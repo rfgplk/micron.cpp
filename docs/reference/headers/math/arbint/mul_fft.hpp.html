@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/mul_fft.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/mul_fft.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/mul_fft.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/mul_fft.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-84a72aa8eba5e86f">micron::math::mpn::fft_itch(usize an, usize bn) noexcept</a></td><td>function; line 46</td></tr><tr class="t-dsc"><td><a href="#f-d1db0caef401f2e8">micron::math::mpn::mul_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept</a></td><td>function; line 260</td></tr><tr class="t-dsc"><td><a href="#f-d87ac5ebf32370e1">micron::math::mpn::sqr_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</a></td><td>function; line 272</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-84a72aa8eba5e86f"><h3><code>micron::math::mpn::fft_itch(usize an, usize bn) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L46">line 46</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+fft_itch(usize an, usize bn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize bn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+fft_itch(usize an, usize bn) noexcept
+{
+  if ( !an || !bn ) return 0u;
+  if ( __nuss_size_add(an, bn) == __nuss_size_max ) return __nuss_size_max;
+  const usize exact = nussbaumer_itch(an, bn);
+#if defined(__micron_arbint_fft)
+  const auto s = __fft_pick_shape(an, bn);
+  // three half-length arrays, complex/real twiddles, alignment slack, and a tile
+  const usize work = __nuss_size_add(__nuss_size_mul(s.plan.n / 4u, 144u / limb_bytes), __nuss_size_add(s.an + s.bn, 24u / limb_bytes));
+  return work &gt; exact ? work : exact;
+#else
+  return exact;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0u</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L48">line 48</a></td></tr><tr class="t-dsc"><td><code>__nuss_size_max</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L49">line 49</a></td></tr><tr class="t-dsc"><td><code>work &gt; exact ? work : exact</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L55">line 55</a></td></tr><tr class="t-dsc"><td><code>exact</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L57">line 57</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_nussbaumer.hpp.html#f-0a09770c88df24ca">__nuss_size_add</a>, <a href="mul_nussbaumer.hpp.html#f-d77f7a36d249d473">nussbaumer_itch</a>, <a href="mul_fft.hpp.html#f-30474996560daa27">__fft_pick_shape</a>, <a href="mul_nussbaumer.hpp.html#f-77546cd83100f87d">__nuss_size_mul</a>.</p></section><section class="function-entry" id="f-d1db0caef401f2e8"><h3><code>micron::math::mpn::mul_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L260">line 260</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+mul_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+mul_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept
+{
+  if ( !an || !bn ) return zero(rp, an + bn);
+#if defined(__micron_arbint_fft)
+  if !consteval {
+    if ( __fft_run&lt;false&gt;(rp, ap, an, bp, bn, scratch) ) return;
+  }
+#endif
+  mul_nussbaumer(rp, ap, an, bp, bn, scratch);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>zero(rp, an + bn)</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L262">line 262</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L265">line 265</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mul_fft.hpp.html#f-4401fc75959f4ce1">__fft_run&lt;false&gt;</a>, <a href="mul_nussbaumer.hpp.html#f-91c41a3dc6e27b6d">mul_nussbaumer</a>.</p></section><section class="function-entry" id="f-d87ac5ebf32370e1"><h3><code>micron::math::mpn::sqr_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L272">line 272</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+sqr_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+sqr_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept
+{
+  if ( !n ) return;
+#if defined(__micron_arbint_fft)
+  if !consteval {
+    if ( __fft_run&lt;true&gt;(rp, ap, n, ap, n, scratch) ) return;
+  }
+#endif
+  sqr_nussbaumer(rp, ap, n, scratch);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L274">line 274</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L277">line 277</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_fft.hpp.html#f-4401fc75959f4ce1">__fft_run&lt;true&gt;</a>, <a href="mul_nussbaumer.hpp.html#f-dca3b5f20758df25">sqr_nussbaumer</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-30474996560daa27"><h3><code>micron::math::mpn::__fft_pick_shape(usize an, usize bn) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L32">line 32</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr __fft_shape
+__fft_pick_shape(usize an, usize bn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize bn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr __fft_shape
+__fft_pick_shape(usize an, usize bn) noexcept
+{
+  if ( !an || !bn ) return {};
+  usize a = an, b = bn;
+  if ( an / bn &gt;= 8u ) a = __nuss_size_mul(3u, bn);
+  if ( bn / an &gt;= 8u ) b = __nuss_size_mul(3u, an);
+  const auto whole = __fft_make_plan(a, b);
+  if ( whole.valid ) return { a, b, whole };
+  a = a &lt; __fft_block_limbs ? a : __fft_block_limbs;
+  b = b &lt; __fft_block_limbs ? b : __fft_block_limbs;
+  return { a, b, __fft_make_plan(a, b) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L34">line 34</a></td></tr><tr class="t-dsc"><td><code>{ a, b, whole }</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L39">line 39</a></td></tr><tr class="t-dsc"><td><code>{ a, b, __fft_make_plan(a, b) }</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L42">line 42</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_nussbaumer.hpp.html#f-77546cd83100f87d">__nuss_size_mul</a>, <a href="thresholds.hpp.html#f-6cc01f9aae7a9563">__fft_make_plan</a>.</p></section><section class="function-entry" id="f-8670cca862261c8d"><h3><code>micron::math::mpn::__fft_roots(__fft_complex *tw, usize count, usize j, usize n) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L66">line 66</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__fft_roots(__fft_complex *tw, usize count, usize j, usize n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fft_complex *tw</code></li><li><code>usize count</code></li><li><code>usize j</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__fft_roots(__fft_complex *tw, usize count, usize j, usize n) noexcept
+{
+  const auto step = fft::__impl::__root&lt;double&gt;(j, n);
+  __fft_complex powers[20];
+  for ( usize bit = 5u; (usize{ 1 } &lt;&lt; bit) &lt; count; ++bit ) powers[bit - 5u] = fft::__impl::__root&lt;double&gt;(j * (usize{ 1 } &lt;&lt; bit), n);
+  for ( usize k = 0u; k &lt; count; k += 32u ) {
+    // each anchor uses at most log2(N) independently evaluated roots;
+    // recurrence error cannot accumulate across the whole table
+    __fft_complex w{ 1.0, 0.0 };
+    for ( usize bits = k &gt;&gt; 5u, bit = 0u; bits; bits &gt;&gt;= 1u, ++bit )
+      if ( bits &amp; 1u ) w *= powers[bit];
+    const usize end = k + 32u &lt; count ? k + 32u : count;
+    for ( usize i = k; i &lt; end; ++i ) {
+      tw[i] = w;
+      w *= step;
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../fft/common.hpp.html#f-9b9d1a1fe2480435">fft::__impl::__root&lt;double&gt;</a>.</p></section><section class="function-entry" id="f-86446d90db88aa54"><h3><code>micron::math::mpn::__fft_twiddles(__fft_complex *tw, usize n) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L86">line 86</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__fft_twiddles(__fft_complex *tw, usize n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fft_complex *tw</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__fft_twiddles(__fft_complex *tw, usize n) noexcept
+{
+  while ( n &gt; 8u ) {
+    const usize m = n / 4u;
+    for ( usize j = 1u; j &lt;= 3u; ++j ) __fft_roots(tw + (j - 1u) * m, m, j, n);
+    tw += 3u * m;
+    n = m;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul_fft.hpp.html#f-8670cca862261c8d">__fft_roots</a>.</p></section><section class="function-entry" id="f-439815070ddb6334"><h3><code>micron::math::mpn::__fft_transform(const __fft_complex *in, __fft_complex *out, const __fft_complex *tw, usize n, usize stride = 1u) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L98">line 98</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Inverse&gt;
+inline void
+__fft_transform(const __fft_complex *in, __fft_complex *out, const __fft_complex *tw, usize n, usize stride = 1u) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __fft_complex *in</code></li><li><code>__fft_complex *out</code></li><li><code>const __fft_complex *tw</code></li><li><code>usize n</code></li><li><code>usize stride = 1u</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Inverse&gt;
+inline void
+__fft_transform(const __fft_complex *in, __fft_complex *out, const __fft_complex *tw, usize n, usize stride = 1u) noexcept
+{
+  if ( n == 2u ) return fft::__impl::__leaf&lt;2, Inverse&gt;(in, out, stride);
+  if ( n == 4u ) return fft::__impl::__leaf&lt;4, Inverse&gt;(in, out, stride);
+  if ( n == 8u ) return fft::__impl::__leaf&lt;8, Inverse&gt;(in, out, stride);
+  const usize m = n / 4u;
+  for ( usize j = 0u; j &lt; 4u; ++j ) __fft_transform&lt;Inverse&gt;(in + j * stride, out + j * m, tw + 3u * m, m, stride * 4u);
+  fft::__impl::__stage&lt;4, Inverse&gt;(out, tw, m, 0u, m);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fft::__impl::__leaf&lt;2, Inverse&gt;(in, out, stride)</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>fft::__impl::__leaf&lt;4, Inverse&gt;(in, out, stride)</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>fft::__impl::__leaf&lt;8, Inverse&gt;(in, out, stride)</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L102">line 102</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../fft/kernels.hpp.html#f-22f6d739ce831344">fft::__impl::__leaf&lt;2, Inverse&gt;</a>, <a href="../fft/kernels.hpp.html#f-22f6d739ce831344">fft::__impl::__leaf&lt;4, Inverse&gt;</a>, <a href="../fft/kernels.hpp.html#f-22f6d739ce831344">fft::__impl::__leaf&lt;8, Inverse&gt;</a>, <a href="../fft/kernels.hpp.html#f-0d6335d6fea25c0d">fft::__impl::__stage&lt;4, Inverse&gt;</a>.</p></section><section class="function-entry" id="f-60200bf73cb9a85b"><h3><code>micron::math::mpn::__fft_residue(const limb_t *p, usize n) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L110">line 110</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 P&gt;
+[[nodiscard]] inline u64
+__fft_residue(const limb_t *p, usize n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const limb_t *p</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 P&gt;
+[[nodiscard]] inline u64
+__fft_residue(const limb_t *p, usize n) noexcept
+{
+  u64 r = 0u;
+  for ( usize i = n; i-- &gt; 0u; ) {
+    if constexpr ( limb_bits == 64u ) r = ((r &lt;&lt; 32u) | u32(u64(p[i]) &gt;&gt; 32u)) % P;
+    r = ((r &lt;&lt; 32u) | u32(p[i])) % P;
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L117">line 117</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-f3fe2e99a2368c8e">u32</a>, <a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-4a6fd3d3394249e6"><h3><code>micron::math::mpn::__fft_check(const limb_t *r, const limb_t *a, usize an, const limb_t *b, usize bn) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L122">line 122</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 P&gt;
+[[nodiscard]] inline bool
+__fft_check(const limb_t *r, const limb_t *a, usize an, const limb_t *b, usize bn) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const limb_t *r</code></li><li><code>const limb_t *a</code></li><li><code>usize an</code></li><li><code>const limb_t *b</code></li><li><code>usize bn</code></li></ul><h4>Effects</h4><p>Returns <code>__fft_residue&lt;P&gt;(r, an + bn) == (__fft_residue&lt;P&gt;(a, an) * __fft_residue&lt;P&gt;(b, bn)) % P</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 P&gt;
+[[nodiscard]] inline bool
+__fft_check(const limb_t *r, const limb_t *a, usize an, const limb_t *b, usize bn) noexcept
+{
+  return __fft_residue&lt;P&gt;(r, an + bn) == (__fft_residue&lt;P&gt;(a, an) * __fft_residue&lt;P&gt;(b, bn)) % P;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fft_residue&lt;P&gt;(r, an + bn) == (__fft_residue&lt;P&gt;(a, an) * __fft_residue&lt;P&gt;(b, bn)) % P</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L124">line 124</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_fft.hpp.html#f-60200bf73cb9a85b">__fft_residue&lt;P&gt;</a>.</p></section><section class="function-entry" id="f-a3691a89aa2a1960"><h3><code>micron::math::mpn::__fft_real_pass(__fft_complex *b, const __fft_complex *roots, usize h) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L131">line 131</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Inverse&gt;
+inline void
+__fft_real_pass(__fft_complex *b, const __fft_complex *roots, usize h) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fft_complex *b</code></li><li><code>const __fft_complex *roots</code></li><li><code>usize h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Inverse&gt;
+inline void
+__fft_real_pass(__fft_complex *b, const __fft_complex *roots, usize h) noexcept
+{
+  const auto z = b[0];
+  b[0] = { z.real + z.imag, z.real - z.imag };
+  if constexpr ( Inverse ) b[0] *= 0.5;
+  for ( usize k = 1u; k &lt; h / 2u; ++k ) {
+    const auto u = b[k], v = conj(b[h - k]);
+    const auto sum = (u + v) * 0.5;
+    auto w = roots[k];
+    if constexpr ( Inverse ) w = conj(w);
+    const auto diff = (u - v) * w * 0.5;
+    const __fft_complex rotated = Inverse ? __fft_complex{ -diff.imag, diff.real } : __fft_complex{ diff.imag, -diff.real };
+    b[k] = sum + rotated;
+    b[h - k] = conj(sum - rotated);
+  }
+  b[h / 2u] = conj(b[h / 2u]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../complex.hpp.html#f-bd97f2a393288137">conj</a>.</p></section><section class="function-entry" id="f-659d10bf01df7ed8"><h3><code>micron::math::mpn::__fft_load(__fft_complex *a, usize h, const limb_t *ap, usize an, usize q) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L150">line 150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__fft_load(__fft_complex *a, usize h, const limb_t *ap, usize an, usize q) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fft_complex *a</code></li><li><code>usize h</code></li><li><code>const limb_t *ap</code></li><li><code>usize an</code></li><li><code>usize q</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__fft_load(__fft_complex *a, usize h, const limb_t *ap, usize an, usize q) noexcept
+{
+  const usize digits = __nuss_ceil_div(an * limb_bits, q);
+  for ( usize k = 0u; k &lt; h; ++k )
+    a[k] = { 2u * k &lt; digits ? double(__nuss_digit(ap, an, 2u * k, q)) : 0.0,
+             2u * k + 1u &lt; digits ? double(__nuss_digit(ap, an, 2u * k + 1u, q)) : 0.0 };
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul_nussbaumer.hpp.html#f-2b345c514dbfa661">__nuss_ceil_div</a>, <a href="mul_nussbaumer.hpp.html#f-6af4a3f019bf7558">__nuss_digit</a>.</p></section><section class="function-entry" id="f-c17775ddff559d3f"><h3><code>micron::math::mpn::__fft_product(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, const __fft_plan &amp;p, __fft_complex *a, __fft_complex *b,
+              __fft_complex *c, const __fft_complex *tw, const __fft_complex *roots) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L160">line 160</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Square&gt;
+[[nodiscard]] inline bool
+__fft_product(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, const __fft_plan &amp;p, __fft_complex *a, __fft_complex *b,
+              __fft_complex *c, const __fft_complex *tw, const __fft_complex *roots) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize an</code></li><li><code>const limb_t *bp</code></li><li><code>usize bn</code></li><li><code>const __fft_plan &amp;p</code></li><li><code>__fft_complex *a</code></li><li><code>__fft_complex *b</code></li><li><code>__fft_complex *c</code></li><li><code>const __fft_complex *tw</code></li><li><code>const __fft_complex *roots</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Square&gt;
+[[nodiscard]] inline bool
+__fft_product(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, const __fft_plan &amp;p, __fft_complex *a, __fft_complex *b,
+              __fft_complex *c, const __fft_complex *tw, const __fft_complex *roots) noexcept
+{
+  const usize ad = __nuss_ceil_div(an * limb_bits, p.digit_bits), bd = __nuss_ceil_div(bn * limb_bits, p.digit_bits);
+  const usize h = p.n / 2u;
+  __fft_load(a, h, ap, an, p.digit_bits);
+  __fft_transform&lt;false&gt;(a, b, tw, h);
+  __fft_real_pass&lt;false&gt;(b, roots, h);
+  if constexpr ( Square ) {
+    b[0] = { b[0].real * b[0].real, b[0].imag * b[0].imag };
+    fft::__impl::__multiply(b + 1u, b + 1u, h - 1u);
+  } else {
+    __fft_load(a, h, bp, bn, p.digit_bits);
+    __fft_transform&lt;false&gt;(a, c, tw, h);
+    __fft_real_pass&lt;false&gt;(c, roots, h);
+    b[0] = { b[0].real * c[0].real, b[0].imag * c[0].imag };
+    fft::__impl::__multiply(b + 1u, c + 1u, h - 1u);
+  }
+  __fft_real_pass&lt;true&gt;(b, roots, h);
+  __fft_transform&lt;true&gt;(b, a, tw, h);
+  const double scale = 1.0 / double(h);
+  const u64 mask = (u64{ 1 } &lt;&lt; p.digit_bits) - 1u;
+  const double bound = double(ad &lt; bd ? ad : bd) * double(mask * mask);
+  __nuss_packer pack{ rp, an + bn, 0u, 0u, 0u, true };
+  u64 carry = 0u;
+  for ( usize k = 0u; k &lt; ad + bd - 1u; ++k ) {
+    const double v = ((k &amp; 1u) ? a[k / 2u].imag : a[k / 2u].real) * scale;
+    if ( !(v &gt;= -0.125 &amp;&amp; v &lt;= bound + 0.125) ) return false;
+    const u64 nearest = static_cast&lt;u64&gt;(v + 0.5);
+    const double error = v - double(nearest);
+    if ( error &lt; -0.125 || error &gt; 0.125 ) return false;
+    const u64 word = nearest + carry;
+    pack.push(static_cast&lt;limb_t&gt;(word &amp; mask), p.digit_bits);
+    carry = word &gt;&gt; p.digit_bits;
+  }
+  while ( carry ) {
+    pack.push(static_cast&lt;limb_t&gt;(carry &amp; mask), p.digit_bits);
+    carry &gt;&gt;= p.digit_bits;
+  }
+  pack.finish();
+  // consistency guards supplement the bounded rounding error
+  return pack.exact &amp;&amp; __fft_check&lt;4294967291ull&gt;(rp, ap, an, bp, bn) &amp;&amp; __fft_check&lt;4294967279ull&gt;(rp, ap, an, bp, bn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L190">line 190</a></td></tr><tr class="t-dsc"><td><code>pack.exact &amp;&amp; __fft_check&lt;4294967291ull&gt;(rp, ap, an, bp, bn) &amp;&amp; __fft_check&lt;4294967279ull&gt;(rp, ap, an, bp, bn)</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L201">line 201</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_nussbaumer.hpp.html#f-2b345c514dbfa661">__nuss_ceil_div</a>, <a href="mul_fft.hpp.html#f-659d10bf01df7ed8">__fft_load</a>, <a href="mul_fft.hpp.html#f-439815070ddb6334">__fft_transform&lt;false&gt;</a>, <a href="mul_fft.hpp.html#f-a3691a89aa2a1960">__fft_real_pass&lt;false&gt;</a>, <a href="../fft/packet.hpp.html#f-1bcc5b5e550ef939">fft::__impl::__multiply</a>, <a href="mul_fft.hpp.html#f-a3691a89aa2a1960">__fft_real_pass&lt;true&gt;</a>, <a href="mul_fft.hpp.html#f-439815070ddb6334">__fft_transform&lt;true&gt;</a>, <a href="mul_fft.hpp.html#f-4a6fd3d3394249e6">__fft_check&lt;4294967291ull&gt;</a>, <a href="mul_fft.hpp.html#f-4a6fd3d3394249e6">__fft_check&lt;4294967279ull&gt;</a>.</p></section><section class="function-entry" id="f-4401fc75959f4ce1"><h3><code>micron::math::mpn::__fft_run(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul_fft.hpp</code>, <a href="../../../source/math/arbint/mul_fft.hpp.html#L206">line 206</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Square&gt;
+[[nodiscard]] inline bool
+__fft_run(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arbint_fft)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize an</code></li><li><code>const limb_t *bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Square&gt;
+[[nodiscard]] inline bool
+__fft_run(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, limb_t *scratch) noexcept
+{
+  const auto s = __fft_pick_shape(an, bn);
+  limb_t *aligned = scratch;
+  while ( reinterpret_cast&lt;usize&gt;(aligned) % 8u ) ++aligned;
+  const usize h = s.plan.n / 2u, count = 9u * s.plan.n / 4u + 1u;
+  auto *a = ::new (static_cast&lt;void *&gt;(aligned)) __fft_complex[count];
+  auto *b = a + h, *c = b + h, *tw = c + h, *roots = tw + h;
+  limb_t *part = aligned + count * sizeof(__fft_complex) / limb_bytes;
+  __fft_twiddles(tw, h);
+  __fft_roots(roots, h / 2u + 1u, 1u, s.plan.n);
+  usize prepared = s.plan.n;
+  bool ok = true;
+  if ( s.an == an &amp;&amp; s.bn == bn ) {
+    ok = __fft_product&lt;Square&gt;(rp, ap, an, bp, bn, s.plan, a, b, c, tw, roots);
+  } else {
+    zero(rp, an + bn);
+    for ( usize ai = 0u; ai &lt; an &amp;&amp; ok; ai += s.an ) {
+      const usize atake = an - ai &lt; s.an ? an - ai : s.an;
+      for ( usize bi = 0u; bi &lt; bn &amp;&amp; ok; bi += s.bn ) {
+        if constexpr ( Square ) {
+          if ( bi &gt; ai ) break;
+        }
+        const usize btake = bn - bi &lt; s.bn ? bn - bi : s.bn;
+        if ( atake &lt;= 2u || btake &lt;= 2u ) {
+          if ( atake &gt;= btake )
+            mul_basecase(part, ap + ai, atake, bp + bi, btake);
+          else
+            mul_basecase(part, bp + bi, btake, ap + ai, atake);
+        } else {
+          const auto p = __fft_make_plan(atake, btake);
+          if ( p.n != prepared ) {
+            __fft_twiddles(tw, p.n / 2u);
+            __fft_roots(roots, p.n / 4u + 1u, 1u, p.n);
+            prepared = p.n;
+          }
+          if ( Square &amp;&amp; ai == bi )
+            ok = __fft_product&lt;true&gt;(part, ap + ai, atake, bp + bi, btake, p, a, b, c, tw, roots);
+          else
+            ok = __fft_product&lt;false&gt;(part, ap + ai, atake, bp + bi, btake, p, a, b, c, tw, roots);
+        }
+        if ( !ok ) break;
+        __nuss_add_partial(rp, an + bn, ai + bi, part, atake + btake);
+        if ( Square &amp;&amp; ai != bi ) __nuss_add_partial(rp, an + bn, ai + bi, part, atake + btake);
+      }
+    }
+  }
+  // restore limb lifetimes before another mpn operation reuses this scratch
+  (void)::new (static_cast&lt;void *&gt;(aligned)) limb_t[count * sizeof(__fft_complex) / limb_bytes];
+  return ok;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ok</code></td><td><a href="../../../source/math/arbint/mul_fft.hpp.html#L255">line 255</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_fft.hpp.html#f-30474996560daa27">__fft_pick_shape</a>, <a href="mul_fft.hpp.html#f-86446d90db88aa54">__fft_twiddles</a>, <a href="mul_fft.hpp.html#f-8670cca862261c8d">__fft_roots</a>, <a href="mul_fft.hpp.html#f-c17775ddff559d3f">__fft_product&lt;Square&gt;</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mul_basecase.hpp.html#f-b800a0c791e5e7d5">mul_basecase</a>, <a href="thresholds.hpp.html#f-6cc01f9aae7a9563">__fft_make_plan</a>, <a href="mul_fft.hpp.html#f-c17775ddff559d3f">__fft_product&lt;true&gt;</a>, <a href="mul_fft.hpp.html#f-c17775ddff559d3f">__fft_product&lt;false&gt;</a>, <a href="mul_nussbaumer.hpp.html#f-e1dc5c62cdbd5230">__nuss_add_partial</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

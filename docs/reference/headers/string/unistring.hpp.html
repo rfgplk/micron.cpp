@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/string/unistring.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/string/unistring.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/strings.html">Strings</a></div><p>Defined in header <code>&lt;micron/string/unistring.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/string/unistring.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-c671c0b7671c17a6">micron::with_capacity(const usize n)</a></td><td>function; line 32</td></tr><tr class="t-dsc"><td><a href="#f-376844dcd3d6aa83">micron::with_capacity(void)</a></td><td>function; line 39</td></tr><tr class="t-dsc"><td><a href="#f-2e7f236d84cf2764">micron::invert(T &amp;str)</a></td><td>function; line 49</td></tr><tr class="t-dsc"><td><a href="#f-8b09ce8fb91d0267">micron::constexpr_int_to_string(I n)</a></td><td>function; line 67</td></tr><tr class="t-dsc"><td><a href="#f-39647e203ab7759e">micron::constexpr_hex(I n, bool upper = false)</a></td><td>function; line 105</td></tr><tr class="t-dsc"><td><a href="#f-64e337bf00320250">micron::constexpr_bin(I n)</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-83d71018634e525f">micron::u8_check(const char *str, usize n)</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-936797110f98541f">micron::u16_check(const char16_t *str, usize n)</a></td><td>function; line 197</td></tr><tr class="t-dsc"><td><a href="#f-29a478c89500615f">micron::u32_check(const char32_t *str, usize n)</a></td><td>function; line 216</td></tr><tr class="t-dsc"><td><a href="#f-260f04d05f535501">micron::to_string(I x)</a></td><td>function; line 235</td></tr><tr class="t-dsc"><td><a href="#f-bc0f24ecb0f1018a">micron::to_string(const C *str)</a></td><td>function; line 242</td></tr><tr class="t-dsc"><td><a href="#f-b1a63876eb9cf50a">micron::to_string(F val)</a></td><td>function; line 250</td></tr><tr class="t-dsc"><td><a href="#f-c94fac1325f14169">micron::to_string(B val)</a></td><td>function; line 261</td></tr><tr class="t-dsc"><td><a href="#f-a0d2624ba60dffb4">micron::to_string(U val)</a></td><td>function; line 269</td></tr><tr class="t-dsc"><td><a href="#f-1630fc8d34604327">micron::to_string_f32(f32 val)</a></td><td>function; line 278</td></tr><tr class="t-dsc"><td><a href="#f-acb136ff30632022">micron::to_string_f64(f64 val)</a></td><td>function; line 285</td></tr><tr class="t-dsc"><td><a href="#f-00cc3116d596c173">micron::to_string(f32 val, u32 prec)</a></td><td>function; line 292</td></tr><tr class="t-dsc"><td><a href="#f-870024c9164d9eab">micron::to_string(f64 val, u32 prec)</a></td><td>function; line 299</td></tr><tr class="t-dsc"><td><a href="#f-3337b79012e30d6f">micron::to_string_stack(I x)</a></td><td>function; line 312</td></tr><tr class="t-dsc"><td><a href="#f-8bb6f625097aabcb">micron::to_string_stack(const C *str)</a></td><td>function; line 319</td></tr><tr class="t-dsc"><td><a href="#f-1501568de81da201">micron::to_string_stack(const C (&amp;str)[N])</a></td><td>function; line 335</td></tr><tr class="t-dsc"><td><a href="#f-71fea574a5b9f5bd">micron::to_string_stack(f32 val)</a></td><td>function; line 348</td></tr><tr class="t-dsc"><td><a href="#f-c2e8bc5aa949fa22">micron::to_string_stack(f64 val)</a></td><td>function; line 364</td></tr><tr class="t-dsc"><td><a href="#f-bdb1e33e127a85e0">micron::to_string_stack(f32 val, u32 prec)</a></td><td>function; line 395</td></tr><tr class="t-dsc"><td><a href="#f-7cad948383113140">micron::to_string_stack(f64 val, u32 prec)</a></td><td>function; line 402</td></tr><tr class="t-dsc"><td><a href="#f-61a7ddc148376594">micron::float_to_string_stack(f32 val)</a></td><td>function; line 413</td></tr><tr class="t-dsc"><td><a href="#f-b16b239ef67b36d9">micron::double_to_string_stack(f64 val)</a></td><td>function; line 428</td></tr><tr class="t-dsc"><td><a href="#f-904150294e208cad">micron::float_to_string_stack(f32 val, u32 prec)</a></td><td>function; line 443</td></tr><tr class="t-dsc"><td><a href="#f-b95f10f39bfd6832">micron::double_to_string_stack(f64 val, u32 prec)</a></td><td>function; line 450</td></tr><tr class="t-dsc"><td><a href="#f-b2b94291e0081181">micron::to_fixed_stack(f64 val, u32 precision = 6)</a></td><td>function; line 460</td></tr><tr class="t-dsc"><td><a href="#f-b1bf6279861e7b4c">micron::to_fixed_trim_stack(f64 val, u32 precision = 6)</a></td><td>function; line 467</td></tr><tr class="t-dsc"><td><a href="#f-28cd02a542ba09e2">micron::to_scientific_stack(f64 val, u32 precision = 6)</a></td><td>function; line 474</td></tr><tr class="t-dsc"><td><a href="#f-47ad4105cd23e697">micron::to_general_stack(f64 val, u32 precision = 6)</a></td><td>function; line 481</td></tr><tr class="t-dsc"><td><a href="#f-37ad7ad3a799f2e1">micron::int_to_string_base_stack(I n, u32 base, bool upper = false)</a></td><td>function; line 506</td></tr><tr class="t-dsc"><td><a href="#f-b9cbd54a2c326257">micron::uint_to_string_base_stack(I n, u32 base, bool upper = false)</a></td><td>function; line 539</td></tr><tr class="t-dsc"><td><a href="#f-7f9bf7190e36e4d4">micron::to_hex_stack(I n, bool upper = false)</a></td><td>function; line 561</td></tr><tr class="t-dsc"><td><a href="#f-9db4d14718a628f8">micron::to_oct_stack(I n)</a></td><td>function; line 569</td></tr><tr class="t-dsc"><td><a href="#f-50b0ce497ddf7585">micron::to_bin_stack(I n)</a></td><td>function; line 577</td></tr><tr class="t-dsc"><td><a href="#f-fdc195b0b2278b53">micron::to_hex_fixed_stack(I n, usize digits, bool upper = false)</a></td><td>function; line 588</td></tr><tr class="t-dsc"><td><a href="#f-ecfc2edc742a20f0">micron::to_bin_fixed_stack(I n, usize digits)</a></td><td>function; line 609</td></tr><tr class="t-dsc"><td><a href="#f-ab7f609461a99ead">micron::int_to_string_padded_stack(I n, usize width)</a></td><td>function; line 632</td></tr><tr class="t-dsc"><td><a href="#f-a7718971cc35e119">micron::bytes_to_string(I n)</a></td><td>function; line 682</td></tr><tr class="t-dsc"><td><a href="#f-593fb46232dcf100">micron::bytes_to_string_stack(I n)</a></td><td>function; line 690</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-c671c0b7671c17a6"><h3><code>micron::with_capacity(const usize n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L32">line 32</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+with_capacity(const usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const usize n</code></li></ul><h4>Effects</h4><p>Returns <code>micron::hstring&lt;C&gt;(n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+with_capacity(const usize n)
+{
+  return micron::hstring&lt;C&gt;(n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::hstring&lt;C&gt;(n)</code></td><td><a href="../../source/string/unistring.hpp.html#L34">line 34</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="string.hpp.html#s-ca7bf782235cab51">micron::hstring&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-376844dcd3d6aa83"><h3><code>micron::with_capacity(void)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L39">line 39</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+with_capacity(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::hstring&lt;C&gt;(N)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+with_capacity(void)
+{
+  return micron::hstring&lt;C&gt;(N);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::hstring&lt;C&gt;(N)</code></td><td><a href="../../source/string/unistring.hpp.html#L41">line 41</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="string.hpp.html#s-ca7bf782235cab51">micron::hstring&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-2e7f236d84cf2764"><h3><code>micron::invert(T &amp;str)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L49">line 49</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string T&gt;
+inline void
+invert(T &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string T&gt;
+inline void
+invert(T &amp;str)
+{
+  if ( str.size() &lt;= 1 ) return;
+  typename T::iterator start = str.begin();
+  typename T::iterator end = str.end() - 1;
+  while ( start &lt; end ) {
+    typename T::value_type t = *start;
+    *start++ = *end;
+    *end-- = t;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/string/unistring.hpp.html#L51">line 51</a></td></tr></tbody></table></section><section class="function-entry" id="f-8b09ce8fb91d0267"><h3><code>micron::constexpr_int_to_string(I n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L67">line 67</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize N = 24&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; N &gt;= __impl::max_digits_v&lt;I&gt; + 1)
+constexpr micron::sstring&lt;N, char&gt;
+constexpr_int_to_string(I n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize N = 24&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; N &gt;= __impl::max_digits_v&lt;I&gt; + 1)
+constexpr micron::sstring&lt;N, char&gt;
+constexpr_int_to_string(I n)
+{
+  micron::sstring&lt;N, char&gt; result;
+  char tmp[24];
+  usize pos = 0;
+  bool neg = false;
+  using U = micron::make_unsigned_t&lt;I&gt;;
+  U uval;
+  if constexpr ( micron::is_signed_v&lt;I&gt; ) {
+    if ( n &lt; 0 ) {
+      neg = true;
+      uval = static_cast&lt;U&gt;(-(n + 1)) + 1u;
+    } else {
+      uval = static_cast&lt;U&gt;(n);
+    }
+  } else {
+    uval = static_cast&lt;U&gt;(n);
+  }
+  if ( uval == 0 ) {
+    tmp[pos++] = &#x27;0&#x27;;
+  } else {
+    while ( uval &gt; 0 ) {
+      tmp[pos++] = &#x27;0&#x27; + static_cast&lt;char&gt;(uval % 10);
+      uval /= 10;
+    }
+  }
+  char *out = &amp;result[0];
+  usize out_pos = 0;
+  if ( neg ) out[out_pos++] = &#x27;-&#x27;;
+  for ( usize i = pos; i &gt; 0; --i ) out[out_pos++] = tmp[i - 1];
+  out[out_pos] = &#x27;\0&#x27;;
+  result._buf_set_length(out_pos);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L99">line 99</a></td></tr></tbody></table></section><section class="function-entry" id="f-39647e203ab7759e"><h3><code>micron::constexpr_hex(I n, bool upper = false)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L105">line 105</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize N = 24&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; N &gt;= 19)
+constexpr micron::sstring&lt;N, char&gt;
+constexpr_hex(I n, bool upper = false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li><li><code>bool upper = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize N = 24&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; N &gt;= 19)
+constexpr micron::sstring&lt;N, char&gt;
+constexpr_hex(I n, bool upper = false)
+{
+  micron::sstring&lt;N, char&gt; result;
+  using U = micron::make_unsigned_t&lt;I&gt;;
+  U uval = static_cast&lt;U&gt;(n);
+  const char *digits = upper ? &quot;0123456789ABCDEF&quot; : &quot;0123456789abcdef&quot;;
+  char tmp[24];
+  usize pos = 0;
+  if ( uval == 0 ) {
+    tmp[pos++] = &#x27;0&#x27;;
+  } else {
+    while ( uval &gt; 0 ) {
+      tmp[pos++] = digits[uval &amp; 0xF];
+      uval &gt;&gt;= 4;
+    }
+  }
+  char *out = &amp;result[0];
+  for ( usize i = pos; i &gt; 0; --i ) out[pos - i] = tmp[i - 1];
+  out[pos] = &#x27;\0&#x27;;
+  result._buf_set_length(pos);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L125">line 125</a></td></tr></tbody></table></section><section class="function-entry" id="f-64e337bf00320250"><h3><code>micron::constexpr_bin(I n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize N = 68&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; N &gt;= 67)
+constexpr micron::sstring&lt;N, char&gt;
+constexpr_bin(I n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize N = 68&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; N &gt;= 67)
+constexpr micron::sstring&lt;N, char&gt;
+constexpr_bin(I n)
+{
+  micron::sstring&lt;N, char&gt; result;
+  using U = micron::make_unsigned_t&lt;I&gt;;
+  U uval = static_cast&lt;U&gt;(n);
+  char tmp[66];
+  usize pos = 0;
+  if ( uval == 0 ) {
+    tmp[pos++] = &#x27;0&#x27;;
+  } else {
+    while ( uval &gt; 0 ) {
+      tmp[pos++] = &#x27;0&#x27; + static_cast&lt;char&gt;(uval &amp; 1);
+      uval &gt;&gt;= 1;
+    }
+  }
+  char *out = &amp;result[0];
+  for ( usize i = pos; i &gt; 0; --i ) out[pos - i] = tmp[i - 1];
+  out[pos] = &#x27;\0&#x27;;
+  result._buf_set_length(pos);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L150">line 150</a></td></tr></tbody></table></section><section class="function-entry" id="f-83d71018634e525f"><h3><code>micron::u8_check(const char *str, usize n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+u8_check(const char *str, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+u8_check(const char *str, usize n)
+{
+  const char *end = str + n;
+  while ( str &lt; end ) {
+    u8 c = static_cast&lt;u8&gt;(*str);
+    if ( c &lt; 0x80 ) {
+      ++str;
+      continue;
+    }
+    u32 cp = 0;
+    usize seq = 0;
+    if ( (c &amp; 0xE0) == 0xC0 ) {
+      cp = c &amp; 0x1F;
+      seq = 2;
+    } else if ( (c &amp; 0xF0) == 0xE0 ) {
+      cp = c &amp; 0x0F;
+      seq = 3;
+    } else if ( (c &amp; 0xF8) == 0xF0 ) {
+      cp = c &amp; 0x07;
+      seq = 4;
+    } else
+      return nullptr;
+    ++str;
+    for ( usize j = 1; j &lt; seq; ++j ) {
+      if ( str &gt;= end ) return nullptr;
+      u8 cont = static_cast&lt;u8&gt;(*str);
+      if ( (cont &amp; 0xC0) != 0x80 ) return nullptr;
+      cp = (cp &lt;&lt; 6) | (cont &amp; 0x3F);
+      ++str;
+    }
+    if ( seq == 2 &amp;&amp; cp &lt; 0x80 ) return nullptr;
+    if ( seq == 3 &amp;&amp; cp &lt; 0x800 ) return nullptr;
+    if ( seq == 4 &amp;&amp; cp &lt; 0x10000 ) return nullptr;
+    if ( cp &gt;= 0xD800 &amp;&amp; cp &lt;= 0xDFFF ) return nullptr;
+    if ( cp &gt; 0x10FFFF ) return nullptr;
+  }
+  return str;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L178">line 178</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L183">line 183</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L188">line 188</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L189">line 189</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L190">line 190</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L191">line 191</a></td></tr><tr class="t-dsc"><td><code>str</code></td><td><a href="../../source/string/unistring.hpp.html#L193">line 193</a></td></tr></tbody></table></section><section class="function-entry" id="f-936797110f98541f"><h3><code>micron::u16_check(const char16_t *str, usize n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L197">line 197</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char16_t *
+u16_check(const char16_t *str, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char16_t *str</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char16_t *
+u16_check(const char16_t *str, usize n)
+{
+  const char16_t *end = str + n;
+  while ( str &lt; end ) {
+    u16 c = static_cast&lt;u16&gt;(*str);
+    ++str;
+    if ( c &lt; 0xD800 || c &gt; 0xDFFF ) continue;
+    if ( c &gt;= 0xD800 &amp;&amp; c &lt;= 0xDBFF ) {
+      if ( str &gt;= end ) return nullptr;
+      u16 low = static_cast&lt;u16&gt;(*str);
+      if ( low &lt; 0xDC00 || low &gt; 0xDFFF ) return nullptr;
+      ++str;
+    } else
+      return nullptr;
+  }
+  return str;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L207">line 207</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L210">line 210</a></td></tr><tr class="t-dsc"><td><code>str</code></td><td><a href="../../source/string/unistring.hpp.html#L212">line 212</a></td></tr></tbody></table></section><section class="function-entry" id="f-29a478c89500615f"><h3><code>micron::u32_check(const char32_t *str, usize n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L216">line 216</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char32_t *
+u32_check(const char32_t *str, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char32_t *str</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char32_t *
+u32_check(const char32_t *str, usize n)
+{
+  const char32_t *end = str + n;
+  while ( str &lt; end ) {
+    u32 c = static_cast&lt;u32&gt;(*str);
+    ++str;
+    if ( c &gt;= 0xD800 &amp;&amp; c &lt;= 0xDFFF ) return nullptr;
+    if ( c &gt; 0x10FFFF ) return nullptr;
+  }
+  return str;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L222">line 222</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/string/unistring.hpp.html#L223">line 223</a></td></tr><tr class="t-dsc"><td><code>str</code></td><td><a href="../../source/string/unistring.hpp.html#L225">line 225</a></td></tr></tbody></table></section><section class="function-entry" id="f-260f04d05f535501"><h3><code>micron::to_string(I x)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L235">line 235</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; !micron::is_same_v&lt;micron::remove_cv_t&lt;I&gt;, bool&gt; &amp;&amp; !micron::is_same_v&lt;micron::remove_cv_t&lt;I&gt;, u128&gt;
+           &amp;&amp; !micron::is_same_v&lt;micron::remove_cv_t&lt;I&gt;, i128&gt;)
+inline micron::hstring&lt;C&gt;
+to_string(I x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I x</code></li></ul><h4>Effects</h4><p>Returns <code>int_to_string&lt;I, C&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; !micron::is_same_v&lt;micron::remove_cv_t&lt;I&gt;, bool&gt; &amp;&amp; !micron::is_same_v&lt;micron::remove_cv_t&lt;I&gt;, u128&gt;
+           &amp;&amp; !micron::is_same_v&lt;micron::remove_cv_t&lt;I&gt;, i128&gt;)
+inline micron::hstring&lt;C&gt;
+to_string(I x)
+{
+  return int_to_string&lt;I, C&gt;(x);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>int_to_string&lt;I, C&gt;(x)</code></td><td><a href="../../source/string/unistring.hpp.html#L237">line 237</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/integral.hpp.html#f-3121b9c2bf4f7ca9">int_to_string&lt;I, C&gt;</a>.</p></section><section class="function-entry" id="f-bc0f24ecb0f1018a"><h3><code>micron::to_string(const C *str)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L242">line 242</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C&gt;
+inline micron::hstring&lt;C&gt;
+to_string(const C *str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C *str</code></li></ul><h4>Effects</h4><p>Returns <code>micron::hstring&lt;C&gt;(str)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C&gt;
+inline micron::hstring&lt;C&gt;
+to_string(const C *str)
+{
+  return micron::hstring&lt;C&gt;(str);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::hstring&lt;C&gt;(str)</code></td><td><a href="../../source/string/unistring.hpp.html#L244">line 244</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="string.hpp.html#s-ca7bf782235cab51">micron::hstring&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-b1a63876eb9cf50a"><h3><code>micron::to_string(F val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L250">line 250</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename C = char&gt;
+  requires micron::is_floating_point_v&lt;F&gt;
+inline micron::hstring&lt;C&gt;
+to_string(F val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename C = char&gt;
+  requires micron::is_floating_point_v&lt;F&gt;
+inline micron::hstring&lt;C&gt;
+to_string(F val)
+{
+  if constexpr ( sizeof(F) &lt;= sizeof(f32) )
+    return float_to_string&lt;C&gt;(static_cast&lt;f32&gt;(val));
+  else
+    return double_to_string&lt;C&gt;(static_cast&lt;f64&gt;(val));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>float_to_string&lt;C&gt;(static_cast&lt;f32&gt;(val))</code></td><td><a href="../../source/string/unistring.hpp.html#L253">line 253</a></td></tr><tr class="t-dsc"><td><code>double_to_string&lt;C&gt;(static_cast&lt;f64&gt;(val))</code></td><td><a href="../../source/string/unistring.hpp.html#L255">line 255</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/floating_point.hpp.html#f-1b2092a6213f31a3">float_to_string&lt;C&gt;</a>, <a href="conversions/floating_point.hpp.html#f-77538baa74de8524">double_to_string&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-c94fac1325f14169"><h3><code>micron::to_string(B val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L261">line 261</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename B, typename C = char&gt;
+  requires micron::is_same_v&lt;micron::remove_cv_t&lt;B&gt;, bool&gt;
+inline micron::hstring&lt;C&gt;
+to_string(B val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>B val</code></li></ul><h4>Effects</h4><p>Returns <code>micron::bool_to_string&lt;C&gt;(val)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename B, typename C = char&gt;
+  requires micron::is_same_v&lt;micron::remove_cv_t&lt;B&gt;, bool&gt;
+inline micron::hstring&lt;C&gt;
+to_string(B val)
+{
+  return micron::bool_to_string&lt;C&gt;(val);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::bool_to_string&lt;C&gt;(val)</code></td><td><a href="../../source/string/unistring.hpp.html#L263">line 263</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/integral.hpp.html#f-114fc7975b68f740">micron::bool_to_string&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-a0d2624ba60dffb4"><h3><code>micron::to_string(U val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L269">line 269</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U, typename C = char&gt;
+  requires(micron::is_same_v&lt;micron::remove_cv_t&lt;U&gt;, u128&gt; || micron::is_same_v&lt;micron::remove_cv_t&lt;U&gt;, i128&gt;)
+inline micron::hstring&lt;C&gt;
+to_string(U val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>U val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U, typename C = char&gt;
+  requires(micron::is_same_v&lt;micron::remove_cv_t&lt;U&gt;, u128&gt; || micron::is_same_v&lt;micron::remove_cv_t&lt;U&gt;, i128&gt;)
+inline micron::hstring&lt;C&gt;
+to_string(U val)
+{
+  char buf[136];
+  const usize n = micron::to_chars(buf, sizeof(buf), val, 10u, false);
+  return micron::hstring&lt;C&gt;(buf, buf + n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::hstring&lt;C&gt;(buf, buf + n)</code></td><td><a href="../../source/string/unistring.hpp.html#L273">line 273</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/chars.hpp.html#f-a1b39e643cd4d581">micron::to_chars</a>, <a href="string.hpp.html#s-ca7bf782235cab51">micron::hstring&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-1630fc8d34604327"><h3><code>micron::to_string_f32(f32 val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L278">line 278</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_string_f32(f32 val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li></ul><h4>Effects</h4><p>Returns <code>float_to_string&lt;C&gt;(val)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_string_f32(f32 val)
+{
+  return float_to_string&lt;C&gt;(val);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>float_to_string&lt;C&gt;(val)</code></td><td><a href="../../source/string/unistring.hpp.html#L280">line 280</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/floating_point.hpp.html#f-1b2092a6213f31a3">float_to_string&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-acb136ff30632022"><h3><code>micron::to_string_f64(f64 val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L285">line 285</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_string_f64(f64 val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li></ul><h4>Effects</h4><p>Returns <code>double_to_string&lt;C&gt;(val)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_string_f64(f64 val)
+{
+  return double_to_string&lt;C&gt;(val);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>double_to_string&lt;C&gt;(val)</code></td><td><a href="../../source/string/unistring.hpp.html#L287">line 287</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/floating_point.hpp.html#f-77538baa74de8524">double_to_string&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-00cc3116d596c173"><h3><code>micron::to_string(f32 val, u32 prec)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L292">line 292</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_string(f32 val, u32 prec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Returns <code>float_to_string&lt;C&gt;(val, prec)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_string(f32 val, u32 prec)
+{
+  return float_to_string&lt;C&gt;(val, prec);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>float_to_string&lt;C&gt;(val, prec)</code></td><td><a href="../../source/string/unistring.hpp.html#L294">line 294</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/floating_point.hpp.html#f-1b2092a6213f31a3">float_to_string&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-870024c9164d9eab"><h3><code>micron::to_string(f64 val, u32 prec)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L299">line 299</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_string(f64 val, u32 prec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Returns <code>double_to_string&lt;C&gt;(val, prec)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_string(f64 val, u32 prec)
+{
+  return double_to_string&lt;C&gt;(val, prec);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>double_to_string&lt;C&gt;(val, prec)</code></td><td><a href="../../source/string/unistring.hpp.html#L301">line 301</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/floating_point.hpp.html#f-77538baa74de8524">double_to_string&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-3337b79012e30d6f"><h3><code>micron::to_string_stack(I x)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L312">line 312</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz = 24, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= __impl::max_digits_v&lt;I&gt; + 1)
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(I x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I x</code></li></ul><h4>Effects</h4><p>Returns <code>int_to_string_stack&lt;I, C, Sz&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz = 24, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= __impl::max_digits_v&lt;I&gt; + 1)
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(I x)
+{
+  return int_to_string_stack&lt;I, C, Sz&gt;(x);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>int_to_string_stack&lt;I, C, Sz&gt;(x)</code></td><td><a href="../../source/string/unistring.hpp.html#L314">line 314</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/integral.hpp.html#f-7de1c69d7d8321d4">int_to_string_stack&lt;I, C, Sz&gt;</a>.</p></section><section class="function-entry" id="f-8bb6f625097aabcb"><h3><code>micron::to_string_stack(const C *str)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L319">line 319</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz, typename C&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(const C *str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C *str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz, typename C&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(const C *str)
+{
+  // copy c-string into stack string
+  micron::sstring&lt;Sz, C&gt; result;
+  usize len = micron::strlen(str);
+  if ( len &gt; Sz - 1 ) len = Sz - 1;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; len; ++i ) out[i] = str[i];
+  out[len] = &#x27;\0&#x27;;
+  result._buf_set_length(len);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L329">line 329</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>.</p></section><section class="function-entry" id="f-1501568de81da201"><h3><code>micron::to_string_stack(const C (&amp;str)[N])</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L335">line 335</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz, usize N, typename C&gt;
+  requires(Sz &gt;= N)
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(const C (&amp;str)[N])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C (&amp;str)[N]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz, usize N, typename C&gt;
+  requires(Sz &gt;= N)
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(const C (&amp;str)[N])
+{
+  micron::sstring&lt;Sz, C&gt; result;
+  constexpr usize len = N - 1;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; len; ++i ) out[i] = str[i];
+  out[len] = &#x27;\0&#x27;;
+  result._buf_set_length(len);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L343">line 343</a></td></tr></tbody></table></section><section class="function-entry" id="f-71fea574a5b9f5bd"><h3><code>micron::to_string_stack(f32 val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L348">line 348</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 32, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(f32 val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 32, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(f32 val)
+{
+  // selected shortest representation, then copy to stack
+  char tmp[32];
+  usize n = __impl::__fpconv::d2s_buffered(static_cast&lt;f64&gt;(val), tmp);
+  if ( n &gt; Sz - 1 ) n = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; result;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = static_cast&lt;C&gt;(tmp[i]);
+  out[n] = &#x27;\0&#x27;;
+  result._buf_set_length(n);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L359">line 359</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/zmij.hpp.html#f-9a7a420df3fb0141">__impl::__fpconv::d2s_buffered</a>.</p></section><section class="function-entry" id="f-c2e8bc5aa949fa22"><h3><code>micron::to_string_stack(f64 val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L364">line 364</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 32, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(f64 val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 32, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(f64 val)
+{
+  // selected shortest representation, then copy to stack
+  char tmp[32];
+  usize n = __impl::__fpconv::d2s_buffered(val, tmp);
+  if ( n &gt; Sz - 1 ) n = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; result;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = static_cast&lt;C&gt;(tmp[i]);
+  out[n] = &#x27;\0&#x27;;
+  result._buf_set_length(n);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L375">line 375</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/zmij.hpp.html#f-9a7a420df3fb0141">__impl::__fpconv::d2s_buffered</a>.</p></section><section class="function-entry" id="f-bdb1e33e127a85e0"><h3><code>micron::to_string_stack(f32 val, u32 prec)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L395">line 395</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 48, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(f32 val, u32 prec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(static_cast&lt;f64&gt;(val), b, c, prec); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 48, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(f32 val, u32 prec)
+{
+  return __fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(static_cast&lt;f64&gt;(val), b, c, prec); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(static_cast&lt;f64&gt;(val), b, c, prec); })</code></td><td><a href="../../source/string/unistring.hpp.html#L397">line 397</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-31d162a1b36acec9">__fp_to_sstring&lt;Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-7cad948383113140"><h3><code>micron::to_string_stack(f64 val, u32 prec)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L402">line 402</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 64, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(f64 val, u32 prec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 64, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_string_stack(f64 val, u32 prec)
+{
+  return __fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); })</code></td><td><a href="../../source/string/unistring.hpp.html#L404">line 404</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-31d162a1b36acec9">__fp_to_sstring&lt;Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-61a7ddc148376594"><h3><code>micron::float_to_string_stack(f32 val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L413">line 413</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 32, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+float_to_string_stack(f32 val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 32, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+float_to_string_stack(f32 val)
+{
+  char tmp[32];
+  usize n = __impl::__fpconv::d2s_buffered(static_cast&lt;f64&gt;(val), tmp);
+  if ( n &gt; Sz - 1 ) n = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; result;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = static_cast&lt;C&gt;(tmp[i]);
+  out[n] = &#x27;\0&#x27;;
+  result._buf_set_length(n);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L423">line 423</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/zmij.hpp.html#f-9a7a420df3fb0141">__impl::__fpconv::d2s_buffered</a>.</p></section><section class="function-entry" id="f-b16b239ef67b36d9"><h3><code>micron::double_to_string_stack(f64 val)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L428">line 428</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 32, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+double_to_string_stack(f64 val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 32, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+double_to_string_stack(f64 val)
+{
+  char tmp[32];
+  usize n = __impl::__fpconv::d2s_buffered(val, tmp);
+  if ( n &gt; Sz - 1 ) n = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; result;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = static_cast&lt;C&gt;(tmp[i]);
+  out[n] = &#x27;\0&#x27;;
+  result._buf_set_length(n);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L438">line 438</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/zmij.hpp.html#f-9a7a420df3fb0141">__impl::__fpconv::d2s_buffered</a>.</p></section><section class="function-entry" id="f-904150294e208cad"><h3><code>micron::float_to_string_stack(f32 val, u32 prec)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L443">line 443</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 48, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+float_to_string_stack(f32 val, u32 prec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(static_cast&lt;f64&gt;(val), b, c, prec); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 48, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+float_to_string_stack(f32 val, u32 prec)
+{
+  return __fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(static_cast&lt;f64&gt;(val), b, c, prec); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(static_cast&lt;f64&gt;(val), b, c, prec); })</code></td><td><a href="../../source/string/unistring.hpp.html#L445">line 445</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-31d162a1b36acec9">__fp_to_sstring&lt;Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-b95f10f39bfd6832"><h3><code>micron::double_to_string_stack(f64 val, u32 prec)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L450">line 450</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 64, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+double_to_string_stack(f64 val, u32 prec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 64, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+double_to_string_stack(f64 val, u32 prec)
+{
+  return __fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); })</code></td><td><a href="../../source/string/unistring.hpp.html#L452">line 452</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-31d162a1b36acec9">__fp_to_sstring&lt;Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-b2b94291e0081181"><h3><code>micron::to_fixed_stack(f64 val, u32 precision = 6)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L460">line 460</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 64, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_fixed_stack(f64 val, u32 precision = 6)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision = 6</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, precision); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 64, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_fixed_stack(f64 val, u32 precision = 6)
+{
+  return __fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, precision); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, precision); })</code></td><td><a href="../../source/string/unistring.hpp.html#L462">line 462</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-31d162a1b36acec9">__fp_to_sstring&lt;Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-b1bf6279861e7b4c"><h3><code>micron::to_fixed_trim_stack(f64 val, u32 precision = 6)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L467">line 467</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 64, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_fixed_trim_stack(f64 val, u32 precision = 6)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision = 6</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_trim_buffered(val, b, c, precision); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 64, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_fixed_trim_stack(f64 val, u32 precision = 6)
+{
+  return __fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_trim_buffered(val, b, c, precision); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2f_trim_buffered(val, b, c, precision); })</code></td><td><a href="../../source/string/unistring.hpp.html#L469">line 469</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-31d162a1b36acec9">__fp_to_sstring&lt;Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-28cd02a542ba09e2"><h3><code>micron::to_scientific_stack(f64 val, u32 precision = 6)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L474">line 474</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 80, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_scientific_stack(f64 val, u32 precision = 6)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision = 6</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2e_buffered(val, b, c, precision); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 80, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_scientific_stack(f64 val, u32 precision = 6)
+{
+  return __fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2e_buffered(val, b, c, precision); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_sstring&lt;Sz, C&gt;([&amp;](char *b, usize c) { return __impl::__fpconv::d2e_buffered(val, b, c, precision); })</code></td><td><a href="../../source/string/unistring.hpp.html#L476">line 476</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-31d162a1b36acec9">__fp_to_sstring&lt;Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-47ad4105cd23e697"><h3><code>micron::to_general_stack(f64 val, u32 precision = 6)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L481">line 481</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz = 80, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_general_stack(f64 val, u32 precision = 6)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision = 6</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz = 80, typename C = char&gt;
+inline micron::sstring&lt;Sz, C&gt;
+to_general_stack(f64 val, u32 precision = 6)
+{
+  f64 abs_val = val &lt; 0.0 ? -val : val;
+  if ( abs_val != 0.0 ) {
+    i32 exp = 0;
+    f64 tmp = abs_val;
+    while ( tmp &gt;= 10.0 ) {
+      tmp /= 10.0;
+      ++exp;
+    }
+    while ( tmp &lt; 1.0 ) {
+      tmp *= 10.0;
+      --exp;
+    }
+    if ( exp &lt; -4 || exp &gt;= static_cast&lt;i32&gt;(precision) ) return to_scientific_stack&lt;Sz, C&gt;(val, precision &gt; 0 ? precision - 1 : 0);
+  }
+  return to_fixed_stack&lt;Sz, C&gt;(val, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>to_scientific_stack&lt;Sz, C&gt;(val, precision &gt; 0 ? precision - 1 : 0)</code></td><td><a href="../../source/string/unistring.hpp.html#L495">line 495</a></td></tr><tr class="t-dsc"><td><code>to_fixed_stack&lt;Sz, C&gt;(val, precision)</code></td><td><a href="../../source/string/unistring.hpp.html#L497">line 497</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-28cd02a542ba09e2">to_scientific_stack&lt;Sz, C&gt;</a>, <a href="unistring.hpp.html#f-b2b94291e0081181">to_fixed_stack&lt;Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-37ad7ad3a799f2e1"><h3><code>micron::int_to_string_base_stack(I n, u32 base, bool upper = false)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L506">line 506</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz = 72, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+int_to_string_base_stack(I n, u32 base, bool upper = false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li><li><code>u32 base</code></li><li><code>bool upper = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz = 72, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+int_to_string_base_stack(I n, u32 base, bool upper = false)
+{
+  // convert to tmp via backward-write, copy to stack string
+  char tmp[72];
+  char *tend = tmp + 72;
+  using U = micron::make_unsigned_t&lt;I&gt;;
+  U uval;
+  bool neg = false;
+  if constexpr ( micron::is_signed_v&lt;I&gt; ) {
+    if ( n &lt; 0 &amp;&amp; base == 10 ) {
+      neg = true;
+      uval = static_cast&lt;U&gt;(-(n + 1)) + 1u;
+    } else {
+      uval = static_cast&lt;U&gt;(n);
+    }
+  } else {
+    uval = static_cast&lt;U&gt;(n);
+  }
+  char *start = __impl::uint_to_buf_base_backward(tend, static_cast&lt;u64&gt;(uval), base, upper);
+  if ( neg ) *--start = &#x27;-&#x27;;
+  usize len = static_cast&lt;usize&gt;(tend - start);
+  if ( len &gt; Sz - 1 ) len = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; result;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; len; ++i ) out[i] = static_cast&lt;C&gt;(start[i]);
+  out[len] = &#x27;\0&#x27;;
+  result._buf_set_length(len);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L533">line 533</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/bits.hpp.html#f-14f7f23affb3d066">__impl::uint_to_buf_base_backward</a>.</p></section><section class="function-entry" id="f-b9cbd54a2c326257"><h3><code>micron::uint_to_string_base_stack(I n, u32 base, bool upper = false)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L539">line 539</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz = 72, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+uint_to_string_base_stack(I n, u32 base, bool upper = false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li><li><code>u32 base</code></li><li><code>bool upper = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz = 72, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+uint_to_string_base_stack(I n, u32 base, bool upper = false)
+{
+  using U = micron::make_unsigned_t&lt;I&gt;;
+  char tmp[72];
+  char *tend = tmp + 72;
+  char *start = __impl::uint_to_buf_base_backward(tend, static_cast&lt;u64&gt;(static_cast&lt;U&gt;(n)), base, upper);
+  usize len = static_cast&lt;usize&gt;(tend - start);
+  if ( len &gt; Sz - 1 ) len = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; result;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; len; ++i ) out[i] = static_cast&lt;C&gt;(start[i]);
+  out[len] = &#x27;\0&#x27;;
+  result._buf_set_length(len);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L552">line 552</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/bits.hpp.html#f-14f7f23affb3d066">__impl::uint_to_buf_base_backward</a>.</p></section><section class="function-entry" id="f-7f9bf7190e36e4d4"><h3><code>micron::to_hex_stack(I n, bool upper = false)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L561">line 561</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz = 20, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_hex_stack(I n, bool upper = false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li><li><code>bool upper = false</code></li></ul><h4>Effects</h4><p>Returns <code>uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 16, upper)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz = 20, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_hex_stack(I n, bool upper = false)
+{
+  return uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 16, upper);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 16, upper)</code></td><td><a href="../../source/string/unistring.hpp.html#L563">line 563</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-b9cbd54a2c326257">uint_to_string_base_stack&lt;I, Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-9db4d14718a628f8"><h3><code>micron::to_oct_stack(I n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L569">line 569</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz = 24, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_oct_stack(I n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li></ul><h4>Effects</h4><p>Returns <code>uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 8, false)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz = 24, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_oct_stack(I n)
+{
+  return uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 8, false);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 8, false)</code></td><td><a href="../../source/string/unistring.hpp.html#L571">line 571</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-b9cbd54a2c326257">uint_to_string_base_stack&lt;I, Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-50b0ce497ddf7585"><h3><code>micron::to_bin_stack(I n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L577">line 577</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz = 68, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_bin_stack(I n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li></ul><h4>Effects</h4><p>Returns <code>uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 2, false)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz = 68, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_bin_stack(I n)
+{
+  return uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 2, false);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>uint_to_string_base_stack&lt;I, Sz, C&gt;(n, 2, false)</code></td><td><a href="../../source/string/unistring.hpp.html#L579">line 579</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unistring.hpp.html#f-b9cbd54a2c326257">uint_to_string_base_stack&lt;I, Sz, C&gt;</a>.</p></section><section class="function-entry" id="f-fdc195b0b2278b53"><h3><code>micron::to_hex_fixed_stack(I n, usize digits, bool upper = false)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L588">line 588</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_hex_fixed_stack(I n, usize digits, bool upper = false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li><li><code>usize digits</code></li><li><code>bool upper = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_hex_fixed_stack(I n, usize digits, bool upper = false)
+{
+  using U = micron::make_unsigned_t&lt;I&gt;;
+  U uval = static_cast&lt;U&gt;(n);
+  usize dlen = digits;
+  if ( dlen &gt; Sz - 1 ) dlen = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; buf;
+  const char *hex = upper ? __impl::__hex_upper : __impl::__hex_lower;
+  C *out = &amp;buf[0];
+  for ( usize i = dlen; i &gt; 0; --i ) {
+    out[i - 1] = static_cast&lt;C&gt;(hex[uval &amp; 0xF]);
+    uval &gt;&gt;= 4;
+  }
+  out[dlen] = &#x27;\0&#x27;;
+  buf._buf_set_length(dlen);
+  return buf;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>buf</code></td><td><a href="../../source/string/unistring.hpp.html#L603">line 603</a></td></tr></tbody></table></section><section class="function-entry" id="f-ecfc2edc742a20f0"><h3><code>micron::to_bin_fixed_stack(I n, usize digits)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L609">line 609</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_bin_fixed_stack(I n, usize digits)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li><li><code>usize digits</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= 2)
+inline micron::sstring&lt;Sz, C&gt;
+to_bin_fixed_stack(I n, usize digits)
+{
+  using U = micron::make_unsigned_t&lt;I&gt;;
+  U uval = static_cast&lt;U&gt;(n);
+  usize dlen = digits;
+  if ( dlen &gt; Sz - 1 ) dlen = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; buf;
+  C *out = &amp;buf[0];
+  for ( usize i = dlen; i &gt; 0; --i ) {
+    out[i - 1] = static_cast&lt;C&gt;(&#x27;0&#x27; + (uval &amp; 1));
+    uval &gt;&gt;= 1;
+  }
+  out[dlen] = &#x27;\0&#x27;;
+  buf._buf_set_length(dlen);
+  return buf;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>buf</code></td><td><a href="../../source/string/unistring.hpp.html#L623">line 623</a></td></tr></tbody></table></section><section class="function-entry" id="f-ab7f609461a99ead"><h3><code>micron::int_to_string_padded_stack(I n, usize width)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L632">line 632</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= __impl::max_digits_v&lt;I&gt; + 1)
+inline micron::sstring&lt;Sz, C&gt;
+int_to_string_padded_stack(I n, usize width)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li><li><code>usize width</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= __impl::max_digits_v&lt;I&gt; + 1)
+inline micron::sstring&lt;Sz, C&gt;
+int_to_string_padded_stack(I n, usize width)
+{
+  // convert to tmp first
+  char tmp[24];
+  using U = micron::make_unsigned_t&lt;I&gt;;
+  U uval;
+  bool neg = false;
+  if constexpr ( micron::is_signed_v&lt;I&gt; ) {
+    if ( n &lt; 0 ) {
+      neg = true;
+      uval = static_cast&lt;U&gt;(-(n + 1)) + 1u;
+    } else {
+      uval = static_cast&lt;U&gt;(n);
+    }
+  } else {
+    uval = static_cast&lt;U&gt;(n);
+  }
+  usize off = 0;
+  if ( neg ) tmp[off++] = &#x27;-&#x27;;
+  char dtmp[24];
+  char *dend = dtmp + 24;
+  char *dstart = __impl::uint_to_buf_backward(dend, static_cast&lt;u64&gt;(uval));
+  usize dlen = static_cast&lt;usize&gt;(dend - dstart);
+  // raw length = off + dlen
+  usize raw_len = off + dlen;
+
+  micron::sstring&lt;Sz, C&gt; result;
+  C *out = &amp;result[0];
+  usize pos = 0;
+
+  if ( raw_len &gt;= width ) {
+    // no padding needed
+    if ( neg ) out[pos++] = &#x27;-&#x27;;
+    for ( usize i = 0; i &lt; dlen &amp;&amp; pos &lt; Sz - 1; ++i ) out[pos++] = static_cast&lt;C&gt;(dstart[i]);
+  } else {
+    usize pad = width - raw_len;
+    if ( neg ) out[pos++] = &#x27;-&#x27;;
+    for ( usize i = 0; i &lt; pad &amp;&amp; pos &lt; Sz - 1; ++i ) out[pos++] = &#x27;0&#x27;;
+    for ( usize i = 0; i &lt; dlen &amp;&amp; pos &lt; Sz - 1; ++i ) out[pos++] = static_cast&lt;C&gt;(dstart[i]);
+  }
+  out[pos] = &#x27;\0&#x27;;
+  result._buf_set_length(pos);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L674">line 674</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/bits.hpp.html#f-8d02868078781426">__impl::uint_to_buf_backward</a>.</p></section><section class="function-entry" id="f-a7718971cc35e119"><h3><code>micron::bytes_to_string(I n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L682">line 682</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+bytes_to_string(I n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li></ul><h4>Effects</h4><p>Returns <code>int_to_string&lt;I, C&gt;(n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+bytes_to_string(I n)
+{
+  return int_to_string&lt;I, C&gt;(n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>int_to_string&lt;I, C&gt;(n)</code></td><td><a href="../../source/string/unistring.hpp.html#L684">line 684</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/integral.hpp.html#f-3121b9c2bf4f7ca9">int_to_string&lt;I, C&gt;</a>.</p></section><section class="function-entry" id="f-593fb46232dcf100"><h3><code>micron::bytes_to_string_stack(I n)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L690">line 690</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, usize Sz = 24, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= __impl::max_digits_v&lt;I&gt; + 1)
+inline micron::sstring&lt;Sz, C&gt;
+bytes_to_string_stack(I n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li></ul><h4>Effects</h4><p>Returns <code>int_to_string_stack&lt;I, C, Sz&gt;(n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, usize Sz = 24, typename C = char&gt;
+  requires(micron::is_integral_v&lt;I&gt; &amp;&amp; Sz &gt;= __impl::max_digits_v&lt;I&gt; + 1)
+inline micron::sstring&lt;Sz, C&gt;
+bytes_to_string_stack(I n)
+{
+  return int_to_string_stack&lt;I, C, Sz&gt;(n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>int_to_string_stack&lt;I, C, Sz&gt;(n)</code></td><td><a href="../../source/string/unistring.hpp.html#L692">line 692</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conversions/integral.hpp.html#f-7de1c69d7d8321d4">int_to_string_stack&lt;I, C, Sz&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-31d162a1b36acec9"><h3><code>micron::__fp_to_sstring(Fn &amp;&amp;emit)</code></h3><p>Defined in <code>string/unistring.hpp</code>, <a href="../../source/string/unistring.hpp.html#L380">line 380</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz, typename C, typename Fn&gt;
+inline micron::sstring&lt;Sz, C&gt;
+__fp_to_sstring(Fn &amp;&amp;emit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;emit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz, typename C, typename Fn&gt;
+inline micron::sstring&lt;Sz, C&gt;
+__fp_to_sstring(Fn &amp;&amp;emit)
+{
+  char tmp[__impl::__fpconv::__fmt_fixed_max];
+  usize n = emit(tmp, sizeof(tmp));
+  if ( n &gt; Sz - 1 ) n = Sz - 1;
+  micron::sstring&lt;Sz, C&gt; result;
+  C *out = &amp;result[0];
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = static_cast&lt;C&gt;(tmp[i]);
+  out[n] = &#x27;\0&#x27;;
+  result._buf_set_length(n);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/string/unistring.hpp.html#L390">line 390</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

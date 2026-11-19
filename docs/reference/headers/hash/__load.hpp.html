@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/hash/__load.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/hash/__load.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/hash/__load.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/hash/__load.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-4e2e10c03b12903e"><h3><code>micron::hashes::__load32(const u8 *p) noexcept</code></h3><p>Defined in <code>hash/__load.hpp</code>, <a href="../../source/hash/__load.hpp.html#L18">line 18</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u32
+__load32(const u8 *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u32
+__load32(const u8 *p) noexcept
+{
+#if defined(__micron_endian_little)
+  if !consteval {
+    u32 v;
+    __builtin_memcpy(&amp;v, p, 4);
+    return v;
+  }
+#endif
+  return u32(p[0]) | (u32(p[1]) &lt;&lt; 8) | (u32(p[2]) &lt;&lt; 16) | (u32(p[3]) &lt;&lt; 24);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../source/hash/__load.hpp.html#L24">line 24</a></td></tr><tr class="t-dsc"><td><code>u32(p[0]) | (u32(p[1]) &lt;&lt; 8) | (u32(p[2]) &lt;&lt; 16) | (u32(p[3]) &lt;&lt; 24)</code></td><td><a href="../../source/hash/__load.hpp.html#L27">line 27</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-f3fe2e99a2368c8e">u32</a>.</p></section><section class="function-entry" id="f-99eeedc401b457fa"><h3><code>micron::hashes::__load64(const u8 *p) noexcept</code></h3><p>Defined in <code>hash/__load.hpp</code>, <a href="../../source/hash/__load.hpp.html#L31">line 31</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u64
+__load64(const u8 *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u64
+__load64(const u8 *p) noexcept
+{
+#if defined(__micron_endian_little)
+  if !consteval {
+    u64 v;
+    __builtin_memcpy(&amp;v, p, 8);
+    return v;
+  }
+#endif
+  return u64(p[0]) | (u64(p[1]) &lt;&lt; 8) | (u64(p[2]) &lt;&lt; 16) | (u64(p[3]) &lt;&lt; 24) | (u64(p[4]) &lt;&lt; 32) | (u64(p[5]) &lt;&lt; 40) | (u64(p[6]) &lt;&lt; 48)
+         | (u64(p[7]) &lt;&lt; 56);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../source/hash/__load.hpp.html#L37">line 37</a></td></tr><tr class="t-dsc"><td><code>u64(p[0]) | (u64(p[1]) &lt;&lt; 8) | (u64(p[2]) &lt;&lt; 16) | (u64(p[3]) &lt;&lt; 24) | (u64(p[4]) &lt;&lt; 32) | (u64(p[5]) &lt;&lt; 40) | (u64(p[6]) &lt;&lt; 48)
+         | (u64(p[7]) &lt;&lt; 56)</code></td><td><a href="../../source/hash/__load.hpp.html#L40">line 40</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

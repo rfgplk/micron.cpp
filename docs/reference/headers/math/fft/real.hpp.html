@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/fft/real.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/fft/real.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/fft.html">Fourier transforms</a></div><p>Defined in header <code>&lt;micron/math/fft/real.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/fft/real.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-a77c05bcb89bd4c3">micron::math::fft::r2r_kind</code></td><td>enum; line 13</td></tr><tr class="t-dsc"><td><code id="s-9f4ae870bd432051">micron::math::fft::r2r_kind::dct_i</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-ac6ec25eaea3aa9f">micron::math::fft::r2r_kind::dct_ii</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-8b78d4625448b590">micron::math::fft::r2r_kind::dct_iii</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-98be7fbf957de0e1">micron::math::fft::r2r_kind::dct_iv</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-f4c5656844707d8b">micron::math::fft::r2r_kind::dst_i</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-6000fc578cfaa9d3">micron::math::fft::r2r_kind::dst_ii</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-c77d2f8618de59a6">micron::math::fft::r2r_kind::dst_iii</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-2a86fa235a0b0928">micron::math::fft::r2r_kind::dst_iv</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-adcbf41ca1505fad">micron::math::fft::r2r_plan</code></td><td>class; line 165</td></tr><tr class="t-dsc"><td><a href="#f-a5702b514591bece">micron::math::fft::r2r_plan::r2r_plan(usize n, r2r_kind kind, normalization norm = normalization::backward)</a></td><td>function; line 173</td></tr><tr class="t-dsc"><td><a href="#f-bb2e1e2b37d65fa3">micron::math::fft::r2r_plan::r2r_plan(const descriptor&lt;F&gt; &amp;d, const buffer&lt;r2r_kind&gt; &amp;kinds)</a></td><td>function; line 184</td></tr><tr class="t-dsc"><td><a href="#f-4f77d1d1cc1f9547">micron::math::fft::r2r_plan::configuration() const noexcept</a></td><td>function; line 217</td></tr><tr class="t-dsc"><td><a href="#f-d23673d461e925ab">micron::math::fft::r2r_plan::size() const noexcept</a></td><td>function; line 223</td></tr><tr class="t-dsc"><td><a href="#f-5a3dfd849c45768f">micron::math::fft::r2r_plan::workspace_size(usize workers = 1) const</a></td><td>function; line 229</td></tr><tr class="t-dsc"><td><a href="#f-9739a25e2f4b9006">micron::math::fft::r2r_plan::workspace_bytes(usize workers = 1) const</a></td><td>function; line 236</td></tr><tr class="t-dsc"><td><a href="#f-ef641fd5b150cc35">micron::math::fft::r2r_plan::execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</a></td><td>function; line 272</td></tr><tr class="t-dsc"><td><a href="#f-3b3db73971e73fba">micron::math::fft::real_transform(const F *input, usize n, r2r_kind kind, direction dir = direction::forward, normalization norm = normalization::backward)</a></td><td>function; line 281</td></tr><tr class="t-dsc"><td><a href="#f-7a740705224088c2">micron::math::fft::dct(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)</a></td><td>function; line 292</td></tr><tr class="t-dsc"><td><a href="#f-00717706ae946050">micron::math::fft::dst(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)</a></td><td>function; line 300</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a5702b514591bece"><h3><code>micron::math::fft::r2r_plan::r2r_plan(usize n, r2r_kind kind, normalization norm = normalization::backward)</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L173">line 173</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>r2r_plan(usize n, r2r_kind kind, normalization norm = normalization::backward)
+      : r2r_plan(
+            [&amp;] {
+              descriptor&lt;F&gt; d(n);
+              d.norm = norm;
+              return d;
+            }(),
+            buffer&lt;r2r_kind&gt;{ kind })</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>r2r_kind kind</code></li><li><code>normalization norm = normalization::backward</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">r2r_plan(usize n, r2r_kind kind, normalization norm = normalization::backward)
+      : r2r_plan(
+            [&amp;] {
+              descriptor&lt;F&gt; d(n);
+              d.norm = norm;
+              return d;
+            }(),
+            buffer&lt;r2r_kind&gt;{ kind })
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-bb2e1e2b37d65fa3"><h3><code>micron::math::fft::r2r_plan::r2r_plan(const descriptor&lt;F&gt; &amp;d, const buffer&lt;r2r_kind&gt; &amp;kinds)</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L184">line 184</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>r2r_plan(const descriptor&lt;F&gt; &amp;d, const buffer&lt;r2r_kind&gt; &amp;kinds) : __desc(d)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const descriptor&lt;F&gt; &amp;d</code></li><li><code>const buffer&lt;r2r_kind&gt; &amp;kinds</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">r2r_plan(const descriptor&lt;F&gt; &amp;d, const buffer&lt;r2r_kind&gt; &amp;kinds) : __desc(d)
+  {
+    if ( unsigned(d.norm) &gt; unsigned(normalization::ortho) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid normalization&quot;);
+    if ( d.shape.empty() || d.kind != domain::complex ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform descriptor&quot;);
+    __volume = __impl::__product(d.shape);
+    if ( __desc.axes.empty() )
+      for ( usize i = 0; i &lt; d.shape.size(); ++i ) __desc.axes.push_back(i);
+    if ( kinds.size() != __desc.axes.size() ) exc&lt;except::invalid_argument&gt;(&quot;fft: one real transform kind per axis required&quot;);
+    usize engine_scratch = 0;
+    for ( usize i = 0; i &lt; __desc.axes.size(); ++i ) {
+      usize axis = __desc.axes[i];
+      if ( axis &gt;= d.shape.size() ) exc&lt;except::invalid_argument&gt;(&quot;fft: axis out of range&quot;);
+      for ( usize j = 0; j &lt; i; ++j )
+        if ( __desc.axes[j] == axis ) exc&lt;except::invalid_argument&gt;(&quot;fft: duplicate axis&quot;);
+      __engines.push_back(__impl::__real_engine&lt;F&gt;(d.shape[axis], kinds[i]));
+      __logical = __impl::__mul(__logical, __engines[i].logical_size());
+      if ( __engines[i].scratch_size() &gt; engine_scratch ) engine_scratch = __engines[i].scratch_size();
+      if ( d.shape[axis] &gt; __line_size ) __line_size = d.shape[axis];
+    }
+    __scratch_size = __impl::__add(__impl::__mul(2, __line_size), engine_scratch);
+    __data_size = __impl::__mul(__volume, d.batches);
+    __steps.resize(d.shape.size());
+    usize step = 1;
+    for ( usize i = d.shape.size(); i-- &gt; 0; ) {
+      __steps[i] = step;
+      step *= d.shape[i];
+    }
+    __impl::__mul(__impl::__add(__impl::__complete_layout(__desc.input, d.shape, d.batches), 1), sizeof(F));
+    __impl::__mul(__impl::__add(__impl::__complete_layout(__desc.output, d.shape, d.batches), 1), sizeof(F));
+    __impl::__mul(workspace_size(), sizeof(complex&lt;F&gt;));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform descriptor&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L187">line 187</a><br>Within <code>( unsigned(d.norm) &gt; unsigned(normalization::ortho) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid normalization&quot;);
+    if ( d.shape.empty() || d.kind != domain::complex )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: one real transform kind per axis required&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L191">line 191</a><br>Within <code>( kinds.size() != __desc.axes.size() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: axis out of range&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L195">line 195</a><br>Within <code>i &lt; __desc.axes.size()</code>, <code>( axis &gt;= d.shape.size() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: duplicate axis&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L197">line 197</a><br>Within <code>i &lt; __desc.axes.size()</code>, <code>j &lt; i</code>, <code>( __desc.axes[j] == axis )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>, <a href="common.hpp.html#f-2d3bc7c28d65a7ad">__impl::__product</a>, <a href="common.hpp.html#f-59ec802873cc121f">__impl::__mul</a>, <a href="common.hpp.html#f-e8c2c09f8863b66a">__impl::__add</a>, <a href="plan.hpp.html#f-46e3acbeadeb1d62">__impl::__complete_layout</a>, <a href="real.hpp.html#f-5a3dfd849c45768f">workspace_size</a>.</p></section><section class="function-entry" id="f-4f77d1d1cc1f9547"><h3><code>micron::math::fft::r2r_plan::configuration() const noexcept</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L217">line 217</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const descriptor&lt;F&gt; &amp;
+  configuration() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__desc</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const descriptor&lt;F&gt; &amp;
+  configuration() const noexcept
+  {
+    return __desc;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__desc</code></td><td><a href="../../../source/math/fft/real.hpp.html#L219">line 219</a></td></tr></tbody></table></section><section class="function-entry" id="f-d23673d461e925ab"><h3><code>micron::math::fft::r2r_plan::size() const noexcept</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L223">line 223</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__data_size</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return __data_size;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__data_size</code></td><td><a href="../../../source/math/fft/real.hpp.html#L225">line 225</a></td></tr></tbody></table></section><section class="function-entry" id="f-5a3dfd849c45768f"><h3><code>micron::math::fft::r2r_plan::workspace_size(usize workers = 1) const</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L229">line 229</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  workspace_size(usize workers = 1) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize workers = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  workspace_size(usize workers = 1) const
+  {
+    if ( !workers ) exc&lt;except::invalid_argument&gt;(&quot;fft: zero workers&quot;);
+    return __impl::__add(__data_size, __impl::__mul(workers, __scratch_size));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__add(__data_size, __impl::__mul(workers, __scratch_size))</code></td><td><a href="../../../source/math/fft/real.hpp.html#L232">line 232</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: zero workers&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L231">line 231</a><br>Within <code>( !workers )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>, <a href="common.hpp.html#f-e8c2c09f8863b66a">__impl::__add</a>, <a href="common.hpp.html#f-59ec802873cc121f">__impl::__mul</a>.</p></section><section class="function-entry" id="f-9739a25e2f4b9006"><h3><code>micron::math::fft::r2r_plan::workspace_bytes(usize workers = 1) const</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L236">line 236</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  workspace_bytes(usize workers = 1) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize workers = 1</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__mul(workspace_size(workers), sizeof(complex&lt;F&gt;))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  workspace_bytes(usize workers = 1) const
+  {
+    return __impl::__mul(workspace_size(workers), sizeof(complex&lt;F&gt;));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__mul(workspace_size(workers), sizeof(complex&lt;F&gt;))</code></td><td><a href="../../../source/math/fft/real.hpp.html#L238">line 238</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="common.hpp.html#f-59ec802873cc121f">__impl::__mul</a>, <a href="real.hpp.html#f-5a3dfd849c45768f">workspace_size</a>.</p></section><section class="function-entry" id="f-ef641fd5b150cc35"><h3><code>micron::math::fft::r2r_plan::execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L272">line 272</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *input</code></li><li><code>F *output</code></li><li><code>workspace_view&lt;F&gt; work</code></li><li><code>direction dir = direction::forward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept
+  {
+    __impl::__serial&lt;F&gt; runner;
+    return __execute(input, output, work, dir, runner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__execute(input, output, work, dir, runner)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L275">line 275</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="real.hpp.html#f-786d575d7a30f7c0">__execute</a>.</p></section><section class="function-entry" id="f-3b3db73971e73fba"><h3><code>micron::math::fft::real_transform(const F *input, usize n, r2r_kind kind, direction dir = direction::forward, normalization norm = normalization::backward)</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L281">line 281</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F&gt;
+buffer&lt;F&gt;
+real_transform(const F *input, usize n, r2r_kind kind, direction dir = direction::forward, normalization norm = normalization::backward)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *input</code></li><li><code>usize n</code></li><li><code>r2r_kind kind</code></li><li><code>direction dir = direction::forward</code></li><li><code>normalization norm = normalization::backward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F&gt;
+buffer&lt;F&gt;
+real_transform(const F *input, usize n, r2r_kind kind, direction dir = direction::forward, normalization norm = normalization::backward)
+{
+  r2r_plan&lt;F&gt; p(n, kind, norm);
+  workspace&lt;F&gt; work(p);
+  buffer&lt;F&gt; out(n);
+  if ( p.execute(input, out.data(), work.view(), dir) &lt; 0 ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform input&quot;);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/fft/real.hpp.html#L287">line 287</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform input&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L286">line 286</a><br>Within <code>( p.execute(input, out.data(), work.view(), dir) &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>.</p></section><section class="function-entry" id="f-7a740705224088c2"><h3><code>micron::math::fft::dct(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L292">line 292</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F&gt;
+buffer&lt;F&gt;
+dct(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *input</code></li><li><code>usize n</code></li><li><code>unsigned type = 2</code></li><li><code>normalization norm = normalization::backward</code></li><li><code>direction dir = direction::forward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F&gt;
+buffer&lt;F&gt;
+dct(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)
+{
+  if ( type &lt; 1 || type &gt; 4 ) exc&lt;except::invalid_argument&gt;(&quot;fft: DCT type must be 1..4&quot;);
+  return real_transform(input, n, r2r_kind(type - 1), dir, norm);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>real_transform(input, n, r2r_kind(type - 1), dir, norm)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L295">line 295</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: DCT type must be 1..4&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L294">line 294</a><br>Within <code>( type &lt; 1 || type &gt; 4 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>, <a href="real.hpp.html#f-3b3db73971e73fba">real_transform</a>, <a href="real.hpp.html#s-a77c05bcb89bd4c3">r2r_kind</a>.</p></section><section class="function-entry" id="f-00717706ae946050"><h3><code>micron::math::fft::dst(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L300">line 300</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F&gt;
+buffer&lt;F&gt;
+dst(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *input</code></li><li><code>usize n</code></li><li><code>unsigned type = 2</code></li><li><code>normalization norm = normalization::backward</code></li><li><code>direction dir = direction::forward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F&gt;
+buffer&lt;F&gt;
+dst(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)
+{
+  if ( type &lt; 1 || type &gt; 4 ) exc&lt;except::invalid_argument&gt;(&quot;fft: DST type must be 1..4&quot;);
+  return real_transform(input, n, r2r_kind(type + 3), dir, norm);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>real_transform(input, n, r2r_kind(type + 3), dir, norm)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L303">line 303</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: DST type must be 1..4&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L302">line 302</a><br>Within <code>( type &lt; 1 || type &gt; 4 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>, <a href="real.hpp.html#f-3b3db73971e73fba">real_transform</a>, <a href="real.hpp.html#s-a77c05bcb89bd4c3">r2r_kind</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-035fd20e4bf9c966"><h3><code>micron::math::fft::__impl::__inverse_kind(r2r_kind kind) noexcept</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L18">line 18</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline r2r_kind
+__inverse_kind(r2r_kind kind) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>r2r_kind kind</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline r2r_kind
+__inverse_kind(r2r_kind kind) noexcept
+{
+  switch ( kind ) {
+  case r2r_kind::dct_ii:
+    return r2r_kind::dct_iii;
+  case r2r_kind::dct_iii:
+    return r2r_kind::dct_ii;
+  case r2r_kind::dst_ii:
+    return r2r_kind::dst_iii;
+  case r2r_kind::dst_iii:
+    return r2r_kind::dst_ii;
+  default:
+    return kind;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r2r_kind::dct_iii</code></td><td><a href="../../../source/math/fft/real.hpp.html#L22">line 22</a></td></tr><tr class="t-dsc"><td><code>r2r_kind::dct_ii</code></td><td><a href="../../../source/math/fft/real.hpp.html#L24">line 24</a></td></tr><tr class="t-dsc"><td><code>r2r_kind::dst_iii</code></td><td><a href="../../../source/math/fft/real.hpp.html#L26">line 26</a></td></tr><tr class="t-dsc"><td><code>r2r_kind::dst_ii</code></td><td><a href="../../../source/math/fft/real.hpp.html#L28">line 28</a></td></tr><tr class="t-dsc"><td><code>kind</code></td><td><a href="../../../source/math/fft/real.hpp.html#L30">line 30</a></td></tr></tbody></table></section><section class="function-entry" id="f-a51cb0187743ee15"><h3><code>micron::math::fft::__impl::__logical_size(usize n, r2r_kind kind)</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L35">line 35</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__logical_size(usize n, r2r_kind kind)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>r2r_kind kind</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__logical_size(usize n, r2r_kind kind)
+{
+  if ( !n || (kind == r2r_kind::dct_i &amp;&amp; n &lt; 2) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform length&quot;);
+  if ( kind == r2r_kind::dct_i ) return __mul(2, n - 1);
+  if ( kind == r2r_kind::dst_i ) return __mul(2, __add(n, 1));
+  return __mul(2, n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mul(2, n - 1)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L38">line 38</a></td></tr><tr class="t-dsc"><td><code>__mul(2, __add(n, 1))</code></td><td><a href="../../../source/math/fft/real.hpp.html#L39">line 39</a></td></tr><tr class="t-dsc"><td><code>__mul(2, n)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L40">line 40</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform length&quot;)</code></td><td><a href="../../../source/math/fft/real.hpp.html#L37">line 37</a><br>Within <code>( !n || (kind == r2r_kind::dct_i &amp;&amp; n &lt; 2) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>, <a href="common.hpp.html#f-59ec802873cc121f">__mul</a>, <a href="common.hpp.html#f-e8c2c09f8863b66a">__add</a>.</p></section><section class="function-entry" id="f-0cf6e6ba7cabe97f"><h3><code>micron::math::fft::__impl::__embedding_size(usize n, r2r_kind kind)</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__embedding_size(usize n, r2r_kind kind)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>r2r_kind kind</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__embedding_size(usize n, r2r_kind kind)
+{
+  usize logical = __logical_size(n, kind);
+  return kind == r2r_kind::dct_iv || kind == r2r_kind::dst_iv ? __mul(4, logical) : logical;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>kind == r2r_kind::dct_iv || kind == r2r_kind::dst_iv ? __mul(4, logical) : logical</code></td><td><a href="../../../source/math/fft/real.hpp.html#L47">line 47</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="real.hpp.html#f-a51cb0187743ee15">__logical_size</a>, <a href="common.hpp.html#f-59ec802873cc121f">__mul</a>.</p></section><section class="function-entry" id="f-459c28a128d1f3c3"><h3><code>micron::math::fft::__impl::__real_engine::__real_engine(usize n, r2r_kind kind)</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L58">line 58</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__real_engine(usize n, r2r_kind kind)
+      : __n(n), __logical(__logical_size(n, kind)), __length(__embedding_size(n, kind)), __kind(kind), __fft(__length), __phase(n + 1)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>r2r_kind kind</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__real_engine(usize n, r2r_kind kind)
+      : __n(n), __logical(__logical_size(n, kind)), __length(__embedding_size(n, kind)), __kind(kind), __fft(__length), __phase(n + 1)
+  {
+    if ( unsigned(kind) &gt; unsigned(r2r_kind::dst_iv) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform kind&quot;);
+    for ( usize k = 0; k &lt;= n; ++k ) __phase[k] = __root&lt;F&gt;(k, 4 * n);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="common.hpp.html#f-9b9d1a1fe2480435">__root&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-24c9691999a86834"><h3><code>micron::math::fft::__impl::__real_engine::logical_size() const noexcept</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L66">line 66</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  logical_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__logical</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  logical_size() const noexcept
+  {
+    return __logical;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__logical</code></td><td><a href="../../../source/math/fft/real.hpp.html#L68">line 68</a></td></tr></tbody></table></section><section class="function-entry" id="f-7899926cf2474971"><h3><code>micron::math::fft::__impl::__real_engine::scratch_size() const noexcept</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L72">line 72</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  scratch_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>2 * __length + __fft.scratch_size()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  scratch_size() const noexcept
+  {
+    return 2 * __length + __fft.scratch_size();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>2 * __length + __fft.scratch_size()</code></td><td><a href="../../../source/math/fft/real.hpp.html#L74">line 74</a></td></tr></tbody></table></section><section class="function-entry" id="f-528e167835985870"><h3><code>micron::math::fft::__impl::__real_engine::execute(const complex&lt;F&gt; *input, complex&lt;F&gt; *output, complex&lt;F&gt; *scratch, bool inverse, bool ortho, Runner &amp;runner,
+          bool parallel) const noexcept</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L79">line 79</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Runner&gt;
+  void
+  execute(const complex&lt;F&gt; *input, complex&lt;F&gt; *output, complex&lt;F&gt; *scratch, bool inverse, bool ortho, Runner &amp;runner,
+          bool parallel) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const complex&lt;F&gt; *input</code></li><li><code>complex&lt;F&gt; *output</code></li><li><code>complex&lt;F&gt; *scratch</code></li><li><code>bool inverse</code></li><li><code>bool ortho</code></li><li><code>Runner &amp;runner</code></li><li><code>bool parallel</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Runner&gt;
+  void
+  execute(const complex&lt;F&gt; *input, complex&lt;F&gt; *output, complex&lt;F&gt; *scratch, bool inverse, bool ortho, Runner &amp;runner,
+          bool parallel) const noexcept
+  {
+    r2r_kind kind = inverse ? __inverse_kind(__kind) : __kind;
+    auto *time = scratch, *freq = time + __length, *temp = freq + __length;
+    for ( usize i = 0; i &lt; __length; ++i ) time[i] = {};
+    F root2 = __sqrt(F(2));
+    for ( usize j = 0; j &lt; __n; ++j ) {
+      F x = input[j].real;
+      if ( ortho
+           &amp;&amp; ((kind == r2r_kind::dct_i &amp;&amp; (j == 0 || j + 1 == __n)) || (kind == r2r_kind::dct_iii &amp;&amp; j == 0)
+               || (kind == r2r_kind::dst_iii &amp;&amp; j + 1 == __n)) )
+        x *= root2;
+      switch ( kind ) {
+      case r2r_kind::dct_i:
+        time[j] = { x };
+        if ( j &amp;&amp; j + 1 &lt; __n ) time[__length - j] = { x };
+        break;
+      case r2r_kind::dct_ii:
+        time[j] = { x };
+        time[__length - 1 - j] = { x };
+        break;
+      case r2r_kind::dct_iii:
+        time[j] = conj(__phase[j]) * x;
+        if ( j ) time[__length - j] = conj(time[j]);
+        break;
+      case r2r_kind::dct_iv:
+        time[2 * j + 1] = { x };
+        time[__length - (2 * j + 1)] = { x };
+        break;
+      case r2r_kind::dst_i:
+        time[j + 1] = { x };
+        time[__length - j - 1] = { -x };
+        break;
+      case r2r_kind::dst_ii:
+        time[j] = { x };
+        time[__length - 1 - j] = { -x };
+        break;
+      case r2r_kind::dst_iii:
+        time[j + 1] = complex&lt;F&gt;{ 0, -x } * conj(__phase[j + 1]);
+        if ( j + 1 &lt; __n ) time[__length - j - 1] = conj(time[j + 1]);
+        break;
+      case r2r_kind::dst_iv:
+        time[2 * j + 1] = { x };
+        time[__length - (2 * j + 1)] = { -x };
+        break;
+      }
+    }
+    if ( parallel )
+      __fft.execute_parallel(time, freq, temp, kind == r2r_kind::dct_iii || kind == r2r_kind::dst_iii, runner);
+    else
+      __fft.execute(time, freq, temp, kind == r2r_kind::dct_iii || kind == r2r_kind::dst_iii);
+    for ( usize k = 0; k &lt; __n; ++k ) {
+      F x{};
+      switch ( kind ) {
+      case r2r_kind::dct_i:
+      case r2r_kind::dct_iii:
+      case r2r_kind::dst_iii:
+        x = freq[k].real;
+        break;
+      case r2r_kind::dct_ii:
+        x = (freq[k] * __phase[k]).real;
+        break;
+      case r2r_kind::dct_iv:
+        x = freq[2 * k + 1].real;
+        break;
+      case r2r_kind::dst_i:
+        x = -freq[k + 1].imag;
+        break;
+      case r2r_kind::dst_ii:
+        x = -(freq[k + 1] * __phase[k + 1]).imag;
+        break;
+      case r2r_kind::dst_iv:
+        x = -freq[2 * k + 1].imag;
+        break;
+      }
+      if ( ortho
+           &amp;&amp; ((kind == r2r_kind::dct_i &amp;&amp; (k == 0 || k + 1 == __n)) || (kind == r2r_kind::dct_ii &amp;&amp; k == 0)
+               || (kind == r2r_kind::dst_ii &amp;&amp; k + 1 == __n)) )
+        x /= root2;
+      output[k] = { x };
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="real.hpp.html#f-035fd20e4bf9c966">__inverse_kind</a>, <a href="common.hpp.html#f-101944d411d5c204">__sqrt</a>, <a href="../complex.hpp.html#f-bd97f2a393288137">conj</a>.</p></section><section class="function-entry" id="f-786d575d7a30f7c0"><h3><code>micron::math::fft::r2r_plan::__execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir, Runner &amp;runner) const noexcept</code></h3><p>Defined in <code>math/fft/real.hpp</code>, <a href="../../../source/math/fft/real.hpp.html#L243">line 243</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Runner&gt;
+  max_t
+  __execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir, Runner &amp;runner) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *input</code></li><li><code>F *output</code></li><li><code>workspace_view&lt;F&gt; work</code></li><li><code>direction dir</code></li><li><code>Runner &amp;runner</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Runner&gt;
+  max_t
+  __execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir, Runner &amp;runner) const noexcept
+  {
+    if ( dir != direction::forward &amp;&amp; dir != direction::backward ) return -22;
+    if ( !__desc.batches ) return 0;
+    if ( !input || !output ) return -22;
+    if ( !runner.workers || runner.workers &gt; (__impl::__limit - __data_size) / __scratch_size || !work.data
+         || work.size &lt; __data_size + runner.workers * __scratch_size )
+      return -105;
+    auto *data = work.data;
+    for ( usize b = 0; b &lt; __desc.batches; ++b )
+      for ( usize k = 0; k &lt; __volume; ++k ) data[b * __volume + k] = { input[__impl::__offset(k, __desc.shape, __desc.input, b)] };
+    for ( usize a = 0; a &lt; __desc.axes.size(); ++a ) {
+      usize axis = __desc.axes[a], n = __desc.shape[axis], stride = __steps[axis];
+      runner(__data_size / n, data + __data_size, __scratch_size, [&amp;](usize line, complex&lt;F&gt; *scratch) noexcept {
+        usize base = (line / stride) * (stride * n) + line % stride;
+        auto *in = scratch, *out = scratch + __line_size, *temp = out + __line_size;
+        for ( usize j = 0; j &lt; n; ++j ) in[j] = data[base + j * stride];
+        __engines[a].execute(in, out, temp, dir == direction::backward, __desc.norm == normalization::ortho, runner, __data_size / n == 1);
+        for ( usize j = 0; j &lt; n; ++j ) data[base + j * stride] = out[j];
+      });
+    }
+    F scale = __impl::__scale&lt;F&gt;(__desc.norm, dir, __logical) * (dir == direction::forward ? __desc.forward_scale : __desc.backward_scale);
+    for ( usize b = 0; b &lt; __desc.batches; ++b )
+      for ( usize k = 0; k &lt; __volume; ++k )
+        output[__impl::__offset(k, __desc.shape, __desc.output, b)] = data[b * __volume + k].real * scale;
+    return max_t(__data_size * sizeof(F));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/real.hpp.html#L245">line 245</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/fft/real.hpp.html#L246">line 246</a></td></tr><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/real.hpp.html#L247">line 247</a></td></tr><tr class="t-dsc"><td><code>-105</code></td><td><a href="../../../source/math/fft/real.hpp.html#L250">line 250</a></td></tr><tr class="t-dsc"><td><code>max_t(__data_size * sizeof(F))</code></td><td><a href="../../../source/math/fft/real.hpp.html#L268">line 268</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="plan.hpp.html#f-153d7eedb223e202">__impl::__offset</a>, <a href="common.hpp.html#f-a2b076dfab87aab7">__impl::__scale&lt;F&gt;</a>, <a href="../../types.hpp.html#s-66025c3768325240">max_t</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

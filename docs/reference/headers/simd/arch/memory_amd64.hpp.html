@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/simd/arch/memory_amd64.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/simd/arch/memory_amd64.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/simd/arch/memory_amd64.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/simd/arch/memory_amd64.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-688a13428a0383b0">micron::simd::memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 23</td></tr><tr class="t-dsc"><td><a href="#f-408e7ae272aa02dc">micron::simd::memcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 47</td></tr><tr class="t-dsc"><td><a href="#f-38fbd1b0f4e7abd1">micron::simd::memcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 71</td></tr><tr class="t-dsc"><td><a href="#f-13a750048dd75917">micron::simd::amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 101</td></tr><tr class="t-dsc"><td><a href="#f-2612d8f4ecd9cab1">micron::simd::amemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 123</td></tr><tr class="t-dsc"><td><a href="#f-77e3c0fb62af1e39">micron::simd::amemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 145</td></tr><tr class="t-dsc"><td><a href="#f-a77e6e56ee730c61">micron::simd::ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 173</td></tr><tr class="t-dsc"><td><a href="#f-d84bd7fc1999bb99">micron::simd::ntmemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 197</td></tr><tr class="t-dsc"><td><a href="#f-6134212d6db4519f">micron::simd::ntmemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 221</td></tr><tr class="t-dsc"><td><a href="#f-df58e7424d5197f6">micron::simd::rmemcpy128(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</a></td><td>function; line 251</td></tr><tr class="t-dsc"><td><a href="#f-b02bada3899b2f60">micron::simd::rmemcpy256(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</a></td><td>function; line 266</td></tr><tr class="t-dsc"><td><a href="#f-e9c379fcf102496b">micron::simd::rmemcpy512(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</a></td><td>function; line 281</td></tr><tr class="t-dsc"><td><a href="#f-67e8379dc2cca452">micron::simd::memmove128(T *dest, const T *src, const u64 count) noexcept</a></td><td>function; line 302</td></tr><tr class="t-dsc"><td><a href="#f-904f685a1ebbf389">micron::simd::memmove256(T *dest, const T *src, const u64 count) noexcept</a></td><td>function; line 335</td></tr><tr class="t-dsc"><td><a href="#f-e03a324708077b7b">micron::simd::memmove512(T *dest, const T *src, const u64 count) noexcept</a></td><td>function; line 367</td></tr><tr class="t-dsc"><td><a href="#f-592d3552f70aa27e">micron::simd::amemmove128(T *dest, const T *src, const u64 count) noexcept</a></td><td>function; line 407</td></tr><tr class="t-dsc"><td><a href="#f-91d3b3c85294749c">micron::simd::amemmove256(T *dest, const T *src, const u64 count) noexcept</a></td><td>function; line 439</td></tr><tr class="t-dsc"><td><a href="#f-41b0cd4177f61931">micron::simd::amemmove512(T *dest, const T *src, const u64 count) noexcept</a></td><td>function; line 470</td></tr><tr class="t-dsc"><td><a href="#f-bf3b2db9a7210125">micron::simd::memset128(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 510</td></tr><tr class="t-dsc"><td><a href="#f-92b64bef7476eed7">micron::simd::memset256(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 530</td></tr><tr class="t-dsc"><td><a href="#f-4178c0df9c9d4c4e">micron::simd::memset512(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 550</td></tr><tr class="t-dsc"><td><a href="#f-908ef2f8a279f55b">micron::simd::amemset128(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 573</td></tr><tr class="t-dsc"><td><a href="#f-95ae4447b87bc744">micron::simd::amemset256(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 593</td></tr><tr class="t-dsc"><td><a href="#f-a4e7c0885d1a1064">micron::simd::amemset512(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 613</td></tr><tr class="t-dsc"><td><a href="#f-7c475f7c1a587021">micron::simd::ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 636</td></tr><tr class="t-dsc"><td><a href="#f-5e74c616ea5bbb87">micron::simd::ntmemset256(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 658</td></tr><tr class="t-dsc"><td><a href="#f-15e2eb759e7b2f75">micron::simd::ntmemset512(T *__restrict src, const u8 in, const u64 count) noexcept</a></td><td>function; line 680</td></tr><tr class="t-dsc"><td><a href="#f-9efa5209c8994060">micron::simd::memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</a></td><td>function; line 705</td></tr><tr class="t-dsc"><td><a href="#f-07279593a4ce0ffc">micron::simd::memcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</a></td><td>function; line 733</td></tr><tr class="t-dsc"><td><a href="#f-9849a2a7e02f5837">micron::simd::memcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</a></td><td>function; line 761</td></tr><tr class="t-dsc"><td><a href="#f-25a3ac11db65531c">micron::simd::amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</a></td><td>function; line 796</td></tr><tr class="t-dsc"><td><a href="#f-233a1b375fc280dd">micron::simd::amemcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</a></td><td>function; line 824</td></tr><tr class="t-dsc"><td><a href="#f-57528ef98f483eee">micron::simd::amemcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</a></td><td>function; line 852</td></tr><tr class="t-dsc"><td><a href="#f-ee8b0f64c2564c8d">micron::simd::wordset128(u8 *__restrict src, const u64 in, const u64 bytes) noexcept</a></td><td>function; line 886</td></tr><tr class="t-dsc"><td><a href="#f-80bf4cdea3639c08">micron::simd::wordset256(u8 *__restrict src, const u64 in, const u64 bytes) noexcept</a></td><td>function; line 901</td></tr><tr class="t-dsc"><td><a href="#f-f6fc439031296125">micron::simd::memchr128(const T *src, u8 c, const u64 count) noexcept</a></td><td>function; line 920</td></tr><tr class="t-dsc"><td><a href="#f-e7bbf4083e510246">micron::simd::memchr256(const T *src, u8 c, const u64 count) noexcept</a></td><td>function; line 941</td></tr><tr class="t-dsc"><td><a href="#f-4360d3cf73cfd6e7">micron::simd::memrchr128(const T *src, u8 c, const u64 count) noexcept</a></td><td>function; line 965</td></tr><tr class="t-dsc"><td><a href="#f-496ca586ce99ac50">micron::simd::memrchr256(const T *src, u8 c, const u64 count) noexcept</a></td><td>function; line 989</td></tr><tr class="t-dsc"><td><a href="#f-f85c311a4e10d11e">micron::simd::mempcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 1016</td></tr><tr class="t-dsc"><td><a href="#f-701ba5f0f631181f">micron::simd::mempcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</a></td><td>function; line 1040</td></tr><tr class="t-dsc"><td><a href="#f-9d27ecee37977e4a">micron::simd::memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept</a></td><td>function; line 1067</td></tr><tr class="t-dsc"><td><a href="#f-f79fc9be6b27b7e5">micron::simd::memmem256(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept</a></td><td>function; line 1129</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-688a13428a0383b0"><h3><code>micron::simd::memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L23">line 23</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memcpy128 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(dest);
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_16(d + i * 16, s + i * 16);
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    u8 tmp[16] = {};
+    for ( u64 i = 0; i &lt; rem; i++ ) tmp[i] = s[n * 16 + i];
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 16 + i] = tmp[i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L42">line 42</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memcpy128 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L25">line 25</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-f1f2d385b4791c4d">__bits::__block_copy_16</a>.</p></section><section class="function-entry" id="f-408e7ae272aa02dc"><h3><code>micron::simd::memcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L47">line 47</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memcpy256 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(dest);
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_32(d + i * 32, s + i * 32);
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    u8 tmp[32] = {};
+    for ( u64 i = 0; i &lt; rem; i++ ) tmp[i] = s[n * 32 + i];
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 32 + i] = tmp[i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L66">line 66</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memcpy256 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L49">line 49</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-101ff2d14e736b6a">__bits::__block_copy_32</a>.</p></section><section class="function-entry" id="f-38fbd1b0f4e7abd1"><h3><code>micron::simd::memcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L71">line 71</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+memcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+memcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memcpy512 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(dest);
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 64;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    i512 pkt = _mm512_loadu_si512(reinterpret_cast&lt;const i512 *&gt;(s + i * 64));
+    _mm512_storeu_si512(reinterpret_cast&lt;i512 *&gt;(d + i * 64), pkt);
+  }
+
+  const u64 rem = bytes % 64;
+  if ( rem ) {
+    u8 tmp[64] = {};
+    for ( u64 i = 0; i &lt; rem; i++ ) tmp[i] = s[n * 64 + i];
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 64 + i] = tmp[i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L93">line 93</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memcpy512 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L73">line 73</a></td></tr></tbody></table></section><section class="function-entry" id="f-13a750048dd75917"><h3><code>micron::simd::amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L101">line 101</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemcpy128 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 16));
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 16));
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_16_a(d + i * 16, s + i * 16);
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L118">line 118</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemcpy128 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L103">line 103</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-42487a091d5f515c">__bits::__block_copy_16_a</a>.</p></section><section class="function-entry" id="f-2612d8f4ecd9cab1"><h3><code>micron::simd::amemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L123">line 123</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemcpy256 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 32));
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 32));
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_32_a(d + i * 32, s + i * 32);
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L140">line 140</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemcpy256 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L125">line 125</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-880307a03153e664">__bits::__block_copy_32_a</a>.</p></section><section class="function-entry" id="f-77e3c0fb62af1e39"><h3><code>micron::simd::amemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L145">line 145</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+amemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+amemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemcpy512 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 64));
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 64));
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 64;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    i512 pkt = _mm512_load_si512(reinterpret_cast&lt;const i512 *&gt;(s + i * 64));
+    _mm512_store_si512(reinterpret_cast&lt;i512 *&gt;(d + i * 64), pkt);
+  }
+
+  const u64 rem = bytes % 64;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L165">line 165</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemcpy512 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L147">line 147</a></td></tr></tbody></table></section><section class="function-entry" id="f-a77e6e56ee730c61"><h3><code>micron::simd::ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L173">line 173</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+ntmemcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;ntmemcpy128 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 16));
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_16_nt(d + i * 16, s + i * 16);
+
+  _mm_sfence();
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L192">line 192</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;ntmemcpy128 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L175">line 175</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-b385cbc342d366a9">__bits::__block_copy_16_nt</a>.</p></section><section class="function-entry" id="f-d84bd7fc1999bb99"><h3><code>micron::simd::ntmemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L197">line 197</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+ntmemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+ntmemcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;ntmemcpy256 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 32));
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_32_nt(d + i * 32, s + i * 32);
+
+  _mm_sfence();
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L216">line 216</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;ntmemcpy256 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L199">line 199</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-83a82689408a17a0">__bits::__block_copy_32_nt</a>.</p></section><section class="function-entry" id="f-6134212d6db4519f"><h3><code>micron::simd::ntmemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L221">line 221</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+ntmemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+ntmemcpy512(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;ntmemcpy512 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 64));
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 64;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    i512 pkt = _mm512_loadu_si512(reinterpret_cast&lt;const i512 *&gt;(s + i * 64));
+    _mm512_stream_si512(reinterpret_cast&lt;i512 *&gt;(d + i * 64), pkt);
+  }
+
+  _mm_sfence();
+
+  const u64 rem = bytes % 64;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L243">line 243</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;ntmemcpy512 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L223">line 223</a></td></tr></tbody></table></section><section class="function-entry" id="f-df58e7424d5197f6"><h3><code>micron::simd::rmemcpy128(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L251">line 251</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+F &amp;
+rmemcpy128(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;__restrict</code></li><li><code>dest</code></li><li><code>const D &amp;__restrict</code></li><li><code>src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+F &amp;
+rmemcpy128(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept
+{
+  const u64 n = (cnt * sizeof(D)) / sizeof(i128);
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(&amp;dest);
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(&amp;src);
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_16(d + i * 16, s + i * 16);
+  const u64 rem = (cnt * sizeof(D)) % 16;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
+  }
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L261">line 261</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-f1f2d385b4791c4d">__bits::__block_copy_16</a>.</p></section><section class="function-entry" id="f-b02bada3899b2f60"><h3><code>micron::simd::rmemcpy256(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L266">line 266</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+F &amp;
+rmemcpy256(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;__restrict</code></li><li><code>dest</code></li><li><code>const D &amp;__restrict</code></li><li><code>src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+F &amp;
+rmemcpy256(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept
+{
+  const u64 n = (cnt * sizeof(D)) / sizeof(i256);
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(&amp;dest);
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(&amp;src);
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_32(d + i * 32, s + i * 32);
+  const u64 rem = (cnt * sizeof(D)) % 32;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
+  }
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L276">line 276</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-101ff2d14e736b6a">__bits::__block_copy_32</a>.</p></section><section class="function-entry" id="f-e9c379fcf102496b"><h3><code>micron::simd::rmemcpy512(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L281">line 281</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+[[gnu::target(&quot;avx512f&quot;)]] F &amp;
+rmemcpy512(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;__restrict</code></li><li><code>dest</code></li><li><code>const D &amp;__restrict</code></li><li><code>src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+[[gnu::target(&quot;avx512f&quot;)]] F &amp;
+rmemcpy512(F &amp;__restrict dest, const D &amp;__restrict src, const u64 cnt) noexcept
+{
+  const u64 n = (cnt * sizeof(D)) / sizeof(i512);
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(&amp;dest);
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(&amp;src);
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    i512 pkt = _mm512_loadu_si512(reinterpret_cast&lt;const i512 *&gt;(s + i * 64));
+    _mm512_storeu_si512(reinterpret_cast&lt;i512 *&gt;(d + i * 64), pkt);
+  }
+  const u64 rem = (cnt * sizeof(D)) % 64;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
+  }
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L294">line 294</a></td></tr></tbody></table></section><section class="function-entry" id="f-67e8379dc2cca452"><h3><code>micron::simd::memmove128(T *dest, const T *src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L302">line 302</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memmove128(T *dest, const T *src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *dest</code></li><li><code>const T *src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memmove128(T *dest, const T *src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memmove128 requires trivially copyable type&quot;);
+
+  auto *d = reinterpret_cast&lt;u8 *&gt;(dest);
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+
+  if ( d == s || bytes == 0 ) return dest;
+
+  if ( d &lt; s || d &gt;= s + bytes ) {
+    // non-overlapping or dest is before src: forward copy
+    const u64 n = bytes / 16;
+    for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_16(d + i * 16, s + i * 16);
+    const u64 rem = bytes % 16;
+    if ( rem ) {
+      for ( u64 i = 0; i &lt; rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
+    }
+  } else {
+    // overlapping: dest is after src, must copy backward to avoid clobbering
+    const u64 n = bytes / 16;
+    const u64 rem = bytes % 16;
+    if ( rem ) {
+      for ( u64 i = rem; i &gt; 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
+    }
+    for ( u64 i = n; i &gt; 0; i-- ) __bits::__block_move_16(d + (i - 1) * 16, s + (i - 1) * 16);
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L310">line 310</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L330">line 330</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memmove128 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L304">line 304</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-f1f2d385b4791c4d">__bits::__block_copy_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-be5877edf9ebbfce">__bits::__block_move_16</a>.</p></section><section class="function-entry" id="f-904f685a1ebbf389"><h3><code>micron::simd::memmove256(T *dest, const T *src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L335">line 335</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memmove256(T *dest, const T *src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *dest</code></li><li><code>const T *src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memmove256(T *dest, const T *src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memmove256 requires trivially copyable type&quot;);
+
+  auto *d = reinterpret_cast&lt;u8 *&gt;(dest);
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+
+  if ( d == s || bytes == 0 ) return dest;
+
+  if ( d &lt; s || d &gt;= s + bytes ) {
+    const u64 n = bytes / 32;
+    for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_32(d + i * 32, s + i * 32);
+    const u64 rem = bytes % 32;
+    if ( rem ) {
+      for ( u64 i = 0; i &lt; rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
+    }
+  } else {
+    // overlapping backward path: use __block_move_32 (no __restrict)
+    const u64 n = bytes / 32;
+    const u64 rem = bytes % 32;
+    if ( rem ) {
+      for ( u64 i = rem; i &gt; 0; i-- ) d[n * 32 + i - 1] = s[n * 32 + i - 1];
+    }
+    for ( u64 i = n; i &gt; 0; i-- ) __bits::__block_move_32(d + (i - 1) * 32, s + (i - 1) * 32);
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L362">line 362</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memmove256 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L337">line 337</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-101ff2d14e736b6a">__bits::__block_copy_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-ce57b09573c5e658">__bits::__block_move_32</a>.</p></section><section class="function-entry" id="f-e03a324708077b7b"><h3><code>micron::simd::memmove512(T *dest, const T *src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L367">line 367</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+memmove512(T *dest, const T *src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *dest</code></li><li><code>const T *src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+memmove512(T *dest, const T *src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memmove512 requires trivially copyable type&quot;);
+
+  auto *d = reinterpret_cast&lt;u8 *&gt;(dest);
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+
+  if ( d == s || bytes == 0 ) return dest;
+
+  if ( d &lt; s || d &gt;= s + bytes ) {
+    const u64 n = bytes / 64;
+    for ( u64 i = 0; i &lt; n; i++ ) {
+      i512 pkt = _mm512_loadu_si512(reinterpret_cast&lt;const i512 *&gt;(s + i * 64));
+      _mm512_storeu_si512(reinterpret_cast&lt;i512 *&gt;(d + i * 64), pkt);
+    }
+    const u64 rem = bytes % 64;
+    if ( rem ) {
+      for ( u64 i = 0; i &lt; rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
+    }
+  } else {
+    const u64 n = bytes / 64;
+    const u64 rem = bytes % 64;
+    if ( rem ) {
+      for ( u64 i = rem; i &gt; 0; i-- ) d[n * 64 + i - 1] = s[n * 64 + i - 1];
+    }
+    for ( u64 i = n; i &gt; 0; i-- ) {
+      i512 pkt = _mm512_loadu_si512(reinterpret_cast&lt;const i512 *&gt;(s + (i - 1) * 64));
+      _mm512_storeu_si512(reinterpret_cast&lt;i512 *&gt;(d + (i - 1) * 64), pkt);
+    }
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L375">line 375</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L399">line 399</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;memmove512 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L369">line 369</a></td></tr></tbody></table></section><section class="function-entry" id="f-592d3552f70aa27e"><h3><code>micron::simd::amemmove128(T *dest, const T *src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L407">line 407</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemmove128(T *dest, const T *src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *dest</code></li><li><code>const T *src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemmove128(T *dest, const T *src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemmove128 requires trivially copyable type&quot;);
+
+  auto *d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 16));
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 16));
+  const u64 bytes = count * sizeof(T);
+
+  if ( d == s || bytes == 0 ) return dest;
+
+  if ( d &lt; s || d &gt;= s + bytes ) {
+    const u64 n = bytes / 16;
+    for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_16_a(d + i * 16, s + i * 16);
+    const u64 rem = bytes % 16;
+    if ( rem ) {
+      for ( u64 i = 0; i &lt; rem; i++ ) d[n * 16 + i] = s[n * 16 + i];
+    }
+  } else {
+    // overlapping backward path: __block_move_16 (no __restrict)
+    const u64 n = bytes / 16;
+    const u64 rem = bytes % 16;
+    if ( rem ) {
+      for ( u64 i = rem; i &gt; 0; i-- ) d[n * 16 + i - 1] = s[n * 16 + i - 1];
+    }
+    for ( u64 i = n; i &gt; 0; i-- ) __bits::__block_move_16(d + (i - 1) * 16, s + (i - 1) * 16);
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L415">line 415</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L434">line 434</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemmove128 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L409">line 409</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-42487a091d5f515c">__bits::__block_copy_16_a</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-be5877edf9ebbfce">__bits::__block_move_16</a>.</p></section><section class="function-entry" id="f-91d3b3c85294749c"><h3><code>micron::simd::amemmove256(T *dest, const T *src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L439">line 439</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemmove256(T *dest, const T *src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *dest</code></li><li><code>const T *src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemmove256(T *dest, const T *src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemmove256 requires trivially copyable type&quot;);
+
+  auto *d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 32));
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 32));
+  const u64 bytes = count * sizeof(T);
+
+  if ( d == s || bytes == 0 ) return dest;
+
+  if ( d &lt; s || d &gt;= s + bytes ) {
+    const u64 n = bytes / 32;
+    for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_32_a(d + i * 32, s + i * 32);
+    const u64 rem = bytes % 32;
+    if ( rem ) {
+      for ( u64 i = 0; i &lt; rem; i++ ) d[n * 32 + i] = s[n * 32 + i];
+    }
+  } else {
+    const u64 n = bytes / 32;
+    const u64 rem = bytes % 32;
+    if ( rem ) {
+      for ( u64 i = rem; i &gt; 0; i-- ) d[n * 32 + i - 1] = s[n * 32 + i - 1];
+    }
+    for ( u64 i = n; i &gt; 0; i-- ) __bits::__block_move_32(d + (i - 1) * 32, s + (i - 1) * 32);
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L447">line 447</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L465">line 465</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemmove256 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L441">line 441</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-880307a03153e664">__bits::__block_copy_32_a</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-ce57b09573c5e658">__bits::__block_move_32</a>.</p></section><section class="function-entry" id="f-41b0cd4177f61931"><h3><code>micron::simd::amemmove512(T *dest, const T *src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L470">line 470</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+amemmove512(T *dest, const T *src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *dest</code></li><li><code>const T *src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+amemmove512(T *dest, const T *src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemmove512 requires trivially copyable type&quot;);
+
+  auto *d = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(dest, 64));
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 64));
+  const u64 bytes = count * sizeof(T);
+
+  if ( d == s || bytes == 0 ) return dest;
+
+  if ( d &lt; s || d &gt;= s + bytes ) {
+    const u64 n = bytes / 64;
+    for ( u64 i = 0; i &lt; n; i++ ) {
+      i512 pkt = _mm512_load_si512(reinterpret_cast&lt;const i512 *&gt;(s + i * 64));
+      _mm512_store_si512(reinterpret_cast&lt;i512 *&gt;(d + i * 64), pkt);
+    }
+    const u64 rem = bytes % 64;
+    if ( rem ) {
+      for ( u64 i = 0; i &lt; rem; i++ ) d[n * 64 + i] = s[n * 64 + i];
+    }
+  } else {
+    const u64 n = bytes / 64;
+    const u64 rem = bytes % 64;
+    if ( rem ) {
+      for ( u64 i = rem; i &gt; 0; i-- ) d[n * 64 + i - 1] = s[n * 64 + i - 1];
+    }
+    for ( u64 i = n; i &gt; 0; i-- ) {
+      i512 pkt = _mm512_load_si512(reinterpret_cast&lt;const i512 *&gt;(s + (i - 1) * 64));
+      _mm512_store_si512(reinterpret_cast&lt;i512 *&gt;(d + (i - 1) * 64), pkt);
+    }
+  }
+
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L478">line 478</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L502">line 502</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;amemmove512 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L472">line 472</a></td></tr></tbody></table></section><section class="function-entry" id="f-bf3b2db9a7210125"><h3><code>micron::simd::memset128(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L510">line 510</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memset128(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memset128(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  const i128 v = __bits::__broadcast_byte_16(in);
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_set_16(s + i * 16, v);
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 16 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L525">line 525</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-d7432efd9e00f4f6">__bits::__broadcast_byte_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-53bb054632617314">__bits::__block_set_16</a>.</p></section><section class="function-entry" id="f-92b64bef7476eed7"><h3><code>micron::simd::memset256(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L530">line 530</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memset256(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memset256(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  const auto v = __bits::__broadcast_byte_32(in);
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_set_32(s + i * 32, v);
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 32 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L545">line 545</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-48f9a6bfdb36d403">__bits::__broadcast_byte_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-356312d31f153973">__bits::__block_set_32</a>.</p></section><section class="function-entry" id="f-4178c0df9c9d4c4e"><h3><code>micron::simd::memset512(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L550">line 550</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+memset512(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+memset512(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 64;
+
+  const i512 v = _mm512_set1_epi8(static_cast&lt;char&gt;(in));
+
+  for ( u64 i = 0; i &lt; n; i++ ) _mm512_storeu_si512(reinterpret_cast&lt;i512 *&gt;(s + i * 64), v);
+
+  const u64 rem = bytes % 64;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 64 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L565">line 565</a></td></tr></tbody></table></section><section class="function-entry" id="f-908ef2f8a279f55b"><h3><code>micron::simd::amemset128(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L573">line 573</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemset128(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemset128(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(src, 16));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  const i128 v = __bits::__broadcast_byte_16(in);
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_set_16_a(s + i * 16, v);
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 16 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L588">line 588</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-d7432efd9e00f4f6">__bits::__broadcast_byte_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-43f4cdbccba4b56c">__bits::__block_set_16_a</a>.</p></section><section class="function-entry" id="f-95ae4447b87bc744"><h3><code>micron::simd::amemset256(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L593">line 593</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemset256(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+amemset256(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(src, 32));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  const auto v = __bits::__broadcast_byte_32(in);
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_set_32_a(s + i * 32, v);
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 32 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L608">line 608</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-48f9a6bfdb36d403">__bits::__broadcast_byte_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-374fddd299f66547">__bits::__block_set_32_a</a>.</p></section><section class="function-entry" id="f-a4e7c0885d1a1064"><h3><code>micron::simd::amemset512(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L613">line 613</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+amemset512(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+amemset512(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(src, 64));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 64;
+
+  const i512 v = _mm512_set1_epi8(static_cast&lt;char&gt;(in));
+
+  for ( u64 i = 0; i &lt; n; i++ ) _mm512_storeu_si512(reinterpret_cast&lt;i512 *&gt;(s + i * 64), v);
+
+  const u64 rem = bytes % 64;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 64 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L628">line 628</a></td></tr></tbody></table></section><section class="function-entry" id="f-7c475f7c1a587021"><h3><code>micron::simd::ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L636">line 636</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+ntmemset128(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(src, 16));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  const i128 v = __bits::__broadcast_byte_16(in);
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_set_16_nt(s + i * 16, v);
+
+  _mm_sfence();
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 16 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L653">line 653</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-d7432efd9e00f4f6">__bits::__broadcast_byte_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bfe8900d23790bbc">__bits::__block_set_16_nt</a>.</p></section><section class="function-entry" id="f-5e74c616ea5bbb87"><h3><code>micron::simd::ntmemset256(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L658">line 658</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+ntmemset256(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+ntmemset256(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(src, 32));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  const auto v = __bits::__broadcast_byte_32(in);
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_set_32_nt(s + i * 32, v);
+
+  _mm_sfence();
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 32 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L675">line 675</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-48f9a6bfdb36d403">__bits::__broadcast_byte_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-eddc53ed131b1398">__bits::__block_set_32_nt</a>.</p></section><section class="function-entry" id="f-15e2eb759e7b2f75"><h3><code>micron::simd::ntmemset512(T *__restrict src, const u8 in, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L680">line 680</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+ntmemset512(T *__restrict src, const u8 in, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const u8 in</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512f&quot;))) T *
+ntmemset512(T *__restrict src, const u8 in, const u64 count) noexcept
+{
+  auto *s = reinterpret_cast&lt;u8 *&gt;(__builtin_assume_aligned(src, 64));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 64;
+
+  const i512 v = _mm512_set1_epi8(static_cast&lt;char&gt;(in));
+
+  for ( u64 i = 0; i &lt; n; i++ ) _mm512_stream_si512(reinterpret_cast&lt;i512 *&gt;(s + i * 64), v);
+
+  _mm_sfence();
+
+  const u64 rem = bytes % 64;
+  if ( rem ) {
+    for ( u64 i = 0; i &lt; rem; i++ ) s[n * 64 + i] = in;
+  }
+
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L697">line 697</a></td></tr></tbody></table></section><section class="function-entry" id="f-9efa5209c8994060"><h3><code>micron::simd::memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L705">line 705</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) i64
+memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>const T *__restrict dest</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) i64
+memcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
+{
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(src);
+  const auto *d = reinterpret_cast&lt;const u8 *&gt;(dest);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    const u32 mask = __bits::__block_neq_mask_16(s + i * 16, d + i * 16);
+    if ( mask ) {
+      const u64 idx = i * 16 + static_cast&lt;u64&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mask)));
+      return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[idx])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[idx]));
+    }
+  }
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    const u64 base = n * 16;
+    for ( u64 i = 0; i &lt; rem; i++ )
+      if ( s[base + i] != d[base + i] )
+        return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]));
+  }
+
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[idx])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[idx]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L716">line 716</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L725">line 725</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L728">line 728</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-bbd46795cbd6d4c0">__bits::__block_neq_mask_16</a>.</p></section><section class="function-entry" id="f-07279593a4ce0ffc"><h3><code>micron::simd::memcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L733">line 733</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) i64
+memcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>const T *__restrict dest</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) i64
+memcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
+{
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(src);
+  const auto *d = reinterpret_cast&lt;const u8 *&gt;(dest);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    const u32 mask = __bits::__block_neq_mask_32(s + i * 32, d + i * 32);
+    if ( mask ) {
+      const u64 idx = i * 32 + static_cast&lt;u64&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mask)));
+      return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[idx])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[idx]));
+    }
+  }
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    const u64 base = n * 32;
+    for ( u64 i = 0; i &lt; rem; i++ )
+      if ( s[base + i] != d[base + i] )
+        return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]));
+  }
+
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[idx])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[idx]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L744">line 744</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L753">line 753</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L756">line 756</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-ecdb8a00545f220a">__bits::__block_neq_mask_32</a>.</p></section><section class="function-entry" id="f-9849a2a7e02f5837"><h3><code>micron::simd::memcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L761">line 761</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512bw,avx512f&quot;))) i64
+memcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>const T *__restrict dest</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512bw,avx512f&quot;))) i64
+memcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
+{
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(src);
+  const auto *d = reinterpret_cast&lt;const u8 *&gt;(dest);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 64;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    i512 va = _mm512_loadu_si512(reinterpret_cast&lt;const i512 *&gt;(s + i * 64));
+    i512 vb = _mm512_loadu_si512(reinterpret_cast&lt;const i512 *&gt;(d + i * 64));
+    u64 mask = _mm512_cmpeq_epi8_mask(va, vb);
+    if ( mask != ~static_cast&lt;u64&gt;(0) ) {
+      const u64 base = i * 64;
+      const u64 limit = base + 64 &lt; bytes ? base + 64 : bytes;
+      for ( u64 j = base; j &lt; limit; j++ )
+        if ( s[j] != d[j] ) return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[j])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[j]));
+    }
+  }
+
+  const u64 rem = bytes % 64;
+  if ( rem ) {
+    const u64 base = n * 64;
+    for ( u64 i = 0; i &lt; rem; i++ )
+      if ( s[base + i] != d[base + i] )
+        return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]));
+  }
+
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[j])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[j]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L776">line 776</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L785">line 785</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L788">line 788</a></td></tr></tbody></table></section><section class="function-entry" id="f-25a3ac11db65531c"><h3><code>micron::simd::amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L796">line 796</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) i64
+amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>const T *__restrict dest</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) i64
+amemcmp128(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
+{
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 16));
+  const auto *d = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(dest, 16));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    const u32 mask = __bits::__block_neq_mask_16(s + i * 16, d + i * 16);
+    if ( mask ) {
+      const u64 idx = i * 16 + static_cast&lt;u64&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mask)));
+      return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[idx])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[idx]));
+    }
+  }
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    const u64 base = n * 16;
+    for ( u64 i = 0; i &lt; rem; i++ )
+      if ( s[base + i] != d[base + i] )
+        return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]));
+  }
+
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[idx])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[idx]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L807">line 807</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L816">line 816</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L819">line 819</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-bbd46795cbd6d4c0">__bits::__block_neq_mask_16</a>.</p></section><section class="function-entry" id="f-233a1b375fc280dd"><h3><code>micron::simd::amemcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L824">line 824</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) i64
+amemcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>const T *__restrict dest</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) i64
+amemcmp256(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
+{
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 32));
+  const auto *d = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(dest, 32));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    const u32 mask = __bits::__block_neq_mask_32(s + i * 32, d + i * 32);
+    if ( mask ) {
+      const u64 idx = i * 32 + static_cast&lt;u64&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mask)));
+      return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[idx])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[idx]));
+    }
+  }
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    const u64 base = n * 32;
+    for ( u64 i = 0; i &lt; rem; i++ )
+      if ( s[base + i] != d[base + i] )
+        return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]));
+  }
+
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[idx])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[idx]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L835">line 835</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L844">line 844</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L847">line 847</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-ecdb8a00545f220a">__bits::__block_neq_mask_32</a>.</p></section><section class="function-entry" id="f-57528ef98f483eee"><h3><code>micron::simd::amemcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L852">line 852</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512bw,avx512f&quot;))) i64
+amemcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>const T *__restrict dest</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull, target(&quot;avx512bw,avx512f&quot;))) i64
+amemcmp512(const T *__restrict src, const T *__restrict dest, const u64 count) noexcept
+{
+  const auto *s = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(src, 64));
+  const auto *d = reinterpret_cast&lt;const u8 *&gt;(__builtin_assume_aligned(dest, 64));
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 64;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    i512 va = _mm512_load_si512(reinterpret_cast&lt;const i512 *&gt;(s + i * 64));
+    i512 vb = _mm512_load_si512(reinterpret_cast&lt;const i512 *&gt;(d + i * 64));
+    u64 mask = _mm512_cmpeq_epi8_mask(va, vb);
+    if ( mask != ~static_cast&lt;u64&gt;(0) ) {
+      const u64 base = i * 64;
+      const u64 limit = base + 64 &lt; bytes ? base + 64 : bytes;
+      for ( u64 j = base; j &lt; limit; j++ )
+        if ( s[j] != d[j] ) return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[j])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[j]));
+    }
+  }
+
+  const u64 rem = bytes % 64;
+  if ( rem ) {
+    const u64 base = n * 64;
+    for ( u64 i = 0; i &lt; rem; i++ )
+      if ( s[base + i] != d[base + i] )
+        return static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]));
+  }
+
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[j])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[j]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L867">line 867</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(s[base + i])) - static_cast&lt;i64&gt;(static_cast&lt;unsigned&gt;(d[base + i]))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L876">line 876</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L879">line 879</a></td></tr></tbody></table></section><section class="function-entry" id="f-ee8b0f64c2564c8d"><h3><code>micron::simd::wordset128(u8 *__restrict src, const u64 in, const u64 bytes) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L886">line 886</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) static inline u8 *
+wordset128(u8 *__restrict src, const u64 in, const u64 bytes) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict src</code></li><li><code>const u64 in</code></li><li><code>const u64 bytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) static inline u8 *
+wordset128(u8 *__restrict src, const u64 in, const u64 bytes) noexcept
+{
+  const u64 n = bytes / 16;
+  const __m128i v = __bits::__broadcast_word_16(in);
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_set_16(src + i * 16, v);
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    u8 buf[16];
+    __bits::__block_set_16(buf, v);
+    for ( u64 i = 0; i &lt; rem; i++ ) src[n * 16 + i] = buf[i];
+  }
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L897">line 897</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-73a4a7cb8ffef824">__bits::__broadcast_word_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-53bb054632617314">__bits::__block_set_16</a>.</p></section><section class="function-entry" id="f-80bf4cdea3639c08"><h3><code>micron::simd::wordset256(u8 *__restrict src, const u64 in, const u64 bytes) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L901">line 901</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) static inline u8 *
+wordset256(u8 *__restrict src, const u64 in, const u64 bytes) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict src</code></li><li><code>const u64 in</code></li><li><code>const u64 bytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) static inline u8 *
+wordset256(u8 *__restrict src, const u64 in, const u64 bytes) noexcept
+{
+  const u64 n = bytes / 32;
+  const auto v = __bits::__broadcast_word_32(in);
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_set_32(src + i * 32, v);
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    u8 buf[32];
+    __bits::__block_set_32(buf, v);
+    for ( u64 i = 0; i &lt; rem; i++ ) src[n * 32 + i] = buf[i];
+  }
+  return src;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>src</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L912">line 912</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-7489da31eb85a576">__bits::__broadcast_word_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-356312d31f153973">__bits::__block_set_32</a>.</p></section><section class="function-entry" id="f-f6fc439031296125"><h3><code>micron::simd::memchr128(const T *src, u8 c, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L920">line 920</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memchr128(const T *src, u8 c, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *src</code></li><li><code>u8 c</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memchr128(const T *src, u8 c, const u64 count) noexcept
+{
+  const auto *p = reinterpret_cast&lt;const u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    const u32 m = __bits::__block_eq_mask_16(p + i * 16, c);
+    if ( m ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + i * 16 + __builtin_ctz(m)));
+  }
+
+  const u64 base = n * 16;
+  const u64 rem = bytes % 16;
+  for ( u64 i = 0; i &lt; rem; i++ )
+    if ( p[base + i] == c ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + base + i));
+
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + i * 16 + __builtin_ctz(m)))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L928">line 928</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + base + i))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L934">line 934</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L936">line 936</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-dea7f98981680e4e">__bits::__block_eq_mask_16</a>.</p></section><section class="function-entry" id="f-e7bbf4083e510246"><h3><code>micron::simd::memchr256(const T *src, u8 c, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L941">line 941</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memchr256(const T *src, u8 c, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *src</code></li><li><code>u8 c</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memchr256(const T *src, u8 c, const u64 count) noexcept
+{
+  const auto *p = reinterpret_cast&lt;const u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  for ( u64 i = 0; i &lt; n; i++ ) {
+    const u32 m = __bits::__block_eq_mask_32(p + i * 32, c);
+    if ( m ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + i * 32 + __builtin_ctz(m)));
+  }
+
+  const u64 base = n * 32;
+  const u64 rem = bytes % 32;
+  for ( u64 i = 0; i &lt; rem; i++ )
+    if ( p[base + i] == c ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + base + i));
+
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + i * 32 + __builtin_ctz(m)))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L949">line 949</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + base + i))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L955">line 955</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L957">line 957</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-1545e9742dd70139">__bits::__block_eq_mask_32</a>.</p></section><section class="function-entry" id="f-4360d3cf73cfd6e7"><h3><code>micron::simd::memrchr128(const T *src, u8 c, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L965">line 965</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memrchr128(const T *src, u8 c, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *src</code></li><li><code>u8 c</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memrchr128(const T *src, u8 c, const u64 count) noexcept
+{
+  const auto *p = reinterpret_cast&lt;const u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+  const u64 rem = bytes % 16;
+  const u64 base = n * 16;
+
+  for ( u64 i = rem; i &gt; 0; i-- )
+    if ( p[base + i - 1] == c ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + base + i - 1));
+
+  for ( u64 i = n; i &gt; 0; i-- ) {
+    const u32 m = __bits::__block_eq_mask_16(p + (i - 1) * 16, c);
+    if ( m ) {
+      const u32 hi = static_cast&lt;u32&gt;(31 - __builtin_clz(static_cast&lt;unsigned int&gt;(m)));
+      return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + (i - 1) * 16 + hi));
+    }
+  }
+
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + base + i - 1))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L974">line 974</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + (i - 1) * 16 + hi))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L980">line 980</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L984">line 984</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-dea7f98981680e4e">__bits::__block_eq_mask_16</a>.</p></section><section class="function-entry" id="f-496ca586ce99ac50"><h3><code>micron::simd::memrchr256(const T *src, u8 c, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L989">line 989</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memrchr256(const T *src, u8 c, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *src</code></li><li><code>u8 c</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+memrchr256(const T *src, u8 c, const u64 count) noexcept
+{
+  const auto *p = reinterpret_cast&lt;const u8 *&gt;(src);
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+  const u64 rem = bytes % 32;
+  const u64 base = n * 32;
+
+  for ( u64 i = rem; i &gt; 0; i-- )
+    if ( p[base + i - 1] == c ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + base + i - 1));
+
+  for ( u64 i = n; i &gt; 0; i-- ) {
+    const u32 m = __bits::__block_eq_mask_32(p + (i - 1) * 32, c);
+    if ( m ) {
+      const u32 hi = static_cast&lt;u32&gt;(31 - __builtin_clz(static_cast&lt;unsigned int&gt;(m)));
+      return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + (i - 1) * 32 + hi));
+    }
+  }
+
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + base + i - 1))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L998">line 998</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(p + (i - 1) * 32 + hi))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1004">line 1004</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1008">line 1008</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-1545e9742dd70139">__bits::__block_eq_mask_32</a>.</p></section><section class="function-entry" id="f-f85c311a4e10d11e"><h3><code>micron::simd::mempcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1016">line 1016</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+mempcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+mempcpy128(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;mempcpy128 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(dest);
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 16;
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_16(d + i * 16, s + i * 16);
+
+  const u64 rem = bytes % 16;
+  if ( rem ) {
+    u8 tmp[16] = {};
+    for ( u64 i = 0; i &lt; rem; i++ ) tmp[i] = s[n * 16 + i];
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 16 + i] = tmp[i];
+  }
+
+  return reinterpret_cast&lt;T *&gt;(d + bytes);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;T *&gt;(d + bytes)</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1035">line 1035</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;mempcpy128 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1018">line 1018</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-f1f2d385b4791c4d">__bits::__block_copy_16</a>.</p></section><section class="function-entry" id="f-701ba5f0f631181f"><h3><code>micron::simd::mempcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1040">line 1040</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+mempcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>const u64 count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+__attribute__((nonnull)) T *
+mempcpy256(T *__restrict dest, const T *__restrict src, const u64 count) noexcept
+{
+  static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;mempcpy256 requires trivially copyable type&quot;);
+
+  auto *__restrict d = reinterpret_cast&lt;u8 *&gt;(dest);
+  const auto *__restrict s = reinterpret_cast&lt;const u8 *&gt;(src);
+
+  const u64 bytes = count * sizeof(T);
+  const u64 n = bytes / 32;
+
+  for ( u64 i = 0; i &lt; n; i++ ) __bits::__block_copy_32(d + i * 32, s + i * 32);
+
+  const u64 rem = bytes % 32;
+  if ( rem ) {
+    u8 tmp[32] = {};
+    for ( u64 i = 0; i &lt; rem; i++ ) tmp[i] = s[n * 32 + i];
+    for ( u64 i = 0; i &lt; rem; i++ ) d[n * 32 + i] = tmp[i];
+  }
+
+  return reinterpret_cast&lt;T *&gt;(d + bytes);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;T *&gt;(d + bytes)</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1059">line 1059</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(micron::is_trivially_copyable_v&lt;T&gt;, &quot;mempcpy256 requires trivially copyable type&quot;);</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1042">line 1042</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-101ff2d14e736b6a">__bits::__block_copy_32</a>.</p></section><section class="function-entry" id="f-9d27ecee37977e4a"><h3><code>micron::simd::memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1067">line 1067</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+T *
+memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *hay</code></li><li><code>const u64 hlen</code></li><li><code>const T *nee</code></li><li><code>const u64 nlen</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+T *
+memmem128(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
+{
+  const auto *h = reinterpret_cast&lt;const u8 *&gt;(hay);
+  const auto *ne = reinterpret_cast&lt;const u8 *&gt;(nee);
+  const u64 hbytes = hlen * sizeof(T);
+  const u64 nbytes = nlen * sizeof(T);
+
+  if ( nbytes == 0 ) return const_cast&lt;T *&gt;(hay);
+  if ( nbytes &gt; hbytes ) return nullptr;
+
+  const u64 limit = hbytes - nbytes + 1;
+  const u8 first = ne[0];
+
+  u64 i = 0;
+  while ( i + 16 &lt;= limit ) {
+    const u32 m = __bits::__block_eq_mask_16(h + i, first);
+    if ( m ) {
+      u32 mm = m;
+      while ( mm ) {
+        const u32 off = static_cast&lt;u32&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mm)));
+        const u64 cand = i + off;
+        if ( cand &gt;= limit ) return nullptr;
+        if ( nbytes == 1 ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + cand));
+        bool match = true;
+        u64 j = 1;
+        while ( j + 16 &lt;= nbytes ) {
+          if ( __bits::__block_neq_mask_16(h + cand + j, ne + j) ) {
+            match = false;
+            break;
+          }
+          j += 16;
+        }
+        if ( match ) {
+          for ( ; j &lt; nbytes; j++ )
+            if ( h[cand + j] != ne[j] ) {
+              match = false;
+              break;
+            }
+        }
+        if ( match ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + cand));
+        mm &amp;= mm - 1u;
+      }
+    }
+    i += 16;
+  }
+
+  for ( ; i &lt; limit; i++ ) {
+    if ( h[i] != first ) continue;
+    bool match = true;
+    for ( u64 j = 1; j &lt; nbytes; j++ )
+      if ( h[i + j] != ne[j] ) {
+        match = false;
+        break;
+      }
+    if ( match ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + i));
+  }
+
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(hay)</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1074">line 1074</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1075">line 1075</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1088">line 1088</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + cand))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1089">line 1089</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + cand))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1106">line 1106</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + i))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1121">line 1121</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1124">line 1124</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-dea7f98981680e4e">__bits::__block_eq_mask_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bbd46795cbd6d4c0">__bits::__block_neq_mask_16</a>.</p></section><section class="function-entry" id="f-f79fc9be6b27b7e5"><h3><code>micron::simd::memmem256(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1129">line 1129</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+T *
+memmem256(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *hay</code></li><li><code>const u64 hlen</code></li><li><code>const T *nee</code></li><li><code>const u64 nlen</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+T *
+memmem256(const T *hay, const u64 hlen, const T *nee, const u64 nlen) noexcept
+{
+  const auto *h = reinterpret_cast&lt;const u8 *&gt;(hay);
+  const auto *ne = reinterpret_cast&lt;const u8 *&gt;(nee);
+  const u64 hbytes = hlen * sizeof(T);
+  const u64 nbytes = nlen * sizeof(T);
+
+  if ( nbytes == 0 ) return const_cast&lt;T *&gt;(hay);
+  if ( nbytes &gt; hbytes ) return nullptr;
+
+  const u64 limit = hbytes - nbytes + 1;
+  const u8 first = ne[0];
+
+  u64 i = 0;
+  while ( i + 32 &lt;= limit ) {
+    const u32 m = __bits::__block_eq_mask_32(h + i, first);
+    if ( m ) {
+      u32 mm = m;
+      while ( mm ) {
+        const u32 off = static_cast&lt;u32&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mm)));
+        const u64 cand = i + off;
+        if ( cand &gt;= limit ) return nullptr;
+        if ( nbytes == 1 ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + cand));
+        bool match = true;
+        u64 j = 1;
+        while ( j + 32 &lt;= nbytes ) {
+          if ( __bits::__block_neq_mask_32(h + cand + j, ne + j) ) {
+            match = false;
+            break;
+          }
+          j += 32;
+        }
+        if ( match ) {
+          while ( j + 16 &lt;= nbytes ) {
+            if ( __bits::__block_neq_mask_16(h + cand + j, ne + j) ) {
+              match = false;
+              break;
+            }
+            j += 16;
+          }
+        }
+        if ( match ) {
+          for ( ; j &lt; nbytes; j++ )
+            if ( h[cand + j] != ne[j] ) {
+              match = false;
+              break;
+            }
+        }
+        if ( match ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + cand));
+        mm &amp;= mm - 1u;
+      }
+    }
+    i += 32;
+  }
+
+  for ( ; i &lt; limit; i++ ) {
+    if ( h[i] != first ) continue;
+    bool match = true;
+    for ( u64 j = 1; j &lt; nbytes; j++ )
+      if ( h[i + j] != ne[j] ) {
+        match = false;
+        break;
+      }
+    if ( match ) return const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + i));
+  }
+
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(hay)</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1136">line 1136</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1137">line 1137</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1150">line 1150</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + cand))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1151">line 1151</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + cand))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1177">line 1177</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(reinterpret_cast&lt;const T *&gt;(h + i))</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1192">line 1192</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1195">line 1195</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-1545e9742dd70139">__bits::__block_eq_mask_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-ecdb8a00545f220a">__bits::__block_neq_mask_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bbd46795cbd6d4c0">__bits::__block_neq_mask_16</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-bb229637c161c063"><h3><code>micron::simd::__memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1201">line 1201</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 v</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept
+{
+  const __m256i vv = __bits::__broadcast_byte_32(v);
+  __bits::__block_set_32(d, vv);
+  u8 *p = reinterpret_cast&lt;u8 *&gt;((reinterpret_cast&lt;uintptr_t&gt;(d) + 32) &amp; ~static_cast&lt;uintptr_t&gt;(31));
+  u8 *const e = d + n;
+  for ( ; p + 128 &lt;= e; p += 128 ) {
+    __bits::__block_set_32_a(p, vv);
+    __bits::__block_set_32_a(p + 32, vv);
+    __bits::__block_set_32_a(p + 64, vv);
+    __bits::__block_set_32_a(p + 96, vv);
+  }
+  __bits::__block_set_32(e - 128, vv);
+  __bits::__block_set_32(e - 96, vv);
+  __bits::__block_set_32(e - 64, vv);
+  __bits::__block_set_32(e - 32, vv);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1217">line 1217</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-48f9a6bfdb36d403">__bits::__broadcast_byte_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-356312d31f153973">__bits::__block_set_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-374fddd299f66547">__bits::__block_set_32_a</a>.</p></section><section class="function-entry" id="f-b07ee4aecd300b00"><h3><code>micron::simd::__memset_bulk_nt(u8 *__restrict d, const u8 v, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1221">line 1221</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memset_bulk_nt(u8 *__restrict d, const u8 v, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 v</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memset_bulk_nt(u8 *__restrict d, const u8 v, const u64 n) noexcept
+{
+  const __m256i vv = __bits::__broadcast_byte_32(v);
+  __bits::__block_set_32(d, vv);
+  u8 *p = reinterpret_cast&lt;u8 *&gt;((reinterpret_cast&lt;uintptr_t&gt;(d) + 32) &amp; ~static_cast&lt;uintptr_t&gt;(31));
+  u8 *const e = d + n;
+  for ( ; p + 128 &lt;= e; p += 128 ) {
+    __bits::__block_set_32_nt(p, vv);
+    __bits::__block_set_32_nt(p + 32, vv);
+    __bits::__block_set_32_nt(p + 64, vv);
+    __bits::__block_set_32_nt(p + 96, vv);
+  }
+  __bits::__sfence();
+  __bits::__block_set_32(e - 128, vv);
+  __bits::__block_set_32(e - 96, vv);
+  __bits::__block_set_32(e - 64, vv);
+  __bits::__block_set_32(e - 32, vv);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1238">line 1238</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-48f9a6bfdb36d403">__bits::__broadcast_byte_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-356312d31f153973">__bits::__block_set_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-eddc53ed131b1398">__bits::__block_set_32_nt</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bad28167562e2fb3">__bits::__sfence</a>.</p></section><section class="function-entry" id="f-e5af537a38887dbd"><h3><code>micron::simd::__wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1242">line 1242</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u64 w</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept
+{
+  // WARNING: n must be &gt; 64 and n % period[8] == 0, not guarding behind branch
+  // dst is aligned for the bulk loop by rotating the pattern to the aligned
+  // phase
+  const __m256i vv = __bits::__broadcast_word_32(w);
+  if ( n &lt;= 256 ) {
+    u64 i = 0;
+    for ( ; i + 32 &lt;= n; i += 32 ) __bits::__block_set_32(d + i, vv);
+    if ( i &lt; n ) __bits::__block_set_32(d + n - 32, vv);
+    return d;
+  }
+  __bits::__block_set_32(d, vv);
+  u8 *p = reinterpret_cast&lt;u8 *&gt;((reinterpret_cast&lt;uintptr_t&gt;(d) + 32) &amp; ~static_cast&lt;uintptr_t&gt;(31));
+  const u32 rot = (static_cast&lt;u32&gt;(p - d) &amp; 7u) * 8u;
+  const u64 w2 = rot ? ((w &gt;&gt; rot) | (w &lt;&lt; (64u - rot))) : w;
+  const __m256i vv2 = __bits::__broadcast_word_32(w2);
+  u8 *const e = d + n;
+  for ( ; p + 128 &lt;= e; p += 128 ) {
+    __bits::__block_set_32_a(p, vv2);
+    __bits::__block_set_32_a(p + 32, vv2);
+    __bits::__block_set_32_a(p + 64, vv2);
+    __bits::__block_set_32_a(p + 96, vv2);
+  }
+  for ( ; p + 32 &lt;= e; p += 32 ) __bits::__block_set_32_a(p, vv2);
+  if ( p &lt; e ) __bits::__block_set_32(e - 32, vv);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1252">line 1252</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1268">line 1268</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-7489da31eb85a576">__bits::__broadcast_word_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-356312d31f153973">__bits::__block_set_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-374fddd299f66547">__bits::__block_set_32_a</a>.</p></section><section class="function-entry" id="f-bdeffa10147d3b3f"><h3><code>micron::simd::__memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1272">line 1272</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
+{
+  // NOTE: loop batches all 4 loads before any store; interleaving puts every load in the shadow of a store it can 4K alias against
+  // leading to a 2x collapse when src/dst are not 32-co-aligned; on HSW-E/Zen(sparse testing on Zen?)
+  const __ml::__v32 h = __ml::__ld32(s);
+  const __ml::__v32 t0 = __ml::__ld32(s + n - 128);
+  const __ml::__v32 t1 = __ml::__ld32(s + n - 96);
+  const __ml::__v32 t2 = __ml::__ld32(s + n - 64);
+  const __ml::__v32 t3 = __ml::__ld32(s + n - 32);
+  __ml::__st32(d, h);
+  const u64 off = 32 - (reinterpret_cast&lt;uintptr_t&gt;(d) &amp; 31);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem &gt;= 128; rem -= 128, pd += 128, ps += 128 ) {
+    __ml::__v32 a = __ml::__ld32(ps);
+    __ml::__v32 b = __ml::__ld32(ps + 32);
+    __ml::__v32 c = __ml::__ld32(ps + 64);
+    __ml::__v32 e = __ml::__ld32(ps + 96);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st32(pd, a);
+    __ml::__st32(pd + 32, b);
+    __ml::__st32(pd + 64, c);
+    __ml::__st32(pd + 96, e);
+  }
+  __ml::__st32(d + n - 128, t0);
+  __ml::__st32(d + n - 96, t1);
+  __ml::__st32(d + n - 64, t2);
+  __ml::__st32(d + n - 32, t3);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1301">line 1301</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__vec_ld.hpp.html#f-c54227f0dc4b0474">__ml::__ld32</a>, <a href="../__bits/__vec_ld.hpp.html#f-5dc9de0dcc4419bc">__ml::__st32</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-39f09cc2695b0524">__ml::__pin4</a>.</p></section><section class="function-entry" id="f-02f69265e2183aa0"><h3><code>micron::simd::__memcpy_bulk_nt(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1305">line 1305</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memcpy_bulk_nt(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memcpy_bulk_nt(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
+{
+  __bits::__block_copy_32(d, s);
+  const u64 off = 32 - (reinterpret_cast&lt;uintptr_t&gt;(d) &amp; 31);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem &gt;= 128; rem -= 128, pd += 128, ps += 128 ) {
+    __bits::__prefetch_t0(ps + 256);
+    __bits::__prefetch_t0(ps + 320);
+    __ml::__v32 a = __ml::__ld32(ps);
+    __ml::__v32 b = __ml::__ld32(ps + 32);
+    __ml::__v32 c = __ml::__ld32(ps + 64);
+    __ml::__v32 e = __ml::__ld32(ps + 96);
+    __ml::__pin4(a, b, c, e);
+    __bits::__block_set_32_nt(pd, reinterpret_cast&lt;__m256i&gt;(a));
+    __bits::__block_set_32_nt(pd + 32, reinterpret_cast&lt;__m256i&gt;(b));
+    __bits::__block_set_32_nt(pd + 64, reinterpret_cast&lt;__m256i&gt;(c));
+    __bits::__block_set_32_nt(pd + 96, reinterpret_cast&lt;__m256i&gt;(e));
+  }
+  __bits::__sfence();
+  __bits::__block_copy_32(d + n - 128, s + n - 128);
+  __bits::__block_copy_32(d + n - 96, s + n - 96);
+  __bits::__block_copy_32(d + n - 64, s + n - 64);
+  __bits::__block_copy_32(d + n - 32, s + n - 32);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1330">line 1330</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-101ff2d14e736b6a">__bits::__block_copy_32</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-5a8ca7f51eedd968">__bits::__prefetch_t0</a>, <a href="../__bits/__vec_ld.hpp.html#f-c54227f0dc4b0474">__ml::__ld32</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-39f09cc2695b0524">__ml::__pin4</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-eddc53ed131b1398">__bits::__block_set_32_nt</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bad28167562e2fb3">__bits::__sfence</a>.</p></section><section class="function-entry" id="f-7f7e494a1ac2f36c"><h3><code>micron::simd::__memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1334">line 1334</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *d</code></li><li><code>const u8 *s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept
+{
+  const __ml::__v32 h = __ml::__ld32(s);
+  const __ml::__v32 t0 = __ml::__ld32(s + n - 128);
+  const __ml::__v32 t1 = __ml::__ld32(s + n - 96);
+  const __ml::__v32 t2 = __ml::__ld32(s + n - 64);
+  const __ml::__v32 t3 = __ml::__ld32(s + n - 32);
+  const u64 off = 32 - (reinterpret_cast&lt;uintptr_t&gt;(d) &amp; 31);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem &gt;= 128; rem -= 128, pd += 128, ps += 128 ) {
+    __ml::__v32 a = __ml::__ld32(ps);
+    __ml::__v32 b = __ml::__ld32(ps + 32);
+    __ml::__v32 c = __ml::__ld32(ps + 64);
+    __ml::__v32 e = __ml::__ld32(ps + 96);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st32(pd, a);
+    __ml::__st32(pd + 32, b);
+    __ml::__st32(pd + 64, c);
+    __ml::__st32(pd + 96, e);
+  }
+  __ml::__st32(d + n - 128, t0);
+  __ml::__st32(d + n - 96, t1);
+  __ml::__st32(d + n - 64, t2);
+  __ml::__st32(d + n - 32, t3);
+  __ml::__st32(d, h);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1361">line 1361</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__vec_ld.hpp.html#f-c54227f0dc4b0474">__ml::__ld32</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-39f09cc2695b0524">__ml::__pin4</a>, <a href="../__bits/__vec_ld.hpp.html#f-5dc9de0dcc4419bc">__ml::__st32</a>.</p></section><section class="function-entry" id="f-4ccaa6b504f620ac"><h3><code>micron::simd::__memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1365">line 1365</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *d</code></li><li><code>const u8 *s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept
+{
+  const __ml::__v32 t = __ml::__ld32(s + n - 32);
+  const __ml::__v32 h0 = __ml::__ld32(s);
+  const __ml::__v32 h1 = __ml::__ld32(s + 32);
+  const __ml::__v32 h2 = __ml::__ld32(s + 64);
+  const __ml::__v32 h3 = __ml::__ld32(s + 96);
+  u8 *pe = reinterpret_cast&lt;u8 *&gt;(reinterpret_cast&lt;uintptr_t&gt;(d + n) &amp; ~static_cast&lt;uintptr_t&gt;(31));
+  const u8 *pse = s + (pe - d);
+  while ( static_cast&lt;u64&gt;(pe - d) &gt; 128 ) {
+    pe -= 128;
+    pse -= 128;
+    __ml::__v32 a = __ml::__ld32(pse + 96);
+    __ml::__v32 b = __ml::__ld32(pse + 64);
+    __ml::__v32 c = __ml::__ld32(pse + 32);
+    __ml::__v32 e = __ml::__ld32(pse);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st32(pe + 96, a);
+    __ml::__st32(pe + 64, b);
+    __ml::__st32(pe + 32, c);
+    __ml::__st32(pe, e);
+  }
+  __ml::__st32(d, h0);
+  __ml::__st32(d + 32, h1);
+  __ml::__st32(d + 64, h2);
+  __ml::__st32(d + 96, h3);
+  __ml::__st32(d + n - 32, t);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1392">line 1392</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__vec_ld.hpp.html#f-c54227f0dc4b0474">__ml::__ld32</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-39f09cc2695b0524">__ml::__pin4</a>, <a href="../__bits/__vec_ld.hpp.html#f-5dc9de0dcc4419bc">__ml::__st32</a>.</p></section><section class="function-entry" id="f-7cd8f9d7e82ae0a4"><h3><code>micron::simd::__memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1398">line 1398</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 v</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memset_bulk(u8 *__restrict d, const u8 v, const u64 n) noexcept
+{
+  const __m128i vv = __bits::__broadcast_byte_16(v);
+  __bits::__block_set_16(d, vv);
+  u8 *p = reinterpret_cast&lt;u8 *&gt;((reinterpret_cast&lt;uintptr_t&gt;(d) + 16) &amp; ~static_cast&lt;uintptr_t&gt;(15));
+  u8 *const e = d + n;
+  for ( ; p + 64 &lt;= e; p += 64 ) {
+    __bits::__block_set_16_a(p, vv);
+    __bits::__block_set_16_a(p + 16, vv);
+    __bits::__block_set_16_a(p + 32, vv);
+    __bits::__block_set_16_a(p + 48, vv);
+  }
+  __bits::__block_set_16(e - 64, vv);
+  __bits::__block_set_16(e - 48, vv);
+  __bits::__block_set_16(e - 32, vv);
+  __bits::__block_set_16(e - 16, vv);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1414">line 1414</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-d7432efd9e00f4f6">__bits::__broadcast_byte_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-53bb054632617314">__bits::__block_set_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-43f4cdbccba4b56c">__bits::__block_set_16_a</a>.</p></section><section class="function-entry" id="f-fa6bef3c6ef42f4e"><h3><code>micron::simd::__memset_bulk_nt(u8 *__restrict d, const u8 v, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1418">line 1418</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memset_bulk_nt(u8 *__restrict d, const u8 v, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 v</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memset_bulk_nt(u8 *__restrict d, const u8 v, const u64 n) noexcept
+{
+  const __m128i vv = __bits::__broadcast_byte_16(v);
+  __bits::__block_set_16(d, vv);
+  u8 *p = reinterpret_cast&lt;u8 *&gt;((reinterpret_cast&lt;uintptr_t&gt;(d) + 16) &amp; ~static_cast&lt;uintptr_t&gt;(15));
+  u8 *const e = d + n;
+  for ( ; p + 64 &lt;= e; p += 64 ) {
+    __bits::__block_set_16_nt(p, vv);
+    __bits::__block_set_16_nt(p + 16, vv);
+    __bits::__block_set_16_nt(p + 32, vv);
+    __bits::__block_set_16_nt(p + 48, vv);
+  }
+  __bits::__sfence();
+  __bits::__block_set_16(e - 64, vv);
+  __bits::__block_set_16(e - 48, vv);
+  __bits::__block_set_16(e - 32, vv);
+  __bits::__block_set_16(e - 16, vv);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1435">line 1435</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-d7432efd9e00f4f6">__bits::__broadcast_byte_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-53bb054632617314">__bits::__block_set_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bfe8900d23790bbc">__bits::__block_set_16_nt</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bad28167562e2fb3">__bits::__sfence</a>.</p></section><section class="function-entry" id="f-b9b330521851b45f"><h3><code>micron::simd::__wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1439">line 1439</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u64 w</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__wordset_bulk(u8 *__restrict d, const u64 w, const u64 n) noexcept
+{
+  const __m128i vv = __bits::__broadcast_word_16(w);
+  if ( n &lt;= 256 ) {
+    u64 i = 0;
+    for ( ; i + 16 &lt;= n; i += 16 ) __bits::__block_set_16(d + i, vv);
+    if ( i &lt; n ) __bits::__block_set_16(d + n - 16, vv);
+    return d;
+  }
+  __bits::__block_set_16(d, vv);
+  u8 *p = reinterpret_cast&lt;u8 *&gt;((reinterpret_cast&lt;uintptr_t&gt;(d) + 16) &amp; ~static_cast&lt;uintptr_t&gt;(15));
+  const u32 rot = (static_cast&lt;u32&gt;(p - d) &amp; 7u) * 8u;
+  const u64 w2 = rot ? ((w &gt;&gt; rot) | (w &lt;&lt; (64u - rot))) : w;
+  const __m128i vv2 = __bits::__broadcast_word_16(w2);
+  u8 *const e = d + n;
+  for ( ; p + 64 &lt;= e; p += 64 ) {
+    __bits::__block_set_16_a(p, vv2);
+    __bits::__block_set_16_a(p + 16, vv2);
+    __bits::__block_set_16_a(p + 32, vv2);
+    __bits::__block_set_16_a(p + 48, vv2);
+  }
+  for ( ; p + 16 &lt;= e; p += 16 ) __bits::__block_set_16_a(p, vv2);
+  if ( p &lt; e ) __bits::__block_set_16(e - 16, vv);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1446">line 1446</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1462">line 1462</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-73a4a7cb8ffef824">__bits::__broadcast_word_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-53bb054632617314">__bits::__block_set_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-43f4cdbccba4b56c">__bits::__block_set_16_a</a>.</p></section><section class="function-entry" id="f-fa246d64d309b494"><h3><code>micron::simd::__memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1466">line 1466</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memcpy_bulk(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
+{
+  const __ml::__v16 h = __ml::__ld16(s);
+  const __ml::__v16 t0 = __ml::__ld16(s + n - 64);
+  const __ml::__v16 t1 = __ml::__ld16(s + n - 48);
+  const __ml::__v16 t2 = __ml::__ld16(s + n - 32);
+  const __ml::__v16 t3 = __ml::__ld16(s + n - 16);
+  __ml::__st16(d, h);
+  const u64 off = 16 - (reinterpret_cast&lt;uintptr_t&gt;(d) &amp; 15);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem &gt;= 64; rem -= 64, pd += 64, ps += 64 ) {
+    __ml::__v16 a = __ml::__ld16(ps);
+    __ml::__v16 b = __ml::__ld16(ps + 16);
+    __ml::__v16 c = __ml::__ld16(ps + 32);
+    __ml::__v16 e = __ml::__ld16(ps + 48);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st16(pd, a);
+    __ml::__st16(pd + 16, b);
+    __ml::__st16(pd + 32, c);
+    __ml::__st16(pd + 48, e);
+  }
+  __ml::__st16(d + n - 64, t0);
+  __ml::__st16(d + n - 48, t1);
+  __ml::__st16(d + n - 32, t2);
+  __ml::__st16(d + n - 16, t3);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1493">line 1493</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/vec_ld.hpp.html#f-201f697a13952a16">__ml::__ld16</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-9fdcf61d7245b076">__ml::__st16</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-39f09cc2695b0524">__ml::__pin4</a>.</p></section><section class="function-entry" id="f-d852acb38ad2ccbb"><h3><code>micron::simd::__memcpy_bulk_nt(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1497">line 1497</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memcpy_bulk_nt(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memcpy_bulk_nt(u8 *__restrict d, const u8 *__restrict s, const u64 n) noexcept
+{
+  __bits::__block_copy_16(d, s);
+  const u64 off = 16 - (reinterpret_cast&lt;uintptr_t&gt;(d) &amp; 15);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem &gt;= 64; rem -= 64, pd += 64, ps += 64 ) {
+    __bits::__prefetch_t0(ps + 256);
+    __ml::__v16 a = __ml::__ld16(ps);
+    __ml::__v16 b = __ml::__ld16(ps + 16);
+    __ml::__v16 c = __ml::__ld16(ps + 32);
+    __ml::__v16 e = __ml::__ld16(ps + 48);
+    __ml::__pin4(a, b, c, e);
+    __bits::__block_set_16_nt(pd, reinterpret_cast&lt;__m128i&gt;(a));
+    __bits::__block_set_16_nt(pd + 16, reinterpret_cast&lt;__m128i&gt;(b));
+    __bits::__block_set_16_nt(pd + 32, reinterpret_cast&lt;__m128i&gt;(c));
+    __bits::__block_set_16_nt(pd + 48, reinterpret_cast&lt;__m128i&gt;(e));
+  }
+  __bits::__sfence();
+  __bits::__block_copy_16(d + n - 64, s + n - 64);
+  __bits::__block_copy_16(d + n - 48, s + n - 48);
+  __bits::__block_copy_16(d + n - 32, s + n - 32);
+  __bits::__block_copy_16(d + n - 16, s + n - 16);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1521">line 1521</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__bits/__asm_blocks_amd64.hpp.html#f-f1f2d385b4791c4d">__bits::__block_copy_16</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-5a8ca7f51eedd968">__bits::__prefetch_t0</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-201f697a13952a16">__ml::__ld16</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-39f09cc2695b0524">__ml::__pin4</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bfe8900d23790bbc">__bits::__block_set_16_nt</a>, <a href="../__bits/__asm_blocks_amd64.hpp.html#f-bad28167562e2fb3">__bits::__sfence</a>.</p></section><section class="function-entry" id="f-0631a7737bb49b72"><h3><code>micron::simd::__memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1525">line 1525</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *d</code></li><li><code>const u8 *s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memmove_bulk_fwd(u8 *d, const u8 *s, const u64 n) noexcept
+{
+  const __ml::__v16 h = __ml::__ld16(s);
+  const __ml::__v16 t0 = __ml::__ld16(s + n - 64);
+  const __ml::__v16 t1 = __ml::__ld16(s + n - 48);
+  const __ml::__v16 t2 = __ml::__ld16(s + n - 32);
+  const __ml::__v16 t3 = __ml::__ld16(s + n - 16);
+  const u64 off = 16 - (reinterpret_cast&lt;uintptr_t&gt;(d) &amp; 15);
+  u8 *pd = d + off;
+  const u8 *ps = s + off;
+  u64 rem = n - off;
+  for ( ; rem &gt;= 64; rem -= 64, pd += 64, ps += 64 ) {
+    __ml::__v16 a = __ml::__ld16(ps);
+    __ml::__v16 b = __ml::__ld16(ps + 16);
+    __ml::__v16 c = __ml::__ld16(ps + 32);
+    __ml::__v16 e = __ml::__ld16(ps + 48);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st16(pd, a);
+    __ml::__st16(pd + 16, b);
+    __ml::__st16(pd + 32, c);
+    __ml::__st16(pd + 48, e);
+  }
+  __ml::__st16(d + n - 64, t0);
+  __ml::__st16(d + n - 48, t1);
+  __ml::__st16(d + n - 32, t2);
+  __ml::__st16(d + n - 16, t3);
+  __ml::__st16(d, h);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1552">line 1552</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/vec_ld.hpp.html#f-201f697a13952a16">__ml::__ld16</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-39f09cc2695b0524">__ml::__pin4</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-9fdcf61d7245b076">__ml::__st16</a>.</p></section><section class="function-entry" id="f-648f2e73393ed7c2"><h3><code>micron::simd::__memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept</code></h3><p>Defined in <code>simd/arch/memory_amd64.hpp</code>, <a href="../../../source/simd/arch/memory_amd64.hpp.html#L1556">line 1556</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((nonnull)) inline u8 *
+__memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *d</code></li><li><code>const u8 *s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((nonnull)) inline u8 *
+__memmove_bulk_bwd(u8 *d, const u8 *s, const u64 n) noexcept
+{
+  const __ml::__v16 t = __ml::__ld16(s + n - 16);
+  const __ml::__v16 h0 = __ml::__ld16(s);
+  const __ml::__v16 h1 = __ml::__ld16(s + 16);
+  const __ml::__v16 h2 = __ml::__ld16(s + 32);
+  const __ml::__v16 h3 = __ml::__ld16(s + 48);
+  u8 *pe = reinterpret_cast&lt;u8 *&gt;(reinterpret_cast&lt;uintptr_t&gt;(d + n) &amp; ~static_cast&lt;uintptr_t&gt;(15));
+  const u8 *pse = s + (pe - d);
+  while ( static_cast&lt;u64&gt;(pe - d) &gt; 64 ) {
+    pe -= 64;
+    pse -= 64;
+    __ml::__v16 a = __ml::__ld16(pse + 48);
+    __ml::__v16 b = __ml::__ld16(pse + 32);
+    __ml::__v16 c = __ml::__ld16(pse + 16);
+    __ml::__v16 e = __ml::__ld16(pse);
+    __ml::__pin4(a, b, c, e);
+    __ml::__st16(pe + 48, a);
+    __ml::__st16(pe + 32, b);
+    __ml::__st16(pe + 16, c);
+    __ml::__st16(pe, e);
+  }
+  __ml::__st16(d, h0);
+  __ml::__st16(d + 16, h1);
+  __ml::__st16(d + 32, h2);
+  __ml::__st16(d + 48, h3);
+  __ml::__st16(d + n - 16, t);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/simd/arch/memory_amd64.hpp.html#L1583">line 1583</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/vec_ld.hpp.html#f-201f697a13952a16">__ml::__ld16</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-39f09cc2695b0524">__ml::__pin4</a>, <a href="../../bits/wasm/simd/vec_ld.hpp.html#f-9fdcf61d7245b076">__ml::__st16</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

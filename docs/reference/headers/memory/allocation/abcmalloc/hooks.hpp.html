@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/allocation/abcmalloc/hooks.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/allocation/abcmalloc/hooks.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/allocation.html">Allocation</a></div><p>Defined in header <code>&lt;micron/memory/allocation/abcmalloc/hooks.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-91a992427683bfd0"><h3><code>abc::__saturate_pages_to_bytes(u64 pages) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L40">line 40</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline usize
+__saturate_pages_to_bytes(u64 pages) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 pages</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline usize
+__saturate_pages_to_bytes(u64 pages) noexcept
+{
+  const u64 ps = static_cast&lt;u64&gt;(__system_pagesize);
+  const u64 max_usize = static_cast&lt;u64&gt;(micron::numeric_limits&lt;usize&gt;::max());
+#if defined(__micron_arch_width_32)
+  if ( pages &gt; __width32_sheet_cap / ps ) return static_cast&lt;usize&gt;(__width32_sheet_cap);
+#endif
+  if ( pages &gt; max_usize / ps ) return static_cast&lt;usize&gt;(max_usize &amp; ~(ps - 1));
+  return static_cast&lt;usize&gt;(pages * ps);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(__width32_sheet_cap)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L45">line 45</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(max_usize &amp; ~(ps - 1))</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(pages * ps)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L48">line 48</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;usize&gt;::max</a>.</p></section><section class="function-entry" id="f-ad39b8ad47b28918"><h3><code>abc::__saturate_bytes(u64 bytes) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L54">line 54</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__saturate_bytes(u64 bytes) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 bytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__saturate_bytes(u64 bytes) noexcept
+{
+  const u64 max_usize = static_cast&lt;u64&gt;(micron::numeric_limits&lt;usize&gt;::max());
+  return bytes &gt; max_usize ? static_cast&lt;usize&gt;(max_usize) : static_cast&lt;usize&gt;(bytes);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>bytes &gt; max_usize ? static_cast&lt;usize&gt;(max_usize) : static_cast&lt;usize&gt;(bytes)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L57">line 57</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;usize&gt;::max</a>.</p></section><section class="function-entry" id="f-4d98b997408ffd2e"><h3><code>abc::__calculate_space_cache(usize sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L61">line 61</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__calculate_space_cache(usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__calculate_space_cache(usize sz)
+{
+  // x^2 * ln(x * sqrt(x))
+  // WARNING: square in double; usize sz*sz wraps at sz &gt;= 2^16 on width-32
+  u64 t = static_cast&lt;u64&gt;(static_cast&lt;flong&gt;((double)sz * (double)sz)
+                           * micron::math::logf128(static_cast&lt;flong&gt;((double)sz * micron::math::hw::sqrt_sd((double)sz))));
+  float t_2 = (float)t / __system_pagesize;
+  t_2 = micron::math::ceil(t_2);
+  u64 pages = static_cast&lt;u64&gt;(t_2);
+  if ( pages &lt; __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__saturate_pages_to_bytes(pages)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L72">line 72</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../math/generic.hpp.html#f-f310584f7af2235c">micron::math::logf128</a>, <a href="../../../math/__asm/hw.hpp.html#f-a401ef5304ea75a2">micron::math::hw::sqrt_sd</a>, <a href="../../../math/generic.hpp.html#f-69f5dd9dce8e0c90">micron::math::ceil</a>, <a href="../../../math/generic.hpp.html#f-bbd37f96ff3a284a">micron::math::nearest_pow2ll</a>, <a href="hooks.hpp.html#f-91a992427683bfd0">__saturate_pages_to_bytes</a>.</p></section><section class="function-entry" id="f-fff87b66e563d60e"><h3><code>abc::__calculate_space_small(usize sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L76">line 76</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__calculate_space_small(usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__calculate_space_small(usize sz)
+{
+  // new equation: x * sqrt(x) * 400 smooth sublinear-in-class growth; 4 MiB at sz=513, ~128 MiB at sz=4095
+  u64 t = static_cast&lt;u64&gt;(static_cast&lt;double&gt;(sz) * micron::math::hw::sqrt_sd(static_cast&lt;double&gt;(sz)) * 400.0);
+  float t_2 = (float)t / __system_pagesize;
+  t_2 = micron::math::ceil(t_2);
+  u64 pages = static_cast&lt;u64&gt;(t_2);
+  if ( pages &lt; __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__saturate_pages_to_bytes(pages)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L85">line 85</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../math/__asm/hw.hpp.html#f-a401ef5304ea75a2">micron::math::hw::sqrt_sd</a>, <a href="../../../math/generic.hpp.html#f-69f5dd9dce8e0c90">micron::math::ceil</a>, <a href="../../../math/generic.hpp.html#f-bbd37f96ff3a284a">micron::math::nearest_pow2ll</a>, <a href="hooks.hpp.html#f-91a992427683bfd0">__saturate_pages_to_bytes</a>.</p></section><section class="function-entry" id="f-47538e0a3c5af316"><h3><code>abc::__calculate_space_medium(usize sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L89">line 89</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__calculate_space_medium(usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__calculate_space_medium(usize sz)
+{
+  // new equation: x * ln(x) * 150;  4 MiB at sz=4096, ~64 MiB at sz=32768; hot tier so heavy floor
+  flong f_sz = static_cast&lt;flong&gt;(sz);
+  u64 t = static_cast&lt;u64&gt;(f_sz * micron::math::logf128(f_sz) * 150.0L);
+  float t_2 = (float)t / __system_pagesize;
+  t_2 = micron::math::ceil(t_2);
+  u64 pages = static_cast&lt;u64&gt;(t_2);
+  if ( pages &lt; __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__saturate_pages_to_bytes(pages)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L99">line 99</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../math/generic.hpp.html#f-f310584f7af2235c">micron::math::logf128</a>, <a href="../../../math/generic.hpp.html#f-69f5dd9dce8e0c90">micron::math::ceil</a>, <a href="../../../math/generic.hpp.html#f-bbd37f96ff3a284a">micron::math::nearest_pow2ll</a>, <a href="hooks.hpp.html#f-91a992427683bfd0">__saturate_pages_to_bytes</a>.</p></section><section class="function-entry" id="f-b3e1d03197f006fd"><h3><code>abc::__calculate_space_large(usize sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__calculate_space_large(usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__calculate_space_large(usize sz)
+{
+  // 2 * x * ln(x)^2; the old medium equation scaled by a factor of 2
+  flong f_sz = static_cast&lt;flong&gt;(sz);
+  flong lg = micron::math::logf128(f_sz);
+  u64 t = static_cast&lt;u64&gt;(2.0L * f_sz * lg * lg);
+  float t_2 = (float)t / __system_pagesize;
+  t_2 = micron::math::ceil(t_2);
+  u64 pages = static_cast&lt;u64&gt;(t_2);
+  if ( pages &lt; __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__saturate_pages_to_bytes(pages)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L114">line 114</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../math/generic.hpp.html#f-f310584f7af2235c">micron::math::logf128</a>, <a href="../../../math/generic.hpp.html#f-69f5dd9dce8e0c90">micron::math::ceil</a>, <a href="../../../math/generic.hpp.html#f-bbd37f96ff3a284a">micron::math::nearest_pow2ll</a>, <a href="hooks.hpp.html#f-91a992427683bfd0">__saturate_pages_to_bytes</a>.</p></section><section class="function-entry" id="f-2aa962c5fb14d7e5"><h3><code>abc::__calculate_space_huge(usize sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L118">line 118</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__calculate_space_huge(usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__calculate_space_huge(usize sz)
+{
+  // sqrt(x) * ln(x)^2 * 125; aggressive at the floor, tapers at the top
+  double f_sz = static_cast&lt;double&gt;(sz);
+  double lg = static_cast&lt;double&gt;(micron::math::logf128(static_cast&lt;flong&gt;(sz)));
+  u64 t = static_cast&lt;u64&gt;(micron::math::hw::sqrt_sd(f_sz) * lg * lg * 125.0);
+  float t_2 = (float)t / __system_pagesize;
+  t_2 = micron::math::ceil(t_2);
+  u64 pages = static_cast&lt;u64&gt;(t_2);
+  if ( pages &lt; __default_minimum_page_mul ) pages = __default_minimum_page_mul;
+  pages = micron::math::nearest_pow2ll(pages);
+  return __saturate_pages_to_bytes(pages);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__saturate_pages_to_bytes(pages)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L129">line 129</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../math/generic.hpp.html#f-f310584f7af2235c">micron::math::logf128</a>, <a href="../../../math/__asm/hw.hpp.html#f-a401ef5304ea75a2">micron::math::hw::sqrt_sd</a>, <a href="../../../math/generic.hpp.html#f-69f5dd9dce8e0c90">micron::math::ceil</a>, <a href="../../../math/generic.hpp.html#f-bbd37f96ff3a284a">micron::math::nearest_pow2ll</a>, <a href="hooks.hpp.html#f-91a992427683bfd0">__saturate_pages_to_bytes</a>.</p></section><section class="function-entry" id="f-968ec72bd0d2f5d1"><h3><code>abc::__calculate_space_bulk(usize sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L133">line 133</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__calculate_space_bulk(usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__calculate_space_bulk(usize sz)
+{
+  // logarithmic taper
+  long double factor = 1.0L + 0.1L * micron::math::logf128(static_cast&lt;flong&gt;(static_cast&lt;double&gt;(sz) / (1024 * 1024 * 1024)));
+  if ( factor &lt; 1.0L ) factor = 1.0L;      // never shrink
+
+  usize t = static_cast&lt;usize&gt;(sz * factor);
+
+  usize pow2_sz = 1;
+  while ( pow2_sz &lt; t ) {
+    if ( pow2_sz &gt; (micron::numeric_limits&lt;usize&gt;::max() &gt;&gt; 1) ) break;      // next shift would wrap to 0 (32-bit)
+    pow2_sz &lt;&lt;= 1;
+  }
+#if defined(__micron_arch_width_32)
+  if ( pow2_sz &gt; static_cast&lt;usize&gt;(__width32_sheet_cap) ) pow2_sz = static_cast&lt;usize&gt;(__width32_sheet_cap);
+#endif
+  return pow2_sz;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pow2_sz</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L149">line 149</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../math/generic.hpp.html#f-f310584f7af2235c">micron::math::logf128</a>, <a href="../../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;usize&gt;::max</a>.</p></section><section class="function-entry" id="f-898991c84a187983"><h3><code>abc::__calculate_space_saturated(usize sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L153">line 153</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__calculate_space_saturated(usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__calculate_space_saturated(usize sz)
+{
+  // x * ln(x) * (ln(ln(x)))
+  flong f_sz = static_cast&lt;flong&gt;(sz);
+  u64 t = static_cast&lt;u64&gt;(f_sz * micron::math::logf128(f_sz) * (micron::math::logf128(micron::math::logf128(f_sz))));
+  float t_2 = (float)t / __system_pagesize;
+  t_2 = micron::math::ceil(t_2);
+  // route through the saturating pages-&gt;bytes conversion: the raw multiply wraps on width-32
+  sz = __saturate_pages_to_bytes(
+      micron::math::nearest_pow2ll(((usize)t_2) &lt; __default_minimum_page_mul ? __default_minimum_page_mul : (usize)t_2));
+  return sz;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sz</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L163">line 163</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../math/generic.hpp.html#f-f310584f7af2235c">micron::math::logf128</a>, <a href="../../../math/generic.hpp.html#f-69f5dd9dce8e0c90">micron::math::ceil</a>, <a href="hooks.hpp.html#f-91a992427683bfd0">__saturate_pages_to_bytes</a>, <a href="../../../math/generic.hpp.html#f-bbd37f96ff3a284a">micron::math::nearest_pow2ll</a>.</p></section><section class="function-entry" id="f-49723c0887993fc2"><h3><code>abc::__get_kernel_memory(u64 sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L167">line 167</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void *
+__get_kernel_memory(u64 sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 sz</code></li></ul><h4>Effects</h4><p>Returns <code>micron::sys_allocator&lt;byte&gt;::alloc(static_cast&lt;usize&gt;(sz))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void *
+__get_kernel_memory(u64 sz)
+{
+  return micron::sys_allocator&lt;byte&gt;::alloc(static_cast&lt;usize&gt;(sz));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::sys_allocator&lt;byte&gt;::alloc(static_cast&lt;usize&gt;(sz))</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L169">line 169</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__sys.hpp.html#f-07f5dc5593c7d77f">micron::sys_allocator&lt;byte&gt;::alloc</a>.</p></section><section class="function-entry" id="f-4d3a71dc62d3924c"><h3><code>abc::__get_kernel_chunk(u64 sz)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L174">line 174</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline T
+__get_kernel_chunk(u64 sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline T
+__get_kernel_chunk(u64 sz)
+{
+  if ( auto *p = __va_carve(static_cast&lt;usize&gt;(sz)); p ) [[likely]] {
+    const usize rounded = (static_cast&lt;usize&gt;(sz) + __sheet_align_mask) &amp; ~__sheet_align_mask;
+    return { reinterpret_cast&lt;byte *&gt;(p), rounded };
+  }
+  return { micron::sys_allocator&lt;byte&gt;::alloc(static_cast&lt;usize&gt;(sz)), static_cast&lt;usize&gt;(sz) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ reinterpret_cast&lt;byte *&gt;(p), rounded }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L178">line 178</a></td></tr><tr class="t-dsc"><td><code>{ micron::sys_allocator&lt;byte&gt;::alloc(static_cast&lt;usize&gt;(sz)), static_cast&lt;usize&gt;(sz) }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L180">line 180</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="va_reserve.hpp.html#f-0323aa0b69629874">__va_carve</a>, <a href="__sys.hpp.html#f-07f5dc5593c7d77f">micron::sys_allocator&lt;byte&gt;::alloc</a>.</p></section><section class="function-entry" id="f-cf06a39aba0fbd15"><h3><code>abc::__release_kernel_chunk(const T &amp;mem)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/hooks.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L185">line 185</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+__release_kernel_chunk(const T &amp;mem)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;mem</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+__release_kernel_chunk(const T &amp;mem)
+{
+  if ( __va_contains(mem.ptr) ) {
+    __va_release(micron::ptr_cast&lt;addr_t *&gt;(mem.ptr), mem.len);
+    return;
+  }
+  micron::sys_allocator&lt;byte&gt;::dealloc(mem.ptr, mem.len);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/hooks.hpp.html#L189">line 189</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="va_reserve.hpp.html#f-eecb6818e0c61c70">__va_contains</a>, <a href="va_reserve.hpp.html#f-2910ec84a38165d1">__va_release</a>, <a href="../../addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>, <a href="__sys.hpp.html#f-1276c5912fb5998f">micron::sys_allocator&lt;byte&gt;::dealloc</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

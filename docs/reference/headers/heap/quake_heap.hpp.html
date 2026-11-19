@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/heap/quake_heap.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/heap/quake_heap.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/heaps.html">Heaps</a></div><p>Defined in header <code>&lt;micron/heap/quake_heap.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/heap/quake_heap.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-6e9d3046741c0d0a">micron::quake_heap</code></td><td>class; line 45</td></tr><tr class="t-dsc"><td><code id="s-9626f9ab2a70a81b">micron::quake_heap::node::e</code></td><td>member; line 57</td></tr><tr class="t-dsc"><td><code id="s-f5025d3937009738">micron::quake_heap::node::left</code></td><td>member; line 58</td></tr><tr class="t-dsc"><td><code id="s-9c18ce0d03b64b53">micron::quake_heap::node::right</code></td><td>member; line 59</td></tr><tr class="t-dsc"><td><code id="s-56c8e9aa717da392">micron::quake_heap::node::parent</code></td><td>member; line 60</td></tr><tr class="t-dsc"><td><code id="s-70470e317ccabfb4">micron::quake_heap::node::height</code></td><td>member; line 61</td></tr><tr class="t-dsc"><td><code id="s-3297216057c00b9c">micron::quake_heap::node::fpos</code></td><td>member; line 62</td></tr><tr class="t-dsc"><td><code id="s-d087b076fb0d4830">micron::quake_heap::node::allocation_len</code></td><td>member; line 63</td></tr><tr class="t-dsc"><td><code id="s-2bd05338696e60de">micron::quake_heap::entry::value</code></td><td>member; line 67</td></tr><tr class="t-dsc"><td><code id="s-66899b3860abf2b9">micron::quake_heap::entry::high</code></td><td>member; line 68</td></tr><tr class="t-dsc"><td><code id="s-243109ef9dd5c22f">micron::quake_heap::entry::allocation_len</code></td><td>member; line 69</td></tr><tr class="t-dsc"><td><code id="s-9f309c31105984e2">micron::quake_heap::category_type</code></td><td>typedef; line 351</td></tr><tr class="t-dsc"><td><code id="s-59fa7a752da222bc">micron::quake_heap::mutability_type</code></td><td>typedef; line 352</td></tr><tr class="t-dsc"><td><code id="s-287faa85c70f29cb">micron::quake_heap::memory_type</code></td><td>typedef; line 353</td></tr><tr class="t-dsc"><td><code id="s-6bfdded20807e4d1">micron::quake_heap::value_type</code></td><td>typedef; line 354</td></tr><tr class="t-dsc"><td><code id="s-a949a72abc41e29a">micron::quake_heap::size_type</code></td><td>typedef; line 355</td></tr><tr class="t-dsc"><td><code id="s-d941172ce6793942">micron::quake_heap::reference</code></td><td>typedef; line 356</td></tr><tr class="t-dsc"><td><code id="s-48821c6dd3ffb4bc">micron::quake_heap::const_reference</code></td><td>typedef; line 357</td></tr><tr class="t-dsc"><td><code id="s-257f5043dccb7675">micron::quake_heap::handle</code></td><td>struct; line 359</td></tr><tr class="t-dsc"><td><code id="s-939b75b551ee6940">micron::quake_heap::handle::e</code></td><td>member; line 360</td></tr><tr class="t-dsc"><td><a href="#f-f62d6b94a84caf33">micron::quake_heap::handle::valid() const noexcept</a></td><td>function; line 363</td></tr><tr class="t-dsc"><td><a href="#f-baf8b88d2273e491">micron::quake_heap::~quake_heap()</a></td><td>function; line 389</td></tr><tr class="t-dsc"><td><a href="#f-08396d331e63973d">micron::quake_heap::quake_heap()</a></td><td>function; line 395</td></tr><tr class="t-dsc"><td><a href="#f-fbc70f6816984b54">micron::quake_heap::quake_heap(const Compare &amp;c)</a></td><td>function; line 400</td></tr><tr class="t-dsc"><td><a href="#f-1b788e95a876cb0c">micron::quake_heap::quake_heap(const quake_heap &amp;)</a></td><td>function; line 402</td></tr><tr class="t-dsc"><td><a href="#f-9a235432f0b41e42">micron::quake_heap::operator=(const quake_heap &amp;)</a></td><td>function; line 403</td></tr><tr class="t-dsc"><td><a href="#f-8a590b99e4fc7a58">micron::quake_heap::quake_heap(quake_heap &amp;&amp;o) noexcept</a></td><td>function; line 405</td></tr><tr class="t-dsc"><td><a href="#f-a5caa15919f3297d">micron::quake_heap::operator=(quake_heap &amp;&amp;o) noexcept</a></td><td>function; line 419</td></tr><tr class="t-dsc"><td><a href="#f-9fd721563c432866">micron::quake_heap::empty() const noexcept</a></td><td>function; line 444</td></tr><tr class="t-dsc"><td><a href="#f-dcc6ef592e7cf134">micron::quake_heap::size() const noexcept</a></td><td>function; line 450</td></tr><tr class="t-dsc"><td><a href="#f-207a45842c9e8f21">micron::quake_heap::find_min() const</a></td><td>function; line 456</td></tr><tr class="t-dsc"><td><a href="#f-e14a022ccff49d6b">micron::quake_heap::peek() const</a></td><td>function; line 463</td></tr><tr class="t-dsc"><td><a href="#f-65fc191e7ceac784">micron::quake_heap::insert(const T &amp;v)</a></td><td>function; line 469</td></tr><tr class="t-dsc"><td><a href="#f-83b1c4474048de57">micron::quake_heap::insert(T &amp;&amp;v)</a></td><td>function; line 475</td></tr><tr class="t-dsc"><td><a href="#f-d21cd031635179d6">micron::quake_heap::emplace(Args &amp;&amp;...args)</a></td><td>function; line 482</td></tr><tr class="t-dsc"><td><a href="#f-543f599db0a5865e">micron::quake_heap::decrease_key(handle h, const T &amp;nv)</a></td><td>function; line 488</td></tr><tr class="t-dsc"><td><a href="#f-ab5e648e030ebb5f">micron::quake_heap::extract_min()</a></td><td>function; line 509</td></tr><tr class="t-dsc"><td><a href="#f-c7a5b98bbafcd795">micron::quake_heap::erase(handle h)</a></td><td>function; line 526</td></tr><tr class="t-dsc"><td><a href="#f-6f9fbf18d3208dc7">micron::quake_heap::meld(quake_heap &amp;&amp;o)</a></td><td>function; line 544</td></tr><tr class="t-dsc"><td><a href="#f-a0c975e16a4a292e">micron::quake_heap::clear() noexcept</a></td><td>function; line 564</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f62d6b94a84caf33"><h3><code>micron::quake_heap::handle::valid() const noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L363">line 363</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+    valid() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>e != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+    valid() const noexcept
+    {
+      return e != nullptr;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>e != nullptr</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L365">line 365</a></td></tr></tbody></table></section><section class="function-entry" id="f-baf8b88d2273e491"><h3><code>micron::quake_heap::~quake_heap()</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L389">line 389</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~quake_heap()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~quake_heap()
+  {
+    clear();
+    __drain_pools();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-a0c975e16a4a292e">clear</a>, <a href="quake_heap.hpp.html#f-71f31d0704164a7a">__drain_pools</a>.</p></section><section class="function-entry" id="f-08396d331e63973d"><h3><code>micron::quake_heap::quake_heap()</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L395">line 395</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>quake_heap() : forest(), fkeys(), min_node(nullptr), total(0), levels(0), comp(), __node_pool(nullptr), __entry_pool(nullptr)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">quake_heap() : forest(), fkeys(), min_node(nullptr), total(0), levels(0), comp(), __node_pool(nullptr), __entry_pool(nullptr)
+  {
+    for ( u32 i = 0; i &lt; kMaxLevels; ++i ) counts[i] = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fbc70f6816984b54"><h3><code>micron::quake_heap::quake_heap(const Compare &amp;c)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L400">line 400</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit quake_heap(const Compare &amp;c) : quake_heap()</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Compare &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit quake_heap(const Compare &amp;c) : quake_heap() { comp = c; }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-1b788e95a876cb0c"><h3><code>micron::quake_heap::quake_heap(const quake_heap &amp;)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L402">line 402</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>quake_heap(const quake_heap &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quake_heap &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-9a235432f0b41e42"><h3><code>micron::quake_heap::operator=(const quake_heap &amp;)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L403">line 403</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>quake_heap &amp;operator=(const quake_heap &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quake_heap &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-8a590b99e4fc7a58"><h3><code>micron::quake_heap::quake_heap(quake_heap &amp;&amp;o) noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L405">line 405</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>quake_heap(quake_heap &amp;&amp;o) noexcept
+      : forest(micron::move(o.forest)), fkeys(micron::move(o.fkeys)), min_node(o.min_node), total(o.total), levels(o.levels),
+        comp(micron::move(o.comp)), __node_pool(o.__node_pool), __entry_pool(o.__entry_pool)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quake_heap &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">quake_heap(quake_heap &amp;&amp;o) noexcept
+      : forest(micron::move(o.forest)), fkeys(micron::move(o.fkeys)), min_node(o.min_node), total(o.total), levels(o.levels),
+        comp(micron::move(o.comp)), __node_pool(o.__node_pool), __entry_pool(o.__entry_pool)
+  {
+    for ( u32 i = 0; i &lt; kMaxLevels; ++i ) counts[i] = o.counts[i];
+    o.min_node = nullptr;
+    o.total = 0;
+    o.levels = 0;
+    o.__node_pool = nullptr;
+    o.__entry_pool = nullptr;
+    for ( u32 i = 0; i &lt; kMaxLevels; ++i ) o.counts[i] = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a5caa15919f3297d"><h3><code>micron::quake_heap::operator=(quake_heap &amp;&amp;o) noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L419">line 419</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>quake_heap &amp;
+  operator=(quake_heap &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quake_heap &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">quake_heap &amp;
+  operator=(quake_heap &amp;&amp;o) noexcept
+  {
+    if ( this != &amp;o ) {
+      clear();
+      __drain_pools();
+      forest = micron::move(o.forest);
+      if constexpr ( __simd_on ) fkeys = micron::move(o.fkeys);
+      min_node = o.min_node;
+      total = o.total;
+      levels = o.levels;
+      comp = micron::move(o.comp);
+      __node_pool = o.__node_pool;
+      __entry_pool = o.__entry_pool;
+      for ( u32 i = 0; i &lt; kMaxLevels; ++i ) counts[i] = o.counts[i];
+      o.min_node = nullptr;
+      o.total = 0;
+      o.levels = 0;
+      o.__node_pool = nullptr;
+      o.__entry_pool = nullptr;
+      for ( u32 i = 0; i &lt; kMaxLevels; ++i ) o.counts[i] = 0;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L440">line 440</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-a0c975e16a4a292e">clear</a>, <a href="quake_heap.hpp.html#f-71f31d0704164a7a">__drain_pools</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-9fd721563c432866"><h3><code>micron::quake_heap::empty() const noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L444">line 444</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>total == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const noexcept
+  {
+    return total == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total == 0</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L446">line 446</a></td></tr></tbody></table></section><section class="function-entry" id="f-dcc6ef592e7cf134"><h3><code>micron::quake_heap::size() const noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L450">line 450</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>total</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return total;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L452">line 452</a></td></tr></tbody></table></section><section class="function-entry" id="f-207a45842c9e8f21"><h3><code>micron::quake_heap::find_min() const</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L456">line 456</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_reference
+  find_min() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_reference
+  find_min() const
+  {
+    if ( !min_node ) exc&lt;except::library_error&gt;(&quot;quake_heap::find_min() empty&quot;);
+    return min_node-&gt;e-&gt;value;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>min_node-&gt;e-&gt;value</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L459">line 459</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;quake_heap::find_min() empty&quot;)</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L458">line 458</a><br>Within <code>( !min_node )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-e14a022ccff49d6b"><h3><code>micron::quake_heap::peek() const</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L463">line 463</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_reference
+  peek() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>find_min()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_reference
+  peek() const
+  {
+    return find_min();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>find_min()</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L465">line 465</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-207a45842c9e8f21">find_min</a>.</p></section><section class="function-entry" id="f-65fc191e7ceac784"><h3><code>micron::quake_heap::insert(const T &amp;v)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L469">line 469</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>handle
+  insert(const T &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li></ul><h4>Effects</h4><p>Returns <code>__insert_entry(__acquire_entry(v))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">handle
+  insert(const T &amp;v)
+  {
+    return __insert_entry(__acquire_entry(v));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__insert_entry(__acquire_entry(v))</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L471">line 471</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-f2c30aee5b9f4bab">__insert_entry</a>, <a href="quake_heap.hpp.html#f-b4d31b9ded7e8437">__acquire_entry</a>.</p></section><section class="function-entry" id="f-83b1c4474048de57"><h3><code>micron::quake_heap::insert(T &amp;&amp;v)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L475">line 475</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>handle
+  insert(T &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Returns <code>__insert_entry(__acquire_entry(micron::move(v)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">handle
+  insert(T &amp;&amp;v)
+  {
+    return __insert_entry(__acquire_entry(micron::move(v)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__insert_entry(__acquire_entry(micron::move(v)))</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L477">line 477</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-f2c30aee5b9f4bab">__insert_entry</a>, <a href="quake_heap.hpp.html#f-b4d31b9ded7e8437">__acquire_entry</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-d21cd031635179d6"><h3><code>micron::quake_heap::emplace(Args &amp;&amp;...args)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L482">line 482</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  handle
+  emplace(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Returns <code>__insert_entry(__acquire_entry(micron::forward&lt;Args&gt;(args)...))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  handle
+  emplace(Args &amp;&amp;...args)
+  {
+    return __insert_entry(__acquire_entry(micron::forward&lt;Args&gt;(args)...));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__insert_entry(__acquire_entry(micron::forward&lt;Args&gt;(args)...))</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L484">line 484</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-f2c30aee5b9f4bab">__insert_entry</a>, <a href="quake_heap.hpp.html#f-b4d31b9ded7e8437">__acquire_entry</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-543f599db0a5865e"><h3><code>micron::quake_heap::decrease_key(handle h, const T &amp;nv)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L488">line 488</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  decrease_key(handle h, const T &amp;nv)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>handle h</code></li><li><code>const T &amp;nv</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  decrease_key(handle h, const T &amp;nv)
+  {
+    entry *e = h.e;
+    if ( !e ) return;
+    if ( !comp(nv, e-&gt;value) ) return;
+    e-&gt;value = nv;
+    node *x = e-&gt;high;
+    if ( x-&gt;parent ) {
+      node *p = x-&gt;parent;
+      if ( p-&gt;left == x )
+        p-&gt;left = nullptr;
+      else if ( p-&gt;right == x )
+        p-&gt;right = nullptr;
+      __push_root(x);
+    } else if constexpr ( __simd_on ) {
+      fkeys[x-&gt;fpos] = e-&gt;value;
+    }
+    if ( !min_node || comp(e-&gt;value, min_node-&gt;e-&gt;value) ) min_node = x;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L491">line 491</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L492">line 492</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-9ad9fb76e845b846">__push_root</a>.</p></section><section class="function-entry" id="f-ab5e648e030ebb5f"><h3><code>micron::quake_heap::extract_min()</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L509">line 509</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  extract_min()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  extract_min()
+  {
+    if ( !min_node ) exc&lt;except::library_error&gt;(&quot;quake_heap::extract_min() empty&quot;);
+    node *r = min_node;
+    entry *e = r-&gt;e;
+    T result = micron::move(e-&gt;value);
+    __shake(r);
+    __recycle_entry(e);
+    --total;
+    min_node = nullptr;
+    __consolidate();
+    __quake();
+    __update_min();
+    return result;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L522">line 522</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;quake_heap::extract_min() empty&quot;)</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L511">line 511</a><br>Within <code>( !min_node )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="quake_heap.hpp.html#f-c066725d066b5baf">__shake</a>, <a href="quake_heap.hpp.html#f-152babf385bc8487">__recycle_entry</a>, <a href="quake_heap.hpp.html#f-b82d54e656ae1fff">__consolidate</a>, <a href="quake_heap.hpp.html#f-09f8a8a3a18ff80c">__quake</a>, <a href="quake_heap.hpp.html#f-7c73d31f303b110b">__update_min</a>.</p></section><section class="function-entry" id="f-c7a5b98bbafcd795"><h3><code>micron::quake_heap::erase(handle h)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L526">line 526</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  erase(handle h)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>handle h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  erase(handle h)
+  {
+    entry *e = h.e;
+    if ( !e || total == 0 ) return;
+    node *x = e-&gt;high;
+    if ( x-&gt;parent ) {
+      node *p = x-&gt;parent;
+      if ( p-&gt;left == x )
+        p-&gt;left = nullptr;
+      else if ( p-&gt;right == x )
+        p-&gt;right = nullptr;
+      __push_root(x);
+    }
+    min_node = x;
+    (void)extract_min();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L529">line 529</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-9ad9fb76e845b846">__push_root</a>, <a href="quake_heap.hpp.html#f-ab5e648e030ebb5f">extract_min</a>.</p></section><section class="function-entry" id="f-6f9fbf18d3208dc7"><h3><code>micron::quake_heap::meld(quake_heap &amp;&amp;o)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L544">line 544</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  meld(quake_heap &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quake_heap &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  meld(quake_heap &amp;&amp;o)
+  {
+    if ( o.total == 0 ) return;
+    const u32 ocnt = static_cast&lt;u32&gt;(o.forest.size());
+    node *omin = o.min_node;
+    for ( u32 i = 0; i &lt; ocnt; ++i ) __push_root(o.forest[i]);
+    for ( u32 h = 0; h &lt; o.levels; ++h ) counts[h] += o.counts[h];
+    if ( o.levels &gt; levels ) levels = o.levels;
+    total += o.total;
+    if ( !min_node || (omin &amp;&amp; comp(omin-&gt;e-&gt;value, min_node-&gt;e-&gt;value)) ) min_node = omin;
+
+    o.forest.set_size(0);
+    if constexpr ( __simd_on ) o.fkeys.set_size(0);
+    o.min_node = nullptr;
+    o.total = 0;
+    for ( u32 i = 0; i &lt; kMaxLevels; ++i ) o.counts[i] = 0;
+    o.levels = 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L546">line 546</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-9ad9fb76e845b846">__push_root</a>.</p></section><section class="function-entry" id="f-a0c975e16a4a292e"><h3><code>micron::quake_heap::clear() noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L564">line 564</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear() noexcept
+  {
+    const usize m = forest.size();
+    for ( usize i = 0; i &lt; m; ++i ) __free_subtree(forest[i]);
+    forest.clear();
+    if constexpr ( __simd_on ) fkeys.clear();
+    __zero_counts();
+    total = 0;
+    min_node = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-33e1aac8f718c62d">__free_subtree</a>, <a href="quake_heap.hpp.html#f-274ae6c261ee75b1">__zero_counts</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-f35fca333574c05b"><h3><code>micron::__quake_less::operator()(const T &amp;a, const T &amp;b) const</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L26">line 26</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  operator()(const T &amp;a, const T &amp;b) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;a</code></li><li><code>const T &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>a &lt; b</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  operator()(const T &amp;a, const T &amp;b) const
+  {
+    return a &lt; b;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a &lt; b</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L28">line 28</a></td></tr></tbody></table></section><section class="function-entry" id="f-f32e85b296f37cfa"><h3><code>micron::__quake_greater::operator()(const T &amp;a, const T &amp;b) const</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L34">line 34</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  operator()(const T &amp;a, const T &amp;b) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;a</code></li><li><code>const T &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>a &gt; b</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  operator()(const T &amp;a, const T &amp;b) const
+  {
+    return a &gt; b;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a &gt; b</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L36">line 36</a></td></tr></tbody></table></section><section class="function-entry" id="f-9d302d8f3d9d91bc"><h3><code>micron::quake_heap::__acquire_node()</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L99">line 99</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline node *
+  __acquire_node()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline node *
+  __acquire_node()
+  {
+    if ( __node_pool ) {
+      __pool_link *slot = __node_pool;
+      __node_pool = slot-&gt;next;
+      const usize allocation_len = slot-&gt;allocation_len;
+      return new (static_cast&lt;void *&gt;(slot)) node{ nullptr, nullptr, nullptr, nullptr, 0, 0, allocation_len };
+    }
+    chunk&lt;byte&gt; storage = __allocator_create&lt;Alloc, alignof(node)&gt;(sizeof(node));
+    return new (static_cast&lt;void *&gt;(storage.ptr)) node{ nullptr, nullptr, nullptr, nullptr, 0, 0, storage.len };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>new (static_cast&lt;void *&gt;(slot)) node{ nullptr, nullptr, nullptr, nullptr, 0, 0, allocation_len }</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L105">line 105</a></td></tr><tr class="t-dsc"><td><code>new (static_cast&lt;void *&gt;(storage.ptr)) node{ nullptr, nullptr, nullptr, nullptr, 0, 0, storage.len }</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-72a42b38fc50eab2">__allocator_create&lt;Alloc, alignof(node)&gt;</a>.</p></section><section class="function-entry" id="f-d7f4181e6f18dfd6"><h3><code>micron::quake_heap::__recycle_node(node *n) noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L112">line 112</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+  __recycle_node(node *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+  __recycle_node(node *n) noexcept
+  {
+    const usize allocation_len = n-&gt;allocation_len;
+    n-&gt;~node();
+    __node_pool = new (static_cast&lt;void *&gt;(n)) __pool_link{ __node_pool, allocation_len };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b4d31b9ded7e8437"><h3><code>micron::quake_heap::__acquire_entry(A &amp;&amp;...a)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L121">line 121</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... A&gt;
+  [[gnu::always_inline]] inline entry *
+  __acquire_entry(A &amp;&amp;...a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A &amp;&amp;...a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... A&gt;
+  [[gnu::always_inline]] inline entry *
+  __acquire_entry(A &amp;&amp;...a)
+  {
+    entry *e;
+    if ( __entry_pool ) {
+      __pool_link *slot = __entry_pool;
+      __entry_pool = slot-&gt;next;
+      e = reinterpret_cast&lt;entry *&gt;(slot);
+    } else {
+      chunk&lt;byte&gt; storage = __allocator_create&lt;Alloc, alignof(entry)&gt;(sizeof(entry));
+      e = reinterpret_cast&lt;entry *&gt;(storage.ptr);
+      new (static_cast&lt;void *&gt;(e)) __pool_link{ nullptr, storage.len };
+    }
+    const usize allocation_len = reinterpret_cast&lt;__pool_link *&gt;(e)-&gt;allocation_len;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      new (static_cast&lt;void *&gt;(e)) entry{ T(micron::forward&lt;A&gt;(a)...), nullptr, allocation_len };
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __allocator_destroy&lt;Alloc, alignof(entry)&gt;({ reinterpret_cast&lt;byte *&gt;(e), allocation_len });
+      throw;
+    }
+#endif
+    return e;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>e</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L144">line 144</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L141">line 141</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-72a42b38fc50eab2">__allocator_create&lt;Alloc, alignof(entry)&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;A&gt;</a>, <a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-ec049c2a5d170c8b">__allocator_destroy&lt;Alloc, alignof(entry)&gt;</a>.</p></section><section class="function-entry" id="f-152babf385bc8487"><h3><code>micron::quake_heap::__recycle_entry(entry *e) noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L148">line 148</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+  __recycle_entry(entry *e) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>entry *e</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+  __recycle_entry(entry *e) noexcept
+  {
+    const usize allocation_len = e-&gt;allocation_len;
+    e-&gt;~entry();
+    __entry_pool = new (static_cast&lt;void *&gt;(e)) __pool_link{ __entry_pool, allocation_len };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-71f31d0704164a7a"><h3><code>micron::quake_heap::__drain_pools() noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L156">line 156</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __drain_pools() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __drain_pools() noexcept
+  {
+    while ( __node_pool ) {
+      __pool_link *nx = __node_pool-&gt;next;
+      const usize allocation_len = __node_pool-&gt;allocation_len;
+      __allocator_destroy&lt;Alloc, alignof(node)&gt;({ reinterpret_cast&lt;byte *&gt;(__node_pool), allocation_len });
+      __node_pool = nx;
+    }
+    while ( __entry_pool ) {
+      __pool_link *nx = __entry_pool-&gt;next;
+      const usize allocation_len = __entry_pool-&gt;allocation_len;
+      __allocator_destroy&lt;Alloc, alignof(entry)&gt;({ reinterpret_cast&lt;byte *&gt;(__entry_pool), allocation_len });
+      __entry_pool = nx;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-ec049c2a5d170c8b">__allocator_destroy&lt;Alloc, alignof(node)&gt;</a>, <a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-ec049c2a5d170c8b">__allocator_destroy&lt;Alloc, alignof(entry)&gt;</a>.</p></section><section class="function-entry" id="f-9ad9fb76e845b846"><h3><code>micron::quake_heap::__push_root(node *n)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L173">line 173</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+  __push_root(node *n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+  __push_root(node *n)
+  {
+    n-&gt;fpos = static_cast&lt;u32&gt;(forest.size());
+    n-&gt;parent = nullptr;
+    forest.push_back(n);
+    if constexpr ( __simd_on ) fkeys.push_back(n-&gt;e-&gt;value);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e575961a1656007f"><h3><code>micron::quake_heap::__erase_root(u32 pos)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L182">line 182</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+  __erase_root(u32 pos)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 pos</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+  __erase_root(u32 pos)
+  {
+    const u32 last = static_cast&lt;u32&gt;(forest.size()) - 1;
+    if ( pos != last ) {
+      node *m = forest[last];
+      forest[pos] = m;
+      m-&gt;fpos = pos;
+      if constexpr ( __simd_on ) fkeys[pos] = fkeys[last];
+    }
+    forest.pop_back();
+    if constexpr ( __simd_on ) fkeys.pop_back();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-615a36533c26194d"><h3><code>micron::quake_heap::__bump_levels(u32 h) noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L196">line 196</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __bump_levels(u32 h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __bump_levels(u32 h) noexcept
+  {
+    if ( h + 1 &gt; levels ) levels = h + 1;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f51738ca18bd5a86"><h3><code>micron::quake_heap::__link(node *a, node *b)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L202">line 202</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>node *
+  __link(node *a, node *b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *a</code></li><li><code>node *b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">node *
+  __link(node *a, node *b)
+  {
+    node *w, *l;
+    if ( comp(b-&gt;e-&gt;value, a-&gt;e-&gt;value) ) {
+      w = b;
+      l = a;
+    } else {
+      w = a;
+      l = b;
+    }
+    node *p = __acquire_node();
+    p-&gt;e = w-&gt;e;
+    p-&gt;left = w;
+    p-&gt;right = l;
+    p-&gt;parent = nullptr;
+    p-&gt;height = w-&gt;height + 1;
+    w-&gt;parent = p;
+    l-&gt;parent = p;
+    w-&gt;e-&gt;high = p;
+    if ( p-&gt;height &lt; kMaxLevels ) counts[p-&gt;height]++;
+    __bump_levels(p-&gt;height);
+    return p;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>p</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L223">line 223</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-9d302d8f3d9d91bc">__acquire_node</a>, <a href="quake_heap.hpp.html#f-615a36533c26194d">__bump_levels</a>.</p></section><section class="function-entry" id="f-c066725d066b5baf"><h3><code>micron::quake_heap::__shake(node *r)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L227">line 227</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __shake(node *r)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __shake(node *r)
+  {
+    __erase_root(r-&gt;fpos);
+    entry *te = r-&gt;e;
+    node *cur = r;
+    while ( cur ) {
+      if ( cur-&gt;height &lt; kMaxLevels &amp;&amp; counts[cur-&gt;height] ) counts[cur-&gt;height]--;
+      node *L = cur-&gt;left;
+      node *R = cur-&gt;right;
+      node *win = nullptr;
+      if ( L &amp;&amp; L-&gt;e == te ) {
+        win = L;
+        if ( R ) __push_root(R);
+      } else if ( R &amp;&amp; R-&gt;e == te ) {
+        win = R;
+        if ( L ) __push_root(L);
+      } else {      // leaf (no child carries te)
+        if ( L ) __push_root(L);
+        if ( R ) __push_root(R);
+      }
+      __recycle_node(cur);
+      cur = win;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-e575961a1656007f">__erase_root</a>, <a href="quake_heap.hpp.html#f-9ad9fb76e845b846">__push_root</a>, <a href="quake_heap.hpp.html#f-d7f4181e6f18dfd6">__recycle_node</a>.</p></section><section class="function-entry" id="f-b82d54e656ae1fff"><h3><code>micron::quake_heap::__consolidate()</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L253">line 253</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __consolidate()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __consolidate()
+  {
+    node *by_h[kMaxLevels];
+    for ( u32 i = 0; i &lt; kMaxLevels; ++i ) by_h[i] = nullptr;
+
+    const u32 cnt = static_cast&lt;u32&gt;(forest.size());
+    for ( u32 i = 0; i &lt; cnt; ++i ) {
+      node *r = forest[i];
+      r-&gt;parent = nullptr;
+      u32 h = r-&gt;height;
+      while ( h &lt; kMaxLevels &amp;&amp; by_h[h] ) {
+        node *o = by_h[h];
+        by_h[h] = nullptr;
+        r = __link(r, o);
+        h = r-&gt;height;
+      }
+      if ( h &lt; kMaxLevels ) by_h[h] = r;
+    }
+
+    forest.clear();
+    if constexpr ( __simd_on ) fkeys.clear();
+    for ( u32 h = 0; h &lt; kMaxLevels; ++h )
+      if ( by_h[h] ) __push_root(by_h[h]);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-f51738ca18bd5a86">__link</a>, <a href="quake_heap.hpp.html#f-9ad9fb76e845b846">__push_root</a>.</p></section><section class="function-entry" id="f-8643813c9a3552dc"><h3><code>micron::quake_heap::__decap(node *n, u32 keep)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L279">line 279</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __decap(node *n, u32 keep)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *n</code></li><li><code>u32 keep</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __decap(node *n, u32 keep)
+  {
+    if ( n-&gt;height &lt;= keep ) {
+      n-&gt;parent = nullptr;
+      n-&gt;e-&gt;high = n;
+      __push_root(n);
+      return;
+    }
+    if ( n-&gt;left ) __decap(n-&gt;left, keep);
+    if ( n-&gt;right ) __decap(n-&gt;right, keep);
+    __recycle_node(n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L285">line 285</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-9ad9fb76e845b846">__push_root</a>, <a href="quake_heap.hpp.html#f-d7f4181e6f18dfd6">__recycle_node</a>.</p></section><section class="function-entry" id="f-09f8a8a3a18ff80c"><h3><code>micron::quake_heap::__quake()</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L293">line 293</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __quake()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __quake()
+  {
+    if ( levels &lt; 2 ) return;
+    const usize viol = micron::simd::first_quake_violation(counts, levels, AlphaNum, AlphaDen);
+    if ( viol &gt;= levels ) return;      // invariant holds everywhere
+
+    const u32 keep = static_cast&lt;u32&gt;(viol);
+
+    node *roots[kMaxLevels];
+    u32 rc = 0;
+    const u32 cnt = static_cast&lt;u32&gt;(forest.size());
+    for ( u32 i = 0; i &lt; cnt &amp;&amp; rc &lt; kMaxLevels; ++i ) roots[rc++] = forest[i];
+
+    forest.clear();
+    if constexpr ( __simd_on ) fkeys.clear();
+    for ( u32 h = keep + 1; h &lt; levels; ++h ) counts[h] = 0;
+    levels = keep + 1;
+
+    for ( u32 i = 0; i &lt; rc; ++i ) __decap(roots[i], keep);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L295">line 295</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L297">line 297</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../simd/reduce.hpp.html#f-fe3ebbadfa85a7e4">micron::simd::first_quake_violation</a>, <a href="quake_heap.hpp.html#f-8643813c9a3552dc">__decap</a>.</p></section><section class="function-entry" id="f-7c73d31f303b110b"><h3><code>micron::quake_heap::__update_min()</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L315">line 315</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __update_min()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __update_min()
+  {
+    if ( forest.size() == 0 ) {
+      min_node = nullptr;
+      return;
+    }
+    usize idx;
+    if constexpr ( __simd_on ) {
+      idx = __simd_min ? micron::simd::argmin&lt;T&gt;(fkeys.data(), fkeys.size()) : micron::simd::argmax&lt;T&gt;(fkeys.data(), fkeys.size());
+    } else {
+      idx = 0;
+      const usize m = forest.size();
+      for ( usize k = 1; k &lt; m; ++k )
+        if ( comp(forest[k]-&gt;e-&gt;value, forest[idx]-&gt;e-&gt;value) ) idx = k;
+    }
+    min_node = forest[idx];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L319">line 319</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../simd/reduce.hpp.html#f-100618fc5594e131">micron::simd::argmin&lt;T&gt;</a>, <a href="../simd/reduce.hpp.html#f-d6e3e18de9822695">micron::simd::argmax&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-33e1aac8f718c62d"><h3><code>micron::quake_heap::__free_subtree(node *n) noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L334">line 334</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __free_subtree(node *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __free_subtree(node *n) noexcept
+  {
+    if ( !n ) return;
+    __free_subtree(n-&gt;left);
+    __free_subtree(n-&gt;right);
+    if ( n-&gt;e-&gt;high == n ) __recycle_entry(n-&gt;e);
+    __recycle_node(n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/quake_heap.hpp.html#L336">line 336</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-152babf385bc8487">__recycle_entry</a>, <a href="quake_heap.hpp.html#f-d7f4181e6f18dfd6">__recycle_node</a>.</p></section><section class="function-entry" id="f-274ae6c261ee75b1"><h3><code>micron::quake_heap::__zero_counts() noexcept</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L344">line 344</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __zero_counts() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __zero_counts() noexcept
+  {
+    for ( u32 i = 0; i &lt; kMaxLevels; ++i ) counts[i] = 0;
+    levels = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f2c30aee5b9f4bab"><h3><code>micron::quake_heap::__insert_entry(entry *e)</code></h3><p>Defined in <code>heap/quake_heap.hpp</code>, <a href="../../source/heap/quake_heap.hpp.html#L371">line 371</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>handle
+  __insert_entry(entry *e)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>entry *e</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">handle
+  __insert_entry(entry *e)
+  {
+    node *n = __acquire_node();
+    n-&gt;e = e;
+    n-&gt;left = nullptr;
+    n-&gt;right = nullptr;
+    n-&gt;parent = nullptr;
+    n-&gt;height = 0;
+    e-&gt;high = n;
+    __push_root(n);
+    if ( counts[0]++ == 0 &amp;&amp; levels &lt; 1 ) levels = 1;
+    __bump_levels(0);
+    ++total;
+    if ( !min_node || comp(e-&gt;value, min_node-&gt;e-&gt;value) ) min_node = n;
+    return handle{ e };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>handle{ e }</code></td><td><a href="../../source/heap/quake_heap.hpp.html#L385">line 385</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quake_heap.hpp.html#f-9d302d8f3d9d91bc">__acquire_node</a>, <a href="quake_heap.hpp.html#f-9ad9fb76e845b846">__push_root</a>, <a href="quake_heap.hpp.html#f-615a36533c26194d">__bump_levels</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

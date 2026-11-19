@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/integrate/quad.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/integrate/quad.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/integrate.html">Integration</a></div><p>Defined in header <code>&lt;micron/math/integrate/quad.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/integrate/quad.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-e74119c53b91874a">micron::math::integrate::quad_status</code></td><td>enum; line 29</td></tr><tr class="t-dsc"><td><code id="s-f5e9b1bf4e18ca3e">micron::math::integrate::quad_status::ok</code></td><td>enumerator; line 30</td></tr><tr class="t-dsc"><td><code id="s-1c16aeafcc7753aa">micron::math::integrate::quad_status::max_depth</code></td><td>enumerator; line 31</td></tr><tr class="t-dsc"><td><code id="s-88c3a46e3365abce">micron::math::integrate::quad_status::abnormal</code></td><td>enumerator; line 32</td></tr><tr class="t-dsc"><td><code id="s-dbeb2df901734b8a">micron::math::integrate::quad_status::max_evaluations</code></td><td>enumerator; line 33</td></tr><tr class="t-dsc"><td><code id="s-7442759cdfd773b1">micron::math::integrate::quad_status::max_intervals</code></td><td>enumerator; line 34</td></tr><tr class="t-dsc"><td><code id="s-1432e6fd2115753a">micron::math::integrate::quad_status::roundoff</code></td><td>enumerator; line 35</td></tr><tr class="t-dsc"><td><code id="s-c4e9f5e61a367141">micron::math::integrate::quad_status::non_finite</code></td><td>enumerator; line 36</td></tr><tr class="t-dsc"><td><code id="s-2ac4660921c0f85f">micron::math::integrate::quad_status::divergent</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-f801402adc504dd5">micron::math::integrate::quad_status::invalid_input</code></td><td>enumerator; line 38</td></tr><tr class="t-dsc"><td><code id="s-b49fbda6ff4fa219">micron::math::integrate::quad_status::maximum_evaluations</code></td><td>enumerator; line 39</td></tr><tr class="t-dsc"><td><code id="s-616aaf1f22a0b46a">micron::math::integrate::quad_status::maximum_intervals</code></td><td>enumerator; line 40</td></tr><tr class="t-dsc"><td><code id="s-a25f6186e0ce43ff">micron::math::integrate::quad_status::roundoff_error</code></td><td>enumerator; line 41</td></tr><tr class="t-dsc"><td><code id="s-05afa3bf1e416553">micron::math::integrate::gauss_kronrod_rule</code></td><td>enum; line 44</td></tr><tr class="t-dsc"><td><code id="s-d7daefa99850941e">micron::math::integrate::gauss_kronrod_rule::gk15</code></td><td>enumerator; line 44</td></tr><tr class="t-dsc"><td><code id="s-c07b0d9cca28cfa2">micron::math::integrate::gauss_kronrod_rule::gk21</code></td><td>enumerator; line 44</td></tr><tr class="t-dsc"><td><code id="s-6711edcea695c3a1">micron::math::integrate::quad_error_norm</code></td><td>enum; line 45</td></tr><tr class="t-dsc"><td><code id="s-1f4f8b59a1a481a3">micron::math::integrate::quad_error_norm::l2</code></td><td>enumerator; line 45</td></tr><tr class="t-dsc"><td><code id="s-ecb35fef0fec6cdf">micron::math::integrate::quad_error_norm::maximum</code></td><td>enumerator; line 45</td></tr><tr class="t-dsc"><td><code id="s-a39d6b17d89fd2b9">micron::math::integrate::quad_result</code></td><td>struct; line 47</td></tr><tr class="t-dsc"><td><code id="s-5c48bf5aeef905dc">micron::math::integrate::quad_result::value</code></td><td>member; line 48</td></tr><tr class="t-dsc"><td><code id="s-a942e7c1e3ed2891">micron::math::integrate::quad_result::abs_err</code></td><td>member; line 49</td></tr><tr class="t-dsc"><td><code id="s-9373c64fed7d28b7">micron::math::integrate::quad_result::n_evals</code></td><td>member; line 50</td></tr><tr class="t-dsc"><td><code id="s-ecaf02513fd00c73">micron::math::integrate::quad_result::status</code></td><td>member; line 51</td></tr><tr class="t-dsc"><td><code id="s-786898fb80bb1f6f">micron::math::integrate::quad_result::resabs</code></td><td>member; line 53</td></tr><tr class="t-dsc"><td><code id="s-3ca72e0d3ed711f1">micron::math::integrate::quad_result::resasc</code></td><td>member; line 54</td></tr><tr class="t-dsc"><td><code id="s-cb59b6869d1239f5">micron::math::integrate::quad_result::n_intervals</code></td><td>member; line 55</td></tr><tr class="t-dsc"><td><code id="s-0ea99e0880425f98">micron::math::integrate::quad_result::n_splits</code></td><td>member; line 56</td></tr><tr class="t-dsc"><td><code id="s-5c87055ca2d97c06">micron::math::integrate::quad_result::n_roundoff</code></td><td>member; line 57</td></tr><tr class="t-dsc"><td><code id="s-088e551425082f0b">micron::math::integrate::quad_options</code></td><td>struct; line 60</td></tr><tr class="t-dsc"><td><code id="s-28b445e98117cd1e">micron::math::integrate::quad_options::max_depth</code></td><td>member; line 81</td></tr><tr class="t-dsc"><td><code id="s-acdb2140647c6c0b">micron::math::integrate::quad_options::rule</code></td><td>member; line 82</td></tr><tr class="t-dsc"><td><code id="s-c83cf709de5aebc7">micron::math::integrate::quad_options::accumulation</code></td><td>member; line 94</td></tr><tr class="t-dsc"><td><code id="s-9b17b16c3e38d5b5">micron::math::integrate::quad_interval</code></td><td>struct; line 97</td></tr><tr class="t-dsc"><td><code id="s-9fec41738b920b11">micron::math::integrate::quad_interval::a</code></td><td>member; line 98</td></tr><tr class="t-dsc"><td><code id="s-fff7e69de70f83ef">micron::math::integrate::quad_interval::b</code></td><td>member; line 99</td></tr><tr class="t-dsc"><td><code id="s-2def9939da719ed4">micron::math::integrate::quad_interval::value</code></td><td>member; line 100</td></tr><tr class="t-dsc"><td><code id="s-d4fcbc561c763c4a">micron::math::integrate::quad_interval::error</code></td><td>member; line 101</td></tr><tr class="t-dsc"><td><code id="s-65823a9b6c8387db">micron::math::integrate::quad_interval::resabs</code></td><td>member; line 102</td></tr><tr class="t-dsc"><td><code id="s-c9dd0ab9cca25c1d">micron::math::integrate::quad_interval::resasc</code></td><td>member; line 103</td></tr><tr class="t-dsc"><td><code id="s-eb937daf22ccc21b">micron::math::integrate::quad_interval::depth</code></td><td>member; line 104</td></tr><tr class="t-dsc"><td><code id="s-c85068889e2bc303">micron::math::integrate::quad_workspace</code></td><td>struct; line 107</td></tr><tr class="t-dsc"><td><code id="s-eda4a00b5067c386">micron::math::integrate::quad_workspace::heap</code></td><td>member; line 109</td></tr><tr class="t-dsc"><td><code id="s-9a48115397a7bf0d">micron::math::integrate::quad_workspace::size</code></td><td>member; line 110</td></tr><tr class="t-dsc"><td><code id="s-50dc032eae291652">micron::math::integrate::quad_workspace::capacity</code></td><td>member; line 112</td></tr><tr class="t-dsc"><td><code id="s-69bae53254f2fdee">micron::math::integrate::quad_vec_result</code></td><td>struct; line 552</td></tr><tr class="t-dsc"><td><code id="s-92953cd1dcd28553">micron::math::integrate::quad_vec_result::value</code></td><td>member; line 553</td></tr><tr class="t-dsc"><td><code id="s-eb348270eef55298">micron::math::integrate::quad_vec_result::abs_err</code></td><td>member; line 554</td></tr><tr class="t-dsc"><td><code id="s-8ae22d70f4518818">micron::math::integrate::quad_vec_result::n_evals</code></td><td>member; line 555</td></tr><tr class="t-dsc"><td><code id="s-2367fff035c42c43">micron::math::integrate::quad_vec_result::status</code></td><td>member; line 556</td></tr><tr class="t-dsc"><td><code id="s-4da648d2f5a2a146">micron::math::integrate::quad_vec_result::error_norm</code></td><td>member; line 557</td></tr><tr class="t-dsc"><td><code id="s-3c8f89d0cf5202b6">micron::math::integrate::quad_vec_result::n_intervals</code></td><td>member; line 558</td></tr><tr class="t-dsc"><td><code id="s-48fe0f310ba4af7b">micron::math::integrate::quad_vec_interval</code></td><td>struct; line 561</td></tr><tr class="t-dsc"><td><code id="s-579e4adaa6e2309f">micron::math::integrate::quad_vec_interval::a</code></td><td>member; line 562</td></tr><tr class="t-dsc"><td><code id="s-61ff91866c925ebd">micron::math::integrate::quad_vec_interval::b</code></td><td>member; line 563</td></tr><tr class="t-dsc"><td><code id="s-51b3e8d97c5b1f8d">micron::math::integrate::quad_vec_interval::value</code></td><td>member; line 564</td></tr><tr class="t-dsc"><td><code id="s-1a5e9b3c46766703">micron::math::integrate::quad_vec_interval::error</code></td><td>member; line 565</td></tr><tr class="t-dsc"><td><code id="s-0509ef06975d4dac">micron::math::integrate::quad_vec_interval::priority</code></td><td>member; line 566</td></tr><tr class="t-dsc"><td><code id="s-d6b09cbe7fbf2089">micron::math::integrate::quad_vec_interval::depth</code></td><td>member; line 567</td></tr><tr class="t-dsc"><td><code id="s-40b6af733b5353e8">micron::math::integrate::quad_vec_workspace</code></td><td>struct; line 570</td></tr><tr class="t-dsc"><td><code id="s-8dc3c9eac8a6cb4d">micron::math::integrate::quad_vec_workspace::heap</code></td><td>member; line 572</td></tr><tr class="t-dsc"><td><code id="s-335f7f48d2877700">micron::math::integrate::quad_vec_workspace::size</code></td><td>member; line 573</td></tr><tr class="t-dsc"><td><code id="s-dbe20592a67d3f9c">micron::math::integrate::quad_vec_workspace::capacity</code></td><td>member; line 575</td></tr><tr class="t-dsc"><td><a href="#f-418d33d6bebe49cc">micron::math::integrate::quad_workspace::reset() noexcept</a></td><td>function; line 115</td></tr><tr class="t-dsc"><td><a href="#f-d4f7dd11c56e7017">micron::math::integrate::quad(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace) noexcept</a></td><td>function; line 517</td></tr><tr class="t-dsc"><td><a href="#f-9fc1c085873e254c">micron::math::integrate::quad(Fn f, F a, F b, quad_workspace&lt;F, Capacity&gt; &amp;workspace, const quad_options&lt;F&gt; &amp;options = {}) noexcept</a></td><td>function; line 524</td></tr><tr class="t-dsc"><td><a href="#f-bad381c82b21233b">micron::math::integrate::quad(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options) noexcept</a></td><td>function; line 531</td></tr><tr class="t-dsc"><td><a href="#f-d56118192b753358">micron::math::integrate::quad(Fn f, F a, F b, F abs_tol, F rel_tol, usize max_depth = 50, usize max_func_evals = 0) noexcept</a></td><td>function; line 539</td></tr><tr class="t-dsc"><td><a href="#f-102c0274745d4788">micron::math::integrate::quad_vec_workspace::reset() noexcept</a></td><td>function; line 578</td></tr><tr class="t-dsc"><td><a href="#f-e9358a012b38f804">micron::math::integrate::quad_vec(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace,
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</a></td><td>function; line 826</td></tr><tr class="t-dsc"><td><a href="#f-c5818098644d2d5b">micron::math::integrate::quad_vec(Fn f, F a, F b, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, const quad_options&lt;F&gt; &amp;options = {},
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</a></td><td>function; line 889</td></tr><tr class="t-dsc"><td><a href="#f-95547526b7f16a06">micron::math::integrate::quad_vec(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace,
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</a></td><td>function; line 898</td></tr><tr class="t-dsc"><td><a href="#f-d0c8ff0a0353179a">micron::math::integrate::quad_batch(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace) noexcept</a></td><td>function; line 923</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-418d33d6bebe49cc"><h3><code>micron::math::integrate::quad_workspace::reset() noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L115">line 115</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  reset() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  reset() noexcept
+  {
+    size = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d4f7dd11c56e7017"><h3><code>micron::math::integrate::quad(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L517">line 517</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, callable_real&lt;F&gt; Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>const quad_options&lt;F&gt; &amp;options</code></li><li><code>quad_workspace&lt;F, Capacity&gt; &amp;workspace</code></li></ul><h4>Effects</h4><p>Returns <code>__impl_quad::dispatch_bounds&lt;F&gt;(f, a, b, options, workspace)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, callable_real&lt;F&gt; Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace) noexcept
+{
+  return __impl_quad::dispatch_bounds&lt;F&gt;(f, a, b, options, workspace);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl_quad::dispatch_bounds&lt;F&gt;(f, a, b, options, workspace)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L519">line 519</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quad.hpp.html#f-d852cde98c37ce2d">__impl_quad::dispatch_bounds&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-9fc1c085873e254c"><h3><code>micron::math::integrate::quad(Fn f, F a, F b, quad_workspace&lt;F, Capacity&gt; &amp;workspace, const quad_options&lt;F&gt; &amp;options = {}) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L524">line 524</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, callable_real&lt;F&gt; Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad(Fn f, F a, F b, quad_workspace&lt;F, Capacity&gt; &amp;workspace, const quad_options&lt;F&gt; &amp;options = {}) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>quad_workspace&lt;F, Capacity&gt; &amp;workspace</code></li><li><code>const quad_options&lt;F&gt; &amp;options = {}</code></li></ul><h4>Effects</h4><p>Returns <code>quad&lt;F&gt;(f, a, b, options, workspace)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, callable_real&lt;F&gt; Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad(Fn f, F a, F b, quad_workspace&lt;F, Capacity&gt; &amp;workspace, const quad_options&lt;F&gt; &amp;options = {}) noexcept
+{
+  return quad&lt;F&gt;(f, a, b, options, workspace);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quad&lt;F&gt;(f, a, b, options, workspace)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L526">line 526</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quad.hpp.html#f-d4f7dd11c56e7017">quad&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-bad381c82b21233b"><h3><code>micron::math::integrate::quad(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L531">line 531</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, callable_real&lt;F&gt; Fn&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>const quad_options&lt;F&gt; &amp;options</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, callable_real&lt;F&gt; Fn&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options) noexcept
+{
+  quad_workspace&lt;F, 128&gt; workspace{};
+  return quad&lt;F&gt;(f, a, b, options, workspace);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quad&lt;F&gt;(f, a, b, options, workspace)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L534">line 534</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quad.hpp.html#f-d4f7dd11c56e7017">quad&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d56118192b753358"><h3><code>micron::math::integrate::quad(Fn f, F a, F b, F abs_tol, F rel_tol, usize max_depth = 50, usize max_func_evals = 0) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L539">line 539</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, callable_real&lt;F&gt; Fn&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad(Fn f, F a, F b, F abs_tol, F rel_tol, usize max_depth = 50, usize max_func_evals = 0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>F abs_tol</code></li><li><code>F rel_tol</code></li><li><code>usize max_depth = 50</code></li><li><code>usize max_func_evals = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, callable_real&lt;F&gt; Fn&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad(Fn f, F a, F b, F abs_tol, F rel_tol, usize max_depth = 50, usize max_func_evals = 0) noexcept
+{
+  quad_options&lt;F&gt; options{};
+  options.abs_tol = abs_tol;
+  options.rel_tol = rel_tol;
+  options.max_depth = max_depth &gt; 64 ? 64 : max_depth;
+  options.max_evals = max_func_evals;
+  options.max_intervals = 128;
+  options.rule = gauss_kronrod_rule::gk15;
+  quad_workspace&lt;F, 128&gt; workspace{};
+  return quad&lt;F&gt;(f, a, b, options, workspace);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quad&lt;F&gt;(f, a, b, options, workspace)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L549">line 549</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quad.hpp.html#f-d4f7dd11c56e7017">quad&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-102c0274745d4788"><h3><code>micron::math::integrate::quad_vec_workspace::reset() noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L578">line 578</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  reset() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  reset() noexcept
+  {
+    size = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e9358a012b38f804"><h3><code>micron::math::integrate::quad_vec(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace,
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L826">line 826</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F, typename Fn, usize Capacity&gt;
+  requires(M &gt;= 2 &amp;&amp; M &lt;= 16)
+[[nodiscard]] inline quad_vec_result&lt;M, F&gt;
+quad_vec(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace,
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>const quad_options&lt;F&gt; &amp;options</code></li><li><code>quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace</code></li><li><code>quad_error_norm norm = quad_error_norm::maximum</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F, typename Fn, usize Capacity&gt;
+  requires(M &gt;= 2 &amp;&amp; M &lt;= 16)
+[[nodiscard]] inline quad_vec_result&lt;M, F&gt;
+quad_vec(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace,
+         quad_error_norm norm = quad_error_norm::maximum) noexcept
+{
+  if ( a != a || b != b ) {
+    quad_vec_result&lt;M, F&gt; result{};
+    result.status = quad_status::invalid_input;
+    return result;
+  }
+  const int ai = ieee::inf_sign&lt;F&gt;(a);
+  const int bi = ieee::inf_sign&lt;F&gt;(b);
+  if ( ai == 0 &amp;&amp; bi == 0 ) {
+    if ( b &lt; a ) {
+      quad_vec_result&lt;M, F&gt; result = __impl_quad_vec::finite&lt;M, F&gt;(f, b, a, options, workspace, norm);
+      for ( usize component = 0; component &lt; M; ++component ) result.value.data[component] = -result.value.data[component];
+      return result;
+    }
+    return __impl_quad_vec::finite&lt;M, F&gt;(f, a, b, options, workspace, norm);
+  }
+  if ( (ai == 1 &amp;&amp; bi == 0) || (ai == 0 &amp;&amp; bi == -1) || (ai == 1 &amp;&amp; bi == -1) ) {
+    quad_vec_result&lt;M, F&gt; result = quad_vec&lt;M, F&gt;(f, b, a, options, workspace, norm);
+    for ( usize component = 0; component &lt; M; ++component ) result.value.data[component] = -result.value.data[component];
+    return result;
+  }
+  quad_options&lt;F&gt; transformed = options;
+  transformed.breakpoints = nullptr;
+  transformed.n_breakpoints = 0;
+  if ( ai == 0 &amp;&amp; bi == 1 ) {
+    auto g = [&amp;](F t) noexcept {
+      const F q = F(1) - t;
+      auto value = f(a + t / q);
+      for ( usize component = 0; component &lt; M; ++component ) value.data[component] /= q * q;
+      return value;
+    };
+    return __impl_quad_vec::finite&lt;M, F&gt;(g, F(0), F(1), transformed, workspace, norm);
+  }
+  if ( ai == -1 &amp;&amp; bi == 0 ) {
+    auto g = [&amp;](F t) noexcept {
+      const F q = F(1) - t;
+      auto value = f(b - t / q);
+      for ( usize component = 0; component &lt; M; ++component ) value.data[component] /= q * q;
+      return value;
+    };
+    return __impl_quad_vec::finite&lt;M, F&gt;(g, F(0), F(1), transformed, workspace, norm);
+  }
+  if ( ai == -1 &amp;&amp; bi == 1 ) {
+    auto g = [&amp;](F t) noexcept {
+      const F angle = constant_pi&lt;F&gt; * (t - F(0.5));
+      const F c = mk::trig::cos&lt;F&gt;(angle);
+      auto value = f(mk::trig::tan&lt;F&gt;(angle));
+      const F jacobian = constant_pi&lt;F&gt; / (c * c);
+      for ( usize component = 0; component &lt; M; ++component ) value.data[component] *= jacobian;
+      return value;
+    };
+    return __impl_quad_vec::finite&lt;M, F&gt;(g, F(0), F(1), transformed, workspace, norm);
+  }
+  quad_vec_result&lt;M, F&gt; result{};
+  result.status = quad_status::invalid_input;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L832">line 832</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L840">line 840</a></td></tr><tr class="t-dsc"><td><code>__impl_quad_vec::finite&lt;M, F&gt;(f, a, b, options, workspace, norm)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L842">line 842</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L847">line 847</a></td></tr><tr class="t-dsc"><td><code>__impl_quad_vec::finite&lt;M, F&gt;(g, F(0), F(1), transformed, workspace, norm)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L859">line 859</a></td></tr><tr class="t-dsc"><td><code>__impl_quad_vec::finite&lt;M, F&gt;(g, F(0), F(1), transformed, workspace, norm)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L868">line 868</a></td></tr><tr class="t-dsc"><td><code>__impl_quad_vec::finite&lt;M, F&gt;(g, F(0), F(1), transformed, workspace, norm)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L879">line 879</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L883">line 883</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-0ce15fba13fa6e77">ieee::inf_sign&lt;F&gt;</a>, <a href="quad.hpp.html#f-7614c1c47244aff5">__impl_quad_vec::finite&lt;M, F&gt;</a>.</p></section><section class="function-entry" id="f-c5818098644d2d5b"><h3><code>micron::math::integrate::quad_vec(Fn f, F a, F b, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, const quad_options&lt;F&gt; &amp;options = {},
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L889">line 889</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F, typename Fn, usize Capacity&gt;
+  requires(M &gt;= 2 &amp;&amp; M &lt;= 16)
+[[nodiscard]] inline quad_vec_result&lt;M, F&gt;
+quad_vec(Fn f, F a, F b, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, const quad_options&lt;F&gt; &amp;options = {},
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace</code></li><li><code>const quad_options&lt;F&gt; &amp;options = {}</code></li><li><code>quad_error_norm norm = quad_error_norm::maximum</code></li></ul><h4>Effects</h4><p>Returns <code>quad_vec&lt;M, F&gt;(f, a, b, options, workspace, norm)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F, typename Fn, usize Capacity&gt;
+  requires(M &gt;= 2 &amp;&amp; M &lt;= 16)
+[[nodiscard]] inline quad_vec_result&lt;M, F&gt;
+quad_vec(Fn f, F a, F b, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, const quad_options&lt;F&gt; &amp;options = {},
+         quad_error_norm norm = quad_error_norm::maximum) noexcept
+{
+  return quad_vec&lt;M, F&gt;(f, a, b, options, workspace, norm);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quad_vec&lt;M, F&gt;(f, a, b, options, workspace, norm)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L892">line 892</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quad.hpp.html#f-e9358a012b38f804">quad_vec&lt;M, F&gt;</a>.</p></section><section class="function-entry" id="f-95547526b7f16a06"><h3><code>micron::math::integrate::quad_vec(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace,
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L898">line 898</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F, typename Fn, usize Capacity&gt;
+  requires(M &gt;= 2 &amp;&amp; M &lt;= 16)
+[[nodiscard]] inline quad_vec_result&lt;M, F&gt;
+quad_vec(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace,
+         quad_error_norm norm = quad_error_norm::maximum) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>const quad_options&lt;F&gt; &amp;options</code></li><li><code>quad_workspace&lt;F, Capacity&gt; &amp;workspace</code></li><li><code>quad_error_norm norm = quad_error_norm::maximum</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F, typename Fn, usize Capacity&gt;
+  requires(M &gt;= 2 &amp;&amp; M &lt;= 16)
+[[nodiscard]] inline quad_vec_result&lt;M, F&gt;
+quad_vec(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace,
+         quad_error_norm norm = quad_error_norm::maximum) noexcept
+{
+  quad_vec_result&lt;M, F&gt; result{};
+  F norm_acc = F(0);
+  for ( usize component = 0; component &lt; M; ++component ) {
+    auto scalar = [&amp;](F x) noexcept -&gt; F { return f(x).data[component]; };
+    quad_result&lt;F&gt; r = quad&lt;F&gt;(scalar, a, b, options, workspace);
+    result.value.data[component] = r.value;
+    result.abs_err.data[component] = r.abs_err;
+    result.n_evals += r.n_evals;
+    if ( r.n_intervals &gt; result.n_intervals ) result.n_intervals = r.n_intervals;
+    if ( r.status != quad_status::ok &amp;&amp; result.status == quad_status::ok ) result.status = r.status;
+    if ( norm == quad_error_norm::maximum ) {
+      if ( r.abs_err &gt; norm_acc ) norm_acc = r.abs_err;
+    } else {
+      norm_acc += r.abs_err * r.abs_err;
+    }
+  }
+  result.error_norm = norm == quad_error_norm::maximum ? norm_acc : mk::pow_ns::sqrt&lt;F&gt;(norm_acc);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L918">line 918</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quad.hpp.html#f-d4f7dd11c56e7017">quad&lt;F&gt;</a>, <a href="../mk.hpp.html#f-6a28713714e2db89">mk::pow_ns::sqrt&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d0c8ff0a0353179a"><h3><code>micron::math::integrate::quad_batch(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L923">line 923</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, callable_real_batch&lt;F&gt; Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad_batch(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>const quad_options&lt;F&gt; &amp;options</code></li><li><code>quad_workspace&lt;F, Capacity&gt; &amp;workspace</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, callable_real_batch&lt;F&gt; Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+quad_batch(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;workspace) noexcept
+{
+  if ( ieee::inf_sign&lt;F&gt;(a) == 0 &amp;&amp; ieee::inf_sign&lt;F&gt;(b) == 0 ) {
+    if ( b &lt; a ) {
+      quad_result&lt;F&gt; result = __impl_quad::finite&lt;F, Fn, Capacity, true&gt;(f, b, a, options, workspace);
+      result.value = -result.value;
+      return result;
+    }
+    return __impl_quad::finite&lt;F, Fn, Capacity, true&gt;(f, a, b, options, workspace);
+  }
+  auto scalar = [&amp;](F x) noexcept -&gt; F {
+    F y{};
+    f(&amp;x, &amp;y, 1);
+    return y;
+  };
+  return quad&lt;F&gt;(scalar, a, b, options, workspace);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L929">line 929</a></td></tr><tr class="t-dsc"><td><code>__impl_quad::finite&lt;F, Fn, Capacity, true&gt;(f, a, b, options, workspace)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L931">line 931</a></td></tr><tr class="t-dsc"><td><code>quad&lt;F&gt;(scalar, a, b, options, workspace)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L938">line 938</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-0ce15fba13fa6e77">ieee::inf_sign&lt;F&gt;</a>, <a href="quad.hpp.html#f-adab5ca0db5f7a64">__impl_quad::finite&lt;F, Fn, Capacity, true&gt;</a>, <a href="quad.hpp.html#f-d4f7dd11c56e7017">quad&lt;F&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-24a067523042866f"><h3><code>micron::math::integrate::__impl_quad::add(F x, accumulation_policy policy, F &amp;sum, F &amp;correction) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L126">line 126</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+add(F x, accumulation_policy policy, F &amp;sum, F &amp;correction) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li><li><code>accumulation_policy policy</code></li><li><code>F &amp;sum</code></li><li><code>F &amp;correction</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+add(F x, accumulation_policy policy, F &amp;sum, F &amp;correction) noexcept
+{
+  if ( policy == accumulation_policy::fast ) {
+    sum += x;
+    return;
+  }
+  const F next = sum + x;
+  if ( mk::manip::fabs&lt;F&gt;(sum) &gt;= mk::manip::fabs&lt;F&gt;(x) )
+    correction += (sum - next) + x;
+  else
+    correction += (x - next) + sum;
+  sum = next;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/integrate/quad.hpp.html#L130">line 130</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-ea6686215fb80348">mk::manip::fabs&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-71ffd52e53e61430"><h3><code>micron::math::integrate::__impl_quad::total(F sum, F correction, accumulation_policy policy) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L142">line 142</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+total(F sum, F correction, accumulation_policy policy) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F sum</code></li><li><code>F correction</code></li><li><code>accumulation_policy policy</code></li></ul><h4>Effects</h4><p>Returns <code>policy == accumulation_policy::accurate ? sum + correction : sum</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+total(F sum, F correction, accumulation_policy policy) noexcept
+{
+  return policy == accumulation_policy::accurate ? sum + correction : sum;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>policy == accumulation_policy::accurate ? sum + correction : sum</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L144">line 144</a></td></tr></tbody></table></section><section class="function-entry" id="f-1aa8d533df532b59"><h3><code>micron::math::integrate::__impl_quad::gk_rule(Fn &amp;f, F a, F b, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L149">line 149</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename Fn, typename Table&gt;
+[[gnu::always_inline]] inline bool
+gk_rule(Fn &amp;f, F a, F b, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>quad_interval&lt;F&gt; &amp;out</code></li><li><code>usize &amp;n_evals</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename Fn, typename Table&gt;
+[[gnu::always_inline]] inline bool
+gk_rule(Fn &amp;f, F a, F b, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept
+{
+  const F half_w = F(0.5) * (b - a);
+  const F abs_half_w = mk::manip::fabs&lt;F&gt;(half_w);
+  const F mid = F(0.5) * (a + b);
+  const F fmid = f(mid);
+  ++n_evals;
+  if ( !ieee::is_finite&lt;F&gt;(fmid) ) return false;
+
+  F fv1[Table::half]{};
+  F fv2[Table::half]{};
+  fv1[0] = fmid;
+  fv2[0] = fmid;
+  F resk = Table::wk[0] * fmid;
+  F resg = Table::wg[0] * fmid;
+  F resabs = Table::wk[0] * mk::manip::fabs&lt;F&gt;(fmid);
+
+  for ( usize k = 1; k &lt; Table::half; ++k ) {
+    const F absc = half_w * Table::nodes[k];
+    const F fm = f(mid - absc);
+    const F fp = f(mid + absc);
+    n_evals += 2;
+    if ( !ieee::is_finite&lt;F&gt;(fm) || !ieee::is_finite&lt;F&gt;(fp) ) return false;
+    fv1[k] = fm;
+    fv2[k] = fp;
+    const F pair = fm + fp;
+    resk = math::fma&lt;F&gt;(Table::wk[k], pair, resk);
+    if ( Table::wg[k] != F(0) ) resg = math::fma&lt;F&gt;(Table::wg[k], pair, resg);
+    resabs = math::fma&lt;F&gt;(Table::wk[k], mk::manip::fabs&lt;F&gt;(fm) + mk::manip::fabs&lt;F&gt;(fp), resabs);
+  }
+
+  const F mean = F(0.5) * resk;
+  F resasc = Table::wk[0] * mk::manip::fabs&lt;F&gt;(fmid - mean);
+  for ( usize k = 1; k &lt; Table::half; ++k )
+    resasc += Table::wk[k] * (mk::manip::fabs&lt;F&gt;(fv1[k] - mean) + mk::manip::fabs&lt;F&gt;(fv2[k] - mean));
+
+  out.a = a;
+  out.b = b;
+  out.value = half_w * resk;
+  out.resabs = abs_half_w * resabs;
+  out.resasc = abs_half_w * resasc;
+  F error = mk::manip::fabs&lt;F&gt;(half_w * (resk - resg));
+  if ( out.resasc != F(0) &amp;&amp; error != F(0) ) {
+    F ratio = F(200) * error / out.resasc;
+    if ( ratio &lt; F(1) ) error = out.resasc * ratio * mk::pow_ns::sqrt&lt;F&gt;(ratio);
+  }
+  const F floor = F(50) * machine_epsilon&lt;F&gt;() * out.resabs;
+  out.error = error &gt; floor ? error : floor;
+  return ieee::is_finite&lt;F&gt;(out.value) &amp;&amp; ieee::is_finite&lt;F&gt;(out.error);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L156">line 156</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L171">line 171</a></td></tr><tr class="t-dsc"><td><code>ieee::is_finite&lt;F&gt;(out.value) &amp;&amp; ieee::is_finite&lt;F&gt;(out.error)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L197">line 197</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-ea6686215fb80348">mk::manip::fabs&lt;F&gt;</a>, <a href="../ieee.hpp.html#f-2410899f0a93a5c0">ieee::is_finite&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../mk.hpp.html#f-6a28713714e2db89">mk::pow_ns::sqrt&lt;F&gt;</a>, <a href="common.hpp.html#f-de76612aa460348d">machine_epsilon&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f31d7951f71143ba"><h3><code>micron::math::integrate::__impl_quad::gk_rule_batch(Fn &amp;f, F a, F b, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L202">line 202</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename Fn, typename Table&gt;
+[[gnu::always_inline]] inline bool
+gk_rule_batch(Fn &amp;f, F a, F b, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>quad_interval&lt;F&gt; &amp;out</code></li><li><code>usize &amp;n_evals</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename Fn, typename Table&gt;
+[[gnu::always_inline]] inline bool
+gk_rule_batch(Fn &amp;f, F a, F b, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept
+{
+  constexpr usize count = Table::half * 2 - 1;
+  const F half_w = F(0.5) * (b - a);
+  const F abs_half_w = mk::manip::fabs&lt;F&gt;(half_w);
+  const F mid = F(0.5) * (a + b);
+  F points[count]{};
+  F values[count]{};
+  points[0] = mid;
+  for ( usize k = 1; k &lt; Table::half; ++k ) {
+    const F absc = half_w * Table::nodes[k];
+    points[2 * k - 1] = mid - absc;
+    points[2 * k] = mid + absc;
+  }
+  f(points, values, count);
+  n_evals += count;
+  for ( usize i = 0; i &lt; count; ++i )
+    if ( !ieee::is_finite&lt;F&gt;(values[i]) ) return false;
+
+  const F fmid = values[0];
+  F resk = Table::wk[0] * fmid;
+  F resg = Table::wg[0] * fmid;
+  F resabs = Table::wk[0] * mk::manip::fabs&lt;F&gt;(fmid);
+  for ( usize k = 1; k &lt; Table::half; ++k ) {
+    const F fm = values[2 * k - 1];
+    const F fp = values[2 * k];
+    const F pair = fm + fp;
+    resk = math::fma&lt;F&gt;(Table::wk[k], pair, resk);
+    if ( Table::wg[k] != F(0) ) resg = math::fma&lt;F&gt;(Table::wg[k], pair, resg);
+    resabs = math::fma&lt;F&gt;(Table::wk[k], mk::manip::fabs&lt;F&gt;(fm) + mk::manip::fabs&lt;F&gt;(fp), resabs);
+  }
+
+  const F mean = F(0.5) * resk;
+  F resasc = Table::wk[0] * mk::manip::fabs&lt;F&gt;(fmid - mean);
+  for ( usize k = 1; k &lt; Table::half; ++k )
+    resasc += Table::wk[k] * (mk::manip::fabs&lt;F&gt;(values[2 * k - 1] - mean) + mk::manip::fabs&lt;F&gt;(values[2 * k] - mean));
+
+  out.a = a;
+  out.b = b;
+  out.value = half_w * resk;
+  out.resabs = abs_half_w * resabs;
+  out.resasc = abs_half_w * resasc;
+  F error = mk::manip::fabs&lt;F&gt;(half_w * (resk - resg));
+  if ( out.resasc != F(0) &amp;&amp; error != F(0) ) {
+    const F ratio = F(200) * error / out.resasc;
+    if ( ratio &lt; F(1) ) error = out.resasc * ratio * mk::pow_ns::sqrt&lt;F&gt;(ratio);
+  }
+  const F floor = F(50) * machine_epsilon&lt;F&gt;() * out.resabs;
+  out.error = error &gt; floor ? error : floor;
+  return ieee::is_finite&lt;F&gt;(out.value) &amp;&amp; ieee::is_finite&lt;F&gt;(out.error);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L219">line 219</a></td></tr><tr class="t-dsc"><td><code>ieee::is_finite&lt;F&gt;(out.value) &amp;&amp; ieee::is_finite&lt;F&gt;(out.error)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L251">line 251</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-ea6686215fb80348">mk::manip::fabs&lt;F&gt;</a>, <a href="../ieee.hpp.html#f-2410899f0a93a5c0">ieee::is_finite&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../mk.hpp.html#f-6a28713714e2db89">mk::pow_ns::sqrt&lt;F&gt;</a>, <a href="common.hpp.html#f-de76612aa460348d">machine_epsilon&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2744e34fc9b17297"><h3><code>micron::math::integrate::__impl_quad::evaluate(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L256">line 256</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename Fn&gt;
+[[gnu::always_inline]] inline bool
+evaluate(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>gauss_kronrod_rule rule</code></li><li><code>quad_interval&lt;F&gt; &amp;out</code></li><li><code>usize &amp;n_evals</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename Fn&gt;
+[[gnu::always_inline]] inline bool
+evaluate(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept
+{
+  if ( rule == gauss_kronrod_rule::gk15 ) return gk_rule&lt;F, Fn, coeff::gk::gk_15_7&lt;F&gt;&gt;(f, a, b, out, n_evals);
+  return gk_rule&lt;F, Fn, coeff::gk::gk_21_10&lt;F&gt;&gt;(f, a, b, out, n_evals);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>gk_rule&lt;F, Fn, coeff::gk::gk_15_7&lt;F&gt;&gt;(f, a, b, out, n_evals)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L258">line 258</a></td></tr><tr class="t-dsc"><td><code>gk_rule&lt;F, Fn, coeff::gk::gk_21_10&lt;F&gt;&gt;(f, a, b, out, n_evals)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L259">line 259</a></td></tr></tbody></table></section><section class="function-entry" id="f-6d9841ad3f7b51a9"><h3><code>micron::math::integrate::__impl_quad::evaluate_batch(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L264">line 264</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename Fn&gt;
+[[gnu::always_inline]] inline bool
+evaluate_batch(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>gauss_kronrod_rule rule</code></li><li><code>quad_interval&lt;F&gt; &amp;out</code></li><li><code>usize &amp;n_evals</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename Fn&gt;
+[[gnu::always_inline]] inline bool
+evaluate_batch(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_interval&lt;F&gt; &amp;out, usize &amp;n_evals) noexcept
+{
+  if ( rule == gauss_kronrod_rule::gk15 ) return gk_rule_batch&lt;F, Fn, coeff::gk::gk_15_7&lt;F&gt;&gt;(f, a, b, out, n_evals);
+  return gk_rule_batch&lt;F, Fn, coeff::gk::gk_21_10&lt;F&gt;&gt;(f, a, b, out, n_evals);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>gk_rule_batch&lt;F, Fn, coeff::gk::gk_15_7&lt;F&gt;&gt;(f, a, b, out, n_evals)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L266">line 266</a></td></tr><tr class="t-dsc"><td><code>gk_rule_batch&lt;F, Fn, coeff::gk::gk_21_10&lt;F&gt;&gt;(f, a, b, out, n_evals)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L267">line 267</a></td></tr></tbody></table></section><section class="function-entry" id="f-be1405b70a11166d"><h3><code>micron::math::integrate::__impl_quad::heap_push(quad_workspace&lt;F, Capacity&gt; &amp;ws, const quad_interval&lt;F&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L272">line 272</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize Capacity&gt;
+[[gnu::always_inline]] inline void
+heap_push(quad_workspace&lt;F, Capacity&gt; &amp;ws, const quad_interval&lt;F&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quad_workspace&lt;F, Capacity&gt; &amp;ws</code></li><li><code>const quad_interval&lt;F&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize Capacity&gt;
+[[gnu::always_inline]] inline void
+heap_push(quad_workspace&lt;F, Capacity&gt; &amp;ws, const quad_interval&lt;F&gt; &amp;v) noexcept
+{
+  usize i = ws.size++;
+  while ( i != 0 ) {
+    const usize parent = (i - 1) &gt;&gt; 1;
+    if ( ws.heap[parent].error &gt;= v.error ) break;
+    ws.heap[i] = ws.heap[parent];
+    i = parent;
+  }
+  ws.heap[i] = v;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d6bbafd2016a2ec9"><h3><code>micron::math::integrate::__impl_quad::heap_pop(quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L286">line 286</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize Capacity&gt;
+[[nodiscard, gnu::always_inline]] inline quad_interval&lt;F&gt;
+heap_pop(quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quad_workspace&lt;F, Capacity&gt; &amp;ws</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize Capacity&gt;
+[[nodiscard, gnu::always_inline]] inline quad_interval&lt;F&gt;
+heap_pop(quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept
+{
+  const quad_interval&lt;F&gt; result = ws.heap[0];
+  const quad_interval&lt;F&gt; tail = ws.heap[--ws.size];
+  if ( ws.size == 0 ) return result;
+  usize i = 0;
+  while ( true ) {
+    const usize left = i * 2 + 1;
+    if ( left &gt;= ws.size ) break;
+    const usize right = left + 1;
+    const usize child = right &lt; ws.size &amp;&amp; ws.heap[right].error &gt; ws.heap[left].error ? right : left;
+    if ( ws.heap[child].error &lt;= tail.error ) break;
+    ws.heap[i] = ws.heap[child];
+    i = child;
+  }
+  ws.heap[i] = tail;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L290">line 290</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L302">line 302</a></td></tr></tbody></table></section><section class="function-entry" id="f-162958d7a03c3ac8"><h3><code>micron::math::integrate::__impl_quad::tolerance(const quad_options&lt;F&gt; &amp;options, F value) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L307">line 307</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+tolerance(const quad_options&lt;F&gt; &amp;options, F value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quad_options&lt;F&gt; &amp;options</code></li><li><code>F value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+tolerance(const quad_options&lt;F&gt; &amp;options, F value) noexcept
+{
+  const F rel = options.rel_tol * mk::manip::fabs&lt;F&gt;(value);
+  return options.abs_tol &gt; rel ? options.abs_tol : rel;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>options.abs_tol &gt; rel ? options.abs_tol : rel</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L310">line 310</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-ea6686215fb80348">mk::manip::fabs&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-adab5ca0db5f7a64"><h3><code>micron::math::integrate::__impl_quad::finite(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L315">line 315</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename Fn, usize Capacity, bool Batch = false&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+finite(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>const quad_options&lt;F&gt; &amp;options</code></li><li><code>quad_workspace&lt;F, Capacity&gt; &amp;ws</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename Fn, usize Capacity, bool Batch = false&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+finite(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept
+{
+  quad_result&lt;F&gt; result{};
+  ws.reset();
+  if ( a == b ) return result;
+  if ( options.abs_tol &lt; F(0) || options.rel_tol &lt; F(0) || options.max_depth == 0
+       || (options.n_breakpoints != 0 &amp;&amp; options.breakpoints == nullptr) ) {
+    result.status = quad_status::invalid_input;
+    return result;
+  }
+  for ( usize i = 0; i &lt; options.n_breakpoints; ++i ) {
+    if ( !ieee::is_finite&lt;F&gt;(options.breakpoints[i]) ) {
+      result.status = quad_status::invalid_input;
+      return result;
+    }
+  }
+
+  const usize requested_limit = options.max_intervals == 0 ? Capacity : options.max_intervals;
+  const usize interval_limit = requested_limit &lt; Capacity ? requested_limit : Capacity;
+  const usize eval_cost = options.rule == gauss_kronrod_rule::gk15 ? 15 : 21;
+  F value = F(0), value_c = F(0), error = F(0), error_c = F(0), resabs = F(0), resabs_c = F(0), resasc = F(0), resasc_c = F(0);
+
+  F left = a;
+  usize initialized = 0;
+  while ( left &lt; b ) {
+    F right = b;
+    for ( usize i = 0; i &lt; options.n_breakpoints; ++i ) {
+      const F p = options.breakpoints[i];
+      if ( p &gt; left &amp;&amp; p &lt; right &amp;&amp; p &lt; b ) right = p;
+    }
+    if ( initialized &gt;= interval_limit ) {
+      result.status = quad_status::max_intervals;
+      break;
+    }
+    if ( options.max_evals != 0 &amp;&amp; result.n_evals + eval_cost &gt; options.max_evals ) {
+      result.status = quad_status::max_evaluations;
+      break;
+    }
+    quad_interval&lt;F&gt; initial{};
+    bool evaluated{};
+    if constexpr ( Batch )
+      evaluated = evaluate_batch&lt;F&gt;(f, left, right, options.rule, initial, result.n_evals);
+    else
+      evaluated = evaluate&lt;F&gt;(f, left, right, options.rule, initial, result.n_evals);
+    if ( !evaluated ) {
+      result.status = quad_status::non_finite;
+      ws.reset();
+      return result;
+    }
+    heap_push(ws, initial);
+    add(initial.value, options.accumulation, value, value_c);
+    add(initial.error, options.accumulation, error, error_c);
+    add(initial.resabs, options.accumulation, resabs, resabs_c);
+    add(initial.resasc, options.accumulation, resasc, resasc_c);
+    ++initialized;
+    left = right;
+  }
+
+  if ( ws.size == 0 ) return result;
+  result.n_intervals = ws.size;
+  const F initial_error = total(error, error_c, options.accumulation);
+
+  while ( result.status == quad_status::ok ) {
+    const F current_value = total(value, value_c, options.accumulation);
+    const F current_error = total(error, error_c, options.accumulation);
+    if ( current_error &lt;= tolerance(options, current_value) ) break;
+    if ( ws.size &gt;= interval_limit ) {
+      result.status = quad_status::max_intervals;
+      break;
+    }
+    if ( options.max_evals != 0 &amp;&amp; result.n_evals + 2 * eval_cost &gt; options.max_evals ) {
+      result.status = quad_status::max_evaluations;
+      break;
+    }
+
+    const quad_interval&lt;F&gt; parent = heap_pop(ws);
+    if ( parent.depth &gt;= options.max_depth ) {
+      heap_push(ws, parent);
+      result.status = quad_status::max_depth;
+      break;
+    }
+    const F mid = F(0.5) * (parent.a + parent.b);
+    if ( mid == parent.a || mid == parent.b ) {
+      heap_push(ws, parent);
+      result.status = quad_status::roundoff;
+      break;
+    }
+
+    quad_interval&lt;F&gt; lo{}, hi{};
+    bool lo_ok{}, hi_ok{};
+    if constexpr ( Batch ) {
+      lo_ok = evaluate_batch&lt;F&gt;(f, parent.a, mid, options.rule, lo, result.n_evals);
+      hi_ok = evaluate_batch&lt;F&gt;(f, mid, parent.b, options.rule, hi, result.n_evals);
+    } else {
+      lo_ok = evaluate&lt;F&gt;(f, parent.a, mid, options.rule, lo, result.n_evals);
+      hi_ok = evaluate&lt;F&gt;(f, mid, parent.b, options.rule, hi, result.n_evals);
+    }
+    if ( !lo_ok || !hi_ok ) {
+      heap_push(ws, parent);
+      result.status = quad_status::non_finite;
+      break;
+    }
+    lo.depth = parent.depth + 1;
+    hi.depth = parent.depth + 1;
+
+    const F child_value = lo.value + hi.value;
+    const F child_error = lo.error + hi.error;
+    const F scale = mk::manip::fabs&lt;F&gt;(parent.value) + F(1);
+    if ( mk::manip::fabs&lt;F&gt;(parent.value - child_value) &lt;= F(100) * machine_epsilon&lt;F&gt;() * scale &amp;&amp; child_error &gt;= F(0.99) * parent.error )
+      ++result.n_roundoff;
+
+    add(-parent.value, options.accumulation, value, value_c);
+    add(child_value, options.accumulation, value, value_c);
+    add(-parent.error, options.accumulation, error, error_c);
+    add(child_error, options.accumulation, error, error_c);
+    add(-parent.resabs, options.accumulation, resabs, resabs_c);
+    add(lo.resabs + hi.resabs, options.accumulation, resabs, resabs_c);
+    add(-parent.resasc, options.accumulation, resasc, resasc_c);
+    add(lo.resasc + hi.resasc, options.accumulation, resasc, resasc_c);
+    heap_push(ws, lo);
+    heap_push(ws, hi);
+    ++result.n_splits;
+    result.n_intervals = ws.size;
+
+    if ( result.n_roundoff &gt;= 20 ) result.status = quad_status::roundoff;
+    const F now_error = total(error, error_c, options.accumulation);
+    if ( result.n_splits &gt; 50 &amp;&amp; initial_error &gt; F(0) &amp;&amp; now_error &gt; initial_error * F(1000000) ) result.status = quad_status::divergent;
+  }
+
+  result.value = total(value, value_c, options.accumulation);
+  result.abs_err = total(error, error_c, options.accumulation);
+  result.resabs = total(resabs, resabs_c, options.accumulation);
+  result.resasc = total(resasc, resasc_c, options.accumulation);
+  if ( result.abs_err &lt; F(0) ) result.abs_err = F(0);
+  if ( !ieee::is_finite&lt;F&gt;(result.value) || !ieee::is_finite&lt;F&gt;(result.abs_err) ) result.status = quad_status::non_finite;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L319">line 319</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L323">line 323</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L328">line 328</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L362">line 362</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L373">line 373</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L450">line 450</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-2410899f0a93a5c0">ieee::is_finite&lt;F&gt;</a>, <a href="quad.hpp.html#f-6d9841ad3f7b51a9">evaluate_batch&lt;F&gt;</a>, <a href="quad.hpp.html#f-2744e34fc9b17297">evaluate&lt;F&gt;</a>, <a href="quad.hpp.html#f-be1405b70a11166d">heap_push</a>, <a href="quad.hpp.html#f-24a067523042866f">add</a>, <a href="quad.hpp.html#f-71ffd52e53e61430">total</a>, <a href="quad.hpp.html#f-162958d7a03c3ac8">tolerance</a>, <a href="quad.hpp.html#f-d6bbafd2016a2ec9">heap_pop</a>, <a href="../mk.hpp.html#f-ea6686215fb80348">mk::manip::fabs&lt;F&gt;</a>, <a href="common.hpp.html#f-de76612aa460348d">machine_epsilon&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d852cde98c37ce2d"><h3><code>micron::math::integrate::__impl_quad::dispatch_bounds(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L455">line 455</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+dispatch_bounds(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>const quad_options&lt;F&gt; &amp;options</code></li><li><code>quad_workspace&lt;F, Capacity&gt; &amp;ws</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_result&lt;F&gt;
+dispatch_bounds(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_workspace&lt;F, Capacity&gt; &amp;ws) noexcept
+{
+  if ( a != a || b != b ) {
+    quad_result&lt;F&gt; result{};
+    result.status = quad_status::invalid_input;
+    return result;
+  }
+  const int ai = ieee::inf_sign&lt;F&gt;(a);
+  const int bi = ieee::inf_sign&lt;F&gt;(b);
+  if ( ai == 0 &amp;&amp; bi == 0 ) {
+    if ( b &lt; a ) {
+      quad_result&lt;F&gt; r = finite&lt;F&gt;(f, b, a, options, ws);
+      r.value = -r.value;
+      return r;
+    }
+    return finite&lt;F&gt;(f, a, b, options, ws);
+  }
+
+  if ( (ai == 1 &amp;&amp; bi == 0) || (ai == 0 &amp;&amp; bi == -1) || (ai == 1 &amp;&amp; bi == -1) ) {
+    quad_result&lt;F&gt; r = dispatch_bounds&lt;F&gt;(f, b, a, options, ws);
+    r.value = -r.value;
+    return r;
+  }
+
+  quad_options&lt;F&gt; transformed = options;
+  transformed.breakpoints = nullptr;
+  transformed.n_breakpoints = 0;
+
+  if ( ai == 0 &amp;&amp; bi == 1 ) {
+    auto g = [&amp;](F t) noexcept -&gt; F {
+      const F q = F(1) - t;
+      const F x = a + t / q;
+      return f(x) / (q * q);
+    };
+    return finite&lt;F&gt;(g, F(0), F(1), transformed, ws);
+  }
+  if ( ai == -1 &amp;&amp; bi == 0 ) {
+    auto g = [&amp;](F t) noexcept -&gt; F {
+      const F q = F(1) - t;
+      const F x = b - t / q;
+      return f(x) / (q * q);
+    };
+    return finite&lt;F&gt;(g, F(0), F(1), transformed, ws);
+  }
+  if ( ai == -1 &amp;&amp; bi == 1 ) {
+    auto g = [&amp;](F t) noexcept -&gt; F {
+      const F angle = constant_pi&lt;F&gt; * (t - F(0.5));
+      const F c = mk::trig::cos&lt;F&gt;(angle);
+      return f(mk::trig::tan&lt;F&gt;(angle)) * constant_pi&lt;F&gt; / (c * c);
+    };
+    return finite&lt;F&gt;(g, F(0), F(1), transformed, ws);
+  }
+
+  quad_result&lt;F&gt; result{};
+  result.status = quad_status::invalid_input;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L460">line 460</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L468">line 468</a></td></tr><tr class="t-dsc"><td><code>finite&lt;F&gt;(f, a, b, options, ws)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L470">line 470</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L476">line 476</a></td></tr><tr class="t-dsc"><td><code>finite&lt;F&gt;(g, F(0), F(1), transformed, ws)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L489">line 489</a></td></tr><tr class="t-dsc"><td><code>finite&lt;F&gt;(g, F(0), F(1), transformed, ws)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L497">line 497</a></td></tr><tr class="t-dsc"><td><code>finite&lt;F&gt;(g, F(0), F(1), transformed, ws)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L505">line 505</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L510">line 510</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-0ce15fba13fa6e77">ieee::inf_sign&lt;F&gt;</a>, <a href="quad.hpp.html#f-adab5ca0db5f7a64">finite&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-cf037c016cd18b2c"><h3><code>micron::math::integrate::__impl_quad_vec::norm(const vec&lt;F, M&gt; &amp;value, quad_error_norm mode) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L589">line 589</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+norm(const vec&lt;F, M&gt; &amp;value, quad_error_norm mode) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, M&gt; &amp;value</code></li><li><code>quad_error_norm mode</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+norm(const vec&lt;F, M&gt; &amp;value, quad_error_norm mode) noexcept
+{
+  F result = F(0);
+  if ( mode == quad_error_norm::maximum ) {
+    for ( usize component = 0; component &lt; M; ++component ) {
+      const F magnitude = mk::manip::fabs&lt;F&gt;(value.data[component]);
+      if ( magnitude &gt; result ) result = magnitude;
+    }
+    return result;
+  }
+  for ( usize component = 0; component &lt; M; ++component ) result += value.data[component] * value.data[component];
+  return mk::pow_ns::sqrt&lt;F&gt;(result);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L597">line 597</a></td></tr><tr class="t-dsc"><td><code>mk::pow_ns::sqrt&lt;F&gt;(result)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L600">line 600</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-ea6686215fb80348">mk::manip::fabs&lt;F&gt;</a>, <a href="../mk.hpp.html#f-6a28713714e2db89">mk::pow_ns::sqrt&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-4f876faca35c9452"><h3><code>micron::math::integrate::__impl_quad_vec::evaluate_rule(Fn &amp;f, F a, F b, quad_vec_interval&lt;M, F&gt; &amp;out, usize &amp;n_evals, quad_error_norm mode) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L605">line 605</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F, typename Fn, typename Table&gt;
+[[nodiscard]] inline bool
+evaluate_rule(Fn &amp;f, F a, F b, quad_vec_interval&lt;M, F&gt; &amp;out, usize &amp;n_evals, quad_error_norm mode) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>quad_vec_interval&lt;M, F&gt; &amp;out</code></li><li><code>usize &amp;n_evals</code></li><li><code>quad_error_norm mode</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F, typename Fn, typename Table&gt;
+[[nodiscard]] inline bool
+evaluate_rule(Fn &amp;f, F a, F b, quad_vec_interval&lt;M, F&gt; &amp;out, usize &amp;n_evals, quad_error_norm mode) noexcept
+{
+  const F half_w = F(0.5) * (b - a);
+  const F abs_half_w = mk::manip::fabs&lt;F&gt;(half_w);
+  const F mid = F(0.5) * (a + b);
+  vec&lt;F, M&gt; negative[Table::half]{};
+  vec&lt;F, M&gt; positive[Table::half]{};
+  negative[0] = f(mid);
+  positive[0] = negative[0];
+  ++n_evals;
+  F resk[M]{}, resg[M]{}, resabs[M]{};
+  for ( usize component = 0; component &lt; M; ++component ) {
+    const F center = negative[0].data[component];
+    if ( !ieee::is_finite&lt;F&gt;(center) ) return false;
+    resk[component] = Table::wk[0] * center;
+    resg[component] = Table::wg[0] * center;
+    resabs[component] = Table::wk[0] * mk::manip::fabs&lt;F&gt;(center);
+  }
+  for ( usize k = 1; k &lt; Table::half; ++k ) {
+    const F absc = half_w * Table::nodes[k];
+    negative[k] = f(mid - absc);
+    positive[k] = f(mid + absc);
+    n_evals += 2;
+    for ( usize component = 0; component &lt; M; ++component ) {
+      const F fm = negative[k].data[component];
+      const F fp = positive[k].data[component];
+      if ( !ieee::is_finite&lt;F&gt;(fm) || !ieee::is_finite&lt;F&gt;(fp) ) return false;
+      const F pair = fm + fp;
+      resk[component] = math::fma&lt;F&gt;(Table::wk[k], pair, resk[component]);
+      if ( Table::wg[k] != F(0) ) resg[component] = math::fma&lt;F&gt;(Table::wg[k], pair, resg[component]);
+      resabs[component] = math::fma&lt;F&gt;(Table::wk[k], mk::manip::fabs&lt;F&gt;(fm) + mk::manip::fabs&lt;F&gt;(fp), resabs[component]);
+    }
+  }
+
+  out.a = a;
+  out.b = b;
+  for ( usize component = 0; component &lt; M; ++component ) {
+    const F mean = F(0.5) * resk[component];
+    F resasc = Table::wk[0] * mk::manip::fabs&lt;F&gt;(negative[0].data[component] - mean);
+    for ( usize k = 1; k &lt; Table::half; ++k )
+      resasc += Table::wk[k]
+                * (mk::manip::fabs&lt;F&gt;(negative[k].data[component] - mean) + mk::manip::fabs&lt;F&gt;(positive[k].data[component] - mean));
+    const F scaled_abs = abs_half_w * resabs[component];
+    const F scaled_asc = abs_half_w * resasc;
+    F error = mk::manip::fabs&lt;F&gt;(half_w * (resk[component] - resg[component]));
+    if ( scaled_asc != F(0) &amp;&amp; error != F(0) ) {
+      const F ratio = F(200) * error / scaled_asc;
+      if ( ratio &lt; F(1) ) error = scaled_asc * ratio * mk::pow_ns::sqrt&lt;F&gt;(ratio);
+    }
+    const F floor = F(50) * machine_epsilon&lt;F&gt;() * scaled_abs;
+    out.value.data[component] = half_w * resk[component];
+    out.error.data[component] = error &gt; floor ? error : floor;
+  }
+  out.priority = norm(out.error, mode);
+  return ieee::is_finite&lt;F&gt;(out.priority);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L618">line 618</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L631">line 631</a></td></tr><tr class="t-dsc"><td><code>ieee::is_finite&lt;F&gt;(out.priority)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L659">line 659</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-ea6686215fb80348">mk::manip::fabs&lt;F&gt;</a>, <a href="../ieee.hpp.html#f-2410899f0a93a5c0">ieee::is_finite&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../mk.hpp.html#f-6a28713714e2db89">mk::pow_ns::sqrt&lt;F&gt;</a>, <a href="common.hpp.html#f-de76612aa460348d">machine_epsilon&lt;F&gt;</a>, <a href="quad.hpp.html#f-cf037c016cd18b2c">norm</a>.</p></section><section class="function-entry" id="f-9dc32674bc8e3863"><h3><code>micron::math::integrate::__impl_quad_vec::evaluate(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_vec_interval&lt;M, F&gt; &amp;out, usize &amp;n_evals, quad_error_norm mode) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L664">line 664</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F, typename Fn&gt;
+[[nodiscard]] inline bool
+evaluate(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_vec_interval&lt;M, F&gt; &amp;out, usize &amp;n_evals, quad_error_norm mode) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>gauss_kronrod_rule rule</code></li><li><code>quad_vec_interval&lt;M, F&gt; &amp;out</code></li><li><code>usize &amp;n_evals</code></li><li><code>quad_error_norm mode</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F, typename Fn&gt;
+[[nodiscard]] inline bool
+evaluate(Fn &amp;f, F a, F b, gauss_kronrod_rule rule, quad_vec_interval&lt;M, F&gt; &amp;out, usize &amp;n_evals, quad_error_norm mode) noexcept
+{
+  if ( rule == gauss_kronrod_rule::gk15 ) return evaluate_rule&lt;M, F, Fn, coeff::gk::gk_15_7&lt;F&gt;&gt;(f, a, b, out, n_evals, mode);
+  return evaluate_rule&lt;M, F, Fn, coeff::gk::gk_21_10&lt;F&gt;&gt;(f, a, b, out, n_evals, mode);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>evaluate_rule&lt;M, F, Fn, coeff::gk::gk_15_7&lt;F&gt;&gt;(f, a, b, out, n_evals, mode)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L666">line 666</a></td></tr><tr class="t-dsc"><td><code>evaluate_rule&lt;M, F, Fn, coeff::gk::gk_21_10&lt;F&gt;&gt;(f, a, b, out, n_evals, mode)</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L667">line 667</a></td></tr></tbody></table></section><section class="function-entry" id="f-cace8d26cdf7ed5e"><h3><code>micron::math::integrate::__impl_quad_vec::push(quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, const quad_vec_interval&lt;M, F&gt; &amp;interval) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L672">line 672</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F, usize Capacity&gt;
+inline void
+push(quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, const quad_vec_interval&lt;M, F&gt; &amp;interval) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace</code></li><li><code>const quad_vec_interval&lt;M, F&gt; &amp;interval</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F, usize Capacity&gt;
+inline void
+push(quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, const quad_vec_interval&lt;M, F&gt; &amp;interval) noexcept
+{
+  usize i = workspace.size++;
+  while ( i != 0 ) {
+    const usize parent = (i - 1) &gt;&gt; 1;
+    if ( workspace.heap[parent].priority &gt;= interval.priority ) break;
+    workspace.heap[i] = workspace.heap[parent];
+    i = parent;
+  }
+  workspace.heap[i] = interval;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5da67bcb8c420cac"><h3><code>micron::math::integrate::__impl_quad_vec::pop(quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L686">line 686</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F, usize Capacity&gt;
+[[nodiscard]] inline quad_vec_interval&lt;M, F&gt;
+pop(quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F, usize Capacity&gt;
+[[nodiscard]] inline quad_vec_interval&lt;M, F&gt;
+pop(quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace) noexcept
+{
+  const quad_vec_interval&lt;M, F&gt; result = workspace.heap[0];
+  const quad_vec_interval&lt;M, F&gt; tail = workspace.heap[--workspace.size];
+  if ( workspace.size == 0 ) return result;
+  usize i = 0;
+  while ( true ) {
+    const usize left = i * 2 + 1;
+    if ( left &gt;= workspace.size ) break;
+    const usize right = left + 1;
+    const usize child = right &lt; workspace.size &amp;&amp; workspace.heap[right].priority &gt; workspace.heap[left].priority ? right : left;
+    if ( workspace.heap[child].priority &lt;= tail.priority ) break;
+    workspace.heap[i] = workspace.heap[child];
+    i = child;
+  }
+  workspace.heap[i] = tail;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L690">line 690</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L702">line 702</a></td></tr></tbody></table></section><section class="function-entry" id="f-7614c1c47244aff5"><h3><code>micron::math::integrate::__impl_quad_vec::finite(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, quad_error_norm mode) noexcept</code></h3><p>Defined in <code>math/integrate/quad.hpp</code>, <a href="../../../source/math/integrate/quad.hpp.html#L707">line 707</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, ieee754_floating F, typename Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_vec_result&lt;M, F&gt;
+finite(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, quad_error_norm mode) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>const quad_options&lt;F&gt; &amp;options</code></li><li><code>quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace</code></li><li><code>quad_error_norm mode</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, ieee754_floating F, typename Fn, usize Capacity&gt;
+[[nodiscard]] inline quad_vec_result&lt;M, F&gt;
+finite(Fn f, F a, F b, const quad_options&lt;F&gt; &amp;options, quad_vec_workspace&lt;M, F, Capacity&gt; &amp;workspace, quad_error_norm mode) noexcept
+{
+  quad_vec_result&lt;M, F&gt; result{};
+  workspace.reset();
+  if ( a == b ) return result;
+  if ( options.abs_tol &lt; F(0) || options.rel_tol &lt; F(0) || options.max_depth == 0
+       || (options.n_breakpoints != 0 &amp;&amp; options.breakpoints == nullptr) ) {
+    result.status = quad_status::invalid_input;
+    return result;
+  }
+  for ( usize i = 0; i &lt; options.n_breakpoints; ++i ) {
+    if ( !ieee::is_finite&lt;F&gt;(options.breakpoints[i]) ) {
+      result.status = quad_status::invalid_input;
+      return result;
+    }
+  }
+  const usize requested_limit = options.max_intervals == 0 ? Capacity : options.max_intervals;
+  const usize interval_limit = requested_limit &lt; Capacity ? requested_limit : Capacity;
+  const usize eval_cost = options.rule == gauss_kronrod_rule::gk15 ? 15 : 21;
+  __impl_accumulate::runtime_sum&lt;F&gt; values[M];
+  __impl_accumulate::runtime_sum&lt;F&gt; errors[M];
+  for ( usize component = 0; component &lt; M; ++component ) {
+    values[component].policy = options.accumulation;
+    errors[component].policy = options.accumulation;
+  }
+
+  F left = a;
+  while ( left &lt; b ) {
+    F right = b;
+    for ( usize i = 0; i &lt; options.n_breakpoints; ++i ) {
+      const F point = options.breakpoints[i];
+      if ( point &gt; left &amp;&amp; point &lt; right &amp;&amp; point &lt; b ) right = point;
+    }
+    if ( workspace.size &gt;= interval_limit ) {
+      result.status = quad_status::max_intervals;
+      break;
+    }
+    if ( options.max_evals != 0 &amp;&amp; result.n_evals + eval_cost &gt; options.max_evals ) {
+      result.status = quad_status::max_evaluations;
+      break;
+    }
+    quad_vec_interval&lt;M, F&gt; interval{};
+    if ( !evaluate&lt;M, F&gt;(f, left, right, options.rule, interval, result.n_evals, mode) ) {
+      result.status = quad_status::non_finite;
+      workspace.reset();
+      return result;
+    }
+    push(workspace, interval);
+    for ( usize component = 0; component &lt; M; ++component ) {
+      values[component].add(interval.value.data[component]);
+      errors[component].add(interval.error.data[component]);
+    }
+    left = right;
+  }
+  if ( workspace.size == 0 ) return result;
+
+  while ( result.status == quad_status::ok ) {
+    for ( usize component = 0; component &lt; M; ++component ) {
+      result.value.data[component] = values[component].get();
+      result.abs_err.data[component] = errors[component].get();
+    }
+    result.error_norm = norm(result.abs_err, mode);
+    const F value_norm = norm(result.value, mode);
+    const F relative = options.rel_tol * value_norm;
+    const F tolerance = options.abs_tol &gt; relative ? options.abs_tol : relative;
+    if ( result.error_norm &lt;= tolerance ) break;
+    if ( workspace.size &gt;= interval_limit ) {
+      result.status = quad_status::max_intervals;
+      break;
+    }
+    if ( options.max_evals != 0 &amp;&amp; result.n_evals + 2 * eval_cost &gt; options.max_evals ) {
+      result.status = quad_status::max_evaluations;
+      break;
+    }
+    const quad_vec_interval&lt;M, F&gt; parent = pop(workspace);
+    if ( parent.depth &gt;= options.max_depth ) {
+      push(workspace, parent);
+      result.status = quad_status::max_depth;
+      break;
+    }
+    const F mid = F(0.5) * (parent.a + parent.b);
+    if ( mid == parent.a || mid == parent.b ) {
+      push(workspace, parent);
+      result.status = quad_status::roundoff;
+      break;
+    }
+    quad_vec_interval&lt;M, F&gt; lo{}, hi{};
+    if ( !evaluate&lt;M, F&gt;(f, parent.a, mid, options.rule, lo, result.n_evals, mode)
+         || !evaluate&lt;M, F&gt;(f, mid, parent.b, options.rule, hi, result.n_evals, mode) ) {
+      push(workspace, parent);
+      result.status = quad_status::non_finite;
+      break;
+    }
+    lo.depth = parent.depth + 1;
+    hi.depth = parent.depth + 1;
+    for ( usize component = 0; component &lt; M; ++component ) {
+      values[component].add(-parent.value.data[component]);
+      values[component].add(lo.value.data[component] + hi.value.data[component]);
+      errors[component].add(-parent.error.data[component]);
+      errors[component].add(lo.error.data[component] + hi.error.data[component]);
+    }
+    push(workspace, lo);
+    push(workspace, hi);
+  }
+  for ( usize component = 0; component &lt; M; ++component ) {
+    result.value.data[component] = values[component].get();
+    result.abs_err.data[component] = errors[component].get();
+    if ( result.abs_err.data[component] &lt; F(0) ) result.abs_err.data[component] = F(0);
+  }
+  result.error_norm = norm(result.abs_err, mode);
+  result.n_intervals = workspace.size;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L711">line 711</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L715">line 715</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L720">line 720</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L752">line 752</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L761">line 761</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/integrate/quad.hpp.html#L818">line 818</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-2410899f0a93a5c0">ieee::is_finite&lt;F&gt;</a>, <a href="quad.hpp.html#f-9dc32674bc8e3863">evaluate&lt;M, F&gt;</a>, <a href="quad.hpp.html#f-cace8d26cdf7ed5e">push</a>, <a href="quad.hpp.html#f-cf037c016cd18b2c">norm</a>, <a href="quad.hpp.html#f-5da67bcb8c420cac">pop</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

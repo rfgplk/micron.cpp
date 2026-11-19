@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/parallel/for.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/parallel/for.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/parallel.html">Parallel algorithms</a></div><p>Defined in header <code>&lt;micron/parallel/for.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/parallel/for.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-efd3b0577994263f">micron::parallel_for(T &amp;data)</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-c826b8d491be01c3">micron::fork_for(T &amp;data)</a></td><td>function; line 79</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-efd3b0577994263f"><h3><code>micron::parallel_for(T &amp;data)</code></h3><p>Defined in <code>parallel/for.hpp</code>, <a href="../../source/parallel/for.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, is_iterable_container T&gt;
+  requires(micron::is_invocable_v&lt;decltype(Fn), typename T::iterator&gt; or micron::is_invocable_v&lt;decltype(Fn), typename T::const_iterator&gt;)
+void
+parallel_for(T &amp;data)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, is_iterable_container T&gt;
+  requires(micron::is_invocable_v&lt;decltype(Fn), typename T::iterator&gt; or micron::is_invocable_v&lt;decltype(Fn), typename T::const_iterator&gt;)
+void
+parallel_for(T &amp;data)
+{
+  if ( data.empty() ) return;
+  u64 cn = cpu_count();
+
+  fsstack&lt;uptr&lt;thread&lt;&gt;&gt;, 1024&gt; threads;
+  u64 segment = (data.size() + cn - 1) / cn;
+  u64 start = 0;
+
+  for ( u64 i = 0; i &lt; cn &amp;&amp; start &lt; data.size(); ++i ) {
+    u64 end = start + segment;
+    if ( end &gt; data.size() ) end = data.size();
+    threads.move(__parallel_for&lt;Fn, thread&lt;&gt;, T&gt;(data.begin() + start, data.begin() + end));
+    start = end;
+  }
+  while ( !threads.empty() ) {
+    solo::join(threads.top());
+    threads.pop();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/parallel/for.hpp.html#L44">line 44</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../thread/cpu.hpp.html#f-5acccc5ec129e884">cpu_count</a>, <a href="../thread/thread.hpp.html#f-810956abf5a602d0">solo::join</a>.</p></section><section class="function-entry" id="f-c826b8d491be01c3"><h3><code>micron::fork_for(T &amp;data)</code></h3><p>Defined in <code>parallel/for.hpp</code>, <a href="../../source/parallel/for.hpp.html#L79">line 79</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, is_iterable_container T&gt;
+  requires(micron::is_invocable_v&lt;decltype(Fn), typename T::iterator&gt; or micron::is_invocable_v&lt;decltype(Fn), typename T::const_iterator&gt;)
+void
+fork_for(T &amp;data)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, is_iterable_container T&gt;
+  requires(micron::is_invocable_v&lt;decltype(Fn), typename T::iterator&gt; or micron::is_invocable_v&lt;decltype(Fn), typename T::const_iterator&gt;)
+void
+fork_for(T &amp;data)
+{
+  if ( data.empty() ) return;
+  u64 cn = cpu_count();
+  fsstack&lt;const concurrent_arena::type *, 1024&gt; threads;
+  u64 segment = (data.size() + cn - 1) / cn;
+  u64 start = 0;
+
+  for ( u64 i = 0; i &lt; cn &amp;&amp; start &lt; data.size(); ++i ) {
+    u64 end = start + segment;
+    if ( end &gt; data.size() ) end = data.size();
+    threads.move(__fork_for&lt;Fn, concurrent_arena::thread_class, T&gt;(data.begin() + start, data.begin() + end));
+    start = end;
+  }
+  while ( !threads.empty() ) {
+    expect&lt;memory_order::acquire&gt;(threads.top()-&gt;thread.get_status(), (u32)0);
+    threads.pop();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/parallel/for.hpp.html#L81">line 81</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../thread/cpu.hpp.html#f-5acccc5ec129e884">cpu_count</a>, <a href="for.hpp.html#f-abe7dbdada448902">__fork_for&lt;Fn, concurrent_arena::thread_class, T&gt;</a>, <a href="../sync/expect.hpp.html#f-f40e9b40a9c5b1c5">expect&lt;memory_order::acquire&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-053466735c7576f1"><h3><code>micron::__parallel_for(typename T::iterator start, typename T::iterator end)</code></h3><p>Defined in <code>parallel/for.hpp</code>, <a href="../../source/parallel/for.hpp.html#L32">line 32</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, typename Tr, is_iterable_container T&gt;
+inline __attribute__((always_inline)) auto
+__parallel_for(typename T::iterator start, typename T::iterator end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>typename T::iterator start</code></li><li><code>typename T::iterator end</code></li></ul><h4>Effects</h4><p>Returns <code>solo::spawn&lt;Tr&gt;([start, end]() mutable {
+    for ( ; start != end; ++start ) Fn(start);
+  })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, typename Tr, is_iterable_container T&gt;
+inline __attribute__((always_inline)) auto
+__parallel_for(typename T::iterator start, typename T::iterator end)
+{
+  return solo::spawn&lt;Tr&gt;([start, end]() mutable {
+    for ( ; start != end; ++start ) Fn(start);
+  });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>solo::spawn&lt;Tr&gt;([start, end]() mutable {
+    for ( ; start != end; ++start ) Fn(start);
+  })</code></td><td><a href="../../source/parallel/for.hpp.html#L34">line 34</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../thread/thread.hpp.html#f-18fcb7a6d14477a7">solo::spawn&lt;Tr&gt;</a>.</p></section><section class="function-entry" id="f-abe7dbdada448902"><h3><code>micron::__fork_for(typename T::iterator start, typename T::iterator end)</code></h3><p>Defined in <code>parallel/for.hpp</code>, <a href="../../source/parallel/for.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, typename Tr, is_iterable_container T&gt;
+inline __attribute__((always_inline)) auto
+__fork_for(typename T::iterator start, typename T::iterator end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>typename T::iterator start</code></li><li><code>typename T::iterator end</code></li></ul><h4>Effects</h4><p>Returns <code>&amp;async(
+      [](typename T::iterator __start, typename T::iterator __end) {
+        for ( ; __start != __end; ++__start ) Fn(__start);
+      },
+      start, end)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, typename Tr, is_iterable_container T&gt;
+inline __attribute__((always_inline)) auto
+__fork_for(typename T::iterator start, typename T::iterator end)
+{
+  return &amp;async(
+      [](typename T::iterator __start, typename T::iterator __end) {
+        for ( ; __start != __end; ++__start ) Fn(__start);
+      },
+      start, end);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;async(
+      [](typename T::iterator __start, typename T::iterator __end) {
+        for ( ; __start != __end; ++__start ) Fn(__start);
+      },
+      start, end)</code></td><td><a href="../../source/parallel/for.hpp.html#L69">line 69</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sync/async.hpp.html#f-3d32710eaaa013e1">async</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

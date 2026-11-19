@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sort/heap.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sort/heap.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/sorting.html">Sorting</a></div><p>Defined in header <code>&lt;micron/sort/heap.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sort/heap.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-f45f59bd46c5b325">micron::sort::make_heap(C &amp;c) noexcept</a></td><td>function; line 72</td></tr><tr class="t-dsc"><td><a href="#f-eb15f0fa178d9e25">micron::sort::make_heap(C &amp;c, Cmp comp) noexcept</a></td><td>function; line 79</td></tr><tr class="t-dsc"><td><a href="#f-6f3bb365fe583aa5">micron::sort::heap(C &amp;c) noexcept</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-855ea2c0b57e3d45">micron::sort::heap(C &amp;c, Cmp comp) noexcept</a></td><td>function; line 96</td></tr><tr class="t-dsc"><td><a href="#f-6d59204f628f96a2">micron::sort::as_heap(C &amp;c) noexcept</a></td><td>function; line 105</td></tr><tr class="t-dsc"><td><a href="#f-247cd1af6504156e">micron::sort::as_heap(C &amp;c, Cmp comp) noexcept</a></td><td>function; line 113</td></tr><tr class="t-dsc"><td><a href="#f-057c2408c8c1eed7">micron::sort::as_heap(C &amp;c, typename C::size_type lim) noexcept</a></td><td>function; line 121</td></tr><tr class="t-dsc"><td><a href="#f-3248e0b54283ec6b">micron::sort::as_heap(C &amp;c, typename C::size_type lim, Cmp comp) noexcept</a></td><td>function; line 132</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f45f59bd46c5b325"><h3><code>micron::sort::make_heap(C &amp;c) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+make_heap(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+make_heap(C &amp;c) noexcept
+{
+  __make_heap(c, c.size(), [](const typename C::value_type &amp;a, const typename C::value_type &amp;b) { return a &lt; b; });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-fb3b2ee85ce0b18d">__make_heap</a>.</p></section><section class="function-entry" id="f-eb15f0fa178d9e25"><h3><code>micron::sort::make_heap(C &amp;c, Cmp comp) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L79">line 79</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_valid_comp&lt;C&gt; Cmp&gt;
+constexpr void
+make_heap(C &amp;c, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_valid_comp&lt;C&gt; Cmp&gt;
+constexpr void
+make_heap(C &amp;c, Cmp comp) noexcept
+{
+  __make_heap(c, c.size(), comp);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-fb3b2ee85ce0b18d">__make_heap</a>.</p></section><section class="function-entry" id="f-6f3bb365fe583aa5"><h3><code>micron::sort::heap(C &amp;c) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+heap(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+heap(C &amp;c) noexcept
+{
+  auto comp = [](const typename C::value_type &amp;a, const typename C::value_type &amp;b) { return a &lt; b; };
+  const usize n = c.size();
+  __make_heap(c, n, comp);
+  __sort_heap(c, n, comp);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-fb3b2ee85ce0b18d">__make_heap</a>, <a href="heap.hpp.html#f-267aff0af8c24ace">__sort_heap</a>.</p></section><section class="function-entry" id="f-855ea2c0b57e3d45"><h3><code>micron::sort::heap(C &amp;c, Cmp comp) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L96">line 96</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_valid_comp&lt;C&gt; Cmp&gt;
+constexpr void
+heap(C &amp;c, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_valid_comp&lt;C&gt; Cmp&gt;
+constexpr void
+heap(C &amp;c, Cmp comp) noexcept
+{
+  const usize n = c.size();
+  __make_heap(c, n, comp);
+  __sort_heap(c, n, comp);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-fb3b2ee85ce0b18d">__make_heap</a>, <a href="heap.hpp.html#f-267aff0af8c24ace">__sort_heap</a>.</p></section><section class="function-entry" id="f-6d59204f628f96a2"><h3><code>micron::sort::as_heap(C &amp;c) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L105">line 105</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr C &amp;
+as_heap(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr C &amp;
+as_heap(C &amp;c) noexcept
+{
+  heap(c);
+  return c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../source/sort/heap.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-6f3bb365fe583aa5">heap</a>.</p></section><section class="function-entry" id="f-247cd1af6504156e"><h3><code>micron::sort::as_heap(C &amp;c, Cmp comp) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_valid_comp&lt;C&gt; Cmp&gt;
+constexpr C &amp;
+as_heap(C &amp;c, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_valid_comp&lt;C&gt; Cmp&gt;
+constexpr C &amp;
+as_heap(C &amp;c, Cmp comp) noexcept
+{
+  heap(c, comp);
+  return c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../source/sort/heap.hpp.html#L116">line 116</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-6f3bb365fe583aa5">heap</a>.</p></section><section class="function-entry" id="f-057c2408c8c1eed7"><h3><code>micron::sort::as_heap(C &amp;c, typename C::size_type lim) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L121">line 121</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr C &amp;
+as_heap(C &amp;c, typename C::size_type lim) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::size_type lim</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr C &amp;
+as_heap(C &amp;c, typename C::size_type lim) noexcept
+{
+  const usize n = lim &lt; c.size() ? lim : c.size();
+  auto comp = [](const typename C::value_type &amp;a, const typename C::value_type &amp;b) { return a &lt; b; };
+  __make_heap(c, n, comp);
+  __sort_heap(c, n, comp);
+  return c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../source/sort/heap.hpp.html#L127">line 127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-fb3b2ee85ce0b18d">__make_heap</a>, <a href="heap.hpp.html#f-267aff0af8c24ace">__sort_heap</a>.</p></section><section class="function-entry" id="f-3248e0b54283ec6b"><h3><code>micron::sort::as_heap(C &amp;c, typename C::size_type lim, Cmp comp) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L132">line 132</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_valid_comp&lt;C&gt; Cmp&gt;
+constexpr C &amp;
+as_heap(C &amp;c, typename C::size_type lim, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::size_type lim</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_valid_comp&lt;C&gt; Cmp&gt;
+constexpr C &amp;
+as_heap(C &amp;c, typename C::size_type lim, Cmp comp) noexcept
+{
+  const usize n = lim &lt; c.size() ? lim : c.size();
+  __make_heap(c, n, comp);
+  __sort_heap(c, n, comp);
+  return c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../source/sort/heap.hpp.html#L137">line 137</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-fb3b2ee85ce0b18d">__make_heap</a>, <a href="heap.hpp.html#f-267aff0af8c24ace">__sort_heap</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-c5544f6f260f70e3"><h3><code>micron::sort::__sift_down(C &amp;c, usize start, usize n, Compare comp) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L28">line 28</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Compare&gt;
+constexpr void
+__sift_down(C &amp;c, usize start, usize n, Compare comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>usize start</code></li><li><code>usize n</code></li><li><code>Compare comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Compare&gt;
+constexpr void
+__sift_down(C &amp;c, usize start, usize n, Compare comp) noexcept
+{
+  auto *first = c.begin();
+  usize root = start;
+
+  for ( ;; ) {
+    usize left = (root &lt;&lt; 1) + 1;
+    if ( left &gt;= n ) break;
+
+    usize swap_i = root;
+    if ( comp(first[swap_i], first[left]) ) swap_i = left;
+
+    usize right = left + 1;
+    if ( right &lt; n &amp;&amp; comp(first[swap_i], first[right]) ) swap_i = right;
+
+    if ( swap_i == root ) return;
+
+    micron::swap(first[root], first[swap_i]);
+    root = swap_i;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sort/heap.hpp.html#L43">line 43</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-fb3b2ee85ce0b18d"><h3><code>micron::sort::__make_heap(C &amp;c, usize n, Compare comp) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L52">line 52</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Compare&gt;
+constexpr void
+__make_heap(C &amp;c, usize n, Compare comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>usize n</code></li><li><code>Compare comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Compare&gt;
+constexpr void
+__make_heap(C &amp;c, usize n, Compare comp) noexcept
+{
+  if ( n &lt; 2 ) return;
+  for ( usize i = n / 2; i-- &gt; 0; ) __sift_down(c, i, n, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sort/heap.hpp.html#L54">line 54</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="heap.hpp.html#f-c5544f6f260f70e3">__sift_down</a>.</p></section><section class="function-entry" id="f-267aff0af8c24ace"><h3><code>micron::sort::__sort_heap(C &amp;c, usize n, Compare comp) noexcept</code></h3><p>Defined in <code>sort/heap.hpp</code>, <a href="../../source/sort/heap.hpp.html#L60">line 60</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Compare&gt;
+constexpr void
+__sort_heap(C &amp;c, usize n, Compare comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>usize n</code></li><li><code>Compare comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Compare&gt;
+constexpr void
+__sort_heap(C &amp;c, usize n, Compare comp) noexcept
+{
+  if ( n &lt; 2 ) return;
+  while ( n &gt; 1 ) {
+    micron::swap(c[0], c[n - 1]);
+    --n;
+    __sift_down(c, 0, n, comp);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sort/heap.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>, <a href="heap.hpp.html#f-c5544f6f260f70e3">__sift_down</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

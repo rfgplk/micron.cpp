@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/gfx/gl/loader.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/gfx/gl/loader.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/opengl.html">OpenGL</a></div><p>Defined in header <code>&lt;micron/gfx/gl/loader.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/gfx/gl/loader.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-7b3542b13485be9c">micron::gfx::gl::get_proc_t</code></td><td>typedef; line 37</td></tr><tr class="t-dsc"><td><code id="s-76903a52708dce78">micron::gfx::gl::subset</code></td><td>class; line 100</td></tr><tr class="t-dsc"><td><code id="s-2a5b72164cb27326">micron::gfx::gl::subset::count</code></td><td>member; line 106</td></tr><tr class="t-dsc"><td><code id="s-91ceb8985bc9c396">micron::gfx::gl::subset::indices</code></td><td>member; line 107</td></tr><tr class="t-dsc"><td><code id="s-98d8aa42676c5a1f">MICRON_GL_SYM(name)</code></td><td>macro; line 160</td></tr><tr class="t-dsc"><td><a href="#f-be5d52c169a7df8a">micron::gfx::gl::get_proc_address(const char *name) noexcept</a></td><td>function; line 51</td></tr><tr class="t-dsc"><td><a href="#f-4ace61e33f2536ff">micron::gfx::gl::has_extension(const char *name) noexcept</a></td><td>function; line 78</td></tr><tr class="t-dsc"><td><a href="#f-30ba00f4a6f77d2e">micron::gfx::gl::subset::load(get_proc_t gp) noexcept</a></td><td>function; line 110</td></tr><tr class="t-dsc"><td><a href="#f-b0fb6a4ef3adadbc">micron::gfx::gl::subset::position_of() noexcept</a></td><td>function; line 120</td></tr><tr class="t-dsc"><td><a href="#f-14e706fc29c3922b">micron::gfx::gl::subset::raw() const noexcept</a></td><td>function; line 139</td></tr><tr class="t-dsc"><td><a href="#f-22f1aec2e74aa67d">micron::gfx::gl::subset::as() const noexcept</a></td><td>function; line 146</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-be5d52c169a7df8a"><h3><code>micron::gfx::gl::get_proc_address(const char *name) noexcept</code></h3><p>Defined in <code>gfx/gl/loader.hpp</code>, <a href="../../../source/gfx/gl/loader.hpp.html#L51">line 51</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void *
+get_proc_address(const char *name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Returns <code>__get_proc ? __get_proc(name) : nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void *
+get_proc_address(const char *name) noexcept
+{
+  return __get_proc ? __get_proc(name) : nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__get_proc ? __get_proc(name) : nullptr</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L53">line 53</a></td></tr></tbody></table></section><section class="function-entry" id="f-4ace61e33f2536ff"><h3><code>micron::gfx::gl::has_extension(const char *name) noexcept</code></h3><p>Defined in <code>gfx/gl/loader.hpp</code>, <a href="../../../source/gfx/gl/loader.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+has_extension(const char *name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+has_extension(const char *name) noexcept
+{
+  if ( !glGetIntegerv || !glGetStringi || !glGetString ) return false;
+  GLint n = 0;
+  glGetIntegerv(GL_NUM_EXTENSIONS, &amp;n);
+  if ( n &gt; 0 ) {
+    for ( GLint i = 0; i &lt; n; ++i ) {
+      const GLubyte *s = glGetStringi(GL_EXTENSIONS, static_cast&lt;GLuint&gt;(i));
+      if ( !s ) continue;
+      if ( micron::strcmp(reinterpret_cast&lt;const char *&gt;(s), name) == 0 ) return true;
+    }
+    return false;
+  }
+  const GLubyte *legacy = glGetString(GL_EXTENSIONS);
+  return __extension_in(name, reinterpret_cast&lt;const char *&gt;(legacy));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L87">line 87</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>__extension_in(name, reinterpret_cast&lt;const char *&gt;(legacy))</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L92">line 92</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="opengl.hpp.html#s-6386abc1b7961c2e">glGetIntegerv</a>, <a href="opengl.hpp.html#s-7ed17aae7d8e48b9">glGetStringi</a>, <a href="../../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>, <a href="opengl.hpp.html#s-cc5c8e8f7a6fef8d">glGetString</a>, <a href="loader.hpp.html#f-8cd4b01f59d4f969">__extension_in</a>.</p></section><section class="function-entry" id="f-30ba00f4a6f77d2e"><h3><code>micron::gfx::gl::subset::load(get_proc_t gp) noexcept</code></h3><p>Defined in <code>gfx/gl/loader.hpp</code>, <a href="../../../source/gfx/gl/loader.hpp.html#L110">line 110</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  load(get_proc_t gp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>get_proc_t gp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  load(get_proc_t gp) noexcept
+  {
+    usize k = 0;
+    ((__fns[k++] = gp(gl_table[Indices].name)), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b0fb6a4ef3adadbc"><h3><code>micron::gfx::gl::subset::position_of() noexcept</code></h3><p>Defined in <code>gfx/gl/loader.hpp</code>, <a href="../../../source/gfx/gl/loader.hpp.html#L120">line 120</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u16 Idx&gt;
+  static consteval usize
+  position_of() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u16 Idx&gt;
+  static consteval usize
+  position_of() noexcept
+  {
+    static_assert(((Idx == Indices) || ...), &quot;subset does not contain that index&quot;);
+    usize pos = 0;
+    bool found = false;
+    auto check = [&amp;](u16 idx) {
+      if ( !found ) {
+        if ( idx == Idx )
+          found = true;
+        else
+          ++pos;
+      }
+    };
+    ((check(Indices)), ...);
+    return pos;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L134">line 134</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(((Idx == Indices) || ...), &quot;subset does not contain that index&quot;);</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L122">line 122</a></td></tr></tbody></table></section><section class="function-entry" id="f-14e706fc29c3922b"><h3><code>micron::gfx::gl::subset::raw() const noexcept</code></h3><p>Defined in <code>gfx/gl/loader.hpp</code>, <a href="../../../source/gfx/gl/loader.hpp.html#L139">line 139</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u16 Idx&gt;
+  void *
+  raw() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__fns[position_of&lt;Idx&gt;()]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u16 Idx&gt;
+  void *
+  raw() const noexcept
+  {
+    return __fns[position_of&lt;Idx&gt;()];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fns[position_of&lt;Idx&gt;()]</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L141">line 141</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-b0fb6a4ef3adadbc">position_of&lt;Idx&gt;</a>.</p></section><section class="function-entry" id="f-22f1aec2e74aa67d"><h3><code>micron::gfx::gl::subset::as() const noexcept</code></h3><p>Defined in <code>gfx/gl/loader.hpp</code>, <a href="../../../source/gfx/gl/loader.hpp.html#L146">line 146</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u16 Idx, class Fn&gt;
+  Fn
+  as() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;Fn&gt;(raw&lt;Idx&gt;())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u16 Idx, class Fn&gt;
+  Fn
+  as() const noexcept
+  {
+    return reinterpret_cast&lt;Fn&gt;(raw&lt;Idx&gt;());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;Fn&gt;(raw&lt;Idx&gt;())</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L148">line 148</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-14e706fc29c3922b">raw&lt;Idx&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-14d8b35d8a487ad2"><h3><code>micron::gfx::gl::__load_core_4_6(get_proc_t gp) noexcept</code></h3><p>Defined in <code>gfx/gl/loader.hpp</code>, <a href="../../../source/gfx/gl/loader.hpp.html#L42">line 42</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__load_core_4_6(get_proc_t gp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>get_proc_t gp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__load_core_4_6(get_proc_t gp) noexcept
+{
+  __get_proc = gp;
+  for ( usize i = 0; i &lt; gl_table_size; ++i ) {
+    *__gl_fnptr_slots[i] = gp(gl_table[i].name);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8cd4b01f59d4f969"><h3><code>micron::gfx::gl::__extension_in(const char *ext, const char *list) noexcept</code></h3><p>Defined in <code>gfx/gl/loader.hpp</code>, <a href="../../../source/gfx/gl/loader.hpp.html#L60">line 60</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__extension_in(const char *ext, const char *list) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *ext</code></li><li><code>const char *list</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__extension_in(const char *ext, const char *list) noexcept
+{
+  if ( !ext || !list ) return false;
+  const usize elen = micron::strlen(ext);
+  if ( elen == 0 ) return false;
+  const char *p = list;
+  while ( (p = micron::strstr(p, ext)) != nullptr ) {
+    const bool left_ok = (p == list) || (p[-1] == &#x27; &#x27;);
+    const bool right_ok = (p[elen] == &#x27; &#x27; || p[elen] == &#x27;\0&#x27;);
+    if ( left_ok &amp;&amp; right_ok ) return true;
+    p += elen;
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L62">line 62</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L64">line 64</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L69">line 69</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/gl/loader.hpp.html#L72">line 72</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="../../memory/cstring.hpp.html#f-67736b2c0115f187">micron::strstr</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

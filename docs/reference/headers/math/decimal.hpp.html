@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/decimal.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/decimal.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/numeric_types.html">Numeric types</a></div><p>Defined in header <code>&lt;micron/math/decimal.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/math/decimal.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-a44ded8f60651dc7">micron::math::decimal_error</code></td><td>enum; line 17</td></tr><tr class="t-dsc"><td><code id="s-4a7d66e012fa8756">micron::math::decimal_error::internal_capacity</code></td><td>enumerator; line 17</td></tr><tr class="t-dsc"><td><code id="s-b2b1af3908be38d7">micron::math::decimal_error::invalid_precision</code></td><td>enumerator; line 17</td></tr><tr class="t-dsc"><td><code id="s-411620bd0f724274">micron::math::decimal_error::none</code></td><td>enumerator; line 17</td></tr><tr class="t-dsc"><td><code id="s-d67562d537da200f">micron::math::decimal_error::nonfinite</code></td><td>enumerator; line 17</td></tr><tr class="t-dsc"><td><code id="s-9d8e993f87d3368b">micron::math::decimal_error::short_output</code></td><td>enumerator; line 17</td></tr><tr class="t-dsc"><td><code id="s-9c962f91cc32157c">micron::math::decimal_result</code></td><td>struct; line 19</td></tr><tr class="t-dsc"><td><code id="s-4d4bcab843f1d28d">micron::math::decimal_result::size</code></td><td>member; line 20</td></tr><tr class="t-dsc"><td><code id="s-a10c56222d7b2cbe">micron::math::decimal_result::error</code></td><td>member; line 21</td></tr><tr class="t-dsc"><td><code id="s-a8a84d090f0771e1">micron::math::binary64_decimal_capacity</code></td><td>variable; line 31</td></tr><tr class="t-dsc"><td><code id="s-7e2ac6b0f3551019">micron::math::binary64_significant_decimal_capacity</code></td><td>variable; line 33</td></tr><tr class="t-dsc"><td><a href="#f-99569c3f7733966e">micron::math::decimal_result::operator bool() const noexcept</a></td><td>function; line 24</td></tr><tr class="t-dsc"><td><a href="#f-12695feca8a03de5">micron::math::binary64_to_decimal(char *destination, usize capacity, f64 value) noexcept</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-a7ca7b7e5e738a13">micron::math::binary64_to_decimal(char *destination, usize capacity, f64 value, u32 significant_digits) noexcept</a></td><td>function; line 196</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-99569c3f7733966e"><h3><code>micron::math::decimal_result::operator bool() const noexcept</code></h3><p>Defined in <code>math/decimal.hpp</code>, <a href="../../source/math/decimal.hpp.html#L24">line 24</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr explicit
+  operator bool() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>error == decimal_error::none</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr explicit
+  operator bool() const noexcept
+  {
+    return error == decimal_error::none;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>error == decimal_error::none</code></td><td><a href="../../source/math/decimal.hpp.html#L26">line 26</a></td></tr></tbody></table></section><section class="function-entry" id="f-12695feca8a03de5"><h3><code>micron::math::binary64_to_decimal(char *destination, usize capacity, f64 value) noexcept</code></h3><p>Defined in <code>math/decimal.hpp</code>, <a href="../../source/math/decimal.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr decimal_result
+binary64_to_decimal(char *destination, usize capacity, f64 value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *destination</code></li><li><code>usize capacity</code></li><li><code>f64 value</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::format(destination, capacity, value, 0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr decimal_result
+binary64_to_decimal(char *destination, usize capacity, f64 value) noexcept
+{
+  return __impl::format(destination, capacity, value, 0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::format(destination, capacity, value, 0)</code></td><td><a href="../../source/math/decimal.hpp.html#L191">line 191</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decimal.hpp.html#f-d79e9063c6abd166">__impl::format</a>.</p></section><section class="function-entry" id="f-a7ca7b7e5e738a13"><h3><code>micron::math::binary64_to_decimal(char *destination, usize capacity, f64 value, u32 significant_digits) noexcept</code></h3><p>Defined in <code>math/decimal.hpp</code>, <a href="../../source/math/decimal.hpp.html#L196">line 196</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr decimal_result
+binary64_to_decimal(char *destination, usize capacity, f64 value, u32 significant_digits) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *destination</code></li><li><code>usize capacity</code></li><li><code>f64 value</code></li><li><code>u32 significant_digits</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr decimal_result
+binary64_to_decimal(char *destination, usize capacity, f64 value, u32 significant_digits) noexcept
+{
+  if ( significant_digits &lt; 1 || significant_digits &gt; 17 ) return { 0, decimal_error::invalid_precision };
+  return __impl::format(destination, capacity, value, significant_digits);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ 0, decimal_error::invalid_precision }</code></td><td><a href="../../source/math/decimal.hpp.html#L198">line 198</a></td></tr><tr class="t-dsc"><td><code>__impl::format(destination, capacity, value, significant_digits)</code></td><td><a href="../../source/math/decimal.hpp.html#L199">line 199</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decimal.hpp.html#f-d79e9063c6abd166">__impl::format</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-2158730c2e2104a8"><h3><code>micron::math::__impl::__binary64_digits(micron::__impl::__dec::__decimal &amp;decimal, u64 mantissa, i32 exponent) noexcept</code></h3><p>Defined in <code>math/decimal.hpp</code>, <a href="../../source/math/decimal.hpp.html#L40">line 40</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+__binary64_digits(micron::__impl::__dec::__decimal &amp;decimal, u64 mantissa, i32 exponent) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::__impl::__dec::__decimal &amp;decimal</code></li><li><code>u64 mantissa</code></li><li><code>i32 exponent</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+__binary64_digits(micron::__impl::__dec::__decimal &amp;decimal, u64 mantissa, i32 exponent) noexcept
+{
+  if ( !mantissa ) return;
+  if ( exponent &lt; 0 ) {
+    const i32 zeros = static_cast&lt;i32&gt;(__builtin_ctzll(mantissa));
+    const i32 cancel = zeros &lt; -exponent ? zeros : -exponent;
+    mantissa &gt;&gt;= cancel;
+    exponent += cancel;
+  }
+  u32 limbs[86];
+  const u32 power = static_cast&lt;u32&gt;(exponent &lt; 0 ? -exponent : exponent);
+  const u32 row = exponent &lt; 0 ? power / 13 : power / 29;
+  const u16 *offsets = exponent &lt; 0 ? __decimal_fives.offsets : __decimal_twos.offsets;
+  const u32 *source = (exponent &lt; 0 ? __decimal_fives.limbs : __decimal_twos.limbs) + offsets[row];
+  u32 used = offsets[row + 1] - offsets[row];
+  const u32 low = static_cast&lt;u32&gt;(mantissa % 1000000000), high = static_cast&lt;u32&gt;(mantissa / 1000000000);
+  u64 carry = 0;
+  for ( u32 i = 0; i &lt; used; ++i ) {
+    const u64 product = static_cast&lt;u64&gt;(source[i]) * low + (i ? static_cast&lt;u64&gt;(source[i - 1]) * high : 0) + carry;
+    limbs[i] = static_cast&lt;u32&gt;(product % 1000000000);
+    carry = product / 1000000000;
+  }
+  carry += static_cast&lt;u64&gt;(source[used - 1]) * high;
+  while ( carry ) {
+    limbs[used++] = static_cast&lt;u32&gt;(carry % 1000000000);
+    carry /= 1000000000;
+  }
+  const auto multiply = [&amp;](u32 factor) constexpr {
+    u64 carry = 0;
+    for ( u32 i = 0; i &lt; used; ++i ) {
+      const u64 product = static_cast&lt;u64&gt;(limbs[i]) * factor + carry;
+      const u64 quotient = product / 1000000000;
+      limbs[i] = static_cast&lt;u32&gt;(product - quotient * 1000000000);
+      carry = quotient;
+    }
+    while ( carry ) {
+      limbs[used++] = static_cast&lt;u32&gt;(carry % 1000000000);
+      carry /= 1000000000;
+    }
+  };
+  const i32 scale = exponent &lt; 0 ? -exponent : 0;
+  if ( exponent &gt;= 0 ) {
+    if ( power % 29 ) multiply(1u &lt;&lt; (power % 29));
+  } else {
+    u32 remaining = power % 13;
+    u32 factor = 1;
+    while ( remaining-- ) factor *= 5;
+    if ( factor != 1 ) multiply(factor);
+  }
+  u8 reversed[9];
+  u32 top = limbs[used - 1], digits = 0;
+  do {
+    reversed[digits++] = static_cast&lt;u8&gt;(top % 10);
+    top /= 10;
+  } while ( top );
+  decimal.ndigits = digits;
+  for ( u32 i = 0; i &lt; digits; ++i ) decimal.d[i] = reversed[digits - 1 - i];
+  for ( u32 i = used - 1; i-- &gt; 0; ) {
+    decimal.d[decimal.ndigits++] = static_cast&lt;u8&gt;(limbs[i] / 100000000);
+    micron::__impl::__digits::write8(decimal.d + decimal.ndigits, limbs[i] % 100000000);
+    decimal.ndigits += 8;
+  }
+  decimal.point = static_cast&lt;i32&gt;(decimal.ndigits) - scale;
+  micron::__impl::__dec::__dec_trim(decimal);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/math/decimal.hpp.html#L42">line 42</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../algorithm/arith.hpp.html#f-c43aace35b2d35ce">multiply</a>, <a href="../string/conversions/decimal_simd.hpp.html#f-1b1673943c44e205">micron::__impl::__digits::write8</a>, <a href="../string/conversions/decimal.hpp.html#f-496b91587629574d">micron::__impl::__dec::__dec_trim</a>.</p></section><section class="function-entry" id="f-d79e9063c6abd166"><h3><code>micron::math::__impl::format(char *destination, usize capacity, f64 value, u32 significant_digits) noexcept</code></h3><p>Defined in <code>math/decimal.hpp</code>, <a href="../../source/math/decimal.hpp.html#L107">line 107</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr decimal_result
+format(char *destination, usize capacity, f64 value, u32 significant_digits) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *destination</code></li><li><code>usize capacity</code></li><li><code>f64 value</code></li><li><code>u32 significant_digits</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr decimal_result
+format(char *destination, usize capacity, f64 value, u32 significant_digits) noexcept
+{
+  const u64 bits = ieee::to_bits(value);
+  const u64 exponent = (bits &gt;&gt; 52) &amp; 0x7ff;
+  if ( exponent == 0x7ff ) return { 0, decimal_error::nonfinite };
+  u64 mantissa = bits &amp; 0xfffffffffffffull;
+  i32 binary_exponent = -1074;
+  if ( exponent ) {
+    mantissa |= u64{ 1 } &lt;&lt; 52;
+    binary_exponent = static_cast&lt;i32&gt;(exponent) - 1075;
+  }
+  micron::__impl::__dec::__decimal decimal{};
+  __binary64_digits(decimal, mantissa, binary_exponent);
+  if ( decimal.truncated ) return { 0, decimal_error::internal_capacity };
+
+  if ( significant_digits &amp;&amp; significant_digits &lt; decimal.ndigits ) {
+    const bool up = micron::__impl::__dec::__dec_round_up(decimal, significant_digits);
+    decimal.ndigits = significant_digits;
+    if ( up ) {
+      u32 position = significant_digits;
+      while ( position &amp;&amp; decimal.d[position - 1] == 9 ) decimal.d[--position] = 0;
+      if ( position )
+        ++decimal.d[position - 1];
+      else {
+        decimal.d[0] = 1;
+        decimal.ndigits = 1;
+        ++decimal.point;
+      }
+    }
+    micron::__impl::__dec::__dec_trim(decimal);
+  }
+
+  char output[binary64_decimal_capacity];
+  usize size = 0;
+  if ( bits &gt;&gt; 63 ) output[size++] = &#x27;-&#x27;;
+  if ( !mantissa ) {
+    output[size++] = &#x27;0&#x27;;
+  } else if ( decimal.point &gt; 0 &amp;&amp; decimal.point &lt;= 16 &amp;&amp; decimal.ndigits &lt;= 32 ) {
+    for ( i32 i = 0; i &lt; decimal.point || i &lt; static_cast&lt;i32&gt;(decimal.ndigits); ++i ) {
+      if ( i == decimal.point ) output[size++] = &#x27;.&#x27;;
+      output[size++] = i &lt; static_cast&lt;i32&gt;(decimal.ndigits) ? static_cast&lt;char&gt;(&#x27;0&#x27; + decimal.d[i]) : &#x27;0&#x27;;
+    }
+  } else if ( decimal.point &lt;= 0 &amp;&amp; decimal.point &gt;= -6 &amp;&amp; static_cast&lt;i32&gt;(decimal.ndigits) - decimal.point &lt;= 32 ) {
+    output[size++] = &#x27;0&#x27;;
+    output[size++] = &#x27;.&#x27;;
+    for ( i32 i = 0; i &lt; -decimal.point; ++i ) output[size++] = &#x27;0&#x27;;
+    micron::__impl::__digits::ascii(output + size, decimal.d, decimal.ndigits);
+    size += decimal.ndigits;
+  } else {
+    output[size++] = static_cast&lt;char&gt;(&#x27;0&#x27; + decimal.d[0]);
+    if ( decimal.ndigits &gt; 1 ) {
+      output[size++] = &#x27;.&#x27;;
+      micron::__impl::__digits::ascii(output + size, decimal.d + 1, decimal.ndigits - 1);
+      size += decimal.ndigits - 1;
+    }
+    output[size++] = &#x27;e&#x27;;
+    i32 scientific_exponent = decimal.point - 1;
+    if ( scientific_exponent &lt; 0 ) {
+      output[size++] = &#x27;-&#x27;;
+      scientific_exponent = -scientific_exponent;
+    }
+    char digits[4]{};
+    u32 count = 0;
+    do {
+      digits[count++] = static_cast&lt;char&gt;(&#x27;0&#x27; + scientific_exponent % 10);
+      scientific_exponent /= 10;
+    } while ( scientific_exponent );
+    while ( count ) output[size++] = digits[--count];
+  }
+  if ( !destination || size &gt; capacity ) return { 0, decimal_error::short_output };
+  if consteval {
+    for ( usize i = 0; i &lt; size; ++i ) destination[i] = output[i];
+  } else {
+    __builtin_memcpy(destination, output, size);
+  }
+  return { size };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ 0, decimal_error::nonfinite }</code></td><td><a href="../../source/math/decimal.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>{ 0, decimal_error::internal_capacity }</code></td><td><a href="../../source/math/decimal.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>{ 0, decimal_error::short_output }</code></td><td><a href="../../source/math/decimal.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td><code>{ size }</code></td><td><a href="../../source/math/decimal.hpp.html#L182">line 182</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ieee.hpp.html#f-4ae309043c1a9124">ieee::to_bits</a>, <a href="decimal.hpp.html#f-2158730c2e2104a8">__binary64_digits</a>, <a href="../string/conversions/decimal.hpp.html#f-88283752c29f0f05">micron::__impl::__dec::__dec_round_up</a>, <a href="../string/conversions/decimal.hpp.html#f-496b91587629574d">micron::__impl::__dec::__dec_trim</a>, <a href="../string/conversions/decimal_simd.hpp.html#f-7991b77c7f69247d">micron::__impl::__digits::ascii</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

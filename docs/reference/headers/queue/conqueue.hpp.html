@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/queue/conqueue.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/queue/conqueue.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/queues.html">Queues</a></div><p>Defined in header <code>&lt;micron/queue/conqueue.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/queue/conqueue.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-2416547a414715dd">micron::conqueue</code></td><td>class; line 28</td></tr><tr class="t-dsc"><td><code id="s-b6a4433c1c30cac9">micron::conqueue::category_type</code></td><td>typedef; line 168</td></tr><tr class="t-dsc"><td><code id="s-d56cdaa13d88d75a">micron::conqueue::mutability_type</code></td><td>typedef; line 169</td></tr><tr class="t-dsc"><td><code id="s-3f2e489f7ddcaf8d">micron::conqueue::memory_type</code></td><td>typedef; line 170</td></tr><tr class="t-dsc"><td><code id="s-60a839f4f0523af4">micron::conqueue::value_type</code></td><td>typedef; line 171</td></tr><tr class="t-dsc"><td><code id="s-dc79c0d2c1e3656f">micron::conqueue::reference</code></td><td>typedef; line 172</td></tr><tr class="t-dsc"><td><code id="s-cf4f0a30fc59f8cb">micron::conqueue::ref</code></td><td>typedef; line 173</td></tr><tr class="t-dsc"><td><code id="s-c410b7076ae5569e">micron::conqueue::const_reference</code></td><td>typedef; line 174</td></tr><tr class="t-dsc"><td><code id="s-c509c2bb7b996046">micron::conqueue::const_ref</code></td><td>typedef; line 175</td></tr><tr class="t-dsc"><td><code id="s-8aab2a7b7f42d4d4">micron::conqueue::pointer</code></td><td>typedef; line 176</td></tr><tr class="t-dsc"><td><code id="s-ddd819b14852b07a">micron::conqueue::const_pointer</code></td><td>typedef; line 177</td></tr><tr class="t-dsc"><td><code id="s-2e1c72309420594b">micron::conqueue::iterator</code></td><td>typedef; line 178</td></tr><tr class="t-dsc"><td><code id="s-d68c0c61d13e3ea9">micron::conqueue::const_iterator</code></td><td>typedef; line 179</td></tr><tr class="t-dsc"><td><a href="#f-33f38926a1476bab">micron::conqueue::~conqueue()</a></td><td>function; line 181</td></tr><tr class="t-dsc"><td><a href="#f-c0c5dc2c9a228503">micron::conqueue::conqueue()</a></td><td>function; line 187</td></tr><tr class="t-dsc"><td><a href="#f-fa1218d6d9322588">micron::conqueue::conqueue(const std::initializer_list&lt;T&gt; &amp;lst)</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-90beb78ce22c914a">micron::conqueue::conqueue(const umax_t n, const T val)</a></td><td>function; line 211</td></tr><tr class="t-dsc"><td><a href="#f-8bd32b37ea58a19c">micron::conqueue::conqueue(const umax_t n)</a></td><td>function; line 226</td></tr><tr class="t-dsc"><td><a href="#f-1df151630bd5508e">micron::conqueue::conqueue(const conqueue &amp;o)</a></td><td>function; line 247</td></tr><tr class="t-dsc"><td><a href="#f-2820d7abc0dae474">micron::conqueue::conqueue(conqueue &amp;&amp;o)</a></td><td>function; line 257</td></tr><tr class="t-dsc"><td><a href="#f-a913273fe077b9aa">micron::conqueue::operator=(const conqueue &amp;o)</a></td><td>function; line 266</td></tr><tr class="t-dsc"><td><a href="#f-a247e499412a5e72">micron::conqueue::operator=(conqueue &amp;&amp;o)</a></td><td>function; line 293</td></tr><tr class="t-dsc"><td><a href="#f-8e5707a960cf0cf3">micron::conqueue::clear()</a></td><td>function; line 307</td></tr><tr class="t-dsc"><td><a href="#f-66b1346cd2a8b3c3">micron::conqueue::reserve(const usize n)</a></td><td>function; line 314</td></tr><tr class="t-dsc"><td><a href="#f-4f187350d55d466f">micron::conqueue::swap(conqueue &amp;o)</a></td><td>function; line 322</td></tr><tr class="t-dsc"><td><a href="#f-68ce2fdfe2578305">micron::conqueue::empty() const</a></td><td>function; line 334</td></tr><tr class="t-dsc"><td><a href="#f-e354d164dcbf3d43">micron::conqueue::size() const</a></td><td>function; line 341</td></tr><tr class="t-dsc"><td><a href="#f-8028b3124d931afd">micron::conqueue::max_size() const</a></td><td>function; line 348</td></tr><tr class="t-dsc"><td><a href="#f-c9ff398d76438518">micron::conqueue::last()</a></td><td>function; line 356</td></tr><tr class="t-dsc"><td><a href="#f-e820c6c18f41f09b">micron::conqueue::last() const</a></td><td>function; line 363</td></tr><tr class="t-dsc"><td><a href="#f-6590c603142b6a94">micron::conqueue::front()</a></td><td>function; line 370</td></tr><tr class="t-dsc"><td><a href="#f-4e116e7617fb6124">micron::conqueue::front() const</a></td><td>function; line 377</td></tr><tr class="t-dsc"><td><a href="#f-3cb6d0c1fc93ceaf">micron::conqueue::begin()</a></td><td>function; line 384</td></tr><tr class="t-dsc"><td><a href="#f-c2050218f4e192dd">micron::conqueue::begin() const</a></td><td>function; line 391</td></tr><tr class="t-dsc"><td><a href="#f-a900b1e572fbaa4b">micron::conqueue::cbegin() const</a></td><td>function; line 398</td></tr><tr class="t-dsc"><td><a href="#f-beb192df9ee44a85">micron::conqueue::end()</a></td><td>function; line 406</td></tr><tr class="t-dsc"><td><a href="#f-2cf31ae94a6f3e0e">micron::conqueue::end() const</a></td><td>function; line 413</td></tr><tr class="t-dsc"><td><a href="#f-2c9e5e647cfe745e">micron::conqueue::cend() const</a></td><td>function; line 420</td></tr><tr class="t-dsc"><td><a href="#f-21254508e9a53cb5">micron::conqueue::push(void)</a></td><td>function; line 427</td></tr><tr class="t-dsc"><td><a href="#f-6079c59a5039fcd4">micron::conqueue::push(T &amp;&amp;val)</a></td><td>function; line 440</td></tr><tr class="t-dsc"><td><a href="#f-f696440b66db7735">micron::conqueue::push(const T &amp;val)</a></td><td>function; line 448</td></tr><tr class="t-dsc"><td><a href="#f-ba87110e9e0d9846">micron::conqueue::push_batch(const T *items, usize count)</a></td><td>function; line 456</td></tr><tr class="t-dsc"><td><a href="#f-4250e63bb97fe21d">micron::conqueue::pop_batch(T *items, usize count)</a></td><td>function; line 490</td></tr><tr class="t-dsc"><td><a href="#f-1384e9e3dbad0d6b">micron::conqueue::for_each_locked(Fn &amp;&amp;fn)</a></td><td>function; line 501</td></tr><tr class="t-dsc"><td><a href="#f-50f56847e7a1767a">micron::conqueue::for_each_locked(Fn &amp;&amp;fn) const</a></td><td>function; line 509</td></tr><tr class="t-dsc"><td><a href="#f-f4f6ec1c5e6a500e">micron::conqueue::pop(void)</a></td><td>function; line 516</td></tr><tr class="t-dsc"><td><a href="#f-920fce3135945ad2">micron::conqueue::pop(T &amp;out)</a></td><td>function; line 524</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-33f38926a1476bab"><h3><code>micron::conqueue::~conqueue()</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L181">line 181</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~conqueue()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~conqueue()
+  {
+    if ( __mem::memory == nullptr ) return;
+    __clear_unsafe();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/queue/conqueue.hpp.html#L183">line 183</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-9298eb334fd45f00">__clear_unsafe</a>.</p></section><section class="function-entry" id="f-c0c5dc2c9a228503"><h3><code>micron::conqueue::conqueue()</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L187">line 187</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>conqueue() : __mem(__checked_elements(N)), head(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">conqueue() : __mem(__checked_elements(N)), head(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fa1218d6d9322588"><h3><code>micron::conqueue::conqueue(const std::initializer_list&lt;T&gt; &amp;lst)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>conqueue(const std::initializer_list&lt;T&gt; &amp;lst) : __mem(lst.size()), head(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const std::initializer_list&lt;T&gt; &amp;lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">conqueue(const std::initializer_list&lt;T&gt; &amp;lst) : __mem(lst.size()), head(0)
+  {
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( const T &amp;value : lst ) {
+        if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; )
+          __mem::memory[i] = value;
+        else
+          new (micron::addr(__mem::memory[i])) T(value);
+        ++i;
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __impl_container::destroy(__mem::memory, i);
+      throw;
+    }
+#endif
+    __mem::length = i;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/conqueue.hpp.html#L205">line 205</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../bits/__container.hpp.html#f-779c0db971bd6e11">__impl_container::destroy</a>.</p></section><section class="function-entry" id="f-90beb78ce22c914a"><h3><code>micron::conqueue::conqueue(const umax_t n, const T val)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>conqueue(const umax_t n, const T val) : __mem(__checked_elements(n)), head(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const umax_t n</code></li><li><code>const T val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">conqueue(const umax_t n, const T val) : __mem(__checked_elements(n)), head(0)
+
+  {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( umax_t i = 0; i &lt; n; i++ ) __push_unsafe(val);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __clear_unsafe();
+      throw;
+    }
+#endif
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/conqueue.hpp.html#L221">line 221</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-987a0163052db679">__push_unsafe</a>, <a href="conqueue.hpp.html#f-9298eb334fd45f00">__clear_unsafe</a>.</p></section><section class="function-entry" id="f-8bd32b37ea58a19c"><h3><code>micron::conqueue::conqueue(const umax_t n)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L226">line 226</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>conqueue(const umax_t n) : __mem(__checked_elements(n)), head(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const umax_t n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">conqueue(const umax_t n) : __mem(__checked_elements(n)), head(0)
+
+  {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( umax_t i = 0; i &lt; n; i++ ) {
+        if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; )
+          __mem::memory[__mem::length] = T{};
+        else
+          new (micron::addr(__mem::memory[__mem::length])) T{};
+        ++__mem::length;
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __clear_unsafe();
+      throw;
+    }
+#endif
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/conqueue.hpp.html#L242">line 242</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="conqueue.hpp.html#f-9298eb334fd45f00">__clear_unsafe</a>.</p></section><section class="function-entry" id="f-1df151630bd5508e"><h3><code>micron::conqueue::conqueue(const conqueue &amp;o)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L247">line 247</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>conqueue(const conqueue &amp;o) : __mem(nullptr), head(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const conqueue &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">conqueue(const conqueue &amp;o) : __mem(nullptr), head(0)
+  {
+    __hold lock(o.__mtx);
+    if ( o.length ) {
+      __reserve_unsafe(o.length);
+      __impl_container::copy(__mem::memory, micron::addressof(o.memory[o.head]), o.length);
+      __mem::length = o.length;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-9a5488bcc721179c">__reserve_unsafe</a>, <a href="../bits/__container.hpp.html#f-0d88c97bdfcabe99">__impl_container::copy</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-2820d7abc0dae474"><h3><code>micron::conqueue::conqueue(conqueue &amp;&amp;o)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L257">line 257</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>conqueue(conqueue &amp;&amp;o) : __mem(nullptr), head(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>conqueue &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">conqueue(conqueue &amp;&amp;o) : __mem(nullptr), head(0)
+  {
+    __hold lock(o.__mtx);
+    __mem::operator=(micron::move(o));
+    head = o.head;
+    o.head = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-a913273fe077b9aa"><h3><code>micron::conqueue::operator=(const conqueue &amp;o)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L266">line 266</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>conqueue &amp;
+  operator=(const conqueue &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const conqueue &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">conqueue &amp;
+  operator=(const conqueue &amp;o)
+  {
+    if ( this == micron::addr(o) ) return *this;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
+
+    chunk&lt;byte&gt; block = __allocator_create&lt;Alloc, alignof(T)&gt;(allocation_multiply_or_throw(o.length ? o.length : 1, sizeof(T)));
+    __mem replacement(micron::move(block));
+    T *fresh = replacement.memory;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      if ( o.length ) __impl_container::copy(fresh, micron::addressof(o.memory[o.head]), o.length);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      throw;
+    }
+#endif
+
+    __clear_unsafe();
+    __mem::swap(replacement);
+    __mem::length = o.length;
+    head = 0;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/conqueue.hpp.html#L268">line 268</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/conqueue.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/conqueue.hpp.html#L281">line 281</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="conqueue.hpp.html#f-930a2eb0504269fe">__lock_ordered</a>, <a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-72a42b38fc50eab2">__allocator_create&lt;Alloc, alignof(T)&gt;</a>, <a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-f33153f127680a28">allocation_multiply_or_throw</a>, <a href="../bits/__container.hpp.html#f-0d88c97bdfcabe99">__impl_container::copy</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="conqueue.hpp.html#f-9298eb334fd45f00">__clear_unsafe</a>.</p></section><section class="function-entry" id="f-a247e499412a5e72"><h3><code>micron::conqueue::operator=(conqueue &amp;&amp;o)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L293">line 293</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>conqueue &amp;
+  operator=(conqueue &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>conqueue &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">conqueue &amp;
+  operator=(conqueue &amp;&amp;o)
+  {
+    if ( this == micron::addr(o) ) return *this;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
+    __clear_unsafe();
+    if ( __mem::memory ) __mem::free();
+    __mem::operator=(micron::move(o));
+    head = o.head;
+    o.head = 0;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/conqueue.hpp.html#L295">line 295</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/conqueue.hpp.html#L303">line 303</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="conqueue.hpp.html#f-930a2eb0504269fe">__lock_ordered</a>, <a href="conqueue.hpp.html#f-9298eb334fd45f00">__clear_unsafe</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-8e5707a960cf0cf3"><h3><code>micron::conqueue::clear()</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L307">line 307</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  clear()
+  {
+    __hold __lock(__mtx);
+    __clear_unsafe();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-9298eb334fd45f00">__clear_unsafe</a>.</p></section><section class="function-entry" id="f-66b1346cd2a8b3c3"><h3><code>micron::conqueue::reserve(const usize n)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L314">line 314</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  reserve(const usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  reserve(const usize n)
+  {
+    __hold __lock(__mtx);
+    if ( n &lt;= __mem::capacity ) return;
+    __reserve_unsafe(n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/queue/conqueue.hpp.html#L317">line 317</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-9a5488bcc721179c">__reserve_unsafe</a>.</p></section><section class="function-entry" id="f-4f187350d55d466f"><h3><code>micron::conqueue::swap(conqueue &amp;o)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L322">line 322</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  swap(conqueue &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>conqueue &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  swap(conqueue &amp;o)
+  {
+    if ( this == micron::addr(o) ) return;
+    __defer la(__mtx), lb(o.__mtx);
+    __lock_ordered(__mtx, la, o.__mtx, lb);
+    micron::swap(__mem::memory, o.memory);
+    micron::swap(__mem::length, o.length);
+    micron::swap(__mem::capacity, o.capacity);
+    micron::swap(head, o.head);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/queue/conqueue.hpp.html#L324">line 324</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="conqueue.hpp.html#f-930a2eb0504269fe">__lock_ordered</a>, <a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-68ce2fdfe2578305"><h3><code>micron::conqueue::empty() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L334">line 334</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+  empty() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+  empty() const
+  {
+    __hold __lock(__mtx);
+    return __mem::length == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::length == 0</code></td><td><a href="../../source/queue/conqueue.hpp.html#L337">line 337</a></td></tr></tbody></table></section><section class="function-entry" id="f-e354d164dcbf3d43"><h3><code>micron::conqueue::size() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L341">line 341</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  size() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  size() const
+  {
+    __hold __lock(__mtx);
+    return __mem::length;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::length</code></td><td><a href="../../source/queue/conqueue.hpp.html#L344">line 344</a></td></tr></tbody></table></section><section class="function-entry" id="f-8028b3124d931afd"><h3><code>micron::conqueue::max_size() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L348">line 348</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  max_size() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  max_size() const
+  {
+    __hold __lock(__mtx);
+    return __mem::capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::capacity</code></td><td><a href="../../source/queue/conqueue.hpp.html#L351">line 351</a></td></tr></tbody></table></section><section class="function-entry" id="f-c9ff398d76438518"><h3><code>micron::conqueue::last()</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L356">line 356</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline T &amp;
+  last()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline T &amp;
+  last()
+  {
+    __hold __lock(__mtx);
+    return __mem::memory[head];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[head]</code></td><td><a href="../../source/queue/conqueue.hpp.html#L359">line 359</a></td></tr></tbody></table></section><section class="function-entry" id="f-e820c6c18f41f09b"><h3><code>micron::conqueue::last() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L363">line 363</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T &amp;
+  last() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T &amp;
+  last() const
+  {
+    __hold __lock(__mtx);
+    return __mem::memory[head];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[head]</code></td><td><a href="../../source/queue/conqueue.hpp.html#L366">line 366</a></td></tr></tbody></table></section><section class="function-entry" id="f-6590c603142b6a94"><h3><code>micron::conqueue::front()</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L370">line 370</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline T &amp;
+  front()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline T &amp;
+  front()
+  {
+    __hold __lock(__mtx);
+    return __mem::memory[head + __mem::length - 1];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[head + __mem::length - 1]</code></td><td><a href="../../source/queue/conqueue.hpp.html#L373">line 373</a></td></tr></tbody></table></section><section class="function-entry" id="f-4e116e7617fb6124"><h3><code>micron::conqueue::front() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L377">line 377</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T &amp;
+  front() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T &amp;
+  front() const
+  {
+    __hold __lock(__mtx);
+    return __mem::memory[head + __mem::length - 1];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[head + __mem::length - 1]</code></td><td><a href="../../source/queue/conqueue.hpp.html#L380">line 380</a></td></tr></tbody></table></section><section class="function-entry" id="f-3cb6d0c1fc93ceaf"><h3><code>micron::conqueue::begin()</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L384">line 384</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline T *
+  begin()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline T *
+  begin()
+  {
+    __hold __lock(__mtx);
+    return __mem::memory ? __mem::memory + head : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory ? __mem::memory + head : nullptr</code></td><td><a href="../../source/queue/conqueue.hpp.html#L387">line 387</a></td></tr></tbody></table></section><section class="function-entry" id="f-c2050218f4e192dd"><h3><code>micron::conqueue::begin() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L391">line 391</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T *
+  begin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T *
+  begin() const
+  {
+    __hold __lock(__mtx);
+    return __mem::memory ? __mem::memory + head : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory ? __mem::memory + head : nullptr</code></td><td><a href="../../source/queue/conqueue.hpp.html#L394">line 394</a></td></tr></tbody></table></section><section class="function-entry" id="f-a900b1e572fbaa4b"><h3><code>micron::conqueue::cbegin() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L398">line 398</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T *
+  cbegin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T *
+  cbegin() const
+  {
+    __hold __lock(__mtx);
+    return __mem::memory ? __mem::memory + head : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory ? __mem::memory + head : nullptr</code></td><td><a href="../../source/queue/conqueue.hpp.html#L401">line 401</a></td></tr></tbody></table></section><section class="function-entry" id="f-beb192df9ee44a85"><h3><code>micron::conqueue::end()</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L406">line 406</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline T *
+  end()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline T *
+  end()
+  {
+    __hold __lock(__mtx);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory ? __mem::memory + head + __mem::length : nullptr</code></td><td><a href="../../source/queue/conqueue.hpp.html#L409">line 409</a></td></tr></tbody></table></section><section class="function-entry" id="f-2cf31ae94a6f3e0e"><h3><code>micron::conqueue::end() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L413">line 413</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T *
+  end() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T *
+  end() const
+  {
+    __hold __lock(__mtx);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory ? __mem::memory + head + __mem::length : nullptr</code></td><td><a href="../../source/queue/conqueue.hpp.html#L416">line 416</a></td></tr></tbody></table></section><section class="function-entry" id="f-2c9e5e647cfe745e"><h3><code>micron::conqueue::cend() const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L420">line 420</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T *
+  cend() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T *
+  cend() const
+  {
+    __hold __lock(__mtx);
+    return __mem::memory ? __mem::memory + head + __mem::length : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory ? __mem::memory + head + __mem::length : nullptr</code></td><td><a href="../../source/queue/conqueue.hpp.html#L423">line 423</a></td></tr></tbody></table></section><section class="function-entry" id="f-21254508e9a53cb5"><h3><code>micron::conqueue::push(void)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L427">line 427</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline conqueue &amp;
+  push(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline conqueue &amp;
+  push(void)
+  {
+    __hold __lock(__mtx);
+    __ensure_one_unsafe();
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; )
+      __mem::memory[head + __mem::length] = T{};
+    else
+      new (micron::addr(__mem::memory[head + __mem::length])) T{};
+    ++__mem::length;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/conqueue.hpp.html#L436">line 436</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-7d2f27e0ba9d42bf">__ensure_one_unsafe</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-6079c59a5039fcd4"><h3><code>micron::conqueue::push(T &amp;&amp;val)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L440">line 440</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline conqueue &amp;
+  push(T &amp;&amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline conqueue &amp;
+  push(T &amp;&amp;val)
+  {
+    __hold __lock(__mtx);
+    __push_unsafe(micron::move(val));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/conqueue.hpp.html#L444">line 444</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-987a0163052db679">__push_unsafe</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-f696440b66db7735"><h3><code>micron::conqueue::push(const T &amp;val)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L448">line 448</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline conqueue &amp;
+  push(const T &amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline conqueue &amp;
+  push(const T &amp;val)
+  {
+    __hold __lock(__mtx);
+    __push_unsafe(val);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/conqueue.hpp.html#L452">line 452</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-987a0163052db679">__push_unsafe</a>.</p></section><section class="function-entry" id="f-ba87110e9e0d9846"><h3><code>micron::conqueue::push_batch(const T *items, usize count)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L456">line 456</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  push_batch(const T *items, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *items</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  push_batch(const T *items, usize count)
+  {
+    __hold __lock(__mtx);
+    if ( count == 0 ) return 0;
+    if ( count &gt; static_cast&lt;usize&gt;(-1) - __mem::length ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;micron::conqueue capacity overflow&quot;);
+    const usize needed = __mem::length + count;
+    if ( head &gt; __mem::capacity || needed &gt; __mem::capacity - head ) {
+      if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+        if ( needed &lt;= __mem::capacity ) {
+          micron::memmove(__mem::memory, micron::addressof(__mem::memory[head]), __mem::length);
+          head = 0;
+        } else {
+          __reserve_unsafe(__mem::recommended_capacity(__mem::capacity, needed));
+        }
+      } else {
+        __reserve_unsafe(needed &lt;= __mem::capacity ? __mem::capacity : __mem::recommended_capacity(__mem::capacity, needed));
+      }
+    }
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+      micron::memcpy(micron::addressof(__mem::memory[head + __mem::length]), items, count);
+      __mem::length += count;
+      return count;
+    } else {
+      usize pushed = 0;
+      for ( ; pushed &lt; count; ++pushed ) {
+        new (micron::addr(__mem::memory[head + __mem::length])) T(items[pushed]);
+        ++__mem::length;
+      }
+      return pushed;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/queue/conqueue.hpp.html#L459">line 459</a></td></tr><tr class="t-dsc"><td><code>count</code></td><td><a href="../../source/queue/conqueue.hpp.html#L478">line 478</a></td></tr><tr class="t-dsc"><td><code>pushed</code></td><td><a href="../../source/queue/conqueue.hpp.html#L485">line 485</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::conqueue capacity overflow&quot;)</code></td><td><a href="../../source/queue/conqueue.hpp.html#L461">line 461</a><br>Within <code>( count &gt; static_cast&lt;usize&gt;(-1) - __mem::length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memmove.hpp.html#f-8a8a4e3789dd039d">micron::memmove</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="conqueue.hpp.html#f-9a5488bcc721179c">__reserve_unsafe</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-4250e63bb97fe21d"><h3><code>micron::conqueue::pop_batch(T *items, usize count)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L490">line 490</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  pop_batch(T *items, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *items</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  pop_batch(T *items, usize count)
+  {
+    __hold __lock(__mtx);
+    const usize n = count &lt; __mem::length ? count : __mem::length;
+    usize popped = 0;
+    for ( ; popped &lt; n; ++popped ) __pop_unsafe(micron::addressof(items[popped]));
+    return popped;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>popped</code></td><td><a href="../../source/queue/conqueue.hpp.html#L496">line 496</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-e0c7f97161b571eb">__pop_unsafe</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-1384e9e3dbad0d6b"><h3><code>micron::conqueue::for_each_locked(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L501">line 501</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  inline void
+  for_each_locked(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  inline void
+  for_each_locked(Fn &amp;&amp;fn)
+  {
+    __hold __lock(__mtx);
+    for ( usize i = 0; i &lt; __mem::length; ++i ) fn(__mem::memory[head + i]);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-50f56847e7a1767a"><h3><code>micron::conqueue::for_each_locked(Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L509">line 509</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  inline void
+  for_each_locked(Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  inline void
+  for_each_locked(Fn &amp;&amp;fn) const
+  {
+    __hold __lock(__mtx);
+    for ( usize i = 0; i &lt; __mem::length; ++i ) fn(static_cast&lt;const T &amp;&gt;(__mem::memory[head + i]));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f4f6ec1c5e6a500e"><h3><code>micron::conqueue::pop(void)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L516">line 516</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline conqueue &amp;
+  pop(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline conqueue &amp;
+  pop(void)
+  {
+    __hold __lock(__mtx);
+    __pop_unsafe(nullptr);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/conqueue.hpp.html#L520">line 520</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-e0c7f97161b571eb">__pop_unsafe</a>.</p></section><section class="function-entry" id="f-920fce3135945ad2"><h3><code>micron::conqueue::pop(T &amp;out)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L524">line 524</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+  pop(T &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+  pop(T &amp;out)
+  {
+    __hold __lock(__mtx);
+    return __pop_unsafe(micron::addressof(out));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pop_unsafe(micron::addressof(out))</code></td><td><a href="../../source/queue/conqueue.hpp.html#L527">line 527</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-e0c7f97161b571eb">__pop_unsafe</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ea42e3ec627d2fd5"><h3><code>micron::conqueue::__hold::__hold(micron::fast_mutex &amp;mm) noexcept</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L39">line 39</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] explicit __hold(micron::fast_mutex &amp;mm) noexcept : m(mm)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::fast_mutex &amp;mm</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] explicit __hold(micron::fast_mutex &amp;mm) noexcept : m(mm) { m.lock(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3c266845393bef1a"><h3><code>micron::conqueue::__hold::~__hold() noexcept</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L41">line 41</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] ~__hold() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] ~__hold() noexcept { m.unlock(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d7454a3eff52f34a"><h3><code>micron::conqueue::__hold::__hold(const __hold &amp;)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L43">line 43</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__hold(const __hold &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __hold &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-1fdae7d3c5fd1074"><h3><code>micron::conqueue::__hold::operator=(const __hold &amp;)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__hold &amp;operator=(const __hold &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __hold &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-3e4161465e2e440c"><h3><code>micron::conqueue::__checked_elements(I count)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I&gt;
+  static constexpr usize
+  __checked_elements(I count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I&gt;
+  static constexpr usize
+  __checked_elements(I count)
+  {
+    if ( static_cast&lt;umax_t&gt;(count) &gt; static_cast&lt;umax_t&gt;(static_cast&lt;usize&gt;(-1) / sizeof(T)) ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;micron::conqueue capacity overflow&quot;);
+    return static_cast&lt;usize&gt;(count);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(count)</code></td><td><a href="../../source/queue/conqueue.hpp.html#L53">line 53</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::conqueue capacity overflow&quot;)</code></td><td><a href="../../source/queue/conqueue.hpp.html#L52">line 52</a><br>Within <code>( static_cast&lt;umax_t&gt;(count) &gt; static_cast&lt;umax_t&gt;(static_cast&lt;usize&gt;(-1) / sizeof(T)) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-930a2eb0504269fe"><h3><code>micron::conqueue::__lock_ordered(micron::fast_mutex &amp;a, __defer &amp;la, micron::fast_mutex &amp;b, __defer &amp;lb)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline void
+  __lock_ordered(micron::fast_mutex &amp;a, __defer &amp;la, micron::fast_mutex &amp;b, __defer &amp;lb)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::fast_mutex &amp;a</code></li><li><code>__defer &amp;la</code></li><li><code>micron::fast_mutex &amp;b</code></li><li><code>__defer &amp;lb</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline void
+  __lock_ordered(micron::fast_mutex &amp;a, __defer &amp;la, micron::fast_mutex &amp;b, __defer &amp;lb)
+  {
+    const uintptr_t aa = reinterpret_cast&lt;uintptr_t&gt;(micron::addr(a));
+    const uintptr_t bb = reinterpret_cast&lt;uintptr_t&gt;(micron::addr(b));
+    if ( aa == bb ) {
+      la.lock();
+    } else if ( aa &lt; bb ) {
+      la.lock();
+      lb.lock();
+    } else {
+      lb.lock();
+      la.lock();
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-9a5488bcc721179c"><h3><code>micron::conqueue::__reserve_unsafe(const usize n)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L73">line 73</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __reserve_unsafe(const usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __reserve_unsafe(const usize n)
+  {
+    if ( n &lt;= __mem::capacity &amp;&amp; head == 0 ) return;
+    const usize count = __mem::length;
+    const usize requested = n &lt; count ? count : n;
+    const usize elements = __checked_elements(requested ? requested : 1);
+    chunk&lt;byte&gt; block = __allocator_create&lt;Alloc, alignof(T)&gt;(allocation_multiply_or_throw(elements, sizeof(T)));
+    __mem replacement(micron::move(block));
+    T *fresh = replacement.memory;
+
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+      if ( count ) micron::memcpy(fresh, micron::addressof(__mem::memory[head]), count);
+    } else {
+      usize made = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( ; made &lt; count; ++made ) {
+          if constexpr ( micron::is_nothrow_move_constructible_v&lt;T&gt; or !micron::is_copy_constructible_v&lt;T&gt; )
+            new (micron::addr(fresh[made])) T(micron::move(__mem::memory[head + made]));
+          else
+            new (micron::addr(fresh[made])) T(__mem::memory[head + made]);
+        }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        __impl_container::destroy(fresh, made);
+        throw;
+      }
+#endif
+      if ( count ) __impl_container::destroy(micron::addr(__mem::memory[head]), count);
+    }
+
+    __mem::swap(replacement);
+    __mem::length = count;
+    head = 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/queue/conqueue.hpp.html#L75">line 75</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/conqueue.hpp.html#L99">line 99</a><br>Within <code>else of ( micron::is_trivially_copyable_v&lt;T&gt; )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-3e4161465e2e440c">__checked_elements</a>, <a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-72a42b38fc50eab2">__allocator_create&lt;Alloc, alignof(T)&gt;</a>, <a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-f33153f127680a28">allocation_multiply_or_throw</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../bits/__container.hpp.html#f-779c0db971bd6e11">__impl_container::destroy</a>.</p></section><section class="function-entry" id="f-7d2f27e0ba9d42bf"><h3><code>micron::conqueue::__ensure_one_unsafe()</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L111">line 111</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+  __ensure_one_unsafe()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+  __ensure_one_unsafe()
+  {
+    if ( head &lt;= __mem::capacity &amp;&amp; __mem::length &lt; __mem::capacity - head ) return;
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+      if ( head ) {
+        micron::memmove(__mem::memory, micron::addressof(__mem::memory[head]), __mem::length);
+        head = 0;
+        return;
+      }
+    }
+    const usize max_elements = static_cast&lt;usize&gt;(-1) / sizeof(T);
+    if ( __mem::length == __mem::capacity &amp;&amp; __mem::capacity == max_elements ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;micron::conqueue capacity overflow&quot;);
+    const usize wanted
+        = __mem::length &lt; __mem::capacity ? __mem::capacity : __mem::recommended_capacity(__mem::capacity, __mem::capacity + 1);
+    __reserve_unsafe(wanted);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/queue/conqueue.hpp.html#L113">line 113</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/queue/conqueue.hpp.html#L118">line 118</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::conqueue capacity overflow&quot;)</code></td><td><a href="../../source/queue/conqueue.hpp.html#L123">line 123</a><br>Within <code>( __mem::length == __mem::capacity &amp;&amp; __mem::capacity == max_elements )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memmove.hpp.html#f-8a8a4e3789dd039d">micron::memmove</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="conqueue.hpp.html#f-9a5488bcc721179c">__reserve_unsafe</a>.</p></section><section class="function-entry" id="f-9298eb334fd45f00"><h3><code>micron::conqueue::__clear_unsafe() noexcept</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L130">line 130</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __clear_unsafe() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __clear_unsafe() noexcept
+  {
+    if ( __mem::length ) __impl_container::destroy(micron::addr(__mem::memory[head]), __mem::length);
+    __mem::length = 0;
+    head = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-779c0db971bd6e11">__impl_container::destroy</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-987a0163052db679"><h3><code>micron::conqueue::__push_unsafe(U &amp;&amp;val)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L139">line 139</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U&gt;
+  inline void
+  __push_unsafe(U &amp;&amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>U &amp;&amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U&gt;
+  inline void
+  __push_unsafe(U &amp;&amp;val)
+  {
+    __ensure_one_unsafe();
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; )
+      __mem::memory[head + __mem::length] = micron::forward&lt;U&gt;(val);
+    else
+      new (micron::addr(__mem::memory[head + __mem::length])) T(micron::forward&lt;U&gt;(val));
+    ++__mem::length;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="conqueue.hpp.html#f-7d2f27e0ba9d42bf">__ensure_one_unsafe</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;U&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-e0c7f97161b571eb"><h3><code>micron::conqueue::__pop_unsafe(T *out)</code></h3><p>Defined in <code>queue/conqueue.hpp</code>, <a href="../../source/queue/conqueue.hpp.html#L150">line 150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+  __pop_unsafe(T *out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+  __pop_unsafe(T *out)
+  {
+    if ( __mem::length == 0 ) return false;
+    T &amp;v = __mem::memory[head];
+    if ( out ) {
+      if constexpr ( micron::is_move_assignable_v&lt;T&gt; )
+        *out = micron::move(v);
+      else
+        *out = v;
+    }
+    if constexpr ( !micron::is_trivially_destructible_v&lt;T&gt; ) v.~T();
+    ++head;
+    --__mem::length;
+    if ( __mem::length == 0 ) head = 0;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/conqueue.hpp.html#L152">line 152</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/conqueue.hpp.html#L164">line 164</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/__asm/rdrand.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/__asm/rdrand.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/__asm/rdrand.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/__asm/rdrand.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-98993e1535afaca5"><h3><code>micron::math::__asm_op::rdrand64(u64 &amp;out) noexcept</code></h3><p>Defined in <code>math/__asm/rdrand.hpp</code>, <a href="../../../source/math/__asm/rdrand.hpp.html#L19">line 19</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline bool
+rdrand64(u64 &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline bool
+rdrand64(u64 &amp;out) noexcept
+{
+#if defined(__micron_x86_rdrnd) &amp;&amp; defined(__micron_arch_amd64)
+  unsigned char ok = 0;
+  for ( int retry = 0; retry &lt; 10; ++retry ) {
+    asm volatile(&quot;rdrand %0; setc %1&quot; : &quot;=r&quot;(out), &quot;=qm&quot;(ok)::&quot;cc&quot;);
+    if ( ok ) return true;
+  }
+  return false;
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_rng)
+  u64 v = 0;
+  for ( int retry = 0; retry &lt; 10; ++retry ) {
+    u32 nzcv;
+    asm volatile(&quot;mrs %0, s3_3_c2_c4_0\n\tmrs %1, nzcv&quot; : &quot;=r&quot;(v), &quot;=r&quot;(nzcv));
+    if ( ((nzcv &gt;&gt; 30) &amp; 1u) == 0u ) {
+      out = v;
+      return true;
+    }
+  }
+  return false;
+#else
+  (void)out;
+  return false;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L25">line 25</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L27">line 27</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L35">line 35</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L38">line 38</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L41">line 41</a></td></tr></tbody></table></section><section class="function-entry" id="f-db8ab4a1b25e5e3b"><h3><code>micron::math::__asm_op::rdseed64(u64 &amp;out) noexcept</code></h3><p>Defined in <code>math/__asm/rdrand.hpp</code>, <a href="../../../source/math/__asm/rdrand.hpp.html#L46">line 46</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline bool
+rdseed64(u64 &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline bool
+rdseed64(u64 &amp;out) noexcept
+{
+#if defined(__micron_x86_rdseed) &amp;&amp; defined(__micron_arch_amd64)
+  unsigned char ok = 0;
+  for ( int retry = 0; retry &lt; 64; ++retry ) {
+    asm volatile(&quot;rdseed %0; setc %1&quot; : &quot;=r&quot;(out), &quot;=qm&quot;(ok)::&quot;cc&quot;);
+    if ( ok ) return true;
+  }
+  return false;
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_rng)
+  u64 v = 0;
+  for ( int retry = 0; retry &lt; 64; ++retry ) {
+    u32 nzcv;
+    asm volatile(&quot;mrs %0, s3_3_c2_c4_1\n\tmrs %1, nzcv&quot; : &quot;=r&quot;(v), &quot;=r&quot;(nzcv));
+    if ( ((nzcv &gt;&gt; 30) &amp; 1u) == 0u ) {
+      out = v;
+      return true;
+    }
+  }
+  return false;
+#else
+  (void)out;
+  return false;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L52">line 52</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L54">line 54</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L62">line 62</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L65">line 65</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L68">line 68</a></td></tr></tbody></table></section><section class="function-entry" id="f-5eb98da03c9903c2"><h3><code>micron::math::__asm_op::rdtsc64() noexcept</code></h3><p>Defined in <code>math/__asm/rdrand.hpp</code>, <a href="../../../source/math/__asm/rdrand.hpp.html#L82">line 82</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline u64
+rdtsc64() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline u64
+rdtsc64() noexcept
+{
+#if defined(__micron_arch_x86_any)
+  u32 lo = 0, hi = 0;
+  asm volatile(&quot;rdtsc&quot; : &quot;=a&quot;(lo), &quot;=d&quot;(hi));
+  return (u64(hi) &lt;&lt; 32) | u64(lo);
+#elif defined(__micron_arch_arm64)
+  // NOTE: CNTVCT_EL0 is a fixed-frequency virtual counter (rate = CNTFRQ_EL0), NOT a per-cycle count
+  u64 v;
+  asm volatile(&quot;mrs %0, cntvct_el0&quot; : &quot;=r&quot;(v));
+  return v;
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(MICRON_CHRONO_ARM32_CNTVCT)
+  u32 lo, hi;
+  asm volatile(&quot;mrrc p15, 1, %0, %1, c14&quot; : &quot;=r&quot;(lo), &quot;=r&quot;(hi));
+  return (u64(hi) &lt;&lt; 32) | u64(lo);
+#else
+  return 0;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(u64(hi) &lt;&lt; 32) | u64(lo)</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L87">line 87</a></td></tr><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L92">line 92</a></td></tr><tr class="t-dsc"><td><code>(u64(hi) &lt;&lt; 32) | u64(lo)</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/__asm/rdrand.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

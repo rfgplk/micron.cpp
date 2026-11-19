@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/number.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/number.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/number.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/number.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-c098feca405a7628">micron::math::inv_result</code></td><td>struct; line 81</td></tr><tr class="t-dsc"><td><code id="s-3b5d262789928ff0">micron::math::inv_result::value</code></td><td>member; line 82</td></tr><tr class="t-dsc"><td><code id="s-a910966381d1c13c">micron::math::inv_result::exists</code></td><td>member; line 83</td></tr><tr class="t-dsc"><td><code id="s-3679f90df51a943a">micron::math::sinv_result</code></td><td>struct; line 121</td></tr><tr class="t-dsc"><td><code id="s-42d918d34058c8b0">micron::math::sinv_result::value</code></td><td>member; line 122</td></tr><tr class="t-dsc"><td><code id="s-cdea096dc9c967d5">micron::math::sinv_result::exists</code></td><td>member; line 123</td></tr><tr class="t-dsc"><td><a href="#f-92252513cda16a46">micron::math::gcd(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;b)</a></td><td>function; line 51</td></tr><tr class="t-dsc"><td><a href="#f-5a3088a4fc42a49c">micron::math::lcm(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;b)</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-c7131628bed140d4">micron::math::invmod(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;m)</a></td><td>function; line 88</td></tr><tr class="t-dsc"><td><a href="#f-6f7acf207d52db75">micron::math::gcd(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;b)</a></td><td>function; line 109</td></tr><tr class="t-dsc"><td><a href="#f-4aaa5d2831a7a86d">micron::math::lcm(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;b)</a></td><td>function; line 116</td></tr><tr class="t-dsc"><td><a href="#f-ed64db723042837a">micron::math::invmod(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;m)</a></td><td>function; line 128</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-92252513cda16a46"><h3><code>micron::math::gcd(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;b)</code></h3><p>Defined in <code>math/arbint/number.hpp</code>, <a href="../../../source/math/arbint/number.hpp.html#L51">line 51</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr arbuint&lt;B, S, A&gt;
+gcd(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const arbuint&lt;B, S, A&gt; &amp;a</code></li><li><code>const arbuint&lt;B, S, A&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr arbuint&lt;B, S, A&gt;
+gcd(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;b)
+{
+  using U = arbuint&lt;B, S, A&gt;;
+  using sizes = __arb::gcd_sizes&lt;U&gt;;
+  const usize an = a.size();
+  const usize bn = b.size();
+  if ( an == 0 ) return b;
+  if ( bn == 0 ) return a;
+
+  const usize gn = an &lt; bn ? an : bn;
+  __arb::scratch&lt;U::bounded ? sizes::gcd : 1u, A, U::bounded&gt; sc(gn + mpn::gcd_itch(an, bn));
+  mpn::limb_t *const gp = sc.get();
+  mpn::limb_t *const work = gp + gn;
+
+  const usize rn = mpn::gcd(gp, a.limbs(), an, b.limbs(), bn, work);
+  U r;
+  r.__assign_limbs(gp, rn);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>b</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L57">line 57</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L68">line 68</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="gcd.hpp.html#f-9a0f41bd98fc9a00">mpn::gcd_itch</a>, <a href="gcd.hpp.html#f-d8c72db0c05a0cc3">mpn::gcd</a>.</p></section><section class="function-entry" id="f-5a3088a4fc42a49c"><h3><code>micron::math::lcm(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;b)</code></h3><p>Defined in <code>math/arbint/number.hpp</code>, <a href="../../../source/math/arbint/number.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr arbuint&lt;B, S, A&gt;
+lcm(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const arbuint&lt;B, S, A&gt; &amp;a</code></li><li><code>const arbuint&lt;B, S, A&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr arbuint&lt;B, S, A&gt;
+lcm(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;b)
+{
+  using U = arbuint&lt;B, S, A&gt;;
+  if ( a.is_zero() || b.is_zero() ) return U::zero();
+  const U g = gcd(a, b);
+  return (a / g) * b;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>U::zero()</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L76">line 76</a></td></tr><tr class="t-dsc"><td><code>(a / g) * b</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L78">line 78</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="number.hpp.html#f-92252513cda16a46">gcd</a>.</p></section><section class="function-entry" id="f-c7131628bed140d4"><h3><code>micron::math::invmod(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;m)</code></h3><p>Defined in <code>math/arbint/number.hpp</code>, <a href="../../../source/math/arbint/number.hpp.html#L88">line 88</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr inv_result&lt;B, S, A&gt;
+invmod(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const arbuint&lt;B, S, A&gt; &amp;a</code></li><li><code>const arbuint&lt;B, S, A&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr inv_result&lt;B, S, A&gt;
+invmod(const arbuint&lt;B, S, A&gt; &amp;a, const arbuint&lt;B, S, A&gt; &amp;m)
+{
+  using U = arbuint&lt;B, S, A&gt;;
+  using sizes = __arb::gcd_sizes&lt;U&gt;;
+  const usize mn = m.size();
+  if ( mn == 0 ) micron::exc&lt;micron::except::domain_error&gt;(&quot;micron::math::invmod modulus is zero&quot;);
+
+  const usize an = a.size();
+  __arb::scratch&lt;U::bounded ? sizes::inv : 1u, A, U::bounded&gt; sc(mn + mpn::invmod_itch(an != 0 ? an : 1u, mn));
+  mpn::limb_t *const rp = sc.get();
+  mpn::limb_t *const work = rp + mn;
+
+  usize rn = 0;
+  const bool ok = mpn::invmod(rp, rn, a.limbs(), an, m.limbs(), mn, work);
+  U r;
+  if ( ok ) r.__assign_limbs(rp, rn);
+  return inv_result&lt;B, S, A&gt;{ r, ok };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>inv_result&lt;B, S, A&gt;{ r, ok }</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L104">line 104</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::exc&lt;micron::except::domain_error&gt;(&quot;micron::math::invmod modulus is zero&quot;)</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L93">line 93</a><br>Within <code>( mn == 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">micron::exc&lt;micron::except::domain_error&gt;</a>, <a href="gcdext.hpp.html#f-5483b7759c10adf4">mpn::invmod_itch</a>, <a href="gcdext.hpp.html#f-224217b926a0f9ca">mpn::invmod</a>.</p></section><section class="function-entry" id="f-6f7acf207d52db75"><h3><code>micron::math::gcd(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;b)</code></h3><p>Defined in <code>math/arbint/number.hpp</code>, <a href="../../../source/math/arbint/number.hpp.html#L109">line 109</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr arbint&lt;B, S, A&gt;
+gcd(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const arbint&lt;B, S, A&gt; &amp;a</code></li><li><code>const arbint&lt;B, S, A&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>arbint&lt;B, S, A&gt;(gcd(a.magnitude(), b.magnitude()), false)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr arbint&lt;B, S, A&gt;
+gcd(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;b)
+{
+  return arbint&lt;B, S, A&gt;(gcd(a.magnitude(), b.magnitude()), false);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arbint&lt;B, S, A&gt;(gcd(a.magnitude(), b.magnitude()), false)</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L111">line 111</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="signed.hpp.html#s-ab70406d0da87bb2">arbint&lt;B, S, A&gt;</a>, <a href="number.hpp.html#f-92252513cda16a46">gcd</a>.</p></section><section class="function-entry" id="f-4aaa5d2831a7a86d"><h3><code>micron::math::lcm(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;b)</code></h3><p>Defined in <code>math/arbint/number.hpp</code>, <a href="../../../source/math/arbint/number.hpp.html#L116">line 116</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr arbint&lt;B, S, A&gt;
+lcm(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const arbint&lt;B, S, A&gt; &amp;a</code></li><li><code>const arbint&lt;B, S, A&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>arbint&lt;B, S, A&gt;(lcm(a.magnitude(), b.magnitude()), false)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr arbint&lt;B, S, A&gt;
+lcm(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;b)
+{
+  return arbint&lt;B, S, A&gt;(lcm(a.magnitude(), b.magnitude()), false);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arbint&lt;B, S, A&gt;(lcm(a.magnitude(), b.magnitude()), false)</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L118">line 118</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="signed.hpp.html#s-ab70406d0da87bb2">arbint&lt;B, S, A&gt;</a>, <a href="number.hpp.html#f-5a3088a4fc42a49c">lcm</a>.</p></section><section class="function-entry" id="f-ed64db723042837a"><h3><code>micron::math::invmod(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;m)</code></h3><p>Defined in <code>math/arbint/number.hpp</code>, <a href="../../../source/math/arbint/number.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr sinv_result&lt;B, S, A&gt;
+invmod(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const arbint&lt;B, S, A&gt; &amp;a</code></li><li><code>const arbint&lt;B, S, A&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize B, arb_solver S, class A&gt;
+[[nodiscard]] inline constexpr sinv_result&lt;B, S, A&gt;
+invmod(const arbint&lt;B, S, A&gt; &amp;a, const arbint&lt;B, S, A&gt; &amp;m)
+{
+  using U = arbuint&lt;B, S, A&gt;;
+  const U mm = m.magnitude();
+  if ( mm.is_zero() ) micron::exc&lt;micron::except::domain_error&gt;(&quot;micron::math::invmod modulus is zero&quot;);
+
+  U base = a.magnitude();
+  base %= mm;
+  if ( a.sign() &lt; 0 &amp;&amp; !base.is_zero() ) base = mm - base;
+
+  const auto r = invmod(base, mm);
+  return sinv_result&lt;B, S, A&gt;{ arbint&lt;B, S, A&gt;(r.value, false), r.exists };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sinv_result&lt;B, S, A&gt;{ arbint&lt;B, S, A&gt;(r.value, false), r.exists }</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L139">line 139</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::exc&lt;micron::except::domain_error&gt;(&quot;micron::math::invmod modulus is zero&quot;)</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L132">line 132</a><br>Within <code>( mm.is_zero() )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">micron::exc&lt;micron::except::domain_error&gt;</a>, <a href="number.hpp.html#f-c7131628bed140d4">invmod</a>, <a href="signed.hpp.html#s-ab70406d0da87bb2">arbint&lt;B, S, A&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e8f6928d02b77454"><h3><code>micron::math::__arb::mod_gcd_max(usize a, usize b) noexcept</code></h3><p>Defined in <code>math/arbint/number.hpp</code>, <a href="../../../source/math/arbint/number.hpp.html#L32">line 32</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+mod_gcd_max(usize a, usize b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize a</code></li><li><code>usize b</code></li></ul><h4>Effects</h4><p>Returns <code>a &gt; b ? a : b</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+mod_gcd_max(usize a, usize b) noexcept
+{
+  return a &gt; b ? a : b;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a &gt; b ? a : b</code></td><td><a href="../../../source/math/arbint/number.hpp.html#L34">line 34</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

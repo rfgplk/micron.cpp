@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/rng/ziggurat.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/rng/ziggurat.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/random.html">Random numbers</a></div><p>Defined in header <code>&lt;micron/math/rng/ziggurat.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/rng/ziggurat.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-d4c85fe218eaa9b3">micron::math::rng::dist::mkbits::ziggurat_tables</code></td><td>struct; line 38</td></tr><tr class="t-dsc"><td><code id="s-27e7da44b90298c9">micron::math::rng::dist::mkbits::ziggurat_tables::w</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-673cb5b2274ee942">micron::math::rng::dist::mkbits::ziggurat_tables::f</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-cd62e2a8ac0ef771">micron::math::rng::dist::mkbits::ziggurat_tables::k</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-b5315c3b57442805">micron::math::rng::dist::mkbits::ziggurat_tables::R</code></td><td>member; line 43</td></tr><tr class="t-dsc"><td><code id="s-58f33e3a0e472e7e">micron::math::rng::dist::mkbits::ziggurat_tables::V</code></td><td>member; line 44</td></tr><tr class="t-dsc"><td><code id="s-648cee5d5c7b464d">micron::math::rng::dist::mkbits::ziggurat</code></td><td>variable; line 101</td></tr><tr class="t-dsc"><td><a href="#f-4d354df13f6bc1f0">micron::math::rng::dist::mkbits::build_ziggurat() noexcept</a></td><td>function; line 55</td></tr><tr class="t-dsc"><td><a href="#f-bb15f36770a9edd4">micron::math::rng::dist::normal_ziggurat(Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</a></td><td>function; line 107</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-4d354df13f6bc1f0"><h3><code>micron::math::rng::dist::mkbits::build_ziggurat() noexcept</code></h3><p>Defined in <code>math/rng/ziggurat.hpp</code>, <a href="../../../source/math/rng/ziggurat.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] consteval ziggurat_tables
+build_ziggurat() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] consteval ziggurat_tables
+build_ziggurat() noexcept
+{
+  ziggurat_tables t{};
+  constexpr f64 M = 9007199254740992.0;      // 2^53
+
+  const f64 R = ziggurat_tables::R;
+  const f64 V = ziggurat_tables::V;
+  const f64 fR = __zig_f(R);
+  const f64 q = V / fR;      // width of the base rectangle incl. tail mass
+
+  // base strip + tail
+  t.k[0] = u64((R / q) * M);
+  t.w[0] = q / M;
+  t.f[0] = 1.0;
+
+  // the topmost (smallest, peak) box uses x = R as its scale seed
+  t.w[255] = R / M;
+  t.f[255] = fR;
+  t.k[1] = 0;
+
+  // walking the stack downward in index
+  f64 dn = R;      // x[255]
+  f64 tn = R;      // previous x (for the k ratio)
+  bool closed = true;
+  for ( int i = 254; i &gt;= 1; --i ) {
+    const f64 arg = V / dn + __zig_f(dn);
+    if ( !(arg &gt; 0.0 &amp;&amp; arg &lt; 1.0) ) closed = false;
+    dn = math::fsqrt(-2.0 * math::mkbits::log_ns::log_f64(arg));
+    t.k[i + 1] = u64((dn / tn) * M);
+    tn = dn;
+    t.f[i] = __zig_f(dn);
+    t.w[i] = dn / M;
+  }
+
+  const f64 smallest = dn;      // x[1]
+  const bool sane = closed &amp;&amp; smallest &gt; 0.20 &amp;&amp; smallest &lt; 0.23 &amp;&amp; t.f[1] &gt; 0.97 &amp;&amp; t.f[1] &lt; 0.98;
+  if ( !sane ) {
+    // static_assert(false, &quot;division by zero in build_ziggurat&quot;);
+    // int *boom = nullptr;
+    //(void)*boom;      // actually hard compile err if evaluated, above doesn&#x27;t work
+    // neither did that
+    __builtin_unreachable();      // THIS SHOULD
+  }
+  return t;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../../source/math/rng/ziggurat.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ziggurat.hpp.html#f-86ddfa0ffa2e9520">__zig_f</a>, <a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../bits/log.hpp.html#f-7f8c2495fae2cc97">math::mkbits::log_ns::log_f64</a>.</p></section><section class="function-entry" id="f-bb15f36770a9edd4"><h3><code>micron::math::rng::dist::normal_ziggurat(Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</code></h3><p>Defined in <code>math/rng/ziggurat.hpp</code>, <a href="../../../source/math/rng/ziggurat.hpp.html#L107">line 107</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard]] inline F
+normal_ziggurat(Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>F mu = F(0)</code></li><li><code>F sigma = F(1)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard]] inline F
+normal_ziggurat(Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept
+{
+  const f64 *__restrict__ wt = mkbits::ziggurat.w;
+  const f64 *__restrict__ ft = mkbits::ziggurat.f;
+  const u64 *__restrict__ kt = mkbits::ziggurat.k;
+  const f64 R = mkbits::ziggurat_tables::R;
+
+  u64 u = rng::__impl::next64(g);
+  i64 hz = i64(u &gt;&gt; 11);
+  const i64 sign = -i64(u &amp; 1ULL);
+  hz = (hz ^ sign) - sign;
+  u64 iz = (u &gt;&gt; 1) &amp; 0xFFULL;
+  u64 ahz = u64(hz &lt; 0 ? -hz : hz);
+
+  if ( ahz &lt; kt[iz] ) [[likely]]
+    return F(mu + sigma * F(f64(hz) * wt[iz]));
+
+  for ( ;; ) {
+    f64 x = f64(hz) * wt[iz];
+    if ( iz == 0 ) {
+      f64 xt;
+      f64 yt;
+      do {
+        const u64 r1 = ((rng::__impl::next64(g) &gt;&gt; 12) &lt;&lt; 1) | 1ULL;
+        const u64 r2 = ((rng::__impl::next64(g) &gt;&gt; 12) &lt;&lt; 1) | 1ULL;
+        const f64 u1 = r1 * 0x1.0p-53;
+        const f64 u2 = r2 * 0x1.0p-53;
+        xt = -math::mkbits::log_ns::log_f64(u1) / R;
+        yt = -math::mkbits::log_ns::log_f64(u2);
+      } while ( yt + yt &lt; xt * xt );
+      f64 v = (hz &gt; 0) ? (R + xt) : -(R + xt);
+      return F(mu + sigma * F(v));
+    }
+    const f64 u1 = (rng::__impl::next64(g) &gt;&gt; 11) * 0x1.0p-53;
+    f64 fy = ft[iz] + u1 * (ft[iz - 1] - ft[iz]);
+    f64 ax = x &lt; 0 ? -x : x;
+    f64 phi_x = math::mkbits::exp_ns::exp_f64(-ax * ax * 0.5);
+    if ( fy &lt; phi_x ) return F(mu + sigma * F(x));
+
+    u = rng::__impl::next64(g);
+    hz = i64(u &gt;&gt; 11);
+    const i64 retry_sign = -i64(u &amp; 1ULL);
+    hz = (hz ^ retry_sign) - retry_sign;
+    iz = (u &gt;&gt; 1) &amp; 0xFFULL;
+    ahz = u64(hz &lt; 0 ? -hz : hz);
+    if ( ahz &lt; kt[iz] ) return F(mu + sigma * F(f64(hz) * wt[iz]));
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(mu + sigma * F(f64(hz) * wt[iz]))</code></td><td><a href="../../../source/math/rng/ziggurat.hpp.html#L122">line 122</a></td></tr><tr class="t-dsc"><td><code>F(mu + sigma * F(v))</code></td><td><a href="../../../source/math/rng/ziggurat.hpp.html#L138">line 138</a></td></tr><tr class="t-dsc"><td><code>F(mu + sigma * F(x))</code></td><td><a href="../../../source/math/rng/ziggurat.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>F(mu + sigma * F(f64(hz) * wt[iz]))</code></td><td><a href="../../../source/math/rng/ziggurat.hpp.html#L152">line 152</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engines.hpp.html#f-102ea355b87ec387">rng::__impl::next64</a>, <a href="../../types.hpp.html#s-e4e8792a62ffa8d0">i64</a>, <a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="../bits/log.hpp.html#f-7f8c2495fae2cc97">math::mkbits::log_ns::log_f64</a>, <a href="../bits/exp.hpp.html#f-c0dcb29aa2896fb7">math::mkbits::exp_ns::exp_f64</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-86ddfa0ffa2e9520"><h3><code>micron::math::rng::dist::mkbits::__zig_f(f64 x) noexcept</code></h3><p>Defined in <code>math/rng/ziggurat.hpp</code>, <a href="../../../source/math/rng/ziggurat.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] consteval f64
+__zig_f(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Returns <code>math::mkbits::exp_ns::exp_f64(-0.5 * x * x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] consteval f64
+__zig_f(f64 x) noexcept
+{
+  return math::mkbits::exp_ns::exp_f64(-0.5 * x * x);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::mkbits::exp_ns::exp_f64(-0.5 * x * x)</code></td><td><a href="../../../source/math/rng/ziggurat.hpp.html#L51">line 51</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/exp.hpp.html#f-c0dcb29aa2896fb7">math::mkbits::exp_ns::exp_f64</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

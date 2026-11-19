@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/string/conversions/floating_point.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/string/conversions/floating_point.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/strings.html">Strings</a></div><p>Defined in header <code>&lt;micron/string/conversions/floating_point.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/string/conversions/floating_point.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-1b2092a6213f31a3">micron::float_to_string(f32 val)</a></td><td>function; line 368</td></tr><tr class="t-dsc"><td><a href="#f-77538baa74de8524">micron::double_to_string(f64 val)</a></td><td>function; line 377</td></tr><tr class="t-dsc"><td><a href="#f-b7047480045d6de9">micron::float_to_string(f32 val, u32 prec)</a></td><td>function; line 386</td></tr><tr class="t-dsc"><td><a href="#f-b41fe5b65ae6e197">micron::double_to_string(f64 val, u32 prec)</a></td><td>function; line 395</td></tr><tr class="t-dsc"><td><a href="#f-56f001d2221b6b4d">micron::to_fixed(f64 val, u32 precision = 6)</a></td><td>function; line 406</td></tr><tr class="t-dsc"><td><a href="#f-08629b9343a82e50">micron::to_fixed_trim(f64 val, u32 precision = 6)</a></td><td>function; line 415</td></tr><tr class="t-dsc"><td><a href="#f-f1426cc4b2b3ccb1">micron::to_scientific(f64 val, u32 precision = 6)</a></td><td>function; line 423</td></tr><tr class="t-dsc"><td><a href="#f-aba3eeb606777ec6">micron::to_general(f64 val, u32 precision = 6)</a></td><td>function; line 431</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-1b2092a6213f31a3"><h3><code>micron::float_to_string(f32 val)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L368">line 368</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+float_to_string(f32 val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+float_to_string(f32 val)
+{
+  char buf[16];
+  usize n = __impl::__fpconv::f2s_buffered(val, buf);
+  return micron::hstring&lt;C&gt;(buf, buf + n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::hstring&lt;C&gt;(buf, buf + n)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L372">line 372</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-1c1589ebf383edd5">__impl::__fpconv::f2s_buffered</a>, <a href="../string.hpp.html#s-ca7bf782235cab51">micron::hstring&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-77538baa74de8524"><h3><code>micron::double_to_string(f64 val)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L377">line 377</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+double_to_string(f64 val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+double_to_string(f64 val)
+{
+  char buf[26];
+  usize n = __impl::__fpconv::d2s_buffered(val, buf);
+  return micron::hstring&lt;C&gt;(buf, buf + n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::hstring&lt;C&gt;(buf, buf + n)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L381">line 381</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-9a7a420df3fb0141">__impl::__fpconv::d2s_buffered</a>, <a href="../string.hpp.html#s-ca7bf782235cab51">micron::hstring&lt;C&gt;</a>.</p></section><section class="function-entry" id="f-b7047480045d6de9"><h3><code>micron::float_to_string(f32 val, u32 prec)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L386">line 386</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+float_to_string(f32 val, u32 prec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+float_to_string(f32 val, u32 prec)
+{
+  const f64 v = static_cast&lt;f64&gt;(val);
+  return __fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(v, prec),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(v, b, c, prec); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(v, prec),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(v, b, c, prec); })</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L389">line 389</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-7e26397e0f748e66">__fp_to_hstring&lt;C&gt;</a>, <a href="zmij.hpp.html#f-f264b70de2dbf295">__impl::__fpconv::d2f_size</a>.</p></section><section class="function-entry" id="f-b41fe5b65ae6e197"><h3><code>micron::double_to_string(f64 val, u32 prec)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L395">line 395</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+double_to_string(f64 val, u32 prec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, prec),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+double_to_string(f64 val, u32 prec)
+{
+  return __fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, prec),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, prec),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, prec); })</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L397">line 397</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-7e26397e0f748e66">__fp_to_hstring&lt;C&gt;</a>, <a href="zmij.hpp.html#f-f264b70de2dbf295">__impl::__fpconv::d2f_size</a>.</p></section><section class="function-entry" id="f-56f001d2221b6b4d"><h3><code>micron::to_fixed(f64 val, u32 precision = 6)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L406">line 406</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_fixed(f64 val, u32 precision = 6)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision = 6</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, precision); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_fixed(f64 val, u32 precision = 6)
+{
+  return __fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, precision); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_buffered(val, b, c, precision); })</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L408">line 408</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-7e26397e0f748e66">__fp_to_hstring&lt;C&gt;</a>, <a href="zmij.hpp.html#f-f264b70de2dbf295">__impl::__fpconv::d2f_size</a>.</p></section><section class="function-entry" id="f-08629b9343a82e50"><h3><code>micron::to_fixed_trim(f64 val, u32 precision = 6)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L415">line 415</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_fixed_trim(f64 val, u32 precision = 6)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision = 6</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_trim_buffered(val, b, c, precision); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_fixed_trim(f64 val, u32 precision = 6)
+{
+  return __fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_trim_buffered(val, b, c, precision); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2f_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2f_trim_buffered(val, b, c, precision); })</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L417">line 417</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-7e26397e0f748e66">__fp_to_hstring&lt;C&gt;</a>, <a href="zmij.hpp.html#f-f264b70de2dbf295">__impl::__fpconv::d2f_size</a>.</p></section><section class="function-entry" id="f-f1426cc4b2b3ccb1"><h3><code>micron::to_scientific(f64 val, u32 precision = 6)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L423">line 423</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_scientific(f64 val, u32 precision = 6)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision = 6</code></li></ul><h4>Effects</h4><p>Returns <code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2e_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2e_buffered(val, b, c, precision); })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_scientific(f64 val, u32 precision = 6)
+{
+  return __fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2e_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2e_buffered(val, b, c, precision); });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fp_to_hstring&lt;C&gt;(__impl::__fpconv::d2e_size(val, precision),
+                            [&amp;](char *b, usize c) { return __impl::__fpconv::d2e_buffered(val, b, c, precision); })</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L425">line 425</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-7e26397e0f748e66">__fp_to_hstring&lt;C&gt;</a>, <a href="zmij.hpp.html#f-6ea46bf6846831b7">__impl::__fpconv::d2e_size</a>.</p></section><section class="function-entry" id="f-aba3eeb606777ec6"><h3><code>micron::to_general(f64 val, u32 precision = 6)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L431">line 431</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_general(f64 val, u32 precision = 6)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision = 6</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = char&gt;
+inline micron::hstring&lt;C&gt;
+to_general(f64 val, u32 precision = 6)
+{
+  // derive sciExp directly from the selected shortest-decimal decomposition
+  const u64 __b = micron::math::ieee::to_bits&lt;f64&gt;(val);
+  u64 ieeeMantissa = __b &amp; ((1ull &lt;&lt; 52) - 1);
+  u32 ieeeExponent = static_cast&lt;u32&gt;((__b &gt;&gt; 52) &amp; 0x7FF);
+
+  // specials &amp; zero pass through to_fixed
+  if ( ieeeExponent == 0x7FF || (ieeeExponent == 0 &amp;&amp; ieeeMantissa == 0) ) return to_fixed&lt;C&gt;(val, precision);
+
+#if defined(MICRON_USE_RYU)
+  const __impl::__ryu::decimal64 dec = __impl::__ryu::d2d(ieeeMantissa, ieeeExponent);
+  const u32 olength = __impl::__ryu::decimalLength(dec.mantissa);
+  const i32 exp10 = dec.exponent + static_cast&lt;i32&gt;(olength) - 1;
+#else
+  const __impl::__zmij::decimal_fp dec = __impl::__zmij::to_decimal(val);
+  const u32 olength = __impl::__ryu::decimalLength(dec.sig);
+  const i32 exp10 = dec.exp + static_cast&lt;i32&gt;(olength) - 1;
+#endif
+
+  if ( exp10 &lt; -4 || exp10 &gt;= static_cast&lt;i32&gt;(precision) ) return to_scientific&lt;C&gt;(val, precision &gt; 0 ? precision - 1 : 0);
+  return to_fixed&lt;C&gt;(val, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>to_fixed&lt;C&gt;(val, precision)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L439">line 439</a></td></tr><tr class="t-dsc"><td><code>to_scientific&lt;C&gt;(val, precision &gt; 0 ? precision - 1 : 0)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L451">line 451</a></td></tr><tr class="t-dsc"><td><code>to_fixed&lt;C&gt;(val, precision)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L452">line 452</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../math/ieee.hpp.html#f-4ae309043c1a9124">micron::math::ieee::to_bits&lt;f64&gt;</a>, <a href="floating_point.hpp.html#f-56f001d2221b6b4d">to_fixed&lt;C&gt;</a>, <a href="bits.hpp.html#f-724dd1e7fd8f16ef">__impl::__ryu::d2d</a>, <a href="bits.hpp.html#f-21bd5882d4ea49a9">__impl::__ryu::decimalLength</a>, <a href="zmij.hpp.html#f-6a228d78910686bc">__impl::__zmij::to_decimal</a>, <a href="floating_point.hpp.html#f-f1426cc4b2b3ccb1">to_scientific&lt;C&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-c4b94b8d1588c945"><h3><code>micron::__impl::__ryu::__f32::mul_shift_32(u32 m, u64 factor, i32 shift)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L54">line 54</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u32
+mul_shift_32(u32 m, u64 factor, i32 shift)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 m</code></li><li><code>u64 factor</code></li><li><code>i32 shift</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u32
+mul_shift_32(u32 m, u64 factor, i32 shift)
+{
+  u32 fLo = static_cast&lt;u32&gt;(factor);
+  u32 fHi = static_cast&lt;u32&gt;(factor &gt;&gt; 32);
+  u64 bits0 = static_cast&lt;u64&gt;(m) * fLo;
+  u64 bits1 = static_cast&lt;u64&gt;(m) * fHi;
+  u64 sum = (bits0 &gt;&gt; 32) + bits1;
+  return static_cast&lt;u32&gt;(sum &gt;&gt; (shift - 32));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u32&gt;(sum &gt;&gt; (shift - 32))</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L61">line 61</a></td></tr></tbody></table></section><section class="function-entry" id="f-ed4038c4ac17df61"><h3><code>micron::__impl::__ryu::__f32::mul_inv(u32 m, u32 q, i32 j)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L65">line 65</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u32
+mul_inv(u32 m, u32 q, i32 j)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 m</code></li><li><code>u32 q</code></li><li><code>i32 j</code></li></ul><h4>Effects</h4><p>Returns <code>mul_shift_32(m, __pow5_inv[q], j)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u32
+mul_inv(u32 m, u32 q, i32 j)
+{
+  return mul_shift_32(m, __pow5_inv[q], j);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mul_shift_32(m, __pow5_inv[q], j)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L67">line 67</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-c4b94b8d1588c945">mul_shift_32</a>.</p></section><section class="function-entry" id="f-59244ad4d88458cd"><h3><code>micron::__impl::__ryu::__f32::mul_fwd(u32 m, u32 i, i32 j)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u32
+mul_fwd(u32 m, u32 i, i32 j)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 m</code></li><li><code>u32 i</code></li><li><code>i32 j</code></li></ul><h4>Effects</h4><p>Returns <code>mul_shift_32(m, __pow5[i], j)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u32
+mul_fwd(u32 m, u32 i, i32 j)
+{
+  return mul_shift_32(m, __pow5[i], j);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mul_shift_32(m, __pow5[i], j)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-c4b94b8d1588c945">mul_shift_32</a>.</p></section><section class="function-entry" id="f-a7b2b0c83aeb5819"><h3><code>micron::__impl::__ryu::__f32::pow5bits(i32 e)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L80">line 80</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i32
+pow5bits(i32 e)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 e</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;i32&gt;(((static_cast&lt;u32&gt;(e) * 1217359u) &gt;&gt; 19) + 1)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i32
+pow5bits(i32 e)
+{
+  return static_cast&lt;i32&gt;(((static_cast&lt;u32&gt;(e) * 1217359u) &gt;&gt; 19) + 1);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(((static_cast&lt;u32&gt;(e) * 1217359u) &gt;&gt; 19) + 1)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L82">line 82</a></td></tr></tbody></table></section><section class="function-entry" id="f-ba652a55fc34daab"><h3><code>micron::__impl::__ryu::__f32::log10p2(i32 e)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L86">line 86</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i32
+log10p2(i32 e)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 e</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;i32&gt;((static_cast&lt;u64&gt;(e) * 78913) &gt;&gt; 18)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i32
+log10p2(i32 e)
+{
+  return static_cast&lt;i32&gt;((static_cast&lt;u64&gt;(e) * 78913) &gt;&gt; 18);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;((static_cast&lt;u64&gt;(e) * 78913) &gt;&gt; 18)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L88">line 88</a></td></tr></tbody></table></section><section class="function-entry" id="f-4b1d8ee1270ac73e"><h3><code>micron::__impl::__ryu::__f32::log10p5(i32 e)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L92">line 92</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i32
+log10p5(i32 e)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 e</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;i32&gt;((static_cast&lt;u64&gt;(e) * 732923) &gt;&gt; 20)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i32
+log10p5(i32 e)
+{
+  return static_cast&lt;i32&gt;((static_cast&lt;u64&gt;(e) * 732923) &gt;&gt; 20);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;((static_cast&lt;u64&gt;(e) * 732923) &gt;&gt; 20)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L94">line 94</a></td></tr></tbody></table></section><section class="function-entry" id="f-450ad335ba239519"><h3><code>micron::__impl::__ryu::__f32::pow5fac(u32 v)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L98">line 98</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u32
+pow5fac(u32 v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u32
+pow5fac(u32 v)
+{
+  u32 c = 0;
+  while ( v &gt; 0 ) {
+    u32 q = v / 5, r = v - 5 * q;
+    if ( r != 0 ) break;
+    v = q;
+    ++c;
+  }
+  return c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L107">line 107</a></td></tr></tbody></table></section><section class="function-entry" id="f-9e7b280e6b0a8939"><h3><code>micron::__impl::__ryu::__f32::mul_of_5(u32 v, u32 p)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L111">line 111</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr bool
+mul_of_5(u32 v, u32 p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 v</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Returns <code>pow5fac(v) &gt;= p</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr bool
+mul_of_5(u32 v, u32 p)
+{
+  return pow5fac(v) &gt;= p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pow5fac(v) &gt;= p</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L113">line 113</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-450ad335ba239519">pow5fac</a>.</p></section><section class="function-entry" id="f-75ceec6181529da2"><h3><code>micron::__impl::__ryu::__f32::mul_of_2(u32 v, u32 p)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L117">line 117</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr bool
+mul_of_2(u32 v, u32 p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 v</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Returns <code>(v &amp; ((1u &lt;&lt; p) - 1)) == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr bool
+mul_of_2(u32 v, u32 p)
+{
+  return (v &amp; ((1u &lt;&lt; p) - 1)) == 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(v &amp; ((1u &lt;&lt; p) - 1)) == 0</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L119">line 119</a></td></tr></tbody></table></section><section class="function-entry" id="f-49d3d806e90569a4"><h3><code>micron::__impl::__ryu::__f32::dlen9(u32 v)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L123">line 123</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u32
+dlen9(u32 v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u32
+dlen9(u32 v)
+{
+  if ( v &gt;= 100000000 ) return 9;
+  if ( v &gt;= 10000000 ) return 8;
+  if ( v &gt;= 1000000 ) return 7;
+  if ( v &gt;= 100000 ) return 6;
+  if ( v &gt;= 10000 ) return 5;
+  if ( v &gt;= 1000 ) return 4;
+  if ( v &gt;= 100 ) return 3;
+  if ( v &gt;= 10 ) return 2;
+  return 1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>9</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td><code>8</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L126">line 126</a></td></tr><tr class="t-dsc"><td><code>7</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L127">line 127</a></td></tr><tr class="t-dsc"><td><code>6</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L128">line 128</a></td></tr><tr class="t-dsc"><td><code>5</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L129">line 129</a></td></tr><tr class="t-dsc"><td><code>4</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L130">line 130</a></td></tr><tr class="t-dsc"><td><code>3</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>2</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L132">line 132</a></td></tr><tr class="t-dsc"><td><code>1</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L133">line 133</a></td></tr></tbody></table></section><section class="function-entry" id="f-a08173dd7ebad471"><h3><code>micron::__impl::__ryu::__f32::f2d(u32 ieeeMant, u32 ieeeExp)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L145">line 145</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr f2d_t
+f2d(u32 ieeeMant, u32 ieeeExp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 ieeeMant</code></li><li><code>u32 ieeeExp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr f2d_t
+f2d(u32 ieeeMant, u32 ieeeExp)
+{
+  i32 e2;
+  u32 m2;
+  if ( ieeeExp == 0 ) {
+    e2 = 1 - __float_bias - static_cast&lt;i32&gt;(__float_mantissa_bits) - 2;
+    m2 = ieeeMant;
+  } else {
+    e2 = static_cast&lt;i32&gt;(ieeeExp) - __float_bias - static_cast&lt;i32&gt;(__float_mantissa_bits) - 2;
+    m2 = (1u &lt;&lt; __float_mantissa_bits) | ieeeMant;
+  }
+  bool even = (m2 &amp; 1) == 0;
+  bool acceptBounds = even;
+
+  u32 mv = 4 * m2;
+  u32 mp = 4 * m2 + 2;
+  u32 mmShift = (ieeeMant != 0 || ieeeExp &lt;= 1) ? 1 : 0;
+  u32 mm = 4 * m2 - 1 - mmShift;
+
+  u32 vr, vp, vm;
+  i32 e10;
+  bool vmTZ = false, vrTZ = false;
+  u32 lastDig = 0;
+
+  if ( e2 &gt;= 0 ) {
+    u32 q = static_cast&lt;u32&gt;(log10p2(e2));
+    e10 = static_cast&lt;i32&gt;(q);
+    i32 k = __float_pow5_inv_bitcount + pow5bits(static_cast&lt;i32&gt;(q)) - 1;
+    i32 i = -e2 + static_cast&lt;i32&gt;(q) + k;
+    vr = mul_inv(mv, q, i);
+    vp = mul_inv(mp, q, i);
+    vm = mul_inv(mm, q, i);
+    // one removed digit must be known even when the loop below runs zero times
+    if ( q != 0 &amp;&amp; (vp - 1) / 10 &lt;= vm / 10 ) {
+      i32 l = __float_pow5_inv_bitcount + pow5bits(static_cast&lt;i32&gt;(q - 1)) - 1;
+      lastDig = mul_inv(mv, q - 1, -e2 + static_cast&lt;i32&gt;(q) - 1 + l) % 10;
+    }
+    if ( q &lt;= 9 ) {
+      if ( mv % 5 == 0 ) {
+        vrTZ = mul_of_5(mv, q);
+      } else if ( acceptBounds ) {
+        vmTZ = mul_of_5(mm, q);
+      } else {
+        vp -= mul_of_5(mp, q) ? 1 : 0;
+      }
+    }
+  } else {
+    u32 q = static_cast&lt;u32&gt;(log10p5(-e2));
+    e10 = static_cast&lt;i32&gt;(q) + e2;
+    i32 i = -e2 - static_cast&lt;i32&gt;(q);
+    i32 k = pow5bits(i) - __float_pow5_bitcount;
+    i32 j = static_cast&lt;i32&gt;(q) - k;
+    vr = mul_fwd(mv, static_cast&lt;u32&gt;(i), j);
+    vp = mul_fwd(mp, static_cast&lt;u32&gt;(i), j);
+    vm = mul_fwd(mm, static_cast&lt;u32&gt;(i), j);
+    if ( q != 0 &amp;&amp; (vp - 1) / 10 &lt;= vm / 10 ) {
+      i32 j2 = static_cast&lt;i32&gt;(q) - 1 - (pow5bits(i + 1) - __float_pow5_bitcount);
+      lastDig = mul_fwd(mv, static_cast&lt;u32&gt;(i + 1), j2) % 10;
+    }
+    if ( q &lt;= 1 ) {
+      vrTZ = true;
+      if ( acceptBounds )
+        vmTZ = (mmShift == 1);
+      else
+        --vp;
+    } else if ( q &lt; 31 ) {
+      vrTZ = mul_of_2(mv, q - 1);
+    }
+  }
+
+  // digit removal: find shortest representation
+  i32 removed = 0;
+  u32 output;
+
+  if ( vmTZ || vrTZ ) {
+    while ( vp / 10 &gt; vm / 10 ) {
+      vmTZ &amp;= (vm % 10 == 0);
+      vrTZ &amp;= (lastDig == 0);
+      lastDig = vr % 10;
+      vr /= 10;
+      vp /= 10;
+      vm /= 10;
+      ++removed;
+    }
+    if ( vmTZ ) {
+      while ( vm % 10 == 0 ) {
+        vrTZ &amp;= (lastDig == 0);
+        lastDig = vr % 10;
+        vr /= 10;
+        vp /= 10;
+        vm /= 10;
+        ++removed;
+      }
+    }
+    if ( vrTZ &amp;&amp; lastDig == 5 &amp;&amp; vr % 2 == 0 ) lastDig = 4;
+    output = vr + ((vr == vm &amp;&amp; !(acceptBounds &amp;&amp; vmTZ)) || lastDig &gt;= 5 ? 1 : 0);
+  } else {
+    bool roundUp = (lastDig &gt;= 5);      // precomputed digit decides when no removal happens below
+    u32 vpD = vp / 100, vmD = vm / 100;
+    if ( vpD &gt; vmD ) {
+      u32 vrD = vr / 100;
+      roundUp = (vr - 100 * vrD) &gt;= 50;
+      vr = vrD;
+      vp = vpD;
+      vm = vmD;
+      removed += 2;
+    }
+    while ( vp / 10 &gt; vm / 10 ) {
+      roundUp = (vr % 10) &gt;= 5;
+      vr /= 10;
+      vp /= 10;
+      vm /= 10;
+      ++removed;
+    }
+    output = vr + (vr == vm || roundUp ? 1 : 0);
+  }
+
+  return { output, e10 + removed };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ output, e10 + removed }</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L262">line 262</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-ba652a55fc34daab">log10p2</a>, <a href="floating_point.hpp.html#f-a7b2b0c83aeb5819">pow5bits</a>, <a href="floating_point.hpp.html#f-ed4038c4ac17df61">mul_inv</a>, <a href="floating_point.hpp.html#f-9e7b280e6b0a8939">mul_of_5</a>, <a href="floating_point.hpp.html#f-4b1d8ee1270ac73e">log10p5</a>, <a href="floating_point.hpp.html#f-59244ad4d88458cd">mul_fwd</a>, <a href="floating_point.hpp.html#f-75ceec6181529da2">mul_of_2</a>.</p></section><section class="function-entry" id="f-8e5abf55e2752f36"><h3><code>micron::__impl::__ryu::__f32::f2s_buffered(f32 val, char *buf)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L270">line 270</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+f2s_buffered(f32 val, char *buf)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 val</code></li><li><code>char *buf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+f2s_buffered(f32 val, char *buf)
+{
+  const u32 bits = micron::math::ieee::to_bits&lt;f32&gt;(val);
+
+  bool sign = (bits &gt;&gt; 31) != 0;
+  u32 ieeeExp = (bits &gt;&gt; __float_mantissa_bits) &amp; ((1u &lt;&lt; __float_exponent_bits) - 1);
+  u32 ieeeMant = bits &amp; ((1u &lt;&lt; __float_mantissa_bits) - 1);
+
+  usize idx = 0;
+
+  // NaN
+  if ( ieeeExp == 0xFF &amp;&amp; ieeeMant != 0 ) {
+    buf[0] = &#x27;N&#x27;;
+    buf[1] = &#x27;a&#x27;;
+    buf[2] = &#x27;N&#x27;;
+    return 3;
+  }
+  // Inf
+  if ( ieeeExp == 0xFF ) {
+    if ( sign ) buf[idx++] = &#x27;-&#x27;;
+    buf[idx++] = &#x27;I&#x27;;
+    buf[idx++] = &#x27;n&#x27;;
+    buf[idx++] = &#x27;f&#x27;;
+    return idx;
+  }
+  // zero
+  if ( ieeeExp == 0 &amp;&amp; ieeeMant == 0 ) {
+    if ( sign ) buf[idx++] = &#x27;-&#x27;;
+    buf[idx++] = &#x27;0&#x27;;
+    buf[idx++] = &#x27;E&#x27;;
+    buf[idx++] = &#x27;0&#x27;;
+    return idx;
+  }
+
+  if ( sign ) buf[idx++] = &#x27;-&#x27;;
+
+  f2d_t v = f2d(ieeeMant, ieeeExp);
+  u32 olength = dlen9(v.m);
+
+  // write mantissa digits in reverse
+  char dtmp[10];
+  u32 dpos = 0;
+  u32 tmp = v.m;
+  while ( tmp &gt; 0 ) {
+    dtmp[dpos++] = &#x27;0&#x27; + static_cast&lt;char&gt;(tmp % 10);
+    tmp /= 10;
+  }
+
+  // format: first_digit.remaining E exponent
+  buf[idx++] = dtmp[dpos - 1];
+  if ( dpos &gt; 1 ) {
+    buf[idx++] = &#x27;.&#x27;;
+    for ( u32 j = dpos - 1; j-- &gt; 0; ) buf[idx++] = dtmp[j];
+  }
+
+  i32 exp10 = v.e + static_cast&lt;i32&gt;(olength) - 1;
+  buf[idx++] = &#x27;E&#x27;;
+  if ( exp10 &lt; 0 ) {
+    buf[idx++] = &#x27;-&#x27;;
+    exp10 = -exp10;
+  }
+  if ( exp10 &gt;= 10 ) buf[idx++] = &#x27;0&#x27; + static_cast&lt;char&gt;(exp10 / 10);
+  buf[idx++] = &#x27;0&#x27; + static_cast&lt;char&gt;(exp10 % 10);
+
+  return idx;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>3</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L285">line 285</a></td></tr><tr class="t-dsc"><td><code>idx</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L293">line 293</a></td></tr><tr class="t-dsc"><td><code>idx</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L301">line 301</a></td></tr><tr class="t-dsc"><td><code>idx</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L334">line 334</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../math/ieee.hpp.html#f-4ae309043c1a9124">micron::math::ieee::to_bits&lt;f32&gt;</a>, <a href="floating_point.hpp.html#f-a08173dd7ebad471">f2d</a>, <a href="floating_point.hpp.html#f-49d3d806e90569a4">dlen9</a>.</p></section><section class="function-entry" id="f-7e26397e0f748e66"><h3><code>micron::__fp_to_hstring(usize need, Fn &amp;&amp;emit)</code></h3><p>Defined in <code>string/conversions/floating_point.hpp</code>, <a href="../../../source/string/conversions/floating_point.hpp.html#L352">line 352</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C, typename Fn&gt;
+inline micron::hstring&lt;C&gt;
+__fp_to_hstring(usize need, Fn &amp;&amp;emit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize need</code></li><li><code>Fn &amp;&amp;emit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C, typename Fn&gt;
+inline micron::hstring&lt;C&gt;
+__fp_to_hstring(usize need, Fn &amp;&amp;emit)
+{
+  if ( need &lt;= __impl::__fpconv::__fmt_fixed_max ) {
+    char buf[__impl::__fpconv::__fmt_fixed_max];
+    const usize n = emit(buf, sizeof(buf));
+    if ( n == 0 ) return micron::hstring&lt;C&gt;();
+    return micron::hstring&lt;C&gt;(buf, buf + n);
+  }
+  micron::hstring&lt;C&gt; s(need + 1);
+  const usize n = emit(reinterpret_cast&lt;char *&gt;(s.data()), need + 1);
+  s.set_size(n);
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::hstring&lt;C&gt;()</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L357">line 357</a></td></tr><tr class="t-dsc"><td><code>micron::hstring&lt;C&gt;(buf, buf + n)</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L358">line 358</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/floating_point.hpp.html#L363">line 363</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../string.hpp.html#s-ca7bf782235cab51">micron::hstring&lt;C&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

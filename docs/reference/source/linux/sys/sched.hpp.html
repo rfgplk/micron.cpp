@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>linux/sys/sched.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">linux/sys/sched.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/linux/sys/sched.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> #pragma once</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> </span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> #include &quot;../../linux/sys/types.hpp&quot;</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> #include &quot;../../types.hpp&quot;</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> #include &quot;cpu.hpp&quot;</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> </span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> #ifndef _BITS_TYPES_STRUCT_SCHED_PARAM</span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #define _BITS_TYPES_STRUCT_SCHED_PARAM 1</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> struct sched_param {</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a>   int sched_priority;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> };</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> </span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #endif</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> namespace micron</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> {</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> </span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> namespace posix</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> {</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> </span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> struct sched_param {</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a>   int sched_priority;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> };</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> </span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> inline int</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> sched_yield()</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> {</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>   return static_cast&lt;int&gt;(micron::syscall(SYS_sched_yield));</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> }</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> </span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> inline int</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> sched_getparam(pid_t pid, sched_param &amp;params)</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> {</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   return static_cast&lt;int&gt;(micron::syscall(SYS_sched_getparam, pid, &amp;params));</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> }</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> </span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> inline int</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> sched_setparam(pid_t pid, const sched_param &amp;params)</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> {</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   return static_cast&lt;int&gt;(micron::syscall(SYS_sched_setparam, pid, &amp;params));</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> }</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> </span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> inline int</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> sched_setscheduler(pid_t pid, int policy, sched_param &amp;params)</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> {</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>   return static_cast&lt;int&gt;(micron::syscall(SYS_sched_setscheduler, pid, policy, &amp;params));</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> }</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> </span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> inline int</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> sched_getscheduler(pid_t pid)</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> {</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   return static_cast&lt;int&gt;(micron::syscall(SYS_sched_getscheduler, pid));</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> }</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> </span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> inline int</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> sched_setaffinity(pid_t pid, usize cpusetsize, const cpu_set_t &amp;mask)</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> {</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>   return static_cast&lt;int&gt;(micron::syscall(SYS_sched_setaffinity, pid, cpusetsize, &amp;mask));</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> }</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> </span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> inline int</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> sched_getaffinity(pid_t pid, usize cpusetsize, cpu_set_t &amp;mask)</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> {</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   return static_cast&lt;int&gt;(micron::syscall(SYS_sched_getaffinity, pid, cpusetsize, &amp;mask));</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> }</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> </span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> constexpr static const int sched_other = 0;</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> constexpr static const int sched_fifo = 1;</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> constexpr static const int sched_rr = 2;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> constexpr static const int sched_normal = 0;</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> constexpr static const int sched_batch = 3;</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> constexpr static const int sched_iso = 4;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> constexpr static const int sched_idle = 5;</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> constexpr static const int sched_deadline = 6;</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> constexpr static const int sched_ext = 7;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> constexpr static const int sched_reset_on_fork = 0x40000000;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> constexpr static const int sched_flag_reset_on_fork = 0x01;</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> constexpr static const int sched_flag_reclaim = 0x02;</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> constexpr static const int sched_flag_dl_overrun = 0x04;</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> constexpr static const int sched_flag_keep_policy = 0x08;</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> constexpr static const int sched_flag_keep_params = 0x10;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> constexpr static const int sched_flag_util_clamp_min = 0x20;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> constexpr static const int sched_flag_util_clamp_max = 0x40;</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> constexpr static const unsigned long long csignal = 0x000000ff;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> constexpr static const unsigned long long clone_vm = 0x00000100;</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> constexpr static const unsigned long long clone_fs = 0x00000200;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> constexpr static const unsigned long long clone_files = 0x00000400;</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> constexpr static const unsigned long long clone_sighand = 0x00000800;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> constexpr static const unsigned long long clone_pidfd = 0x00001000;</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> constexpr static const unsigned long long clone_ptrace = 0x00002000;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> constexpr static const unsigned long long clone_vfork = 0x00004000;</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> constexpr static const unsigned long long clone_parent = 0x00008000;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> constexpr static const unsigned long long clone_thread = 0x00010000;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> constexpr static const unsigned long long clone_newns = 0x00020000;</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> constexpr static const unsigned long long clone_sysvsem = 0x00040000;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> constexpr static const unsigned long long clone_settls = 0x00080000;</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> constexpr static const unsigned long long clone_parent_settid = 0x00100000;</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> constexpr static const unsigned long long clone_child_cleartid = 0x00200000;</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> constexpr static const unsigned long long clone_detached = 0x00400000;</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> constexpr static const unsigned long long clone_untraced = 0x00800000;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> constexpr static const unsigned long long clone_child_settid = 0x01000000;</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> constexpr static const unsigned long long clone_newcgroup = 0x02000000;</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> constexpr static const unsigned long long clone_newuts = 0x04000000;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> constexpr static const unsigned long long clone_newipc = 0x08000000;</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> constexpr static const unsigned long long clone_newuser = 0x10000000;</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> constexpr static const unsigned long long clone_newpid = 0x20000000;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> constexpr static const unsigned long long clone_newnet = 0x40000000;</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> constexpr static const unsigned long long clone_io = 0x80000000;</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> constexpr static const unsigned long long clone_newtime = 0x00000080;</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> </span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> };      // namespace posix</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

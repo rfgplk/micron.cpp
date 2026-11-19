@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/arbint/mul_fft.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/arbint/mul_fft.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/arbint/mul_fft.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;mul_basecase.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;mul_nussbaumer.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> </span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #if defined(__micron_arbint_fft)</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;../../memory/placement_new.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;../fft/kernels.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #endif</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> namespace micron::math::mpn</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> {</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> </span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> // binary64 convolution</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> // 2*q + log2(N) &lt;= 35 leaves 18 mantissa bits for transform error</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> // re-anchor twiddle recurrences every 32 coefficients</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> // Larger products use overlap-add; no floating coefficient grows with the</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> // number of tiles; all sizes below are in limbs, including scratch</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> </span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> struct __fft_shape {</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a>   usize an, bn;</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a>   __fft_plan plan;</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> };</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> </span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> [[nodiscard]] inline constexpr __fft_shape</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> __fft_pick_shape(usize an, usize bn) noexcept</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> {</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>   if ( !an || !bn ) return {};</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   usize a = an, b = bn;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   if ( an / bn &gt;= 8u ) a = __nuss_size_mul(3u, bn);</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   if ( bn / an &gt;= 8u ) b = __nuss_size_mul(3u, an);</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   const auto whole = __fft_make_plan(a, b);</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   if ( whole.valid ) return { a, b, whole };</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   a = a &lt; __fft_block_limbs ? a : __fft_block_limbs;</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   b = b &lt; __fft_block_limbs ? b : __fft_block_limbs;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   return { a, b, __fft_make_plan(a, b) };</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> }</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> </span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> [[nodiscard]] inline constexpr usize</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> fft_itch(usize an, usize bn) noexcept</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> {</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>   if ( !an || !bn ) return 0u;</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   if ( __nuss_size_add(an, bn) == __nuss_size_max ) return __nuss_size_max;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>   const usize exact = nussbaumer_itch(an, bn);</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> #if defined(__micron_arbint_fft)</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   const auto s = __fft_pick_shape(an, bn);</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   // three half-length arrays, complex/real twiddles, alignment slack, and a tile</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>   const usize work = __nuss_size_add(__nuss_size_mul(s.plan.n / 4u, 144u / limb_bytes), __nuss_size_add(s.an + s.bn, 24u / limb_bytes));</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   return work &gt; exact ? work : exact;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> #else</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   return exact;</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> #endif</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> }</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> </span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> #if defined(__micron_arbint_fft)</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> </span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> using __fft_complex = micron::math::complex&lt;double&gt;;</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> </span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> inline void</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> __fft_roots(__fft_complex *tw, usize count, usize j, usize n) noexcept</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> {</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>   const auto step = fft::__impl::__root&lt;double&gt;(j, n);</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   __fft_complex powers[20];</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>   for ( usize bit = 5u; (usize{ 1 } &lt;&lt; bit) &lt; count; ++bit ) powers[bit - 5u] = fft::__impl::__root&lt;double&gt;(j * (usize{ 1 } &lt;&lt; bit), n);</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>   for ( usize k = 0u; k &lt; count; k += 32u ) {</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     // each anchor uses at most log2(N) independently evaluated roots;</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>     // recurrence error cannot accumulate across the whole table</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>     __fft_complex w{ 1.0, 0.0 };</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>     for ( usize bits = k &gt;&gt; 5u, bit = 0u; bits; bits &gt;&gt;= 1u, ++bit )</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>       if ( bits &amp; 1u ) w *= powers[bit];</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>     const usize end = k + 32u &lt; count ? k + 32u : count;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     for ( usize i = k; i &lt; end; ++i ) {</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>       tw[i] = w;</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>       w *= step;</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>     }</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>   }</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> }</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> </span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> inline void</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> __fft_twiddles(__fft_complex *tw, usize n) noexcept</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> {</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   while ( n &gt; 8u ) {</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>     const usize m = n / 4u;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>     for ( usize j = 1u; j &lt;= 3u; ++j ) __fft_roots(tw + (j - 1u) * m, m, j, n);</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>     tw += 3u * m;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>     n = m;</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>   }</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> }</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> </span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> template&lt;bool Inverse&gt;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> inline void</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> __fft_transform(const __fft_complex *in, __fft_complex *out, const __fft_complex *tw, usize n, usize stride = 1u) noexcept</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> {</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   if ( n == 2u ) return fft::__impl::__leaf&lt;2, Inverse&gt;(in, out, stride);</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>   if ( n == 4u ) return fft::__impl::__leaf&lt;4, Inverse&gt;(in, out, stride);</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   if ( n == 8u ) return fft::__impl::__leaf&lt;8, Inverse&gt;(in, out, stride);</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   const usize m = n / 4u;</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   for ( usize j = 0u; j &lt; 4u; ++j ) __fft_transform&lt;Inverse&gt;(in + j * stride, out + j * m, tw + 3u * m, m, stride * 4u);</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   fft::__impl::__stage&lt;4, Inverse&gt;(out, tw, m, 0u, m);</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> }</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> </span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> template&lt;u64 P&gt;</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> [[nodiscard]] inline u64</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> __fft_residue(const limb_t *p, usize n) noexcept</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> {</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   u64 r = 0u;</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>   for ( usize i = n; i-- &gt; 0u; ) {</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     if constexpr ( limb_bits == 64u ) r = ((r &lt;&lt; 32u) | u32(u64(p[i]) &gt;&gt; 32u)) % P;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>     r = ((r &lt;&lt; 32u) | u32(p[i])) % P;</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   }</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>   return r;</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> }</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> </span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> template&lt;u64 P&gt;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> [[nodiscard]] inline bool</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> __fft_check(const limb_t *r, const limb_t *a, usize an, const limb_t *b, usize bn) noexcept</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> {</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>   return __fft_residue&lt;P&gt;(r, an + bn) == (__fft_residue&lt;P&gt;(a, an) * __fft_residue&lt;P&gt;(b, bn)) % P;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> }</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> </span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> // pack even/odd real samples into an N/2 complex transform</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> // slot zero stores the independent real DC and Nyquist bins in its real and imaginary fields</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> template&lt;bool Inverse&gt;</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a> inline void</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> __fft_real_pass(__fft_complex *b, const __fft_complex *roots, usize h) noexcept</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a> {</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>   const auto z = b[0];</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>   b[0] = { z.real + z.imag, z.real - z.imag };</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>   if constexpr ( Inverse ) b[0] *= 0.5;</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>   for ( usize k = 1u; k &lt; h / 2u; ++k ) {</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     const auto u = b[k], v = conj(b[h - k]);</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>     const auto sum = (u + v) * 0.5;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>     auto w = roots[k];</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     if constexpr ( Inverse ) w = conj(w);</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>     const auto diff = (u - v) * w * 0.5;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>     const __fft_complex rotated = Inverse ? __fft_complex{ -diff.imag, diff.real } : __fft_complex{ diff.imag, -diff.real };</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>     b[k] = sum + rotated;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>     b[h - k] = conj(sum - rotated);</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>   }</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>   b[h / 2u] = conj(b[h / 2u]);</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a> }</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a> </span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> inline void</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> __fft_load(__fft_complex *a, usize h, const limb_t *ap, usize an, usize q) noexcept</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> {</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>   const usize digits = __nuss_ceil_div(an * limb_bits, q);</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   for ( usize k = 0u; k &lt; h; ++k )</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     a[k] = { 2u * k &lt; digits ? double(__nuss_digit(ap, an, 2u * k, q)) : 0.0,</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>              2u * k + 1u &lt; digits ? double(__nuss_digit(ap, an, 2u * k + 1u, q)) : 0.0 };</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a> }</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> </span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a> template&lt;bool Square&gt;</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> [[nodiscard]] inline bool</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> __fft_product(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, const __fft_plan &amp;p, __fft_complex *a, __fft_complex *b,</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>               __fft_complex *c, const __fft_complex *tw, const __fft_complex *roots) noexcept</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a> {</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>   const usize ad = __nuss_ceil_div(an * limb_bits, p.digit_bits), bd = __nuss_ceil_div(bn * limb_bits, p.digit_bits);</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>   const usize h = p.n / 2u;</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>   __fft_load(a, h, ap, an, p.digit_bits);</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>   __fft_transform&lt;false&gt;(a, b, tw, h);</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>   __fft_real_pass&lt;false&gt;(b, roots, h);</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>   if constexpr ( Square ) {</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     b[0] = { b[0].real * b[0].real, b[0].imag * b[0].imag };</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>     fft::__impl::__multiply(b + 1u, b + 1u, h - 1u);</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>   } else {</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>     __fft_load(a, h, bp, bn, p.digit_bits);</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>     __fft_transform&lt;false&gt;(a, c, tw, h);</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>     __fft_real_pass&lt;false&gt;(c, roots, h);</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     b[0] = { b[0].real * c[0].real, b[0].imag * c[0].imag };</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>     fft::__impl::__multiply(b + 1u, c + 1u, h - 1u);</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>   }</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>   __fft_real_pass&lt;true&gt;(b, roots, h);</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>   __fft_transform&lt;true&gt;(b, a, tw, h);</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>   const double scale = 1.0 / double(h);</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>   const u64 mask = (u64{ 1 } &lt;&lt; p.digit_bits) - 1u;</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>   const double bound = double(ad &lt; bd ? ad : bd) * double(mask * mask);</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>   __nuss_packer pack{ rp, an + bn, 0u, 0u, 0u, true };</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   u64 carry = 0u;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   for ( usize k = 0u; k &lt; ad + bd - 1u; ++k ) {</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>     const double v = ((k &amp; 1u) ? a[k / 2u].imag : a[k / 2u].real) * scale;</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>     if ( !(v &gt;= -0.125 &amp;&amp; v &lt;= bound + 0.125) ) return false;</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>     const u64 nearest = static_cast&lt;u64&gt;(v + 0.5);</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>     const double error = v - double(nearest);</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>     if ( error &lt; -0.125 || error &gt; 0.125 ) return false;</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>     const u64 word = nearest + carry;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>     pack.push(static_cast&lt;limb_t&gt;(word &amp; mask), p.digit_bits);</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>     carry = word &gt;&gt; p.digit_bits;</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>   }</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   while ( carry ) {</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>     pack.push(static_cast&lt;limb_t&gt;(carry &amp; mask), p.digit_bits);</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>     carry &gt;&gt;= p.digit_bits;</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   }</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>   pack.finish();</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>   // consistency guards supplement the bounded rounding error</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>   return pack.exact &amp;&amp; __fft_check&lt;4294967291ull&gt;(rp, ap, an, bp, bn) &amp;&amp; __fft_check&lt;4294967279ull&gt;(rp, ap, an, bp, bn);</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> }</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> </span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a> template&lt;bool Square&gt;</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a> [[nodiscard]] inline bool</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> __fft_run(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, limb_t *scratch) noexcept</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> {</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>   const auto s = __fft_pick_shape(an, bn);</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   limb_t *aligned = scratch;</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>   while ( reinterpret_cast&lt;usize&gt;(aligned) % 8u ) ++aligned;</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>   const usize h = s.plan.n / 2u, count = 9u * s.plan.n / 4u + 1u;</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   auto *a = ::new (static_cast&lt;void *&gt;(aligned)) __fft_complex[count];</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>   auto *b = a + h, *c = b + h, *tw = c + h, *roots = tw + h;</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>   limb_t *part = aligned + count * sizeof(__fft_complex) / limb_bytes;</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>   __fft_twiddles(tw, h);</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   __fft_roots(roots, h / 2u + 1u, 1u, s.plan.n);</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   usize prepared = s.plan.n;</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>   bool ok = true;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>   if ( s.an == an &amp;&amp; s.bn == bn ) {</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>     ok = __fft_product&lt;Square&gt;(rp, ap, an, bp, bn, s.plan, a, b, c, tw, roots);</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>   } else {</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>     zero(rp, an + bn);</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>     for ( usize ai = 0u; ai &lt; an &amp;&amp; ok; ai += s.an ) {</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>       const usize atake = an - ai &lt; s.an ? an - ai : s.an;</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>       for ( usize bi = 0u; bi &lt; bn &amp;&amp; ok; bi += s.bn ) {</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>         if constexpr ( Square ) {</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>           if ( bi &gt; ai ) break;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>         }</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>         const usize btake = bn - bi &lt; s.bn ? bn - bi : s.bn;</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>         if ( atake &lt;= 2u || btake &lt;= 2u ) {</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>           if ( atake &gt;= btake )</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>             mul_basecase(part, ap + ai, atake, bp + bi, btake);</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>           else</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>             mul_basecase(part, bp + bi, btake, ap + ai, atake);</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>         } else {</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>           const auto p = __fft_make_plan(atake, btake);</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>           if ( p.n != prepared ) {</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>             __fft_twiddles(tw, p.n / 2u);</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>             __fft_roots(roots, p.n / 4u + 1u, 1u, p.n);</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>             prepared = p.n;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>           }</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>           if ( Square &amp;&amp; ai == bi )</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>             ok = __fft_product&lt;true&gt;(part, ap + ai, atake, bp + bi, btake, p, a, b, c, tw, roots);</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>           else</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>             ok = __fft_product&lt;false&gt;(part, ap + ai, atake, bp + bi, btake, p, a, b, c, tw, roots);</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>         }</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>         if ( !ok ) break;</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>         __nuss_add_partial(rp, an + bn, ai + bi, part, atake + btake);</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>         if ( Square &amp;&amp; ai != bi ) __nuss_add_partial(rp, an + bn, ai + bi, part, atake + btake);</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>       }</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     }</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>   }</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>   // restore limb lifetimes before another mpn operation reuses this scratch</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>   (void)::new (static_cast&lt;void *&gt;(aligned)) limb_t[count * sizeof(__fft_complex) / limb_bytes];</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>   return ok;</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a> }</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a> #endif</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> </span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> inline constexpr void</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a> mul_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a> {</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>   if ( !an || !bn ) return zero(rp, an + bn);</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a> #if defined(__micron_arbint_fft)</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>   if !consteval {</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>     if ( __fft_run&lt;false&gt;(rp, ap, an, bp, bn, scratch) ) return;</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>   }</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> #endif</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>   mul_nussbaumer(rp, ap, an, bp, bn, scratch);</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> }</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> </span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a> inline constexpr void</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> sqr_fft(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> {</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>   if ( !n ) return;</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a> #if defined(__micron_arbint_fft)</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>   if !consteval {</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>     if ( __fft_run&lt;true&gt;(rp, ap, n, ap, n, scratch) ) return;</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>   }</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a> #endif</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>   sqr_nussbaumer(rp, ap, n, scratch);</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a> }</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> };      // namespace micron::math::mpn</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

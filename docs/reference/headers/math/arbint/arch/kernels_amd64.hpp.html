@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/arch/kernels_amd64.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/arch/kernels_amd64.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/arbint/arch/kernels_amd64.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-6a35adeaf07f19da">MICRON_ARBINT_X86_ADX_KERNEL</code></td><td>macro; line 33<br><small><code>#if defined(__micron_x86_bmi2) &amp;&amp; defined(__micron_x86_adx)</code><br><code>#if !defined(MICRON_ARBINT_X86_ADX_KERNEL)</code><br><code>#if defined(__znver3__) || defined(__znver4__) || defined(__znver5__) || defined(__skylake__) || defined(__skylake_avx512__) || defined(__alderlake__) || defined(__icelake_client__) || defined(__icelake_server__) || defined(__sapphirerapids__)</code></small></td></tr><tr class="t-dsc"><td><code id="s-50f1c93c6658e3f8">MICRON_ARBINT_X86_ADX_KERNEL</code></td><td>macro; line 35<br><small><code>#if defined(__micron_x86_bmi2) &amp;&amp; defined(__micron_x86_adx)</code><br><code>#if !defined(MICRON_ARBINT_X86_ADX_KERNEL)</code><br><code>#else of #if defined(__znver3__) || defined(__znver4__) || defined(__znver5__) || defined(__skylake__) || defined(__skylake_avx512__) || defined(__alderlake__) || defined(__icelake_client__) || defined(__icelake_server__) || defined(__sapphirerapids__)</code></small></td></tr></tbody></table><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-66606fa398c1cdd9"><h3><code>micron::math::mpn::__kern::__aors_n_blocks(limb_t *rp, const limb_t *ap, const limb_t *bp, usize blocks, bool sub) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline limb_t
+__aors_n_blocks(limb_t *rp, const limb_t *ap, const limb_t *bp, usize blocks, bool sub) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>const limb_t *bp</code></li><li><code>usize blocks</code></li><li><code>bool sub</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline limb_t
+__aors_n_blocks(limb_t *rp, const limb_t *ap, const limb_t *bp, usize blocks, bool sub) noexcept
+{
+  limb_t cy = 0, t0, t1, t2, t3;
+  if ( sub ) {
+    __asm__ volatile(&quot;xorl %k[t0], %k[t0]\n\t&quot;      // CF = 0
+                     &quot;1:\n\t&quot;
+                     &quot;movq   (%[ap]), %[t0]\n\t&quot;
+                     &quot;movq  8(%[ap]), %[t1]\n\t&quot;
+                     &quot;movq 16(%[ap]), %[t2]\n\t&quot;
+                     &quot;movq 24(%[ap]), %[t3]\n\t&quot;
+                     &quot;sbbq   (%[bp]), %[t0]\n\t&quot;
+                     &quot;sbbq  8(%[bp]), %[t1]\n\t&quot;
+                     &quot;sbbq 16(%[bp]), %[t2]\n\t&quot;
+                     &quot;sbbq 24(%[bp]), %[t3]\n\t&quot;
+                     &quot;movq %[t0],   (%[rp])\n\t&quot;
+                     &quot;movq %[t1],  8(%[rp])\n\t&quot;
+                     &quot;movq %[t2], 16(%[rp])\n\t&quot;
+                     &quot;movq %[t3], 24(%[rp])\n\t&quot;
+                     &quot;leaq 32(%[ap]), %[ap]\n\t&quot;
+                     &quot;leaq 32(%[bp]), %[bp]\n\t&quot;
+                     &quot;leaq 32(%[rp]), %[rp]\n\t&quot;
+                     &quot;leaq -1(%[n]), %[n]\n\t&quot;
+                     &quot;jrcxz 2f\n\t&quot;
+                     &quot;jmp 1b\n\t&quot;
+                     &quot;2:\n\t&quot;
+                     &quot;adcq $0, %[cy]\n\t&quot;
+                     : [cy] &quot;+r&quot;(cy), [rp] &quot;+r&quot;(rp), [ap] &quot;+r&quot;(ap), [bp] &quot;+r&quot;(bp), [n] &quot;+c&quot;(blocks), [t0] &quot;=&amp;r&quot;(t0), [t1] &quot;=&amp;r&quot;(t1),
+                       [t2] &quot;=&amp;r&quot;(t2), [t3] &quot;=&amp;r&quot;(t3)
+                     :
+                     : &quot;cc&quot;, &quot;memory&quot;);
+  } else {
+    __asm__ volatile(&quot;xorl %k[t0], %k[t0]\n\t&quot;
+                     &quot;1:\n\t&quot;
+                     &quot;movq   (%[ap]), %[t0]\n\t&quot;
+                     &quot;movq  8(%[ap]), %[t1]\n\t&quot;
+                     &quot;movq 16(%[ap]), %[t2]\n\t&quot;
+                     &quot;movq 24(%[ap]), %[t3]\n\t&quot;
+                     &quot;adcq   (%[bp]), %[t0]\n\t&quot;
+                     &quot;adcq  8(%[bp]), %[t1]\n\t&quot;
+                     &quot;adcq 16(%[bp]), %[t2]\n\t&quot;
+                     &quot;adcq 24(%[bp]), %[t3]\n\t&quot;
+                     &quot;movq %[t0],   (%[rp])\n\t&quot;
+                     &quot;movq %[t1],  8(%[rp])\n\t&quot;
+                     &quot;movq %[t2], 16(%[rp])\n\t&quot;
+                     &quot;movq %[t3], 24(%[rp])\n\t&quot;
+                     &quot;leaq 32(%[ap]), %[ap]\n\t&quot;
+                     &quot;leaq 32(%[bp]), %[bp]\n\t&quot;
+                     &quot;leaq 32(%[rp]), %[rp]\n\t&quot;
+                     &quot;leaq -1(%[n]), %[n]\n\t&quot;
+                     &quot;jrcxz 2f\n\t&quot;
+                     &quot;jmp 1b\n\t&quot;
+                     &quot;2:\n\t&quot;
+                     &quot;adcq $0, %[cy]\n\t&quot;
+                     : [cy] &quot;+r&quot;(cy), [rp] &quot;+r&quot;(rp), [ap] &quot;+r&quot;(ap), [bp] &quot;+r&quot;(bp), [n] &quot;+c&quot;(blocks), [t0] &quot;=&amp;r&quot;(t0), [t1] &quot;=&amp;r&quot;(t1),
+                       [t2] &quot;=&amp;r&quot;(t2), [t3] &quot;=&amp;r&quot;(t3)
+                     :
+                     : &quot;cc&quot;, &quot;memory&quot;);
+  }
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L125">line 125</a></td></tr></tbody></table></section><section class="function-entry" id="f-e7d8e27bf0a9ce2a"><h3><code>micron::math::mpn::__kern::add_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L129">line 129</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline limb_t
+add_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>const limb_t *bp</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline limb_t
+add_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept
+{
+  limb_t cy = 0;
+  const usize blocks = n &gt;= kern_min_limbs ? (n &gt;&gt; 2) : 0u;
+  if ( blocks != 0 ) {
+    cy = __aors_n_blocks(rp, ap, bp, blocks, false);
+    const usize done = blocks &lt;&lt; 2;
+    rp += done;
+    ap += done;
+    bp += done;
+    n -= done;
+  }
+  for ( usize i = 0; i &lt; n; ++i ) cy = addc(ap[i], bp[i], cy, rp[i]);
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="kernels_amd64.hpp.html#f-66606fa398c1cdd9">__aors_n_blocks</a>, <a href="../bits/carry.hpp.html#f-a281e8afb966d835">addc</a>.</p></section><section class="function-entry" id="f-07ac81bee5e60d34"><h3><code>micron::math::mpn::__kern::sub_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L146">line 146</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline limb_t
+sub_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>const limb_t *bp</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline limb_t
+sub_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept
+{
+  limb_t bw = 0;
+  const usize blocks = n &gt;= kern_min_limbs ? (n &gt;&gt; 2) : 0u;
+  if ( blocks != 0 ) {
+    bw = __aors_n_blocks(rp, ap, bp, blocks, true);
+    const usize done = blocks &lt;&lt; 2;
+    rp += done;
+    ap += done;
+    bp += done;
+    n -= done;
+  }
+  for ( usize i = 0; i &lt; n; ++i ) bw = subb(ap[i], bp[i], bw, rp[i]);
+  return bw;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>bw</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L159">line 159</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="kernels_amd64.hpp.html#f-66606fa398c1cdd9">__aors_n_blocks</a>, <a href="../bits/carry.hpp.html#f-38772e6c44bff808">subb</a>.</p></section><section class="function-entry" id="f-45a284dfabc24cf3"><h3><code>micron::math::mpn::__kern::__mul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L173">line 173</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline limb_t
+__mul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_bmi2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize blocks</code></li><li><code>limb_t b</code></li><li><code>limb_t cy</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline limb_t
+__mul_1_blocks(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept
+{
+  limb_t t0, t1, t2, t3;
+  __asm__ volatile(
+      &quot;xorl %k[t0], %k[t0]\n\t&quot;      // CF = 0
+      &quot;1:\n\t&quot;
+      &quot;mulx   (%[ap]), %[t0], %[t1]\n\t&quot;
+      &quot;mulx  8(%[ap]), %[t2], %[t3]\n\t&quot;
+      &quot;adcq %[cy], %[t0]\n\t&quot;
+      &quot;adcq %[t1], %[t2]\n\t&quot;
+      &quot;movq %[t0],  (%[rp])\n\t&quot;
+      &quot;mulx 16(%[ap]), %[t0], %[t1]\n\t&quot;
+      &quot;adcq %[t3], %[t0]\n\t&quot;
+      &quot;movq %[t2], 8(%[rp])\n\t&quot;
+      &quot;mulx 24(%[ap]), %[t2], %[cy]\n\t&quot;
+      &quot;adcq %[t1], %[t2]\n\t&quot;
+      &quot;adcq $0, %[cy]\n\t&quot;
+      &quot;movq %[t0], 16(%[rp])\n\t&quot;
+      &quot;movq %[t2], 24(%[rp])\n\t&quot;
+      &quot;leaq 32(%[ap]), %[ap]\n\t&quot;
+      &quot;leaq 32(%[rp]), %[rp]\n\t&quot;
+      &quot;leaq -1(%[n]), %[n]\n\t&quot;
+      &quot;jrcxz 2f\n\t&quot;
+      &quot;jmp 1b\n\t&quot;
+      &quot;2:\n\t&quot;
+      : [cy] &quot;+r&quot;(cy), [rp] &quot;+r&quot;(rp), [ap] &quot;+r&quot;(ap), [n] &quot;+c&quot;(blocks), [t0] &quot;=&amp;r&quot;(t0), [t1] &quot;=&amp;r&quot;(t1), [t2] &quot;=&amp;r&quot;(t2), [t3] &quot;=&amp;r&quot;(t3)
+      : &quot;d&quot;(b)
+      : &quot;cc&quot;, &quot;memory&quot;);
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L201">line 201</a></td></tr></tbody></table></section><section class="function-entry" id="f-0941d9a5995cd441"><h3><code>micron::math::mpn::__kern::mul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L205">line 205</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline limb_t
+mul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_bmi2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize n</code></li><li><code>limb_t b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline limb_t
+mul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept
+{
+  limb_t cy = 0;
+  const usize blocks = n &gt;= kern_min_limbs ? (n &gt;&gt; 2) : 0u;
+  if ( blocks != 0 ) {
+    cy = __mul_1_blocks(rp, ap, blocks, b, cy);
+    const usize done = blocks &lt;&lt; 2;
+    rp += done;
+    ap += done;
+    n -= done;
+  }
+  for ( usize i = 0; i &lt; n; ++i ) {
+    limb_t lo = 0, hi = 0;
+    muladd_wide(ap[i], b, cy, lo, hi);
+    rp[i] = lo;
+    cy = hi;
+  }
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L222">line 222</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="kernels_amd64.hpp.html#f-45a284dfabc24cf3">__mul_1_blocks</a>, <a href="../bits/carry.hpp.html#f-4c991145a3659a1f">muladd_wide</a>.</p></section><section class="function-entry" id="f-448d507094262c6c"><h3><code>micron::math::mpn::__kern::__addmul_1_blocks_adx(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L231">line 231</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline limb_t
+__addmul_1_blocks_adx(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_bmi2)
+#if defined(__micron_arbint_x86_adx_kernel)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize blocks</code></li><li><code>limb_t b</code></li><li><code>limb_t cy</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline limb_t
+__addmul_1_blocks_adx(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept
+{
+  limb_t t0, h0, h1, zr;
+  __asm__ volatile(
+      &quot;xorl %k[zr], %k[zr]\n\t&quot;      // clears CF _and_ OF, and zeroes zr for the fold
+      &quot;1:\n\t&quot;
+      &quot;mulx   (%[ap]), %[t0], %[h0]\n\t&quot;
+      &quot;adcx %[cy], %[t0]\n\t&quot;
+      &quot;adox   (%[rp]), %[t0]\n\t&quot;
+      &quot;movq %[t0],   (%[rp])\n\t&quot;
+      &quot;mulx  8(%[ap]), %[t0], %[h1]\n\t&quot;
+      &quot;adcx %[h0], %[t0]\n\t&quot;
+      &quot;adox  8(%[rp]), %[t0]\n\t&quot;
+      &quot;movq %[t0],  8(%[rp])\n\t&quot;
+      &quot;mulx 16(%[ap]), %[t0], %[h0]\n\t&quot;
+      &quot;adcx %[h1], %[t0]\n\t&quot;
+      &quot;adox 16(%[rp]), %[t0]\n\t&quot;
+      &quot;movq %[t0], 16(%[rp])\n\t&quot;
+      &quot;mulx 24(%[ap]), %[t0], %[cy]\n\t&quot;
+      &quot;adcx %[h0], %[t0]\n\t&quot;
+      &quot;adox 24(%[rp]), %[t0]\n\t&quot;
+      &quot;movq %[t0], 24(%[rp])\n\t&quot;
+      &quot;leaq 32(%[ap]), %[ap]\n\t&quot;
+      &quot;leaq 32(%[rp]), %[rp]\n\t&quot;
+      &quot;leaq -1(%[n]), %[n]\n\t&quot;
+      &quot;jrcxz 2f\n\t&quot;
+      &quot;jmp 1b\n\t&quot;
+      &quot;2:\n\t&quot;
+      &quot;adcx %[zr], %[cy]\n\t&quot;      // fold both chains into the carry word. cannot
+      &quot;adox %[zr], %[cy]\n\t&quot;
+      : [cy] &quot;+r&quot;(cy), [rp] &quot;+r&quot;(rp), [ap] &quot;+r&quot;(ap), [n] &quot;+c&quot;(blocks), [t0] &quot;=&amp;r&quot;(t0), [h0] &quot;=&amp;r&quot;(h0), [h1] &quot;=&amp;r&quot;(h1), [zr] &quot;=&amp;r&quot;(zr)
+      : &quot;d&quot;(b)
+      : &quot;cc&quot;, &quot;memory&quot;);
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L264">line 264</a></td></tr></tbody></table></section><section class="function-entry" id="f-0ea239d33b7befb2"><h3><code>micron::math::mpn::__kern::__submul_1_blocks_adx(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L268">line 268</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline limb_t
+__submul_1_blocks_adx(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_bmi2)
+#if defined(__micron_arbint_x86_adx_kernel)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize blocks</code></li><li><code>limb_t b</code></li><li><code>limb_t cy</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline limb_t
+__submul_1_blocks_adx(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept
+{
+  limb_t lo, h0, h1, zr, sd;
+  __asm__ volatile(&quot;xorl %k[zr], %k[zr]\n\t&quot;      // zr = 0, CF = 0, OF = 0
+                   &quot;movl $1, %k[sd]\n\t&quot;          // mov writes no flags
+                   &quot;addb $127, %b[sd]\n\t&quot;        // 1 + 127 overflows int8: OF = 1, CF untouched at 0
+                   &quot;1:\n\t&quot;
+                   &quot;mulx   (%[ap]), %[lo], %[h0]\n\t&quot;
+                   &quot;adcx %[cy], %[lo]\n\t&quot;
+                   &quot;notq %[lo]\n\t&quot;
+                   &quot;adox   (%[rp]), %[lo]\n\t&quot;
+                   &quot;movq %[lo],   (%[rp])\n\t&quot;
+                   &quot;mulx  8(%[ap]), %[lo], %[h1]\n\t&quot;
+                   &quot;adcx %[h0], %[lo]\n\t&quot;
+                   &quot;notq %[lo]\n\t&quot;
+                   &quot;adox  8(%[rp]), %[lo]\n\t&quot;
+                   &quot;movq %[lo],  8(%[rp])\n\t&quot;
+                   &quot;mulx 16(%[ap]), %[lo], %[h0]\n\t&quot;
+                   &quot;adcx %[h1], %[lo]\n\t&quot;
+                   &quot;notq %[lo]\n\t&quot;
+                   &quot;adox 16(%[rp]), %[lo]\n\t&quot;
+                   &quot;movq %[lo], 16(%[rp])\n\t&quot;
+                   &quot;mulx 24(%[ap]), %[lo], %[cy]\n\t&quot;
+                   &quot;adcx %[h0], %[lo]\n\t&quot;
+                   &quot;notq %[lo]\n\t&quot;
+                   &quot;adox 24(%[rp]), %[lo]\n\t&quot;
+                   &quot;movq %[lo], 24(%[rp])\n\t&quot;
+                   &quot;leaq 32(%[ap]), %[ap]\n\t&quot;
+                   &quot;leaq 32(%[rp]), %[rp]\n\t&quot;
+                   &quot;leaq -1(%[n]), %[n]\n\t&quot;
+                   &quot;jrcxz 2f\n\t&quot;
+                   &quot;jmp 1b\n\t&quot;
+                   &quot;2:\n\t&quot;
+                   &quot;adcx %[zr], %[cy]\n\t&quot;      // cy = H, the product&#x27;s carry out. adcx leaves OF alone
+                   &quot;setno %b[sd]\n\t&quot;           // sd = 1 - carry_out = the borrow
+                   &quot;movzbl %b[sd], %k[sd]\n\t&quot;
+                   &quot;addq %[sd], %[cy]\n\t&quot;
+                   : [cy] &quot;+r&quot;(cy), [rp] &quot;+r&quot;(rp), [ap] &quot;+r&quot;(ap), [n] &quot;+c&quot;(blocks), [lo] &quot;=&amp;r&quot;(lo), [h0] &quot;=&amp;r&quot;(h0), [h1] &quot;=&amp;r&quot;(h1),
+                     [zr] &quot;=&amp;r&quot;(zr), [sd] &quot;=&amp;Q&quot;(sd)
+                   : &quot;d&quot;(b)
+                   : &quot;cc&quot;, &quot;memory&quot;);
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L309">line 309</a></td></tr></tbody></table></section><section class="function-entry" id="f-1931dd7fc7391065"><h3><code>micron::math::mpn::__kern::__addmul_1_blocks_bmi2(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L315">line 315</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline limb_t
+__addmul_1_blocks_bmi2(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_bmi2)
+#else of #if defined(__micron_arbint_x86_adx_kernel)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize blocks</code></li><li><code>limb_t b</code></li><li><code>limb_t cy</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline limb_t
+__addmul_1_blocks_bmi2(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept
+{
+  limb_t l0, l1, l2, l3, h0, h1, h2, t;
+  __asm__ volatile(&quot;1:\n\t&quot;
+                   &quot;mulx   (%[ap]), %[l0], %[h0]\n\t&quot;
+                   &quot;mulx  8(%[ap]), %[l1], %[h1]\n\t&quot;
+                   &quot;mulx 16(%[ap]), %[l2], %[h2]\n\t&quot;
+                   &quot;mulx 24(%[ap]), %[l3], %[t]\n\t&quot;
+                   &quot;addq %[cy], %[l0]\n\t&quot;      // fold: lo_i += hi_{i-1}, one chain
+                   &quot;adcq %[h0], %[l1]\n\t&quot;
+                   &quot;adcq %[h1], %[l2]\n\t&quot;
+                   &quot;adcq %[h2], %[l3]\n\t&quot;
+                   &quot;adcq $0, %[t]\n\t&quot;
+                   &quot;addq %[l0],   (%[rp])\n\t&quot;      // apply: rp[i] += lo_i, a fresh chain
+                   &quot;adcq %[l1],  8(%[rp])\n\t&quot;
+                   &quot;adcq %[l2], 16(%[rp])\n\t&quot;
+                   &quot;adcq %[l3], 24(%[rp])\n\t&quot;
+                   &quot;adcq $0, %[t]\n\t&quot;
+                   &quot;movq %[t], %[cy]\n\t&quot;
+                   &quot;leaq 32(%[ap]), %[ap]\n\t&quot;
+                   &quot;leaq 32(%[rp]), %[rp]\n\t&quot;
+                   &quot;leaq -1(%[n]), %[n]\n\t&quot;
+                   &quot;jrcxz 2f\n\t&quot;
+                   &quot;jmp 1b\n\t&quot;
+                   &quot;2:\n\t&quot;
+                   : [cy] &quot;+r&quot;(cy), [rp] &quot;+r&quot;(rp), [ap] &quot;+r&quot;(ap), [n] &quot;+c&quot;(blocks), [l0] &quot;=&amp;r&quot;(l0), [l1] &quot;=&amp;r&quot;(l1), [l2] &quot;=&amp;r&quot;(l2),
+                     [l3] &quot;=&amp;r&quot;(l3), [h0] &quot;=&amp;r&quot;(h0), [h1] &quot;=&amp;r&quot;(h1), [h2] &quot;=&amp;r&quot;(h2), [t] &quot;=&amp;r&quot;(t)
+                   : &quot;d&quot;(b)
+                   : &quot;cc&quot;, &quot;memory&quot;);
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L344">line 344</a></td></tr></tbody></table></section><section class="function-entry" id="f-5518593e9e0e4ec8"><h3><code>micron::math::mpn::__kern::__submul_1_blocks_bmi2(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L348">line 348</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline limb_t
+__submul_1_blocks_bmi2(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_bmi2)
+#else of #if defined(__micron_arbint_x86_adx_kernel)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize blocks</code></li><li><code>limb_t b</code></li><li><code>limb_t cy</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline limb_t
+__submul_1_blocks_bmi2(limb_t *rp, const limb_t *ap, usize blocks, limb_t b, limb_t cy) noexcept
+{
+  limb_t l0, l1, l2, l3, h0, h1, h2, t;
+  __asm__ volatile(&quot;1:\n\t&quot;
+                   &quot;mulx   (%[ap]), %[l0], %[h0]\n\t&quot;
+                   &quot;mulx  8(%[ap]), %[l1], %[h1]\n\t&quot;
+                   &quot;mulx 16(%[ap]), %[l2], %[h2]\n\t&quot;
+                   &quot;mulx 24(%[ap]), %[l3], %[t]\n\t&quot;
+                   &quot;addq %[cy], %[l0]\n\t&quot;
+                   &quot;adcq %[h0], %[l1]\n\t&quot;
+                   &quot;adcq %[h1], %[l2]\n\t&quot;
+                   &quot;adcq %[h2], %[l3]\n\t&quot;
+                   &quot;adcq $0, %[t]\n\t&quot;
+                   &quot;subq %[l0],   (%[rp])\n\t&quot;      // the borrow chain, fresh
+                   &quot;sbbq %[l1],  8(%[rp])\n\t&quot;
+                   &quot;sbbq %[l2], 16(%[rp])\n\t&quot;
+                   &quot;sbbq %[l3], 24(%[rp])\n\t&quot;
+                   &quot;adcq $0, %[t]\n\t&quot;
+                   &quot;movq %[t], %[cy]\n\t&quot;
+                   &quot;leaq 32(%[ap]), %[ap]\n\t&quot;
+                   &quot;leaq 32(%[rp]), %[rp]\n\t&quot;
+                   &quot;leaq -1(%[n]), %[n]\n\t&quot;
+                   &quot;jrcxz 2f\n\t&quot;
+                   &quot;jmp 1b\n\t&quot;
+                   &quot;2:\n\t&quot;
+                   : [cy] &quot;+r&quot;(cy), [rp] &quot;+r&quot;(rp), [ap] &quot;+r&quot;(ap), [n] &quot;+c&quot;(blocks), [l0] &quot;=&amp;r&quot;(l0), [l1] &quot;=&amp;r&quot;(l1), [l2] &quot;=&amp;r&quot;(l2),
+                     [l3] &quot;=&amp;r&quot;(l3), [h0] &quot;=&amp;r&quot;(h0), [h1] &quot;=&amp;r&quot;(h1), [h2] &quot;=&amp;r&quot;(h2), [t] &quot;=&amp;r&quot;(t)
+                   : &quot;d&quot;(b)
+                   : &quot;cc&quot;, &quot;memory&quot;);
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L377">line 377</a></td></tr></tbody></table></section><section class="function-entry" id="f-684fc7f0ea7565a5"><h3><code>micron::math::mpn::__kern::addmul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L383">line 383</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline limb_t
+addmul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_bmi2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize n</code></li><li><code>limb_t b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline limb_t
+addmul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept
+{
+  limb_t cy = 0;
+  const usize blocks = n &gt;= kern_min_limbs ? (n &gt;&gt; 2) : 0u;
+  if ( blocks != 0 ) {
+#if defined(__micron_arbint_x86_adx_kernel)
+    cy = __addmul_1_blocks_adx(rp, ap, blocks, b, cy);
+#else
+    cy = __addmul_1_blocks_bmi2(rp, ap, blocks, b, cy);
+#endif
+    const usize done = blocks &lt;&lt; 2;
+    rp += done;
+    ap += done;
+    n -= done;
+  }
+  for ( usize i = 0; i &lt; n; ++i ) {
+    limb_t lo = 0, hi = 0;
+    muladd2_wide(ap[i], b, cy, rp[i], lo, hi);
+    rp[i] = lo;
+    cy = hi;
+  }
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L404">line 404</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="kernels_amd64.hpp.html#f-448d507094262c6c">__addmul_1_blocks_adx</a>, <a href="kernels_amd64.hpp.html#f-1931dd7fc7391065">__addmul_1_blocks_bmi2</a>, <a href="../bits/carry.hpp.html#f-c49ccadfe4e50d2b">muladd2_wide</a>.</p></section><section class="function-entry" id="f-e14bc42cacd2e467"><h3><code>micron::math::mpn::__kern::submul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept</code></h3><p>Defined in <code>math/arbint/arch/kernels_amd64.hpp</code>, <a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L408">line 408</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline limb_t
+submul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_bmi2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize n</code></li><li><code>limb_t b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline limb_t
+submul_1(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept
+{
+  limb_t cy = 0;
+  const usize blocks = n &gt;= kern_min_limbs ? (n &gt;&gt; 2) : 0u;
+  if ( blocks != 0 ) {
+#if defined(__micron_arbint_x86_adx_kernel)
+    cy = __submul_1_blocks_adx(rp, ap, blocks, b, cy);
+#else
+    cy = __submul_1_blocks_bmi2(rp, ap, blocks, b, cy);
+#endif
+    const usize done = blocks &lt;&lt; 2;
+    rp += done;
+    ap += done;
+    n -= done;
+  }
+  for ( usize i = 0; i &lt; n; ++i ) {
+    limb_t lo = 0, hi = 0;
+    muladd_wide(ap[i], b, cy, lo, hi);
+    limb_t d = 0;
+    const limb_t bw = subb(rp[i], lo, 0, d);
+    rp[i] = d;
+    cy = static_cast&lt;limb_t&gt;(hi + bw);
+  }
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/kernels_amd64.hpp.html#L431">line 431</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="kernels_amd64.hpp.html#f-0ea239d33b7befb2">__submul_1_blocks_adx</a>, <a href="kernels_amd64.hpp.html#f-5518593e9e0e4ec8">__submul_1_blocks_bmi2</a>, <a href="../bits/carry.hpp.html#f-4c991145a3659a1f">muladd_wide</a>, <a href="../bits/carry.hpp.html#f-38772e6c44bff808">subb</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/fft/real.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/fft/real.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/fft/real.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;plan.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> namespace micron::math::fft</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> {</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> enum class r2r_kind { dct_i, dct_ii, dct_iii, dct_iv, dst_i, dst_ii, dst_iii, dst_iv };</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> namespace __impl</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> {</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> inline r2r_kind</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> __inverse_kind(r2r_kind kind) noexcept</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> {</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a>   switch ( kind ) {</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a>   case r2r_kind::dct_ii:</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a>     return r2r_kind::dct_iii;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a>   case r2r_kind::dct_iii:</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a>     return r2r_kind::dct_ii;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a>   case r2r_kind::dst_ii:</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a>     return r2r_kind::dst_iii;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a>   case r2r_kind::dst_iii:</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a>     return r2r_kind::dst_ii;</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>   default:</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>     return kind;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   }</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> }</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> </span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> inline usize</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> __logical_size(usize n, r2r_kind kind)</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> {</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   if ( !n || (kind == r2r_kind::dct_i &amp;&amp; n &lt; 2) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform length&quot;);</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   if ( kind == r2r_kind::dct_i ) return __mul(2, n - 1);</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   if ( kind == r2r_kind::dst_i ) return __mul(2, __add(n, 1));</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   return __mul(2, n);</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> }</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> </span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> inline usize</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> __embedding_size(usize n, r2r_kind kind)</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> {</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>   usize logical = __logical_size(n, kind);</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>   return kind == r2r_kind::dct_iv || kind == r2r_kind::dst_iv ? __mul(4, logical) : logical;</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> }</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> </span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> template&lt;fft_scalar F&gt; class __real_engine</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> {</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   usize __n, __logical, __length;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   r2r_kind __kind;</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>   __engine&lt;F&gt; __fft;</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   buffer&lt;complex&lt;F&gt;&gt; __phase;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> </span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> public:</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>   __real_engine(usize n, r2r_kind kind)</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>       : __n(n), __logical(__logical_size(n, kind)), __length(__embedding_size(n, kind)), __kind(kind), __fft(__length), __phase(n + 1)</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   {</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>     if ( unsigned(kind) &gt; unsigned(r2r_kind::dst_iv) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform kind&quot;);</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>     for ( usize k = 0; k &lt;= n; ++k ) __phase[k] = __root&lt;F&gt;(k, 4 * n);</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>   }</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> </span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   usize</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>   logical_size() const noexcept</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>   {</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>     return __logical;</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   }</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> </span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>   usize</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>   scratch_size() const noexcept</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   {</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>     return 2 * __length + __fft.scratch_size();</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>   }</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> </span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>   template&lt;typename Runner&gt;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   void</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   execute(const complex&lt;F&gt; *input, complex&lt;F&gt; *output, complex&lt;F&gt; *scratch, bool inverse, bool ortho, Runner &amp;runner,</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>           bool parallel) const noexcept</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>   {</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>     r2r_kind kind = inverse ? __inverse_kind(__kind) : __kind;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     auto *time = scratch, *freq = time + __length, *temp = freq + __length;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>     for ( usize i = 0; i &lt; __length; ++i ) time[i] = {};</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>     F root2 = __sqrt(F(2));</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>     for ( usize j = 0; j &lt; __n; ++j ) {</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>       F x = input[j].real;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>       if ( ortho</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>            &amp;&amp; ((kind == r2r_kind::dct_i &amp;&amp; (j == 0 || j + 1 == __n)) || (kind == r2r_kind::dct_iii &amp;&amp; j == 0)</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>                || (kind == r2r_kind::dst_iii &amp;&amp; j + 1 == __n)) )</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>         x *= root2;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>       switch ( kind ) {</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>       case r2r_kind::dct_i:</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>         time[j] = { x };</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>         if ( j &amp;&amp; j + 1 &lt; __n ) time[__length - j] = { x };</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>         break;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>       case r2r_kind::dct_ii:</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>         time[j] = { x };</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>         time[__length - 1 - j] = { x };</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>         break;</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>       case r2r_kind::dct_iii:</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>         time[j] = conj(__phase[j]) * x;</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>         if ( j ) time[__length - j] = conj(time[j]);</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>         break;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>       case r2r_kind::dct_iv:</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>         time[2 * j + 1] = { x };</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>         time[__length - (2 * j + 1)] = { x };</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>         break;</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>       case r2r_kind::dst_i:</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>         time[j + 1] = { x };</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>         time[__length - j - 1] = { -x };</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>         break;</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>       case r2r_kind::dst_ii:</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>         time[j] = { x };</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>         time[__length - 1 - j] = { -x };</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>         break;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>       case r2r_kind::dst_iii:</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>         time[j + 1] = complex&lt;F&gt;{ 0, -x } * conj(__phase[j + 1]);</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>         if ( j + 1 &lt; __n ) time[__length - j - 1] = conj(time[j + 1]);</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>         break;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>       case r2r_kind::dst_iv:</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>         time[2 * j + 1] = { x };</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>         time[__length - (2 * j + 1)] = { -x };</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>         break;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>       }</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     }</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>     if ( parallel )</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>       __fft.execute_parallel(time, freq, temp, kind == r2r_kind::dct_iii || kind == r2r_kind::dst_iii, runner);</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>     else</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>       __fft.execute(time, freq, temp, kind == r2r_kind::dct_iii || kind == r2r_kind::dst_iii);</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>     for ( usize k = 0; k &lt; __n; ++k ) {</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>       F x{};</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>       switch ( kind ) {</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>       case r2r_kind::dct_i:</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>       case r2r_kind::dct_iii:</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>       case r2r_kind::dst_iii:</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>         x = freq[k].real;</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>         break;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>       case r2r_kind::dct_ii:</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>         x = (freq[k] * __phase[k]).real;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>         break;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>       case r2r_kind::dct_iv:</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>         x = freq[2 * k + 1].real;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>         break;</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>       case r2r_kind::dst_i:</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>         x = -freq[k + 1].imag;</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>         break;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>       case r2r_kind::dst_ii:</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>         x = -(freq[k + 1] * __phase[k + 1]).imag;</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>         break;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>       case r2r_kind::dst_iv:</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>         x = -freq[2 * k + 1].imag;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>         break;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>       }</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>       if ( ortho</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>            &amp;&amp; ((kind == r2r_kind::dct_i &amp;&amp; (k == 0 || k + 1 == __n)) || (kind == r2r_kind::dct_ii &amp;&amp; k == 0)</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>                || (kind == r2r_kind::dst_ii &amp;&amp; k + 1 == __n)) )</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>         x /= root2;</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>       output[k] = { x };</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     }</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>   }</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a> };</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a> }      // namespace __impl</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a> </span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a> template&lt;fft_scalar F&gt; class r2r_plan</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a> {</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>   descriptor&lt;F&gt; __desc;</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>   buffer&lt;__impl::__real_engine&lt;F&gt;&gt; __engines;</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>   buffer&lt;usize&gt; __steps;</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   usize __volume{}, __logical{ 1 }, __line_size{}, __scratch_size{}, __data_size{};</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> </span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a> public:</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>   r2r_plan(usize n, r2r_kind kind, normalization norm = normalization::backward)</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>       : r2r_plan(</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>             [&amp;] {</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>               descriptor&lt;F&gt; d(n);</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>               d.norm = norm;</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>               return d;</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>             }(),</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>             buffer&lt;r2r_kind&gt;{ kind })</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>   {</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>   }</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> </span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   r2r_plan(const descriptor&lt;F&gt; &amp;d, const buffer&lt;r2r_kind&gt; &amp;kinds) : __desc(d)</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   {</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>     if ( unsigned(d.norm) &gt; unsigned(normalization::ortho) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid normalization&quot;);</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>     if ( d.shape.empty() || d.kind != domain::complex ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform descriptor&quot;);</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>     __volume = __impl::__product(d.shape);</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>     if ( __desc.axes.empty() )</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>       for ( usize i = 0; i &lt; d.shape.size(); ++i ) __desc.axes.push_back(i);</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>     if ( kinds.size() != __desc.axes.size() ) exc&lt;except::invalid_argument&gt;(&quot;fft: one real transform kind per axis required&quot;);</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>     usize engine_scratch = 0;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>     for ( usize i = 0; i &lt; __desc.axes.size(); ++i ) {</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>       usize axis = __desc.axes[i];</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>       if ( axis &gt;= d.shape.size() ) exc&lt;except::invalid_argument&gt;(&quot;fft: axis out of range&quot;);</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>       for ( usize j = 0; j &lt; i; ++j )</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>         if ( __desc.axes[j] == axis ) exc&lt;except::invalid_argument&gt;(&quot;fft: duplicate axis&quot;);</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>       __engines.push_back(__impl::__real_engine&lt;F&gt;(d.shape[axis], kinds[i]));</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>       __logical = __impl::__mul(__logical, __engines[i].logical_size());</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>       if ( __engines[i].scratch_size() &gt; engine_scratch ) engine_scratch = __engines[i].scratch_size();</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>       if ( d.shape[axis] &gt; __line_size ) __line_size = d.shape[axis];</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>     }</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>     __scratch_size = __impl::__add(__impl::__mul(2, __line_size), engine_scratch);</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>     __data_size = __impl::__mul(__volume, d.batches);</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>     __steps.resize(d.shape.size());</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>     usize step = 1;</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>     for ( usize i = d.shape.size(); i-- &gt; 0; ) {</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>       __steps[i] = step;</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>       step *= d.shape[i];</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>     }</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>     __impl::__mul(__impl::__add(__impl::__complete_layout(__desc.input, d.shape, d.batches), 1), sizeof(F));</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>     __impl::__mul(__impl::__add(__impl::__complete_layout(__desc.output, d.shape, d.batches), 1), sizeof(F));</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>     __impl::__mul(workspace_size(), sizeof(complex&lt;F&gt;));</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>   }</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a> </span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   const descriptor&lt;F&gt; &amp;</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   configuration() const noexcept</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>   {</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>     return __desc;</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>   }</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a> </span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>   usize</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>   size() const noexcept</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>   {</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>     return __data_size;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>   }</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a> </span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>   usize</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>   workspace_size(usize workers = 1) const</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>   {</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>     if ( !workers ) exc&lt;except::invalid_argument&gt;(&quot;fft: zero workers&quot;);</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>     return __impl::__add(__data_size, __impl::__mul(workers, __scratch_size));</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>   }</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> </span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>   usize</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>   workspace_bytes(usize workers = 1) const</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   {</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>     return __impl::__mul(workspace_size(workers), sizeof(complex&lt;F&gt;));</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>   }</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> </span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   template&lt;typename Runner&gt;</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>   max_t</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>   __execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir, Runner &amp;runner) const noexcept</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>   {</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>     if ( dir != direction::forward &amp;&amp; dir != direction::backward ) return -22;</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>     if ( !__desc.batches ) return 0;</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>     if ( !input || !output ) return -22;</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>     if ( !runner.workers || runner.workers &gt; (__impl::__limit - __data_size) / __scratch_size || !work.data</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>          || work.size &lt; __data_size + runner.workers * __scratch_size )</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>       return -105;</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     auto *data = work.data;</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>     for ( usize b = 0; b &lt; __desc.batches; ++b )</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>       for ( usize k = 0; k &lt; __volume; ++k ) data[b * __volume + k] = { input[__impl::__offset(k, __desc.shape, __desc.input, b)] };</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>     for ( usize a = 0; a &lt; __desc.axes.size(); ++a ) {</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>       usize axis = __desc.axes[a], n = __desc.shape[axis], stride = __steps[axis];</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>       runner(__data_size / n, data + __data_size, __scratch_size, [&amp;](usize line, complex&lt;F&gt; *scratch) noexcept {</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>         usize base = (line / stride) * (stride * n) + line % stride;</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>         auto *in = scratch, *out = scratch + __line_size, *temp = out + __line_size;</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>         for ( usize j = 0; j &lt; n; ++j ) in[j] = data[base + j * stride];</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>         __engines[a].execute(in, out, temp, dir == direction::backward, __desc.norm == normalization::ortho, runner, __data_size / n == 1);</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>         for ( usize j = 0; j &lt; n; ++j ) data[base + j * stride] = out[j];</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>       });</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>     }</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>     F scale = __impl::__scale&lt;F&gt;(__desc.norm, dir, __logical) * (dir == direction::forward ? __desc.forward_scale : __desc.backward_scale);</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>     for ( usize b = 0; b &lt; __desc.batches; ++b )</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>       for ( usize k = 0; k &lt; __volume; ++k )</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>         output[__impl::__offset(k, __desc.shape, __desc.output, b)] = data[b * __volume + k].real * scale;</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>     return max_t(__data_size * sizeof(F));</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>   }</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> </span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>   max_t</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>   execute(const F *input, F *output, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>   {</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>     __impl::__serial&lt;F&gt; runner;</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>     return __execute(input, output, work, dir, runner);</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>   }</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a> };</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a> </span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a> template&lt;fft_scalar F&gt;</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a> buffer&lt;F&gt;</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a> real_transform(const F *input, usize n, r2r_kind kind, direction dir = direction::forward, normalization norm = normalization::backward)</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> {</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>   r2r_plan&lt;F&gt; p(n, kind, norm);</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>   workspace&lt;F&gt; work(p);</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>   buffer&lt;F&gt; out(n);</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>   if ( p.execute(input, out.data(), work.view(), dir) &lt; 0 ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid real transform input&quot;);</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>   return out;</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> }</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a> </span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a> template&lt;fft_scalar F&gt;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a> buffer&lt;F&gt;</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a> dct(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> {</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>   if ( type &lt; 1 || type &gt; 4 ) exc&lt;except::invalid_argument&gt;(&quot;fft: DCT type must be 1..4&quot;);</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>   return real_transform(input, n, r2r_kind(type - 1), dir, norm);</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a> }</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a> </span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a> template&lt;fft_scalar F&gt;</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a> buffer&lt;F&gt;</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a> dst(const F *input, usize n, unsigned type = 2, normalization norm = normalization::backward, direction dir = direction::forward)</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> {</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>   if ( type &lt; 1 || type &gt; 4 ) exc&lt;except::invalid_argument&gt;(&quot;fft: DST type must be 1..4&quot;);</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>   return real_transform(input, n, r2r_kind(type + 3), dir, norm);</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a> }</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> </span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> };      // namespace micron::math::fft</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

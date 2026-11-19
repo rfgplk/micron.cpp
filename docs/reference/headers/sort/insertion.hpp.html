@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sort/insertion.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sort/insertion.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/sorting.html">Sorting</a></div><p>Defined in header <code>&lt;micron/sort/insertion.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sort/insertion.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-4ce324f6a6f46b1f">micron::sort::insertion(T &amp;arr)</a></td><td>function; line 50</td></tr><tr class="t-dsc"><td><a href="#f-013cfb3f38a24619">micron::sort::insertion(T &amp;arr, Cmp comp)</a></td><td>function; line 58</td></tr><tr class="t-dsc"><td><a href="#f-6364a6ab48fb4f88">micron::sort::insertion(T &amp;arr, typename T::size_type lim)</a></td><td>function; line 66</td></tr><tr class="t-dsc"><td><a href="#f-56d912e3f6f2d649">micron::sort::insertion(T &amp;arr, typename T::size_type lim, Cmp comp)</a></td><td>function; line 74</td></tr><tr class="t-dsc"><td><a href="#f-905b0d00b053963d">micron::sort::insertion(typename T::iterator start, typename T::iterator end)</a></td><td>function; line 99</td></tr><tr class="t-dsc"><td><a href="#f-c8b649a45ee5a1a7">micron::sort::insertion(typename T::iterator start, typename T::iterator end, Cmp comp)</a></td><td>function; line 106</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-4ce324f6a6f46b1f"><h3><code>micron::sort::insertion(T &amp;arr)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L50">line 50</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+T &amp;
+insertion(T &amp;arr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+T &amp;
+insertion(T &amp;arr)
+{
+  __insertion(arr, 0, arr.size());
+  return arr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/sort/insertion.hpp.html#L53">line 53</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="insertion.hpp.html#f-83a39a3537d74895">__insertion</a>.</p></section><section class="function-entry" id="f-013cfb3f38a24619"><h3><code>micron::sort::insertion(T &amp;arr, Cmp comp)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L58">line 58</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+T &amp;
+insertion(T &amp;arr, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+T &amp;
+insertion(T &amp;arr, Cmp comp)
+{
+  __insertion(arr, 0, arr.size(), comp);
+  return arr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/sort/insertion.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="insertion.hpp.html#f-83a39a3537d74895">__insertion</a>.</p></section><section class="function-entry" id="f-6364a6ab48fb4f88"><h3><code>micron::sort::insertion(T &amp;arr, typename T::size_type lim)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L66">line 66</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+T &amp;
+insertion(T &amp;arr, typename T::size_type lim)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>typename T::size_type lim</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+T &amp;
+insertion(T &amp;arr, typename T::size_type lim)
+{
+  __insertion(arr, 0, lim &lt; arr.size() ? lim : arr.size());
+  return arr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/sort/insertion.hpp.html#L69">line 69</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="insertion.hpp.html#f-83a39a3537d74895">__insertion</a>.</p></section><section class="function-entry" id="f-56d912e3f6f2d649"><h3><code>micron::sort::insertion(T &amp;arr, typename T::size_type lim, Cmp comp)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L74">line 74</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+T &amp;
+insertion(T &amp;arr, typename T::size_type lim, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>typename T::size_type lim</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+T &amp;
+insertion(T &amp;arr, typename T::size_type lim, Cmp comp)
+{
+  __insertion(arr, 0, lim &lt; arr.size() ? lim : arr.size(), comp);
+  return arr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/sort/insertion.hpp.html#L77">line 77</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="insertion.hpp.html#f-83a39a3537d74895">__insertion</a>.</p></section><section class="function-entry" id="f-905b0d00b053963d"><h3><code>micron::sort::insertion(typename T::iterator start, typename T::iterator end)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L99">line 99</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+typename T::iterator
+insertion(typename T::iterator start, typename T::iterator end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>typename T::iterator start</code></li><li><code>typename T::iterator end</code></li></ul><h4>Effects</h4><p>Returns <code>__insertion_it&lt;T&gt;(start, end, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+typename T::iterator
+insertion(typename T::iterator start, typename T::iterator end)
+{
+  return __insertion_it&lt;T&gt;(start, end, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__insertion_it&lt;T&gt;(start, end, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code></td><td><a href="../../source/sort/insertion.hpp.html#L101">line 101</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="insertion.hpp.html#f-dad8c732f1a80d2f">__insertion_it&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-c8b649a45ee5a1a7"><h3><code>micron::sort::insertion(typename T::iterator start, typename T::iterator end, Cmp comp)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L106">line 106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+typename T::iterator
+insertion(typename T::iterator start, typename T::iterator end, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>typename T::iterator start</code></li><li><code>typename T::iterator end</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Returns <code>__insertion_it&lt;T&gt;(start, end, comp)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+typename T::iterator
+insertion(typename T::iterator start, typename T::iterator end, Cmp comp)
+{
+  return __insertion_it&lt;T&gt;(start, end, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__insertion_it&lt;T&gt;(start, end, comp)</code></td><td><a href="../../source/sort/insertion.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="insertion.hpp.html#f-dad8c732f1a80d2f">__insertion_it&lt;T&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-83a39a3537d74895"><h3><code>micron::sort::__insertion(T &amp;arr, typename T::size_type start, typename T::size_type end, Cmp comp)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L27">line 27</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Cmp&gt;
+void
+__insertion(T &amp;arr, typename T::size_type start, typename T::size_type end, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>typename T::size_type start</code></li><li><code>typename T::size_type end</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Cmp&gt;
+void
+__insertion(T &amp;arr, typename T::size_type start, typename T::size_type end, Cmp comp)
+{
+  using value_t = typename T::value_type;
+  for ( typename T::size_type i = start + 1; i &lt; end; ++i ) {
+    value_t key = arr[i];
+    typename T::size_type j = i;
+    while ( j &gt; 0 &amp;&amp; comp(key, arr[j - 1]) ) {
+      arr[j] = arr[j - 1];
+      --j;
+    }
+    arr[j] = key;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5fc6a9ab4c267d05"><h3><code>micron::sort::__insertion(T &amp;arr, typename T::size_type start, typename T::size_type end)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L43">line 43</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+void
+__insertion(T &amp;arr, typename T::size_type start, typename T::size_type end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>typename T::size_type start</code></li><li><code>typename T::size_type end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+void
+__insertion(T &amp;arr, typename T::size_type start, typename T::size_type end)
+{
+  __insertion(arr, start, end, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="insertion.hpp.html#f-83a39a3537d74895">__insertion</a>.</p></section><section class="function-entry" id="f-dad8c732f1a80d2f"><h3><code>micron::sort::__insertion_it(typename T::iterator start, typename T::iterator end, Cmp comp)</code></h3><p>Defined in <code>sort/insertion.hpp</code>, <a href="../../source/sort/insertion.hpp.html#L82">line 82</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Cmp&gt;
+typename T::iterator
+__insertion_it(typename T::iterator start, typename T::iterator end, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>typename T::iterator start</code></li><li><code>typename T::iterator end</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Cmp&gt;
+typename T::iterator
+__insertion_it(typename T::iterator start, typename T::iterator end, Cmp comp)
+{
+  const max_t cnt = static_cast&lt;max_t&gt;(end - start);
+  for ( max_t i = 1; i &lt; cnt; ++i ) {
+    auto key = start[i];
+    max_t j = i;
+    while ( j &gt; 0 &amp;&amp; comp(key, start[j - 1]) ) {
+      start[j] = start[j - 1];
+      --j;
+    }
+    start[j] = key;
+  }
+  return start;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>start</code></td><td><a href="../../source/sort/insertion.hpp.html#L94">line 94</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

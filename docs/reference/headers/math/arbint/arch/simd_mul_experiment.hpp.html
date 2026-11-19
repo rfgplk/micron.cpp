@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/arch/simd_mul_experiment.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/arch/simd_mul_experiment.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/arbint/arch/simd_mul_experiment.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/math/arbint/arch/simd_mul_experiment.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-293b3b752bd1990c"><h3><code>micron::math::mpn::__kern::__vmul32(__ai_v4du a, __ai_v4du b) noexcept</code></h3><p>Defined in <code>math/arbint/arch/simd_mul_experiment.hpp</code>, <a href="../../../../source/math/arbint/arch/simd_mul_experiment.hpp.html#L43">line 43</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline __ai_v4du
+__vmul32(__ai_v4du a, __ai_v4du b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_arch_width_64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__ai_v4du a</code></li><li><code>__ai_v4du b</code></li></ul><h4>Effects</h4><p>Returns <code>(__ai_v4du)__builtin_ia32_pmuludq256((__ai_v8si)a, (__ai_v8si)b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline __ai_v4du
+__vmul32(__ai_v4du a, __ai_v4du b) noexcept
+{
+  return (__ai_v4du)__builtin_ia32_pmuludq256((__ai_v8si)a, (__ai_v8si)b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__ai_v4du)__builtin_ia32_pmuludq256((__ai_v8si)a, (__ai_v8si)b)</code></td><td><a href="../../../../source/math/arbint/arch/simd_mul_experiment.hpp.html#L45">line 45</a></td></tr></tbody></table></section><section class="function-entry" id="f-023faf0f906443d5"><h3><code>micron::math::mpn::__kern::mul_1_avx2(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept</code></h3><p>Defined in <code>math/arbint/arch/simd_mul_experiment.hpp</code>, <a href="../../../../source/math/arbint/arch/simd_mul_experiment.hpp.html#L50">line 50</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline limb_t
+mul_1_avx2(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_arch_width_64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize n</code></li><li><code>limb_t b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline limb_t
+mul_1_avx2(limb_t *rp, const limb_t *ap, usize n, limb_t b) noexcept
+{
+  const __ai_v4du mask = { 0xFFFFFFFFull, 0xFFFFFFFFull, 0xFFFFFFFFull, 0xFFFFFFFFull };
+  const limb_t bl = b &amp; 0xFFFFFFFFull;
+  const limb_t bh = b &gt;&gt; 32;
+  const __ai_v4du vbl = { bl, bl, bl, bl };
+  const __ai_v4du vbh = { bh, bh, bh, bh };
+
+  limb_t cy = 0;
+  usize i = 0;
+  alignas(32) limb_t lo[4], hi[4];
+
+  for ( ; i + 4u &lt;= n; i += 4u ) {
+    __ai_v4du va;
+    __builtin_memcpy(&amp;va, ap + i, sizeof(va));
+    const __ai_v4du val = va &amp; mask;
+    const __ai_v4du vah = va &gt;&gt; 32;
+
+    const __ai_v4du m0 = __vmul32(val, vbl);
+    const __ai_v4du m1 = __vmul32(val, vbh);
+    const __ai_v4du m2 = __vmul32(vah, vbl);
+    const __ai_v4du m3 = __vmul32(vah, vbh);
+
+    const __ai_v4du t = m1 + (m0 &gt;&gt; 32);
+    const __ai_v4du u = (t &amp; mask) + m2;
+    const __ai_v4du vlo = (u &lt;&lt; 32) | (m0 &amp; mask);
+    const __ai_v4du vhi = m3 + (t &gt;&gt; 32) + (u &gt;&gt; 32);
+
+    __builtin_memcpy(lo, &amp;vlo, sizeof(vlo));
+    __builtin_memcpy(hi, &amp;vhi, sizeof(vhi));
+
+    for ( usize j = 0; j &lt; 4u; ++j ) {
+      limb_t s = 0;
+      const limb_t c = addc(lo[j], cy, 0, s);
+      rp[i + j] = s;
+      cy = static_cast&lt;limb_t&gt;(hi[j] + c);
+    }
+  }
+
+  for ( ; i &lt; n; ++i ) {
+    limb_t l = 0, h = 0;
+    muladd_wide(ap[i], b, cy, l, h);
+    rp[i] = l;
+    cy = h;
+  }
+  return cy;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cy</code></td><td><a href="../../../../source/math/arbint/arch/simd_mul_experiment.hpp.html#L95">line 95</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd_mul_experiment.hpp.html#f-293b3b752bd1990c">__vmul32</a>, <a href="../bits/carry.hpp.html#f-a281e8afb966d835">addc</a>, <a href="../bits/carry.hpp.html#f-4c991145a3659a1f">muladd_wide</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

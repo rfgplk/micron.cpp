@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/rng/fill.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/rng/fill.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/random.html">Random numbers</a></div><p>Defined in header <code>&lt;micron/math/rng/fill.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/rng/fill.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-0f72b9a1ed17ab6c">micron::math::rng::fill::fill_uniform(F *__restrict__ out, usize N, Rng &amp;g) noexcept</a></td><td>function; line 27</td></tr><tr class="t-dsc"><td><a href="#f-ee6ebe32bd8174a1">micron::math::rng::fill::fill_uniform(F *__restrict__ out, usize N, Rng &amp;g, F lo, F hi) noexcept</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-422fb090c8782ba6">micron::math::rng::fill::fill_normal(F *__restrict__ out, usize N, Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</a></td><td>function; line 58</td></tr><tr class="t-dsc"><td><a href="#f-b6010bb332a840ef">micron::math::rng::fill::fill_bytes(u8 *__restrict__ out, usize N, Rng &amp;g) noexcept</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-ba0b9d7d14086115">micron::math::rng::fill::fill_uniform_int(T *__restrict__ out, usize N, Rng &amp;g, T lo, T hi) noexcept</a></td><td>function; line 90</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-0f72b9a1ed17ab6c"><h3><code>micron::math::rng::fill::fill_uniform(F *__restrict__ out, usize N, Rng &amp;g) noexcept</code></h3><p>Defined in <code>math/rng/fill.hpp</code>, <a href="../../../source/math/rng/fill.hpp.html#L27">line 27</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, rng_concept Rng&gt;
+[[gnu::flatten]] inline void
+fill_uniform(F *__restrict__ out, usize N, Rng &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *__restrict__ out</code></li><li><code>usize N</code></li><li><code>Rng &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, rng_concept Rng&gt;
+[[gnu::flatten]] inline void
+fill_uniform(F *__restrict__ out, usize N, Rng &amp;g) noexcept
+{
+  while ( N &gt;= 4 ) {
+    out[0] = dist::uniform_real&lt;F&gt;(g);
+    out[1] = dist::uniform_real&lt;F&gt;(g);
+    out[2] = dist::uniform_real&lt;F&gt;(g);
+    out[3] = dist::uniform_real&lt;F&gt;(g);
+    out += 4;
+    N -= 4;
+  }
+  while ( N-- != 0 ) *out++ = dist::uniform_real&lt;F&gt;(g);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="dist.hpp.html#f-d9f2bc9bae7b7d44">dist::uniform_real&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ee6ebe32bd8174a1"><h3><code>micron::math::rng::fill::fill_uniform(F *__restrict__ out, usize N, Rng &amp;g, F lo, F hi) noexcept</code></h3><p>Defined in <code>math/rng/fill.hpp</code>, <a href="../../../source/math/rng/fill.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, rng_concept Rng&gt;
+[[gnu::flatten]] inline void
+fill_uniform(F *__restrict__ out, usize N, Rng &amp;g, F lo, F hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *__restrict__ out</code></li><li><code>usize N</code></li><li><code>Rng &amp;g</code></li><li><code>F lo</code></li><li><code>F hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, rng_concept Rng&gt;
+[[gnu::flatten]] inline void
+fill_uniform(F *__restrict__ out, usize N, Rng &amp;g, F lo, F hi) noexcept
+{
+  const F r = hi - lo;
+  while ( N &gt;= 4 ) {
+    out[0] = lo + r * dist::uniform_real&lt;F&gt;(g);
+    out[1] = lo + r * dist::uniform_real&lt;F&gt;(g);
+    out[2] = lo + r * dist::uniform_real&lt;F&gt;(g);
+    out[3] = lo + r * dist::uniform_real&lt;F&gt;(g);
+    out += 4;
+    N -= 4;
+  }
+  while ( N-- != 0 ) *out++ = lo + r * dist::uniform_real&lt;F&gt;(g);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="dist.hpp.html#f-d9f2bc9bae7b7d44">dist::uniform_real&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-422fb090c8782ba6"><h3><code>micron::math::rng::fill::fill_normal(F *__restrict__ out, usize N, Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</code></h3><p>Defined in <code>math/rng/fill.hpp</code>, <a href="../../../source/math/rng/fill.hpp.html#L58">line 58</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, rng_concept Rng&gt;
+[[gnu::flatten]] inline void
+fill_normal(F *__restrict__ out, usize N, Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *__restrict__ out</code></li><li><code>usize N</code></li><li><code>Rng &amp;g</code></li><li><code>F mu = F(0)</code></li><li><code>F sigma = F(1)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, rng_concept Rng&gt;
+[[gnu::flatten]] inline void
+fill_normal(F *__restrict__ out, usize N, Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept
+{
+  while ( N &gt;= 4 ) {
+    out[0] = dist::normal_ziggurat&lt;F&gt;(g, mu, sigma);
+    out[1] = dist::normal_ziggurat&lt;F&gt;(g, mu, sigma);
+    out[2] = dist::normal_ziggurat&lt;F&gt;(g, mu, sigma);
+    out[3] = dist::normal_ziggurat&lt;F&gt;(g, mu, sigma);
+    out += 4;
+    N -= 4;
+  }
+  while ( N-- != 0 ) *out++ = dist::normal_ziggurat&lt;F&gt;(g, mu, sigma);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="ziggurat.hpp.html#f-bb15f36770a9edd4">dist::normal_ziggurat&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-b6010bb332a840ef"><h3><code>micron::math::rng::fill::fill_bytes(u8 *__restrict__ out, usize N, Rng &amp;g) noexcept</code></h3><p>Defined in <code>math/rng/fill.hpp</code>, <a href="../../../source/math/rng/fill.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;rng_concept Rng&gt;
+[[gnu::flatten]] inline void
+fill_bytes(u8 *__restrict__ out, usize N, Rng &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict__ out</code></li><li><code>usize N</code></li><li><code>Rng &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;rng_concept Rng&gt;
+[[gnu::flatten]] inline void
+fill_bytes(u8 *__restrict__ out, usize N, Rng &amp;g) noexcept
+{
+  while ( N &gt;= 8 ) {
+    const u64 r = rng::__impl::next64(g);
+    __builtin_memcpy(out, &amp;r, 8);
+    out += 8;
+    N -= 8;
+  }
+  if ( N != 0 ) {
+    const u64 r = rng::__impl::next64(g);
+    __builtin_memcpy(out, &amp;r, N);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engines.hpp.html#f-102ea355b87ec387">rng::__impl::next64</a>.</p></section><section class="function-entry" id="f-ba0b9d7d14086115"><h3><code>micron::math::rng::fill::fill_uniform_int(T *__restrict__ out, usize N, Rng &amp;g, T lo, T hi) noexcept</code></h3><p>Defined in <code>math/rng/fill.hpp</code>, <a href="../../../source/math/rng/fill.hpp.html#L90">line 90</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, rng_concept Rng&gt;
+  requires(micron::is_integral_v&lt;T&gt;)
+[[gnu::flatten]] inline void
+fill_uniform_int(T *__restrict__ out, usize N, Rng &amp;g, T lo, T hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict__ out</code></li><li><code>usize N</code></li><li><code>Rng &amp;g</code></li><li><code>T lo</code></li><li><code>T hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, rng_concept Rng&gt;
+  requires(micron::is_integral_v&lt;T&gt;)
+[[gnu::flatten]] inline void
+fill_uniform_int(T *__restrict__ out, usize N, Rng &amp;g, T lo, T hi) noexcept
+{
+  T *end = out + N;
+  while ( out != end ) *out++ = dist::uniform_int&lt;T&gt;(g, lo, hi);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="dist.hpp.html#f-ca595ff19d0deb1d">dist::uniform_int&lt;T&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

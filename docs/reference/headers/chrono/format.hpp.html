@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/chrono/format.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/chrono/format.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/chrono.html">Date and time</a></div><p>Defined in header <code>&lt;micron/chrono/format.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/chrono/format.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-06ed66b0496f13a6">micron::chrono::offset_style</code></td><td>enum; line 22</td></tr><tr class="t-dsc"><td><code id="s-11b0c0b9d28a7578">micron::chrono::offset_style::none</code></td><td>enumerator; line 23</td></tr><tr class="t-dsc"><td><code id="s-af7b80a61020378f">micron::chrono::offset_style::z_or_colon</code></td><td>enumerator; line 24</td></tr><tr class="t-dsc"><td><code id="s-d01865fdd7c29f79">micron::chrono::offset_style::colon</code></td><td>enumerator; line 25</td></tr><tr class="t-dsc"><td><code id="s-5c31bf12e40dc9d0">micron::chrono::offset_style::compact</code></td><td>enumerator; line 26</td></tr><tr class="t-dsc"><td><code id="s-17c3e24174747621">micron::chrono::offset_style::z_or_compact</code></td><td>enumerator; line 27</td></tr><tr class="t-dsc"><td><code id="s-76a6fa2bc90605cc">micron::chrono::date_sep</code></td><td>enum; line 30</td></tr><tr class="t-dsc"><td><code id="s-8d217d15e50a2624">micron::chrono::date_sep::iso_t</code></td><td>enumerator; line 31</td></tr><tr class="t-dsc"><td><code id="s-97f21c2eaf8840d2">micron::chrono::date_sep::space</code></td><td>enumerator; line 32</td></tr><tr class="t-dsc"><td><code id="s-d0fdca5b7c788d24">micron::chrono::date_sep::none</code></td><td>enumerator; line 33</td></tr><tr class="t-dsc"><td><code id="s-09baa3de9289d512">micron::chrono::iso8601_max</code></td><td>variable; line 659</td></tr><tr class="t-dsc"><td><code id="s-ebfd098f31583d98">micron::chrono::rfc2822_max</code></td><td>variable; line 660</td></tr><tr class="t-dsc"><td><code id="s-ba863bb322b0214a">micron::chrono::asctime_max</code></td><td>variable; line 661</td></tr><tr class="t-dsc"><td><code id="s-9210430e7e657a85">micron::chrono::compact_max</code></td><td>variable; line 662</td></tr><tr class="t-dsc"><td><code id="s-f2bea89acdc36d56">micron::chrono::duration_max</code></td><td>variable; line 663</td></tr><tr class="t-dsc"><td><a href="#f-a8a0e9284757f104">micron::chrono::iso8601_size(const civil &amp;c, u32 subsec_digits = 0, date_sep sep = date_sep::iso_t, offset_style os = offset_style::z_or_colon) noexcept</a></td><td>function; line 220</td></tr><tr class="t-dsc"><td><a href="#f-f02ab09b6c8e0640">micron::chrono::write_iso8601(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 0, date_sep sep = date_sep::iso_t,
+              offset_style os = offset_style::z_or_colon) noexcept</a></td><td>function; line 226</td></tr><tr class="t-dsc"><td><a href="#f-9f55729e6c5d9e22">micron::chrono::write_rfc3339(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 0) noexcept</a></td><td>function; line 235</td></tr><tr class="t-dsc"><td><a href="#f-d3206b9a37ca58d6">micron::chrono::rfc3339_size(const civil &amp;c, u32 subsec_digits = 0) noexcept</a></td><td>function; line 241</td></tr><tr class="t-dsc"><td><a href="#f-029750a4301fc658">micron::chrono::write_iso_full(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 9) noexcept</a></td><td>function; line 247</td></tr><tr class="t-dsc"><td><a href="#f-e964daa3f8ea7141">micron::chrono::iso_full_size(const civil &amp;c, u32 subsec_digits = 9) noexcept</a></td><td>function; line 253</td></tr><tr class="t-dsc"><td><a href="#f-1d4608efaaf9d988">micron::chrono::write_rfc2822(char *buf, usize cap, const civil &amp;c) noexcept</a></td><td>function; line 259</td></tr><tr class="t-dsc"><td><a href="#f-cd4911c6ddf7888a">micron::chrono::rfc2822_size(const civil &amp;c) noexcept</a></td><td>function; line 266</td></tr><tr class="t-dsc"><td><a href="#f-25c8936a3245ddd8">micron::chrono::write_http_date(char *buf, usize cap, const civil &amp;c) noexcept</a></td><td>function; line 273</td></tr><tr class="t-dsc"><td><a href="#f-abb49a06508a9579">micron::chrono::http_date_size(const civil &amp;c) noexcept</a></td><td>function; line 280</td></tr><tr class="t-dsc"><td><a href="#f-a30da0fb12f49421">micron::chrono::write_asctime(char *buf, usize cap, const civil &amp;c) noexcept</a></td><td>function; line 286</td></tr><tr class="t-dsc"><td><a href="#f-903774f7e05914b4">micron::chrono::asctime_size(const civil &amp;c) noexcept</a></td><td>function; line 293</td></tr><tr class="t-dsc"><td><a href="#f-fa191a447524d9db">micron::chrono::write_compact(char *buf, usize cap, const civil &amp;c, bool with_z = true) noexcept</a></td><td>function; line 299</td></tr><tr class="t-dsc"><td><a href="#f-3c4edcb42a278bf0">micron::chrono::compact_size(const civil &amp;c, bool with_z = true) noexcept</a></td><td>function; line 306</td></tr><tr class="t-dsc"><td><a href="#f-ba0be624fee31626">micron::chrono::write_log_stamp(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 3) noexcept</a></td><td>function; line 312</td></tr><tr class="t-dsc"><td><a href="#f-aea109e56c97a884">micron::chrono::log_stamp_size(const civil &amp;c, u32 subsec_digits = 3) noexcept</a></td><td>function; line 318</td></tr><tr class="t-dsc"><td><a href="#f-c090b5132919c3ca">micron::chrono::strftime_size(const char *fmt, const civil &amp;c) noexcept</a></td><td>function; line 521</td></tr><tr class="t-dsc"><td><a href="#f-2101660014ecc690">micron::chrono::write_strftime(char *buf, usize cap, const char *fmt, const civil &amp;c) noexcept</a></td><td>function; line 527</td></tr><tr class="t-dsc"><td><a href="#f-7a4b479e223e065a">micron::chrono::write_duration_hms(char *buf, usize cap, u64 secs) noexcept</a></td><td>function; line 621</td></tr><tr class="t-dsc"><td><a href="#f-0042b6cf90c2756e">micron::chrono::duration_hms_size(u64 secs) noexcept</a></td><td>function; line 628</td></tr><tr class="t-dsc"><td><a href="#f-603e9048ef6fc526">micron::chrono::write_duration_clock(char *buf, usize cap, u64 ticks, u64 hz) noexcept</a></td><td>function; line 634</td></tr><tr class="t-dsc"><td><a href="#f-c7baf8de2ed54a41">micron::chrono::duration_clock_size(u64 ticks, u64 hz) noexcept</a></td><td>function; line 641</td></tr><tr class="t-dsc"><td><a href="#f-e9f6c85401a60bef">micron::chrono::write_duration_units(char *buf, usize cap, u64 ns) noexcept</a></td><td>function; line 647</td></tr><tr class="t-dsc"><td><a href="#f-dedf8049fa54a072">micron::chrono::duration_units_size(u64 ns) noexcept</a></td><td>function; line 654</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a8a0e9284757f104"><h3><code>micron::chrono::iso8601_size(const civil &amp;c, u32 subsec_digits = 0, date_sep sep = date_sep::iso_t, offset_style os = offset_style::z_or_colon) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L220">line 220</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+iso8601_size(const civil &amp;c, u32 subsec_digits = 0, date_sep sep = date_sep::iso_t, offset_style os = offset_style::z_or_colon) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits = 0</code></li><li><code>date_sep sep = date_sep::iso_t</code></li><li><code>offset_style os = offset_style::z_or_colon</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__iso8601(nullptr, 0, c, subsec_digits, sep, os)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+iso8601_size(const civil &amp;c, u32 subsec_digits = 0, date_sep sep = date_sep::iso_t, offset_style os = offset_style::z_or_colon) noexcept
+{
+  return __impl::__iso8601(nullptr, 0, c, subsec_digits, sep, os);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__iso8601(nullptr, 0, c, subsec_digits, sep, os)</code></td><td><a href="../../source/chrono/format.hpp.html#L222">line 222</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-7dbb56c83f8d0832">__impl::__iso8601</a>.</p></section><section class="function-entry" id="f-f02ab09b6c8e0640"><h3><code>micron::chrono::write_iso8601(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 0, date_sep sep = date_sep::iso_t,
+              offset_style os = offset_style::z_or_colon) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L226">line 226</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_iso8601(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 0, date_sep sep = date_sep::iso_t,
+              offset_style os = offset_style::z_or_colon) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits = 0</code></li><li><code>date_sep sep = date_sep::iso_t</code></li><li><code>offset_style os = offset_style::z_or_colon</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_iso8601(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 0, date_sep sep = date_sep::iso_t,
+              offset_style os = offset_style::z_or_colon) noexcept
+{
+  const usize need = __impl::__iso8601(buf, cap, c, subsec_digits, sep, os);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L230">line 230</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-7dbb56c83f8d0832">__impl::__iso8601</a>.</p></section><section class="function-entry" id="f-9f55729e6c5d9e22"><h3><code>micron::chrono::write_rfc3339(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 0) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L235">line 235</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_rfc3339(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits = 0</code></li></ul><h4>Effects</h4><p>Returns <code>write_iso8601(buf, cap, c, subsec_digits, date_sep::iso_t, offset_style::z_or_colon)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_rfc3339(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 0) noexcept
+{
+  return write_iso8601(buf, cap, c, subsec_digits, date_sep::iso_t, offset_style::z_or_colon);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>write_iso8601(buf, cap, c, subsec_digits, date_sep::iso_t, offset_style::z_or_colon)</code></td><td><a href="../../source/chrono/format.hpp.html#L237">line 237</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-f02ab09b6c8e0640">write_iso8601</a>.</p></section><section class="function-entry" id="f-d3206b9a37ca58d6"><h3><code>micron::chrono::rfc3339_size(const civil &amp;c, u32 subsec_digits = 0) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L241">line 241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+rfc3339_size(const civil &amp;c, u32 subsec_digits = 0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits = 0</code></li></ul><h4>Effects</h4><p>Returns <code>iso8601_size(c, subsec_digits, date_sep::iso_t, offset_style::z_or_colon)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+rfc3339_size(const civil &amp;c, u32 subsec_digits = 0) noexcept
+{
+  return iso8601_size(c, subsec_digits, date_sep::iso_t, offset_style::z_or_colon);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>iso8601_size(c, subsec_digits, date_sep::iso_t, offset_style::z_or_colon)</code></td><td><a href="../../source/chrono/format.hpp.html#L243">line 243</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-a8a0e9284757f104">iso8601_size</a>.</p></section><section class="function-entry" id="f-029750a4301fc658"><h3><code>micron::chrono::write_iso_full(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 9) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L247">line 247</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_iso_full(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 9) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits = 9</code></li></ul><h4>Effects</h4><p>Returns <code>write_iso8601(buf, cap, c, subsec_digits, date_sep::space, offset_style::compact)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_iso_full(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 9) noexcept
+{
+  return write_iso8601(buf, cap, c, subsec_digits, date_sep::space, offset_style::compact);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>write_iso8601(buf, cap, c, subsec_digits, date_sep::space, offset_style::compact)</code></td><td><a href="../../source/chrono/format.hpp.html#L249">line 249</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-f02ab09b6c8e0640">write_iso8601</a>.</p></section><section class="function-entry" id="f-e964daa3f8ea7141"><h3><code>micron::chrono::iso_full_size(const civil &amp;c, u32 subsec_digits = 9) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L253">line 253</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+iso_full_size(const civil &amp;c, u32 subsec_digits = 9) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits = 9</code></li></ul><h4>Effects</h4><p>Returns <code>iso8601_size(c, subsec_digits, date_sep::space, offset_style::compact)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+iso_full_size(const civil &amp;c, u32 subsec_digits = 9) noexcept
+{
+  return iso8601_size(c, subsec_digits, date_sep::space, offset_style::compact);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>iso8601_size(c, subsec_digits, date_sep::space, offset_style::compact)</code></td><td><a href="../../source/chrono/format.hpp.html#L255">line 255</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-a8a0e9284757f104">iso8601_size</a>.</p></section><section class="function-entry" id="f-1d4608efaaf9d988"><h3><code>micron::chrono::write_rfc2822(char *buf, usize cap, const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L259">line 259</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_rfc2822(char *buf, usize cap, const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_rfc2822(char *buf, usize cap, const civil &amp;c) noexcept
+{
+  const usize need = __impl::__rfc2822(buf, cap, c, false);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L262">line 262</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-93bbf9b381482329">__impl::__rfc2822</a>.</p></section><section class="function-entry" id="f-cd4911c6ddf7888a"><h3><code>micron::chrono::rfc2822_size(const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L266">line 266</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+rfc2822_size(const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__rfc2822(nullptr, 0, c, false)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+rfc2822_size(const civil &amp;c) noexcept
+{
+  return __impl::__rfc2822(nullptr, 0, c, false);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__rfc2822(nullptr, 0, c, false)</code></td><td><a href="../../source/chrono/format.hpp.html#L268">line 268</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-93bbf9b381482329">__impl::__rfc2822</a>.</p></section><section class="function-entry" id="f-25c8936a3245ddd8"><h3><code>micron::chrono::write_http_date(char *buf, usize cap, const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L273">line 273</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_http_date(char *buf, usize cap, const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_http_date(char *buf, usize cap, const civil &amp;c) noexcept
+{
+  const usize need = __impl::__rfc2822(buf, cap, c, true);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L276">line 276</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-93bbf9b381482329">__impl::__rfc2822</a>.</p></section><section class="function-entry" id="f-abb49a06508a9579"><h3><code>micron::chrono::http_date_size(const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L280">line 280</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+http_date_size(const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__rfc2822(nullptr, 0, c, true)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+http_date_size(const civil &amp;c) noexcept
+{
+  return __impl::__rfc2822(nullptr, 0, c, true);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__rfc2822(nullptr, 0, c, true)</code></td><td><a href="../../source/chrono/format.hpp.html#L282">line 282</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-93bbf9b381482329">__impl::__rfc2822</a>.</p></section><section class="function-entry" id="f-a30da0fb12f49421"><h3><code>micron::chrono::write_asctime(char *buf, usize cap, const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L286">line 286</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_asctime(char *buf, usize cap, const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_asctime(char *buf, usize cap, const civil &amp;c) noexcept
+{
+  const usize need = __impl::__asctime(buf, cap, c);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-902f2ca9faa7fd6d">__impl::__asctime</a>.</p></section><section class="function-entry" id="f-903774f7e05914b4"><h3><code>micron::chrono::asctime_size(const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L293">line 293</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+asctime_size(const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__asctime(nullptr, 0, c)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+asctime_size(const civil &amp;c) noexcept
+{
+  return __impl::__asctime(nullptr, 0, c);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__asctime(nullptr, 0, c)</code></td><td><a href="../../source/chrono/format.hpp.html#L295">line 295</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-902f2ca9faa7fd6d">__impl::__asctime</a>.</p></section><section class="function-entry" id="f-fa191a447524d9db"><h3><code>micron::chrono::write_compact(char *buf, usize cap, const civil &amp;c, bool with_z = true) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L299">line 299</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_compact(char *buf, usize cap, const civil &amp;c, bool with_z = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li><li><code>bool with_z = true</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_compact(char *buf, usize cap, const civil &amp;c, bool with_z = true) noexcept
+{
+  const usize need = __impl::__compact(buf, cap, c, with_z);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L302">line 302</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-1970e704a514b3fc">__impl::__compact</a>.</p></section><section class="function-entry" id="f-3c4edcb42a278bf0"><h3><code>micron::chrono::compact_size(const civil &amp;c, bool with_z = true) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L306">line 306</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+compact_size(const civil &amp;c, bool with_z = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil &amp;c</code></li><li><code>bool with_z = true</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__compact(nullptr, 0, c, with_z)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+compact_size(const civil &amp;c, bool with_z = true) noexcept
+{
+  return __impl::__compact(nullptr, 0, c, with_z);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__compact(nullptr, 0, c, with_z)</code></td><td><a href="../../source/chrono/format.hpp.html#L308">line 308</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-1970e704a514b3fc">__impl::__compact</a>.</p></section><section class="function-entry" id="f-ba0be624fee31626"><h3><code>micron::chrono::write_log_stamp(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 3) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L312">line 312</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_log_stamp(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 3) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits = 3</code></li></ul><h4>Effects</h4><p>Returns <code>write_iso8601(buf, cap, c, subsec_digits, date_sep::space, offset_style::none)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_log_stamp(char *buf, usize cap, const civil &amp;c, u32 subsec_digits = 3) noexcept
+{
+  return write_iso8601(buf, cap, c, subsec_digits, date_sep::space, offset_style::none);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>write_iso8601(buf, cap, c, subsec_digits, date_sep::space, offset_style::none)</code></td><td><a href="../../source/chrono/format.hpp.html#L314">line 314</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-f02ab09b6c8e0640">write_iso8601</a>.</p></section><section class="function-entry" id="f-aea109e56c97a884"><h3><code>micron::chrono::log_stamp_size(const civil &amp;c, u32 subsec_digits = 3) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L318">line 318</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+log_stamp_size(const civil &amp;c, u32 subsec_digits = 3) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits = 3</code></li></ul><h4>Effects</h4><p>Returns <code>iso8601_size(c, subsec_digits, date_sep::space, offset_style::none)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+log_stamp_size(const civil &amp;c, u32 subsec_digits = 3) noexcept
+{
+  return iso8601_size(c, subsec_digits, date_sep::space, offset_style::none);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>iso8601_size(c, subsec_digits, date_sep::space, offset_style::none)</code></td><td><a href="../../source/chrono/format.hpp.html#L320">line 320</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-a8a0e9284757f104">iso8601_size</a>.</p></section><section class="function-entry" id="f-c090b5132919c3ca"><h3><code>micron::chrono::strftime_size(const char *fmt, const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L521">line 521</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+strftime_size(const char *fmt, const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *fmt</code></li><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__strftime(nullptr, 0, fmt, c)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+strftime_size(const char *fmt, const civil &amp;c) noexcept
+{
+  return __impl::__strftime(nullptr, 0, fmt, c);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__strftime(nullptr, 0, fmt, c)</code></td><td><a href="../../source/chrono/format.hpp.html#L523">line 523</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-8e039c930e8c9d0f">__impl::__strftime</a>.</p></section><section class="function-entry" id="f-2101660014ecc690"><h3><code>micron::chrono::write_strftime(char *buf, usize cap, const char *fmt, const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L527">line 527</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_strftime(char *buf, usize cap, const char *fmt, const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const char *fmt</code></li><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_strftime(char *buf, usize cap, const char *fmt, const civil &amp;c) noexcept
+{
+  const usize need = __impl::__strftime(buf, cap, fmt, c);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L530">line 530</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-8e039c930e8c9d0f">__impl::__strftime</a>.</p></section><section class="function-entry" id="f-7a4b479e223e065a"><h3><code>micron::chrono::write_duration_hms(char *buf, usize cap, u64 secs) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L621">line 621</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_duration_hms(char *buf, usize cap, u64 secs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u64 secs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_duration_hms(char *buf, usize cap, u64 secs) noexcept
+{
+  const usize need = __impl::__dur_hms(buf, cap, secs);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L624">line 624</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-50f21d78505138c2">__impl::__dur_hms</a>.</p></section><section class="function-entry" id="f-0042b6cf90c2756e"><h3><code>micron::chrono::duration_hms_size(u64 secs) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L628">line 628</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+duration_hms_size(u64 secs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 secs</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__dur_hms(nullptr, 0, secs)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+duration_hms_size(u64 secs) noexcept
+{
+  return __impl::__dur_hms(nullptr, 0, secs);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__dur_hms(nullptr, 0, secs)</code></td><td><a href="../../source/chrono/format.hpp.html#L630">line 630</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-50f21d78505138c2">__impl::__dur_hms</a>.</p></section><section class="function-entry" id="f-603e9048ef6fc526"><h3><code>micron::chrono::write_duration_clock(char *buf, usize cap, u64 ticks, u64 hz) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L634">line 634</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_duration_clock(char *buf, usize cap, u64 ticks, u64 hz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u64 ticks</code></li><li><code>u64 hz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_duration_clock(char *buf, usize cap, u64 ticks, u64 hz) noexcept
+{
+  const usize need = __impl::__dur_clock(buf, cap, ticks, hz);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L637">line 637</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-929b508ec7c6f46d">__impl::__dur_clock</a>.</p></section><section class="function-entry" id="f-c7baf8de2ed54a41"><h3><code>micron::chrono::duration_clock_size(u64 ticks, u64 hz) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L641">line 641</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+duration_clock_size(u64 ticks, u64 hz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 ticks</code></li><li><code>u64 hz</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__dur_clock(nullptr, 0, ticks, hz)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+duration_clock_size(u64 ticks, u64 hz) noexcept
+{
+  return __impl::__dur_clock(nullptr, 0, ticks, hz);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__dur_clock(nullptr, 0, ticks, hz)</code></td><td><a href="../../source/chrono/format.hpp.html#L643">line 643</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-929b508ec7c6f46d">__impl::__dur_clock</a>.</p></section><section class="function-entry" id="f-e9f6c85401a60bef"><h3><code>micron::chrono::write_duration_units(char *buf, usize cap, u64 ns) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L647">line 647</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+write_duration_units(char *buf, usize cap, u64 ns) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u64 ns</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+write_duration_units(char *buf, usize cap, u64 ns) noexcept
+{
+  const usize need = __impl::__dur_units(buf, cap, ns);
+  return need &lt;= cap ? need : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>need &lt;= cap ? need : 0</code></td><td><a href="../../source/chrono/format.hpp.html#L650">line 650</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-7ec1abbcbd9e4a26">__impl::__dur_units</a>.</p></section><section class="function-entry" id="f-dedf8049fa54a072"><h3><code>micron::chrono::duration_units_size(u64 ns) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L654">line 654</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+duration_units_size(u64 ns) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 ns</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__dur_units(nullptr, 0, ns)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+duration_units_size(u64 ns) noexcept
+{
+  return __impl::__dur_units(nullptr, 0, ns);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__dur_units(nullptr, 0, ns)</code></td><td><a href="../../source/chrono/format.hpp.html#L656">line 656</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-7ec1abbcbd9e4a26">__impl::__dur_units</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-7446281e9c3207c4"><h3><code>micron::chrono::__impl::wbuf::wbuf(char *b, usize c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr wbuf(char *b, usize c) noexcept : p(b), cap(c), n(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *b</code></li><li><code>usize c</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr wbuf(char *b, usize c) noexcept : p(b), cap(c), n(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9977fd80af126fc4"><h3><code>micron::chrono::__impl::wbuf::put(char ch) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L47">line 47</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  put(char ch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char ch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  put(char ch) noexcept
+  {
+    if ( n &lt; cap ) p[n] = ch;
+    ++n;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-46a811842fc36f3c"><h3><code>micron::chrono::__impl::wbuf::put_n(const char *s, usize k) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L54">line 54</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  put_n(const char *s, usize k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  put_n(const char *s, usize k) noexcept
+  {
+    for ( usize i = 0; i &lt; k; ++i ) put(s[i]);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="format.hpp.html#f-9977fd80af126fc4">put</a>.</p></section><section class="function-entry" id="f-7cb11929b0acb3dc"><h3><code>micron::chrono::__impl::wbuf::put_cstr(const char *s) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L60">line 60</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  put_cstr(const char *s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  put_cstr(const char *s) noexcept
+  {
+    if ( !s ) return;
+    while ( *s ) put(*s++);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/chrono/format.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-9977fd80af126fc4">put</a>.</p></section><section class="function-entry" id="f-b10caf4860773ff4"><h3><code>micron::chrono::__impl::wbuf::put_u(u64 v, u32 width, char fill = &#x27;0&#x27;) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  put_u(u64 v, u32 width, char fill = &#x27;0&#x27;) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 v</code></li><li><code>u32 width</code></li><li><code>char fill = &#x27;0&#x27;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  put_u(u64 v, u32 width, char fill = &#x27;0&#x27;) noexcept
+  {
+    char tmp[24];
+    u32 k = 0;
+    do {
+      tmp[k++] = static_cast&lt;char&gt;(&#x27;0&#x27; + static_cast&lt;char&gt;(v % 10u));
+      v /= 10u;
+    } while ( v != 0 );
+    for ( u32 i = k; i &lt; width; ++i ) put(fill);
+    while ( k != 0 ) put(tmp[--k]);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="format.hpp.html#f-9977fd80af126fc4">put</a>.</p></section><section class="function-entry" id="f-42c4fbcd767a14d3"><h3><code>micron::chrono::__impl::wbuf::put_i(i64 v, u32 width, char fill = &#x27;0&#x27;) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L80">line 80</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  put_i(i64 v, u32 width, char fill = &#x27;0&#x27;) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 v</code></li><li><code>u32 width</code></li><li><code>char fill = &#x27;0&#x27;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  put_i(i64 v, u32 width, char fill = &#x27;0&#x27;) noexcept
+  {
+    if ( v &lt; 0 ) {
+      put(&#x27;-&#x27;);
+      put_u(static_cast&lt;u64&gt;(-(v + 1)) + 1u, width, fill);
+    } else {
+      put_u(static_cast&lt;u64&gt;(v), width, fill);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="format.hpp.html#f-9977fd80af126fc4">put</a>, <a href="format.hpp.html#f-b10caf4860773ff4">put_u</a>.</p></section><section class="function-entry" id="f-c061627f65bddfdc"><h3><code>micron::chrono::__impl::__put_year(wbuf &amp;w, i32 y) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L92">line 92</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+__put_year(wbuf &amp;w, i32 y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>wbuf &amp;w</code></li><li><code>i32 y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+__put_year(wbuf &amp;w, i32 y) noexcept
+{
+  if ( y &gt;= 0 &amp;&amp; y &lt;= 9999 ) {
+    w.put_u(static_cast&lt;u64&gt;(y), 4);
+  } else {
+    w.put(y &lt; 0 ? &#x27;-&#x27; : &#x27;+&#x27;);
+    const i64 mag = y &lt; 0 ? -static_cast&lt;i64&gt;(y) : static_cast&lt;i64&gt;(y);
+    w.put_u(static_cast&lt;u64&gt;(mag), 4);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3475e176dda9aaab"><h3><code>micron::chrono::__impl::__put_subsec(wbuf &amp;w, u32 ns, u32 digits) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L105">line 105</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+__put_subsec(wbuf &amp;w, u32 ns, u32 digits) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>wbuf &amp;w</code></li><li><code>u32 ns</code></li><li><code>u32 digits</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+__put_subsec(wbuf &amp;w, u32 ns, u32 digits) noexcept
+{
+  if ( digits == 0 ) return;
+  if ( digits &gt; 9 ) digits = 9;
+  u32 scale = 1;
+  for ( u32 i = digits; i &lt; 9; ++i ) scale *= 10u;
+  w.put(&#x27;.&#x27;);
+  w.put_u(static_cast&lt;u64&gt;(ns / scale), digits);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/chrono/format.hpp.html#L107">line 107</a></td></tr></tbody></table></section><section class="function-entry" id="f-9dd23e729b36326e"><h3><code>micron::chrono::__impl::__put_offset(wbuf &amp;w, i32 off, offset_style os) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L117">line 117</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+__put_offset(wbuf &amp;w, i32 off, offset_style os) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>wbuf &amp;w</code></li><li><code>i32 off</code></li><li><code>offset_style os</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+__put_offset(wbuf &amp;w, i32 off, offset_style os) noexcept
+{
+  if ( os == offset_style::none ) return;
+  if ( off == 0 &amp;&amp; (os == offset_style::z_or_colon || os == offset_style::z_or_compact) ) {
+    w.put(&#x27;Z&#x27;);
+    return;
+  }
+  w.put(off &lt; 0 ? &#x27;-&#x27; : &#x27;+&#x27;);
+  const u32 mag = static_cast&lt;u32&gt;(off &lt; 0 ? -static_cast&lt;i64&gt;(off) : static_cast&lt;i64&gt;(off));
+  w.put_u(mag / 3600u, 2);
+  if ( os == offset_style::z_or_colon || os == offset_style::colon ) w.put(&#x27;:&#x27;);
+  w.put_u((mag % 3600u) / 60u, 2);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/chrono/format.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/chrono/format.hpp.html#L122">line 122</a></td></tr></tbody></table></section><section class="function-entry" id="f-7dbb56c83f8d0832"><h3><code>micron::chrono::__impl::__iso8601(char *buf, usize cap, const civil &amp;c, u32 subsec_digits, date_sep sep, offset_style os) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L132">line 132</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+__iso8601(char *buf, usize cap, const civil &amp;c, u32 subsec_digits, date_sep sep, offset_style os) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li><li><code>u32 subsec_digits</code></li><li><code>date_sep sep</code></li><li><code>offset_style os</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+__iso8601(char *buf, usize cap, const civil &amp;c, u32 subsec_digits, date_sep sep, offset_style os) noexcept
+{
+  wbuf w(buf, cap);
+  __put_year(w, c.y);
+  w.put(&#x27;-&#x27;);
+  w.put_u(c.mo, 2);
+  w.put(&#x27;-&#x27;);
+  w.put_u(c.d, 2);
+  w.put(sep == date_sep::space ? &#x27; &#x27; : &#x27;T&#x27;);
+  w.put_u(c.h, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u(c.mi, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u(c.s, 2);
+  __put_subsec(w, c.ns, subsec_digits);
+  __put_offset(w, c.off, os);
+  return w.n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L148">line 148</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-c061627f65bddfdc">__put_year</a>, <a href="format.hpp.html#f-3475e176dda9aaab">__put_subsec</a>, <a href="format.hpp.html#f-9dd23e729b36326e">__put_offset</a>.</p></section><section class="function-entry" id="f-93bbf9b381482329"><h3><code>micron::chrono::__impl::__rfc2822(char *buf, usize cap, const civil &amp;c, bool gmt_literal) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L152">line 152</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+__rfc2822(char *buf, usize cap, const civil &amp;c, bool gmt_literal) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li><li><code>bool gmt_literal</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+__rfc2822(char *buf, usize cap, const civil &amp;c, bool gmt_literal) noexcept
+{
+  wbuf w(buf, cap);
+  const u32 wd = weekday_of(c.y, c.mo, c.d);
+  w.put_cstr(weekday_abbr[wd &lt; 7 ? wd : 0]);
+  w.put(&#x27;,&#x27;);
+  w.put(&#x27; &#x27;);
+  w.put_u(c.d, 2);
+  w.put(&#x27; &#x27;);
+  w.put_cstr(month_abbr[c.mo &lt;= 12 ? c.mo : 0]);
+  w.put(&#x27; &#x27;);
+  w.put_i(static_cast&lt;i64&gt;(c.y), 4);
+  w.put(&#x27; &#x27;);
+  w.put_u(c.h, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u(c.mi, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u(c.s, 2);
+  w.put(&#x27; &#x27;);
+  if ( gmt_literal )
+    w.put_cstr(&quot;GMT&quot;);
+  else
+    __put_offset(w, c.off, offset_style::compact);
+  return w.n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L175">line 175</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calendar.hpp.html#f-71e1c76974f80019">weekday_of</a>, <a href="format.hpp.html#f-9dd23e729b36326e">__put_offset</a>.</p></section><section class="function-entry" id="f-902f2ca9faa7fd6d"><h3><code>micron::chrono::__impl::__asctime(char *buf, usize cap, const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L179">line 179</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+__asctime(char *buf, usize cap, const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+__asctime(char *buf, usize cap, const civil &amp;c) noexcept
+{
+  wbuf w(buf, cap);
+  const u32 wd = weekday_of(c.y, c.mo, c.d);
+  w.put_cstr(weekday_abbr[wd &lt; 7 ? wd : 0]);
+  w.put(&#x27; &#x27;);
+  w.put_cstr(month_abbr[c.mo &lt;= 12 ? c.mo : 0]);
+  w.put(&#x27; &#x27;);
+  w.put_u(c.d, 2, &#x27; &#x27;);      // POSIX asctime uses %3d, i.e. space padded
+  w.put(&#x27; &#x27;);
+  w.put_u(c.h, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u(c.mi, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u(c.s, 2);
+  w.put(&#x27; &#x27;);
+  w.put_i(static_cast&lt;i64&gt;(c.y), 4);
+  return w.n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L196">line 196</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calendar.hpp.html#f-71e1c76974f80019">weekday_of</a>.</p></section><section class="function-entry" id="f-1970e704a514b3fc"><h3><code>micron::chrono::__impl::__compact(char *buf, usize cap, const civil &amp;c, bool with_z) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L200">line 200</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+__compact(char *buf, usize cap, const civil &amp;c, bool with_z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const civil &amp;c</code></li><li><code>bool with_z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+__compact(char *buf, usize cap, const civil &amp;c, bool with_z) noexcept
+{
+  wbuf w(buf, cap);
+  w.put_u(static_cast&lt;u64&gt;(c.y &lt; 0 ? 0 : c.y), 4);
+  w.put_u(c.mo, 2);
+  w.put_u(c.d, 2);
+  w.put(&#x27;T&#x27;);
+  w.put_u(c.h, 2);
+  w.put_u(c.mi, 2);
+  w.put_u(c.s, 2);
+  if ( with_z ) w.put(&#x27;Z&#x27;);
+  return w.n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L211">line 211</a></td></tr></tbody></table></section><section class="function-entry" id="f-8e039c930e8c9d0f"><h3><code>micron::chrono::__impl::__strftime(char *buf, usize cap, const char *fmt, const civil &amp;c) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L329">line 329</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+__strftime(char *buf, usize cap, const char *fmt, const civil &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>const char *fmt</code></li><li><code>const civil &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+__strftime(char *buf, usize cap, const char *fmt, const civil &amp;c) noexcept
+{
+  wbuf w(buf, cap);
+  if ( !fmt ) return 0;
+
+  for ( const char *f = fmt; *f; ++f ) {
+    if ( *f != &#x27;%&#x27; ) {
+      w.put(*f);
+      continue;
+    }
+    ++f;
+    if ( *f == &#x27;\0&#x27; ) {
+      w.put(&#x27;%&#x27;);
+      break;
+    }
+    const u32 wd = weekday_of(c.y, c.mo, c.d);
+    switch ( *f ) {
+    case &#x27;a&#x27;:
+      w.put_cstr(weekday_abbr[wd &lt; 7 ? wd : 0]);
+      break;
+    case &#x27;A&#x27;:
+      w.put_cstr(weekday_name[wd &lt; 7 ? wd : 0]);
+      break;
+    case &#x27;b&#x27;:
+    case &#x27;h&#x27;:
+      w.put_cstr(month_abbr[c.mo &lt;= 12 ? c.mo : 0]);
+      break;
+    case &#x27;B&#x27;:
+      w.put_cstr(month_name[c.mo &lt;= 12 ? c.mo : 0]);
+      break;
+    case &#x27;c&#x27;:      // the POSIX locale&#x27;s date-and-time, which is asctime&#x27;s shape
+      w.put_cstr(weekday_abbr[wd &lt; 7 ? wd : 0]);
+      w.put(&#x27; &#x27;);
+      w.put_cstr(month_abbr[c.mo &lt;= 12 ? c.mo : 0]);
+      w.put(&#x27; &#x27;);
+      w.put_u(c.d, 2, &#x27; &#x27;);
+      w.put(&#x27; &#x27;);
+      w.put_u(c.h, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.mi, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.s, 2);
+      w.put(&#x27; &#x27;);
+      w.put_i(static_cast&lt;i64&gt;(c.y), 4);
+      break;
+    case &#x27;C&#x27;:
+      w.put_u(static_cast&lt;u64&gt;(c.y &gt;= 0 ? c.y / 100 : 0), 2);
+      break;
+    case &#x27;d&#x27;:
+      w.put_u(c.d, 2);
+      break;
+    case &#x27;D&#x27;:      // %m/%d/%y
+      w.put_u(c.mo, 2);
+      w.put(&#x27;/&#x27;);
+      w.put_u(c.d, 2);
+      w.put(&#x27;/&#x27;);
+      w.put_u(static_cast&lt;u64&gt;(((c.y % 100) + 100) % 100), 2);
+      break;
+    case &#x27;e&#x27;:
+      w.put_u(c.d, 2, &#x27; &#x27;);
+      break;
+    case &#x27;F&#x27;:      // %Y-%m-%d
+      __put_year(w, c.y);
+      w.put(&#x27;-&#x27;);
+      w.put_u(c.mo, 2);
+      w.put(&#x27;-&#x27;);
+      w.put_u(c.d, 2);
+      break;
+    case &#x27;g&#x27;:
+      w.put_u(static_cast&lt;u64&gt;(((iso_week_date(c.y, c.mo, c.d).year % 100) + 100) % 100), 2);
+      break;
+    case &#x27;G&#x27;:
+      w.put_i(static_cast&lt;i64&gt;(iso_week_date(c.y, c.mo, c.d).year), 4);
+      break;
+    case &#x27;H&#x27;:
+      w.put_u(c.h, 2);
+      break;
+    case &#x27;I&#x27;:
+      w.put_u(c.h % 12u == 0u ? 12u : c.h % 12u, 2);
+      break;
+    case &#x27;j&#x27;:
+      w.put_u(day_of_year(c.y, c.mo, c.d), 3);
+      break;
+    case &#x27;k&#x27;:
+      w.put_u(c.h, 2, &#x27; &#x27;);
+      break;
+    case &#x27;l&#x27;:
+      w.put_u(c.h % 12u == 0u ? 12u : c.h % 12u, 2, &#x27; &#x27;);
+      break;
+    case &#x27;m&#x27;:
+      w.put_u(c.mo, 2);
+      break;
+    case &#x27;M&#x27;:
+      w.put_u(c.mi, 2);
+      break;
+    case &#x27;n&#x27;:
+      w.put(&#x27;\n&#x27;);
+      break;
+    case &#x27;p&#x27;:
+      w.put_cstr(c.h &lt; 12u ? &quot;AM&quot; : &quot;PM&quot;);
+      break;
+    case &#x27;P&#x27;:
+      w.put_cstr(c.h &lt; 12u ? &quot;am&quot; : &quot;pm&quot;);
+      break;
+    case &#x27;r&#x27;:      // %I:%M:%S %p
+      w.put_u(c.h % 12u == 0u ? 12u : c.h % 12u, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.mi, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.s, 2);
+      w.put(&#x27; &#x27;);
+      w.put_cstr(c.h &lt; 12u ? &quot;AM&quot; : &quot;PM&quot;);
+      break;
+    case &#x27;R&#x27;:      // %H:%M
+      w.put_u(c.h, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.mi, 2);
+      break;
+    case &#x27;s&#x27;:      // seconds since the epoch, from the fields and the offset they carry
+      w.put_i(civil_secs(c) - static_cast&lt;i64&gt;(c.off), 1);
+      break;
+    case &#x27;S&#x27;:
+      w.put_u(c.s, 2);
+      break;
+    case &#x27;t&#x27;:
+      w.put(&#x27;\t&#x27;);
+      break;
+    case &#x27;T&#x27;:      // %H:%M:%S
+      w.put_u(c.h, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.mi, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.s, 2);
+      break;
+    case &#x27;u&#x27;:      // 1 = Monday .. 7 = Sunday
+      w.put_u(wd == 0u ? 7u : wd, 1);
+      break;
+    case &#x27;U&#x27;:      // week of year, Sunday as the first day
+      w.put_u((day_of_year(c.y, c.mo, c.d) + 6u - wd) / 7u, 2);
+      break;
+    case &#x27;V&#x27;:
+      w.put_u(iso_week_date(c.y, c.mo, c.d).week, 2);
+      break;
+    case &#x27;w&#x27;:      // 0 = Sunday
+      w.put_u(wd, 1);
+      break;
+    case &#x27;W&#x27;:      // week of year, Monday as the first day
+      w.put_u((day_of_year(c.y, c.mo, c.d) + 6u - (wd == 0u ? 6u : wd - 1u)) / 7u, 2);
+      break;
+    case &#x27;x&#x27;:      // %m/%d/%y in the POSIX locale
+      w.put_u(c.mo, 2);
+      w.put(&#x27;/&#x27;);
+      w.put_u(c.d, 2);
+      w.put(&#x27;/&#x27;);
+      w.put_u(static_cast&lt;u64&gt;(((c.y % 100) + 100) % 100), 2);
+      break;
+    case &#x27;X&#x27;:      // %H:%M:%S in the POSIX locale
+      w.put_u(c.h, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.mi, 2);
+      w.put(&#x27;:&#x27;);
+      w.put_u(c.s, 2);
+      break;
+    case &#x27;y&#x27;:
+      w.put_u(static_cast&lt;u64&gt;(((c.y % 100) + 100) % 100), 2);
+      break;
+    case &#x27;Y&#x27;:
+      __put_year(w, c.y);
+      break;
+    case &#x27;z&#x27;:
+      __put_offset(w, c.off, offset_style::compact);
+      break;
+    case &#x27;Z&#x27;:
+      if ( c.off == 0 )
+        w.put_cstr(&quot;UTC&quot;);
+      else
+        __put_offset(w, c.off, offset_style::compact);
+      break;
+    case &#x27;%&#x27;:
+      w.put(&#x27;%&#x27;);
+      break;
+    default:      // an unknown specifier renders literally, the way glibc does
+      w.put(&#x27;%&#x27;);
+      w.put(*f);
+      break;
+    }
+  }
+  return w.n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/format.hpp.html#L332">line 332</a></td></tr><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L516">line 516</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calendar.hpp.html#f-71e1c76974f80019">weekday_of</a>, <a href="format.hpp.html#f-c061627f65bddfdc">__put_year</a>, <a href="calendar.hpp.html#f-222311d50b821cf7">iso_week_date</a>, <a href="calendar.hpp.html#f-dcca6417cc4aef49">day_of_year</a>, <a href="civil.hpp.html#f-b442bc2875c91034">civil_secs</a>, <a href="format.hpp.html#f-9dd23e729b36326e">__put_offset</a>.</p></section><section class="function-entry" id="f-50f21d78505138c2"><h3><code>micron::chrono::__impl::__dur_hms(char *buf, usize cap, u64 secs) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L536">line 536</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+__dur_hms(char *buf, usize cap, u64 secs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u64 secs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+__dur_hms(char *buf, usize cap, u64 secs) noexcept
+{
+  wbuf w(buf, cap);
+  const u64 d = secs / 86400ull;
+  const u64 h = (secs / 3600ull) % 24ull;
+  const u64 m = (secs / 60ull) % 60ull;
+  if ( d != 0 ) {
+    w.put_u(d, 1);
+    w.put(&#x27;d&#x27;);
+    w.put(&#x27; &#x27;);
+    w.put_u(h, 2);
+    w.put(&#x27;:&#x27;);
+    w.put_u(m, 2);
+    return w.n;
+  }
+  w.put_u(h, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u(m, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u(secs % 60ull, 2);
+  return w.n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L549">line 549</a></td></tr><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L556">line 556</a></td></tr></tbody></table></section><section class="function-entry" id="f-929b508ec7c6f46d"><h3><code>micron::chrono::__impl::__dur_clock(char *buf, usize cap, u64 ticks, u64 hz) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L560">line 560</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+__dur_clock(char *buf, usize cap, u64 ticks, u64 hz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u64 ticks</code></li><li><code>u64 hz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+__dur_clock(char *buf, usize cap, u64 ticks, u64 hz) noexcept
+{
+  wbuf w(buf, cap);
+  if ( hz == 0 ) hz = 1;
+  const u64 secs = ticks / hz;
+  if ( secs &lt; 3600ull ) {
+    w.put_u(secs / 60ull, 1);
+    w.put(&#x27;:&#x27;);
+    w.put_u(secs % 60ull, 2);
+    w.put(&#x27;.&#x27;);
+    w.put_u(((ticks % hz) * 100ull) / hz, 2);
+    return w.n;
+  }
+  if ( secs &lt; 86400ull ) {
+    w.put_u(secs / 3600ull, 1);
+    w.put(&#x27;:&#x27;);
+    w.put_u((secs / 60ull) % 60ull, 2);
+    w.put(&#x27;:&#x27;);
+    w.put_u(secs % 60ull, 2);
+    return w.n;
+  }
+  w.put_u(secs / 86400ull, 1);
+  w.put(&#x27;d&#x27;);
+  w.put(&#x27; &#x27;);
+  w.put_u((secs / 3600ull) % 24ull, 2);
+  w.put(&#x27;:&#x27;);
+  w.put_u((secs / 60ull) % 60ull, 2);
+  return w.n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L571">line 571</a></td></tr><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L579">line 579</a></td></tr><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L587">line 587</a></td></tr></tbody></table></section><section class="function-entry" id="f-7ec1abbcbd9e4a26"><h3><code>micron::chrono::__impl::__dur_units(char *buf, usize cap, u64 ns) noexcept</code></h3><p>Defined in <code>chrono/format.hpp</code>, <a href="../../source/chrono/format.hpp.html#L591">line 591</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+__dur_units(char *buf, usize cap, u64 ns) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u64 ns</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+__dur_units(char *buf, usize cap, u64 ns) noexcept
+{
+  wbuf w(buf, cap);
+  if ( ns == 0 ) {
+    w.put(&#x27;0&#x27;);
+    w.put(&#x27;s&#x27;);
+    return w.n;
+  }
+
+  struct comp {
+    u64 scale;
+    const char *suffix;
+  };
+
+  constexpr comp __c[8] = { { ns_per_week, &quot;w&quot; }, { ns_per_day, &quot;d&quot; }, { ns_per_hour, &quot;h&quot; }, { ns_per_min, &quot;m&quot; },
+                            { ns_per_s, &quot;s&quot; },    { ns_per_ms, &quot;ms&quot; }, { ns_per_us, &quot;us&quot; },  { 1ull, &quot;ns&quot; } };
+  u64 rest = ns;
+  for ( usize i = 0; i &lt; 8; ++i ) {
+    const u64 v = rest / __c[i].scale;
+    if ( v == 0 ) continue;
+    w.put_u(v, 1);
+    w.put_cstr(__c[i].suffix);
+    rest -= v * __c[i].scale;
+    if ( rest == 0 ) break;
+  }
+  return w.n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L597">line 597</a></td></tr><tr class="t-dsc"><td><code>w.n</code></td><td><a href="../../source/chrono/format.hpp.html#L616">line 616</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

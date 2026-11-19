@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sec/groups.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">sec/groups.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/sec/groups.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2026- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../bits/__arch.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;../concepts.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../syscall.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../types.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> // named syscall groups</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> namespace micron</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> {</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> namespace sec</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> {</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> </span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #define __micron_sec_has_groups_namespaces 1</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #define __micron_sec_has_groups_mount_api 1</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #define __micron_sec_has_groups_keyring 1</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> #define __micron_sec_has_groups_kernel_debug 1</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> #define __micron_sec_has_groups_uring 1</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> </span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> struct syscall_group_tag {</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> };</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> </span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> template&lt;typename T&gt;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> concept is_syscall_group = requires {</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a>   typename T::policy_tag;</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>   { T::calls } -&gt; micron::convertible_to&lt;const i32 *&gt;;</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>   { T::count } -&gt; micron::convertible_to&lt;usize&gt;;</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> } &amp;&amp; micron::is_same_v&lt;typename T::policy_tag, syscall_group_tag&gt;;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> </span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> namespace groups</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> {</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> struct baseline {</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   static constexpr i32 calls[] = {</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>     SYS_exit,</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>     SYS_exit_group,</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>     SYS_rt_sigreturn,</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>     SYS_brk,</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>     SYS_munmap,</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>     SYS_futex,</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>     SYS_sysinfo,</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>     SYS_set_tid_address,</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>     SYS_set_robust_list,</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>     SYS_rseq,</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>     SYS_getrandom,</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>     SYS_close,</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>     // NOTE: SYS_ioctl must not be here; see (CVE-2019-10063)</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>     // if you need terminal control use groups::baseline_tty</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>     SYS_read,</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>     SYS_write,</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>     SYS_openat,</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>     SYS_clock_gettime,</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>     SYS_gettid,</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>     SYS_sched_yield,</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>     SYS_faccessat,</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>     SYS_mprotect,</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> #if defined(__micron_arch_amd64)</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>     SYS_mmap,</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>     SYS_arch_prctl,</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>     SYS_open,</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>     SYS_access,</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> #elif defined(__micron_arch_x86)</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>     SYS_mmap2,</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>     SYS_arch_prctl,</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     SYS_open,</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>     SYS_access,</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>     SYS_futex_time64,</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>     SYS_clock_gettime64,</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>     SYS_mmap2,</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     SYS_open,</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>     SYS_access,</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>     SYS_futex_time64,</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>     SYS_clock_gettime64,</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     SYS_mmap,</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> #else</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> #error &quot;micron::sec::groups::baseline: unhandled architecture&quot;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> #endif</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   };</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> };</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> </span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> // baseline plus ioctl</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> struct baseline_tty {</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>   static constexpr i32 calls[] = { SYS_ioctl };</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> };</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> </span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> struct memory {</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   static constexpr i32 calls[] = {</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>     SYS_memfd_create, SYS_brk,      SYS_munmap,        SYS_mprotect,      SYS_madvise,       SYS_mremap,     SYS_msync, SYS_mlock,</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>     SYS_munlock,      SYS_mlockall, SYS_munlockall,    SYS_mlock2,        SYS_shmget,        SYS_shmat,      SYS_shmdt, SYS_shmctl,</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>     SYS_mincore,      SYS_mbind,    SYS_set_mempolicy, SYS_get_mempolicy, SYS_migrate_pages, SYS_move_pages,</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>     SYS_mmap,</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>     SYS_mmap2,</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> #else</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> #error &quot;micron::sec::groups::memory: unhandled architecture&quot;</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> #endif</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   };</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> };</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> </span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> struct io {</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>   static constexpr i32 calls[] = {</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>     SYS_read,</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>     SYS_write,</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>     SYS_close,</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>     SYS_openat,</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>     SYS_pread64,</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>     SYS_pwrite64,</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     SYS_readv,</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     SYS_writev,</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     SYS_preadv,</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>     SYS_pwritev,</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>     SYS_lseek,</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>     SYS_dup,</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>     SYS_dup3,</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>     SYS_fstat,</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>     SYS_statx,</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>     SYS_fcntl,</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     SYS_ftruncate,</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>     SYS_truncate,</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     SYS_fsync,</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     SYS_fdatasync,</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>     SYS_sync,</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>     SYS_syncfs,</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     SYS_fallocate,</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>     SYS_sendfile,</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>     SYS_splice,</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>     SYS_vmsplice,</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>     SYS_copy_file_range,</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     SYS_readlinkat,</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>     SYS_unlinkat,</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>     SYS_renameat2,</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>     SYS_fchmod,</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     SYS_fchmodat,</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>     SYS_fchown,</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>     SYS_fchownat,</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>     SYS_close_range,</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a> #if defined(__micron_arch_amd64)</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     SYS_open,</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     SYS_stat,</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     SYS_lstat,</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>     SYS_newfstatat,</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>     SYS_dup2,</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>     SYS_readlink,</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     SYS_unlink,</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>     SYS_rename,</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     SYS_renameat,</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>     SYS_chmod,</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     SYS_chown,</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     SYS_lchown,</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>     SYS_sync_file_range,</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a> #elif defined(__micron_arch_x86)</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>     SYS_open,       SYS_stat64,          SYS_lstat64,         SYS_fstat64,    SYS_fstatat64, SYS_dup2,      SYS_readlink,    SYS_unlink,</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     SYS_rename,     SYS_renameat,        SYS_chmod,           SYS_chown,      SYS_lchown,    SYS_fcntl64,   SYS_ftruncate64, SYS_truncate64,</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>     SYS_sendfile64, SYS_sync_file_range,</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>     SYS_open,       SYS_stat64,      SYS_lstat64,</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>     SYS_fstat64,    SYS_fstatat64,   SYS_dup2,</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>     SYS_readlink,   SYS_unlink,      SYS_rename,</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     SYS_renameat,   SYS_chmod,       SYS_chown,</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>     SYS_lchown,     SYS_fcntl64,     SYS_ftruncate64,</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>     SYS_truncate64, SYS_sendfile64,  SYS_sync_file_range2,</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>     SYS_newfstatat, SYS_sync_file_range,</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> #else</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> #error &quot;micron::sec::groups::io: unhandled architecture&quot;</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a> #endif</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>   };</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a> };</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a> </span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a> struct filesystem {</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>   static constexpr i32 calls[] = {</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>     SYS_mount,      SYS_umount2,   SYS_chroot,   SYS_pivot_root, SYS_sync,       SYS_statfs,     SYS_fstatfs,    SYS_mknodat,</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>     SYS_linkat,     SYS_symlinkat, SYS_unlinkat, SYS_renameat2,  SYS_readlinkat, SYS_getdents64, SYS_mkdirat,    SYS_faccessat,</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>     SYS_faccessat2, SYS_fsopen,    SYS_fsconfig, SYS_fsmount,    SYS_fspick,     SYS_open_tree,  SYS_move_mount, SYS_mount_setattr,</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a> #if defined(__micron_arch_amd64)</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>     SYS_mknod,      SYS_link,      SYS_symlink,  SYS_unlink,     SYS_rename,     SYS_renameat,   SYS_readlink,   SYS_getdents,</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>     SYS_mkdir,      SYS_rmdir,     SYS_access,</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>     SYS_mknod,      SYS_link,      SYS_symlink,  SYS_unlink,     SYS_rename,     SYS_renameat,   SYS_readlink,   SYS_getdents,</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>     SYS_mkdir,      SYS_rmdir,     SYS_access,   SYS_statfs64,   SYS_fstatfs64,</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>   // asm-generic: only the *at forms exist</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a> #else</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> #error &quot;micron::sec::groups::filesystem: unhandled architecture&quot;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> #endif</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   };</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> };</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> </span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> struct filesystem_readonly {</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>   static constexpr i32 calls[] = {</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>     SYS_sync,     SYS_statfs,   SYS_fstatfs, SYS_readlinkat, SYS_getdents64, SYS_faccessat, SYS_faccessat2,</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a> #if defined(__micron_arch_amd64)</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>     SYS_readlink, SYS_getdents, SYS_access,</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>     SYS_readlink, SYS_getdents, SYS_access,  SYS_statfs64,   SYS_fstatfs64,</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   // asm-generic: only the *at forms exist</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a> #else</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a> #error &quot;micron::sec::groups::filesystem_readonly: unhandled architecture&quot;</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a> #endif</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>   };</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> };</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a> </span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a> struct filesystem_no_mount {</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>   static constexpr i32 calls[] = {</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>     SYS_sync,      SYS_statfs,     SYS_fstatfs,    SYS_linkat,  SYS_symlinkat, SYS_unlinkat,</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>     SYS_renameat2, SYS_readlinkat, SYS_getdents64, SYS_mkdirat, SYS_faccessat, SYS_faccessat2,</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a> #if defined(__micron_arch_amd64)</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>     SYS_link,      SYS_symlink,    SYS_unlink,     SYS_rename,  SYS_renameat,  SYS_readlink,</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>     SYS_getdents,  SYS_mkdir,      SYS_rmdir,      SYS_access,</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>     SYS_link,      SYS_symlink,    SYS_unlink,     SYS_rename,  SYS_renameat,  SYS_readlink,</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>     SYS_getdents,  SYS_mkdir,      SYS_rmdir,      SYS_access,  SYS_statfs64,  SYS_fstatfs64,</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   // asm-generic: only the *at forms exist</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> #else</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> #error &quot;micron::sec::groups::filesystem_no_mount: unhandled architecture&quot;</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> #endif</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   };</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a> };</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a> </span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a> struct process {</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>   static constexpr i32 calls[] = {</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>     SYS_pipe2,     SYS_restart_syscall, SYS_clone,    SYS_clone3,   SYS_execve, SYS_execveat, SYS_wait4,   SYS_waitid,</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>     SYS_getpid,    SYS_getppid,         SYS_getuid,   SYS_geteuid,  SYS_getgid, SYS_getegid,  SYS_setuid,  SYS_setgid,</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>     SYS_setresuid, SYS_setresgid,       SYS_setreuid, SYS_setregid, SYS_setsid, SYS_setpgid,  SYS_getpgid, SYS_getsid,</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     SYS_setgroups, SYS_getgroups,       SYS_prctl,    SYS_unshare,  SYS_setns,</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> #if defined(__micron_arch_amd64)</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>     SYS_fork,      SYS_vfork,           SYS_pipe,</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>     // the bare forms above are the legacy 16-bit-uid syscalls; system.hpp issues the *32 ones, so a</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>     // policy without these denies micron&#x27;s own getuid()/setresuid()/... (see __sys_getuid)</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>     SYS_fork,      SYS_vfork,           SYS_pipe,        SYS_setuid32,    SYS_setgid32,</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>     SYS_setgroups32, SYS_getgroups32,   SYS_getuid32,    SYS_geteuid32,   SYS_getgid32,</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>     SYS_getegid32, SYS_setresuid32,     SYS_setresgid32, SYS_setreuid32,  SYS_setregid32,</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>   // asm-generic: clone/clone3 only, and pipe2 only</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a> #else</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a> #error &quot;micron::sec::groups::process: unhandled architecture&quot;</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a> #endif</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>   };</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> };</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a> </span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> // SYS_clone3 is absent and SYS_clone is present; clone3 passes a struct which bpf cannot read through; see CVE-2022-0185 and</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> // CVE-2026-63917/63921</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a> //</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> // WARNING: micron&#x27;s freestanding threads use clone3, enabling this means you can&#x27;t use them, opt for groups:process and concede that it can</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> // create namespaces arbitrarily</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> struct process_no_ns {</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>   static constexpr i32 calls[] = {</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>     SYS_pipe2,    SYS_restart_syscall, SYS_clone,   SYS_execve,  SYS_execveat, SYS_wait4,     SYS_waitid,    SYS_getpid,    SYS_getppid,</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>     SYS_getuid,   SYS_geteuid,         SYS_getgid,  SYS_getegid, SYS_setuid,   SYS_setgid,    SYS_setresuid, SYS_setresgid, SYS_setreuid,</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>     SYS_setregid, SYS_setsid,          SYS_setpgid, SYS_getpgid, SYS_getsid,   SYS_setgroups, SYS_getgroups, SYS_prctl,</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a> #if defined(__micron_arch_amd64)</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>     SYS_fork,     SYS_vfork,           SYS_pipe,</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>     SYS_fork,      SYS_vfork,           SYS_pipe,      SYS_setuid32,    SYS_setgid32,    SYS_setgroups32, SYS_getgroups32, SYS_getuid32,</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>     SYS_geteuid32, SYS_getgid32,        SYS_getegid32, SYS_setresuid32, SYS_setresgid32, SYS_setreuid32,  SYS_setregid32,</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>   // asm-generic</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a> #else</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> #error &quot;micron::sec::groups::process_no_ns: unhandled architecture&quot;</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a> #endif</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>   };</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a> };</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> </span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a> struct signal {</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>   static constexpr i32 calls[] = {</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>     SYS_rt_sigaction,    SYS_rt_sigprocmask,    SYS_rt_sigreturn,      SYS_kill,          SYS_tgkill,</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>     SYS_tkill,           SYS_sigaltstack,       SYS_rt_sigsuspend,     SYS_rt_sigpending, SYS_rt_sigtimedwait,</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>     SYS_rt_sigqueueinfo, SYS_rt_tgsigqueueinfo, SYS_pidfd_send_signal,</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a> #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>     SYS_rt_sigtimedwait_time64,</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a> #else</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a> #error &quot;micron::sec::groups::signal: unhandled architecture&quot;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> #endif</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a>   };</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a> };</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a> </span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a> // %%%%%%%%%%%%%%</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a> // network</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a> </span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a> struct network {</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>   static constexpr i32 calls[] = {</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>     SYS_socket,   SYS_connect,    SYS_accept4,    SYS_bind,        SYS_listen,      SYS_sendto,     SYS_recvfrom, SYS_sendmsg,  SYS_recvmsg,</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>     SYS_shutdown, SYS_setsockopt, SYS_getsockopt, SYS_getpeername, SYS_getsockname, SYS_socketpair, SYS_recvmmsg, SYS_sendmmsg,</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a> #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>     SYS_accept,</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>     SYS_accept,      SYS_recvmmsg_time64,</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a> #elif defined(__micron_arch_x86)</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>     SYS_socketcall,  SYS_recvmmsg_time64,</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a> #else</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a> #error &quot;micron::sec::groups::network: unhandled architecture&quot;</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a> #endif</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>   };</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a> };</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a> </span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a> struct time {</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>   static constexpr i32 calls[] = {</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>     SYS_clock_gettime,    SYS_clock_getres,  SYS_clock_nanosleep, SYS_nanosleep,    SYS_gettimeofday,  SYS_settimeofday,</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>     SYS_adjtimex,         SYS_clock_adjtime, SYS_times,           SYS_timer_create, SYS_timer_settime, SYS_timer_gettime,</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>     SYS_timer_getoverrun, SYS_timer_delete,  SYS_getitimer,       SYS_setitimer,</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a> #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>     SYS_clock_gettime64,  SYS_clock_getres_time64, SYS_clock_nanosleep_time64,</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>     SYS_clock_adjtime64,  SYS_timer_settime64,     SYS_timer_gettime64,</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a> #else</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a> #error &quot;micron::sec::groups::time: unhandled architecture&quot;</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a> #endif</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>   };</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a> };</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a> </span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a> // ipc</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a> //</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a> // NOTE: i386 multiplexes sysv ipc through SYS_ipc, so it has no semop/semtimedop of its own</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a> </span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a> struct ipc {</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>   static constexpr i32 calls[] = {</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>     SYS_semget,      SYS_semctl,     SYS_msgget,         SYS_msgsnd,          SYS_msgrcv,          SYS_msgctl,        SYS_futex,</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>     SYS_eventfd2,    SYS_signalfd4,  SYS_timerfd_create, SYS_timerfd_settime, SYS_timerfd_gettime, SYS_epoll_create1, SYS_epoll_ctl,</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>     SYS_epoll_pwait, SYS_shmget,     SYS_shmat,          SYS_shmdt,           SYS_shmctl,</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a> #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>     SYS_semop,       SYS_semtimedop,</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>     SYS_semop, SYS_semtimedop, SYS_futex_time64, SYS_timerfd_settime64, SYS_timerfd_gettime64,</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a> #elif defined(__micron_arch_x86)</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>     SYS_ipc, SYS_futex_time64, SYS_timerfd_settime64, SYS_timerfd_gettime64,</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a> #else</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a> #error &quot;micron::sec::groups::ipc: unhandled architecture&quot;</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a> #endif</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>   };</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a> };</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a> </span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a> struct capabilities {</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a>   static constexpr i32 calls[] = {</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>     SYS_capget,    SYS_capset,    SYS_setuid,    SYS_setgid, SYS_setreuid, SYS_setregid,</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>     SYS_setresuid, SYS_setresgid, SYS_setgroups, SYS_prctl,  SYS_seccomp,  SYS_personality,</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a> #if defined(__micron_arch_amd64) || defined(__micron_arch_arm64)</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a> #elif defined(__micron_arch_x86) || defined(__micron_arch_arm32)</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>     // as in groups::process: micron issues the *32 forms, not the 16-bit ones named above</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>     SYS_setuid32,  SYS_setgid32,  SYS_setgroups32, SYS_setreuid32, SYS_setregid32,</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>     SYS_setresuid32, SYS_setresgid32, SYS_getuid32, SYS_geteuid32, SYS_getgid32, SYS_getegid32,</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a> #else</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a> #error &quot;micron::sec::groups::capabilities: unhandled architecture&quot;</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a> #endif</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>   };</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a> };</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a> </span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a> // WARNING: micron&#x27;s own thread spawn issues clone3</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a> struct namespaces {</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>   static constexpr i32 calls[] = {</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a>     SYS_unshare,</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>     SYS_setns,</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a>     SYS_clone3,</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a>   };</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a> };</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a> </span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a> struct mount_api {</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>   static constexpr i32 calls[] = {</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>     SYS_fsopen, SYS_fsconfig, SYS_fsmount, SYS_fspick, SYS_open_tree, SYS_move_mount, SYS_mount_setattr,</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>   };</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a> };</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a> </span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a> struct keyring {</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>   static constexpr i32 calls[] = {</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a>     SYS_keyctl,</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>     SYS_add_key,</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>     SYS_request_key,</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>   };</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a> };</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a> </span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a> struct kernel_debug {</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a>   static constexpr i32 calls[] = {</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>     SYS_ptrace,      SYS_process_vm_readv, SYS_process_vm_writev, SYS_bpf,           SYS_perf_event_open,</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>     SYS_userfaultfd, SYS_init_module,      SYS_finit_module,      SYS_delete_module, SYS_kexec_load,</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>     SYS_quotactl,    SYS_swapon,           SYS_swapoff,           SYS_reboot,        SYS_pivot_root,</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>   };</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a> };</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a> </span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a> // WARNING: SECCOMP DOES NOT SEE IO_URING OPERATIONS</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a> struct uring {</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>   static constexpr i32 calls[] = {</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>     SYS_io_uring_setup,</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a>     SYS_io_uring_enter,</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a>     SYS_io_uring_register,</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>   };</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a> };</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a> </span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a> // the union, for a caller who wants one name for &quot;none of this&quot;</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a> struct kernel_attack_surface {</span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>   static constexpr i32 calls[] = {</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>     // namespaces</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>     SYS_unshare,</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>     SYS_setns,</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>     SYS_clone3,</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>     // mount api</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>     SYS_fsopen,</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>     SYS_fsconfig,</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>     SYS_fsmount,</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a>     SYS_fspick,</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>     SYS_open_tree,</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a>     SYS_move_mount,</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>     SYS_mount_setattr,</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>     // keyring</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>     SYS_keyctl,</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>     SYS_add_key,</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>     SYS_request_key,</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a>     // kernel debug / module / task introspection</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a>     SYS_ptrace,</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>     SYS_process_vm_readv,</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>     SYS_process_vm_writev,</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>     SYS_bpf,</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>     SYS_perf_event_open,</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>     SYS_userfaultfd,</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a>     SYS_init_module,</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>     SYS_finit_module,</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>     SYS_delete_module,</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>     SYS_kexec_load,</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>     SYS_quotactl,</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>     SYS_swapon,</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a>     SYS_swapoff,</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a>     SYS_reboot,</span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a>     SYS_pivot_root,</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>     // the legacy mount API too: this is the &quot;none of this&quot; group, so it means none of it</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>     SYS_mount,</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>     SYS_umount2,</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a>     SYS_chroot,</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a>   };</span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a> };</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a> </span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a> struct io_multiplexing {</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>   using policy_tag = syscall_group_tag;</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>   static constexpr i32 calls[] = {</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>     SYS_pselect6,  SYS_ppoll,    SYS_epoll_create1,  SYS_epoll_ctl,       SYS_epoll_pwait,     SYS_epoll_pwait2,</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a>     SYS_signalfd4, SYS_eventfd2, SYS_timerfd_create, SYS_timerfd_settime, SYS_timerfd_gettime,</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a> #if defined(__micron_arch_amd64)</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a>     SYS_select,    SYS_poll,     SYS_epoll_create,   SYS_epoll_wait,      SYS_signalfd,        SYS_eventfd,</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a> #elif defined(__micron_arch_x86)</span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a>     SYS_select,    SYS__newselect,      SYS_poll,           SYS_epoll_create,      SYS_epoll_wait,        SYS_signalfd,</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a>     SYS_eventfd,   SYS_pselect6_time64, SYS_ppoll_time64,   SYS_timerfd_settime64, SYS_timerfd_gettime64,</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a>     SYS__newselect,      SYS_poll,         SYS_epoll_create,      SYS_epoll_wait,        SYS_signalfd,        SYS_eventfd,</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a>     SYS_pselect6_time64, SYS_ppoll_time64, SYS_timerfd_settime64, SYS_timerfd_gettime64,</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a>   // asm-generic: only the p*/create1/*2 forms exist</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a> #else</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a> #error &quot;micron::sec::groups::io_multiplexing: unhandled architecture&quot;</span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a> #endif</span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a>   };</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a>   static constexpr usize count = sizeof(calls) / sizeof(calls[0]);</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a> };</span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a> </span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a> };      // namespace groups</span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a> };      // namespace sec</span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

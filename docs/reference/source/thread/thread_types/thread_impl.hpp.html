@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>thread/thread_types/thread_impl.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">thread/thread_types/thread_impl.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/thread/thread_types/thread_impl.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../bits/__abc_mt.hpp&quot;      // autofires MICRON_ABC_MT; must precede abcmalloc</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../../type_traits.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../../types.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;../../tuple.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../../linux/__includes.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> </span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;sig_callbacks.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> </span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../../linux/sys/micthread/threads.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;../../linux/sys/resource.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;../../linux/sys/system.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #include &quot;../../memory/stack_constants.hpp&quot;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #include &quot;../../new.hpp&quot;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> #include &quot;../../queue/lambda_queue.hpp&quot;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> #include &quot;../../sync/futex.hpp&quot;</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> </span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> #include &quot;../../except.hpp&quot;</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> </span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> #include &quot;../../atomic/atomic.hpp&quot;</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> #include &quot;../../bits/__thread_exit_hook.hpp&quot;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> #include &quot;../../memory/cmemory.hpp&quot;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> #include &quot;../../tuple.hpp&quot;</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> </span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> #if defined(__micron_attach_capable)</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> #include &quot;../../attach/info.hpp&quot;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> #endif</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> </span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> // NOTE: this file should contain all the constructors and implementations for the underlying threads (separate from the</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> // classes themselves), for readability</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> </span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> namespace micron</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> {</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> enum thread_returns : i32 { return_success, return_force, return_fail };</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> </span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> enum join_status { join_success, join_fail, join_allowed, join_busy };</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> </span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> // give a thread&#x27;s TLS frame back to whoever built it.</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> // WARNING: when attached, the frame came from the host&#x27;s info-&gt;make_child_frame() and must go back</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> // through info-&gt;free_frame() -- that callback exists in the ABI precisely so the host can own frame</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> // lifetime (a recycling pool, landlord accounting). A guest that munmaps it itself hands back memory</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> // the host still believes it owns, and the next attached thread handed that frame faults on its</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> // first thread_local access. Every teardown path routes here, not just the spawn-failure one.</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> inline void</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> __tls_release_frame(const micron::__tls_frame &amp;f) noexcept</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> {</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> #if defined(__micron_attach_capable)</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   if ( micron::__micron_attach_info != nullptr ) {</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>     micron::__micron_attach_info-&gt;free_frame(&amp;f);</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>     return;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   }</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> #endif</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>   micron::__tls_free_frame(f);</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> }</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> </span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> // bounded budget for a hard-stopped (SIGTERM) thread to publish alive=false before it gets reaped</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> inline constexpr f64 __thread_term_timeout_ms = 1000.0;</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> </span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> template&lt;typename T&gt; struct __async_payload {</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   atomic_token&lt;bool&gt; alive;</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>   atomic_token&lt;u64&gt; ret_val;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>   posix::rusage_t usage;      // non atomic</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> </span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   void</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   clear(void)</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>   {</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>     alive.store(false);</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>     ret_val.store(0);</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     usage = posix::rusage_t{};</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   }</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> };</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> </span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> struct __thread_payload {</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>   atomic_token&lt;bool&gt; alive;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   // the child sets this true the instant it reaches __thread_kernel</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>   atomic_token&lt;bool&gt; started{ false };</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>   // native park/sleep/awake/terminate control word</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   atomic_token&lt;u32&gt; park{ __park_run };</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   // NOTE:</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>   // the pointer is used as the operand of a static_cast (7.6.1.8), except when the conversion is to pointer</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>   // to cv void, or to pointer to cv void and subsequently to pointer to cv char, cv unsigned char, or</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>   // cv std::byte (17.2.1)....</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>   // If a program attempts to access (3.1) the stored value of an object through a glvalue whose type is not</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>   // similar (7.3.5) to one of the following types the behavior is undefined:51</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>   //(11.1) — the dynamic type of the object,</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>   //(11.2) — a type that is the signed or unsigned type corresponding to the dynamic type of the object, or</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>   //(11.3) — a char, unsigned char, or std::byte type.</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   atomic_ptr&lt;byte *&gt; ret_val;      // stop gap measure for returning arbitrary return types</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   enum class tag : u8 { none = 0, literal, heap, __end };</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   atomic_token&lt;u8&gt; tag_val{ (u8)tag::none };</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   void (*deleter)(byte *) = nullptr;</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> </span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   posix::rusage_t usage;      // non atomic</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> </span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   void</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   clear(void)</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   {</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>     alive.store(false);</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>     started.store(false, memory_order_release);</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>     park.store(__park_run, memory_order_release);</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>     tag_val.store((u8)tag::none, memory_order_release);</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>     ret_val.store(nullptr, memory_order_release);</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>     deleter = nullptr;</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>     usage = posix::rusage_t{};</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>   }</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> };</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> </span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> // the running thread kernel self-exit routine</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> [[noreturn]] inline void</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> __micron_thread_die_impl() noexcept</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> {</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>   // run this thread&#x27;s C++ thread_local dtors (guest modules) before the arena hook</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>   micron::__run_thread_dtors();</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>   if ( micron::__dynamic_tls_exit_hook ) micron::__dynamic_tls_exit_hook();</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>   if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>   if ( micron::__micron_thread_alive_word )</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     static_cast&lt;atomic_token&lt;bool&gt; *&gt;(micron::__micron_thread_alive_word)-&gt;store(false, memory_order_seq_cst);</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>   micthread::__exit_thread(0);</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> }</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> </span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a> struct __worker_payload {</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>   atomic_token&lt;u32&gt; has_work{ 0 };             // for futex compat.</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   atomic_token&lt;bool&gt; should_die{ false };      // rude :/</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>   micron::lambda_queue&lt;256&gt; queue;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>   atomic_token&lt;u32&gt; usage_seq{ 0 };</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>   posix::rusage_t usage;      // non atomic</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> };</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> </span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> // The kernel of the thread, encapsulating the req&#x27;d function</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> // status flags if the thread is running or not</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> // NOTE: args is always instantiated with decayed (value) types by __as_*_thread_attached</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> // taking args by value gives the kernel local storage; invoking fn(args...) passes lvalues</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> template&lt;typename Fn, typename... Args&gt;</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>   requires(micron::is_invocable_v&lt;Fn, Args &amp;...&gt;)</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> i32</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> __thread_kernel(__thread_payload *payload, Fn fn, Args... args)</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> {</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>   // prologue</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>   using ret_t = micron::invoke_result_t&lt;Fn, Args &amp;...&gt;;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>   __thread_handler();</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>   payload-&gt;alive.store(true, memory_order_seq_cst);</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>   // confirm to the spawner that we actually reached our kernel</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>   payload-&gt;started.store(true, memory_order_seq_cst);</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   // publish this thread&#x27;s native control state: alive flag + park word + self-exit routine, consumed by</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   micron::__micron_thread_alive_word = static_cast&lt;void *&gt;(&amp;payload-&gt;alive);</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>   micron::__micron_thread_park = payload-&gt;park.ptr();</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>   micron::__micron_thread_die = &amp;__micron_thread_die_impl;</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> </span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   // work</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> </span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>   if constexpr ( micron::is_void_v&lt;ret_t&gt; ) {</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>     fn(args...);</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     // function has _no_ return value, signal that it returned successfully (1)</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>     // NOTE: this may cause erronous behavior if 1 happens to be a valid pointer on your platform. be careful!</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     payload-&gt;deleter = nullptr;</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     payload-&gt;tag_val.store((u8)__thread_payload::tag::none, memory_order_release);</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>     payload-&gt;ret_val.store(reinterpret_cast&lt;byte *&gt;(1), memory_order_release);</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>   } else if constexpr ( micron::is_class_v&lt;ret_t&gt; and !micron::is_trivially_constructible_v&lt;ret_t&gt; and !micron::is_literal_type_v&lt;ret_t&gt; ) {</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>     // NOTE: IMPORTANT</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     // make sure this is freed either by the calling thread, or whatever handles returns</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>     ret_t *ret = new ret_t(fn(args...));</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>     payload-&gt;deleter = +[](byte *p) { delete reinterpret_cast&lt;ret_t *&gt;(p); };</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>     payload-&gt;tag_val.store((u8)__thread_payload::tag::heap, memory_order_release);</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>     payload-&gt;ret_val.store(reinterpret_cast&lt;byte *&gt;(ret), memory_order_release);</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   } else if constexpr ( sizeof(ret_t) &gt; sizeof(byte *) ) {</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     // bigger than a pointer (8B on 64-bit, 4B on 32-bit): cannot be packed into ret_val, use new</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>     // NOTE: the bound is sizeof(byte*), NOT a hard-coded 8</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>     ret_t *ret = new ret_t(fn(args...));</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>     payload-&gt;deleter = +[](byte *p) { delete reinterpret_cast&lt;ret_t *&gt;(p); };</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>     payload-&gt;tag_val.store((u8)__thread_payload::tag::heap, memory_order_release);</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>     payload-&gt;ret_val.store(reinterpret_cast&lt;byte *&gt;(ret), memory_order_release);</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>   } else {</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>     // type is literal, can be stored.</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>     ret_t __ret_val_storage = fn(args...);</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>     u64 __ret_raw = 0;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>     micron::cbytecpy&lt;sizeof(ret_t)&gt;(reinterpret_cast&lt;byte *&gt;(&amp;__ret_raw), reinterpret_cast&lt;const byte *&gt;(&amp;__ret_val_storage));</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>     payload-&gt;deleter = nullptr;</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>     payload-&gt;tag_val.store((u8)__thread_payload::tag::literal, memory_order_release);</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>     payload-&gt;ret_val.store(reinterpret_cast&lt;byte *&gt;(__ret_raw), memory_order_release);</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>   }</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   // end work</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a> </span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   // epilogue</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>   // NOTE: run any registered per-thread cleanup (abcmalloc releasing this thread&#x27;s arena slot) on the exiting thread while its TLS is still</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>   // valid. thread_local C++ dtors (guest modules) run first, while the arena is still live</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   micron::__run_thread_dtors();</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> #if defined(__micron_freestanding)</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>   if ( micron::__dynamic_tls_exit_hook ) micron::__dynamic_tls_exit_hook();</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a> #endif</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>   if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>   posix::getrusage(posix::rusage_thread, payload-&gt;usage);</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>   payload-&gt;alive.store(false, memory_order_seq_cst);</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>   return return_success;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> }</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a> </span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a> // worker kernel, for concurrent arenas and parallelism</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> // main difference compared to a regular kernel is that this function NEVER returns, instead constantly loops checking</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> // for new work</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> </span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a> inline i32</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a> __worker_loop(__worker_payload *payload)</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a> {</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   for ( ;; ) {</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>     while ( payload-&gt;queue.empty() ) {</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>       if ( payload-&gt;should_die.get(memory_order_acquire) ) return return_force;</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>       // WARNING: consume a pending wake token via CAS 1-&gt;0 instead of an unconditional store(0)</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>       // an unconditional clear races the producer/stop() path: if our store(0) lands __AFTER__</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>       // the producer&#x27;s store(1) and the wake fired before we reach wait_futex, the wakeup is</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>       // lost and we sleep on 0 forever</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>       u32 __hw_token = 1;</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>       payload-&gt;has_work.compare_exchange_strong(__hw_token, 0u, memory_order_acq_rel, memory_order_acquire);</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>       if ( !payload-&gt;queue.empty() ) break;      // a producer raced the clear; don&#x27;t sleep</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>       if ( payload-&gt;should_die.get(memory_order_acquire) ) return return_force;</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>       wait_futex(payload-&gt;has_work.ptr(), 0);</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>     }</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>     if ( payload-&gt;should_die.get(memory_order_acquire) ) return return_force;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>     while ( !payload-&gt;queue.empty() ) {</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>       payload-&gt;queue.execute();</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>       if ( payload-&gt;should_die.get(memory_order_acquire) ) return return_force;</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>     }</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>     // epilogue (seqlock-protected usage snapshot)</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>     payload-&gt;usage_seq.add_fetch(1, memory_order_acq_rel);</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>     posix::getrusage(posix::rusage_thread, payload-&gt;usage);</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>     payload-&gt;usage_seq.add_fetch(1, memory_order_acq_rel);</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>   }</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>   return return_success;</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> }</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a> </span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> i32</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> __worker_kernel(__worker_payload *payload)</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> {</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   // prologue</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>   __thread_handler();</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>   const i32 rc = __worker_loop(payload);</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>   // epilogue</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>   // NOTE: a worker exits through here, not through __thread_kernel, so it needs the same teardown:</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>   // thread_local C++ dtors (guest modules) then the arena hook, while this thread&#x27;s TLS is still</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>   // mapped. Without it a worker&#x27;s thread_local RAII objects (a uring ring, a buffered file, a socket)</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>   // are simply munmap&#x27;d with the frame and their fds leak for the life of the process</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>   micron::__run_thread_dtors();</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a> #if defined(__micron_freestanding)</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>   if ( micron::__dynamic_tls_exit_hook ) micron::__dynamic_tls_exit_hook();</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> #endif</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>   if ( micron::__thread_exit_hook ) micron::__thread_exit_hook();</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>   return rc;</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a> }</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a> </span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a> // hosted backend</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> #if !defined(__micron_freestanding)</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> template&lt;auto KFn, typename... Args&gt; struct __pth_box {</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>   micron::tuple&lt;Args...&gt; args;</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a> </span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>   template&lt;typename... U&gt;</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>     requires(sizeof...(U) == sizeof...(Args))</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>   explicit __pth_box(U &amp;&amp;...values) : args(micron::forward&lt;U&gt;(values)...)</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>   {</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>   }</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> </span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>   static void *</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>   trampoline(void *p)</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a>   {</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>     auto *self = static_cast&lt;__pth_box *&gt;(p);</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>     __invoke(self, micron::make_index_sequence&lt;sizeof...(Args)&gt;{});</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>     delete self;</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>     return nullptr;</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>   }</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> </span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>   static void</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>   destroy(__pth_box *self)</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>   {</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>     delete self;</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>   }</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> </span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a> private:</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>   template&lt;usize... I&gt;</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>   static void</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>   __invoke(__pth_box *self, micron::index_sequence&lt;I...&gt;)</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>   {</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a>     KFn(static_cast&lt;Args &amp;&amp;&gt;(micron::get&lt;I&gt;(self-&gt;args))...);</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>   }</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a> };</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a> #endif</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a> </span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> inline bool</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a> __link_valid([[maybe_unused]] pid_t tid, [[maybe_unused]] unsigned long pth) noexcept</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a> {</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a> #if defined(__micron_freestanding)</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>   return tid != 0;</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a> #else</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>   return pth != 0;</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a> #endif</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> }</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a> </span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a> // NOTE: moving an already spawned thread (one whos kernel points back to a thread controlled control block is strictly UB</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a> inline void</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> __thread_assert_movable_src([[maybe_unused]] pid_t tid, [[maybe_unused]] unsigned long pth)</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> {</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a>   if ( __link_valid(tid, pth) )</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a>     micron::exc&lt;except::thread_error&gt;(&quot;micron thread: cannot move a live/un-joined thread; join, cancel, or terminate it first&quot;);</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a> }</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a> </span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a> // kernel tid for tgkill / identity</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a> inline pid_t</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a> __link_tid([[maybe_unused]] pid_t tid, [[maybe_unused]] unsigned long pth) noexcept</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a> {</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a> #if defined(__micron_freestanding)</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>   return tid;</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a> #else</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>   return pth ? static_cast&lt;pid_t&gt;(pthread_gettid_np(static_cast&lt;pthread_t&gt;(pth))) : 0;</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a> #endif</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a> }</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a> </span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a> template&lt;int Stack_Size, auto KFn, typename P, typename... KArgs&gt;</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a> void</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a> __link_launch([[maybe_unused]] pid_t &amp;tid, [[maybe_unused]] int &amp;ctid, [[maybe_unused]] micron::__tls_frame &amp;tls,</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>               [[maybe_unused]] unsigned long &amp;pth, P *payload, addr_t *fstack, KArgs &amp;&amp;...kargs)</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a> {</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>   if ( payload == nullptr || fstack == nullptr ) micron::exc&lt;except::thread_error&gt;(&quot;micron thread::__link_launch(): invalid arguments&quot;);</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a> #if defined(__micron_freestanding)</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>   micron::__tls_frame frame{};</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a> #if defined(__micron_attach_capable)</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>   // a guest (attached) thread&#x27;s frame must be built by the host</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>   if ( micron::__micron_attach_info != nullptr ) {</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>     if ( micron::__micron_attach_info-&gt;make_child_frame(&amp;frame) != 0 || frame.base == nullptr )</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>       micron::exc&lt;except::thread_error&gt;(&quot;micron thread::__link_launch(): host failed to build attached TLS&quot;);</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>   } else</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a> #endif</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>   {</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>     frame = micron::__tls_make_child_frame();</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>     if ( frame.base == nullptr ) micron::exc&lt;except::thread_error&gt;(&quot;micron thread::__link_launch(): failed to build thread TLS&quot;);</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>   }</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>   auto reg = micthread::guard_stack(fstack, static_cast&lt;usize&gt;(Stack_Size));</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>   pid_t t = micthread::spawn&lt;KFn&gt;(reg.low, reg.usable, reinterpret_cast&lt;unsigned long&gt;(frame.tp), &amp;ctid, payload,</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>                                   micron::forward&lt;KArgs&gt;(kargs)...);</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>   if ( t == micthread::thread_failed ) {</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a>     micron::__tls_release_frame(frame);</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a>     micron::exc&lt;except::thread_error&gt;(&quot;micron thread::__link_launch(): thread failed to spawn&quot;);</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>   }</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>   tls = frame;</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>   tid = t;</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a> #else</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a>   using box_t = __pth_box&lt;KFn, P *, micron::decay_t&lt;KArgs&gt;...&gt;;</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>   auto *box = new box_t(payload, static_cast&lt;KArgs &amp;&amp;&gt;(kargs)...);</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a>   pthread_attr_t attr;</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>   int err = pthread_attr_init(&amp;attr);</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>   if ( err != 0 ) {</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>     box_t::destroy(box);</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>     micron::exc&lt;except::thread_error&gt;(&quot;micron thread::__link_launch(): failed to initialize pthread attributes&quot;);</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>   }</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a>   auto reg = micthread::guard_stack(fstack, static_cast&lt;usize&gt;(Stack_Size));</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>   err = pthread_attr_setstack(&amp;attr, reg.low, reg.usable);</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a>   if ( err != 0 ) {</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>     pthread_attr_destroy(&amp;attr);</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a>     if ( reg.low != reinterpret_cast&lt;addr_t *&gt;(fstack) )</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>       micron::mprotect(reinterpret_cast&lt;addr_t *&gt;(fstack), __micron_page_size_default, micron::prot_read | micron::prot_write);</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a>     box_t::destroy(box);</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>     micron::exc&lt;except::thread_error&gt;(&quot;micron thread::__link_launch(): invalid pthread stack&quot;);</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a>   }</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>   pthread_t th{};</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>   err = pthread_create(&amp;th, &amp;attr, &amp;box_t::trampoline, box);</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>   pthread_attr_destroy(&amp;attr);</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a>   if ( err != 0 ) {</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a>     if ( reg.low != reinterpret_cast&lt;addr_t *&gt;(fstack) )</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a>       micron::mprotect(reinterpret_cast&lt;addr_t *&gt;(fstack), __micron_page_size_default, micron::prot_read | micron::prot_write);</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a>     box_t::destroy(box);</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>     micron::exc&lt;except::thread_error&gt;(&quot;micron thread::__link_launch(): thread failed to spawn&quot;);</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>   }</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>   pth = static_cast&lt;unsigned long&gt;(th);</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a> #endif</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a> }</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a> </span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a> inline int</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a> __link_join([[maybe_unused]] pid_t tid, [[maybe_unused]] int *ctid, [[maybe_unused]] unsigned long pth)</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a> {</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>   if ( !__link_valid(tid, pth) ) return 0;</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a> #if defined(__micron_freestanding)</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>   micthread::join(ctid);</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a> #else</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>   pthread_join(static_cast&lt;pthread_t&gt;(pth), nullptr);</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a> #endif</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>   return 0;</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a> }</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a> </span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a> // non-blocking: 0 if exited/none, error::busy if still running</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a> inline int</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a> __link_try_join([[maybe_unused]] pid_t tid, [[maybe_unused]] int *ctid, [[maybe_unused]] unsigned long pth)</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a> {</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>   if ( !__link_valid(tid, pth) ) return 0;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a> #if defined(__micron_freestanding)</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a>   return micthread::try_join(ctid) == 0 ? 0 : static_cast&lt;int&gt;(error::busy);</span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a> #else</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>   return pthread_tryjoin_np(static_cast&lt;pthread_t&gt;(pth), nullptr) == 0 ? 0 : static_cast&lt;int&gt;(error::busy);</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a> #endif</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a> }</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a> </span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a> struct thread_attr_t {</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>   ~thread_attr_t() = default;</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a> </span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a>   thread_attr_t(pid_t a)</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>       : parent(a), pid(0), ctid(0), tls{}, pth(0), sched_policy(0), sched_priority(0), sched_niceness(0), detach_state(0), stack_size(0),</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>         stack_addr(nullptr)</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a>   {</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>   }</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a> </span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>   thread_attr_t(pid_t a, const pthread_attr_t &amp;)</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>       : parent(a), pid(0), ctid(0), tls{}, pth(0), sched_policy(0), sched_priority(0), sched_niceness(0), detach_state(0), stack_size(0),</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>         stack_addr(nullptr)</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>   {</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a>   }</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a> </span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a>   void</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>   clear()</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>   {</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>     pid = 0;</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>     ctid = 0;</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>     tls = micron::__tls_frame{};</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>     pth = 0;</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>     stack_size = 0;</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>     stack_addr = nullptr;</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>   }</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a> </span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>   thread_attr_t(thread_attr_t &amp;&amp;o) noexcept</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>       : parent(o.parent), pid(o.pid), ctid(o.ctid), tls(o.tls), pth(o.pth), sched_policy(o.sched_policy), sched_priority(o.sched_priority),</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a>         sched_niceness(o.sched_niceness), detach_state(o.detach_state), stack_size(o.stack_size), stack_addr(o.stack_addr)</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a>   {</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>     o.pid = 0;</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>     o.ctid = 0;</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a>     o.tls = micron::__tls_frame{};</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a>     o.pth = 0;</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a>     o.stack_size = 0;</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a>     o.stack_addr = nullptr;</span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>   }</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a> </span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>   thread_attr_t &amp;</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>   operator=(thread_attr_t &amp;&amp;o) noexcept</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>   {</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>     if ( this == &amp;o ) return *this;</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>     parent = o.parent;</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>     pid = o.pid;</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>     ctid = o.ctid;</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>     tls = o.tls;</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a>     pth = o.pth;</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>     sched_policy = o.sched_policy;</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a>     sched_priority = o.sched_priority;</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>     sched_niceness = o.sched_niceness;</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>     detach_state = o.detach_state;</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>     stack_size = o.stack_size;</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>     stack_addr = o.stack_addr;</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>     o.pid = 0;</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a>     o.ctid = 0;</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a>     o.tls = micron::__tls_frame{};</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>     o.pth = 0;</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>     o.stack_size = 0;</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>     o.stack_addr = nullptr;</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>     return *this;</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>   }</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a> </span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>   pid_t parent;</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>   pid_t pid;                    // kernel tid (freestanding; 0 = none/joined)</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>   int ctid;                     // CHILD_CLEARTID join futex word (freestanding; address must stay stable while running)</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>   micron::__tls_frame tls;      // per-thread TLS block (freestanding; joiner frees)</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>   unsigned long pth;            // pthread_t handle (hosted backend)</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a>   i32 sched_policy;</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a>   u32 sched_priority;</span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a>   u32 sched_niceness;</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>   i32 detach_state;</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>   usize stack_size;</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>   addr_t *stack_addr;</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a> };</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a> </span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a> inline thread_attr_t</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a> __thread_attr_with_stack(pid_t parent, int policy, addr_t *stack, usize sz, int prio = 0) noexcept</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a> {</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>   thread_attr_t a(parent);</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>   a.stack_addr = stack;</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>   a.stack_size = sz;</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>   a.sched_policy = policy;</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a>   a.sched_priority = static_cast&lt;u32&gt;(prio);</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a>   return a;</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a> }</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a> </span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

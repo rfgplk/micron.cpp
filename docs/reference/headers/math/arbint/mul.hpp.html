@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/mul.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/mul.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/mul.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/mul.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-59d2f2f525ac998f">micron::math::mpn::tiers_built</code></td><td>variable; line 30</td></tr><tr class="t-dsc"><td><code id="s-d46afe11dbb022e9">micron::math::mpn::mul_tier_cap</code></td><td>variable; line 32</td></tr><tr class="t-dsc"><td><code id="s-cdca8332a6365b4c">micron::math::mpn::sqr_tier_cap</code></td><td>variable; line 33</td></tr><tr class="t-dsc"><td><a href="#f-52affdb596678a7b">micron::math::mpn::clamp_algo(algo k) noexcept</a></td><td>function; line 41</td></tr><tr class="t-dsc"><td><a href="#f-02636a7401fd5e34">micron::math::mpn::mul_itch(usize an, usize bn, usize cutoff = threshold::mul_karatsuba) noexcept</a></td><td>function; line 50</td></tr><tr class="t-dsc"><td><a href="#f-644352241e06eb4e">micron::math::mpn::sqr_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept</a></td><td>function; line 69</td></tr><tr class="t-dsc"><td><a href="#f-3c8b9d403a996332">micron::math::mpn::mul_itch_forced(usize an, usize bn) noexcept</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-4f602d13fd7bc743">micron::math::mpn::sqr_itch_forced(usize n) noexcept</a></td><td>function; line 104</td></tr><tr class="t-dsc"><td><a href="#f-fb3ea344944331b7">micron::math::mpn::mul_itch_with(usize an, usize bn) noexcept</a></td><td>function; line 122</td></tr><tr class="t-dsc"><td><a href="#f-360185570c3584a5">micron::math::mpn::sqr_itch_with(usize n) noexcept</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-d03113fe99677357">micron::math::mpn::mul_solver_itch(usize an, usize bn) noexcept</a></td><td>function; line 173</td></tr><tr class="t-dsc"><td><a href="#f-873deeef4439ab28">micron::math::mpn::sqr_solver_itch(usize n) noexcept</a></td><td>function; line 183</td></tr><tr class="t-dsc"><td><a href="#f-a2e57e07bace7f1a">micron::math::mpn::mul_solver_cap_itch(usize cap) noexcept</a></td><td>function; line 199</td></tr><tr class="t-dsc"><td><a href="#f-ab5d065bd0e0f685">micron::math::mpn::sqr_solver_cap_itch(usize cap) noexcept</a></td><td>function; line 235</td></tr><tr class="t-dsc"><td><a href="#f-3984e6586d888d3c">micron::math::mpn::mul_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+         limb_t *scratch) noexcept</a></td><td>function; line 270</td></tr><tr class="t-dsc"><td><a href="#f-a59d5ceefe8be0bb">micron::math::mpn::sqr_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</a></td><td>function; line 302</td></tr><tr class="t-dsc"><td><a href="#f-e7f7cb20e6b85f6a">micron::math::mpn::mul(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept</a></td><td>function; line 335</td></tr><tr class="t-dsc"><td><a href="#f-871d1061e7ab9c5e">micron::math::mpn::sqr(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</a></td><td>function; line 375</td></tr><tr class="t-dsc"><td><a href="#f-5932c01513990cae">micron::math::mpn::mul_fixed(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+          limb_t *scratch) noexcept</a></td><td>function; line 419</td></tr><tr class="t-dsc"><td><a href="#f-6d64aa51dbd44d52">micron::math::mpn::sqr_fixed(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</a></td><td>function; line 437</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-52affdb596678a7b"><h3><code>micron::math::mpn::clamp_algo(algo k) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L41">line 41</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr algo
+clamp_algo(algo k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>algo k</code></li></ul><h4>Effects</h4><p>Returns <code>clamp_to(k, mul_tier_cap)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr algo
+clamp_algo(algo k) noexcept
+{
+  return clamp_to(k, mul_tier_cap);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>clamp_to(k, mul_tier_cap)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L43">line 43</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tags.hpp.html#f-aa15fc56e92caa88">clamp_to</a>.</p></section><section class="function-entry" id="f-02636a7401fd5e34"><h3><code>micron::math::mpn::mul_itch(usize an, usize bn, usize cutoff = threshold::mul_karatsuba) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L50">line 50</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_itch(usize an, usize bn, usize cutoff = threshold::mul_karatsuba) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize bn</code></li><li><code>usize cutoff = threshold::mul_karatsuba</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_itch(usize an, usize bn, usize cutoff = threshold::mul_karatsuba) noexcept
+{
+  const usize n = an &lt; bn ? an : bn;
+  if ( clamp_algo(pick_mul(an, bn)) == algo::fft ) return fft_itch(an, bn);
+  if ( n &lt; cutoff ) return 0;
+  if ( clamp_algo(pick_mul(an, bn)) == algo::nussbaumer ) return nussbaumer_itch(an, bn);
+  usize base = karatsuba_itch(n, cutoff);
+  if ( an == bn &amp;&amp; n &gt;= threshold::mul_toom3 ) {
+    const usize t3 = toom3_itch(n);
+    if ( t3 &gt; base ) base = t3;
+  }
+  if ( an == bn &amp;&amp; n &gt;= threshold::mul_toom4 ) {
+    const usize t4 = toom4_itch(n);
+    if ( t4 &gt; base ) base = t4;
+  }
+  return (an == bn) ? base : (unbalanced_stage_itch(an, bn, cutoff) + base);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fft_itch(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L54">line 54</a></td></tr><tr class="t-dsc"><td><code>nussbaumer_itch(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L55">line 55</a></td></tr><tr class="t-dsc"><td><code>(an == bn) ? base : (unbalanced_stage_itch(an, bn, cutoff) + base)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L65">line 65</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-52affdb596678a7b">clamp_algo</a>, <a href="thresholds.hpp.html#f-60dc158b87cc2721">pick_mul</a>, <a href="mul_fft.hpp.html#f-84a72aa8eba5e86f">fft_itch</a>, <a href="mul_nussbaumer.hpp.html#f-d77f7a36d249d473">nussbaumer_itch</a>, <a href="mul_karatsuba.hpp.html#f-37cfdf23f68ccec2">karatsuba_itch</a>, <a href="mul_toom.hpp.html#f-f1e1c5b2062d1da0">toom3_itch</a>, <a href="mul_toom4.hpp.html#f-d0e4ad4185891e1d">toom4_itch</a>, <a href="mul_karatsuba.hpp.html#f-d9da202a48e4e577">unbalanced_stage_itch</a>.</p></section><section class="function-entry" id="f-644352241e06eb4e"><h3><code>micron::math::mpn::sqr_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>usize cutoff = threshold::sqr_karatsuba</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept
+{
+  if ( clamp_to(pick_sqr(n), sqr_tier_cap) == algo::fft ) return fft_itch(n, n);
+  if ( clamp_to(pick_sqr(n), sqr_tier_cap) == algo::nussbaumer ) return sqr_nussbaumer_itch(n);
+  usize base = sqr_karatsuba_itch(n, cutoff);
+  if ( n &gt;= threshold::sqr_toom3 ) {
+    const usize t3 = sqr_toom3_itch(n);
+    if ( t3 &gt; base ) base = t3;
+  }
+  if ( n &gt;= threshold::sqr_toom4 ) {
+    const usize t4 = sqr_toom4_itch(n);
+    if ( t4 &gt; base ) base = t4;
+  }
+  return base;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fft_itch(n, n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L71">line 71</a></td></tr><tr class="t-dsc"><td><code>sqr_nussbaumer_itch(n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L72">line 72</a></td></tr><tr class="t-dsc"><td><code>base</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L82">line 82</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tags.hpp.html#f-aa15fc56e92caa88">clamp_to</a>, <a href="thresholds.hpp.html#f-e24c0aa29434f72d">pick_sqr</a>, <a href="mul_fft.hpp.html#f-84a72aa8eba5e86f">fft_itch</a>, <a href="mul_nussbaumer.hpp.html#f-c597331b9c45127a">sqr_nussbaumer_itch</a>, <a href="mul_karatsuba.hpp.html#f-9345b4873ac97a10">sqr_karatsuba_itch</a>, <a href="mul_toom.hpp.html#f-ba0665c5cb0ee229">sqr_toom3_itch</a>, <a href="mul_toom4.hpp.html#f-f4e924719ffb5917">sqr_toom4_itch</a>.</p></section><section class="function-entry" id="f-3c8b9d403a996332"><h3><code>micron::math::mpn::mul_itch_forced(usize an, usize bn) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_itch_forced(usize an, usize bn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize bn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_itch_forced(usize an, usize bn) noexcept
+{
+  usize base = mul_itch(an, bn, karatsuba_force);
+  // mul_with&lt;toom3&gt; runs the Toom kernel wherever toom3_applies() allows
+  if ( an == bn &amp;&amp; an &gt;= 3u ) {
+    const usize t3 = toom3_itch(an, true);
+    if ( t3 &gt; base ) base = t3;
+    const usize t4 = toom4_itch(an, true);
+    if ( t4 &gt; base ) base = t4;
+  }
+  const usize ns = nussbaumer_itch(an, bn);
+  if ( ns &gt; base ) base = ns;
+  const usize fs = fft_itch(an, bn);
+  if ( fs &gt; base ) base = fs;
+  return base;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>base</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L100">line 100</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-02636a7401fd5e34">mul_itch</a>, <a href="mul_toom.hpp.html#f-f1e1c5b2062d1da0">toom3_itch</a>, <a href="mul_toom4.hpp.html#f-d0e4ad4185891e1d">toom4_itch</a>, <a href="mul_nussbaumer.hpp.html#f-d77f7a36d249d473">nussbaumer_itch</a>, <a href="mul_fft.hpp.html#f-84a72aa8eba5e86f">fft_itch</a>.</p></section><section class="function-entry" id="f-4f602d13fd7bc743"><h3><code>micron::math::mpn::sqr_itch_forced(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L104">line 104</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_itch_forced(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_itch_forced(usize n) noexcept
+{
+  usize base = sqr_itch(n, karatsuba_force);
+  if ( sqr_toom3_applies(n) ) {
+    const usize t3 = sqr_toom3_itch(n, true);
+    if ( t3 &gt; base ) base = t3;
+  }
+  const usize t4 = sqr_toom4_itch(n, true);
+  if ( t4 &gt; base ) base = t4;
+  const usize ns = sqr_nussbaumer_itch(n);
+  if ( ns &gt; base ) base = ns;
+  const usize fs = fft_itch(n, n);
+  if ( fs &gt; base ) base = fs;
+  return base;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>base</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L117">line 117</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-644352241e06eb4e">sqr_itch</a>, <a href="mul_toom.hpp.html#f-43664f4239a70dd0">sqr_toom3_applies</a>, <a href="mul_toom.hpp.html#f-ba0665c5cb0ee229">sqr_toom3_itch</a>, <a href="mul_toom4.hpp.html#f-f4e924719ffb5917">sqr_toom4_itch</a>, <a href="mul_nussbaumer.hpp.html#f-c597331b9c45127a">sqr_nussbaumer_itch</a>, <a href="mul_fft.hpp.html#f-84a72aa8eba5e86f">fft_itch</a>.</p></section><section class="function-entry" id="f-fb3ea344944331b7"><h3><code>micron::math::mpn::mul_itch_with(usize an, usize bn) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L122">line 122</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;algo K&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_itch_with(usize an, usize bn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize bn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;algo K&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_itch_with(usize an, usize bn) noexcept
+{
+  if constexpr ( K == algo::basecase || K == algo::comba )
+    return 0u;
+  else if constexpr ( K == algo::karatsuba ) {
+    if ( bn &lt; 2u ) return 0u;
+    if ( an != bn ) {
+      usize stage = unbalanced_stage_itch(an, bn, threshold::mul_karatsuba);
+      if ( stage == 0u ) stage = 2u * bn;
+      return stage + karatsuba_itch(bn);
+    }
+    const usize k = (an + 1u) / 2u;
+    return 6u * k + 1u + karatsuba_itch(k);
+  } else if constexpr ( K == algo::toom3 ) {
+    if ( toom3_applies(an, bn) ) return toom3_itch(an, true);
+    return mul_itch_with&lt;algo::karatsuba&gt;(an, bn);
+  } else if constexpr ( K == algo::toom4 ) {
+    if ( toom4_applies(an, bn) ) return toom4_itch(an, true);
+    if ( toom3_applies(an, bn) ) return toom3_itch(an, true);
+    return mul_itch_with&lt;algo::karatsuba&gt;(an, bn);
+  } else if constexpr ( K == algo::nussbaumer )
+    return nussbaumer_itch(an, bn);
+  else if constexpr ( K == algo::fft )
+    return fft_itch(an, bn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0u</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td><code>0u</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L127">line 127</a></td></tr><tr class="t-dsc"><td><code>stage + karatsuba_itch(bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>6u * k + 1u + karatsuba_itch(k)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L134">line 134</a></td></tr><tr class="t-dsc"><td><code>toom3_itch(an, true)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L136">line 136</a></td></tr><tr class="t-dsc"><td><code>mul_itch_with&lt;algo::karatsuba&gt;(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L137">line 137</a></td></tr><tr class="t-dsc"><td><code>toom4_itch(an, true)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>toom3_itch(an, true)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L140">line 140</a></td></tr><tr class="t-dsc"><td><code>mul_itch_with&lt;algo::karatsuba&gt;(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>nussbaumer_itch(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L143">line 143</a></td></tr><tr class="t-dsc"><td><code>fft_itch(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L145">line 145</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_karatsuba.hpp.html#f-d9da202a48e4e577">unbalanced_stage_itch</a>, <a href="mul_karatsuba.hpp.html#f-37cfdf23f68ccec2">karatsuba_itch</a>, <a href="mul_toom.hpp.html#f-2bac7aee96e82a26">toom3_applies</a>, <a href="mul_toom.hpp.html#f-f1e1c5b2062d1da0">toom3_itch</a>, <a href="mul_toom4.hpp.html#f-f60707d3b246cbf2">toom4_applies</a>, <a href="mul_toom4.hpp.html#f-d0e4ad4185891e1d">toom4_itch</a>, <a href="mul_nussbaumer.hpp.html#f-d77f7a36d249d473">nussbaumer_itch</a>, <a href="mul_fft.hpp.html#f-84a72aa8eba5e86f">fft_itch</a>.</p></section><section class="function-entry" id="f-360185570c3584a5"><h3><code>micron::math::mpn::sqr_itch_with(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;algo K&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_itch_with(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;algo K&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_itch_with(usize n) noexcept
+{
+  if constexpr ( K == algo::basecase || K == algo::comba )
+    return 0u;
+  else if constexpr ( K == algo::karatsuba ) {
+    if ( n &lt; 2u ) return 0u;
+    const usize k = (n + 1u) / 2u;
+    return 5u * k + 1u + sqr_karatsuba_itch(k);
+  } else if constexpr ( K == algo::toom3 ) {
+    if ( sqr_toom3_applies(n) ) return sqr_toom3_itch(n, true);
+    return sqr_itch_with&lt;algo::karatsuba&gt;(n);
+  } else if constexpr ( K == algo::toom4 ) {
+    if ( sqr_toom4_applies(n) ) return sqr_toom4_itch(n, true);
+    if ( sqr_toom3_applies(n) ) return sqr_toom3_itch(n, true);
+    return sqr_itch_with&lt;algo::karatsuba&gt;(n);
+  } else if constexpr ( K == algo::nussbaumer )
+    return sqr_nussbaumer_itch(n);
+  else if constexpr ( K == algo::fft )
+    return fft_itch(n, n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0u</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L153">line 153</a></td></tr><tr class="t-dsc"><td><code>0u</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L155">line 155</a></td></tr><tr class="t-dsc"><td><code>5u * k + 1u + sqr_karatsuba_itch(k)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L157">line 157</a></td></tr><tr class="t-dsc"><td><code>sqr_toom3_itch(n, true)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L159">line 159</a></td></tr><tr class="t-dsc"><td><code>sqr_itch_with&lt;algo::karatsuba&gt;(n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L160">line 160</a></td></tr><tr class="t-dsc"><td><code>sqr_toom4_itch(n, true)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L162">line 162</a></td></tr><tr class="t-dsc"><td><code>sqr_toom3_itch(n, true)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L163">line 163</a></td></tr><tr class="t-dsc"><td><code>sqr_itch_with&lt;algo::karatsuba&gt;(n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L164">line 164</a></td></tr><tr class="t-dsc"><td><code>sqr_nussbaumer_itch(n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L166">line 166</a></td></tr><tr class="t-dsc"><td><code>fft_itch(n, n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L168">line 168</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_karatsuba.hpp.html#f-9345b4873ac97a10">sqr_karatsuba_itch</a>, <a href="mul_toom.hpp.html#f-43664f4239a70dd0">sqr_toom3_applies</a>, <a href="mul_toom.hpp.html#f-ba0665c5cb0ee229">sqr_toom3_itch</a>, <a href="mul_toom4.hpp.html#f-b7f5b85fb2b1a9a7">sqr_toom4_applies</a>, <a href="mul_toom4.hpp.html#f-f4e924719ffb5917">sqr_toom4_itch</a>, <a href="mul_nussbaumer.hpp.html#f-c597331b9c45127a">sqr_nussbaumer_itch</a>, <a href="mul_fft.hpp.html#f-84a72aa8eba5e86f">fft_itch</a>.</p></section><section class="function-entry" id="f-d03113fe99677357"><h3><code>micron::math::mpn::mul_solver_itch(usize an, usize bn) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L173">line 173</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arb_solver S&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_solver_itch(usize an, usize bn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize bn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arb_solver S&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_solver_itch(usize an, usize bn) noexcept
+{
+  if constexpr ( micron::is_same_v&lt;S, solver::automatic&gt; )
+    return mul_itch(an, bn);
+  else
+    return mul_itch_with&lt;pinned_algo&lt;S&gt;()&gt;(an, bn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mul_itch(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td><code>mul_itch_with&lt;pinned_algo&lt;S&gt;()&gt;(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L178">line 178</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-02636a7401fd5e34">mul_itch</a>.</p></section><section class="function-entry" id="f-873deeef4439ab28"><h3><code>micron::math::mpn::sqr_solver_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L183">line 183</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arb_solver S&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_solver_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arb_solver S&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_solver_itch(usize n) noexcept
+{
+  if constexpr ( micron::is_same_v&lt;S, solver::automatic&gt; )
+    return sqr_itch(n);
+  else
+    return sqr_itch_with&lt;pinned_algo&lt;S&gt;()&gt;(n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sqr_itch(n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L186">line 186</a></td></tr><tr class="t-dsc"><td><code>sqr_itch_with&lt;pinned_algo&lt;S&gt;()&gt;(n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-644352241e06eb4e">sqr_itch</a>.</p></section><section class="function-entry" id="f-a2e57e07bace7f1a"><h3><code>micron::math::mpn::mul_solver_cap_itch(usize cap) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L199">line 199</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arb_solver S&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_solver_cap_itch(usize cap) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize cap</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arb_solver S&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+mul_solver_cap_itch(usize cap) noexcept
+{
+  if constexpr ( micron::is_same_v&lt;S, solver::basecase&gt; || micron::is_same_v&lt;S, solver::comba&gt; ) {
+    return 0u;
+  } else if constexpr ( micron::is_same_v&lt;S, solver::nussbaumer&gt; ) {
+    return nussbaumer_itch(cap, cap);
+  } else if constexpr ( micron::is_same_v&lt;S, solver::fft&gt; ) {
+    return fft_itch(cap, cap);
+  } else {
+    // Every unbalanced Karatsuba stage follows an Euclidean remainder chain.  The sum of that
+    // chain is below 3*cap and each stage reserves 2*bn, so this bounds every an,bn &lt;= cap.
+    usize out = 0u;
+    if constexpr ( !micron::is_same_v&lt;S, solver::automatic&gt; )
+      out = __nuss_size_add(__nuss_size_mul(6u, cap), karatsuba_itch(cap));
+    else if ( cap &gt;= threshold::mul_karatsuba )
+      out = __nuss_size_add(__nuss_size_mul(6u, cap), karatsuba_itch(cap));
+    if constexpr ( micron::is_same_v&lt;S, solver::toom&gt; ) {
+      out = __mul_itch_max(out, toom3_itch(cap, true));
+    } else if constexpr ( micron::is_same_v&lt;S, solver::automatic&gt; ) {
+      if constexpr ( static_cast&lt;u8&gt;(mul_tier_cap) &gt;= static_cast&lt;u8&gt;(algo::toom3) )
+        if ( cap &gt;= threshold::mul_toom3 ) out = __mul_itch_max(out, toom3_itch(cap));
+      if constexpr ( static_cast&lt;u8&gt;(mul_tier_cap) &gt;= static_cast&lt;u8&gt;(algo::toom4) )
+        if ( cap &gt;= threshold::mul_toom4 ) out = __mul_itch_max(out, toom4_itch(cap));
+      if constexpr ( static_cast&lt;u8&gt;(mul_tier_cap) &gt;= static_cast&lt;u8&gt;(algo::nussbaumer) )
+        if ( cap &gt;= threshold::mul_nussbaumer ) out = __mul_itch_max(out, nussbaumer_itch(cap, cap));
+#if defined(__micron_arbint_fft)
+      if constexpr ( static_cast&lt;u8&gt;(mul_tier_cap) &gt;= static_cast&lt;u8&gt;(algo::fft) )
+        if ( cap &gt;= threshold::mul_fft ) out = __mul_itch_max(out, fft_itch(cap, cap));
+#endif
+    }
+    return out;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0u</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L202">line 202</a></td></tr><tr class="t-dsc"><td><code>nussbaumer_itch(cap, cap)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L204">line 204</a></td></tr><tr class="t-dsc"><td><code>fft_itch(cap, cap)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L206">line 206</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L229">line 229</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_nussbaumer.hpp.html#f-d77f7a36d249d473">nussbaumer_itch</a>, <a href="mul_fft.hpp.html#f-84a72aa8eba5e86f">fft_itch</a>, <a href="mul_nussbaumer.hpp.html#f-0a09770c88df24ca">__nuss_size_add</a>, <a href="mul_nussbaumer.hpp.html#f-77546cd83100f87d">__nuss_size_mul</a>, <a href="mul_karatsuba.hpp.html#f-37cfdf23f68ccec2">karatsuba_itch</a>, <a href="mul.hpp.html#f-1c07a78857dddcab">__mul_itch_max</a>, <a href="mul_toom.hpp.html#f-f1e1c5b2062d1da0">toom3_itch</a>, <a href="mul_toom4.hpp.html#f-d0e4ad4185891e1d">toom4_itch</a>.</p></section><section class="function-entry" id="f-ab5d065bd0e0f685"><h3><code>micron::math::mpn::sqr_solver_cap_itch(usize cap) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L235">line 235</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arb_solver S&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_solver_cap_itch(usize cap) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize cap</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arb_solver S&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_solver_cap_itch(usize cap) noexcept
+{
+  if constexpr ( micron::is_same_v&lt;S, solver::automatic&gt; ) {
+    usize out = sqr_itch(cap);
+#if defined(__micron_arbint_fft)
+    if constexpr ( static_cast&lt;u8&gt;(sqr_tier_cap) &gt;= static_cast&lt;u8&gt;(algo::fft) )
+      if ( cap &gt;= threshold::sqr_fft ) out = __mul_itch_max(out, fft_itch(cap, cap));
+#endif
+    return out;
+  } else
+    return sqr_itch_with&lt;pinned_algo&lt;S&gt;()&gt;(cap);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L243">line 243</a></td></tr><tr class="t-dsc"><td><code>sqr_itch_with&lt;pinned_algo&lt;S&gt;()&gt;(cap)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L245">line 245</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-644352241e06eb4e">sqr_itch</a>, <a href="mul.hpp.html#f-1c07a78857dddcab">__mul_itch_max</a>, <a href="mul_fft.hpp.html#f-84a72aa8eba5e86f">fft_itch</a>.</p></section><section class="function-entry" id="f-3984e6586d888d3c"><h3><code>micron::math::mpn::mul_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+         limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L270">line 270</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;algo K&gt;
+inline constexpr void
+mul_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+         limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;algo K&gt;
+inline constexpr void
+mul_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+         limb_t *scratch) noexcept
+{
+  static_assert(static_cast&lt;u8&gt;(K) &lt;= static_cast&lt;u8&gt;(tiers_built),
+                &quot;arbint: this multiplication tier is not implemented yet -- see mpn::tiers_built&quot;);
+  if constexpr ( K == algo::basecase )
+    mul_basecase(rp, ap, an, bp, bn);
+  else if constexpr ( K == algo::comba )
+    mul_comba(rp, ap, an, bp, bn);
+  else if constexpr ( K == algo::karatsuba )
+    mul_karatsuba_top(rp, ap, an, bp, bn, scratch);
+  else if constexpr ( K == algo::toom3 ) {
+    if ( toom3_applies(an, bn) )
+      mul_toom3(rp, ap, bp, an, scratch, threshold::mul_karatsuba);
+    else
+      mul_karatsuba_top(rp, ap, an, bp, bn, scratch);
+  } else if constexpr ( K == algo::toom4 ) {
+    if ( toom4_applies(an, bn) )
+      mul_toom4(rp, ap, bp, an, scratch, threshold::mul_karatsuba);
+    else if ( toom3_applies(an, bn) )
+      mul_toom3(rp, ap, bp, an, scratch, threshold::mul_karatsuba);
+    else
+      mul_karatsuba_top(rp, ap, an, bp, bn, scratch);
+  } else if constexpr ( K == algo::fft ) {
+    mul_fft(rp, ap, an, bp, bn, scratch);
+  } else {
+    mul_nussbaumer(rp, ap, an, bp, bn, scratch);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(static_cast&lt;u8&gt;(K) &lt;= static_cast&lt;u8&gt;(tiers_built),
+                &quot;arbint: this multiplication tier is not implemented yet -- see mpn::tiers_built&quot;);</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L273">line 273</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_basecase.hpp.html#f-b800a0c791e5e7d5">mul_basecase</a>, <a href="mul_basecase.hpp.html#f-c693bcab2601fa30">mul_comba</a>, <a href="mul_karatsuba.hpp.html#f-5487820eb96a9ad1">mul_karatsuba_top</a>, <a href="mul_toom.hpp.html#f-2bac7aee96e82a26">toom3_applies</a>, <a href="mul_toom.hpp.html#f-23641a46c370afc2">mul_toom3</a>, <a href="mul_toom4.hpp.html#f-f60707d3b246cbf2">toom4_applies</a>, <a href="mul_toom4.hpp.html#f-8bee1860ed873497">mul_toom4</a>, <a href="mul_fft.hpp.html#f-d1db0caef401f2e8">mul_fft</a>, <a href="mul_nussbaumer.hpp.html#f-91c41a3dc6e27b6d">mul_nussbaumer</a>.</p></section><section class="function-entry" id="f-a59d5ceefe8be0bb"><h3><code>micron::math::mpn::sqr_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L302">line 302</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;algo K&gt;
+inline constexpr void
+sqr_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;algo K&gt;
+inline constexpr void
+sqr_with(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept
+{
+  static_assert(static_cast&lt;u8&gt;(K) &lt;= static_cast&lt;u8&gt;(tiers_built),
+                &quot;arbint: this squaring tier is not implemented yet -- see mpn::tiers_built&quot;);
+  if constexpr ( K == algo::basecase )
+    sqr_basecase(rp, ap, n);
+  else if constexpr ( K == algo::comba )
+    sqr_comba(rp, ap, n);
+  else if constexpr ( K == algo::karatsuba )
+    sqr_karatsuba_top(rp, ap, n, scratch);
+  else if constexpr ( K == algo::toom3 ) {
+    if ( sqr_toom3_applies(n) )
+      sqr_toom3(rp, ap, n, scratch, threshold::sqr_karatsuba);
+    else
+      sqr_karatsuba_top(rp, ap, n, scratch);
+  } else if constexpr ( K == algo::toom4 ) {
+    if ( sqr_toom4_applies(n) )
+      sqr_toom4(rp, ap, n, scratch, threshold::sqr_karatsuba);
+    else if ( sqr_toom3_applies(n) )
+      sqr_toom3(rp, ap, n, scratch, threshold::sqr_karatsuba);
+    else
+      sqr_karatsuba_top(rp, ap, n, scratch);
+  } else if constexpr ( K == algo::fft ) {
+    sqr_fft(rp, ap, n, scratch);
+  } else {
+    sqr_nussbaumer(rp, ap, n, scratch);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(static_cast&lt;u8&gt;(K) &lt;= static_cast&lt;u8&gt;(tiers_built),
+                &quot;arbint: this squaring tier is not implemented yet -- see mpn::tiers_built&quot;);</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L304">line 304</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_basecase.hpp.html#f-7c64e70840e2558d">sqr_basecase</a>, <a href="mul_basecase.hpp.html#f-ae87084e981d170e">sqr_comba</a>, <a href="mul_karatsuba.hpp.html#f-7130814f90db535c">sqr_karatsuba_top</a>, <a href="mul_toom.hpp.html#f-43664f4239a70dd0">sqr_toom3_applies</a>, <a href="mul_toom.hpp.html#f-6f922c18bc998bc1">sqr_toom3</a>, <a href="mul_toom4.hpp.html#f-b7f5b85fb2b1a9a7">sqr_toom4_applies</a>, <a href="mul_toom4.hpp.html#f-2952777a502f1bd5">sqr_toom4</a>, <a href="mul_fft.hpp.html#f-d87ac5ebf32370e1">sqr_fft</a>, <a href="mul_nussbaumer.hpp.html#f-dca3b5f20758df25">sqr_nussbaumer</a>.</p></section><section class="function-entry" id="f-e7f7cb20e6b85f6a"><h3><code>micron::math::mpn::mul(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L335">line 335</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+mul(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+mul(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch) noexcept
+{
+  if ( bn == 1 ) {
+    rp[an] = mul_1(rp, ap, an, bp[0]);
+    return;
+  }
+  switch ( clamp_algo(pick_mul(an, bn)) ) {
+  case algo::basecase:
+    mul_basecase(rp, ap, an, bp, bn);
+    return;
+  case algo::comba:
+    mul_comba(rp, ap, an, bp, bn);
+    return;
+  case algo::karatsuba:
+    mul_karatsuba(rp, ap, an, bp, bn, scratch);
+    return;
+  case algo::toom3:
+    if ( toom3_applies(an, bn) )
+      mul_toom3(rp, ap, bp, an, scratch, threshold::mul_karatsuba);
+    else
+      mul_karatsuba(rp, ap, an, bp, bn, scratch);
+    return;
+  case algo::toom4:
+    if ( toom4_applies(an, bn) )
+      mul_toom4(rp, ap, bp, an, scratch, threshold::mul_karatsuba);
+    else if ( toom3_applies(an, bn) )
+      mul_toom3(rp, ap, bp, an, scratch, threshold::mul_karatsuba);
+    else
+      mul_karatsuba(rp, ap, an, bp, bn, scratch);
+    return;
+  case algo::nussbaumer:
+    mul_nussbaumer(rp, ap, an, bp, bn, scratch);
+    return;
+  case algo::fft:
+    mul_fft(rp, ap, an, bp, bn, scratch);
+    return;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L339">line 339</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L344">line 344</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L347">line 347</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L350">line 350</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L356">line 356</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L367">line 367</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L370">line 370</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-3b73931b0fe4109c">mul_1</a>, <a href="mul.hpp.html#f-52affdb596678a7b">clamp_algo</a>, <a href="thresholds.hpp.html#f-60dc158b87cc2721">pick_mul</a>, <a href="mul_basecase.hpp.html#f-b800a0c791e5e7d5">mul_basecase</a>, <a href="mul_basecase.hpp.html#f-c693bcab2601fa30">mul_comba</a>, <a href="mul_karatsuba.hpp.html#f-5474a93d50edac85">mul_karatsuba</a>, <a href="mul_toom.hpp.html#f-2bac7aee96e82a26">toom3_applies</a>, <a href="mul_toom.hpp.html#f-23641a46c370afc2">mul_toom3</a>, <a href="mul_toom4.hpp.html#f-f60707d3b246cbf2">toom4_applies</a>, <a href="mul_toom4.hpp.html#f-8bee1860ed873497">mul_toom4</a>, <a href="mul_nussbaumer.hpp.html#f-91c41a3dc6e27b6d">mul_nussbaumer</a>, <a href="mul_fft.hpp.html#f-d1db0caef401f2e8">mul_fft</a>.</p></section><section class="function-entry" id="f-871d1061e7ab9c5e"><h3><code>micron::math::mpn::sqr(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L375">line 375</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+sqr(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+sqr(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept
+{
+  if ( n == 1 ) {
+    mul_wide(ap[0], ap[0], rp[0], rp[1]);
+    return;
+  }
+  switch ( clamp_to(pick_sqr(n), sqr_tier_cap) ) {
+  case algo::basecase:
+    sqr_basecase(rp, ap, n);
+    return;
+  case algo::comba:
+    sqr_comba(rp, ap, n);
+    return;
+  case algo::karatsuba:
+    sqr_karatsuba(rp, ap, n, scratch);
+    return;
+  case algo::toom3:
+    if ( sqr_toom3_applies(n) )
+      sqr_toom3(rp, ap, n, scratch, threshold::sqr_karatsuba);
+    else
+      sqr_karatsuba(rp, ap, n, scratch);
+    return;
+  case algo::toom4:
+    if ( sqr_toom4_applies(n) )
+      sqr_toom4(rp, ap, n, scratch, threshold::sqr_karatsuba);
+    else if ( sqr_toom3_applies(n) )
+      sqr_toom3(rp, ap, n, scratch, threshold::sqr_karatsuba);
+    else
+      sqr_karatsuba(rp, ap, n, scratch);
+    return;
+  case algo::nussbaumer:
+    sqr_nussbaumer(rp, ap, n, scratch);
+    return;
+  case algo::fft:
+    sqr_fft(rp, ap, n, scratch);
+    return;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L379">line 379</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L384">line 384</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L387">line 387</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L390">line 390</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L396">line 396</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L404">line 404</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L407">line 407</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul.hpp.html#L410">line 410</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/carry.hpp.html#f-aefe45390216bc36">mul_wide</a>, <a href="tags.hpp.html#f-aa15fc56e92caa88">clamp_to</a>, <a href="thresholds.hpp.html#f-e24c0aa29434f72d">pick_sqr</a>, <a href="mul_basecase.hpp.html#f-7c64e70840e2558d">sqr_basecase</a>, <a href="mul_basecase.hpp.html#f-ae87084e981d170e">sqr_comba</a>, <a href="mul_karatsuba.hpp.html#f-9e1b073dcdf47a29">sqr_karatsuba</a>, <a href="mul_toom.hpp.html#f-43664f4239a70dd0">sqr_toom3_applies</a>, <a href="mul_toom.hpp.html#f-6f922c18bc998bc1">sqr_toom3</a>, <a href="mul_toom4.hpp.html#f-b7f5b85fb2b1a9a7">sqr_toom4_applies</a>, <a href="mul_toom4.hpp.html#f-2952777a502f1bd5">sqr_toom4</a>, <a href="mul_nussbaumer.hpp.html#f-dca3b5f20758df25">sqr_nussbaumer</a>, <a href="mul_fft.hpp.html#f-d87ac5ebf32370e1">sqr_fft</a>.</p></section><section class="function-entry" id="f-5932c01513990cae"><h3><code>micron::math::mpn::mul_fixed(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+          limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L419">line 419</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize AN, usize BN, arb_solver S&gt;
+[[gnu::always_inline]] inline constexpr void
+mul_fixed(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+          limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize AN, usize BN, arb_solver S&gt;
+[[gnu::always_inline]] inline constexpr void
+mul_fixed(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+          limb_t *scratch) noexcept
+{
+  if constexpr ( !micron::is_same_v&lt;S, solver::automatic&gt; ) {
+    mul_with&lt;pinned_algo&lt;S&gt;()&gt;(rp, ap, an, bp, bn, scratch);
+  } else if constexpr ( AN &lt;= 16 &amp;&amp; BN &lt;= 16 &amp;&amp; AN + BN &lt;= 24 ) {
+    // small enough that the branch to pick a shape costs more than always taking the unrolled one
+    if ( an == AN &amp;&amp; bn == BN )
+      mul_comba_fixed&lt;AN, BN&gt;(rp, ap, bp);
+    else
+      mul(rp, ap, an, bp, bn, scratch);
+  } else {
+    mul(rp, ap, an, bp, bn, scratch);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul_basecase.hpp.html#f-93e2eba1f6eb6af7">mul_comba_fixed&lt;AN, BN&gt;</a>, <a href="mul.hpp.html#f-e7f7cb20e6b85f6a">mul</a>.</p></section><section class="function-entry" id="f-6d64aa51dbd44d52"><h3><code>micron::math::mpn::sqr_fixed(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L437">line 437</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, arb_solver S&gt;
+[[gnu::always_inline]] inline constexpr void
+sqr_fixed(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, arb_solver S&gt;
+[[gnu::always_inline]] inline constexpr void
+sqr_fixed(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept
+{
+  if constexpr ( !micron::is_same_v&lt;S, solver::automatic&gt; ) {
+    sqr_with&lt;pinned_algo&lt;S&gt;()&gt;(rp, ap, n, scratch);
+  } else if constexpr ( N &lt;= 16 ) {
+    if ( n == N )
+      sqr_comba_fixed&lt;N&gt;(rp, ap);
+    else
+      sqr(rp, ap, n, scratch);
+  } else {
+    sqr(rp, ap, n, scratch);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul_basecase.hpp.html#f-fe3504fc840a47c3">sqr_comba_fixed&lt;N&gt;</a>, <a href="mul.hpp.html#f-871d1061e7ab9c5e">sqr</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-1c07a78857dddcab"><h3><code>micron::math::mpn::__mul_itch_max(usize a, usize b) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L192">line 192</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+__mul_itch_max(usize a, usize b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize a</code></li><li><code>usize b</code></li></ul><h4>Effects</h4><p>Returns <code>a &gt; b ? a : b</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+__mul_itch_max(usize a, usize b) noexcept
+{
+  return a &gt; b ? a : b;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a &gt; b ? a : b</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L194">line 194</a></td></tr></tbody></table></section><section class="function-entry" id="f-d99d21f6c745b624"><h3><code>micron::math::mpn::__mul_itch_bound(usize an, usize bn) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L251">line 251</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+__mul_itch_bound(usize an, usize bn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize bn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+__mul_itch_bound(usize an, usize bn) noexcept
+{
+#if defined(__micron_arbint_fft)
+  if constexpr ( MICRON_ARBINT_MUL_TIER_CAP &gt;= 6 )
+    if ( an &gt;= threshold::mul_fft &amp;&amp; bn &gt;= threshold::mul_fft ) return mul_solver_cap_itch&lt;solver::automatic&gt;(an &gt; bn ? an : bn);
+#endif
+  return mul_itch(an, bn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mul_solver_cap_itch&lt;solver::automatic&gt;(an &gt; bn ? an : bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L255">line 255</a></td></tr><tr class="t-dsc"><td><code>mul_itch(an, bn)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L257">line 257</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-a2e57e07bace7f1a">mul_solver_cap_itch&lt;solver::automatic&gt;</a>, <a href="mul.hpp.html#f-02636a7401fd5e34">mul_itch</a>.</p></section><section class="function-entry" id="f-3c800bac55fe5b0c"><h3><code>micron::math::mpn::__sqr_itch_bound(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/mul.hpp</code>, <a href="../../../source/math/arbint/mul.hpp.html#L261">line 261</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+__sqr_itch_bound(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>sqr_solver_cap_itch&lt;solver::automatic&gt;(n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+__sqr_itch_bound(usize n) noexcept
+{
+  return sqr_solver_cap_itch&lt;solver::automatic&gt;(n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sqr_solver_cap_itch&lt;solver::automatic&gt;(n)</code></td><td><a href="../../../source/math/arbint/mul.hpp.html#L263">line 263</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-ab5d065bd0e0f685">sqr_solver_cap_itch&lt;solver::automatic&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

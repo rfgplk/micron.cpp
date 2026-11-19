@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/allocation/abcmalloc/tapi.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/allocation/abcmalloc/tapi.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/allocation.html">Allocation</a></div><p>Defined in header <code>&lt;micron/memory/allocation/abcmalloc/tapi.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-a2b8cb7a5bbe75eb">MICRON_ABC_MAX_ARENAS</code></td><td>macro; line 38<br><small><code>#ifndef MICRON_ABC_MAX_ARENAS</code></small></td></tr></tbody></table><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-7e14e63217a4a00e"><h3><code>abc::__this_tid(void) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline i32
+__this_tid(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>static_cast&lt;i32&gt;(micron::syscall(SYS_gettid))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline i32
+__this_tid(void) noexcept
+{
+  return static_cast&lt;i32&gt;(micron::syscall(SYS_gettid));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(micron::syscall(SYS_gettid))</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L71">line 71</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-facae2d3d6133ede"><h3><code>abc::__owner_alive(i32 tid) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L76">line 76</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold]] static inline bool
+__owner_alive(i32 tid) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 tid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold]] static inline bool
+__owner_alive(i32 tid) noexcept
+{
+  if ( tid == 0 ) return false;
+  const i32 pid = static_cast&lt;i32&gt;(micron::syscall(SYS_getpid));
+  return micron::syscall(SYS_tgkill, pid, tid, 0) == 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L78">line 78</a></td></tr><tr class="t-dsc"><td><code>micron::syscall(SYS_tgkill, pid, tid, 0) == 0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L80">line 80</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-28cbe6f143be3ebb"><h3><code>abc::__is_initial_thread(void) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L85">line 85</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold]] static inline bool
+__is_initial_thread(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__this_tid() == static_cast&lt;i32&gt;(micron::syscall(SYS_getpid))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold]] static inline bool
+__is_initial_thread(void) noexcept
+{
+  return __this_tid() == static_cast&lt;i32&gt;(micron::syscall(SYS_getpid));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__this_tid() == static_cast&lt;i32&gt;(micron::syscall(SYS_getpid))</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L87">line 87</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tapi.hpp.html#f-7e14e63217a4a00e">__this_tid</a>, <a href="../../../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-c92602ebc5dc2704"><h3><code>abc::__release_tls_arena(void) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L92">line 92</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+__release_tls_arena(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+__release_tls_arena(void) noexcept
+{
+  __arena *a = __tls_arena;
+  if ( !a ) return;
+  if ( __is_initial_thread() ) {
+    a-&gt;__maybe_drain();
+    return;
+  }
+  const i32 tid = __this_tid();
+  for ( u32 i = 0; i &lt; __max_arenas; ++i ) {
+    if ( __arena_pool[i] == a ) {
+      if ( __arena_owner[i].get(micron::memory_order_acquire) == tid ) {
+        a-&gt;__maybe_drain();      // flush pending cross-thread frees while we still own it
+        __arena_owner[i].store(__arena_slot_free, micron::memory_order_release);      // recyclable (ABC-10)
+      }
+      __tls_arena = nullptr;
+      return;
+    }
+  }
+  // overflow arena: same release protocol on the node&#x27;s own owner field
+  for ( __arena_node *nd = __overflow_head.get(micron::memory_order_acquire); nd != nullptr; nd = nd-&gt;next ) {
+    if ( &amp;nd-&gt;arena == a ) {
+      if ( nd-&gt;owner.get(micron::memory_order_acquire) == tid ) {
+        a-&gt;__maybe_drain();
+        nd-&gt;owner.store(__arena_slot_free, micron::memory_order_release);
+      }
+      break;
+    }
+  }
+  __tls_arena = nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L95">line 95</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L98">line 98</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tapi.hpp.html#f-28cbe6f143be3ebb">__is_initial_thread</a>, <a href="tapi.hpp.html#f-7e14e63217a4a00e">__this_tid</a>.</p></section><section class="function-entry" id="f-671366b7cda30beb"><h3><code>abc::__arena_slot_releaser::~__arena_slot_releaser() noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L127">line 127</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline ~__arena_slot_releaser() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline ~__arena_slot_releaser() noexcept { __release_tls_arena(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="tapi.hpp.html#f-c92602ebc5dc2704">__release_tls_arena</a>.</p></section><section class="function-entry" id="f-ddf98e04dbe6b03c"><h3><code>abc::__claim_arena_slow(void) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L134">line 134</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold, gnu::noinline]] inline __arena *
+__claim_arena_slow(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold, gnu::noinline]] inline __arena *
+__claim_arena_slow(void) noexcept
+{
+  micron::__thread_exit_hook = &amp;__release_tls_arena;      // micron::thread exit path
+  (void)&amp;__arena_releaser_tls;                            // force-instantiate the TLS-dtor releaser
+
+  const i32 tid = __this_tid();
+
+  {
+    const u32 n = __arena_pool_next.get(micron::memory_order_acquire);
+    const u32 lim = n &gt; __max_arenas ? __max_arenas : n;
+    for ( u32 i = 0; i &lt; lim; ++i ) {
+      i32 expect = __arena_slot_free;
+      if ( __arena_owner[i].compare_exchange_strong(expect, tid, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+        __arena *a = __arena_pool[i];
+        a-&gt;__maybe_drain();
+        __tls_arena = a;
+        return a;
+      }
+    }
+  }
+
+  // WARNING: reclaim a slot whose owner thread has died without releasing it;
+  // a joined threads slot can lag the next threads reclaim, under fast churn stale slots can accumulate rapidly
+  {
+    const u32 n = __arena_pool_next.get(micron::memory_order_acquire);
+    const u32 lim = n &gt; __max_arenas ? __max_arenas : n;
+    for ( u32 i = 0; i &lt; lim; ++i ) {
+      __arena *a = __arena_pool[i];
+      if ( !a ) continue;
+      i32 owner = __arena_owner[i].get(micron::memory_order_acquire);
+      if ( owner &lt;= 0 || owner == tid ) continue;
+      if ( __owner_alive(owner) ) continue;
+      if ( __arena_owner[i].compare_exchange_strong(owner, tid, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+        a-&gt;__maybe_drain();
+        __tls_arena = a;
+        return a;
+      }
+    }
+  }
+
+  u32 cur = __arena_pool_next.get(micron::memory_order_acquire);
+  while ( cur &lt; __max_arenas ) {
+    if ( __arena_pool_next.compare_exchange_strong(cur, cur + 1, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+      __arena *a = new (&amp;__arena_pool_storage[cur * sizeof(__arena)]) __arena();
+      __arena_pool[cur] = a;
+      __arena_owner[cur].store(tid, micron::memory_order_release);
+      __tls_arena = a;
+      return a;
+    }
+  }
+
+  for ( __arena_node *nd = __overflow_head.get(micron::memory_order_acquire); nd != nullptr; nd = nd-&gt;next ) {
+    i32 owner = nd-&gt;owner.get(micron::memory_order_acquire);
+    const bool reclaimable = (owner == __arena_slot_free) || (owner &gt; 0 &amp;&amp; owner != tid &amp;&amp; !__owner_alive(owner));
+    if ( !reclaimable ) continue;
+    i32 expect = owner;      // free or a dead owner; claim it
+    if ( nd-&gt;owner.compare_exchange_strong(expect, tid, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+      nd-&gt;arena.__maybe_drain();
+      __tls_arena = &amp;nd-&gt;arena;
+      return &amp;nd-&gt;arena;
+    }
+  }
+
+  byte *mem = micron::sys_allocator&lt;byte&gt;::alloc(sizeof(__arena_node));
+  __arena_node *node = new (mem) __arena_node();
+  node-&gt;owner.store(tid, micron::memory_order_release);
+  node-&gt;next = __overflow_head.get(micron::memory_order_acquire);
+  while ( !__overflow_head.compare_exchange_weak(node-&gt;next, node, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+  }
+  __tls_arena = &amp;node-&gt;arena;
+  return &amp;node-&gt;arena;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L169">line 169</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>&amp;nd-&gt;arena</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L193">line 193</a></td></tr><tr class="t-dsc"><td><code>&amp;node-&gt;arena</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L204">line 204</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tapi.hpp.html#f-7e14e63217a4a00e">__this_tid</a>, <a href="tapi.hpp.html#f-facae2d3d6133ede">__owner_alive</a>, <a href="__sys.hpp.html#f-07f5dc5593c7d77f">micron::sys_allocator&lt;byte&gt;::alloc</a>.</p></section><section class="function-entry" id="f-46cdde3bc00553d3"><h3><code>abc::__current_arena(void) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L209">line 209</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline __arena *
+__current_arena(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline __arena *
+__current_arena(void) noexcept
+{
+  __arena *a = __tls_arena;
+  if ( a ) [[likely]] {
+    a-&gt;__maybe_drain();
+    return a;
+  }
+  return __claim_arena_slow();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L214">line 214</a></td></tr><tr class="t-dsc"><td><code>__claim_arena_slow()</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L216">line 216</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tapi.hpp.html#f-ddf98e04dbe6b03c">__claim_arena_slow</a>.</p></section><section class="function-entry" id="f-6f9517c58dced596"><h3><code>abc::__route_dealloc(byte *p, usize sz) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L220">line 220</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline bool
+__route_dealloc(byte *p, usize sz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *p</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline bool
+__route_dealloc(byte *p, usize sz) noexcept
+{
+  __arena *me = __current_arena();
+  if constexpr ( !__default_multithread_safe ) {
+    // single-thread
+    return sz ? me-&gt;pop(micron::__chunk&lt;byte&gt;{ p, sz }) : me-&gt;pop(p);
+  }
+  __arena *owner = __owner_of(p);
+  if ( !owner || owner == me ) [[likely]] {
+    return sz ? me-&gt;pop(micron::__chunk&lt;byte&gt;{ p, sz }) : me-&gt;pop(p);
+  }
+  // wait-free: the owner&#x27;s ring, falling back to the embedded-node overflow LIFO when the ring is full; never spin here
+  ABC_DOCTOR(doctor::record_remote_free(p, sz);)
+  (void)owner-&gt;__remote_push(p, sz);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sz ? me-&gt;pop(micron::__chunk&lt;byte&gt;{ p, sz }) : me-&gt;pop(p)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L225">line 225</a></td></tr><tr class="t-dsc"><td><code>sz ? me-&gt;pop(micron::__chunk&lt;byte&gt;{ p, sz }) : me-&gt;pop(p)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L229">line 229</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L234">line 234</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tapi.hpp.html#f-46cdde3bc00553d3">__current_arena</a>, <a href="sheet_header.hpp.html#f-b4af13f755f2ec7f">__owner_of</a>.</p></section><section class="function-entry" id="f-39cdf79637edbbd8"><h3><code>abc::__route_retire(byte *p) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L238">line 238</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline bool
+__route_retire(byte *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline bool
+__route_retire(byte *p) noexcept
+{
+  __arena *me = __current_arena();
+  if constexpr ( !__default_multithread_safe ) return me-&gt;ts_pop(p);
+  __arena *owner = __owner_of(p);
+  if ( !owner || owner == me ) [[likely]]
+    return me-&gt;ts_pop(p);
+  ABC_DOCTOR(doctor::record_remote_tombstone(p);)
+  (void)owner-&gt;__remote_push(p, __remote_tombstone_size);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>me-&gt;ts_pop(p)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L241">line 241</a></td></tr><tr class="t-dsc"><td><code>me-&gt;ts_pop(p)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L244">line 244</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L247">line 247</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tapi.hpp.html#f-46cdde3bc00553d3">__current_arena</a>, <a href="sheet_header.hpp.html#f-b4af13f755f2ec7f">__owner_of</a>.</p></section><section class="function-entry" id="f-82291aa02b1accaa"><h3><code>abc::__query_arena(const void *p) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L251">line 251</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline __arena *
+__query_arena(const void *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline __arena *
+__query_arena(const void *p) noexcept
+{
+  if constexpr ( !__default_multithread_safe ) {
+    (void)p;
+    return __current_arena();
+  } else {
+    __arena *owner = __owner_of(p);
+    return owner ? owner : __current_arena();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__current_arena()</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L255">line 255</a></td></tr><tr class="t-dsc"><td><code>owner ? owner : __current_arena()</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L258">line 258</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tapi.hpp.html#f-46cdde3bc00553d3">__current_arena</a>, <a href="sheet_header.hpp.html#f-b4af13f755f2ec7f">__owner_of</a>.</p></section><section class="function-entry" id="f-847e4c0f2f5de260"><h3><code>abc::__for_each_live_arena(Fn &amp;&amp;fn) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L264">line 264</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+[[gnu::always_inline]] static inline void
+__for_each_live_arena(Fn &amp;&amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+[[gnu::always_inline]] static inline void
+__for_each_live_arena(Fn &amp;&amp;fn) noexcept
+{
+  if constexpr ( !__default_multithread_safe ) {
+    if ( auto *a = __tls_arena; a ) fn(*a);
+    return;
+  }
+  const u32 n = __arena_pool_next.get(micron::memory_order_acquire);
+  const u32 lim = n &gt; __max_arenas ? __max_arenas : n;
+  for ( u32 i = 0; i &lt; lim; ++i ) {
+    if ( auto *a = __arena_pool[i]; a ) fn(*a);
+  }
+  for ( __arena_node *nd = __overflow_head.get(micron::memory_order_acquire); nd != nullptr; nd = nd-&gt;next ) fn(nd-&gt;arena);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L268">line 268</a></td></tr></tbody></table></section><section class="function-entry" id="f-571643cd6bad3c54"><h3><code>abc::__boot_abcmalloc(void) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/tapi.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/tapi.hpp.html#L281">line 281</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::used, gnu::retain]] inline void
+__boot_abcmalloc(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::used, gnu::retain]] inline void
+__boot_abcmalloc(void) noexcept
+{
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

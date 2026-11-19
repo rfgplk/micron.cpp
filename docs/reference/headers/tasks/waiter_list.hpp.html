@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/waiter_list.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/waiter_list.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/waiter_list.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/tasks/waiter_list.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-8225586bf33ea050">micron::coro::waiter_node</code></td><td>struct; line 38</td></tr><tr class="t-dsc"><td><code id="s-7e998b333ac68747">micron::coro::waiter_list</code></td><td>class; line 59</td></tr><tr class="t-dsc"><td><a href="#f-dd519b7ec71889e3">micron::coro::waiter_list::waiter_list() noexcept</a></td><td>function; line 81</td></tr><tr class="t-dsc"><td><a href="#f-47a4d21c32182207">micron::coro::waiter_list::waiter_list(const waiter_list &amp;)</a></td><td>function; line 82</td></tr><tr class="t-dsc"><td><a href="#f-9dd28824b9114baf">micron::coro::waiter_list::operator=(const waiter_list &amp;)</a></td><td>function; line 83</td></tr><tr class="t-dsc"><td><a href="#f-db951b68ec32f0f7">micron::coro::waiter_list::push(waiter_node *__n) noexcept</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-124203f505708327">micron::coro::waiter_list::push_unless(waiter_node *__n, Pred __open) noexcept</a></td><td>function; line 96</td></tr><tr class="t-dsc"><td><a href="#f-d7b41f525c6e9fd2">micron::coro::waiter_list::pop() noexcept</a></td><td>function; line 110</td></tr><tr class="t-dsc"><td><a href="#f-e7c1b2f48f6418df">micron::coro::waiter_list::pop_blocking() noexcept</a></td><td>function; line 120</td></tr><tr class="t-dsc"><td><a href="#f-e5678ab299b6c427">micron::coro::waiter_list::swap_all() noexcept</a></td><td>function; line 136</td></tr><tr class="t-dsc"><td><a href="#f-5d6cff0d832e5e5b">micron::coro::waiter_list::swap_all_under(Fn __fn) noexcept</a></td><td>function; line 148</td></tr><tr class="t-dsc"><td><a href="#f-e217c057d007a565">micron::coro::waiter_list::empty() noexcept</a></td><td>function; line 161</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-dd519b7ec71889e3"><h3><code>micron::coro::waiter_list::waiter_list() noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L81">line 81</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>waiter_list() noexcept = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-47a4d21c32182207"><h3><code>micron::coro::waiter_list::waiter_list(const waiter_list &amp;)</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L82">line 82</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>waiter_list(const waiter_list &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const waiter_list &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-9dd28824b9114baf"><h3><code>micron::coro::waiter_list::operator=(const waiter_list &amp;)</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>waiter_list &amp;operator=(const waiter_list &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const waiter_list &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-db951b68ec32f0f7"><h3><code>micron::coro::waiter_list::push(waiter_node *__n) noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  push(waiter_node *__n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>waiter_node *__n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  push(waiter_node *__n) noexcept
+  {
+    __lock();
+    __n-&gt;__next = __head;
+    __head = __n;
+    __unlock();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-e69aa981f1636b69">__lock</a>, <a href="waiter_list.hpp.html#f-c6807fde498493e4">__unlock</a>.</p></section><section class="function-entry" id="f-124203f505708327"><h3><code>micron::coro::waiter_list::push_unless(waiter_node *__n, Pred __open) noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L96">line 96</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Pred&gt;
+  bool
+  push_unless(waiter_node *__n, Pred __open) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>waiter_node *__n</code></li><li><code>Pred __open</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Pred&gt;
+  bool
+  push_unless(waiter_node *__n, Pred __open) noexcept
+  {
+    __lock();
+    if ( __open() ) {
+      __unlock();
+      return false;
+    }
+    __n-&gt;__next = __head;
+    __head = __n;
+    __unlock();
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/tasks/waiter_list.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/tasks/waiter_list.hpp.html#L106">line 106</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-e69aa981f1636b69">__lock</a>, <a href="waiter_list.hpp.html#f-c6807fde498493e4">__unlock</a>.</p></section><section class="function-entry" id="f-d7b41f525c6e9fd2"><h3><code>micron::coro::waiter_list::pop() noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L110">line 110</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>waiter_node *
+  pop() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">waiter_node *
+  pop() noexcept
+  {
+    __lock();
+    waiter_node *__h = __head;
+    if ( __h != nullptr ) __head = __h-&gt;__next;
+    __unlock();
+    return __h;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__h</code></td><td><a href="../../source/tasks/waiter_list.hpp.html#L116">line 116</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-e69aa981f1636b69">__lock</a>, <a href="waiter_list.hpp.html#f-c6807fde498493e4">__unlock</a>.</p></section><section class="function-entry" id="f-e7c1b2f48f6418df"><h3><code>micron::coro::waiter_list::pop_blocking() noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L120">line 120</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>waiter_node *
+  pop_blocking() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">waiter_node *
+  pop_blocking() noexcept
+  {
+    for ( ;; ) {
+      __lock();
+      if ( __head != nullptr ) {
+        waiter_node *__h = __head;
+        __head = __h-&gt;__next;
+        __unlock();
+        return __h;
+      }
+      __unlock();
+      __cpu_pause();
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__h</code></td><td><a href="../../source/tasks/waiter_list.hpp.html#L128">line 128</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-e69aa981f1636b69">__lock</a>, <a href="waiter_list.hpp.html#f-c6807fde498493e4">__unlock</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-e5678ab299b6c427"><h3><code>micron::coro::waiter_list::swap_all() noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L136">line 136</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>waiter_node *
+  swap_all() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">waiter_node *
+  swap_all() noexcept
+  {
+    __lock();
+    waiter_node *__h = __head;
+    __head = nullptr;
+    __unlock();
+    return __h;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__h</code></td><td><a href="../../source/tasks/waiter_list.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-e69aa981f1636b69">__lock</a>, <a href="waiter_list.hpp.html#f-c6807fde498493e4">__unlock</a>.</p></section><section class="function-entry" id="f-5d6cff0d832e5e5b"><h3><code>micron::coro::waiter_list::swap_all_under(Fn __fn) noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L148">line 148</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  waiter_node *
+  swap_all_under(Fn __fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn __fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  waiter_node *
+  swap_all_under(Fn __fn) noexcept
+  {
+    __lock();
+    waiter_node *__h = nullptr;
+    if ( __fn() ) {
+      __h = __head;
+      __head = nullptr;
+    }
+    __unlock();
+    return __h;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__h</code></td><td><a href="../../source/tasks/waiter_list.hpp.html#L157">line 157</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-e69aa981f1636b69">__lock</a>, <a href="waiter_list.hpp.html#f-c6807fde498493e4">__unlock</a>.</p></section><section class="function-entry" id="f-e217c057d007a565"><h3><code>micron::coro::waiter_list::empty() noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L161">line 161</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() noexcept
+  {
+    __lock();
+    const bool __e = (__head == nullptr);
+    __unlock();
+    return __e;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/tasks/waiter_list.hpp.html#L166">line 166</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-e69aa981f1636b69">__lock</a>, <a href="waiter_list.hpp.html#f-c6807fde498493e4">__unlock</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-5bc590b6e30ccb8b"><h3><code>micron::coro::__resume_waiter(__frame_base *__f) noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L30">line 30</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__resume_waiter(__frame_base *__f) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__frame_base *__f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__resume_waiter(__frame_base *__f) noexcept
+{
+  if ( __global_engine != nullptr )
+    __global_engine-&gt;submit(__f);
+  else
+    __f-&gt;__self.resume();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-58d7e3d268d8197b"><h3><code>micron::coro::__wake_one(waiter_node *__n) noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__wake_one(waiter_node *__n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>waiter_node *__n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__wake_one(waiter_node *__n) noexcept
+{
+  if ( __n != nullptr ) __resume_waiter(__n-&gt;__frame);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-5bc590b6e30ccb8b">__resume_waiter</a>.</p></section><section class="function-entry" id="f-57dbd0f766aa8ab3"><h3><code>micron::coro::__wake_all(waiter_node *__h) noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L50">line 50</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__wake_all(waiter_node *__h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>waiter_node *__h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__wake_all(waiter_node *__h) noexcept
+{
+  while ( __h != nullptr ) {
+    waiter_node *__nx = __h-&gt;__next;
+    __resume_waiter(__h-&gt;__frame);
+    __h = __nx;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-5bc590b6e30ccb8b">__resume_waiter</a>.</p></section><section class="function-entry" id="f-e69aa981f1636b69"><h3><code>micron::coro::waiter_list::__lock() noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L65">line 65</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __lock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __lock() noexcept
+  {
+    u32 __e = 0;
+    while ( !__lk.compare_exchange_weak(__e, 1u, memory_order_acq_rel, memory_order_acquire) ) {
+      __e = 0;
+      __cpu_pause();
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-c6807fde498493e4"><h3><code>micron::coro::waiter_list::__unlock() noexcept</code></h3><p>Defined in <code>tasks/waiter_list.hpp</code>, <a href="../../source/tasks/waiter_list.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __unlock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __unlock() noexcept
+  {
+    __lk.store(0u, memory_order_release);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

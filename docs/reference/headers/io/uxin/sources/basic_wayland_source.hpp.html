@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/uxin/sources/basic_wayland_source.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/uxin/sources/basic_wayland_source.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/input.html">Input devices</a></div><p>Defined in header <code>&lt;micron/io/uxin/sources/basic_wayland_source.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-dd49a57aefb3892e">micron::uxin::basic_wayland_source</code></td><td>class; line 27</td></tr><tr class="t-dsc"><td><code id="s-3cc2935311cc6cde">micron::uxin::basic_wayland_source::on_key</code></td><td>member; line 380</td></tr><tr class="t-dsc"><td><code id="s-24cd36c79a069490">micron::uxin::basic_wayland_source::on_button</code></td><td>member; line 382</td></tr><tr class="t-dsc"><td><code id="s-cede59af0ef99722">micron::uxin::basic_wayland_source::on_motion</code></td><td>member; line 384</td></tr><tr class="t-dsc"><td><code id="s-83c8c05475da6e55">micron::uxin::basic_wayland_source::on_axis</code></td><td>member; line 386</td></tr><tr class="t-dsc"><td><code id="s-1c4b4227e31ac7ce">micron::uxin::basic_wayland_source::on_keysym</code></td><td>member; line 388</td></tr><tr class="t-dsc"><td><code id="s-77b9dd687065deaa">micron::uxin::basic_wayland_source::user</code></td><td>member; line 389</td></tr><tr class="t-dsc"><td><code id="s-bb17e603f3ddffdd">micron::uxin::basic_wayland_source::on_global</code></td><td>member; line 390</td></tr><tr class="t-dsc"><td><code id="s-74103b1688539024">micron::uxin::basic_wayland_source::on_global_remove</code></td><td>member; line 391</td></tr><tr class="t-dsc"><td><code id="s-bf746dfb83de731c">micron::uxin::basic_wayland_source::on_modifiers</code></td><td>member; line 392</td></tr><tr class="t-dsc"><td><code id="s-40addfc6ff984a47">micron::uxin::basic_wayland_source::on_pointer_focus</code></td><td>member; line 393</td></tr><tr class="t-dsc"><td><code id="s-8ac8b7aea42587aa">micron::uxin::basic_wayland_source::on_keyboard_focus</code></td><td>member; line 394</td></tr><tr class="t-dsc"><td><code id="s-f24316d735a420a3">micron::uxin::basic_wayland_source::on_position</code></td><td>member; line 395</td></tr><tr class="t-dsc"><td><code id="s-677ce1416cd13c41">micron::uxin::basic_wayland_source::on_scroll</code></td><td>member; line 396</td></tr><tr class="t-dsc"><td><code id="s-58812646d27f9ce4">micron::uxin::basic_wayland_source::on_repeat</code></td><td>member; line 397</td></tr><tr class="t-dsc"><td><code id="s-8cbd0d51256d4cf6">micron::uxin::basic_wayland_source::on_serial</code></td><td>member; line 398</td></tr><tr class="t-dsc"><td><a href="#f-dc7ed5d609164404">micron::uxin::basic_wayland_source::~basic_wayland_source()</a></td><td>function; line 348</td></tr><tr class="t-dsc"><td><a href="#f-4fe5291b971d751b">micron::uxin::basic_wayland_source::basic_wayland_source()</a></td><td>function; line 350</td></tr><tr class="t-dsc"><td><a href="#f-2dc5645e03a41abc">micron::uxin::basic_wayland_source::basic_wayland_source(const basic_wayland_source &amp;)</a></td><td>function; line 351</td></tr><tr class="t-dsc"><td><a href="#f-4d00ea23bce02243">micron::uxin::basic_wayland_source::operator=(const basic_wayland_source &amp;)</a></td><td>function; line 352</td></tr><tr class="t-dsc"><td><a href="#f-cfcc3221d5499245">micron::uxin::basic_wayland_source::bind(gfx::platform::display &amp;dpy, gfx::platform::wl_surface *surface = nullptr, bool synchronous = true)</a></td><td>function; line 356</td></tr><tr class="t-dsc"><td><a href="#f-0e37cf87fbd10e2b">micron::uxin::basic_wayland_source::xkb_available() const noexcept</a></td><td>function; line 401</td></tr><tr class="t-dsc"><td><a href="#f-c31e7467bea7e67f">micron::uxin::basic_wayland_source::poll() noexcept</a></td><td>function; line 407</td></tr><tr class="t-dsc"><td><a href="#f-b592a3b8668aeeb0">micron::uxin::basic_wayland_source::release() noexcept</a></td><td>function; line 413</td></tr><tr class="t-dsc"><td><a href="#f-da371458a892cf17">micron::uxin::basic_wayland_source::decoder() noexcept</a></td><td>function; line 436</td></tr><tr class="t-dsc"><td><a href="#f-33f1ca8f7366f91d">micron::uxin::basic_wayland_source::decoder() const noexcept</a></td><td>function; line 442</td></tr><tr class="t-dsc"><td><a href="#f-85b3a53abe851dc0">micron::uxin::basic_wayland_source::take_error() noexcept</a></td><td>function; line 448</td></tr><tr class="t-dsc"><td><a href="#f-b496ee89fdca0c04">micron::uxin::basic_wayland_source::seat() const noexcept</a></td><td>function; line 456</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-dc7ed5d609164404"><h3><code>micron::uxin::basic_wayland_source::~basic_wayland_source()</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L348">line 348</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~basic_wayland_source()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~basic_wayland_source() { release(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="basic_wayland_source.hpp.html#f-b592a3b8668aeeb0">release</a>.</p></section><section class="function-entry" id="f-4fe5291b971d751b"><h3><code>micron::uxin::basic_wayland_source::basic_wayland_source()</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L350">line 350</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>basic_wayland_source() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-2dc5645e03a41abc"><h3><code>micron::uxin::basic_wayland_source::basic_wayland_source(const basic_wayland_source &amp;)</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L351">line 351</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>basic_wayland_source(const basic_wayland_source &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const basic_wayland_source &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-4d00ea23bce02243"><h3><code>micron::uxin::basic_wayland_source::operator=(const basic_wayland_source &amp;)</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L352">line 352</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>basic_wayland_source &amp;operator=(const basic_wayland_source &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const basic_wayland_source &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-cfcc3221d5499245"><h3><code>micron::uxin::basic_wayland_source::bind(gfx::platform::display &amp;dpy, gfx::platform::wl_surface *surface = nullptr, bool synchronous = true)</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L356">line 356</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  bind(gfx::platform::display &amp;dpy, gfx::platform::wl_surface *surface = nullptr, bool synchronous = true)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>gfx::platform::display &amp;dpy</code></li><li><code>gfx::platform::wl_surface *surface = nullptr</code></li><li><code>bool synchronous = true</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  bind(gfx::platform::display &amp;dpy, gfx::platform::wl_surface *surface = nullptr, bool synchronous = true)
+  {
+    if ( dpy.backend() != gfx::platform::backend_tag_t::wayland ) {
+      exc&lt;except::logic_error&gt;(&quot;basic_wayland_source: gfx::platform::display is not Wayland&quot;);
+    }
+    __dpy = dpy.as_wayland();
+    if ( !__dpy || !__dpy-&gt;lib() ) exc&lt;except::logic_error&gt;(&quot;basic_wayland_source: wayland_display_t missing&quot;);
+    __lib = __dpy-&gt;lib();
+    __surface = surface;
+    __registry = __lib-&gt;wl_display_get_registry(__dpy-&gt;display());
+    if ( !__registry ) exc&lt;except::library_error&gt;(&quot;basic_wayland_source: registry unavailable&quot;);
+
+    static gfx::platform::wl_registry_listener_t reg_listener{ &amp;__on_global, &amp;__on_global_remove };
+    __lib-&gt;wl_proxy_add_listener(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(__registry), reinterpret_cast&lt;void (**)(void)&gt;(&amp;reg_listener),
+                                 this);
+    __xkb_available = __keymap.prepare();
+    if ( synchronous ) {
+      __lib-&gt;wl_display_roundtrip(__dpy-&gt;display());
+      __lib-&gt;wl_display_roundtrip(__dpy-&gt;display());
+      if ( !__seat ) exc&lt;except::library_error&gt;(&quot;wayland_source: compositor advertises no input&quot;);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::logic_error&gt;(&quot;basic_wayland_source: gfx::platform::display is not Wayland&quot;)</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L359">line 359</a><br>Within <code>( dpy.backend() != gfx::platform::backend_tag_t::wayland )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::logic_error&gt;(&quot;basic_wayland_source: wayland_display_t missing&quot;)</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L362">line 362</a><br>Within <code>( !__dpy || !__dpy-&gt;lib() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;basic_wayland_source: registry unavailable&quot;)</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L366">line 366</a><br>Within <code>( !__registry )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;wayland_source: compositor advertises no input&quot;)</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L375">line 375</a><br>Within <code>( synchronous )</code>, <code>( !__seat )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::logic_error&gt;</a>, <a href="../../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-0e37cf87fbd10e2b"><h3><code>micron::uxin::basic_wayland_source::xkb_available() const noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L401">line 401</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  xkb_available() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__xkb_available &amp;&amp; __keymap.valid()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  xkb_available() const noexcept
+  {
+    return __xkb_available &amp;&amp; __keymap.valid();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__xkb_available &amp;&amp; __keymap.valid()</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L403">line 403</a></td></tr></tbody></table></section><section class="function-entry" id="f-c31e7467bea7e67f"><h3><code>micron::uxin::basic_wayland_source::poll() noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L407">line 407</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  poll() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  poll() noexcept
+  {
+    if ( __dpy ) __dpy-&gt;dispatch_pending();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b592a3b8668aeeb0"><h3><code>micron::uxin::basic_wayland_source::release() noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L413">line 413</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  release() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  release() noexcept
+  {
+    if ( !__lib ) return;
+    drop_keyboard();
+    drop_pointer();
+    if ( __seat ) {
+      if ( __seat_version &lt; 5 )
+        __lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(__seat));
+      else
+        __lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(__seat), wl_seat_ops::wl_seat_release, nullptr,
+                                      __seat_version, 1);
+      __seat = nullptr;
+    }
+    if ( __registry ) __lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(__registry));
+    __registry = nullptr;
+    __lib = nullptr;
+    __keymap.reset();
+    __dpy = nullptr;
+    __surface = nullptr;
+    __pointer_inside = __keyboard_inside = false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L415">line 415</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="basic_wayland_source.hpp.html#f-48540498933e777d">drop_keyboard</a>, <a href="basic_wayland_source.hpp.html#f-2bebaba03059056d">drop_pointer</a>.</p></section><section class="function-entry" id="f-da371458a892cf17"><h3><code>micron::uxin::basic_wayland_source::decoder() noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L436">line 436</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>Decoder &amp;
+  decoder() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__keymap</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">Decoder &amp;
+  decoder() noexcept
+  {
+    return __keymap;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__keymap</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L438">line 438</a></td></tr></tbody></table></section><section class="function-entry" id="f-33f1ca8f7366f91d"><h3><code>micron::uxin::basic_wayland_source::decoder() const noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L442">line 442</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const Decoder &amp;
+  decoder() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__keymap</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const Decoder &amp;
+  decoder() const noexcept
+  {
+    return __keymap;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__keymap</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L444">line 444</a></td></tr></tbody></table></section><section class="function-entry" id="f-85b3a53abe851dc0"><h3><code>micron::uxin::basic_wayland_source::take_error() noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L448">line 448</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>i32
+  take_error() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">i32
+  take_error() noexcept
+  {
+    const auto result = error_;
+    error_ = 0;
+    return result;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L452">line 452</a></td></tr></tbody></table></section><section class="function-entry" id="f-b496ee89fdca0c04"><h3><code>micron::uxin::basic_wayland_source::seat() const noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L456">line 456</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>gfx::platform::wl_seat *
+  seat() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__seat</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">gfx::platform::wl_seat *
+  seat() const noexcept
+  {
+    return __seat;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__seat</code></td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L458">line 458</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-2f0e6c3368d05353"><h3><code>micron::uxin::basic_wayland_source::__on_global(void *data, gfx::platform::wl_registry *registry, u32 name, const char *interface, u32 version) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L30">line 30</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_global(void *data, gfx::platform::wl_registry *registry, u32 name, const char *interface, u32 version) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_registry *registry</code></li><li><code>u32 name</code></li><li><code>const char *interface</code></li><li><code>u32 version</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_global(void *data, gfx::platform::wl_registry *registry, u32 name, const char *interface, u32 version) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    auto streq = [](const char *a, const char *b) {
+      while ( *a &amp;&amp; *a == *b ) {
+        ++a;
+        ++b;
+      }
+      return *a == 0 &amp;&amp; *b == 0;
+    };
+    if ( self-&gt;on_global ) self-&gt;on_global(self-&gt;user, registry, name, interface, version);
+    if ( streq(interface, &quot;wl_seat&quot;) &amp;&amp; !self-&gt;__seat ) {
+      const u32 use_ver = version &lt; 7 ? version : 7u;
+      void *p = self-&gt;__lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(registry), 0 /*wl_registry.bind*/,
+                                                    &amp;__wl_seat_interface, use_ver, 0, name, &quot;wl_seat&quot;, use_ver, nullptr);
+      self-&gt;__seat = reinterpret_cast&lt;gfx::platform::wl_seat *&gt;(p);
+      self-&gt;__seat_version = use_ver;
+      self-&gt;seat_name_ = name;
+
+      static wl_seat_listener_t listener{ &amp;__on_seat_capabilities, &amp;__on_seat_name };
+      self-&gt;__lib-&gt;wl_proxy_add_listener(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;__seat),
+                                         reinterpret_cast&lt;void (**)(void)&gt;(&amp;listener), self);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e0df6f77ebfc1a72"><h3><code>micron::uxin::basic_wayland_source::__on_global_remove(void *data, gfx::platform::wl_registry *, u32 name) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L56">line 56</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_global_remove(void *data, gfx::platform::wl_registry *, u32 name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_registry *</code></li><li><code>u32 name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_global_remove(void *data, gfx::platform::wl_registry *, u32 name) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    if ( name == self-&gt;seat_name_ ) {
+      self-&gt;drop_keyboard();
+      self-&gt;drop_pointer();
+      if ( self-&gt;__seat ) {
+        if ( self-&gt;__seat_version &lt; 5 )
+          self-&gt;__lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;__seat));
+        else
+          self-&gt;__lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;__seat), wl_seat_ops::wl_seat_release,
+                                              nullptr, self-&gt;__seat_version, 1);
+      }
+      self-&gt;__seat = nullptr;
+      self-&gt;error_ = -error::no_device;
+    }
+    if ( self-&gt;on_global_remove ) self-&gt;on_global_remove(self-&gt;user, name);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-2831d73f4600bdda"><h3><code>micron::uxin::basic_wayland_source::__on_seat_capabilities(void *data, gfx::platform::wl_seat *seat, u32 caps) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L76">line 76</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_seat_capabilities(void *data, gfx::platform::wl_seat *seat, u32 caps) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_seat *seat</code></li><li><code>u32 caps</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_seat_capabilities(void *data, gfx::platform::wl_seat *seat, u32 caps) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    if ( !(caps &amp; wl_seat_capability_pointer) ) self-&gt;drop_pointer();
+    if ( !(caps &amp; wl_seat_capability_keyboard) ) self-&gt;drop_keyboard();
+    if ( (caps &amp; wl_seat_capability_pointer) &amp;&amp; !self-&gt;pointer_ ) {
+      void *p = self-&gt;__lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(seat), wl_seat_ops::wl_seat_get_pointer,
+                                                    &amp;__wl_pointer_interface, self-&gt;__seat_version, 0, nullptr);
+      self-&gt;pointer_ = reinterpret_cast&lt;gfx::platform::wl_pointer *&gt;(p);
+      static wl_pointer_listener_t plistener{
+        &amp;__on_p_enter,       &amp;__on_p_leave,     &amp;__on_p_motion,        &amp;__on_p_button,    &amp;__on_p_axis,         &amp;__on_p_frame,
+        &amp;__on_p_axis_source, &amp;__on_p_axis_stop, &amp;__on_p_axis_discrete, &amp;__on_p_axis_v120, &amp;__on_p_axis_rel_dir,
+      };
+      self-&gt;__lib-&gt;wl_proxy_add_listener(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;pointer_),
+                                         reinterpret_cast&lt;void (**)(void)&gt;(&amp;plistener), self);
+    }
+    if ( (caps &amp; wl_seat_capability_keyboard) &amp;&amp; !self-&gt;keyboard_ ) {
+      void *p = self-&gt;__lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(seat), wl_seat_ops::wl_seat_get_keyboard,
+                                                    &amp;__wl_keyboard_interface, self-&gt;__seat_version, 0, nullptr);
+      self-&gt;keyboard_ = reinterpret_cast&lt;gfx::platform::wl_keyboard *&gt;(p);
+      static wl_keyboard_listener_t klistener{
+        &amp;__on_k_keymap, &amp;__on_k_enter, &amp;__on_k_leave, &amp;__on_k_key, &amp;__on_k_modifiers, &amp;__on_k_repeat_info,
+      };
+      self-&gt;__lib-&gt;wl_proxy_add_listener(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;keyboard_),
+                                         reinterpret_cast&lt;void (**)(void)&gt;(&amp;klistener), self);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-183896a386104994"><h3><code>micron::uxin::basic_wayland_source::__on_seat_name(void *, gfx::platform::wl_seat *, const char *) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L105">line 105</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_seat_name(void *, gfx::platform::wl_seat *, const char *) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *</code></li><li><code>gfx::platform::wl_seat *</code></li><li><code>const char *</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_seat_name(void *, gfx::platform::wl_seat *, const char *) noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a0be437453cffe30"><h3><code>micron::uxin::basic_wayland_source::__on_p_enter(void *data, gfx::platform::wl_pointer *pointer, u32 serial, gfx::platform::wl_surface *surface, i32 x, i32 y) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L111">line 111</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_enter(void *data, gfx::platform::wl_pointer *pointer, u32 serial, gfx::platform::wl_surface *surface, i32 x, i32 y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_pointer *pointer</code></li><li><code>u32 serial</code></li><li><code>gfx::platform::wl_surface *surface</code></li><li><code>i32 x</code></li><li><code>i32 y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_enter(void *data, gfx::platform::wl_pointer *pointer, u32 serial, gfx::platform::wl_surface *surface, i32 x, i32 y) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    self-&gt;__pointer_inside = !self-&gt;__surface || self-&gt;__surface == surface;
+    if ( self-&gt;on_serial ) self-&gt;on_serial(self-&gt;user, serial);
+    if ( self-&gt;on_pointer_focus ) self-&gt;on_pointer_focus(self-&gt;user, self-&gt;__pointer_inside);
+    if ( self-&gt;__pointer_inside ) __on_p_motion(data, pointer, 0, x, y);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="basic_wayland_source.hpp.html#f-49c38db3d33666b7">__on_p_motion</a>.</p></section><section class="function-entry" id="f-c71ff9402c2a866f"><h3><code>micron::uxin::basic_wayland_source::__on_p_leave(void *data, gfx::platform::wl_pointer *, u32, gfx::platform::wl_surface *) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L121">line 121</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_leave(void *data, gfx::platform::wl_pointer *, u32, gfx::platform::wl_surface *) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32</code></li><li><code>gfx::platform::wl_surface *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_leave(void *data, gfx::platform::wl_pointer *, u32, gfx::platform::wl_surface *) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    self-&gt;__pointer_inside = false;
+    if ( self-&gt;on_pointer_focus ) self-&gt;on_pointer_focus(self-&gt;user, false);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-49c38db3d33666b7"><h3><code>micron::uxin::basic_wayland_source::__on_p_motion(void *data, gfx::platform::wl_pointer *, u32 time, i32 sx_fixed, i32 sy_fixed) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L129">line 129</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_motion(void *data, gfx::platform::wl_pointer *, u32 time, i32 sx_fixed, i32 sy_fixed) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32 time</code></li><li><code>i32 sx_fixed</code></li><li><code>i32 sy_fixed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_motion(void *data, gfx::platform::wl_pointer *, u32 time, i32 sx_fixed, i32 sy_fixed) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    if ( !self-&gt;__pointer_inside ) return;
+    if ( self-&gt;on_position ) self-&gt;on_position(self-&gt;user, float(sx_fixed) / 256.f, float(sy_fixed) / 256.f);
+    if ( !self-&gt;on_motion ) return;
+    input_event ev{};
+    ev.time.tv_sec = static_cast&lt;long&gt;(time / 1000);
+    ev.time.tv_usec = static_cast&lt;long&gt;((time % 1000) * 1000);
+    ev.type = ev_rel;
+    ev.code = rel_x;
+    ev.value = sx_fixed &gt;&gt; 8;
+    self-&gt;on_motion(self-&gt;user, ev);
+    ev.code = rel_y;
+    ev.value = sy_fixed &gt;&gt; 8;
+    self-&gt;on_motion(self-&gt;user, ev);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L132">line 132</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L134">line 134</a></td></tr></tbody></table></section><section class="function-entry" id="f-c063c35967173c99"><h3><code>micron::uxin::basic_wayland_source::__on_p_button(void *data, gfx::platform::wl_pointer *, u32 serial, u32 time, u32 button, u32 state) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L148">line 148</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_button(void *data, gfx::platform::wl_pointer *, u32 serial, u32 time, u32 button, u32 state) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32 serial</code></li><li><code>u32 time</code></li><li><code>u32 button</code></li><li><code>u32 state</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_button(void *data, gfx::platform::wl_pointer *, u32 serial, u32 time, u32 button, u32 state) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    if ( !self-&gt;__pointer_inside ) return;
+    if ( self-&gt;on_serial ) self-&gt;on_serial(self-&gt;user, serial);
+    if ( !self-&gt;on_button ) return;
+    input_event ev{};
+    ev.time.tv_sec = static_cast&lt;long&gt;(time / 1000);
+    ev.time.tv_usec = static_cast&lt;long&gt;((time % 1000) * 1000);
+    ev.type = ev_key;
+    ev.code = static_cast&lt;u16&gt;(button);      // Wayland button codes match BTN_*
+    ev.value = (state == wl_pointer_button_state_pressed) ? 1 : 0;
+    self-&gt;on_button(self-&gt;user, ev);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L151">line 151</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L153">line 153</a></td></tr></tbody></table></section><section class="function-entry" id="f-bc5a98f4770d49dd"><h3><code>micron::uxin::basic_wayland_source::__on_p_axis(void *data, gfx::platform::wl_pointer *, u32 time, u32 axis, i32 value_fixed) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L164">line 164</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_axis(void *data, gfx::platform::wl_pointer *, u32 time, u32 axis, i32 value_fixed) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32 time</code></li><li><code>u32 axis</code></li><li><code>i32 value_fixed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_axis(void *data, gfx::platform::wl_pointer *, u32 time, u32 axis, i32 value_fixed) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    if ( !self-&gt;__pointer_inside ) return;
+    if ( self-&gt;on_scroll ) self-&gt;on_scroll(self-&gt;user, axis, float(value_fixed) / 256.f);
+    if ( !self-&gt;on_axis ) return;
+    input_event ev{};
+    ev.time.tv_sec = static_cast&lt;long&gt;(time / 1000);
+    ev.time.tv_usec = static_cast&lt;long&gt;((time % 1000) * 1000);
+    ev.type = ev_rel;
+    ev.code = static_cast&lt;u16&gt;((axis == 0) ? rel_wheel : rel_hwheel);
+    ev.value = value_fixed &gt;&gt; 8;
+    self-&gt;on_axis(self-&gt;user, ev);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L167">line 167</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L169">line 169</a></td></tr></tbody></table></section><section class="function-entry" id="f-0fb0bfd5af5167f6"><h3><code>micron::uxin::basic_wayland_source::__on_p_frame(void *, gfx::platform::wl_pointer *) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L180">line 180</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_frame(void *, gfx::platform::wl_pointer *) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *</code></li><li><code>gfx::platform::wl_pointer *</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_frame(void *, gfx::platform::wl_pointer *) noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ae0fa36b7250eca9"><h3><code>micron::uxin::basic_wayland_source::__on_p_axis_source(void *, gfx::platform::wl_pointer *, u32) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L185">line 185</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_axis_source(void *, gfx::platform::wl_pointer *, u32) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_axis_source(void *, gfx::platform::wl_pointer *, u32) noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5ac9b2bb6031e7a8"><h3><code>micron::uxin::basic_wayland_source::__on_p_axis_stop(void *, gfx::platform::wl_pointer *, u32, u32) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L190">line 190</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_axis_stop(void *, gfx::platform::wl_pointer *, u32, u32) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32</code></li><li><code>u32</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_axis_stop(void *, gfx::platform::wl_pointer *, u32, u32) noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-af3f1dfd417e4eb4"><h3><code>micron::uxin::basic_wayland_source::__on_p_axis_discrete(void *, gfx::platform::wl_pointer *, u32, i32) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L195">line 195</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_axis_discrete(void *, gfx::platform::wl_pointer *, u32, i32) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32</code></li><li><code>i32</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_axis_discrete(void *, gfx::platform::wl_pointer *, u32, i32) noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a77854c1cdd0d9c3"><h3><code>micron::uxin::basic_wayland_source::__on_p_axis_v120(void *, gfx::platform::wl_pointer *, u32, i32) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L200">line 200</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_axis_v120(void *, gfx::platform::wl_pointer *, u32, i32) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32</code></li><li><code>i32</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_axis_v120(void *, gfx::platform::wl_pointer *, u32, i32) noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f5d592ee3f33d4f2"><h3><code>micron::uxin::basic_wayland_source::__on_p_axis_rel_dir(void *, gfx::platform::wl_pointer *, u32, u32) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L205">line 205</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_p_axis_rel_dir(void *, gfx::platform::wl_pointer *, u32, u32) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *</code></li><li><code>gfx::platform::wl_pointer *</code></li><li><code>u32</code></li><li><code>u32</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_p_axis_rel_dir(void *, gfx::platform::wl_pointer *, u32, u32) noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6f3aa7f0cbb18361"><h3><code>micron::uxin::basic_wayland_source::__on_k_keymap(void *data, gfx::platform::wl_keyboard *, u32 format, i32 fd, u32 size) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L211">line 211</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_k_keymap(void *data, gfx::platform::wl_keyboard *, u32 format, i32 fd, u32 size) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_keyboard *</code></li><li><code>u32 format</code></li><li><code>i32 fd</code></li><li><code>u32 size</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_k_keymap(void *data, gfx::platform::wl_keyboard *, u32 format, i32 fd, u32 size) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    if ( !self-&gt;__xkb_available || fd &lt; 0 || size == 0 || size &gt; 4 * 1024 * 1024 || format != 1u ) {
+      if ( fd &gt;= 0 ) posix::close(fd);
+      self-&gt;__keymap.reset();
+      self-&gt;error_ = size &gt; 4 * 1024 * 1024 ? -error::message_too_long : -error::op_not_supported;
+      return;
+    }
+    // An owned read also makes truncated/raced descriptors an error rather than a SIGBUS mapping fault.
+    try {
+      micron::vector&lt;char&gt; bytes;
+      bytes.resize(size);
+      usize done = 0;
+      self-&gt;error_ = 0;
+      while ( done &lt; size ) {
+        const auto count = posix::pread(fd, bytes.data() + done, size - done, static_cast&lt;posix::off64_t&gt;(done));
+        if ( count == -error::interrupted ) continue;
+        if ( count &lt;= 0 ) {
+          self-&gt;error_ = count &lt; 0 ? static_cast&lt;i32&gt;(count) : -error::io_error;
+          break;
+        }
+        done += static_cast&lt;usize&gt;(count);
+      }
+      if ( !self-&gt;error_ ) self-&gt;error_ = self-&gt;__keymap.load_map({ bytes.data(), bytes.size() });
+    } catch ( ... ) {
+      self-&gt;error_ = -error::out_of_memory;
+    }
+    if ( self-&gt;error_ ) self-&gt;__keymap.reset();
+    posix::close(fd);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L218">line 218</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../../../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>.</p></section><section class="function-entry" id="f-dda6ef79590de784"><h3><code>micron::uxin::basic_wayland_source::__on_k_enter(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *surface, void *) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L244">line 244</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_k_enter(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *surface, void *) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_keyboard *</code></li><li><code>u32</code></li><li><code>gfx::platform::wl_surface *surface</code></li><li><code>void *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_k_enter(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *surface, void *) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    self-&gt;__keyboard_inside = !self-&gt;__surface || self-&gt;__surface == surface;
+    if ( self-&gt;on_keyboard_focus ) self-&gt;on_keyboard_focus(self-&gt;user, self-&gt;__keyboard_inside);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-1fd7765eb8355deb"><h3><code>micron::uxin::basic_wayland_source::__on_k_leave(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L252">line 252</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_k_leave(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_keyboard *</code></li><li><code>u32</code></li><li><code>gfx::platform::wl_surface *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_k_leave(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    self-&gt;__keyboard_inside = false;
+    if ( self-&gt;on_keyboard_focus ) self-&gt;on_keyboard_focus(self-&gt;user, false);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e9fe3fe1cad07f4d"><h3><code>micron::uxin::basic_wayland_source::__on_k_key(void *data, gfx::platform::wl_keyboard *, u32 serial, u32 time, u32 key, u32 state) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L260">line 260</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_k_key(void *data, gfx::platform::wl_keyboard *, u32 serial, u32 time, u32 key, u32 state) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_keyboard *</code></li><li><code>u32 serial</code></li><li><code>u32 time</code></li><li><code>u32 key</code></li><li><code>u32 state</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_k_key(void *data, gfx::platform::wl_keyboard *, u32 serial, u32 time, u32 key, u32 state) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    const bool pressed = (state == wl_keyboard_key_state_pressed);
+    if ( !self-&gt;__keyboard_inside ) return;
+    if ( self-&gt;on_serial ) self-&gt;on_serial(self-&gt;user, serial);
+
+    if ( self-&gt;on_key ) {
+      input_event ev{};
+      ev.time.tv_sec = static_cast&lt;long&gt;(time / 1000);
+      ev.time.tv_usec = static_cast&lt;long&gt;((time % 1000) * 1000);
+      ev.type = ev_key;
+      ev.code = static_cast&lt;u16&gt;(key);
+      ev.value = pressed ? 1 : 0;
+      self-&gt;on_key(self-&gt;user, ev);
+    }
+
+    if ( self-&gt;__keymap.valid() ) {
+      self-&gt;__keymap.update_key(key, pressed);
+      if ( self-&gt;on_keysym ) {
+        u32 sym = self-&gt;__keymap.translate_key(key);
+        u32 utf32 = self-&gt;__keymap.translate_utf32(key);
+        self-&gt;on_keysym(self-&gt;user, key, sym, utf32, pressed);
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L264">line 264</a></td></tr></tbody></table></section><section class="function-entry" id="f-bf6f813f2a182260"><h3><code>micron::uxin::basic_wayland_source::__on_k_modifiers(void *data, gfx::platform::wl_keyboard *, u32, u32 depressed, u32 latched, u32 locked, u32 group) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L288">line 288</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_k_modifiers(void *data, gfx::platform::wl_keyboard *, u32, u32 depressed, u32 latched, u32 locked, u32 group) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_keyboard *</code></li><li><code>u32</code></li><li><code>u32 depressed</code></li><li><code>u32 latched</code></li><li><code>u32 locked</code></li><li><code>u32 group</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_k_modifiers(void *data, gfx::platform::wl_keyboard *, u32, u32 depressed, u32 latched, u32 locked, u32 group) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    if ( self-&gt;__keymap.valid() ) self-&gt;__keymap.update_mods(depressed, latched, locked, group);
+    if ( self-&gt;on_modifiers ) self-&gt;on_modifiers(self-&gt;user, depressed, latched, locked, group);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-34a32b8892d21312"><h3><code>micron::uxin::basic_wayland_source::__on_k_repeat_info(void *data, gfx::platform::wl_keyboard *, i32 rate, i32 delay) noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L296">line 296</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __on_k_repeat_info(void *data, gfx::platform::wl_keyboard *, i32 rate, i32 delay) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *data</code></li><li><code>gfx::platform::wl_keyboard *</code></li><li><code>i32 rate</code></li><li><code>i32 delay</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __on_k_repeat_info(void *data, gfx::platform::wl_keyboard *, i32 rate, i32 delay) noexcept
+  {
+    auto *self = static_cast&lt;basic_wayland_source *&gt;(data);
+    if ( self-&gt;on_repeat ) self-&gt;on_repeat(self-&gt;user, rate, delay);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-48540498933e777d"><h3><code>micron::uxin::basic_wayland_source::drop_keyboard() noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L318">line 318</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  drop_keyboard() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  drop_keyboard() noexcept
+  {
+    if ( !keyboard_ ) return;
+    if ( __seat_version &lt; 3 )
+      __lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(keyboard_));
+    else
+      __lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(keyboard_), wl_seat_ops::wl_keyboard_release, nullptr,
+                                    __seat_version, 1);
+    keyboard_ = nullptr;
+    __keyboard_inside = false;
+    __keymap.reset();
+    if ( on_keyboard_focus ) on_keyboard_focus(user, false);
+    if ( on_repeat ) on_repeat(user, 0, 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L320">line 320</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="basic_wayland_source.hpp.html#s-8ac8b7aea42587aa">on_keyboard_focus</a>, <a href="basic_wayland_source.hpp.html#s-58812646d27f9ce4">on_repeat</a>.</p></section><section class="function-entry" id="f-2bebaba03059056d"><h3><code>micron::uxin::basic_wayland_source::drop_pointer() noexcept</code></h3><p>Defined in <code>io/uxin/sources/basic_wayland_source.hpp</code>, <a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L334">line 334</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  drop_pointer() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  drop_pointer() noexcept
+  {
+    if ( !pointer_ ) return;
+    if ( __seat_version &lt; 3 )
+      __lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(pointer_));
+    else
+      __lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(pointer_), wl_seat_ops::wl_pointer_release, nullptr,
+                                    __seat_version, 1);
+    pointer_ = nullptr;
+    __pointer_inside = false;
+    if ( on_pointer_focus ) on_pointer_focus(user, false);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/io/uxin/sources/basic_wayland_source.hpp.html#L336">line 336</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="basic_wayland_source.hpp.html#s-40addfc6ff984a47">on_pointer_focus</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

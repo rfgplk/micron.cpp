@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/linalg/svd_bdc.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/linalg/svd_bdc.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/matrix.html">Matrices and linear algebra</a></div><p>Defined in header <code>&lt;micron/math/linalg/svd_bdc.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/linalg/svd_bdc.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-eabf85af23c53ad7">micron::math::linalg::decomp::bidiag_result_dyn</code></td><td>struct; line 32</td></tr><tr class="t-dsc"><td><code id="s-8a873a631b049d58">micron::math::linalg::decomp::bidiag_result_dyn::B</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-1fef3832c7ad03c6">micron::math::linalg::decomp::bidiag_result_dyn::U</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-3a89f429d781b9cc">micron::math::linalg::decomp::bidiag_result_dyn::V</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-39af90db30f705bf">micron::math::linalg::decomp::svd_bdc_result_dyn</code></td><td>struct; line 422</td></tr><tr class="t-dsc"><td><code id="s-64dc742d71c6ea84">micron::math::linalg::decomp::svd_bdc_result_dyn::U</code></td><td>member; line 423</td></tr><tr class="t-dsc"><td><code id="s-463825c66a38269b">micron::math::linalg::decomp::svd_bdc_result_dyn::S</code></td><td>member; line 424</td></tr><tr class="t-dsc"><td><code id="s-3b60b680438101e5">micron::math::linalg::decomp::svd_bdc_result_dyn::V</code></td><td>member; line 425</td></tr><tr class="t-dsc"><td><code id="s-635ba8adb194525b">micron::math::linalg::decomp::svd_bdc_result_dyn::converged</code></td><td>member; line 426</td></tr><tr class="t-dsc"><td><a href="#f-9a488164daba2926">micron::math::linalg::decomp::bidiagonalize(const dynmat&lt;F&gt; &amp;A) noexcept</a></td><td>function; line 41</td></tr><tr class="t-dsc"><td><a href="#f-a1e4d21958909008">micron::math::linalg::decomp::svd_bdc(const dynmat&lt;F&gt; &amp;A, int max_iter = 60) noexcept</a></td><td>function; line 431</td></tr><tr class="t-dsc"><td><a href="#f-6c3abebbb8ff653d">micron::math::linalg::decomp::svd_bdc_dnc(const dynmat&lt;F&gt; &amp;A, usize threshold = 16, int max_iter = 60) noexcept</a></td><td>function; line 510</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-9a488164daba2926"><h3><code>micron::math::linalg::decomp::bidiagonalize(const dynmat&lt;F&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/svd_bdc.hpp</code>, <a href="../../../source/math/linalg/svd_bdc.hpp.html#L41">line 41</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bidiag_result_dyn&lt;F&gt;
+bidiagonalize(const dynmat&lt;F&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bidiag_result_dyn&lt;F&gt;
+bidiagonalize(const dynmat&lt;F&gt; &amp;A) noexcept
+{
+  const usize R = A.rows;
+  const usize C = A.cols;
+  const usize K = (R &lt; C) ? R : C;
+  bidiag_result_dyn&lt;F&gt; r{ A, dynmat&lt;F&gt;::identity(R), dynmat&lt;F&gt;::identity(C) };
+
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; x_row(R, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; v_row(R, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; x_col(C, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; v_col(C, F(0));
+
+  for ( usize k = 0; k &lt; K; ++k ) {
+    // left Householder on column k below row k
+    for ( usize i = 0; i &lt; R; ++i ) x_row.data()[i] = F(0);
+    for ( usize i = k; i &lt; R; ++i ) x_row.data()[i] = r.B.at(i, k);
+    F beta_l = __impl_decomp::householder_reflector_dyn&lt;F&gt;(x_row.data(), R, k, v_row.data());
+    if ( beta_l != F(0) ) {
+      __impl_decomp::apply_householder_left_dyn&lt;F&gt;(r.B.data(), R, C, r.B.ld, v_row.data(), beta_l, k);
+      __impl_decomp::apply_householder_right_dyn&lt;F&gt;(r.U.data(), R, R, r.U.ld, v_row.data(), beta_l, k);
+      for ( usize i = k + 1; i &lt; R; ++i ) r.B.at(i, k) = F(0);
+    }
+    // right Householder on row k right of column k+1
+    if ( k + 2 &lt;= C ) {
+      for ( usize j = 0; j &lt; C; ++j ) x_col.data()[j] = F(0);
+      for ( usize j = k + 1; j &lt; C; ++j ) x_col.data()[j] = r.B.at(k, j);
+      F beta_r = __impl_decomp::householder_reflector_dyn&lt;F&gt;(x_col.data(), C, k + 1, v_col.data());
+      if ( beta_r != F(0) ) {
+        __impl_decomp::apply_householder_right_dyn&lt;F&gt;(r.B.data(), R, C, r.B.ld, v_col.data(), beta_r, k + 1);
+        __impl_decomp::apply_householder_right_dyn&lt;F&gt;(r.V.data(), C, C, r.V.ld, v_col.data(), beta_r, k + 1);
+        for ( usize j = k + 2; j &lt; C; ++j ) r.B.at(k, j) = F(0);
+      }
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L75">line 75</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/dynmat.hpp.html#f-060fa63dd0fb5917">dynmat&lt;F&gt;::identity</a>, <a href="householder.hpp.html#f-7836e5300fbf1cd1">__impl_decomp::householder_reflector_dyn&lt;F&gt;</a>, <a href="householder.hpp.html#f-3c4226801713e256">__impl_decomp::apply_householder_left_dyn&lt;F&gt;</a>, <a href="householder.hpp.html#f-2e02f32bea4d10ee">__impl_decomp::apply_householder_right_dyn&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a1e4d21958909008"><h3><code>micron::math::linalg::decomp::svd_bdc(const dynmat&lt;F&gt; &amp;A, int max_iter = 60) noexcept</code></h3><p>Defined in <code>math/linalg/svd_bdc.hpp</code>, <a href="../../../source/math/linalg/svd_bdc.hpp.html#L431">line 431</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd_bdc_result_dyn&lt;F&gt;
+svd_bdc(const dynmat&lt;F&gt; &amp;A, int max_iter = 60) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>int max_iter = 60</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd_bdc_result_dyn&lt;F&gt;
+svd_bdc(const dynmat&lt;F&gt; &amp;A, int max_iter = 60) noexcept
+{
+  const usize R = A.rows;
+  const usize C = A.cols;
+  const usize K = (R &lt; C) ? R : C;
+  svd_bdc_result_dyn&lt;F&gt; r{};
+
+  if ( K == 0 ) {
+    r.U = dynmat&lt;F&gt;::identity(R);
+    r.S = dynvec&lt;F&gt;(0);
+    r.V = dynmat&lt;F&gt;::identity(C);
+    r.converged = true;
+    return r;
+  }
+
+  // For R &lt; C, bidiagonalize leaves B(R-1, R) outside the K x K block; SVD(A) = (V, S, U) of SVD(A^T)
+  if ( R &lt; C ) {
+    dynmat&lt;F&gt; At(C, R);
+    for ( usize i = 0; i &lt; R; ++i )
+      for ( usize j = 0; j &lt; C; ++j ) At.at(j, i) = A.at(i, j);
+    auto rt = svd_bdc&lt;F&gt;(At, max_iter);
+    r.U = micron::move(rt.V);
+    r.S = micron::move(rt.S);
+    r.V = micron::move(rt.U);
+    r.converged = rt.converged;
+    return r;
+  }
+
+  auto bd = bidiagonalize&lt;F&gt;(A);
+
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; d(K, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; e(K &gt; 0 ? K - 1 : 0, F(0));
+  for ( usize i = 0; i &lt; K; ++i ) d.data()[i] = bd.B.at(i, i);
+  for ( usize i = 0; i + 1 &lt; K; ++i ) e.data()[i] = bd.B.at(i, i + 1);
+
+  r.converged = __impl_svd_bdc::bidiag_svd_diag&lt;F&gt;(d.data(), e.data(), K, bd.U.data(), R, bd.U.ld, bd.V.data(), C, bd.V.ld, max_iter);
+
+  // sort singular values descending; permute cols of U (first K) and V (first K)
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; idx(K);
+  for ( usize i = 0; i &lt; K; ++i ) idx.data()[i] = i;
+  // simple selection sort by d (small K typically)
+  for ( usize i = 0; i + 1 &lt; K; ++i ) {
+    usize best = i;
+    F best_v = d.data()[idx.data()[i]];
+    for ( usize j = i + 1; j &lt; K; ++j ) {
+      F v = d.data()[idx.data()[j]];
+      if ( v &gt; best_v ) {
+        best = j;
+        best_v = v;
+      }
+    }
+    if ( best != i ) {
+      usize t = idx.data()[i];
+      idx.data()[i] = idx.data()[best];
+      idx.data()[best] = t;
+    }
+  }
+
+  r.S = dynvec&lt;F&gt;(K);
+  for ( usize i = 0; i &lt; K; ++i ) r.S[i] = d.data()[idx.data()[i]];
+
+  // permute columns of U[:, 0:K] and V[:, 0:K] using idx
+  r.U = dynmat&lt;F&gt;(R, R);
+  for ( usize i = 0; i &lt; R; ++i ) {
+    for ( usize j = 0; j &lt; K; ++j ) r.U.at(i, j) = bd.U.at(i, idx.data()[j]);
+    for ( usize j = K; j &lt; R; ++j ) r.U.at(i, j) = bd.U.at(i, j);
+  }
+  r.V = dynmat&lt;F&gt;(C, C);
+  for ( usize i = 0; i &lt; C; ++i ) {
+    for ( usize j = 0; j &lt; K; ++j ) r.V.at(i, j) = bd.V.at(i, idx.data()[j]);
+    for ( usize j = K; j &lt; C; ++j ) r.V.at(i, j) = bd.V.at(i, j);
+  }
+
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L443">line 443</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L456">line 456</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L504">line 504</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/dynmat.hpp.html#f-060fa63dd0fb5917">dynmat&lt;F&gt;::identity</a>, <a href="types.hpp.html#s-cfcae647c74796da">dynvec&lt;F&gt;</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="householder.hpp.html#f-126d9726f5298291">bidiagonalize&lt;F&gt;</a>, <a href="svd_bdc.hpp.html#f-3757b4d249ada063">__impl_svd_bdc::bidiag_svd_diag&lt;F&gt;</a>, <a href="types.hpp.html#s-c1a9c847f25b5d36">dynmat&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-6c3abebbb8ff653d"><h3><code>micron::math::linalg::decomp::svd_bdc_dnc(const dynmat&lt;F&gt; &amp;A, usize threshold = 16, int max_iter = 60) noexcept</code></h3><p>Defined in <code>math/linalg/svd_bdc.hpp</code>, <a href="../../../source/math/linalg/svd_bdc.hpp.html#L510">line 510</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd_bdc_result_dyn&lt;F&gt;
+svd_bdc_dnc(const dynmat&lt;F&gt; &amp;A, usize threshold = 16, int max_iter = 60) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>usize threshold = 16</code></li><li><code>int max_iter = 60</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd_bdc_result_dyn&lt;F&gt;
+svd_bdc_dnc(const dynmat&lt;F&gt; &amp;A, usize threshold = 16, int max_iter = 60) noexcept
+{
+  const usize R = A.rows;
+  const usize C = A.cols;
+  svd_bdc_result_dyn&lt;F&gt; r{};
+
+  if ( R == 0 || C == 0 ) {
+    r.U = dynmat&lt;F&gt;::identity(R);
+    r.S = dynvec&lt;F&gt;(0);
+    r.V = dynmat&lt;F&gt;::identity(C);
+    r.converged = true;
+    return r;
+  }
+
+  // For R &lt; C, SVD(A) = (V, S, U) of SVD(A^T)
+  if ( R &lt; C ) {
+    dynmat&lt;F&gt; At(C, R);
+    for ( usize i = 0; i &lt; R; ++i )
+      for ( usize j = 0; j &lt; C; ++j ) At.at(j, i) = A.at(i, j);
+    auto rt = svd_bdc_dnc&lt;F&gt;(At, threshold, max_iter);
+    r.U = micron::move(rt.V);
+    r.S = micron::move(rt.S);
+    r.V = micron::move(rt.U);
+    r.converged = rt.converged;
+    return r;
+  }
+
+  // R &gt;= C path
+  const usize K = C;
+
+  if ( threshold &lt; K ) threshold = K;
+
+  auto bd = bidiagonalize&lt;F&gt;(A);
+
+  // build tridiagonal T = B^T B (C x C symmetric, in d_t and e_t)
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; d_t(K, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; e_t(K &gt; 0 ? K - 1 : 0, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; d_b(K, F(0));      // diag of B
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; e_b(K &gt; 0 ? K - 1 : 0, F(0));
+  for ( usize i = 0; i &lt; K; ++i ) d_b.data()[i] = bd.B.at(i, i);
+  for ( usize i = 0; i + 1 &lt; K; ++i ) e_b.data()[i] = bd.B.at(i, i + 1);
+
+  d_t.data()[0] = d_b.data()[0] * d_b.data()[0];
+  for ( usize i = 1; i &lt; K; ++i ) d_t.data()[i] = d_b.data()[i] * d_b.data()[i] + e_b.data()[i - 1] * e_b.data()[i - 1];
+  for ( usize i = 0; i + 1 &lt; K; ++i ) e_t.data()[i] = d_b.data()[i] * e_b.data()[i];
+
+  // Cuppen on T
+  dynmat&lt;F&gt; Q = dynmat&lt;F&gt;::identity(K);
+  bool conv = __impl_svd_bdc::cuppen_tridiag_dnc&lt;F&gt;(d_t.data(), e_t.data(), K, Q.data(), Q.ld, threshold, max_iter);
+  r.converged = conv;
+
+  // d_t now holds eigenvalues; sigma = sqrt(eigenvalue); clamp non-negative
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; sigma(K, F(0));
+  for ( usize i = 0; i &lt; K; ++i ) {
+    F lam = d_t.data()[i];
+    if ( lam &lt; F(0) ) lam = F(0);
+    sigma.data()[i] = math::fsqrt(lam);
+  }
+
+  // right singular vectors of B (in bidiag space) = columns of Q
+  // left singular vectors of B = B * Q * diag(1/sigma)
+  dynmat&lt;F&gt; U_inner = dynmat&lt;F&gt;::zero(R, K);
+  // For thin form: U_inner[:, j] = (B * Q[:, j]) / sigma[j]
+  for ( usize j = 0; j &lt; K; ++j ) {
+    // compute B * Q[:, j] using bidiagonal structure
+    // (B * q)_i = d_b[i] * q_i + e_b[i] * q_{i+1}  for i in [0..K-2]
+    // (B * q)_{K-1} = d_b[K-1] * q_{K-1}
+    // (B * q)_i = 0   for i &gt;= K  (since B&#x27;s bidiagonal is in top K rows; row indices &gt;= K are zero in B)
+    for ( usize i = 0; i + 1 &lt; K; ++i ) {
+      F bq = d_b.data()[i] * Q.at(i, j) + e_b.data()[i] * Q.at(i + 1, j);
+      U_inner.at(i, j) = bq;
+    }
+    if ( K &gt; 0 ) U_inner.at(K - 1, j) = d_b.data()[K - 1] * Q.at(K - 1, j);
+    for ( usize i = K; i &lt; R; ++i ) U_inner.at(i, j) = F(0);
+    // normalize by sigma if nonzero; else the vector itself is in the null space
+    if ( sigma.data()[j] &gt; F(0) ) {
+      F inv = F(1) / sigma.data()[j];
+      for ( usize i = 0; i &lt; R; ++i ) U_inner.at(i, j) *= inv;
+    } else {
+      // sigma == 0: leave U_inner[:, j] as-is (will be re-orthogonalized below or zeroed)
+      for ( usize i = 0; i &lt; R; ++i ) U_inner.at(i, j) = F(0);
+    }
+  }
+
+  // sort sigma descending; permute U_inner cols and Q cols accordingly
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; idx(K);
+  for ( usize i = 0; i &lt; K; ++i ) idx.data()[i] = i;
+  for ( usize i = 0; i + 1 &lt; K; ++i ) {
+    usize best = i;
+    for ( usize j = i + 1; j &lt; K; ++j ) {
+      if ( sigma.data()[idx.data()[j]] &gt; sigma.data()[idx.data()[best]] ) best = j;
+    }
+    if ( best != i ) {
+      usize t = idx.data()[i];
+      idx.data()[i] = idx.data()[best];
+      idx.data()[best] = t;
+    }
+  }
+
+  r.S = dynvec&lt;F&gt;(K);
+  for ( usize i = 0; i &lt; K; ++i ) r.S[i] = sigma.data()[idx.data()[i]];
+
+  r.U = dynmat&lt;F&gt;(R, R);
+  for ( usize i = 0; i &lt; R; ++i ) {
+    for ( usize j = 0; j &lt; K; ++j ) {
+      F s = F(0);
+      for ( usize kk = 0; kk &lt; R; ++kk ) s = math::fma&lt;F&gt;(bd.U.at(i, kk), U_inner.at(kk, idx.data()[j]), s);
+      r.U.at(i, j) = s;
+    }
+    for ( usize j = K; j &lt; R; ++j ) r.U.at(i, j) = bd.U.at(i, j);
+  }
+
+  r.V = dynmat&lt;F&gt;(C, C);
+  for ( usize i = 0; i &lt; C; ++i ) {
+    for ( usize j = 0; j &lt; K; ++j ) {
+      F s = F(0);
+      for ( usize kk = 0; kk &lt; C; ++kk ) s = math::fma&lt;F&gt;(bd.V.at(i, kk), Q.at(kk, idx.data()[j]), s);
+      r.V.at(i, j) = s;
+    }
+    for ( usize j = K; j &lt; C; ++j ) r.V.at(i, j) = bd.V.at(i, j);
+  }
+
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L521">line 521</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L534">line 534</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L632">line 632</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/dynmat.hpp.html#f-060fa63dd0fb5917">dynmat&lt;F&gt;::identity</a>, <a href="types.hpp.html#s-cfcae647c74796da">dynvec&lt;F&gt;</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="householder.hpp.html#f-126d9726f5298291">bidiagonalize&lt;F&gt;</a>, <a href="svd_bdc.hpp.html#f-9121fd6c0d00255c">__impl_svd_bdc::cuppen_tridiag_dnc&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../matrix/dynmat.hpp.html#f-f2be77990fd00b81">dynmat&lt;F&gt;::zero</a>, <a href="types.hpp.html#s-c1a9c847f25b5d36">dynmat&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-c3a6cad25f90e5da"><h3><code>micron::math::linalg::decomp::__impl_svd_bdc::pythag(F a, F b) noexcept</code></h3><p>Defined in <code>math/linalg/svd_bdc.hpp</code>, <a href="../../../source/math/linalg/svd_bdc.hpp.html#L83">line 83</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline F
+pythag(F a, F b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline F
+pythag(F a, F b) noexcept
+{
+  F absa = math::fabs(a), absb = math::fabs(b);
+  if ( absa &gt; absb ) {
+    F r = absb / absa;
+    return absa * math::fsqrt(F(1) + r * r);
+  }
+  if ( absb == F(0) ) return F(0);
+  F r = absa / absb;
+  return absb * math::fsqrt(F(1) + r * r);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>absa * math::fsqrt(F(1) + r * r)</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L88">line 88</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L90">line 90</a></td></tr><tr class="t-dsc"><td><code>absb * math::fsqrt(F(1) + r * r)</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L92">line 92</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-77acef223e87d42c"><h3><code>micron::math::linalg::decomp::__impl_svd_bdc::sgn_copy(F a, F b) noexcept</code></h3><p>Defined in <code>math/linalg/svd_bdc.hpp</code>, <a href="../../../source/math/linalg/svd_bdc.hpp.html#L97">line 97</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline F
+sgn_copy(F a, F b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Returns <code>(b &gt;= F(0)) ? math::fabs(a) : -math::fabs(a)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline F
+sgn_copy(F a, F b) noexcept
+{
+  return (b &gt;= F(0)) ? math::fabs(a) : -math::fabs(a);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(b &gt;= F(0)) ? math::fabs(a) : -math::fabs(a)</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L99">line 99</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>.</p></section><section class="function-entry" id="f-3757b4d249ada063"><h3><code>micron::math::linalg::decomp::__impl_svd_bdc::bidiag_svd_diag(F *__restrict__ d, F *__restrict__ e, usize n, F *__restrict__ U_data, usize U_rows, usize U_ld, F *__restrict__ V_data,
+                usize V_rows, usize V_ld, int max_iter) noexcept</code></h3><p>Defined in <code>math/linalg/svd_bdc.hpp</code>, <a href="../../../source/math/linalg/svd_bdc.hpp.html#L104">line 104</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline bool
+bidiag_svd_diag(F *__restrict__ d, F *__restrict__ e, usize n, F *__restrict__ U_data, usize U_rows, usize U_ld, F *__restrict__ V_data,
+                usize V_rows, usize V_ld, int max_iter) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *__restrict__ d</code></li><li><code>F *__restrict__ e</code></li><li><code>usize n</code></li><li><code>F *__restrict__ U_data</code></li><li><code>usize U_rows</code></li><li><code>usize U_ld</code></li><li><code>F *__restrict__ V_data</code></li><li><code>usize V_rows</code></li><li><code>usize V_ld</code></li><li><code>int max_iter</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline bool
+bidiag_svd_diag(F *__restrict__ d, F *__restrict__ e, usize n, F *__restrict__ U_data, usize U_rows, usize U_ld, F *__restrict__ V_data,
+                usize V_rows, usize V_ld, int max_iter) noexcept
+{
+  if ( n == 0 ) return true;
+  if ( n == 1 ) {
+    if ( d[0] &lt; F(0) ) {
+      d[0] = -d[0];
+      for ( usize j = 0; j &lt; V_rows; ++j ) V_data[j * V_ld + 0] = -V_data[j * V_ld + 0];
+    }
+    return true;
+  }
+
+  // scale for negligibility tests
+  F anorm = math::fabs(d[0]);
+  for ( usize i = 0; i + 1 &lt; n; ++i ) {
+    F v = math::fabs(d[i + 1]) + math::fabs(e[i]);
+    if ( v &gt; anorm ) anorm = v;
+  }
+
+  // process from bottom up
+  for ( usize k_top = n; k_top-- &gt; 0; ) {
+    const usize k = k_top;
+    int iter = 0;
+    while ( true ) {
+      // find l in [0..k] such that the submatrix B[l..k] is irreducible
+      bool flag = true;
+      usize l = 0;
+      bool found = false;
+      for ( usize ll = k; ll-- &gt; 0; ) {
+        // ll in [0..k-1];  test e[ll]
+        if ( math::fabs(e[ll]) + anorm == anorm ) {
+          flag = false;
+          e[ll] = F(0);
+          l = ll + 1;
+          found = true;
+          break;
+        }
+        if ( math::fabs(d[ll]) + anorm == anorm ) {
+          l = ll + 1;
+          found = true;
+          break;
+        }
+      }
+      if ( !found ) {
+        l = 0;
+        flag = false;
+      }
+
+      if ( flag ) {
+        // chase the zero in d[l-1] across e[l-1..k-1]; left Givens into U cols (l-1, i)
+        F c = F(0), s = F(1);
+        const usize nm = l - 1;
+        for ( usize i = l; i &lt;= k; ++i ) {
+          F f = s * e[i - 1];
+          e[i - 1] = c * e[i - 1];
+          if ( math::fabs(f) + anorm == anorm ) break;
+          F g = d[i];
+          F h = pythag&lt;F&gt;(f, g);
+          d[i] = h;
+          h = F(1) / h;
+          c = g * h;
+          s = -f * h;
+          for ( usize j = 0; j &lt; U_rows; ++j ) {
+            F y = U_data[j * U_ld + nm];
+            F z = U_data[j * U_ld + i];
+            U_data[j * U_ld + nm] = y * c + z * s;
+            U_data[j * U_ld + i] = z * c - y * s;
+          }
+        }
+      }
+
+      F zk = d[k];
+      if ( l == k ) {
+        if ( zk &lt; F(0) ) {
+          d[k] = -zk;
+          for ( usize j = 0; j &lt; V_rows; ++j ) V_data[j * V_ld + k] = -V_data[j * V_ld + k];
+        }
+        break;
+      }
+
+      if ( ++iter &gt; max_iter ) return false;
+
+      // shift from bottom 2x2 of B^T B over rows l..k
+      F x = d[l];
+      const usize nm = k - 1;
+      F y = d[nm];
+      F g = (nm &gt; 0) ? e[nm - 1] : F(0);
+      F h = e[nm];
+      F f = ((y - zk) * (y + zk) + (g - h) * (g + h)) / (F(2) * h * y);
+      F gg = pythag&lt;F&gt;(f, F(1));
+      f = ((x - zk) * (x + zk) + h * ((y / (f + sgn_copy&lt;F&gt;(gg, f))) - h)) / x;
+
+      // QR sweep over j in [l..nm]
+      F c = F(1), s = F(1);
+      for ( usize j = l; j &lt;= nm; ++j ) {
+        const usize i = j + 1;
+        F gv = e[j];
+        F yv = d[i];
+        F hv = s * gv;
+        gv = c * gv;
+        F zv = pythag&lt;F&gt;(f, hv);
+        if ( j &gt; 0 ) e[j - 1] = zv;
+        if ( zv != F(0) ) {
+          F inv_z = F(1) / zv;
+          c = f * inv_z;
+          s = hv * inv_z;
+        }
+        f = x * c + gv * s;
+        gv = gv * c - x * s;
+        hv = yv * s;
+        yv = yv * c;
+        // right Givens into V cols (j, i)
+        for ( usize jj = 0; jj &lt; V_rows; ++jj ) {
+          F xv = V_data[jj * V_ld + j];
+          F zw = V_data[jj * V_ld + i];
+          V_data[jj * V_ld + j] = xv * c + zw * s;
+          V_data[jj * V_ld + i] = zw * c - xv * s;
+        }
+        F zv2 = pythag&lt;F&gt;(f, hv);
+        d[j] = zv2;
+        if ( zv2 != F(0) ) {
+          F inv_z = F(1) / zv2;
+          c = f * inv_z;
+          s = hv * inv_z;
+        }
+        f = c * gv + s * yv;
+        x = c * yv - s * gv;
+        // left Givens into U cols (j, i)
+        for ( usize jj = 0; jj &lt; U_rows; ++jj ) {
+          F yu = U_data[jj * U_ld + j];
+          F zu = U_data[jj * U_ld + i];
+          U_data[jj * U_ld + j] = yu * c + zu * s;
+          U_data[jj * U_ld + i] = zu * c - yu * s;
+        }
+      }
+      // cleanup the chased entries
+      if ( l &gt; 0 ) e[l - 1] = F(0);
+      e[k - 1] = f;
+      d[k] = x;
+    }
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L107">line 107</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L113">line 113</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L184">line 184</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L245">line 245</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="svd_bdc.hpp.html#f-c3a6cad25f90e5da">pythag&lt;F&gt;</a>, <a href="svd_bdc.hpp.html#f-77acef223e87d42c">sgn_copy&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-05e0153c39b94570"><h3><code>micron::math::linalg::decomp::__impl_svd_bdc::solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_pad, int max_iter, bool *converged = nullptr) noexcept</code></h3><p>Defined in <code>math/linalg/svd_bdc.hpp</code>, <a href="../../../source/math/linalg/svd_bdc.hpp.html#L251">line 251</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline F
+solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_pad, int max_iter, bool *converged = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *d</code></li><li><code>const F *z2</code></li><li><code>usize n</code></li><li><code>usize idx</code></li><li><code>F rho</code></li><li><code>F upper_pad</code></li><li><code>int max_iter</code></li><li><code>bool *converged = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline F
+solve_secular_root(const F *d, const F *z2, usize n, usize idx, F rho, F upper_pad, int max_iter, bool *converged = nullptr) noexcept
+{
+  F lo = d[idx];
+  F hi = (idx + 1 &lt; n) ? d[idx + 1] : (d[n - 1] + upper_pad);
+  F lam = (lo + hi) * F(0.5);
+  bool ok = false;
+
+  for ( int iter = 0; iter &lt; max_iter; ++iter ) {
+    F f = F(1);
+    F fp = F(0);
+    bool degenerate = false;
+    for ( usize i = 0; i &lt; n; ++i ) {
+      F denom = d[i] - lam;
+      F scale = math::fabs(d[i]) + math::fabs(lam) + F(1);
+      if ( math::fabs(denom) &lt; default_eps&lt;F&gt;() * scale * F(8) ) {
+        degenerate = true;
+        break;
+      }
+      F t = z2[i] / denom;
+      f += rho * t;
+      fp += rho * t / denom;
+    }
+
+    if ( degenerate ) {
+      // fall back to bisection step
+      F mid = (lo + hi) * F(0.5);
+      if ( mid == lam ) break;
+      lam = mid;
+      continue;
+    }
+
+    if ( math::fabs(f) &lt;= default_eps&lt;F&gt;() * F(100) * (math::fabs(lam) + F(1)) ) {
+      ok = true;
+      break;
+    }
+
+    if ( f &gt; F(0) )
+      hi = lam;
+    else
+      lo = lam;
+
+    F delta = (fp != F(0)) ? -f / fp : F(0);
+    F new_lam = lam + delta;
+    if ( delta == F(0) || new_lam &lt;= lo || new_lam &gt;= hi ) {
+      new_lam = (lo + hi) * F(0.5);
+    }
+    if ( new_lam == lam ) {
+      ok = true;
+      break;
+    }
+    lam = new_lam;
+  }
+  if ( converged ) *converged = ok;
+  return lam;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lam</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L304">line 304</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-9121fd6c0d00255c"><h3><code>micron::math::linalg::decomp::__impl_svd_bdc::cuppen_tridiag_dnc(F *d, F *e, usize n, F *Q_data, usize Q_ld, usize threshold, int max_iter) noexcept</code></h3><p>Defined in <code>math/linalg/svd_bdc.hpp</code>, <a href="../../../source/math/linalg/svd_bdc.hpp.html#L310">line 310</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline bool
+cuppen_tridiag_dnc(F *d, F *e, usize n, F *Q_data, usize Q_ld, usize threshold, int max_iter) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *d</code></li><li><code>F *e</code></li><li><code>usize n</code></li><li><code>F *Q_data</code></li><li><code>usize Q_ld</code></li><li><code>usize threshold</code></li><li><code>int max_iter</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline bool
+cuppen_tridiag_dnc(F *d, F *e, usize n, F *Q_data, usize Q_ld, usize threshold, int max_iter) noexcept
+{
+  if ( n == 0 ) return true;
+  if ( n == 1 ) return true;
+
+  if ( n &lt;= threshold ) {
+    return decomp::__impl_decomp_qrtri::tqli&lt;F&gt;(d, e, Q_data, n, Q_ld, max_iter);
+  }
+
+  const usize k = n / 2;
+  const F beta = e[k - 1];
+
+  const F rho = math::fabs(beta);
+  const F sign_beta = (beta &gt;= F(0)) ? F(1) : F(-1);
+
+  // rank-1 split T = T_hat + rho * v v^T with v = e_{k-1} + sign_beta * e_k
+  d[k - 1] -= rho;
+  d[k] -= rho;
+
+  // recurse on sub-blocks; each sub-block of Q is currently identity
+  if ( !cuppen_tridiag_dnc&lt;F&gt;(d, e, k, Q_data, Q_ld, threshold, max_iter) ) return false;
+  if ( !cuppen_tridiag_dnc&lt;F&gt;(d + k, e + k, n - k, Q_data + k * Q_ld + k, Q_ld, threshold, max_iter) ) return false;
+
+  // u_i = (Q^T v)_i where v = e_{k-1} + sign_beta * e_k
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; u(n, F(0));
+  for ( usize i = 0; i &lt; k; ++i ) u.data()[i] = Q_data[(k - 1) * Q_ld + i];
+  for ( usize i = k; i &lt; n; ++i ) u.data()[i] = sign_beta * Q_data[k * Q_ld + i];
+
+  // sort d ascending; carry u alongside
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; perm(n);
+  for ( usize i = 0; i &lt; n; ++i ) perm.data()[i] = i;
+  for ( usize i = 0; i + 1 &lt; n; ++i ) {
+    usize best = i;
+    for ( usize j = i + 1; j &lt; n; ++j ) {
+      if ( d[perm.data()[j]] &lt; d[perm.data()[best]] ) best = j;
+    }
+    if ( best != i ) {
+      usize t = perm.data()[i];
+      perm.data()[i] = perm.data()[best];
+      perm.data()[best] = t;
+    }
+  }
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; d_sorted(n, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; u_sorted(n, F(0));
+  for ( usize i = 0; i &lt; n; ++i ) {
+    d_sorted.data()[i] = d[perm.data()[i]];
+    u_sorted.data()[i] = u.data()[perm.data()[i]];
+  }
+
+  // ρ for secular root finder
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; z2(n);
+  F sum_z2 = F(0);
+  for ( usize i = 0; i &lt; n; ++i ) {
+    z2.data()[i] = u_sorted.data()[i] * u_sorted.data()[i];
+    sum_z2 += z2.data()[i];
+  }
+  F upper_pad = rho * sum_z2 + (math::fabs(d_sorted.data()[n - 1]) + F(1)) * F(0.01);
+  if ( upper_pad &lt;= F(0) ) upper_pad = F(1);
+
+  // find new eigenvalues; honestly track per-root convergence
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; lam(n, F(0));
+  bool all_converged = true;
+  for ( usize i = 0; i &lt; n; ++i ) {
+    bool root_ok = false;
+    lam.data()[i] = solve_secular_root&lt;F&gt;(d_sorted.data(), z2.data(), n, i, rho, upper_pad, max_iter, &amp;root_ok);
+    if ( !root_ok ) all_converged = false;
+  }
+
+  // normalize each column
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; V_merge(n * n, F(0));
+  for ( usize i = 0; i &lt; n; ++i ) {
+    F norm_sq = F(0);
+    for ( usize j = 0; j &lt; n; ++j ) {
+      F denom = d_sorted.data()[j] - lam.data()[i];
+      if ( math::fabs(denom) &lt; default_eps&lt;F&gt;() * F(8) ) denom = (denom &gt;= F(0)) ? default_eps&lt;F&gt;() : -default_eps&lt;F&gt;();
+      F vj = u_sorted.data()[j] / denom;
+      V_merge.data()[j * n + i] = vj;
+      norm_sq = math::fma&lt;F&gt;(vj, vj, norm_sq);
+    }
+    F norm = math::fsqrt(norm_sq);
+    if ( norm &gt; F(0) ) {
+      F inv = F(1) / norm;
+      for ( usize j = 0; j &lt; n; ++j ) V_merge.data()[j * n + i] *= inv;
+    }
+  }
+
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; V_unperm(n * n, F(0));
+  for ( usize i = 0; i &lt; n; ++i ) {
+    for ( usize j = 0; j &lt; n; ++j ) {
+      // row in original ordering = perm.data()[j]; column = i
+      V_unperm.data()[perm.data()[j] * n + i] = V_merge.data()[j * n + i];
+    }
+  }
+  for ( usize i = 0; i &lt; n; ++i ) d[i] = lam.data()[i];
+
+  // Q := Q * V_unperm   (Q has columns = old eigenvectors; we transform to new basis)
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; tmp(n * n, F(0));
+  for ( usize i = 0; i &lt; n; ++i ) {
+    for ( usize j = 0; j &lt; n; ++j ) {
+      F s = F(0);
+      for ( usize kk = 0; kk &lt; n; ++kk ) s = math::fma&lt;F&gt;(Q_data[i * Q_ld + kk], V_unperm.data()[kk * n + j], s);
+      tmp.data()[i * n + j] = s;
+    }
+  }
+  for ( usize i = 0; i &lt; n; ++i )
+    for ( usize j = 0; j &lt; n; ++j ) Q_data[i * Q_ld + j] = tmp.data()[i * n + j];
+
+  return all_converged;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L312">line 312</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L313">line 313</a></td></tr><tr class="t-dsc"><td><code>decomp::__impl_decomp_qrtri::tqli&lt;F&gt;(d, e, Q_data, n, Q_ld, max_iter)</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L316">line 316</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L330">line 330</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L331">line 331</a></td></tr><tr class="t-dsc"><td><code>all_converged</code></td><td><a href="../../../source/math/linalg/svd_bdc.hpp.html#L417">line 417</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp_ext.hpp.html#f-35acd767816295cf">decomp::__impl_decomp_qrtri::tqli&lt;F&gt;</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="svd_bdc.hpp.html#f-05e0153c39b94570">solve_secular_root&lt;F&gt;</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

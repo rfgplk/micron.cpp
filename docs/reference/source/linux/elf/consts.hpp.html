@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>linux/elf/consts.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">linux/elf/consts.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/linux/elf/consts.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;bits.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> namespace micron</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> {</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> namespace elf</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> {</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> inline constexpr half et_none = 0;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> inline constexpr half et_rel = 1;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> inline constexpr half et_exec = 2;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> inline constexpr half et_dyn = 3;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> inline constexpr half et_core = 4;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> </span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> // TODO: eventually expand this when we add more arches</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> inline constexpr half em_x86_64 = 62;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> inline constexpr half em_aarch64 = 183;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> </span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> inline constexpr half em_386 = 3;</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> inline constexpr half em_mips = 8;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> inline constexpr half em_ppc = 20;</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> inline constexpr half em_ppc64 = 21;</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> inline constexpr half em_s390 = 22;</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> inline constexpr half em_arm = 40;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> inline constexpr half em_sparcv9 = 43;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> inline constexpr half em_ia_64 = 50;</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> inline constexpr half em_riscv = 243;</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> inline constexpr half em_loongarch = 258;</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> </span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> inline constexpr word ev_current = 1;</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> </span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> inline constexpr u8 elfclass32 = 1;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> inline constexpr u8 elfclass64 = 2;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> inline constexpr u8 elfdata2lsb = 1;</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> inline constexpr u8 elfdata2msb = 2;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> </span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> // e_ident[EI_OSABI]</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> inline constexpr u8 elfosabi_sysv = 0;</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> inline constexpr u8 elfosabi_hpux = 1;</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> inline constexpr u8 elfosabi_netbsd = 2;</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> inline constexpr u8 elfosabi_gnu = 3;</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> inline constexpr u8 elfosabi_solaris = 6;</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> inline constexpr u8 elfosabi_aix = 7;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> inline constexpr u8 elfosabi_irix = 8;</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> inline constexpr u8 elfosabi_freebsd = 9;</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> inline constexpr u8 elfosabi_openbsd = 12;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> </span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> inline constexpr word pt_null = 0;</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> inline constexpr word pt_load = 1;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> inline constexpr word pt_dynamic = 2;</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> inline constexpr word pt_interp = 3;</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> inline constexpr word pt_note = 4;</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> inline constexpr word pt_shlib = 5;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> inline constexpr word pt_phdr = 6;</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> inline constexpr word pt_tls = 7;</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> inline constexpr word pt_gnu_eh_frame = 0x6474e550;</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> inline constexpr word pt_gnu_stack = 0x6474e551;</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> inline constexpr word pt_gnu_relro = 0x6474e552;</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> inline constexpr word pt_gnu_property = 0x6474e553;</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> </span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> inline constexpr word pt_arm_exidx = 0x70000001;      // armv7 unwind index; == pt_loproc + 1</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> </span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> inline constexpr word pf_x = 0x1;</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> inline constexpr word pf_w = 0x2;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> inline constexpr word pf_r = 0x4;</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> </span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> inline constexpr sxword dt_null = 0;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> inline constexpr sxword dt_needed = 1;</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> inline constexpr sxword dt_pltrelsz = 2;</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> inline constexpr sxword dt_pltgot = 3;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> inline constexpr sxword dt_hash = 4;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> inline constexpr sxword dt_strtab = 5;</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> inline constexpr sxword dt_symtab = 6;</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> inline constexpr sxword dt_rela = 7;</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> inline constexpr sxword dt_relasz = 8;</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> inline constexpr sxword dt_relaent = 9;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> inline constexpr sxword dt_strsz = 10;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> inline constexpr sxword dt_syment = 11;</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> inline constexpr sxword dt_init = 12;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> inline constexpr sxword dt_fini = 13;</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> inline constexpr sxword dt_soname = 14;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> inline constexpr sxword dt_rpath = 15;</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> inline constexpr sxword dt_symbolic = 16;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> inline constexpr sxword dt_rel = 17;</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> inline constexpr sxword dt_relsz = 18;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> inline constexpr sxword dt_relent = 19;</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> inline constexpr sxword dt_pltrel = 20;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> inline constexpr sxword dt_debug = 21;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> inline constexpr sxword dt_textrel = 22;</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> inline constexpr sxword dt_jmprel = 23;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> inline constexpr sxword dt_bind_now = 24;</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> inline constexpr sxword dt_init_array = 25;</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> inline constexpr sxword dt_fini_array = 26;</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> inline constexpr sxword dt_init_arraysz = 27;</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> inline constexpr sxword dt_fini_arraysz = 28;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> inline constexpr sxword dt_runpath = 29;</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> inline constexpr sxword dt_flags = 30;</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> inline constexpr sxword dt_preinit_array = 32;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> inline constexpr sxword dt_preinit_arraysz = 33;</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> </span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> inline constexpr sxword dt_loos = 0x6000000d;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> inline constexpr sxword dt_hios = 0x6ffff000;</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> inline constexpr sxword dt_loproc = 0x70000000;</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> inline constexpr sxword dt_hiproc = 0x7fffffff;</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> </span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> // armv7 puts the exception index table&#x27;s address and count in the processor range</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> inline constexpr sxword dt_arm_exidx = 0x70000001;</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> inline constexpr sxword dt_arm_exidxsz = 0x70000002;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> </span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> inline constexpr sxword dt_gnu_hash = 0x6ffffef5;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> inline constexpr sxword dt_relacount = 0x6ffffff9;</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> inline constexpr sxword dt_relcount = 0x6ffffffa;</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> inline constexpr sxword dt_relrsz = 35;      // packed relative relocations (RELR)</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> inline constexpr sxword dt_relr = 36;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> inline constexpr sxword dt_relrent = 37;</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> inline constexpr sxword dt_flags_1 = 0x6ffffffb;</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> inline constexpr sxword dt_verdef = 0x6ffffffc;</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> inline constexpr sxword dt_verdefnum = 0x6ffffffd;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> inline constexpr sxword dt_verneed = 0x6ffffffe;</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> inline constexpr sxword dt_verneednum = 0x6fffffff;</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> inline constexpr sxword dt_versym = 0x6ffffff0;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> </span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> inline constexpr u8 stb_local = 0;</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a> inline constexpr u8 stb_global = 1;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> inline constexpr u8 stb_weak = 2;</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a> inline constexpr u8 stb_gnu_unique = 10;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> </span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> inline constexpr u8 stt_notype = 0;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> inline constexpr u8 stt_object = 1;</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> inline constexpr u8 stt_func = 2;</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> inline constexpr u8 stt_section = 3;</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> inline constexpr u8 stt_file = 4;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> inline constexpr u8 stt_common = 5;</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> inline constexpr u8 stt_tls = 6;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> inline constexpr u8 stt_gnu_ifunc = 10;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> </span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> inline constexpr word stn_undef = 0;      // reserved .dynsym[0], and r_info&#x27;s &quot;no symbol&quot;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> </span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> // st_other &amp; 0x3</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> inline constexpr u8 stv_default = 0;</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a> inline constexpr u8 stv_internal = 1;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a> inline constexpr u8 stv_hidden = 2;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> inline constexpr u8 stv_protected = 3;</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> </span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> inline constexpr half shn_undef = 0;</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> inline constexpr half shn_abs = 0xfff1;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a> inline constexpr half shn_common = 0xfff2;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a> inline constexpr half shn_xindex = 0xffff;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a> </span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a> // sh_type</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> inline constexpr word sht_null = 0;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a> inline constexpr word sht_progbits = 1;</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> inline constexpr word sht_symtab = 2;</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> inline constexpr word sht_strtab = 3;</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a> inline constexpr word sht_rela = 4;</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a> inline constexpr word sht_hash = 5;</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a> inline constexpr word sht_dynamic = 6;</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a> inline constexpr word sht_note = 7;</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a> inline constexpr word sht_nobits = 8;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a> inline constexpr word sht_rel = 9;</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a> inline constexpr word sht_shlib = 10;</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a> inline constexpr word sht_dynsym = 11;</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a> inline constexpr word sht_init_array = 14;</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a> inline constexpr word sht_fini_array = 15;</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> inline constexpr word sht_preinit_array = 16;</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a> inline constexpr word sht_group = 17;</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> inline constexpr word sht_symtab_shndx = 18;</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a> inline constexpr word sht_relr = 19;</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a> inline constexpr word sht_gnu_attributes = 0x6ffffff5;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a> inline constexpr word sht_gnu_hash = 0x6ffffff6;</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a> inline constexpr word sht_gnu_liblist = 0x6ffffff7;</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> inline constexpr word sht_gnu_verdef = 0x6ffffffd;</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> inline constexpr word sht_gnu_verneed = 0x6ffffffe;</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> inline constexpr word sht_gnu_versym = 0x6fffffff;</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> </span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a> // sh_flags</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> inline constexpr xword shf_write = 0x1;</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a> inline constexpr xword shf_alloc = 0x2;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a> inline constexpr xword shf_execinstr = 0x4;</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a> inline constexpr xword shf_merge = 0x10;</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a> inline constexpr xword shf_strings = 0x20;</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a> inline constexpr xword shf_info_link = 0x40;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a> inline constexpr xword shf_link_order = 0x80;</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a> inline constexpr xword shf_os_nonconforming = 0x100;</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a> inline constexpr xword shf_group = 0x200;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a> inline constexpr xword shf_tls = 0x400;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a> inline constexpr xword shf_compressed = 0x800;</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a> </span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a> inline constexpr u8</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> elf_st_bind(u8 info) noexcept</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a> {</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   return info &gt;&gt; 4;</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a> }</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a> </span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a> inline constexpr u8</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> elf_st_type(u8 info) noexcept</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> {</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   return info &amp; 0x0f;</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a> }</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> </span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> inline constexpr u8</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> elf_st_visibility(u8 other) noexcept</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a> {</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>   return other &amp; 0x03;</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a> }</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a> </span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a> // ELF32 is (sym &lt;&lt; 8 | type) in a word</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a> // ELF64 is (sym &lt;&lt; 32 | type) in an xword</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a> inline constexpr u32</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a> elf32_r_sym(word info) noexcept</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a> {</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>   return info &gt;&gt; 8;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a> }</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a> </span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a> inline constexpr u32</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a> elf32_r_type(word info) noexcept</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> {</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>   return info &amp; 0xffu;</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a> }</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a> </span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a> inline constexpr word</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a> elf32_r_info(u32 sym, u32 type) noexcept</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a> {</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>   return static_cast&lt;word&gt;((sym &lt;&lt; 8) | (type &amp; 0xffu));</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a> }</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a> </span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a> inline constexpr u32</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> elf64_r_sym(xword info) noexcept</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> {</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>   return static_cast&lt;u32&gt;(info &gt;&gt; 32);</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a> }</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> </span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> inline constexpr u32</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> elf64_r_type(xword info) noexcept</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a> {</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>   return static_cast&lt;u32&gt;(info &amp; 0xffffffff);</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a> }</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a> </span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a> inline constexpr xword</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a> elf64_r_info(u32 sym, u32 type) noexcept</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a> {</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>   return (static_cast&lt;xword&gt;(sym) &lt;&lt; 32) | static_cast&lt;xword&gt;(type);</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a> }</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a> </span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a> inline constexpr u32</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> elf_r_sym(xword info) noexcept</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a> {</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>   if constexpr ( native_class == fmt_class::elf32 )</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>     return elf32_r_sym(static_cast&lt;word&gt;(info));</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>   else</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>     return elf64_r_sym(info);</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> }</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> </span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a> inline constexpr u32</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a> elf_r_type(xword info) noexcept</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a> {</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>   if constexpr ( native_class == fmt_class::elf32 )</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>     return elf32_r_type(static_cast&lt;word&gt;(info));</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>   else</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>     return elf64_r_type(info);</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> }</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a> </span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> // DT_FLAGS / DT_FLAGS_1</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> inline constexpr xword df_origin = 0x01;</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a> inline constexpr xword df_symbolic = 0x02;</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> inline constexpr xword df_textrel = 0x04;</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> inline constexpr xword df_bind_now = 0x08;</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> inline constexpr xword df_static_tls = 0x10;</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a> </span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> inline constexpr xword df_1_now = 0x00000001;</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a> inline constexpr xword df_1_global = 0x00000002;</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a> inline constexpr xword df_1_group = 0x00000004;</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a> inline constexpr xword df_1_nodelete = 0x00000008;</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a> inline constexpr xword df_1_loadfltr = 0x00000010;</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a> inline constexpr xword df_1_initfirst = 0x00000020;</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> inline constexpr xword df_1_noopen = 0x00000040;</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a> inline constexpr xword df_1_origin = 0x00000080;</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a> inline constexpr xword df_1_direct = 0x00000100;</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a> inline constexpr xword df_1_interpose = 0x00000400;</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a> inline constexpr xword df_1_nodeflib = 0x00000800;</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a> inline constexpr xword df_1_nodump = 0x00001000;</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> inline constexpr xword df_1_confalt = 0x00002000;</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a> inline constexpr xword df_1_noreloc = 0x00400000;</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a> inline constexpr xword df_1_pie = 0x08000000;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a> </span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a> // these live in .gnu.version, one half per .dynsym entry</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> inline constexpr half ver_ndx_local = 0;       // the symbol is not exported</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a> inline constexpr half ver_ndx_global = 1;      // exported, unversioned</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a> inline constexpr half ver_ndx_eliminate = 0xff01;</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a> inline constexpr half ver_ndx_hidden = 0x8000;</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a> </span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a> inline constexpr half ver_flg_base = 0x1;</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a> inline constexpr half ver_flg_weak = 0x2;</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a> </span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> inline constexpr half</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a> elf_ver_ndx(half versym) noexcept</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a> {</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>   return static_cast&lt;half&gt;(versym &amp; ~ver_ndx_hidden);</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> }</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> </span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a> };      // namespace elf</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

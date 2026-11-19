@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/manifolds/lie/se3.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/manifolds/lie/se3.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/manifolds.html">Manifolds</a></div><p>Defined in header <code>&lt;micron/math/manifolds/lie/se3.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/math/manifolds/lie/se3.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-97b5852998009ad1">micron::math::manifolds::lie::SE3</code></td><td>struct; line 154</td></tr><tr class="t-dsc"><td><code id="s-d2e50bcdc04b3634">micron::math::manifolds::lie::SE3::R</code></td><td>member; line 155</td></tr><tr class="t-dsc"><td><code id="s-f78c9282030ef64b">micron::math::manifolds::lie::SE3::t</code></td><td>member; line 156</td></tr><tr class="t-dsc"><td><code id="s-66d3b3d7d3b9d1b1">micron::math::manifolds::traits</code></td><td>struct; line 437</td></tr><tr class="t-dsc"><td><code id="s-6cc3e5c5fbde99a2">micron::math::manifolds::traits::point_type</code></td><td>typedef; line 438</td></tr><tr class="t-dsc"><td><code id="s-3d808f1f6d425aa6">micron::math::manifolds::traits::tangent_type</code></td><td>typedef; line 439</td></tr><tr class="t-dsc"><td><code id="s-dd41c3af40cd36e0">micron::math::manifolds::traits::scalar_type</code></td><td>typedef; line 440</td></tr><tr class="t-dsc"><td><code id="s-3d44ba14ebc2b246">micron::math::manifolds::traits::category</code></td><td>typedef; line 441</td></tr><tr class="t-dsc"><td><code id="s-421836a206f13178">micron::math::manifolds::traits::dim</code></td><td>member; line 442</td></tr><tr class="t-dsc"><td><code id="s-22b3c1999679ffe1">micron::math::manifolds::traits::ambient_dim</code></td><td>member; line 443</td></tr><tr class="t-dsc"><td><a href="#f-a78fd4daabd32bcb">micron::math::manifolds::lie::SE3::identity() noexcept</a></td><td>function; line 159</td></tr><tr class="t-dsc"><td><a href="#f-3fbda0163848a03c">micron::math::manifolds::lie::SE3::from_rt(const SO3&lt;F&gt; &amp;rotation, const vec&lt;F, 3&gt; &amp;translation) noexcept</a></td><td>function; line 165</td></tr><tr class="t-dsc"><td><a href="#f-66fe7d94ff349109">micron::math::manifolds::lie::SE3::from_quat_translation(const quat&lt;F&gt; &amp;rotation, const vec&lt;F, 3&gt; &amp;translation) noexcept</a></td><td>function; line 171</td></tr><tr class="t-dsc"><td><a href="#f-5065ee0b64d95ac2">micron::math::manifolds::lie::SE3::from_matrix(const mat&lt;F, 4, 4&gt; &amp;T) noexcept</a></td><td>function; line 177</td></tr><tr class="t-dsc"><td><a href="#f-9bface389d0ada40">micron::math::manifolds::lie::SE3::compose(const SE3 &amp;a, const SE3 &amp;b) noexcept</a></td><td>function; line 186</td></tr><tr class="t-dsc"><td><a href="#f-6e6f711b487abfe9">micron::math::manifolds::lie::SE3::inverse(const SE3 &amp;g) noexcept</a></td><td>function; line 192</td></tr><tr class="t-dsc"><td><a href="#f-dffb47fc2e0c1202">micron::math::manifolds::lie::SE3::between(const SE3 &amp;a, const SE3 &amp;b) noexcept</a></td><td>function; line 200</td></tr><tr class="t-dsc"><td><a href="#f-3a0c49f20c8f458b">micron::math::manifolds::lie::SE3::normalized(const SE3 &amp;g) noexcept</a></td><td>function; line 207</td></tr><tr class="t-dsc"><td><a href="#f-38f1c5377b3c84bc">micron::math::manifolds::lie::SE3::exp_map(const vec&lt;F, 6&gt; &amp;xi) noexcept</a></td><td>function; line 213</td></tr><tr class="t-dsc"><td><a href="#f-a75c4e5ddbb7d3ca">micron::math::manifolds::lie::SE3::log_map(const SE3 &amp;g) noexcept</a></td><td>function; line 248</td></tr><tr class="t-dsc"><td><a href="#f-c3102d597a05f0fe">micron::math::manifolds::lie::SE3::to_matrix(const SE3 &amp;g) noexcept</a></td><td>function; line 300</td></tr><tr class="t-dsc"><td><a href="#f-cca3cfe7caaa3314">micron::math::manifolds::lie::SE3::act(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;point) noexcept</a></td><td>function; line 314</td></tr><tr class="t-dsc"><td><a href="#f-cc304f9d63e167cf">micron::math::manifolds::lie::SE3::act_vector(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;direction) noexcept</a></td><td>function; line 320</td></tr><tr class="t-dsc"><td><a href="#f-b315d6384e96148a">micron::math::manifolds::lie::SE3::inverse_act(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;point) noexcept</a></td><td>function; line 326</td></tr><tr class="t-dsc"><td><a href="#f-24d3ea0c3ce3cb4b">micron::math::manifolds::lie::SE3::inverse_act_vector(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;direction) noexcept</a></td><td>function; line 332</td></tr><tr class="t-dsc"><td><a href="#f-662dc807f2b83f5f">micron::math::manifolds::lie::SE3::adjoint(const SE3 &amp;g) noexcept</a></td><td>function; line 338</td></tr><tr class="t-dsc"><td><a href="#f-aa3c74eaaddb3eb0">micron::math::manifolds::lie::SE3::coadjoint(const SE3 &amp;g) noexcept</a></td><td>function; line 366</td></tr><tr class="t-dsc"><td><a href="#f-b45aca60dd3305f5">micron::math::manifolds::lie::SE3::adjoint_apply(const SE3 &amp;g, const vec&lt;F, 6&gt; &amp;xi) noexcept</a></td><td>function; line 391</td></tr><tr class="t-dsc"><td><a href="#f-86d67c59f8e564a3">micron::math::manifolds::lie::SE3::coadjoint_apply(const SE3 &amp;g, const vec&lt;F, 6&gt; &amp;wrench) noexcept</a></td><td>function; line 402</td></tr><tr class="t-dsc"><td><a href="#f-a822406be0496a19">micron::math::manifolds::lie::SE3::squared_distance(const SE3 &amp;a, const SE3 &amp;b) noexcept</a></td><td>function; line 413</td></tr><tr class="t-dsc"><td><a href="#f-7f0fa1a92408127f">micron::math::manifolds::lie::SE3::distance(const SE3 &amp;a, const SE3 &amp;b) noexcept</a></td><td>function; line 422</td></tr><tr class="t-dsc"><td><a href="#f-70f6c57e76c45de0">micron::math::manifolds::lie::SE3::interpolate(const SE3 &amp;a, const SE3 &amp;b, F t) noexcept</a></td><td>function; line 428</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a78fd4daabd32bcb"><h3><code>micron::math::manifolds::lie::SE3::identity() noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L159">line 159</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static constexpr SE3
+  identity() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>SE3{ SO3&lt;F&gt;::identity(), vec&lt;F, 3&gt;{ F(0), F(0), F(0) } }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static constexpr SE3
+  identity() noexcept
+  {
+    return SE3{ SO3&lt;F&gt;::identity(), vec&lt;F, 3&gt;{ F(0), F(0), F(0) } };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ SO3&lt;F&gt;::identity(), vec&lt;F, 3&gt;{ F(0), F(0), F(0) } }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L161">line 161</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-63e862011e4e2017">SO3&lt;F&gt;::identity</a>.</p></section><section class="function-entry" id="f-3fbda0163848a03c"><h3><code>micron::math::manifolds::lie::SE3::from_rt(const SO3&lt;F&gt; &amp;rotation, const vec&lt;F, 3&gt; &amp;translation) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L165">line 165</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static constexpr SE3
+  from_rt(const SO3&lt;F&gt; &amp;rotation, const vec&lt;F, 3&gt; &amp;translation) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SO3&lt;F&gt; &amp;rotation</code></li><li><code>const vec&lt;F, 3&gt; &amp;translation</code></li></ul><h4>Effects</h4><p>Returns <code>SE3{ rotation, translation }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static constexpr SE3
+  from_rt(const SO3&lt;F&gt; &amp;rotation, const vec&lt;F, 3&gt; &amp;translation) noexcept
+  {
+    return SE3{ rotation, translation };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ rotation, translation }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L167">line 167</a></td></tr></tbody></table></section><section class="function-entry" id="f-66fe7d94ff349109"><h3><code>micron::math::manifolds::lie::SE3::from_quat_translation(const quat&lt;F&gt; &amp;rotation, const vec&lt;F, 3&gt; &amp;translation) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L171">line 171</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static constexpr SE3
+  from_quat_translation(const quat&lt;F&gt; &amp;rotation, const vec&lt;F, 3&gt; &amp;translation) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;rotation</code></li><li><code>const vec&lt;F, 3&gt; &amp;translation</code></li></ul><h4>Effects</h4><p>Returns <code>SE3{ SO3&lt;F&gt;::from_quat(rotation), translation }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static constexpr SE3
+  from_quat_translation(const quat&lt;F&gt; &amp;rotation, const vec&lt;F, 3&gt; &amp;translation) noexcept
+  {
+    return SE3{ SO3&lt;F&gt;::from_quat(rotation), translation };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ SO3&lt;F&gt;::from_quat(rotation), translation }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L173">line 173</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-45e14c18347c75d6">SO3&lt;F&gt;::from_quat</a>.</p></section><section class="function-entry" id="f-5065ee0b64d95ac2"><h3><code>micron::math::manifolds::lie::SE3::from_matrix(const mat&lt;F, 4, 4&gt; &amp;T) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L177">line 177</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr SE3
+  from_matrix(const mat&lt;F, 4, 4&gt; &amp;T) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 4, 4&gt; &amp;T</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr SE3
+  from_matrix(const mat&lt;F, 4, 4&gt; &amp;T) noexcept
+  {
+    mat&lt;F, 3, 3&gt; R3{};
+    for ( usize r = 0; r &lt; 3; ++r )
+      for ( usize c = 0; c &lt; 3; ++c ) R3.data[r * 3 + c] = T.data[r * 4 + c];
+    return SE3{ SO3&lt;F&gt;::from_matrix(R3), vec&lt;F, 3&gt;{ T.data[3], T.data[7], T.data[11] } };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ SO3&lt;F&gt;::from_matrix(R3), vec&lt;F, 3&gt;{ T.data[3], T.data[7], T.data[11] } }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L182">line 182</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-7ceb53719a68a986">SO3&lt;F&gt;::from_matrix</a>.</p></section><section class="function-entry" id="f-9bface389d0ada40"><h3><code>micron::math::manifolds::lie::SE3::compose(const SE3 &amp;a, const SE3 &amp;b) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L186">line 186</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr SE3
+  compose(const SE3 &amp;a, const SE3 &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;a</code></li><li><code>const SE3 &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>SE3{ SO3&lt;F&gt;::compose(a.R, b.R), a.t + SO3&lt;F&gt;::rotate(a.R, b.t) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr SE3
+  compose(const SE3 &amp;a, const SE3 &amp;b) noexcept
+  {
+    return SE3{ SO3&lt;F&gt;::compose(a.R, b.R), a.t + SO3&lt;F&gt;::rotate(a.R, b.t) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ SO3&lt;F&gt;::compose(a.R, b.R), a.t + SO3&lt;F&gt;::rotate(a.R, b.t) }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-46e13608f9ddb5e4">SO3&lt;F&gt;::compose</a>, <a href="so3.hpp.html#f-c396c0ad12672cf7">SO3&lt;F&gt;::rotate</a>.</p></section><section class="function-entry" id="f-6e6f711b487abfe9"><h3><code>micron::math::manifolds::lie::SE3::inverse(const SE3 &amp;g) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L192">line 192</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr SE3
+  inverse(const SE3 &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr SE3
+  inverse(const SE3 &amp;g) noexcept
+  {
+    const auto Rinv = SO3&lt;F&gt;::inverse(g.R);
+    const auto tinv = SO3&lt;F&gt;::rotate(Rinv, vec&lt;F, 3&gt;{ -g.t.data[0], -g.t.data[1], -g.t.data[2] });
+    return SE3{ Rinv, tinv };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ Rinv, tinv }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L196">line 196</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-fb11232fce5cf351">SO3&lt;F&gt;::inverse</a>, <a href="so3.hpp.html#f-c396c0ad12672cf7">SO3&lt;F&gt;::rotate</a>.</p></section><section class="function-entry" id="f-dffb47fc2e0c1202"><h3><code>micron::math::manifolds::lie::SE3::between(const SE3 &amp;a, const SE3 &amp;b) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L200">line 200</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr SE3
+  between(const SE3 &amp;a, const SE3 &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;a</code></li><li><code>const SE3 &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr SE3
+  between(const SE3 &amp;a, const SE3 &amp;b) noexcept
+  {
+    const auto Rinv = SO3&lt;F&gt;::inverse(a.R);
+    return SE3{ SO3&lt;F&gt;::compose(Rinv, b.R), SO3&lt;F&gt;::rotate(Rinv, b.t - a.t) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ SO3&lt;F&gt;::compose(Rinv, b.R), SO3&lt;F&gt;::rotate(Rinv, b.t - a.t) }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L203">line 203</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-fb11232fce5cf351">SO3&lt;F&gt;::inverse</a>, <a href="so3.hpp.html#f-46e13608f9ddb5e4">SO3&lt;F&gt;::compose</a>, <a href="so3.hpp.html#f-c396c0ad12672cf7">SO3&lt;F&gt;::rotate</a>.</p></section><section class="function-entry" id="f-3a0c49f20c8f458b"><h3><code>micron::math::manifolds::lie::SE3::normalized(const SE3 &amp;g) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L207">line 207</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static SE3
+  normalized(const SE3 &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li></ul><h4>Effects</h4><p>Returns <code>SE3{ SO3&lt;F&gt;::normalized(g.R), g.t }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static SE3
+  normalized(const SE3 &amp;g) noexcept
+  {
+    return SE3{ SO3&lt;F&gt;::normalized(g.R), g.t };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ SO3&lt;F&gt;::normalized(g.R), g.t }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L209">line 209</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-2c31de52f6fafe7f">SO3&lt;F&gt;::normalized</a>.</p></section><section class="function-entry" id="f-38f1c5377b3c84bc"><h3><code>micron::math::manifolds::lie::SE3::exp_map(const vec&lt;F, 6&gt; &amp;xi) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L213">line 213</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr SE3
+  exp_map(const vec&lt;F, 6&gt; &amp;xi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 6&gt; &amp;xi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr SE3
+  exp_map(const vec&lt;F, 6&gt; &amp;xi) noexcept
+  {
+    const vec&lt;F, 3&gt; v{ xi.data[0], xi.data[1], xi.data[2] };
+    const F wx = xi.data[3], wy = xi.data[4], wz = xi.data[5];
+    const vec&lt;F, 3&gt; w{ wx, wy, wz };
+    const F theta_sq = wx * wx + wy * wy + wz * wz;
+
+    // optimized
+    F scalar;
+    F c_half;
+    F a, b;
+
+    if ( theta_sq &lt; __se3_impl::small_angle_threshold_sq&lt;F&gt;() ) {
+      scalar = __so3_impl::sinc_half_over_theta&lt;F&gt;(theta_sq);
+      c_half = __so3_impl::cos_half&lt;F&gt;(theta_sq);
+      a = __se3_impl::lj_a_poly&lt;F&gt;(theta_sq);
+      b = __se3_impl::lj_b_poly&lt;F&gt;(theta_sq);
+    } else {
+      const F theta = math::fsqrt(theta_sq);
+      const F half = theta * F(0.5);
+      F s_half;
+      math::sincos&lt;F&gt;(half, s_half, c_half);
+      scalar = s_half / theta;
+      const F sin_theta = F(2) * s_half * c_half;
+      const F cos_theta = c_half * c_half - s_half * s_half;
+      a = (F(1) - cos_theta) / theta_sq;
+      b = (theta - sin_theta) / (theta * theta_sq);
+    }
+
+    const quat&lt;F&gt; q{ wx * scalar, wy * scalar, wz * scalar, c_half };
+    const vec&lt;F, 3&gt; t_out = __se3_impl::left_jacobian_apply_with_ab&lt;F&gt;(w, v, a, b);
+    return SE3{ SO3&lt;F&gt;{ q }, t_out };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SE3{ SO3&lt;F&gt;{ q }, t_out }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L244">line 244</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="se3.hpp.html#f-77a8020f48ea6358">__se3_impl::small_angle_threshold_sq&lt;F&gt;</a>, <a href="so3.hpp.html#f-1a4b991a7e748422">__so3_impl::sinc_half_over_theta&lt;F&gt;</a>, <a href="so3.hpp.html#f-fdac55848840844d">__so3_impl::cos_half&lt;F&gt;</a>, <a href="se3.hpp.html#f-e516f2f77c1f9f2c">__se3_impl::lj_a_poly&lt;F&gt;</a>, <a href="se3.hpp.html#f-6865f64abdcd435e">__se3_impl::lj_b_poly&lt;F&gt;</a>, <a href="../../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;F&gt;</a>, <a href="se3.hpp.html#f-d9be1860aacf12f6">__se3_impl::left_jacobian_apply_with_ab&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a75c4e5ddbb7d3ca"><h3><code>micron::math::manifolds::lie::SE3::log_map(const SE3 &amp;g) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L248">line 248</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr vec&lt;F, 6&gt;
+  log_map(const SE3 &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr vec&lt;F, 6&gt;
+  log_map(const SE3 &amp;g) noexcept
+  {
+    F qx = g.R.q.data[0], qy = g.R.q.data[1], qz = g.R.q.data[2], qw = g.R.q.data[3];
+    if ( qw &lt; F(0) ) {
+      qx = -qx;
+      qy = -qy;
+      qz = -qz;
+      qw = -qw;
+    }
+    const F xyz_sq = qx * qx + qy * qy + qz * qz;
+
+    F wx, wy, wz;
+    F theta_sq;
+    if ( xyz_sq &lt; __so3_impl::small_angle_threshold_sq&lt;F&gt;() ) {
+      const F inv_qw = F(1) / qw;
+      const F y2 = xyz_sq * (inv_qw * inv_qw);
+      F p = F(-1) / F(11);
+      p = p * y2 + F(1) / F(9);
+      p = p * y2 - F(1) / F(7);
+      p = p * y2 + F(1) / F(5);
+      p = p * y2 - F(1) / F(3);
+      p = p * y2 + F(1);
+      const F k = F(2) * p * inv_qw;
+      wx = qx * k;
+      wy = qy * k;
+      wz = qz * k;
+      theta_sq = wx * wx + wy * wy + wz * wz;
+    } else {
+      const F xyz_norm = math::fsqrt(xyz_sq);
+      const F angle = F(2) * math::atan2&lt;F&gt;(xyz_norm, qw);
+      const F k = angle / xyz_norm;
+      wx = qx * k;
+      wy = qy * k;
+      wz = qz * k;
+      theta_sq = angle * angle;
+    }
+    const vec&lt;F, 3&gt; w{ wx, wy, wz };
+
+    F coeff;
+    if ( theta_sq &lt; __se3_impl::small_angle_threshold_sq&lt;F&gt;() ) {
+      coeff = __se3_impl::lj_inv_poly&lt;F&gt;(theta_sq);
+    } else {
+      const F xyz_norm = math::fsqrt(xyz_sq);
+      const F theta = math::fsqrt(theta_sq);
+      coeff = (F(1) / theta_sq) - qw / (F(2) * theta * xyz_norm);
+    }
+    const vec&lt;F, 3&gt; v_out = __se3_impl::left_jacobian_inv_apply_with_c&lt;F&gt;(w, g.t, coeff);
+
+    return vec&lt;F, 6&gt;{ v_out.data[0], v_out.data[1], v_out.data[2], wx, wy, wz };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vec&lt;F, 6&gt;{ v_out.data[0], v_out.data[1], v_out.data[2], wx, wy, wz }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L296">line 296</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-aafdec506561194e">__so3_impl::small_angle_threshold_sq&lt;F&gt;</a>, <a href="../../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../../mk.hpp.html#f-4db5683eb6ab85c6">math::atan2&lt;F&gt;</a>, <a href="se3.hpp.html#f-77a8020f48ea6358">__se3_impl::small_angle_threshold_sq&lt;F&gt;</a>, <a href="se3.hpp.html#f-9f7a36a10b0fb9f1">__se3_impl::lj_inv_poly&lt;F&gt;</a>, <a href="se3.hpp.html#f-09503f0db7abb06c">__se3_impl::left_jacobian_inv_apply_with_c&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c3102d597a05f0fe"><h3><code>micron::math::manifolds::lie::SE3::to_matrix(const SE3 &amp;g) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L300">line 300</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr mat&lt;F, 4, 4&gt;
+  to_matrix(const SE3 &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr mat&lt;F, 4, 4&gt;
+  to_matrix(const SE3 &amp;g) noexcept
+  {
+    const auto R3 = SO3&lt;F&gt;::to_matrix(g.R);
+    mat&lt;F, 4, 4&gt; M = mat&lt;F, 4, 4&gt;::zero();
+    for ( usize r = 0; r &lt; 3; ++r )
+      for ( usize c = 0; c &lt; 3; ++c ) M.data[r * 4 + c] = R3.data[r * 3 + c];
+    M.data[0 * 4 + 3] = g.t.data[0];
+    M.data[1 * 4 + 3] = g.t.data[1];
+    M.data[2 * 4 + 3] = g.t.data[2];
+    M.data[3 * 4 + 3] = F(1);
+    return M;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>M</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L310">line 310</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-377e509147e01fc9">SO3&lt;F&gt;::to_matrix</a>, <a href="../../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, 4, 4&gt;::zero</a>.</p></section><section class="function-entry" id="f-cca3cfe7caaa3314"><h3><code>micron::math::manifolds::lie::SE3::act(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;point) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L314">line 314</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static constexpr vec&lt;F, 3&gt;
+  act(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;point) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li><li><code>const vec&lt;F, 3&gt; &amp;point</code></li></ul><h4>Effects</h4><p>Returns <code>SO3&lt;F&gt;::rotate(g.R, point) + g.t</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static constexpr vec&lt;F, 3&gt;
+  act(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;point) noexcept
+  {
+    return SO3&lt;F&gt;::rotate(g.R, point) + g.t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SO3&lt;F&gt;::rotate(g.R, point) + g.t</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L316">line 316</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-c396c0ad12672cf7">SO3&lt;F&gt;::rotate</a>.</p></section><section class="function-entry" id="f-cc304f9d63e167cf"><h3><code>micron::math::manifolds::lie::SE3::act_vector(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;direction) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L320">line 320</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static constexpr vec&lt;F, 3&gt;
+  act_vector(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;direction) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li><li><code>const vec&lt;F, 3&gt; &amp;direction</code></li></ul><h4>Effects</h4><p>Returns <code>SO3&lt;F&gt;::rotate(g.R, direction)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static constexpr vec&lt;F, 3&gt;
+  act_vector(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;direction) noexcept
+  {
+    return SO3&lt;F&gt;::rotate(g.R, direction);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SO3&lt;F&gt;::rotate(g.R, direction)</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L322">line 322</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-c396c0ad12672cf7">SO3&lt;F&gt;::rotate</a>.</p></section><section class="function-entry" id="f-b315d6384e96148a"><h3><code>micron::math::manifolds::lie::SE3::inverse_act(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;point) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L326">line 326</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static constexpr vec&lt;F, 3&gt;
+  inverse_act(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;point) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li><li><code>const vec&lt;F, 3&gt; &amp;point</code></li></ul><h4>Effects</h4><p>Returns <code>SO3&lt;F&gt;::inverse_rotate(g.R, point - g.t)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static constexpr vec&lt;F, 3&gt;
+  inverse_act(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;point) noexcept
+  {
+    return SO3&lt;F&gt;::inverse_rotate(g.R, point - g.t);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SO3&lt;F&gt;::inverse_rotate(g.R, point - g.t)</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L328">line 328</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-828b39012739b0c9">SO3&lt;F&gt;::inverse_rotate</a>.</p></section><section class="function-entry" id="f-24d3ea0c3ce3cb4b"><h3><code>micron::math::manifolds::lie::SE3::inverse_act_vector(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;direction) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L332">line 332</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static constexpr vec&lt;F, 3&gt;
+  inverse_act_vector(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;direction) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li><li><code>const vec&lt;F, 3&gt; &amp;direction</code></li></ul><h4>Effects</h4><p>Returns <code>SO3&lt;F&gt;::inverse_rotate(g.R, direction)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static constexpr vec&lt;F, 3&gt;
+  inverse_act_vector(const SE3 &amp;g, const vec&lt;F, 3&gt; &amp;direction) noexcept
+  {
+    return SO3&lt;F&gt;::inverse_rotate(g.R, direction);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>SO3&lt;F&gt;::inverse_rotate(g.R, direction)</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L334">line 334</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-828b39012739b0c9">SO3&lt;F&gt;::inverse_rotate</a>.</p></section><section class="function-entry" id="f-662dc807f2b83f5f"><h3><code>micron::math::manifolds::lie::SE3::adjoint(const SE3 &amp;g) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L338">line 338</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr mat&lt;F, 6, 6&gt;
+  adjoint(const SE3 &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr mat&lt;F, 6, 6&gt;
+  adjoint(const SE3 &amp;g) noexcept
+  {
+    const auto R3 = SO3&lt;F&gt;::to_matrix(g.R);
+    const F tx = g.t.data[0], ty = g.t.data[1], tz = g.t.data[2];
+    const F s00 = F(0), s01 = -tz, s02 = ty;
+    const F s10 = tz, s11 = F(0), s12 = -tx;
+    const F s20 = -ty, s21 = tx, s22 = F(0);
+    F tr[9];
+    tr[0] = s00 * R3.data[0] + s01 * R3.data[3] + s02 * R3.data[6];
+    tr[1] = s00 * R3.data[1] + s01 * R3.data[4] + s02 * R3.data[7];
+    tr[2] = s00 * R3.data[2] + s01 * R3.data[5] + s02 * R3.data[8];
+    tr[3] = s10 * R3.data[0] + s11 * R3.data[3] + s12 * R3.data[6];
+    tr[4] = s10 * R3.data[1] + s11 * R3.data[4] + s12 * R3.data[7];
+    tr[5] = s10 * R3.data[2] + s11 * R3.data[5] + s12 * R3.data[8];
+    tr[6] = s20 * R3.data[0] + s21 * R3.data[3] + s22 * R3.data[6];
+    tr[7] = s20 * R3.data[1] + s21 * R3.data[4] + s22 * R3.data[7];
+    tr[8] = s20 * R3.data[2] + s21 * R3.data[5] + s22 * R3.data[8];
+    mat&lt;F, 6, 6&gt; Ad = mat&lt;F, 6, 6&gt;::zero();
+    for ( usize r = 0; r &lt; 3; ++r )
+      for ( usize c = 0; c &lt; 3; ++c ) {
+        Ad.data[r * 6 + c] = R3.data[r * 3 + c];
+        Ad.data[r * 6 + (c + 3)] = tr[r * 3 + c];
+        Ad.data[(r + 3) * 6 + (c + 3)] = R3.data[r * 3 + c];
+      }
+    return Ad;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>Ad</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L362">line 362</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-377e509147e01fc9">SO3&lt;F&gt;::to_matrix</a>, <a href="../../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, 6, 6&gt;::zero</a>.</p></section><section class="function-entry" id="f-aa3c74eaaddb3eb0"><h3><code>micron::math::manifolds::lie::SE3::coadjoint(const SE3 &amp;g) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L366">line 366</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr mat&lt;F, 6, 6&gt;
+  coadjoint(const SE3 &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr mat&lt;F, 6, 6&gt;
+  coadjoint(const SE3 &amp;g) noexcept
+  {
+    const auto R3 = SO3&lt;F&gt;::to_matrix(g.R);
+    const F tx = g.t.data[0], ty = g.t.data[1], tz = g.t.data[2];
+    F tr[9];
+    tr[0] = -tz * R3.data[3] + ty * R3.data[6];
+    tr[1] = -tz * R3.data[4] + ty * R3.data[7];
+    tr[2] = -tz * R3.data[5] + ty * R3.data[8];
+    tr[3] = tz * R3.data[0] - tx * R3.data[6];
+    tr[4] = tz * R3.data[1] - tx * R3.data[7];
+    tr[5] = tz * R3.data[2] - tx * R3.data[8];
+    tr[6] = -ty * R3.data[0] + tx * R3.data[3];
+    tr[7] = -ty * R3.data[1] + tx * R3.data[4];
+    tr[8] = -ty * R3.data[2] + tx * R3.data[5];
+    mat&lt;F, 6, 6&gt; Ad = mat&lt;F, 6, 6&gt;::zero();
+    for ( usize r = 0; r &lt; 3; ++r )
+      for ( usize c = 0; c &lt; 3; ++c ) {
+        Ad.data[r * 6 + c] = R3.data[r * 3 + c];
+        Ad.data[(r + 3) * 6 + c] = tr[r * 3 + c];
+        Ad.data[(r + 3) * 6 + (c + 3)] = R3.data[r * 3 + c];
+      }
+    return Ad;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>Ad</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L387">line 387</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-377e509147e01fc9">SO3&lt;F&gt;::to_matrix</a>, <a href="../../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, 6, 6&gt;::zero</a>.</p></section><section class="function-entry" id="f-b45aca60dd3305f5"><h3><code>micron::math::manifolds::lie::SE3::adjoint_apply(const SE3 &amp;g, const vec&lt;F, 6&gt; &amp;xi) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L391">line 391</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr vec&lt;F, 6&gt;
+  adjoint_apply(const SE3 &amp;g, const vec&lt;F, 6&gt; &amp;xi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li><li><code>const vec&lt;F, 6&gt; &amp;xi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr vec&lt;F, 6&gt;
+  adjoint_apply(const SE3 &amp;g, const vec&lt;F, 6&gt; &amp;xi) noexcept
+  {
+    const vec&lt;F, 3&gt; v{ xi.data[0], xi.data[1], xi.data[2] };
+    const vec&lt;F, 3&gt; w{ xi.data[3], xi.data[4], xi.data[5] };
+    const auto Rv = SO3&lt;F&gt;::rotate(g.R, v);
+    const auto Rw = SO3&lt;F&gt;::rotate(g.R, w);
+    const auto top = Rv + linalg::ops::cross(g.t, Rw);
+    return vec&lt;F, 6&gt;{ top.data[0], top.data[1], top.data[2], Rw.data[0], Rw.data[1], Rw.data[2] };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vec&lt;F, 6&gt;{ top.data[0], top.data[1], top.data[2], Rw.data[0], Rw.data[1], Rw.data[2] }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L398">line 398</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-c396c0ad12672cf7">SO3&lt;F&gt;::rotate</a>, <a href="../../linalg/ops.hpp.html#f-f44233de36210ce3">linalg::ops::cross</a>.</p></section><section class="function-entry" id="f-86d67c59f8e564a3"><h3><code>micron::math::manifolds::lie::SE3::coadjoint_apply(const SE3 &amp;g, const vec&lt;F, 6&gt; &amp;wrench) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L402">line 402</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr vec&lt;F, 6&gt;
+  coadjoint_apply(const SE3 &amp;g, const vec&lt;F, 6&gt; &amp;wrench) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;g</code></li><li><code>const vec&lt;F, 6&gt; &amp;wrench</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr vec&lt;F, 6&gt;
+  coadjoint_apply(const SE3 &amp;g, const vec&lt;F, 6&gt; &amp;wrench) noexcept
+  {
+    const vec&lt;F, 3&gt; force{ wrench.data[0], wrench.data[1], wrench.data[2] };
+    const vec&lt;F, 3&gt; torque{ wrench.data[3], wrench.data[4], wrench.data[5] };
+    const auto Rf = SO3&lt;F&gt;::rotate(g.R, force);
+    const auto Rt = SO3&lt;F&gt;::rotate(g.R, torque);
+    const auto bottom = linalg::ops::cross(g.t, Rf) + Rt;
+    return vec&lt;F, 6&gt;{ Rf.data[0], Rf.data[1], Rf.data[2], bottom.data[0], bottom.data[1], bottom.data[2] };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vec&lt;F, 6&gt;{ Rf.data[0], Rf.data[1], Rf.data[2], bottom.data[0], bottom.data[1], bottom.data[2] }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L409">line 409</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="so3.hpp.html#f-c396c0ad12672cf7">SO3&lt;F&gt;::rotate</a>, <a href="../../linalg/ops.hpp.html#f-f44233de36210ce3">linalg::ops::cross</a>.</p></section><section class="function-entry" id="f-a822406be0496a19"><h3><code>micron::math::manifolds::lie::SE3::squared_distance(const SE3 &amp;a, const SE3 &amp;b) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L413">line 413</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr F
+  squared_distance(const SE3 &amp;a, const SE3 &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;a</code></li><li><code>const SE3 &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr F
+  squared_distance(const SE3 &amp;a, const SE3 &amp;b) noexcept
+  {
+    const auto xi = log_map(between(a, b));
+    F s = F(0);
+    for ( usize i = 0; i &lt; 6; ++i ) s = math::fma&lt;F&gt;(xi.data[i], xi.data[i], s);
+    return s;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L418">line 418</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="se3.hpp.html#f-a75c4e5ddbb7d3ca">log_map</a>, <a href="se3.hpp.html#f-dffb47fc2e0c1202">between</a>, <a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-7f0fa1a92408127f"><h3><code>micron::math::manifolds::lie::SE3::distance(const SE3 &amp;a, const SE3 &amp;b) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L422">line 422</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static F
+  distance(const SE3 &amp;a, const SE3 &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;a</code></li><li><code>const SE3 &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>math::fsqrt(squared_distance(a, b))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static F
+  distance(const SE3 &amp;a, const SE3 &amp;b) noexcept
+  {
+    return math::fsqrt(squared_distance(a, b));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fsqrt(squared_distance(a, b))</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L424">line 424</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="se3.hpp.html#f-a822406be0496a19">squared_distance</a>.</p></section><section class="function-entry" id="f-70f6c57e76c45de0"><h3><code>micron::math::manifolds::lie::SE3::interpolate(const SE3 &amp;a, const SE3 &amp;b, F t) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L428">line 428</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] static constexpr SE3
+  interpolate(const SE3 &amp;a, const SE3 &amp;b, F t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const SE3 &amp;a</code></li><li><code>const SE3 &amp;b</code></li><li><code>F t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] static constexpr SE3
+  interpolate(const SE3 &amp;a, const SE3 &amp;b, F t) noexcept
+  {
+    const auto delta = log_map(between(a, b));
+    return compose(a, exp_map(delta * t));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>compose(a, exp_map(delta * t))</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L431">line 431</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="se3.hpp.html#f-a75c4e5ddbb7d3ca">log_map</a>, <a href="se3.hpp.html#f-dffb47fc2e0c1202">between</a>, <a href="se3.hpp.html#f-9bface389d0ada40">compose</a>, <a href="se3.hpp.html#f-38f1c5377b3c84bc">exp_map</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e516f2f77c1f9f2c"><h3><code>micron::math::manifolds::lie::__se3_impl::lj_a_poly(F t2) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L38">line 38</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_a_poly(F t2) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F t2</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_a_poly(F t2) noexcept
+{
+  F r = F(1) / F(3628800);
+  r = r * t2 - F(1) / F(40320);
+  r = r * t2 + F(1) / F(720);
+  r = r * t2 - F(1) / F(24);
+  r = r * t2 + F(0.5);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L45">line 45</a></td></tr></tbody></table></section><section class="function-entry" id="f-6865f64abdcd435e"><h3><code>micron::math::manifolds::lie::__se3_impl::lj_b_poly(F t2) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L51">line 51</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_b_poly(F t2) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F t2</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_b_poly(F t2) noexcept
+{
+  F r = F(1) / F(39916800);
+  r = r * t2 - F(1) / F(362880);
+  r = r * t2 + F(1) / F(5040);
+  r = r * t2 - F(1) / F(120);
+  r = r * t2 + F(1) / F(6);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L58">line 58</a></td></tr></tbody></table></section><section class="function-entry" id="f-9f7a36a10b0fb9f1"><h3><code>micron::math::manifolds::lie::__se3_impl::lj_inv_poly(F t2) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L64">line 64</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_inv_poly(F t2) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F t2</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lj_inv_poly(F t2) noexcept
+{
+  F r = F(1) / F(1209600);
+  r = r * t2 + F(1) / F(30240);
+  r = r * t2 + F(1) / F(720);
+  r = r * t2 + F(1) / F(12);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L70">line 70</a></td></tr></tbody></table></section><section class="function-entry" id="f-6d80b4e888cee9b9"><h3><code>micron::math::manifolds::lie::__se3_impl::cross3(const vec&lt;F, 3&gt; &amp;a, const vec&lt;F, 3&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+cross3(const vec&lt;F, 3&gt; &amp;a, const vec&lt;F, 3&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;a</code></li><li><code>const vec&lt;F, 3&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>vec&lt;F, 3&gt;{ a.data[1] * b.data[2] - a.data[2] * b.data[1], a.data[2] * b.data[0] - a.data[0] * b.data[2],
+                    a.data[0] * b.data[1] - a.data[1] * b.data[0] }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+cross3(const vec&lt;F, 3&gt; &amp;a, const vec&lt;F, 3&gt; &amp;b) noexcept
+{
+  return vec&lt;F, 3&gt;{ a.data[1] * b.data[2] - a.data[2] * b.data[1], a.data[2] * b.data[0] - a.data[0] * b.data[2],
+                    a.data[0] * b.data[1] - a.data[1] * b.data[0] };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vec&lt;F, 3&gt;{ a.data[1] * b.data[2] - a.data[2] * b.data[1], a.data[2] * b.data[0] - a.data[0] * b.data[2],
+                    a.data[0] * b.data[1] - a.data[1] * b.data[0] }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L77">line 77</a></td></tr></tbody></table></section><section class="function-entry" id="f-d9be1860aacf12f6"><h3><code>micron::math::manifolds::lie::__se3_impl::left_jacobian_apply_with_ab(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;v, F a, F b) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L84">line 84</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+left_jacobian_apply_with_ab(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;v, F a, F b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;omega</code></li><li><code>const vec&lt;F, 3&gt; &amp;v</code></li><li><code>F a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+left_jacobian_apply_with_ab(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;v, F a, F b) noexcept
+{
+  const vec&lt;F, 3&gt; wxv = cross3&lt;F&gt;(omega, v);
+  const vec&lt;F, 3&gt; wxwxv = cross3&lt;F&gt;(omega, wxv);
+  return vec&lt;F, 3&gt;{ v.data[0] + a * wxv.data[0] + b * wxwxv.data[0], v.data[1] + a * wxv.data[1] + b * wxwxv.data[1],
+                    v.data[2] + a * wxv.data[2] + b * wxwxv.data[2] };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vec&lt;F, 3&gt;{ v.data[0] + a * wxv.data[0] + b * wxwxv.data[0], v.data[1] + a * wxv.data[1] + b * wxwxv.data[1],
+                    v.data[2] + a * wxv.data[2] + b * wxwxv.data[2] }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L88">line 88</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="se3.hpp.html#f-6d80b4e888cee9b9">cross3&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-09503f0db7abb06c"><h3><code>micron::math::manifolds::lie::__se3_impl::left_jacobian_inv_apply_with_c(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;t, F c) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L95">line 95</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+left_jacobian_inv_apply_with_c(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;t, F c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;omega</code></li><li><code>const vec&lt;F, 3&gt; &amp;t</code></li><li><code>F c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+left_jacobian_inv_apply_with_c(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;t, F c) noexcept
+{
+  const vec&lt;F, 3&gt; wxt = cross3&lt;F&gt;(omega, t);
+  const vec&lt;F, 3&gt; wxwxt = cross3&lt;F&gt;(omega, wxt);
+  return vec&lt;F, 3&gt;{ t.data[0] - F(0.5) * wxt.data[0] + c * wxwxt.data[0], t.data[1] - F(0.5) * wxt.data[1] + c * wxwxt.data[1],
+                    t.data[2] - F(0.5) * wxt.data[2] + c * wxwxt.data[2] };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vec&lt;F, 3&gt;{ t.data[0] - F(0.5) * wxt.data[0] + c * wxwxt.data[0], t.data[1] - F(0.5) * wxt.data[1] + c * wxwxt.data[1],
+                    t.data[2] - F(0.5) * wxt.data[2] + c * wxwxt.data[2] }</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L99">line 99</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="se3.hpp.html#f-6d80b4e888cee9b9">cross3&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-77a8020f48ea6358"><h3><code>micron::math::manifolds::lie::__se3_impl::small_angle_threshold_sq() noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L105">line 105</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+small_angle_threshold_sq() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>F(1) / F(100)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+small_angle_threshold_sq() noexcept
+{
+  return F(1) / F(100);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(1) / F(100)</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L107">line 107</a></td></tr></tbody></table></section><section class="function-entry" id="f-d6bfff09d771ba15"><h3><code>micron::math::manifolds::lie::__se3_impl::left_jacobian_apply(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L112">line 112</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr vec&lt;F, 3&gt;
+left_jacobian_apply(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;omega</code></li><li><code>const vec&lt;F, 3&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr vec&lt;F, 3&gt;
+left_jacobian_apply(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;v) noexcept
+{
+  const F wx = omega.data[0], wy = omega.data[1], wz = omega.data[2];
+  const F theta_sq = wx * wx + wy * wy + wz * wz;
+  F a, b;
+  if ( theta_sq &lt; small_angle_threshold_sq&lt;F&gt;() ) {
+    a = lj_a_poly&lt;F&gt;(theta_sq);
+    b = lj_b_poly&lt;F&gt;(theta_sq);
+  } else {
+    const F theta = math::fsqrt(theta_sq);
+    const F half = theta * F(0.5);
+    F s_half, c_half;
+    math::sincos&lt;F&gt;(half, s_half, c_half);
+    const F sin_theta = F(2) * s_half * c_half;
+    const F cos_theta = c_half * c_half - s_half * s_half;
+    a = (F(1) - cos_theta) / theta_sq;
+    b = (theta - sin_theta) / (theta * theta_sq);
+  }
+  return left_jacobian_apply_with_ab&lt;F&gt;(omega, v, a, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>left_jacobian_apply_with_ab&lt;F&gt;(omega, v, a, b)</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L130">line 130</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="se3.hpp.html#f-77a8020f48ea6358">small_angle_threshold_sq&lt;F&gt;</a>, <a href="se3.hpp.html#f-e516f2f77c1f9f2c">lj_a_poly&lt;F&gt;</a>, <a href="se3.hpp.html#f-6865f64abdcd435e">lj_b_poly&lt;F&gt;</a>, <a href="../../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;F&gt;</a>, <a href="se3.hpp.html#f-d9be1860aacf12f6">left_jacobian_apply_with_ab&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-b4b8ae92db09d4f9"><h3><code>micron::math::manifolds::lie::__se3_impl::left_jacobian_inv_apply(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;t) noexcept</code></h3><p>Defined in <code>math/manifolds/lie/se3.hpp</code>, <a href="../../../../source/math/manifolds/lie/se3.hpp.html#L135">line 135</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr vec&lt;F, 3&gt;
+left_jacobian_inv_apply(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;omega</code></li><li><code>const vec&lt;F, 3&gt; &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr vec&lt;F, 3&gt;
+left_jacobian_inv_apply(const vec&lt;F, 3&gt; &amp;omega, const vec&lt;F, 3&gt; &amp;t) noexcept
+{
+  const F wx = omega.data[0], wy = omega.data[1], wz = omega.data[2];
+  const F theta_sq = wx * wx + wy * wy + wz * wz;
+  F coeff;
+  if ( theta_sq &lt; small_angle_threshold_sq&lt;F&gt;() ) {
+    coeff = lj_inv_poly&lt;F&gt;(theta_sq);
+  } else {
+    const F theta = math::fsqrt(theta_sq);
+    const F half = theta * F(0.5);
+    F s_half, c_half;
+    math::sincos&lt;F&gt;(half, s_half, c_half);
+    coeff = (F(1) / theta_sq) - c_half / (F(2) * theta * s_half);
+  }
+  return left_jacobian_inv_apply_with_c&lt;F&gt;(omega, t, coeff);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>left_jacobian_inv_apply_with_c&lt;F&gt;(omega, t, coeff)</code></td><td><a href="../../../../source/math/manifolds/lie/se3.hpp.html#L149">line 149</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="se3.hpp.html#f-77a8020f48ea6358">small_angle_threshold_sq&lt;F&gt;</a>, <a href="se3.hpp.html#f-9f7a36a10b0fb9f1">lj_inv_poly&lt;F&gt;</a>, <a href="../../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;F&gt;</a>, <a href="se3.hpp.html#f-09503f0db7abb06c">left_jacobian_inv_apply_with_c&lt;F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/bits/wasm/threads.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/bits/wasm/threads.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/wasm.html">WebAssembly target</a></div><p>Defined in header <code>&lt;micron/bits/wasm/threads.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/bits/wasm/threads.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-d08dd59ae816e612">MICRON_WASM_MAX_THREADS</code></td><td>macro; line 15<br><small><code>#ifndef MICRON_WASM_MAX_THREADS</code></small></td></tr><tr class="t-dsc"><td><code id="s-614a646fe02c365f">MICRON_WASM_STACK_SIZE</code></td><td>macro; line 18<br><small><code>#ifndef MICRON_WASM_STACK_SIZE</code></small></td></tr><tr class="t-dsc"><td><code id="s-1b6692edecba90ad">micron::wasm::thread_entry</code></td><td>typedef; line 23</td></tr><tr class="t-dsc"><td><code id="s-77b0540619e7be7d">micron::wasm::thread_handle</code></td><td>struct; line 25</td></tr><tr class="t-dsc"><td><code id="s-ef0694daf0bfed37">micron::wasm::thread_handle::generation</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-ac48e9bfb9d987fa">micron::wasm::thread_handle::slot</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-6db36830dd0a523b">micron::wasm::thread_slot</code></td><td>struct; line 29</td></tr><tr class="t-dsc"><td><code id="s-fbdedebb83587190">micron::wasm::thread_slot::state</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-2d2d7dc34a7c1c79">micron::wasm::thread_slot::generation</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-8a66ff71f755bcb0">micron::wasm::thread_slot::cancelled</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-c1157b77da4aebf9">micron::wasm::thread_slot::park</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-0f9ccd8e1d4535c5">micron::wasm::thread_slot::stack</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-cb84246a8573361a">micron::wasm::thread_slot::stack_bytes</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-5e7f08e6d311a0b3">micron::wasm::thread_slot::tls</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-6446d60d4524332a">micron::wasm::thread_slot::entry</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-0032002499746e8b">micron::wasm::thread_slot::arg</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-e494e2cbeacbdc8e">micron::wasm::thread_slot::result</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><a href="#f-d326b93c4bf82d28">micron::wasm::cancellation_requested() noexcept</a></td><td>function; line 48</td></tr><tr class="t-dsc"><td><a href="#f-05baf65c066c01bc">micron::wasm::spawn(thread_entry entry, void *arg, thread_handle &amp;handle) noexcept</a></td><td>function; line 60</td></tr><tr class="t-dsc"><td><a href="#f-fec474dbf95b6223">micron::wasm::request_cancel(thread_handle handle) noexcept</a></td><td>function; line 123</td></tr><tr class="t-dsc"><td><a href="#f-221f999fb8322196">micron::wasm::join(thread_handle &amp;handle, int *result = nullptr) noexcept</a></td><td>function; line 194</td></tr><tr class="t-dsc"><td><a href="#f-501bb403297de6f3">micron::wasm::finish_thread(bool cancelled = false) noexcept</a></td><td>function; line 200</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-d326b93c4bf82d28"><h3><code>micron::wasm::cancellation_requested() noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+cancellation_requested() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__thread_id &gt; 1 &amp;&amp; __atomic_load_n(&amp;__threads[__thread_id - 1].cancelled, __ATOMIC_ACQUIRE) != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+cancellation_requested() noexcept
+{
+  return __thread_id &gt; 1 &amp;&amp; __atomic_load_n(&amp;__threads[__thread_id - 1].cancelled, __ATOMIC_ACQUIRE) != 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__thread_id &gt; 1 &amp;&amp; __atomic_load_n(&amp;__threads[__thread_id - 1].cancelled, __ATOMIC_ACQUIRE) != 0</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L50">line 50</a></td></tr></tbody></table></section><section class="function-entry" id="f-05baf65c066c01bc"><h3><code>micron::wasm::spawn(thread_entry entry, void *arg, thread_handle &amp;handle) noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L60">line 60</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+spawn(thread_entry entry, void *arg, thread_handle &amp;handle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>thread_entry entry</code></li><li><code>void *arg</code></li><li><code>thread_handle &amp;handle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+spawn(thread_entry entry, void *arg, thread_handle &amp;handle) noexcept
+{
+#if defined(__micron_wasm_threads)
+  if ( !entry || !can_wait() ) return -95;
+  const unsigned runtime = __atomic_load_n(&amp;__runtime_state, __ATOMIC_ACQUIRE);
+  if ( runtime != 1 &amp;&amp; runtime != 2 ) return -16;
+  __threads_lock.lock();
+  unsigned slot = 1;
+  const unsigned locked_runtime = __atomic_load_n(&amp;__runtime_state, __ATOMIC_ACQUIRE);
+  if ( locked_runtime != 1 &amp;&amp; locked_runtime != 2 ) {
+    __threads_lock.unlock();
+    return -16;
+  }
+  while ( slot &lt; MICRON_WASM_MAX_THREADS &amp;&amp; __atomic_load_n(&amp;__threads[slot].state, __ATOMIC_ACQUIRE) ) ++slot;
+  if ( slot == MICRON_WASM_MAX_THREADS ) {
+    __threads_lock.unlock();
+    return -11;
+  }
+  auto &amp;t = __threads[slot];
+  if ( !t.stack ) {
+    t.stack = reinterpret_cast&lt;unsigned&gt;(linear_reserve(MICRON_WASM_STACK_SIZE, 16));
+    if ( !t.stack ) {
+      __threads_lock.unlock();
+      return -12;
+    }
+    t.stack_bytes = MICRON_WASM_STACK_SIZE;
+  }
+  if ( !t.tls ) {
+    t.tls = reinterpret_cast&lt;unsigned&gt;(linear_reserve(__builtin_wasm_tls_size(), __builtin_wasm_tls_align()));
+    if ( !t.tls ) {
+      __threads_lock.unlock();
+      return -12;
+    }
+  }
+  const unsigned generation = __atomic_add_fetch(&amp;t.generation, 1u, __ATOMIC_RELAXED);
+  t.entry = entry;
+  t.arg = arg;
+  t.result = 0;
+  t.cancelled = 0;
+  t.park = 0;
+  __atomic_store_n(&amp;t.state, 1u, __ATOMIC_RELEASE);
+  __atomic_fetch_add(&amp;__live_threads, 1u, __ATOMIC_ACQ_REL);
+  handle = { slot, generation };
+  __threads_lock.unlock();
+  const int r = __micron_wasm_host_worker_spawn(slot, t.stack + t.stack_bytes, t.tls, reinterpret_cast&lt;unsigned&gt;(&amp;t.state));
+  if ( r &lt; 0 ) {
+    __threads_lock.lock();
+    __atomic_store_n(&amp;t.state, 0u, __ATOMIC_RELEASE);
+    __atomic_fetch_sub(&amp;__live_threads, 1u, __ATOMIC_ACQ_REL);
+    __threads_lock.unlock();
+    handle = {};
+    return r;
+  }
+  return 0;
+#else
+  (void)entry;
+  (void)arg;
+  (void)handle;
+  return -95;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L63">line 63</a></td></tr><tr class="t-dsc"><td><code>-16</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L65">line 65</a></td></tr><tr class="t-dsc"><td><code>-16</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L71">line 71</a></td></tr><tr class="t-dsc"><td><code>-11</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L76">line 76</a></td></tr><tr class="t-dsc"><td><code>-12</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L83">line 83</a></td></tr><tr class="t-dsc"><td><code>-12</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L91">line 91</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L113">line 113</a></td></tr><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L118">line 118</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="runtime.hpp.html#f-cffaf48d399663ad">can_wait</a>, <a href="memory.hpp.html#f-f68d998b013a5da1">linear_reserve</a>, <a href="host.hpp.html#f-d1d19038ff1dbe9e">__micron_wasm_host_worker_spawn</a>.</p></section><section class="function-entry" id="f-fec474dbf95b6223"><h3><code>micron::wasm::request_cancel(thread_handle handle) noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L123">line 123</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+request_cancel(thread_handle handle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>thread_handle handle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+request_cancel(thread_handle handle) noexcept
+{
+  if ( !handle.slot || handle.slot &gt;= MICRON_WASM_MAX_THREADS ) return -22;
+  __threads_lock.lock();
+  auto &amp;t = __threads[handle.slot];
+  if ( __atomic_load_n(&amp;t.generation, __ATOMIC_RELAXED) != handle.generation || !__atomic_load_n(&amp;t.state, __ATOMIC_ACQUIRE) ) {
+    __threads_lock.unlock();
+    return -22;
+  }
+  __atomic_store_n(&amp;t.cancelled, 1u, __ATOMIC_RELEASE);
+  __atomic_store_n(&amp;t.park, micron::__park_dying, __ATOMIC_RELEASE);
+  __threads_lock.unlock();
+  (void)wake32(&amp;t.park);
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L130">line 130</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L136">line 136</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="runtime.hpp.html#f-33b3a8094dce5388">wake32</a>.</p></section><section class="function-entry" id="f-221f999fb8322196"><h3><code>micron::wasm::join(thread_handle &amp;handle, int *result = nullptr) noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L194">line 194</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+join(thread_handle &amp;handle, int *result = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>thread_handle &amp;handle</code></li><li><code>int *result = nullptr</code></li></ul><h4>Effects</h4><p>Returns <code>__join(handle, result)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+join(thread_handle &amp;handle, int *result = nullptr) noexcept
+{
+  return __join(handle, result);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__join(handle, result)</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L196">line 196</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="threads.hpp.html#f-2d68b20b0857d820">__join</a>.</p></section><section class="function-entry" id="f-501bb403297de6f3"><h3><code>micron::wasm::finish_thread(bool cancelled = false) noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L200">line 200</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+finish_thread(bool cancelled = false) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool cancelled = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+finish_thread(bool cancelled = false) noexcept
+{
+  if ( __thread_finished ) return;
+  __thread_finished = true;
+  micron::__micron_thread_park = nullptr;
+  micron::__micron_thread_die = nullptr;
+#if defined(__micron_eh)
+  if ( cancelled ) __micron_wasm_finish_exceptions();
+#else
+  (void)cancelled;
+#endif
+  __run_thread_dtors();
+  if ( __thread_exit_hook ) __thread_exit_hook();
+  if ( __dynamic_tls_exit_hook ) __dynamic_tls_exit_hook();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/bits/wasm/threads.hpp.html#L202">line 202</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="eh.hpp.html#f-27bf62f6fcb67ef9">__micron_wasm_finish_exceptions</a>, <a href="../__thread_exit_hook.hpp.html#f-b5b82ee89d36a3e6">__run_thread_dtors</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-f295a1cd0686b753"><h3><code>__micron_wasm_finish_exceptions() noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L11">line 11</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void __micron_wasm_finish_exceptions() noexcept;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_eh)</pre><h4>Effects</h4><p>See <a href="eh.hpp.html#f-27bf62f6fcb67ef9">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-c0f0c48621a9b5bd"><h3><code>micron::wasm::__exit_worker() noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L54">line 54</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[noreturn]] inline void
+__exit_worker() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[noreturn]] inline void
+__exit_worker() noexcept
+{
+  __micron_wasm_host_thread_exit();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="host.hpp.html#f-bba56ef52ddb3276">__micron_wasm_host_thread_exit</a>.</p></section><section class="function-entry" id="f-9014b08eeb7bb8cb"><h3><code>micron::wasm::__set_park(thread_handle handle, bool parked) noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L140">line 140</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+__set_park(thread_handle handle, bool parked) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>thread_handle handle</code></li><li><code>bool parked</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+__set_park(thread_handle handle, bool parked) noexcept
+{
+  if ( !handle.slot || handle.slot &gt;= MICRON_WASM_MAX_THREADS ) return -22;
+  __threads_lock.lock();
+  auto &amp;t = __threads[handle.slot];
+  const unsigned state = __atomic_load_n(&amp;t.state, __ATOMIC_ACQUIRE);
+  if ( __atomic_load_n(&amp;t.generation, __ATOMIC_RELAXED) != handle.generation || (state != 1 &amp;&amp; state != 2) ) {
+    __threads_lock.unlock();
+    return -22;
+  }
+  if ( __atomic_load_n(&amp;t.cancelled, __ATOMIC_ACQUIRE) ) {
+    __threads_lock.unlock();
+    return -125;
+  }
+  __atomic_store_n(&amp;t.park, parked ? micron::__park_parked : micron::__park_run, __ATOMIC_RELEASE);
+  __threads_lock.unlock();
+  if ( !parked ) (void)wake32(&amp;t.park);
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L142">line 142</a></td></tr><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L148">line 148</a></td></tr><tr class="t-dsc"><td><code>-125</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L152">line 152</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L157">line 157</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="runtime.hpp.html#f-33b3a8094dce5388">wake32</a>.</p></section><section class="function-entry" id="f-2d68b20b0857d820"><h3><code>micron::wasm::__join(thread_handle &amp;handle, int *result = nullptr) noexcept</code></h3><p>Defined in <code>bits/wasm/threads.hpp</code>, <a href="../../../source/bits/wasm/threads.hpp.html#L162">line 162</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;void (*BeforeState)(thread_handle) = nullptr&gt;
+inline int
+__join(thread_handle &amp;handle, int *result = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>thread_handle &amp;handle</code></li><li><code>int *result = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;void (*BeforeState)(thread_handle) = nullptr&gt;
+inline int
+__join(thread_handle &amp;handle, int *result = nullptr) noexcept
+{
+  if ( !handle.slot || handle.slot &gt;= MICRON_WASM_MAX_THREADS ) return -22;
+  if ( handle.slot + 1 == __thread_id ) return -35;
+  auto &amp;t = __threads[handle.slot];
+  unsigned state;
+  for ( ;; ) {
+    if ( __atomic_load_n(&amp;t.generation, __ATOMIC_ACQUIRE) != handle.generation ) return -22;
+    if constexpr ( BeforeState != nullptr ) BeforeState(handle);
+    state = __atomic_load_n(&amp;t.state, __ATOMIC_ACQUIRE);
+    if ( state != 1 &amp;&amp; state != 2 ) break;
+    // A copied handle can be reaped and its slot reused between the two loads.
+    // Bound the state-only wait so it cannot wait indefinitely on that successor.
+    const int r = wait32(&amp;t.state, state, __join_poll_ns);
+    if ( r &lt; 0 &amp;&amp; r != -11 &amp;&amp; r != -110 ) return r;
+  }
+  __threads_lock.lock();
+  state = __atomic_load_n(&amp;t.state, __ATOMIC_ACQUIRE);
+  if ( __atomic_load_n(&amp;t.generation, __ATOMIC_RELAXED) != handle.generation || (state != 3 &amp;&amp; state != 4) ) {
+    __threads_lock.unlock();
+    return -22;
+  }
+  if ( result ) *result = t.result;
+  const int status = state == 4 ? -5 : 0;
+  __atomic_store_n(&amp;t.state, 0u, __ATOMIC_RELEASE);
+  __atomic_fetch_sub(&amp;__live_threads, 1u, __ATOMIC_ACQ_REL);
+  __threads_lock.unlock();
+  handle = {};
+  return status;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L164">line 164</a></td></tr><tr class="t-dsc"><td><code>-35</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L169">line 169</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L182">line 182</a></td></tr><tr class="t-dsc"><td><code>status</code></td><td><a href="../../../source/bits/wasm/threads.hpp.html#L190">line 190</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="runtime.hpp.html#f-6a47fcf00668d5d3">wait32</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

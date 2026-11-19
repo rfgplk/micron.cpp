@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/simd/types/neon_arm32.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/simd/types/neon_arm32.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/simd.html">SIMD</a></div><p>Defined in header <code>&lt;micron/simd/types/neon_arm32.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/simd/types/neon_arm32.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-0c2eafa697265f36">micron::simd::v128</code></td><td>class; line 16</td></tr><tr class="t-dsc"><td><a href="#f-80fdd1bc2d914d1b">micron::simd::v128::~v128()</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-489161255206c424">micron::simd::v128::v128(void)</a></td><td>function; line 47</td></tr><tr class="t-dsc"><td><a href="#f-6d976b0bb397f168">micron::simd::v128::operator=(std::initializer_list&lt;float&gt; lst)</a></td><td>function; line 50</td></tr><tr class="t-dsc"><td><a href="#f-1bab2494d88f6cb2">micron::simd::v128::operator=(std::initializer_list&lt;i64&gt; lst)</a></td><td>function; line 68</td></tr><tr class="t-dsc"><td><a href="#f-03bbc3ffbc5d42cc">micron::simd::v128::operator=(std::initializer_list&lt;i32&gt; lst)</a></td><td>function; line 84</td></tr><tr class="t-dsc"><td><a href="#f-6e96b6f5298aebd5">micron::simd::v128::operator=(std::initializer_list&lt;i16&gt; lst)</a></td><td>function; line 95</td></tr><tr class="t-dsc"><td><a href="#f-8a8d371512012259">micron::simd::v128::operator=(std::initializer_list&lt;i8&gt; lst)</a></td><td>function; line 106</td></tr><tr class="t-dsc"><td><a href="#f-3bfa22924a0a14e8">micron::simd::v128::v128(std::initializer_list&lt;float&gt; lst)</a></td><td>function; line 116</td></tr><tr class="t-dsc"><td><a href="#f-e02e11756446f396">micron::simd::v128::v128(std::initializer_list&lt;i64&gt; lst)</a></td><td>function; line 122</td></tr><tr class="t-dsc"><td><a href="#f-9c899de0d0e2afc0">micron::simd::v128::v128(std::initializer_list&lt;i32&gt; lst)</a></td><td>function; line 128</td></tr><tr class="t-dsc"><td><a href="#f-7f504ac1b1e28f5b">micron::simd::v128::v128(std::initializer_list&lt;i16&gt; lst)</a></td><td>function; line 134</td></tr><tr class="t-dsc"><td><a href="#f-0978857fe5087938">micron::simd::v128::v128(std::initializer_list&lt;i8&gt; lst)</a></td><td>function; line 140</td></tr><tr class="t-dsc"><td><a href="#f-8245b3a536f11e35">micron::simd::v128::v128(i8 _e0)
+    requires micron::is_same_v&lt;T, i128&gt;</a></td><td>function; line 146</td></tr><tr class="t-dsc"><td><a href="#f-73c9fc7e08257bdf">micron::simd::v128::v128(i16 _e0)
+    requires micron::is_same_v&lt;T, i128&gt;</a></td><td>function; line 152</td></tr><tr class="t-dsc"><td><a href="#f-d5a6df33ec86f424">micron::simd::v128::v128(i32 a)
+    requires micron::is_same_v&lt;T, i128&gt;</a></td><td>function; line 158</td></tr><tr class="t-dsc"><td><a href="#f-8c72dce13344a495">micron::simd::v128::v128(i64 a)
+    requires micron::is_same_v&lt;T, i128&gt;</a></td><td>function; line 164</td></tr><tr class="t-dsc"><td><a href="#f-8be6721819a254e0">micron::simd::v128::v128(float a)
+    requires micron::is_same_v&lt;T, f128&gt;</a></td><td>function; line 170</td></tr><tr class="t-dsc"><td><a href="#f-dd568cd6dca19644">micron::simd::v128::v128(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12, i8 _e13, i8 _e14, i8 _e15)
+    requires micron::is_same_v&lt;T, i128&gt;</a></td><td>function; line 176</td></tr><tr class="t-dsc"><td><a href="#f-7efcf04d85bb1b18">micron::simd::v128::v128(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7)
+    requires micron::is_same_v&lt;T, i128&gt;</a></td><td>function; line 184</td></tr><tr class="t-dsc"><td><a href="#f-4476d888d91a6046">micron::simd::v128::v128(i32 a, i32 b, i32 c, i32 d)
+    requires micron::is_same_v&lt;T, i128&gt;</a></td><td>function; line 192</td></tr><tr class="t-dsc"><td><a href="#f-9b92b1ae85f03955">micron::simd::v128::v128(i64 a, i64 b)
+    requires micron::is_same_v&lt;T, i128&gt;</a></td><td>function; line 199</td></tr><tr class="t-dsc"><td><a href="#f-fc7f9f7a1b073d5b">micron::simd::v128::v128(float a, float b, float c, float d)
+    requires micron::is_same_v&lt;T, f128&gt;</a></td><td>function; line 206</td></tr><tr class="t-dsc"><td><a href="#f-8755e28cff0e099f">micron::simd::v128::v128(const v128 &amp;o)</a></td><td>function; line 213</td></tr><tr class="t-dsc"><td><a href="#f-aa0c1e0eae009055">micron::simd::v128::v128(v128 &amp;&amp;o)</a></td><td>function; line 215</td></tr><tr class="t-dsc"><td><a href="#f-ccc1ba6060ace09b">micron::simd::v128::operator=(const v128 &amp;o)</a></td><td>function; line 222</td></tr><tr class="t-dsc"><td><a href="#f-88ab5f91752ada1d">micron::simd::v128::operator=(v128 &amp;&amp;o)</a></td><td>function; line 229</td></tr><tr class="t-dsc"><td><a href="#f-e8f97f3de95794d4">micron::simd::v128::operator=(float f)</a></td><td>function; line 239</td></tr><tr class="t-dsc"><td><a href="#f-44845f572a9a2815">micron::simd::v128::operator=(i8 c)</a></td><td>function; line 246</td></tr><tr class="t-dsc"><td><a href="#f-e092d7ee18a41134">micron::simd::v128::operator=(i16 s)</a></td><td>function; line 253</td></tr><tr class="t-dsc"><td><a href="#f-73ae78c07d72698e">micron::simd::v128::operator=(i32 i)</a></td><td>function; line 260</td></tr><tr class="t-dsc"><td><a href="#f-5a7eece847810373">micron::simd::v128::operator=(i64 l)</a></td><td>function; line 267</td></tr><tr class="t-dsc"><td><a href="#f-b4757226150f31be">micron::simd::v128::operator=(F *addr)</a></td><td>function; line 274</td></tr><tr class="t-dsc"><td><a href="#f-c65285799c234d0c">micron::simd::v128::size(void)</a></td><td>function; line 280</td></tr><tr class="t-dsc"><td><a href="#f-09a01c546a91a5ac">micron::simd::v128::operator[](const R a)</a></td><td>function; line 295</td></tr><tr class="t-dsc"><td><a href="#f-f5d39f2934bf10b5">micron::simd::v128::operator==(const v128 &amp;o) const</a></td><td>function; line 435</td></tr><tr class="t-dsc"><td><a href="#f-a34f3e27a2f2d348">micron::simd::v128::operator!=(const v128 &amp;o) const</a></td><td>function; line 453</td></tr><tr class="t-dsc"><td><a href="#f-b2ae023af3d3857a">micron::simd::v128::operator&gt;=(const v128 &amp;o) const</a></td><td>function; line 472</td></tr><tr class="t-dsc"><td><a href="#f-9f5ffc3b7863a655">micron::simd::v128::operator&gt;(const v128 &amp;o) const</a></td><td>function; line 490</td></tr><tr class="t-dsc"><td><a href="#f-4d6b4bf7aa4c3a53">micron::simd::v128::operator&lt;(const v128 &amp;o) const</a></td><td>function; line 508</td></tr><tr class="t-dsc"><td><a href="#f-0e0f9e05d86b4b76">micron::simd::v128::operator&lt;=(const v128 &amp;o) const</a></td><td>function; line 526</td></tr><tr class="t-dsc"><td><a href="#f-89fe37b80694c030">micron::simd::v128::operator+=(float x)</a></td><td>function; line 544</td></tr><tr class="t-dsc"><td><a href="#f-6adec37bcbdb0966">micron::simd::v128::operator+=(A __x)
+    requires is_int_flag_type&lt;A&gt;</a></td><td>function; line 552</td></tr><tr class="t-dsc"><td><a href="#f-3753e1f3229da38b">micron::simd::v128::operator+=(const v128 &amp;o)</a></td><td>function; line 569</td></tr><tr class="t-dsc"><td><a href="#f-c8a29e970b7f3f92">micron::simd::v128::operator-=(float x)</a></td><td>function; line 585</td></tr><tr class="t-dsc"><td><a href="#f-d1a561df6e426813">micron::simd::v128::operator-=(A x)
+    requires is_int_flag_type&lt;A&gt;</a></td><td>function; line 593</td></tr><tr class="t-dsc"><td><a href="#f-1cb0e637bfa638ae">micron::simd::v128::operator-=(const v128 &amp;o)</a></td><td>function; line 610</td></tr><tr class="t-dsc"><td><a href="#f-7e731bc186456a4c">micron::simd::v128::operator*=(const v128 &amp;o)</a></td><td>function; line 626</td></tr><tr class="t-dsc"><td><a href="#f-ab4c32410de8259a">micron::simd::v128::operator/=(const v128 &amp;o)</a></td><td>function; line 645</td></tr><tr class="t-dsc"><td><a href="#f-c0bbb5824280c7e4">micron::simd::v128::operator/(const v128 &amp;o) const</a></td><td>function; line 656</td></tr><tr class="t-dsc"><td><a href="#f-18738633c076c585">micron::simd::v128::operator+(const v128 &amp;o) const</a></td><td>function; line 668</td></tr><tr class="t-dsc"><td><a href="#f-726721dbede0f729">micron::simd::v128::operator-(const v128 &amp;o) const</a></td><td>function; line 676</td></tr><tr class="t-dsc"><td><a href="#f-f6982766fbe07d32">micron::simd::v128::all_zeroes() const</a></td><td>function; line 684</td></tr><tr class="t-dsc"><td><a href="#f-f9a70a2438f8c22b">micron::simd::v128::all_ones() const</a></td><td>function; line 695</td></tr><tr class="t-dsc"><td><a href="#f-bb64c40b37d4117b">micron::simd::v128::to_zero(void)</a></td><td>function; line 706</td></tr><tr class="t-dsc"><td><a href="#f-f877194a00d67c1a">micron::simd::v128::to_ones(void)</a></td><td>function; line 712</td></tr><tr class="t-dsc"><td><a href="#f-406e82750d04cf5c">micron::simd::v128::set(float f)</a></td><td>function; line 718</td></tr><tr class="t-dsc"><td><a href="#f-8ed9a24c452e7221">micron::simd::v128::set(i8 c)</a></td><td>function; line 725</td></tr><tr class="t-dsc"><td><a href="#f-9f589e10df43fe1c">micron::simd::v128::set(i16 s)</a></td><td>function; line 732</td></tr><tr class="t-dsc"><td><a href="#f-7493e3e58ebb51d9">micron::simd::v128::set(i32 i)</a></td><td>function; line 739</td></tr><tr class="t-dsc"><td><a href="#f-0e09f7b0e0f5a82d">micron::simd::v128::set(i64 l)</a></td><td>function; line 746</td></tr><tr class="t-dsc"><td><a href="#f-6705ea1d8914e1d5">micron::simd::v128::set(float const *f)</a></td><td>function; line 753</td></tr><tr class="t-dsc"><td><a href="#f-e6c97c1804d2de4a">micron::simd::v128::broadcast(float const *f)</a></td><td>function; line 760</td></tr><tr class="t-dsc"><td><a href="#f-9c5db0ce5ae22978">micron::simd::v128::load(B *mem)</a></td><td>function; line 767</td></tr><tr class="t-dsc"><td><a href="#f-5b26075b4f949b68">micron::simd::v128::uload(B *mem)</a></td><td>function; line 776</td></tr><tr class="t-dsc"><td><a href="#f-9f51f56adfbad80d">micron::simd::v128::operator|=(const v128 &amp;o)</a></td><td>function; line 786</td></tr><tr class="t-dsc"><td><a href="#f-87afc64143f4ef90">micron::simd::v128::operator&amp;=(const v128 &amp;o)</a></td><td>function; line 795</td></tr><tr class="t-dsc"><td><a href="#f-cc6df9d6fbae1dd3">micron::simd::v128::operator^=(const v128 &amp;o)</a></td><td>function; line 804</td></tr><tr class="t-dsc"><td><a href="#f-bbd16b53ee3edd67">micron::simd::v128::operator|(const v128 &amp;o) const</a></td><td>function; line 813</td></tr><tr class="t-dsc"><td><a href="#f-0d456703337a58de">micron::simd::v128::operator&amp;(const v128 &amp;o) const</a></td><td>function; line 821</td></tr><tr class="t-dsc"><td><a href="#f-af2677afedfb2f4d">micron::simd::v128::operator^(const v128 &amp;o) const</a></td><td>function; line 829</td></tr><tr class="t-dsc"><td><a href="#f-9d55376480f6cda6">micron::simd::v128::operator~() const</a></td><td>function; line 837</td></tr><tr class="t-dsc"><td><a href="#f-e3f23b6ce57e2123">micron::simd::v128::operator&lt;&lt;(int i) const</a></td><td>function; line 847</td></tr><tr class="t-dsc"><td><a href="#f-173f3f5bf32ce735">micron::simd::v128::operator&lt;&lt;=(int i)</a></td><td>function; line 863</td></tr><tr class="t-dsc"><td><a href="#f-8a355d2125650eea">micron::simd::v128::operator&gt;&gt;(int i) const</a></td><td>function; line 878</td></tr><tr class="t-dsc"><td><a href="#f-f39c4d77de2bff63">micron::simd::v128::operator&gt;&gt;=(int i)</a></td><td>function; line 904</td></tr><tr class="t-dsc"><td><a href="#f-47fb96e8584438f2">micron::simd::v128::operator/=(float x)</a></td><td>function; line 929</td></tr><tr class="t-dsc"><td><a href="#f-1f469e1087e4ca7c">micron::simd::v128::operator/(float x) const</a></td><td>function; line 936</td></tr><tr class="t-dsc"><td><a href="#f-0398033407ad00b3">micron::simd::v128::operator*=(float x)</a></td><td>function; line 944</td></tr><tr class="t-dsc"><td><a href="#f-619f2639046f6b40">micron::simd::v128::operator*=(A __x)
+    requires is_int_flag_type&lt;A&gt;</a></td><td>function; line 952</td></tr><tr class="t-dsc"><td><a href="#f-8ca2ecb98e43d4b5">micron::simd::v128::operator*(float x) const</a></td><td>function; line 971</td></tr><tr class="t-dsc"><td><a href="#f-f8d7fae67f634c57">micron::simd::v128::operator*(v128 x) const</a></td><td>function; line 979</td></tr><tr class="t-dsc"><td><a href="#f-c51e011a0e75f27b">micron::simd::v128::get(F *arr) const</a></td><td>function; line 999</td></tr><tr class="t-dsc"><td><a href="#f-5957348c8da40a72">micron::simd::v128::get_aligned(F *arr) const</a></td><td>function; line 1007</td></tr><tr class="t-dsc"><td><a href="#f-211feed3067fa7e1">micron::simd::v128::shuffle(const v128 &amp;control) const</a></td><td>function; line 1013</td></tr><tr class="t-dsc"><td><a href="#f-4c5a79291e12609c">micron::simd::v128::andnot(const v128 &amp;o) const</a></td><td>function; line 1025</td></tr><tr class="t-dsc"><td><a href="#f-a1d0e0ad7a29247e">micron::simd::v128::movemask(void) const</a></td><td>function; line 1034</td></tr><tr class="t-dsc"><td><a href="#f-3eb2f644ba3b29a4">micron::simd::v128::byte0(void) const</a></td><td>function; line 1050</td></tr><tr class="t-dsc"><td><a href="#f-2c321f285cdb72db">micron::simd::v128::byte_shift_left(void) const</a></td><td>function; line 1058</td></tr><tr class="t-dsc"><td><a href="#f-785b8fe35d7a8142">micron::simd::v128::byte_shift_right(void) const</a></td><td>function; line 1072</td></tr><tr class="t-dsc"><td><a href="#f-2d8598dcaaec062d">micron::simd::v128::alignr(const v128 &amp;o) const</a></td><td>function; line 1086</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-80fdd1bc2d914d1b"><h3><code>micron::simd::v128::~v128()</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~v128() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-489161255206c424"><h3><code>micron::simd::v128::v128(void)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L47">line 47</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(void) { __impl_zero_init(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-02dde2d9a6f5711e">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-6d976b0bb397f168"><h3><code>micron::simd::v128::operator=(std::initializer_list&lt;float&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L50">line 50</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(std::initializer_list&lt;float&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;float&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(std::initializer_list&lt;float&gt; lst)
+  {
+    if ( lst.size() != 4 ) return *this;
+    float a = 0, b = 0, c = 0, d = 0;
+    int _f = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
+      _f++;
+    }
+    const float arr[4] = { a, b, c, d };
+    value = vld1q_f32(arr);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L52">line 52</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L64">line 64</a></td></tr></tbody></table></section><section class="function-entry" id="f-1bab2494d88f6cb2"><h3><code>micron::simd::v128::operator=(std::initializer_list&lt;i64&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(std::initializer_list&lt;i64&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i64&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(std::initializer_list&lt;i64&gt; lst)
+  {
+    if ( lst.size() != 2 ) return *this;
+    i64 a = 0, b = 0;
+    int _f = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      _f++;
+    }
+    const int64_t arr[2] = { static_cast&lt;int64_t&gt;(a), static_cast&lt;int64_t&gt;(b) };
+    value = vreinterpretq_s32_s64(vld1q_s64(arr));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L70">line 70</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L80">line 80</a></td></tr></tbody></table></section><section class="function-entry" id="f-03bbc3ffbc5d42cc"><h3><code>micron::simd::v128::operator=(std::initializer_list&lt;i32&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L84">line 84</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(std::initializer_list&lt;i32&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i32&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(std::initializer_list&lt;i32&gt; lst)
+  {
+    if ( lst.size() != 4 ) return *this;
+    i32 __arr[4];
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+    value = vld1q_s32(__arr);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L91">line 91</a></td></tr></tbody></table></section><section class="function-entry" id="f-6e96b6f5298aebd5"><h3><code>micron::simd::v128::operator=(std::initializer_list&lt;i16&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L95">line 95</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(std::initializer_list&lt;i16&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i16&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(std::initializer_list&lt;i16&gt; lst)
+  {
+    if ( lst.size() != 8 ) return *this;
+    i16 __arr[8];
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+    value = vreinterpretq_s32_s16(vld1q_s16(__arr));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L97">line 97</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L102">line 102</a></td></tr></tbody></table></section><section class="function-entry" id="f-8a8d371512012259"><h3><code>micron::simd::v128::operator=(std::initializer_list&lt;i8&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L106">line 106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(std::initializer_list&lt;i8&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i8&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(std::initializer_list&lt;i8&gt; lst)
+  {
+    if ( lst.size() != 16 ) return *this;
+    i8 __arr[16];
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+    value = vreinterpretq_s32_s8(vld1q_s8(__arr));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L108">line 108</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L113">line 113</a></td></tr></tbody></table></section><section class="function-entry" id="f-3bfa22924a0a14e8"><h3><code>micron::simd::v128::v128(std::initializer_list&lt;float&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L116">line 116</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(std::initializer_list&lt;float&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;float&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(std::initializer_list&lt;float&gt; lst)
+  {
+    __impl_zero_init();
+    *this = lst;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-02dde2d9a6f5711e">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-e02e11756446f396"><h3><code>micron::simd::v128::v128(std::initializer_list&lt;i64&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L122">line 122</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(std::initializer_list&lt;i64&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i64&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(std::initializer_list&lt;i64&gt; lst)
+  {
+    __impl_zero_init();
+    *this = lst;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-02dde2d9a6f5711e">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-9c899de0d0e2afc0"><h3><code>micron::simd::v128::v128(std::initializer_list&lt;i32&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(std::initializer_list&lt;i32&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i32&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(std::initializer_list&lt;i32&gt; lst)
+  {
+    __impl_zero_init();
+    *this = lst;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-02dde2d9a6f5711e">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-7f504ac1b1e28f5b"><h3><code>micron::simd::v128::v128(std::initializer_list&lt;i16&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L134">line 134</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(std::initializer_list&lt;i16&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i16&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(std::initializer_list&lt;i16&gt; lst)
+  {
+    __impl_zero_init();
+    *this = lst;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-02dde2d9a6f5711e">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-0978857fe5087938"><h3><code>micron::simd::v128::v128(std::initializer_list&lt;i8&gt; lst)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L140">line 140</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(std::initializer_list&lt;i8&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i8&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(std::initializer_list&lt;i8&gt; lst)
+  {
+    __impl_zero_init();
+    *this = lst;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-02dde2d9a6f5711e">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-8245b3a536f11e35"><h3><code>micron::simd::v128::v128(i8 _e0)
+    requires micron::is_same_v&lt;T, i128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L146">line 146</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(i8 _e0)
+    requires micron::is_same_v&lt;T, i128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i8 _e0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(i8 _e0)
+    requires micron::is_same_v&lt;T, i128&gt;
+  {
+    value = vreinterpretq_s32_s8(vdupq_n_s8(_e0));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-73c9fc7e08257bdf"><h3><code>micron::simd::v128::v128(i16 _e0)
+    requires micron::is_same_v&lt;T, i128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L152">line 152</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(i16 _e0)
+    requires micron::is_same_v&lt;T, i128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i16 _e0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(i16 _e0)
+    requires micron::is_same_v&lt;T, i128&gt;
+  {
+    value = vreinterpretq_s32_s16(vdupq_n_s16(_e0));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d5a6df33ec86f424"><h3><code>micron::simd::v128::v128(i32 a)
+    requires micron::is_same_v&lt;T, i128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L158">line 158</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(i32 a)
+    requires micron::is_same_v&lt;T, i128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(i32 a)
+    requires micron::is_same_v&lt;T, i128&gt;
+  {
+    value = vdupq_n_s32(a);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8c72dce13344a495"><h3><code>micron::simd::v128::v128(i64 a)
+    requires micron::is_same_v&lt;T, i128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L164">line 164</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(i64 a)
+    requires micron::is_same_v&lt;T, i128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(i64 a)
+    requires micron::is_same_v&lt;T, i128&gt;
+  {
+    value = vreinterpretq_s32_s64(vdupq_n_s64(static_cast&lt;int64_t&gt;(a)));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8be6721819a254e0"><h3><code>micron::simd::v128::v128(float a)
+    requires micron::is_same_v&lt;T, f128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L170">line 170</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(float a)
+    requires micron::is_same_v&lt;T, f128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(float a)
+    requires micron::is_same_v&lt;T, f128&gt;
+  {
+    value = vdupq_n_f32(a);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-dd568cd6dca19644"><h3><code>micron::simd::v128::v128(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12, i8 _e13, i8 _e14, i8 _e15)
+    requires micron::is_same_v&lt;T, i128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L176">line 176</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12, i8 _e13, i8 _e14, i8 _e15)
+    requires micron::is_same_v&lt;T, i128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i8 _e0</code></li><li><code>i8 _e1</code></li><li><code>i8 _e2</code></li><li><code>i8 _e3</code></li><li><code>i8 _e4</code></li><li><code>i8 _e5</code></li><li><code>i8 _e6</code></li><li><code>i8 _e7</code></li><li><code>i8 _e8</code></li><li><code>i8 _e9</code></li><li><code>i8 _e10</code></li><li><code>i8 _e11</code></li><li><code>i8 _e12</code></li><li><code>i8 _e13</code></li><li><code>i8 _e14</code></li><li><code>i8 _e15</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(i8 _e0, i8 _e1, i8 _e2, i8 _e3, i8 _e4, i8 _e5, i8 _e6, i8 _e7, i8 _e8, i8 _e9, i8 _e10, i8 _e11, i8 _e12, i8 _e13, i8 _e14, i8 _e15)
+    requires micron::is_same_v&lt;T, i128&gt;
+  {
+    // arg0 -&gt; lane0 (natural order, matching the i32/i64/f32 ctors + x86)
+    const int8_t arr[16] = { _e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15 };
+    value = vreinterpretq_s32_s8(vld1q_s8(arr));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7efcf04d85bb1b18"><h3><code>micron::simd::v128::v128(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7)
+    requires micron::is_same_v&lt;T, i128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L184">line 184</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7)
+    requires micron::is_same_v&lt;T, i128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i16 _e0</code></li><li><code>i16 _e1</code></li><li><code>i16 _e2</code></li><li><code>i16 _e3</code></li><li><code>i16 _e4</code></li><li><code>i16 _e5</code></li><li><code>i16 _e6</code></li><li><code>i16 _e7</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(i16 _e0, i16 _e1, i16 _e2, i16 _e3, i16 _e4, i16 _e5, i16 _e6, i16 _e7)
+    requires micron::is_same_v&lt;T, i128&gt;
+  {
+    // arg0 -&gt; lane0 (natural order, matching the i32/i64/f32 ctors + x86)
+    const int16_t arr[8] = { _e0, _e1, _e2, _e3, _e4, _e5, _e6, _e7 };
+    value = vreinterpretq_s32_s16(vld1q_s16(arr));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4476d888d91a6046"><h3><code>micron::simd::v128::v128(i32 a, i32 b, i32 c, i32 d)
+    requires micron::is_same_v&lt;T, i128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L192">line 192</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(i32 a, i32 b, i32 c, i32 d)
+    requires micron::is_same_v&lt;T, i128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 a</code></li><li><code>i32 b</code></li><li><code>i32 c</code></li><li><code>i32 d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(i32 a, i32 b, i32 c, i32 d)
+    requires micron::is_same_v&lt;T, i128&gt;
+  {
+    const int32_t arr[4] = { a, b, c, d };
+    value = vld1q_s32(arr);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9b92b1ae85f03955"><h3><code>micron::simd::v128::v128(i64 a, i64 b)
+    requires micron::is_same_v&lt;T, i128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L199">line 199</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(i64 a, i64 b)
+    requires micron::is_same_v&lt;T, i128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 a</code></li><li><code>i64 b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(i64 a, i64 b)
+    requires micron::is_same_v&lt;T, i128&gt;
+  {
+    const int64_t arr[2] = { static_cast&lt;int64_t&gt;(a), static_cast&lt;int64_t&gt;(b) };
+    value = vreinterpretq_s32_s64(vld1q_s64(arr));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fc7f9f7a1b073d5b"><h3><code>micron::simd::v128::v128(float a, float b, float c, float d)
+    requires micron::is_same_v&lt;T, f128&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L206">line 206</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(float a, float b, float c, float d)
+    requires micron::is_same_v&lt;T, f128&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float a</code></li><li><code>float b</code></li><li><code>float c</code></li><li><code>float d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(float a, float b, float c, float d)
+    requires micron::is_same_v&lt;T, f128&gt;
+  {
+    const float arr[4] = { a, b, c, d };
+    value = vld1q_f32(arr);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8755e28cff0e099f"><h3><code>micron::simd::v128::v128(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L213">line 213</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(const v128 &amp;o) : value(o.value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(const v128 &amp;o) : value(o.value) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-aa0c1e0eae009055"><h3><code>micron::simd::v128::v128(v128 &amp;&amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L215">line 215</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v128(v128 &amp;&amp;o) : value(o.value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>v128 &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v128(v128 &amp;&amp;o) : value(o.value)
+  {
+    if constexpr ( micron::same_as&lt;T, f128&gt; ) o.value = vdupq_n_f32(0.0f);
+    if constexpr ( micron::same_as&lt;T, i128&gt; ) o.value = vdupq_n_s32(0);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ccc1ba6060ace09b"><h3><code>micron::simd::v128::operator=(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L222">line 222</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(const v128 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(const v128 &amp;o)
+  {
+    value = o.value;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L225">line 225</a></td></tr></tbody></table></section><section class="function-entry" id="f-88ab5f91752ada1d"><h3><code>micron::simd::v128::operator=(v128 &amp;&amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L229">line 229</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(v128 &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>v128 &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(v128 &amp;&amp;o)
+  {
+    value = o.value;
+    // zero the moved-from source, matching the move ctor
+    if constexpr ( micron::same_as&lt;T, f128&gt; ) o.value = vdupq_n_f32(0.0f);
+    if constexpr ( micron::same_as&lt;T, i128&gt; ) o.value = vdupq_n_s32(0);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L235">line 235</a></td></tr></tbody></table></section><section class="function-entry" id="f-e8f97f3de95794d4"><h3><code>micron::simd::v128::operator=(float f)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L239">line 239</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(float f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(float f)
+  {
+    value = vdupq_n_f32(f);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L242">line 242</a></td></tr></tbody></table></section><section class="function-entry" id="f-44845f572a9a2815"><h3><code>micron::simd::v128::operator=(i8 c)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L246">line 246</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(i8 c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i8 c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(i8 c)
+  {
+    value = vreinterpretq_s32_s8(vdupq_n_s8(c));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L249">line 249</a></td></tr></tbody></table></section><section class="function-entry" id="f-e092d7ee18a41134"><h3><code>micron::simd::v128::operator=(i16 s)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L253">line 253</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(i16 s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i16 s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(i16 s)
+  {
+    value = vreinterpretq_s32_s16(vdupq_n_s16(s));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L256">line 256</a></td></tr></tbody></table></section><section class="function-entry" id="f-73ae78c07d72698e"><h3><code>micron::simd::v128::operator=(i32 i)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L260">line 260</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(i32 i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(i32 i)
+  {
+    value = vdupq_n_s32(i);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L263">line 263</a></td></tr></tbody></table></section><section class="function-entry" id="f-5a7eece847810373"><h3><code>micron::simd::v128::operator=(i64 l)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L267">line 267</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(i64 l)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(i64 l)
+  {
+    value = vreinterpretq_s32_s64(vdupq_n_s64(static_cast&lt;int64_t&gt;(l)));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L270">line 270</a></td></tr></tbody></table></section><section class="function-entry" id="f-b4757226150f31be"><h3><code>micron::simd::v128::operator=(F *addr)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L274">line 274</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator=(F *addr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *addr</code></li></ul><h4>Effects</h4><p>Returns <code>uload&lt;F&gt;(addr)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator=(F *addr)
+  {
+    return uload&lt;F&gt;(addr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>uload&lt;F&gt;(addr)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L276">line 276</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-5b26075b4f949b68">uload&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c65285799c234d0c"><h3><code>micron::simd::v128::size(void)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L280">line 280</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr usize
+  size(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr usize
+  size(void)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      return 4;
+    else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_64_wide&lt;F&gt;() ) return 2;
+      if constexpr ( __is_32_wide&lt;F&gt;() ) return 4;
+      if constexpr ( __is_16_wide&lt;F&gt;() ) return 8;
+      if constexpr ( __is_8_wide&lt;F&gt;() ) return 16;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>4</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L283">line 283</a></td></tr><tr class="t-dsc"><td><code>2</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L285">line 285</a></td></tr><tr class="t-dsc"><td><code>4</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L286">line 286</a></td></tr><tr class="t-dsc"><td><code>8</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L287">line 287</a></td></tr><tr class="t-dsc"><td><code>16</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L288">line 288</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-09a01c546a91a5ac"><h3><code>micron::simd::v128::operator[](const R a)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L295">line 295</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires(micron::is_integral_v&lt;R&gt;)
+  constexpr auto
+  operator[](const R a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires(micron::is_integral_v&lt;R&gt;)
+  constexpr auto
+  operator[](const R a)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      float _f = 0.0f;
+      switch ( a ) {
+      case 0:
+        _f = vgetq_lane_f32(value, 0);
+        break;
+      case 1:
+        _f = vgetq_lane_f32(value, 1);
+        break;
+      case 2:
+        _f = vgetq_lane_f32(value, 2);
+        break;
+      case 3:
+        _f = vgetq_lane_f32(value, 3);
+        break;
+      }
+      return _f;
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_64_wide&lt;F&gt;() ) {
+        i64 _d = 0;
+        switch ( a ) {
+        case 0:
+          _d = static_cast&lt;i64&gt;(vgetq_lane_s64(vreinterpretq_s64_s32(value), 0));
+          break;
+        case 1:
+          _d = static_cast&lt;i64&gt;(vgetq_lane_s64(vreinterpretq_s64_s32(value), 1));
+          break;
+        }
+        return _d;
+      }
+      if constexpr ( __is_32_wide&lt;F&gt;() ) {
+        i32 _d = 0;
+        switch ( a ) {
+        case 0:
+          _d = vgetq_lane_s32(value, 0);
+          break;
+        case 1:
+          _d = vgetq_lane_s32(value, 1);
+          break;
+        case 2:
+          _d = vgetq_lane_s32(value, 2);
+          break;
+        case 3:
+          _d = vgetq_lane_s32(value, 3);
+          break;
+        }
+        return _d;
+      }
+      if constexpr ( __is_16_wide&lt;F&gt;() ) {
+        i16 _d = 0;
+        auto v16 = vreinterpretq_s16_s32(value);
+        switch ( a ) {
+        case 0:
+          _d = vgetq_lane_s16(v16, 0);
+          break;
+        case 1:
+          _d = vgetq_lane_s16(v16, 1);
+          break;
+        case 2:
+          _d = vgetq_lane_s16(v16, 2);
+          break;
+        case 3:
+          _d = vgetq_lane_s16(v16, 3);
+          break;
+        case 4:
+          _d = vgetq_lane_s16(v16, 4);
+          break;
+        case 5:
+          _d = vgetq_lane_s16(v16, 5);
+          break;
+        case 6:
+          _d = vgetq_lane_s16(v16, 6);
+          break;
+        case 7:
+          _d = vgetq_lane_s16(v16, 7);
+          break;
+        }
+        return _d;
+      }
+      if constexpr ( __is_8_wide&lt;F&gt;() ) {
+        i8 _d = 0;
+        auto v8 = vreinterpretq_s8_s32(value);
+        switch ( a ) {
+        case 0:
+          _d = vgetq_lane_s8(v8, 0);
+          break;
+        case 1:
+          _d = vgetq_lane_s8(v8, 1);
+          break;
+        case 2:
+          _d = vgetq_lane_s8(v8, 2);
+          break;
+        case 3:
+          _d = vgetq_lane_s8(v8, 3);
+          break;
+        case 4:
+          _d = vgetq_lane_s8(v8, 4);
+          break;
+        case 5:
+          _d = vgetq_lane_s8(v8, 5);
+          break;
+        case 6:
+          _d = vgetq_lane_s8(v8, 6);
+          break;
+        case 7:
+          _d = vgetq_lane_s8(v8, 7);
+          break;
+        case 8:
+          _d = vgetq_lane_s8(v8, 8);
+          break;
+        case 9:
+          _d = vgetq_lane_s8(v8, 9);
+          break;
+        case 10:
+          _d = vgetq_lane_s8(v8, 10);
+          break;
+        case 11:
+          _d = vgetq_lane_s8(v8, 11);
+          break;
+        case 12:
+          _d = vgetq_lane_s8(v8, 12);
+          break;
+        case 13:
+          _d = vgetq_lane_s8(v8, 13);
+          break;
+        case 14:
+          _d = vgetq_lane_s8(v8, 14);
+          break;
+        case 15:
+          _d = vgetq_lane_s8(v8, 15);
+          break;
+        }
+        return _d;
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_f</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L313">line 313</a></td></tr><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L325">line 325</a></td></tr><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L374">line 374</a></td></tr><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L429">line 429</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f5d39f2934bf10b5"><h3><code>micron::simd::v128::operator==(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L435">line 435</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr int
+  operator==(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr int
+  operator==(const v128 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      return neon_movemask_f32(vreinterpretq_f32_u32(vceqq_f32(value, o.value)));
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      i128 _r;
+      if constexpr ( __is_8_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u8(vceqq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u16(vceqq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u32(vceqq_s32(value, o.value));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u64(neon_v7_ceqq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
+      return neon_movemask_si128(_r);
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neon_movemask_f32(vreinterpretq_f32_u32(vceqq_f32(value, o.value)))</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L438">line 438</a></td></tr><tr class="t-dsc"><td><code>neon_movemask_si128(_r)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L447">line 447</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L449">line 449</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-fa0bf361cc7ee8bc">neon_movemask_f32</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../arch/types_arm32.hpp.html#f-4f9811ce317a7f3d">neon_v7_ceqq_s64</a>, <a href="../arch/types_arm32.hpp.html#f-d80d06210774c830">neon_movemask_si128</a>.</p></section><section class="function-entry" id="f-a34f3e27a2f2d348"><h3><code>micron::simd::v128::operator!=(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L453">line 453</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr int
+  operator!=(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr int
+  operator!=(const v128 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      auto _ne = veorq_u32(vceqq_f32(value, o.value), vreinterpretq_u32_s32(neon_all_ones_si128()));
+      return neon_movemask_f32(vreinterpretq_f32_u32(_ne));
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      i128 _eq;
+      if constexpr ( __is_8_wide&lt;F&gt;() ) _eq = vreinterpretq_s32_u8(vceqq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        _eq = vreinterpretq_s32_u16(vceqq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) _eq = vreinterpretq_s32_u32(vceqq_s32(value, o.value));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        _eq = vreinterpretq_s32_u64(neon_v7_ceqq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
+      return neon_movemask_si128(veorq_s32(_eq, neon_all_ones_si128()));
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neon_movemask_f32(vreinterpretq_f32_u32(_ne))</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L457">line 457</a></td></tr><tr class="t-dsc"><td><code>neon_movemask_si128(veorq_s32(_eq, neon_all_ones_si128()))</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L466">line 466</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L468">line 468</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-cefd939d3447ae71">neon_all_ones_si128</a>, <a href="../arch/types_arm32.hpp.html#f-fa0bf361cc7ee8bc">neon_movemask_f32</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../arch/types_arm32.hpp.html#f-4f9811ce317a7f3d">neon_v7_ceqq_s64</a>, <a href="../arch/types_arm32.hpp.html#f-d80d06210774c830">neon_movemask_si128</a>.</p></section><section class="function-entry" id="f-b2ae023af3d3857a"><h3><code>micron::simd::v128::operator&gt;=(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L472">line 472</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr int
+  operator&gt;=(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr int
+  operator&gt;=(const v128 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      return neon_movemask_f32(vreinterpretq_f32_u32(vcgeq_f32(value, o.value)));
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      i128 _r;
+      if constexpr ( __is_8_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u8(vcgeq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u16(vcgeq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u32(vcgeq_s32(value, o.value));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u64(neon_v7_cgeq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
+      return neon_movemask_si128(_r);
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neon_movemask_f32(vreinterpretq_f32_u32(vcgeq_f32(value, o.value)))</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L475">line 475</a></td></tr><tr class="t-dsc"><td><code>neon_movemask_si128(_r)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L484">line 484</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L486">line 486</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-fa0bf361cc7ee8bc">neon_movemask_f32</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../arch/types_arm32.hpp.html#f-6d1b381c0ac63d76">neon_v7_cgeq_s64</a>, <a href="../arch/types_arm32.hpp.html#f-d80d06210774c830">neon_movemask_si128</a>.</p></section><section class="function-entry" id="f-9f5ffc3b7863a655"><h3><code>micron::simd::v128::operator&gt;(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L490">line 490</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr int
+  operator&gt;(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr int
+  operator&gt;(const v128 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      return neon_movemask_f32(vreinterpretq_f32_u32(vcgtq_f32(value, o.value)));
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      i128 _r;
+      if constexpr ( __is_8_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u8(vcgtq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u16(vcgtq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u32(vcgtq_s32(value, o.value));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u64(neon_v7_cgtq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
+      return neon_movemask_si128(_r);
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neon_movemask_f32(vreinterpretq_f32_u32(vcgtq_f32(value, o.value)))</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L493">line 493</a></td></tr><tr class="t-dsc"><td><code>neon_movemask_si128(_r)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L502">line 502</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L504">line 504</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-fa0bf361cc7ee8bc">neon_movemask_f32</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../arch/types_arm32.hpp.html#f-a550df313a5656a1">neon_v7_cgtq_s64</a>, <a href="../arch/types_arm32.hpp.html#f-d80d06210774c830">neon_movemask_si128</a>.</p></section><section class="function-entry" id="f-4d6b4bf7aa4c3a53"><h3><code>micron::simd::v128::operator&lt;(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L508">line 508</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr int
+  operator&lt;(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr int
+  operator&lt;(const v128 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      return neon_movemask_f32(vreinterpretq_f32_u32(vcltq_f32(value, o.value)));
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      i128 _r;
+      if constexpr ( __is_8_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u8(vcltq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u16(vcltq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u32(vcltq_s32(value, o.value));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u64(neon_v7_cltq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
+      return neon_movemask_si128(_r);
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neon_movemask_f32(vreinterpretq_f32_u32(vcltq_f32(value, o.value)))</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L511">line 511</a></td></tr><tr class="t-dsc"><td><code>neon_movemask_si128(_r)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L520">line 520</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L522">line 522</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-fa0bf361cc7ee8bc">neon_movemask_f32</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../arch/types_arm32.hpp.html#f-916727b8d643d462">neon_v7_cltq_s64</a>, <a href="../arch/types_arm32.hpp.html#f-d80d06210774c830">neon_movemask_si128</a>.</p></section><section class="function-entry" id="f-0e0f9e05d86b4b76"><h3><code>micron::simd::v128::operator&lt;=(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L526">line 526</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr int
+  operator&lt;=(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr int
+  operator&lt;=(const v128 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      return neon_movemask_f32(vreinterpretq_f32_u32(vcleq_f32(value, o.value)));
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      i128 _r;
+      if constexpr ( __is_8_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u8(vcleq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u16(vcleq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) _r = vreinterpretq_s32_u32(vcleq_s32(value, o.value));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        _r = vreinterpretq_s32_u64(neon_v7_cleq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
+      return neon_movemask_si128(_r);
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neon_movemask_f32(vreinterpretq_f32_u32(vcleq_f32(value, o.value)))</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L529">line 529</a></td></tr><tr class="t-dsc"><td><code>neon_movemask_si128(_r)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L538">line 538</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L540">line 540</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-fa0bf361cc7ee8bc">neon_movemask_f32</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../arch/types_arm32.hpp.html#f-cea4dd06904c6143">neon_v7_cleq_s64</a>, <a href="../arch/types_arm32.hpp.html#f-d80d06210774c830">neon_movemask_si128</a>.</p></section><section class="function-entry" id="f-89fe37b80694c030"><h3><code>micron::simd::v128::operator+=(float x)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L544">line 544</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128 &amp;
+  operator+=(float x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128 &amp;
+  operator+=(float x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) value = vaddq_f32(value, vdupq_n_f32(x));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L547">line 547</a></td></tr></tbody></table></section><section class="function-entry" id="f-6adec37bcbdb0966"><h3><code>micron::simd::v128::operator+=(A __x)
+    requires is_int_flag_type&lt;A&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L552">line 552</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+  constexpr inline v128 &amp;
+  operator+=(A __x)
+    requires is_int_flag_type&lt;A&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A __x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+  constexpr inline v128 &amp;
+  operator+=(A __x)
+    requires is_int_flag_type&lt;A&gt;
+  {
+    F x = static_cast&lt;F&gt;(__x);
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_8_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s8(vaddq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast&lt;int8_t&gt;(x))));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s16(vaddq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(x))));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) value = vaddq_s32(value, vdupq_n_s32(static_cast&lt;int32_t&gt;(x)));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s64(vaddq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast&lt;int64_t&gt;(x))));
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L565">line 565</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3753e1f3229da38b"><h3><code>micron::simd::v128::operator+=(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L569">line 569</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128 &amp;
+  operator+=(const v128 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128 &amp;
+  operator+=(const v128 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      value = vaddq_f32(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_8_wide&lt;F&gt;() ) value = vreinterpretq_s32_s8(vaddq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s16(vaddq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) value = vaddq_s32(value, o.value);
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s64(vaddq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L581">line 581</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c8a29e970b7f3f92"><h3><code>micron::simd::v128::operator-=(float x)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L585">line 585</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128 &amp;
+  operator-=(float x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128 &amp;
+  operator-=(float x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) value = vsubq_f32(value, vdupq_n_f32(x));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L588">line 588</a></td></tr></tbody></table></section><section class="function-entry" id="f-d1a561df6e426813"><h3><code>micron::simd::v128::operator-=(A x)
+    requires is_int_flag_type&lt;A&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L593">line 593</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+  constexpr inline v128 &amp;
+  operator-=(A x)
+    requires is_int_flag_type&lt;A&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+  constexpr inline v128 &amp;
+  operator-=(A x)
+    requires is_int_flag_type&lt;A&gt;
+  {
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( micron::is_same_v&lt;A, __v8&gt; || micron::is_same_v&lt;A, __uv8&gt; )
+        value = vreinterpretq_s32_s8(vsubq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast&lt;int8_t&gt;(x))));
+      if constexpr ( micron::is_same_v&lt;A, __v16&gt; || micron::is_same_v&lt;A, __uv16&gt; )
+        value = vreinterpretq_s32_s16(vsubq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(x))));
+      if constexpr ( micron::is_same_v&lt;A, __v32&gt; || micron::is_same_v&lt;A, __uv32&gt; )
+        value = vsubq_s32(value, vdupq_n_s32(static_cast&lt;int32_t&gt;(x)));
+      if constexpr ( micron::is_same_v&lt;A, __v64&gt; || micron::is_same_v&lt;A, __uv64&gt; )
+        value = vreinterpretq_s32_s64(vsubq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast&lt;int64_t&gt;(x))));
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L606">line 606</a></td></tr></tbody></table></section><section class="function-entry" id="f-1cb0e637bfa638ae"><h3><code>micron::simd::v128::operator-=(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L610">line 610</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128 &amp;
+  operator-=(const v128 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128 &amp;
+  operator-=(const v128 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      value = vsubq_f32(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_8_wide&lt;F&gt;() ) value = vreinterpretq_s32_s8(vsubq_s8(vreinterpretq_s8_s32(value), vreinterpretq_s8_s32(o.value)));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s16(vsubq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) value = vsubq_s32(value, o.value);
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s64(vsubq_s64(vreinterpretq_s64_s32(value), vreinterpretq_s64_s32(o.value)));
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L622">line 622</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-7e731bc186456a4c"><h3><code>micron::simd::v128::operator*=(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L626">line 626</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128 &amp;
+  operator*=(const v128 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128 &amp;
+  operator*=(const v128 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      value = vmulq_f32(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_8_wide&lt;F&gt;() ) {
+        static_assert(!__is_8_wide&lt;F&gt;(), &quot;No epi8 SIMD multiply (ARMv7)&quot;);
+      }
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s16(vmulq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(o.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) value = vmulq_s32(value, o.value);
+      if constexpr ( __is_64_wide&lt;F&gt;() ) {
+        static_assert(!__is_64_wide&lt;F&gt;(), &quot;No epi64 SIMD multiply (ARMv7)&quot;);
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L641">line 641</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!__is_8_wide&lt;F&gt;(), &quot;No epi8 SIMD multiply (ARMv7)&quot;);</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L632">line 632</a><br>Within <code>else of ( micron::is_same_v&lt;T, f128&gt; )</code>, <code>( micron::is_same_v&lt;T, i128&gt; )</code>, <code>( __is_8_wide&lt;F&gt;() )</code></td></tr><tr class="t-dsc"><td><code>static_assert(!__is_64_wide&lt;F&gt;(), &quot;No epi64 SIMD multiply (ARMv7)&quot;);</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L638">line 638</a><br>Within <code>else of ( micron::is_same_v&lt;T, f128&gt; )</code>, <code>( micron::is_same_v&lt;T, i128&gt; )</code>, <code>( __is_64_wide&lt;F&gt;() )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ab4c32410de8259a"><h3><code>micron::simd::v128::operator/=(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L645">line 645</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128 &amp;
+  operator/=(const v128 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128 &amp;
+  operator/=(const v128 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      value = neon_v7_divq_f32(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      static_assert(!micron::is_same_v&lt;T, i128&gt;, &quot;No SIMD integer division (ARMv7)&quot;);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L652">line 652</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::is_same_v&lt;T, i128&gt;, &quot;No SIMD integer division (ARMv7)&quot;);</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L650">line 650</a><br>Within <code>else of ( micron::is_same_v&lt;T, f128&gt; )</code>, <code>( micron::is_same_v&lt;T, i128&gt; )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-7d203c381dc9c2be">neon_v7_divq_f32</a>.</p></section><section class="function-entry" id="f-c0bbb5824280c7e4"><h3><code>micron::simd::v128::operator/(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L656">line 656</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128
+  operator/(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128
+  operator/(const v128 &amp;o) const
+  {
+    v128 _d;
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) {
+      _d.value = neon_v7_divq_f32(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      static_assert(!micron::is_same_v&lt;T, i128&gt;, &quot;No SIMD integer division (ARMv7)&quot;);
+    }
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L664">line 664</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::is_same_v&lt;T, i128&gt;, &quot;No SIMD integer division (ARMv7)&quot;);</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L662">line 662</a><br>Within <code>else of ( micron::is_same_v&lt;T, f128&gt; )</code>, <code>( micron::is_same_v&lt;T, i128&gt; )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-7d203c381dc9c2be">neon_v7_divq_f32</a>.</p></section><section class="function-entry" id="f-18738633c076c585"><h3><code>micron::simd::v128::operator+(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L668">line 668</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128
+  operator+(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128
+  operator+(const v128 &amp;o) const
+  {
+    v128 _r = *this;
+    _r += o;
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L672">line 672</a></td></tr></tbody></table></section><section class="function-entry" id="f-726721dbede0f729"><h3><code>micron::simd::v128::operator-(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L676">line 676</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128
+  operator-(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128
+  operator-(const v128 &amp;o) const
+  {
+    v128 _r = *this;
+    _r -= o;
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L680">line 680</a></td></tr></tbody></table></section><section class="function-entry" id="f-f6982766fbe07d32"><h3><code>micron::simd::v128::all_zeroes() const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L684">line 684</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  all_zeroes() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  all_zeroes() const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      return neon_movemask_f32(value) == 0x0;
+    else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      const uint64x2_t v64 = vreinterpretq_u64_s32(value);
+      return (vgetq_lane_u64(v64, 0) | vgetq_lane_u64(v64, 1)) == 0ULL;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neon_movemask_f32(value) == 0x0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L687">line 687</a></td></tr><tr class="t-dsc"><td><code>(vgetq_lane_u64(v64, 0) | vgetq_lane_u64(v64, 1)) == 0ULL</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L690">line 690</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-fa0bf361cc7ee8bc">neon_movemask_f32</a>.</p></section><section class="function-entry" id="f-f9a70a2438f8c22b"><h3><code>micron::simd::v128::all_ones() const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L695">line 695</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  all_ones() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  all_ones() const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      return neon_movemask_f32(value) == 0xF;
+    else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      const uint64x2_t v64 = vreinterpretq_u64_s32(value);
+      return (vgetq_lane_u64(v64, 0) &amp; vgetq_lane_u64(v64, 1)) == ~static_cast&lt;u64&gt;(0);
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neon_movemask_f32(value) == 0xF</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L698">line 698</a></td></tr><tr class="t-dsc"><td><code>(vgetq_lane_u64(v64, 0) &amp; vgetq_lane_u64(v64, 1)) == ~static_cast&lt;u64&gt;(0)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L701">line 701</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-fa0bf361cc7ee8bc">neon_movemask_f32</a>.</p></section><section class="function-entry" id="f-bb64c40b37d4117b"><h3><code>micron::simd::v128::to_zero(void)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L706">line 706</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  to_zero(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  to_zero(void)
+  {
+    __impl_zero_init();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-02dde2d9a6f5711e">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-f877194a00d67c1a"><h3><code>micron::simd::v128::to_ones(void)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L712">line 712</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  to_ones(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  to_ones(void)
+  {
+    __impl_one_init();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-ae4d236933915005">__impl_one_init</a>.</p></section><section class="function-entry" id="f-406e82750d04cf5c"><h3><code>micron::simd::v128::set(float f)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L718">line 718</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  set(float f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  set(float f)
+  {
+    value = vdupq_n_f32(f);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L721">line 721</a></td></tr></tbody></table></section><section class="function-entry" id="f-8ed9a24c452e7221"><h3><code>micron::simd::v128::set(i8 c)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L725">line 725</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  set(i8 c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i8 c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  set(i8 c)
+  {
+    value = vreinterpretq_s32_s8(vdupq_n_s8(c));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L728">line 728</a></td></tr></tbody></table></section><section class="function-entry" id="f-9f589e10df43fe1c"><h3><code>micron::simd::v128::set(i16 s)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L732">line 732</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  set(i16 s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i16 s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  set(i16 s)
+  {
+    value = vreinterpretq_s32_s16(vdupq_n_s16(s));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L735">line 735</a></td></tr></tbody></table></section><section class="function-entry" id="f-7493e3e58ebb51d9"><h3><code>micron::simd::v128::set(i32 i)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L739">line 739</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  set(i32 i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  set(i32 i)
+  {
+    value = vdupq_n_s32(i);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L742">line 742</a></td></tr></tbody></table></section><section class="function-entry" id="f-0e09f7b0e0f5a82d"><h3><code>micron::simd::v128::set(i64 l)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L746">line 746</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  set(i64 l)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  set(i64 l)
+  {
+    value = vreinterpretq_s32_s64(vdupq_n_s64(static_cast&lt;int64_t&gt;(l)));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L749">line 749</a></td></tr></tbody></table></section><section class="function-entry" id="f-6705ea1d8914e1d5"><h3><code>micron::simd::v128::set(float const *f)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L753">line 753</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  set(float const *f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float const *f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  set(float const *f)
+  {
+    value = vld1q_dup_f32(f);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L756">line 756</a></td></tr></tbody></table></section><section class="function-entry" id="f-e6c97c1804d2de4a"><h3><code>micron::simd::v128::broadcast(float const *f)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L760">line 760</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  broadcast(float const *f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float const *f</code></li></ul><h4>Effects</h4><p>Returns <code>set(f)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  broadcast(float const *f)
+  {
+    return set(f);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>set(f)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L762">line 762</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-406e82750d04cf5c">set</a>.</p></section><section class="function-entry" id="f-9c5db0ce5ae22978"><h3><code>micron::simd::v128::load(B *mem)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L767">line 767</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename B&gt;
+  inline v128 &amp;
+  load(B *mem)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>B *mem</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename B&gt;
+  inline v128 &amp;
+  load(B *mem)
+  {
+    if ( !is_aligned&lt;128&gt;(mem) ) return *this;
+    value = ::micron::simd::load&lt;T, B&gt;(mem);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L769">line 769</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L771">line 771</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/bits.hpp.html#f-eb6676627338050d">is_aligned&lt;128&gt;</a>.</p></section><section class="function-entry" id="f-5b26075b4f949b68"><h3><code>micron::simd::v128::uload(B *mem)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L776">line 776</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename B&gt;
+  inline v128 &amp;
+  uload(B *mem)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>B *mem</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename B&gt;
+  inline v128 &amp;
+  uload(B *mem)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      value = vld1q_f32(reinterpret_cast&lt;const float *&gt;(mem));
+    else if constexpr ( micron::is_same_v&lt;T, i128&gt; )
+      value = vreinterpretq_s32_u8(vld1q_u8(reinterpret_cast&lt;const uint8_t *&gt;(mem)));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L782">line 782</a></td></tr></tbody></table></section><section class="function-entry" id="f-9f51f56adfbad80d"><h3><code>micron::simd::v128::operator|=(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L786">line 786</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator|=(const v128 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator|=(const v128 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) value = vorrq_s32(value, o.value);
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      value = vreinterpretq_f32_u32(vorrq_u32(vreinterpretq_u32_f32(value), vreinterpretq_u32_f32(o.value)));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L791">line 791</a></td></tr></tbody></table></section><section class="function-entry" id="f-87afc64143f4ef90"><h3><code>micron::simd::v128::operator&amp;=(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L795">line 795</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator&amp;=(const v128 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator&amp;=(const v128 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) value = vandq_s32(value, o.value);
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      value = vreinterpretq_f32_u32(vandq_u32(vreinterpretq_u32_f32(value), vreinterpretq_u32_f32(o.value)));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L800">line 800</a></td></tr></tbody></table></section><section class="function-entry" id="f-cc6df9d6fbae1dd3"><h3><code>micron::simd::v128::operator^=(const v128 &amp;o)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L804">line 804</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator^=(const v128 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator^=(const v128 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) value = veorq_s32(value, o.value);
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      value = vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(value), vreinterpretq_u32_f32(o.value)));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L809">line 809</a></td></tr></tbody></table></section><section class="function-entry" id="f-bbd16b53ee3edd67"><h3><code>micron::simd::v128::operator|(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L813">line 813</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128
+  operator|(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128
+  operator|(const v128 &amp;o) const
+  {
+    v128 _r = *this;
+    _r |= o;
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L817">line 817</a></td></tr></tbody></table></section><section class="function-entry" id="f-0d456703337a58de"><h3><code>micron::simd::v128::operator&amp;(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L821">line 821</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128
+  operator&amp;(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128
+  operator&amp;(const v128 &amp;o) const
+  {
+    v128 _r = *this;
+    _r &amp;= o;
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L825">line 825</a></td></tr></tbody></table></section><section class="function-entry" id="f-af2677afedfb2f4d"><h3><code>micron::simd::v128::operator^(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L829">line 829</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128
+  operator^(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128
+  operator^(const v128 &amp;o) const
+  {
+    v128 _r = *this;
+    _r ^= o;
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L833">line 833</a></td></tr></tbody></table></section><section class="function-entry" id="f-9d55376480f6cda6"><h3><code>micron::simd::v128::operator~() const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L837">line 837</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128
+  operator~() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128
+  operator~() const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) _r.value = veorq_s32(value, neon_all_ones_si128());
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      _r.value = vreinterpretq_f32_u32(veorq_u32(vreinterpretq_u32_f32(value), vreinterpretq_u32_s32(neon_all_ones_si128())));
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L843">line 843</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-cefd939d3447ae71">neon_all_ones_si128</a>.</p></section><section class="function-entry" id="f-e3f23b6ce57e2123"><h3><code>micron::simd::v128::operator&lt;&lt;(int i) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L847">line 847</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128
+  operator&lt;&lt;(int i) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128
+  operator&lt;&lt;(int i) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_8_wide&lt;F&gt;() )
+        _r.value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast&lt;int8_t&gt;(i))));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        _r.value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(i))));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) _r.value = vshlq_s32(value, vdupq_n_s32(i));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        _r.value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast&lt;int64_t&gt;(i))));
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L859">line 859</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-173f3f5bf32ce735"><h3><code>micron::simd::v128::operator&lt;&lt;=(int i)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L863">line 863</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator&lt;&lt;=(int i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator&lt;&lt;=(int i)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_8_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast&lt;int8_t&gt;(i))));
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(i))));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) value = vshlq_s32(value, vdupq_n_s32(i));
+      if constexpr ( __is_64_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast&lt;int64_t&gt;(i))));
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L874">line 874</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-8a355d2125650eea"><h3><code>micron::simd::v128::operator&gt;&gt;(int i) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L878">line 878</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128
+  operator&gt;&gt;(int i) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128
+  operator&gt;&gt;(int i) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( micron::is_signed_v&lt;F&gt; ) {
+        if constexpr ( __is_8_wide&lt;F&gt;() )
+          _r.value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast&lt;int8_t&gt;(-i))));
+        if constexpr ( __is_16_wide&lt;F&gt;() )
+          _r.value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(-i))));
+        if constexpr ( __is_32_wide&lt;F&gt;() ) _r.value = vshlq_s32(value, vdupq_n_s32(-i));
+        if constexpr ( __is_64_wide&lt;F&gt;() )
+          _r.value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast&lt;int64_t&gt;(-i))));
+      } else {
+        if constexpr ( __is_8_wide&lt;F&gt;() )
+          _r.value = vreinterpretq_s32_u8(vshlq_u8(vreinterpretq_u8_s32(value), vdupq_n_s8(static_cast&lt;int8_t&gt;(-i))));
+        if constexpr ( __is_16_wide&lt;F&gt;() )
+          _r.value = vreinterpretq_s32_u16(vshlq_u16(vreinterpretq_u16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(-i))));
+        if constexpr ( __is_32_wide&lt;F&gt;() ) _r.value = vreinterpretq_s32_u32(vshlq_u32(vreinterpretq_u32_s32(value), vdupq_n_s32(-i)));
+        if constexpr ( __is_64_wide&lt;F&gt;() )
+          _r.value = vreinterpretq_s32_u64(vshlq_u64(vreinterpretq_u64_s32(value), vdupq_n_s64(static_cast&lt;int64_t&gt;(-i))));
+      }
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L900">line 900</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f39c4d77de2bff63"><h3><code>micron::simd::v128::operator&gt;&gt;=(int i)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L904">line 904</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128 &amp;
+  operator&gt;&gt;=(int i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128 &amp;
+  operator&gt;&gt;=(int i)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( micron::is_signed_v&lt;F&gt; ) {
+        if constexpr ( __is_8_wide&lt;F&gt;() )
+          value = vreinterpretq_s32_s8(vshlq_s8(vreinterpretq_s8_s32(value), vdupq_n_s8(static_cast&lt;int8_t&gt;(-i))));
+        if constexpr ( __is_16_wide&lt;F&gt;() )
+          value = vreinterpretq_s32_s16(vshlq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(-i))));
+        if constexpr ( __is_32_wide&lt;F&gt;() ) value = vshlq_s32(value, vdupq_n_s32(-i));
+        if constexpr ( __is_64_wide&lt;F&gt;() )
+          value = vreinterpretq_s32_s64(vshlq_s64(vreinterpretq_s64_s32(value), vdupq_n_s64(static_cast&lt;int64_t&gt;(-i))));
+      } else {
+        if constexpr ( __is_8_wide&lt;F&gt;() )
+          value = vreinterpretq_s32_u8(vshlq_u8(vreinterpretq_u8_s32(value), vdupq_n_s8(static_cast&lt;int8_t&gt;(-i))));
+        if constexpr ( __is_16_wide&lt;F&gt;() )
+          value = vreinterpretq_s32_u16(vshlq_u16(vreinterpretq_u16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(-i))));
+        if constexpr ( __is_32_wide&lt;F&gt;() ) value = vreinterpretq_s32_u32(vshlq_u32(vreinterpretq_u32_s32(value), vdupq_n_s32(-i)));
+        if constexpr ( __is_64_wide&lt;F&gt;() )
+          value = vreinterpretq_s32_u64(vshlq_u64(vreinterpretq_u64_s32(value), vdupq_n_s64(static_cast&lt;int64_t&gt;(-i))));
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L925">line 925</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-47fb96e8584438f2"><h3><code>micron::simd::v128::operator/=(float x)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L929">line 929</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128 &amp;
+  operator/=(float x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128 &amp;
+  operator/=(float x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) value = neon_v7_divq_f32(value, vdupq_n_f32(x));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L932">line 932</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-7d203c381dc9c2be">neon_v7_divq_f32</a>.</p></section><section class="function-entry" id="f-1f469e1087e4ca7c"><h3><code>micron::simd::v128::operator/(float x) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L936">line 936</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128
+  operator/(float x) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128
+  operator/(float x) const
+  {
+    v128 _d;
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) _d.value = neon_v7_divq_f32(value, vdupq_n_f32(x));
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L940">line 940</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../arch/types_arm32.hpp.html#f-7d203c381dc9c2be">neon_v7_divq_f32</a>.</p></section><section class="function-entry" id="f-0398033407ad00b3"><h3><code>micron::simd::v128::operator*=(float x)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L944">line 944</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128 &amp;
+  operator*=(float x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128 &amp;
+  operator*=(float x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) value = vmulq_f32(value, vdupq_n_f32(x));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L947">line 947</a></td></tr></tbody></table></section><section class="function-entry" id="f-619f2639046f6b40"><h3><code>micron::simd::v128::operator*=(A __x)
+    requires is_int_flag_type&lt;A&gt;</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L952">line 952</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+  constexpr inline v128 &amp;
+  operator*=(A __x)
+    requires is_int_flag_type&lt;A&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A __x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+  constexpr inline v128 &amp;
+  operator*=(A __x)
+    requires is_int_flag_type&lt;A&gt;
+  {
+    F x = static_cast&lt;F&gt;(__x);
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_8_wide&lt;F&gt;() ) {
+        static_assert(!__is_8_wide&lt;F&gt;(), &quot;No epi8 SIMD multiply (ARMv7)&quot;);
+      }
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        value = vreinterpretq_s32_s16(vmulq_s16(vreinterpretq_s16_s32(value), vdupq_n_s16(static_cast&lt;int16_t&gt;(x))));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) value = vmulq_s32(value, vdupq_n_s32(static_cast&lt;int32_t&gt;(x)));
+      if constexpr ( __is_64_wide&lt;F&gt;() ) {
+        static_assert(!__is_64_wide&lt;F&gt;(), &quot;No epi64 SIMD multiply (ARMv7)&quot;);
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L967">line 967</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!__is_8_wide&lt;F&gt;(), &quot;No epi8 SIMD multiply (ARMv7)&quot;);</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L958">line 958</a><br>Within <code>( micron::is_same_v&lt;T, i128&gt; )</code>, <code>( __is_8_wide&lt;F&gt;() )</code></td></tr><tr class="t-dsc"><td><code>static_assert(!__is_64_wide&lt;F&gt;(), &quot;No epi64 SIMD multiply (ARMv7)&quot;);</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L964">line 964</a><br>Within <code>( micron::is_same_v&lt;T, i128&gt; )</code>, <code>( __is_64_wide&lt;F&gt;() )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-8ca2ecb98e43d4b5"><h3><code>micron::simd::v128::operator*(float x) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L971">line 971</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128
+  operator*(float x) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128
+  operator*(float x) const
+  {
+    v128 _d;
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; ) _d.value = vmulq_f32(value, vdupq_n_f32(x));
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L975">line 975</a></td></tr></tbody></table></section><section class="function-entry" id="f-f8d7fae67f634c57"><h3><code>micron::simd::v128::operator*(v128 x) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L979">line 979</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v128
+  operator*(v128 x) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>v128 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v128
+  operator*(v128 x) const
+  {
+    v128 _d;
+    if constexpr ( micron::is_same_v&lt;T, f128&gt; )
+      _d.value = vmulq_f32(value, x.value);
+    else if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( __is_8_wide&lt;F&gt;() ) {
+        static_assert(!__is_8_wide&lt;F&gt;(), &quot;No epi8 SIMD multiply (ARMv7)&quot;);
+      }
+      if constexpr ( __is_16_wide&lt;F&gt;() )
+        _d.value = vreinterpretq_s32_s16(vmulq_s16(vreinterpretq_s16_s32(value), vreinterpretq_s16_s32(x.value)));
+      if constexpr ( __is_32_wide&lt;F&gt;() ) _d.value = vmulq_s32(value, x.value);
+      if constexpr ( __is_64_wide&lt;F&gt;() ) {
+        static_assert(!__is_64_wide&lt;F&gt;(), &quot;No epi64 SIMD multiply (ARMv7)&quot;);
+      }
+    }
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L995">line 995</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!__is_8_wide&lt;F&gt;(), &quot;No epi8 SIMD multiply (ARMv7)&quot;);</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L986">line 986</a><br>Within <code>else of ( micron::is_same_v&lt;T, f128&gt; )</code>, <code>( micron::is_same_v&lt;T, i128&gt; )</code>, <code>( __is_8_wide&lt;F&gt;() )</code></td></tr><tr class="t-dsc"><td><code>static_assert(!__is_64_wide&lt;F&gt;(), &quot;No epi64 SIMD multiply (ARMv7)&quot;);</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L992">line 992</a><br>Within <code>else of ( micron::is_same_v&lt;T, f128&gt; )</code>, <code>( micron::is_same_v&lt;T, i128&gt; )</code>, <code>( __is_64_wide&lt;F&gt;() )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c51e011a0e75f27b"><h3><code>micron::simd::v128::get(F *arr) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L999">line 999</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  get(F *arr) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *arr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  get(F *arr) const
+  {
+    if constexpr ( micron::is_same_v&lt;F, __vf&gt; ) vst1q_f32(reinterpret_cast&lt;float *&gt;(arr), value);
+    if constexpr ( __is_8_wide&lt;F&gt;() || __is_16_wide&lt;F&gt;() || __is_32_wide&lt;F&gt;() || __is_64_wide&lt;F&gt;() )
+      vst1q_s32(micron::ptr_cast&lt;int32_t *&gt;(arr), value);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/types.hpp.html#f-7d231c9ef76bf686">__is_8_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-9f08df27c8f2b46c">__is_16_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-3bd977a70587e4f0">__is_32_wide&lt;F&gt;</a>, <a href="../../bits/wasm/simd/types.hpp.html#f-120db4e5809d84f1">__is_64_wide&lt;F&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;int32_t *&gt;</a>.</p></section><section class="function-entry" id="f-5957348c8da40a72"><h3><code>micron::simd::v128::get_aligned(F *arr) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L1007">line 1007</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  get_aligned(F *arr) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *arr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  get_aligned(F *arr) const
+  {
+    get(arr);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="neon_arm32.hpp.html#f-c51e011a0e75f27b">get</a>.</p></section><section class="function-entry" id="f-211feed3067fa7e1"><h3><code>micron::simd::v128::shuffle(const v128 &amp;control) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L1013">line 1013</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128
+  shuffle(const v128 &amp;control) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;control</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128
+  shuffle(const v128 &amp;control) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      uint8x16_t v = vreinterpretq_u8_s32(value);
+      uint8x16_t c = vandq_u8(vreinterpretq_u8_s32(control.value), vdupq_n_u8(0x8f));
+      _r.value = vreinterpretq_s32_u8(vqtbl1q_u8(v, c));
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1021">line 1021</a></td></tr></tbody></table></section><section class="function-entry" id="f-4c5a79291e12609c"><h3><code>micron::simd::v128::andnot(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L1025">line 1025</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v128
+  andnot(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v128
+  andnot(const v128 &amp;o) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; )
+      _r.value = vreinterpretq_s32_u8(vandq_u8(vmvnq_u8(vreinterpretq_u8_s32(value)), vreinterpretq_u8_s32(o.value)));
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1030">line 1030</a></td></tr></tbody></table></section><section class="function-entry" id="f-a1d0e0ad7a29247e"><h3><code>micron::simd::v128::movemask(void) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L1034">line 1034</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+  movemask(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+  movemask(void) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      static const uint8x16_t kbit = { 1, 2, 4, 8, 16, 32, 64, 128, 1, 2, 4, 8, 16, 32, 64, 128 };
+      uint8x16_t sat = vcgtq_u8(vreinterpretq_u8_s32(value), vdupq_n_u8(0x7f));
+      uint8x16_t b = vandq_u8(sat, kbit);
+      uint8x8_t lo = vget_low_u8(b), hi = vget_high_u8(b);
+      lo = vpadd_u8(lo, hi);
+      lo = vpadd_u8(lo, lo);
+      lo = vpadd_u8(lo, lo);
+      return (int)vget_lane_u16(vreinterpret_u16_u8(lo), 0);
+    }
+    return 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(int)vget_lane_u16(vreinterpret_u16_u8(lo), 0)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1044">line 1044</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1046">line 1046</a></td></tr></tbody></table></section><section class="function-entry" id="f-3eb2f644ba3b29a4"><h3><code>micron::simd::v128::byte0(void) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L1050">line 1050</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline unsigned char
+  byte0(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline unsigned char
+  byte0(void) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) return vgetq_lane_u8(vreinterpretq_u8_s32(value), 0);
+    return 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vgetq_lane_u8(vreinterpretq_u8_s32(value), 0)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1052">line 1052</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1053">line 1053</a></td></tr></tbody></table></section><section class="function-entry" id="f-2c321f285cdb72db"><h3><code>micron::simd::v128::byte_shift_left(void) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L1058">line 1058</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int IMM&gt;
+  inline v128
+  byte_shift_left(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int IMM&gt;
+  inline v128
+  byte_shift_left(void) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( IMM &lt;= 0 )
+        _r.value = value;
+      else if constexpr ( IMM &lt; 16 )
+        _r.value = vreinterpretq_s32_u8(vextq_u8(vdupq_n_u8(0), vreinterpretq_u8_s32(value), 16 - IMM));
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1067">line 1067</a></td></tr></tbody></table></section><section class="function-entry" id="f-785b8fe35d7a8142"><h3><code>micron::simd::v128::byte_shift_right(void) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L1072">line 1072</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int IMM&gt;
+  inline v128
+  byte_shift_right(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int IMM&gt;
+  inline v128
+  byte_shift_right(void) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( IMM &lt;= 0 )
+        _r.value = value;
+      else if constexpr ( IMM &lt; 16 )
+        _r.value = vreinterpretq_s32_u8(vextq_u8(vreinterpretq_u8_s32(value), vdupq_n_u8(0), IMM));
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1081">line 1081</a></td></tr></tbody></table></section><section class="function-entry" id="f-2d8598dcaaec062d"><h3><code>micron::simd::v128::alignr(const v128 &amp;o) const</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L1086">line 1086</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int IMM&gt;
+  inline v128
+  alignr(const v128 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v128 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int IMM&gt;
+  inline v128
+  alignr(const v128 &amp;o) const
+  {
+    v128 _r;
+    if constexpr ( micron::is_same_v&lt;T, i128&gt; ) {
+      if constexpr ( IMM &gt;= 16 )
+        _r.value = value;
+      else
+        _r.value = vreinterpretq_s32_u8(vextq_u8(vreinterpretq_u8_s32(o.value), vreinterpretq_u8_s32(value), IMM));
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L1095">line 1095</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-02dde2d9a6f5711e"><h3><code>micron::simd::v128::__impl_zero_init(void)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L25">line 25</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __impl_zero_init(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __impl_zero_init(void)
+  {
+    if constexpr ( micron::same_as&lt;T, f128&gt; ) value = vdupq_n_f32(0.0f);
+    if constexpr ( micron::same_as&lt;T, i128&gt; ) value = vdupq_n_s32(0);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ae4d236933915005"><h3><code>micron::simd::v128::__impl_one_init(void)</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L32">line 32</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __impl_one_init(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __impl_one_init(void)
+  {
+    if constexpr ( micron::same_as&lt;T, f128&gt; ) value = vreinterpretq_f32_s32(vdupq_n_s32(-1));
+    if constexpr ( micron::same_as&lt;T, i128&gt; ) value = vdupq_n_s32(-1);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-af7f9249ebf4ea11"><h3><code>micron::simd::v128::__all_ones_si128(void) noexcept</code></h3><p>Defined in <code>simd/types/neon_arm32.hpp</code>, <a href="../../../source/simd/types/neon_arm32.hpp.html#L39">line 39</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline i128
+  __all_ones_si128(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>vdupq_n_s32(-1)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline i128
+  __all_ones_si128(void) noexcept
+  {
+    return vdupq_n_s32(-1);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vdupq_n_s32(-1)</code></td><td><a href="../../../source/simd/types/neon_arm32.hpp.html#L41">line 41</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

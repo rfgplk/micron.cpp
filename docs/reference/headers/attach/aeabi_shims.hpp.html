@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/attach/aeabi_shims.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/attach/aeabi_shims.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/attach.html">Module attachment</a></div><p>Defined in header <code>&lt;micron/attach/aeabi_shims.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/attach/aeabi_shims.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-82bf82ed9b1868bf"><h3><code>anonymous_13::__micron_aeabi_udivmod32(unsigned int n, unsigned int d, unsigned int &amp;q_out, unsigned int &amp;r_out) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L16">line 16</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__micron_aeabi_udivmod32(unsigned int n, unsigned int d, unsigned int &amp;q_out, unsigned int &amp;r_out) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>unsigned int n</code></li><li><code>unsigned int d</code></li><li><code>unsigned int &amp;q_out</code></li><li><code>unsigned int &amp;r_out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__micron_aeabi_udivmod32(unsigned int n, unsigned int d, unsigned int &amp;q_out, unsigned int &amp;r_out) noexcept
+{
+  if ( d == 0 ) __builtin_trap();
+  unsigned int q = 0;
+  unsigned int r = 0;
+  for ( int i = 0; i &lt; 32; ++i ) {
+    r = (r &lt;&lt; 1) | (n &gt;&gt; 31);
+    n &lt;&lt;= 1;
+    q &lt;&lt;= 1;
+    if ( r &gt;= d ) {
+      r -= d;
+      q |= 1;
+    }
+  }
+  q_out = q;
+  r_out = r;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4e3be1b417743cb3"><h3><code>__aeabi_uidiv(unsigned int n, unsigned int d) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L38">line 38</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used)) unsigned int
+__aeabi_uidiv(unsigned int n, unsigned int d) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>unsigned int n</code></li><li><code>unsigned int d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used)) unsigned int
+__aeabi_uidiv(unsigned int n, unsigned int d) noexcept
+{
+  unsigned int q;
+  unsigned int r;
+  __micron_aeabi_udivmod32(n, d, q, r);
+  return q;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>q</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L43">line 43</a></td></tr></tbody></table></section><section class="function-entry" id="f-f2c579aa3d112b1a"><h3><code>__aeabi_idiv(int n, int d) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L47">line 47</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used)) int
+__aeabi_idiv(int n, int d) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int n</code></li><li><code>int d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used)) int
+__aeabi_idiv(int n, int d) noexcept
+{
+  const bool neg = (n &lt; 0) ^ (d &lt; 0);
+  const unsigned int un = (n &lt; 0) ? -static_cast&lt;unsigned int&gt;(n) : static_cast&lt;unsigned int&gt;(n);
+  const unsigned int ud = (d &lt; 0) ? -static_cast&lt;unsigned int&gt;(d) : static_cast&lt;unsigned int&gt;(d);
+  unsigned int q;
+  unsigned int r;
+  __micron_aeabi_udivmod32(un, ud, q, r);
+  return neg ? static_cast&lt;int&gt;(0u - q) : static_cast&lt;int&gt;(q);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neg ? static_cast&lt;int&gt;(0u - q) : static_cast&lt;int&gt;(q)</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L55">line 55</a></td></tr></tbody></table></section><section class="function-entry" id="f-35d3d592e73bfab8"><h3><code>__aeabi_uldivmod() noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L59">line 59</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((naked, weak, used)) void
+__aeabi_uldivmod() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((naked, weak, used)) void
+__aeabi_uldivmod() noexcept
+{
+  __asm__ volatile(&quot;.syntax unified\n&quot;
+                   &quot;push   {r4, r5, r6, r7, r8, lr}\n&quot;
+                   &quot;mov    r4, r0\n&quot;
+                   &quot;mov    r5, r1\n&quot;
+                   &quot;mov    r6, r2\n&quot;
+                   &quot;mov    r7, r3\n&quot;
+                   &quot;bl     __udivdi3\n&quot;
+                   &quot;mov    r8, r0\n&quot;
+                   &quot;umull  r2, r3, r0, r6\n&quot;
+                   &quot;mla    r3, r1, r6, r3\n&quot;
+                   &quot;mla    r3, r0, r7, r3\n&quot;
+                   &quot;subs   r2, r4, r2\n&quot;
+                   &quot;sbc    r3, r5, r3\n&quot;
+                   &quot;mov    r0, r8\n&quot;
+                   &quot;pop    {r4, r5, r6, r7, r8, pc}\n&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4c5dc50ae5fa1d2c"><h3><code>__aeabi_ldivmod() noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L79">line 79</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((naked, weak, used)) void
+__aeabi_ldivmod() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((naked, weak, used)) void
+__aeabi_ldivmod() noexcept
+{
+  __asm__ volatile(&quot;.syntax unified\n&quot;
+                   &quot;push   {r4, r5, r6, r7, r8, lr}\n&quot;
+                   &quot;mov    r4, r0\n&quot;
+                   &quot;mov    r5, r1\n&quot;
+                   &quot;mov    r6, r2\n&quot;
+                   &quot;mov    r7, r3\n&quot;
+                   &quot;bl     __divdi3\n&quot;
+                   &quot;mov    r8, r0\n&quot;
+                   &quot;umull  r2, r3, r0, r6\n&quot;
+                   &quot;mla    r3, r1, r6, r3\n&quot;
+                   &quot;mla    r3, r0, r7, r3\n&quot;
+                   &quot;subs   r2, r4, r2\n&quot;
+                   &quot;sbc    r3, r5, r3\n&quot;
+                   &quot;mov    r0, r8\n&quot;
+                   &quot;pop    {r4, r5, r6, r7, r8, pc}\n&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ea4b9afd508a72f0"><h3><code>__aeabi_idivmod() noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L99">line 99</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((naked, weak, used)) void
+__aeabi_idivmod() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((naked, weak, used)) void
+__aeabi_idivmod() noexcept
+{
+  __asm__ volatile(&quot;.syntax unified\n&quot;
+                   &quot;push   {r4, r5, lr}\n&quot;
+                   &quot;mov    r4, r0\n&quot;
+                   &quot;mov    r5, r1\n&quot;
+                   &quot;bl     __aeabi_idiv\n&quot;
+                   &quot;mul    r1, r0, r5\n&quot;
+                   &quot;sub    r1, r4, r1\n&quot;
+                   &quot;pop    {r4, r5, pc}\n&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-656e529e764c94df"><h3><code>__aeabi_uidivmod() noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L112">line 112</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((naked, weak, used)) void
+__aeabi_uidivmod() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((naked, weak, used)) void
+__aeabi_uidivmod() noexcept
+{
+  __asm__ volatile(&quot;.syntax unified\n&quot;
+                   &quot;push   {r4, r5, lr}\n&quot;
+                   &quot;mov    r4, r0\n&quot;
+                   &quot;mov    r5, r1\n&quot;
+                   &quot;bl     __aeabi_uidiv\n&quot;
+                   &quot;mul    r1, r0, r5\n&quot;
+                   &quot;sub    r1, r4, r1\n&quot;
+                   &quot;pop    {r4, r5, pc}\n&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6eabf7367d5e427d"><h3><code>__aeabi_ul2d(unsigned long long x) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L125">line 125</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used, pcs(&quot;aapcs&quot;))) double
+__aeabi_ul2d(unsigned long long x) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>unsigned long long x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used, pcs(&quot;aapcs&quot;))) double
+__aeabi_ul2d(unsigned long long x) noexcept
+{
+  const unsigned int hi = static_cast&lt;unsigned int&gt;(x &gt;&gt; 32);
+  const unsigned int lo = static_cast&lt;unsigned int&gt;(x);
+  return static_cast&lt;double&gt;(hi) * 4294967296.0 + static_cast&lt;double&gt;(lo);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;double&gt;(hi) * 4294967296.0 + static_cast&lt;double&gt;(lo)</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L129">line 129</a></td></tr></tbody></table></section><section class="function-entry" id="f-97f4317e5465dcfc"><h3><code>__aeabi_l2d(long long x) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L133">line 133</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used, pcs(&quot;aapcs&quot;))) double
+__aeabi_l2d(long long x) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long long x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used, pcs(&quot;aapcs&quot;))) double
+__aeabi_l2d(long long x) noexcept
+{
+  if ( x &lt; 0 ) return -__aeabi_ul2d(0ull - static_cast&lt;unsigned long long&gt;(x));
+  return __aeabi_ul2d(static_cast&lt;unsigned long long&gt;(x));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-__aeabi_ul2d(0ull - static_cast&lt;unsigned long long&gt;(x))</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>__aeabi_ul2d(static_cast&lt;unsigned long long&gt;(x))</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L136">line 136</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="aeabi_shims.hpp.html#f-6eabf7367d5e427d">__aeabi_ul2d</a>.</p></section><section class="function-entry" id="f-f71e0ad12a59e1a7"><h3><code>__aeabi_ul2f(unsigned long long x) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L140">line 140</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used, pcs(&quot;aapcs&quot;))) float
+__aeabi_ul2f(unsigned long long x) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>unsigned long long x</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;float&gt;(__aeabi_ul2d(x))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used, pcs(&quot;aapcs&quot;))) float
+__aeabi_ul2f(unsigned long long x) noexcept
+{
+  return static_cast&lt;float&gt;(__aeabi_ul2d(x));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;float&gt;(__aeabi_ul2d(x))</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="aeabi_shims.hpp.html#f-6eabf7367d5e427d">__aeabi_ul2d</a>.</p></section><section class="function-entry" id="f-68934257cea08b48"><h3><code>__aeabi_l2f(long long x) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L146">line 146</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used, pcs(&quot;aapcs&quot;))) float
+__aeabi_l2f(long long x) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long long x</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;float&gt;(__aeabi_l2d(x))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used, pcs(&quot;aapcs&quot;))) float
+__aeabi_l2f(long long x) noexcept
+{
+  return static_cast&lt;float&gt;(__aeabi_l2d(x));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;float&gt;(__aeabi_l2d(x))</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L148">line 148</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="aeabi_shims.hpp.html#f-97f4317e5465dcfc">__aeabi_l2d</a>.</p></section><section class="function-entry" id="f-cf7a3aced8e802c1"><h3><code>__aeabi_d2ulz(double x) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L152">line 152</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used, pcs(&quot;aapcs&quot;))) unsigned long long
+__aeabi_d2ulz(double x) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used, pcs(&quot;aapcs&quot;))) unsigned long long
+__aeabi_d2ulz(double x) noexcept
+{
+  if ( !(x &gt;= 0.0) ) return 0;
+  if ( x &gt;= 18446744073709551616.0 ) return ~0ULL;
+  if ( x &lt; 4294967296.0 ) return static_cast&lt;unsigned int&gt;(x);
+  unsigned int hi = static_cast&lt;unsigned int&gt;(x * (1.0 / 4294967296.0));
+  double lo_d = x - static_cast&lt;double&gt;(hi) * 4294967296.0;
+  if ( lo_d &lt; 0.0 ) {
+    --hi;
+    lo_d += 4294967296.0;
+  } else if ( lo_d &gt;= 4294967296.0 ) {
+    ++hi;
+    lo_d -= 4294967296.0;
+  }
+  const unsigned int lo = static_cast&lt;unsigned int&gt;(lo_d);
+  return (static_cast&lt;unsigned long long&gt;(hi) &lt;&lt; 32) | lo;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L154">line 154</a></td></tr><tr class="t-dsc"><td><code>~0ULL</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L155">line 155</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;unsigned int&gt;(x)</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L156">line 156</a></td></tr><tr class="t-dsc"><td><code>(static_cast&lt;unsigned long long&gt;(hi) &lt;&lt; 32) | lo</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L167">line 167</a></td></tr></tbody></table></section><section class="function-entry" id="f-0c96e6ea93573f5e"><h3><code>__aeabi_d2lz(double x) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L171">line 171</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used, pcs(&quot;aapcs&quot;))) long long
+__aeabi_d2lz(double x) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used, pcs(&quot;aapcs&quot;))) long long
+__aeabi_d2lz(double x) noexcept
+{
+  if ( x != x ) return 0;
+  if ( x &gt;= 9223372036854775808.0 ) return 0x7FFFFFFFFFFFFFFFLL;
+  if ( x &lt; -9223372036854775808.0 ) return static_cast&lt;long long&gt;(0x8000000000000000ULL);
+  if ( x &gt;= 0.0 ) return static_cast&lt;long long&gt;(__aeabi_d2ulz(x));
+  return static_cast&lt;long long&gt;(0ull - __aeabi_d2ulz(-x));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L173">line 173</a></td></tr><tr class="t-dsc"><td><code>0x7FFFFFFFFFFFFFFFLL</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L174">line 174</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;long long&gt;(0x8000000000000000ULL)</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L175">line 175</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;long long&gt;(__aeabi_d2ulz(x))</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;long long&gt;(0ull - __aeabi_d2ulz(-x))</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L177">line 177</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="aeabi_shims.hpp.html#f-cf7a3aced8e802c1">__aeabi_d2ulz</a>.</p></section><section class="function-entry" id="f-793d690ae2aab8da"><h3><code>__aeabi_f2ulz(float x) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L181">line 181</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used, pcs(&quot;aapcs&quot;))) unsigned long long
+__aeabi_f2ulz(float x) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Returns <code>__aeabi_d2ulz(static_cast&lt;double&gt;(x))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used, pcs(&quot;aapcs&quot;))) unsigned long long
+__aeabi_f2ulz(float x) noexcept
+{
+  return __aeabi_d2ulz(static_cast&lt;double&gt;(x));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__aeabi_d2ulz(static_cast&lt;double&gt;(x))</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L183">line 183</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="aeabi_shims.hpp.html#f-cf7a3aced8e802c1">__aeabi_d2ulz</a>.</p></section><section class="function-entry" id="f-ed6e59a881e29b91"><h3><code>__aeabi_f2lz(float x) noexcept</code></h3><p>Defined in <code>attach/aeabi_shims.hpp</code>, <a href="../../source/attach/aeabi_shims.hpp.html#L187">line 187</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used, pcs(&quot;aapcs&quot;))) long long
+__aeabi_f2lz(float x) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE) &amp;&amp; defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Returns <code>__aeabi_d2lz(static_cast&lt;double&gt;(x))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used, pcs(&quot;aapcs&quot;))) long long
+__aeabi_f2lz(float x) noexcept
+{
+  return __aeabi_d2lz(static_cast&lt;double&gt;(x));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__aeabi_d2lz(static_cast&lt;double&gt;(x))</code></td><td><a href="../../source/attach/aeabi_shims.hpp.html#L189">line 189</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="aeabi_shims.hpp.html#f-0c96e6ea93573f5e">__aeabi_d2lz</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

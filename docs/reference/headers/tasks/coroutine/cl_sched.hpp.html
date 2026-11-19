@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/coroutine/cl_sched.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/coroutine/cl_sched.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/coroutine/cl_sched.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/tasks/coroutine/cl_sched.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-97723391d3a1650a">micron::coro::engine</code></td><td>struct; line 61</td></tr><tr class="t-dsc"><td><code id="s-f60117063bfe78bf">micron::coro::engine::workers</code></td><td>member; line 62</td></tr><tr class="t-dsc"><td><code id="s-39b712041d66ab07">micron::coro::engine::inbox</code></td><td>member; line 63</td></tr><tr class="t-dsc"><td><code id="s-50939b1b9b19459f">micron::coro::engine::stopping</code></td><td>member; line 64</td></tr><tr class="t-dsc"><td><code id="s-47037abdedc7b8f0">micron::coro::engine::pending_timers</code></td><td>member; line 65</td></tr><tr class="t-dsc"><td><code id="s-7c8575f0dd70812b">micron::coro::engine::n</code></td><td>member; line 66</td></tr><tr class="t-dsc"><td><code id="s-4ece8b99bd98ff38">micron::coro::engine::threads</code></td><td>member; line 67</td></tr><tr class="t-dsc"><td><code id="s-fd2d0cff1f066534">MICRON_CORO_IO_DRAIN_GRACE_NS</code></td><td>macro; line 556<br><small><code>#ifndef MICRON_CORO_IO_DRAIN_GRACE_NS</code></small></td></tr><tr class="t-dsc"><td><code id="s-a04f59b72a146099">MICRON_CORO_TIMER_DRAIN_GRACE_NS</code></td><td>macro; line 565<br><small><code>#ifndef MICRON_CORO_TIMER_DRAIN_GRACE_NS</code></small></td></tr><tr class="t-dsc"><td><a href="#f-520a8934f10c98ff">micron::coro::engine::~engine()</a></td><td>function; line 75</td></tr><tr class="t-dsc"><td><a href="#f-cb4d15d5f06014d7">micron::coro::engine::engine() noexcept</a></td><td>function; line 77</td></tr><tr class="t-dsc"><td><a href="#f-2704e43d7ff1fd43">micron::coro::engine::worker_main(u32 id) noexcept</a></td><td>function; line 217</td></tr><tr class="t-dsc"><td><a href="#f-37bca4f88da0e6bb">micron::coro::engine::submit(__frame_base *fb) noexcept</a></td><td>function; line 309</td></tr><tr class="t-dsc"><td><a href="#f-b77586ce9a867b10">micron::coro::stop_coroutine_runtime() noexcept</a></td><td>function; line 643</td></tr><tr class="t-dsc"><td><a href="#f-63d830b17b9e450c">micron::coro::start_coroutine_runtime(u32 nworkers = 0) noexcept</a></td><td>function; line 658</td></tr><tr class="t-dsc"><td><a href="#f-bfe8523a873c5588">micron::coro::stop_coroutine_runtime() noexcept</a></td><td>function; line 692</td></tr><tr class="t-dsc"><td><a href="#f-2d4ebad96c07c170">micron::coro::sync_wait(task&lt;T&gt; &amp;&amp;root)</a></td><td>function; line 910</td></tr><tr class="t-dsc"><td><a href="#f-a3a2b487a1c15d81">micron::coro::detach(task&lt;T&gt; &amp;&amp;__root)</a></td><td>function; line 1100</td></tr><tr class="t-dsc"><td><a href="#f-986dc6a8d39d06a4">micron::coro::schedule(task&lt;T&gt; &amp;&amp;__root)</a></td><td>function; line 1109</td></tr><tr class="t-dsc"><td><a href="#f-5ceeb437b093ebb0">micron::coro::reschedule() noexcept</a></td><td>function; line 1190</td></tr><tr class="t-dsc"><td><a href="#f-8d0750a962bdb726">micron::coro::reschedule_fair() noexcept</a></td><td>function; line 1239</td></tr><tr class="t-dsc"><td><a href="#f-e9afca3383b21927">micron::coro::when_any(micron::futex_future&lt;T&gt; *__futs, usize __n) noexcept</a></td><td>function; line 1328</td></tr><tr class="t-dsc"><td><a href="#f-79dc5844b7d2b57d">micron::coro::sleep_until(const timespec_t &amp;__deadline_monotonic) noexcept</a></td><td>function; line 1400</td></tr><tr class="t-dsc"><td><a href="#f-2d7ae579fd8771ce">micron::coro::sleep_for(u64 __nanos) noexcept</a></td><td>function; line 1406</td></tr><tr class="t-dsc"><td><a href="#f-848f38c1861c5b8b">micron::coro::sleep_for_ms(u64 __ms) noexcept</a></td><td>function; line 1420</td></tr><tr class="t-dsc"><td><a href="#f-50e0d855c7c4ffcc">micron::operator co_await(const micron::futex_future&lt;T&gt; &amp;__f) noexcept</a></td><td>function; line 1430</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-520a8934f10c98ff"><h3><code>micron::coro::engine::~engine()</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L75">line 75</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~engine()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~engine() { delete[] workers; }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-cb4d15d5f06014d7"><h3><code>micron::coro::engine::engine() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L77">line 77</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>engine() noexcept = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-2704e43d7ff1fd43"><h3><code>micron::coro::engine::worker_main(u32 id) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L217">line 217</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  worker_main(u32 id) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 id</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  worker_main(u32 id) noexcept
+  {
+    worker *w = &amp;workers[id];
+    __cur_worker = w;
+    u32 seed = id * 2654435761u + 1u;
+#if defined(MICRON_CORO_URING)
+    __io_worker_ring_init(id, n);
+#endif
+    for ( u32 __i = 0; __i &lt; __cl_prewarm_segments; ++__i ) {
+      micron::fiber::fiber *__pf = micron::fiber::create_fiber(&amp;__cl_hot_entry, nullptr, static_cast&lt;usize&gt;(small_stack_size));
+      if ( __pf == nullptr ) break;
+      micron::fiber::destroy_fiber(__pf);
+    }
+    // active covers the interval where a continuation left the inbox/deque but is still running here
+    for ( ;; ) {
+      if ( stopping.get(micron::memory_order_acquire) ) break;
+      w-&gt;active.store(1, micron::memory_order_release);
+      __frame_base *cont = __find(w, seed);
+      if ( cont == nullptr ) cont = __search(w, seed);      // bounded pre-park spin (capped searchers)
+      if ( cont != nullptr ) {
+        __run(w, cont);
+        continue;
+      }
+      w-&gt;active.store(0, micron::memory_order_release);
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+      __cl_sleepers.fetch_add(1, micron::memory_order_seq_cst);      // announce parked (Dekker: see submit)
+      const u32 sig = __cl_signal.get(micron::memory_order_seq_cst);
+#else
+      const u32 __bit = 1u &lt;&lt; w-&gt;id;
+      // NOTE: a waker can only bump the epoch after claiming our bit, so any wake between the announce and the futex_wait leaves epoch !=
+      // __ep -&gt; EAGAIN
+      const u32 __ep = __cl_park[w-&gt;id].epoch.get(micron::memory_order_relaxed);
+      __cl_sleeper_mask.fetch_or(__bit, micron::memory_order_seq_cst);      // announce parked (Dekker: see __cl_wake_one&lt;true&gt;)
+#endif
+      w-&gt;active.store(1, micron::memory_order_release);
+      cont = __find(w, seed);
+      if ( cont != nullptr ) {
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+        __cl_sleepers.sub_fetch(1, micron::memory_order_acq_rel);
+#else
+        __cl_sleeper_mask.fetch_and(~__bit, micron::memory_order_acq_rel);
+#endif
+        if ( !stopping.get(micron::memory_order_acquire) ) __run(w, cont);
+        continue;
+      }
+      w-&gt;active.store(0, micron::memory_order_release);
+      if ( !stopping.get(micron::memory_order_acquire) ) {
+#if defined(MICRON_CORO_URING)
+        // (&gt;=6.7)
+        if ( __io.futex_ok.get(micron::memory_order_acquire) != 0 ) {
+          __wring &amp;__own = __io_rings[w-&gt;id];
+          if ( __own.__live.get(micron::memory_order_acquire) != 0 &amp;&amp; __own.__pending.get(micron::memory_order_relaxed) != 0 ) {
+            __ring_park(w, __ep);
+            __cl_sleeper_mask.fetch_and(~__bit, micron::memory_order_acq_rel);
+            continue;
+          }
+        }
+        if ( __io.any_live.get(micron::memory_order_acquire) != 0 &amp;&amp; __io_pending_total() != 0 ) {
+          i32 __exp = -1;
+          if ( __io.watcher.compare_exchange_strong(__exp, static_cast&lt;i32&gt;(w-&gt;id), micron::memory_order_acq_rel,
+                                                    micron::memory_order_acquire) ) {
+            timespec_t __wts{ 0, 1000000 };
+            micron::__futex(__cl_park[w-&gt;id].epoch.ptr(), futex_wait | futex_private_flag, __ep, &amp;__wts, nullptr, 0);
+            __io.watcher.store(-1, micron::memory_order_release);
+            __drain_all();
+            __cl_sleeper_mask.fetch_and(~__bit, micron::memory_order_acq_rel);
+            continue;
+          }
+        }
+#endif
+        timespec_t __ts{ 0, 100000000 };
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+        micron::__futex(__cl_signal.ptr(), futex_wait | futex_private_flag, sig, &amp;__ts, nullptr, 0);
+#else
+        micron::__futex(__cl_park[w-&gt;id].epoch.ptr(), futex_wait | futex_private_flag, __ep, &amp;__ts, nullptr, 0);
+#endif
+      }
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+      __cl_sleepers.sub_fetch(1, micron::memory_order_acq_rel);
+#else
+      __cl_sleeper_mask.fetch_and(~__bit, micron::memory_order_acq_rel);
+#endif
+    }
+    w-&gt;active.store(0, micron::memory_order_release);
+    __retire_hot(w);      // before drain: the retired segment recycles into the freelist being drained
+    micron::fiber::drain_freelist();
+#if defined(MICRON_CORO_URING)
+    __io_worker_ring_shutdown(id);      // own thread: last touch of the single-issuer ring
+#endif
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-d3a39a794d1b9624">__io_worker_ring_init</a>, <a href="fiber.hpp.html#f-f21971299a03b2ac">micron::fiber::create_fiber</a>, <a href="fiber.hpp.html#f-859c6d7350f248bc">micron::fiber::destroy_fiber</a>, <a href="cl_sched.hpp.html#f-b8149f15c684cf57">__find</a>, <a href="cl_sched.hpp.html#f-c77ee12e45bec27f">__search</a>, <a href="cl_sched.hpp.html#f-9f762f4e8619c200">__run</a>, <a href="cl_sched.hpp.html#f-167721c37349ea69">__ring_park</a>, <a href="reactor.hpp.html#f-a94324c2a23edc17">__io_pending_total</a>, <a href="../../sync/futex.hpp.html#f-4d11121a85bcfca1">micron::__futex</a>, <a href="cl_sched.hpp.html#f-38d3f3b01103a998">__drain_all</a>, <a href="cl_sched.hpp.html#f-a6a37b694f64f6ec">__retire_hot</a>, <a href="fiber.hpp.html#f-a711adc0ab178467">micron::fiber::drain_freelist</a>, <a href="reactor.hpp.html#f-e985939784a4aeaf">__io_worker_ring_shutdown</a>.</p></section><section class="function-entry" id="f-37bca4f88da0e6bb"><h3><code>micron::coro::engine::submit(__frame_base *fb) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L309">line 309</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  submit(__frame_base *fb) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__frame_base *fb</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  submit(__frame_base *fb) noexcept
+  {
+    while ( !inbox.push(fb) ) micron::yield();      // inbox full
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+    __cl_signal.fetch_add(1, micron::memory_order_seq_cst);
+    if ( __cl_sleepers.get(micron::memory_order_seq_cst) != 0 ) micron::wake_futex(__cl_signal.ptr(), 1);
+#else
+    __cl_wake_one&lt;true&gt;();      // Strong: the seq_cst RMW mask read orders after the inbox push
+#endif
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../sync/yield.hpp.html#f-8d551fb247ff4b47">micron::yield</a>, <a href="../../sync/futex.hpp.html#f-d0c4f067a82c7179">micron::wake_futex</a>, <a href="../coro_core.hpp.html#f-e9fe9449c00b3144">__cl_wake_one&lt;true&gt;</a>.</p></section><section class="function-entry" id="f-b77586ce9a867b10"><h3><code>micron::coro::stop_coroutine_runtime() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L643">line 643</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void stop_coroutine_runtime() noexcept;</pre></td></tr></tbody></table><h4>Effects</h4><p>See <a href="cl_sched.hpp.html#f-bfe8523a873c5588">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-63d830b17b9e450c"><h3><code>micron::coro::start_coroutine_runtime(u32 nworkers = 0) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L658">line 658</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+start_coroutine_runtime(u32 nworkers = 0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 nworkers = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+start_coroutine_runtime(u32 nworkers = 0) noexcept
+{
+  if ( __engine_state.get(micron::memory_order_acquire) == 2u ) return;
+
+  u32 __exp = 0u;
+  if ( !__engine_state.compare_exchange_strong(__exp, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+    while ( __engine_state.get(micron::memory_order_acquire) != 2u ) micron::yield();      // wait for ready
+    return;
+  }
+
+  __arm_runtime_reaper();
+
+  if ( nworkers == 0 ) nworkers = micron::cpu_count();
+  if ( nworkers &gt; __cl_max_workers ) nworkers = __cl_max_workers;
+  if ( nworkers &lt; 1 ) nworkers = 1;
+
+  engine *e = new engine();
+  e-&gt;n = nworkers;
+  e-&gt;workers = new worker[nworkers];
+  for ( u32 i = 0; i &lt; nworkers; ++i ) e-&gt;workers[i].id = i;
+#if defined(MICRON_CORO_URING)
+  __io_fb_init();      // worker rings init on their own threads (single_issuer)
+  __io.futex_ok.store(micron::kernel::has(micron::kernel::feature::uring_futex) ? 1u : 0u, micron::memory_order_relaxed);
+  __io.watcher.store(-1, micron::memory_order_relaxed);
+  __io_cancel_hook = &amp;__io_cancel_walker;      // cancellation_source::cancel() reaches in-flight ops
+#endif
+  __global_engine = e;
+  for ( u32 i = 0; i &lt; nworkers; ++i )
+    e-&gt;threads[i] = micron::solo::spawn&lt;micron::auto_thread&lt;&gt;&gt;([](engine *eng, u32 id) { eng-&gt;worker_main(id); }, e, i);
+  // the timer thread spawns lazily on the first sleep/timer
+  __engine_state.store(2u, micron::memory_order_release);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L660">line 660</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L665">line 665</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../sync/yield.hpp.html#f-8d551fb247ff4b47">micron::yield</a>, <a href="cl_sched.hpp.html#f-bfebab4ce554e015">__arm_runtime_reaper</a>, <a href="../../thread/cpu.hpp.html#f-5acccc5ec129e884">micron::cpu_count</a>, <a href="reactor.hpp.html#f-2f0db10ccc7daf52">__io_fb_init</a>, <a href="../../kernel.hpp.html#f-2ad2ea87c7c49299">micron::kernel::has</a>.</p></section><section class="function-entry" id="f-bfe8523a873c5588"><h3><code>micron::coro::stop_coroutine_runtime() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L692">line 692</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+stop_coroutine_runtime() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+stop_coroutine_runtime() noexcept
+{
+  engine *e = __global_engine;
+  if ( e == nullptr ) return;
+
+  {
+    u32 __quiet = 0;
+    timespec_t __tm_dl{ 0, 0 };      // re-armed whenever a timer fires
+    u32 __tm_seen = 0;
+    bool __tm_armed = false;
+    bool __tm_cut = false;
+#if defined(MICRON_CORO_URING)
+    timespec_t __io_dl{ 0, 0 };      // grace deadline; re-armed whenever io makes progress
+    u64 __seen = 0;                  // in-flight count the deadline was armed against
+    bool __armed = false;
+#endif
+    while ( __quiet &lt; 4 ) {
+      // WARNING: a still-armed timer may _NEVER_ stall indefinitely
+      const u32 __tm = e-&gt;pending_timers.get(micron::memory_order_acquire);
+      if ( __tm == 0 ) {
+        __tm_armed = false;
+      } else if ( !__tm_cut ) {
+        timespec_t __now{};
+        micron::clock_gettime(micron::clock_monotonic, __now);
+        if ( !__tm_armed || __tm != __tm_seen ) {
+          __tm_seen = __tm;
+          __tm_armed = true;
+          __tm_dl = __now;
+          __ts_add_ns(__tm_dl, __cl_timer_drain_grace_ns);
+        } else if ( !__ts_le(__now, __tm_dl) ) {
+          __tm_cut = true;
+        }
+        if ( !__tm_cut ) {
+          timespec_t __nap{ 0, 200000 };
+          (void)micron::nanosleep(__nap);
+          __quiet = 0;
+          continue;
+        }
+      }
+      bool __q = e-&gt;inbox.empty() &amp;&amp; (__tm == 0 || __tm_cut);
+#if defined(MICRON_CORO_URING)
+      if ( __q &amp;&amp; !e-&gt;__io_ovf_empty() ) __q = false;
+#endif
+      for ( u32 __i = 0; __q &amp;&amp; __i &lt; e-&gt;n; ++__i )
+        if ( e-&gt;workers[__i].active.get(micron::memory_order_acquire) != 0 || !e-&gt;workers[__i].deque.empty()
+             || e-&gt;workers[__i].ovf != nullptr )
+          __q = false;
+#if defined(MICRON_CORO_URING)
+      if ( __q ) {
+        const u64 __pend = __io_pending_total();
+        if ( __pend != 0 ) {
+          timespec_t __now{};
+          micron::clock_gettime(micron::clock_monotonic, __now);
+          if ( !__armed || __pend != __seen ) {
+            __seen = __pend;
+            __armed = true;
+            __io_dl = __now;
+            __ts_add_ns(__io_dl, __cl_io_drain_grace_ns);
+          } else if ( !__ts_le(__now, __io_dl) ) {      // grace burned with zero progress
+            micron::uring::sync_cancel_reg __sc{};
+            __sc.fd = -1;
+            __sc.flags = micron::uring::async_cancel_any;
+            for ( u32 __i = 0; __i &lt; e-&gt;n; ++__i ) {
+              __wring &amp;__wr = __io_rings[__i];
+              if ( __wr.__live.get(micron::memory_order_acquire) != 0 )
+                (void)micron::uring::__io_uring_register(__wr.__r.fd, micron::uring::reg_register_sync_cancel, &amp;__sc, 1);
+            }
+            if ( __io_fb.__live.get(micron::memory_order_acquire) != 0 )
+              (void)micron::uring::__io_uring_register(__io_fb.__r.fd, micron::uring::reg_register_sync_cancel, &amp;__sc, 1);
+            __armed = false;      // re-arm: a cancel that does not land must not spin the register syscall
+          }
+          __q = false;
+          // the grace window is seconds long: poll it, do not sched_yield a core
+          // flat out while the workers are the ones that need the cpu
+          timespec_t __nap{ 0, 200000 };
+          (void)micron::nanosleep(__nap);
+          __quiet = 0;
+          continue;
+        }
+        __armed = false;
+      }
+#endif
+      if ( __q )
+        ++__quiet;
+      else
+        __quiet = 0;
+      micron::yield();
+    }
+  }
+
+  e-&gt;stopping.store(1, micron::memory_order_release);
+  if ( __timer_state.get(micron::memory_order_acquire) != 0u ) {
+    __timer_epoch.fetch_add(1, micron::memory_order_release);      // the timer may be in an indefinite wait
+    micron::wake_futex(__timer_epoch.ptr(), 1);
+    __timer_thread.reset();
+    __timer_state.store(0u, micron::memory_order_release);
+  }
+  __timer_lock();
+  __timer_head = nullptr;
+  __timer_unlock();
+  e-&gt;pending_timers.store(0, micron::memory_order_release);
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+  __cl_signal.fetch_add(1, micron::memory_order_release);
+  micron::wake_futex(__cl_signal.ptr(), static_cast&lt;int&gt;(e-&gt;n));
+#else
+  for ( u32 i = 0; i &lt; e-&gt;n; ++i ) {
+    __cl_park[i].epoch.fetch_add(1, micron::memory_order_release);
+    micron::wake_futex(__cl_park[i].epoch.ptr(), 1);
+  }
+#endif
+  for ( u32 i = 0; i &lt; e-&gt;n; ++i ) e-&gt;threads[i].reset();
+  micron::fiber::drain_seg_pool();      // segments parked by crossworker finalize
+#if defined(MICRON_CORO_URING)
+  __io_cancel_hook = nullptr;
+  __io_fb_shutdown();
+  __io_fixed_shutdown();
+  __io.any_live.store(0, micron::memory_order_release);
+  __io.watcher.store(-1, micron::memory_order_relaxed);
+#endif
+  __global_engine = nullptr;
+  delete e;
+  __engine_state.store(0u, micron::memory_order_release);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L695">line 695</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/sys/time.hpp.html#f-50f28f374b0aa921">micron::clock_gettime</a>, <a href="cl_sched.hpp.html#f-f359164b3603343b">__ts_add_ns</a>, <a href="cl_sched.hpp.html#f-325fae3741cdedf0">__ts_le</a>, <a href="../../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>, <a href="reactor.hpp.html#f-a94324c2a23edc17">__io_pending_total</a>, <a href="../../linux/sys/uring.hpp.html#f-6dc20584d9a7b2fd">micron::uring::__io_uring_register</a>, <a href="../../sync/yield.hpp.html#f-8d551fb247ff4b47">micron::yield</a>, <a href="../../sync/futex.hpp.html#f-d0c4f067a82c7179">micron::wake_futex</a>, <a href="cl_sched.hpp.html#f-b1814a27c4f58584">__timer_lock</a>, <a href="cl_sched.hpp.html#f-3ee0d136e8567dec">__timer_unlock</a>, <a href="fiber.hpp.html#f-4912618cacc1ba17">micron::fiber::drain_seg_pool</a>, <a href="reactor.hpp.html#f-85deb35329e69177">__io_fb_shutdown</a>, <a href="reactor.hpp.html#f-a14ebe0e666029d9">__io_fixed_shutdown</a>.</p></section><section class="function-entry" id="f-2d4ebad96c07c170"><h3><code>micron::coro::sync_wait(task&lt;T&gt; &amp;&amp;root)</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L910">line 910</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T&gt;
+decltype(auto)
+sync_wait(task&lt;T&gt; &amp;&amp;root)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>task&lt;T&gt; &amp;&amp;root</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T&gt;
+decltype(auto)
+sync_wait(task&lt;T&gt; &amp;&amp;root)
+{
+  start_coroutine_runtime();
+  micron::atomic_token&lt;u32&gt; done{ 0 };
+
+  if constexpr ( micron::is_void_v&lt;T&gt; ) {
+    __sync_bridge bridge = [](task&lt;void&gt; __r) -&gt; __sync_bridge { co_await micron::move(__r); }(micron::move(root));
+    bridge.__h.promise().__done = &amp;done;
+    __global_engine-&gt;submit(&amp;bridge.__h.promise());
+    __sync_spin(done);
+    // WARNING: exit exclusively via an acquire load seeing done!=0 (without this the bridge destroy below has no hb edge to the worker&#x27;s
+    // frame writes)
+    while ( done.get(micron::memory_order_acquire) == 0 ) micron::wait_futex(done.ptr(), 0u);
+    bridge.__h.destroy();
+    return;
+  } else {
+    alignas(T) unsigned char storage[sizeof(T)];
+    T *slot = micron::ptr_cast&lt;T *&gt;(storage);
+    __sync_bridge bridge = [](task&lt;T&gt; __r, T *__s) -&gt; __sync_bridge {
+      // NOTE: the co_await is split out of the placement-new to avoid a GCC ICE (co_await inside a new-expr)
+      // i investigated this _thoroughly_, the placement-new bug is completely unrelated to our code (all paths have been audited and are
+      // fully standard compliant &amp;&amp; valid) it&#x27;s a pure gcc compiler bug
+      //  standard compliant repro
+      //  #include &lt;coroutine&gt;
+      //  #include &lt;new&gt;
+      //  struct Aw { bool await_ready() const noexcept {return false;}
+      //              void await_suspend(std::coroutine_handle&lt;&gt;) noexcept {}
+      //              int  await_resume() noexcept {return 7;} };
+      //  struct bridge { struct promise_type {
+      //    bridge get_return_object(){return {};}
+      //    std::suspend_always initial_suspend() noexcept {return {};}
+      //    std::suspend_never  final_suspend() noexcept {return {};}
+      //    void return_void(){} void unhandled_exception(){} }; };
+      //
+      //  bridge f(int* s) { ::new (static_cast&lt;void*&gt;(s)) int(co_await Aw{}); }   // ICE on the spot
+
+      //  during RTL pass: expand
+      //  internal compiler error: in expand_expr_real_1, at expr.cc:11648    (GCC 16.1.1)
+      //  internal compiler error: in expand_expr_real_1, at expr.cc:11559    (GCC 15.2.1, arm32) [present across cmpl versions and arches
+      //  too]
+
+      // main difference between operator new and placement new
+      //
+      // %%%%%%%%%%%%%%%%%
+      //  for operator new
+      // _17 = operator new (4);
+      // frame_ptr-&gt;T001_2_3 = _17;  // result
+      // frame_ptr-&gt;T002_2_3 = 1;    // guard
+
+      // suspend/resume
+      //_24 = frame_ptr-&gt;T001_2_3;  // rewritten
+      // MEM[(int *)_24] = _25;
+
+      // %%%%%%%%%%%%%%%
+      // for placement new
+      //  _17 = frame_ptr-&gt;s;
+      //  frame_ptr-&gt;T001_2_3 = _17;  // saved placement ptr
+      //  _18 = frame_ptr-&gt;T001_2_3;
+      //  _19 = operator new (4, _18);
+      //  frame_ptr-&gt;T002_2_3 = _19;  // result
+      //  frame_ptr-&gt;T003_2_3 = 1;    // guard
+      //  suspend/resume
+      //  MEM[(int *)D.12331] = _26;  // __NOT__ rewritten
+      //  frame_ptr-&gt;T003_2_3 = 0;
+      //
+      //  according to gdb exact abort fires at pass_expand::execute -&gt; expand_gimple_stmt -&gt; expand_assignment -&gt; expand_expr_real_1 -&gt;
+      //  hard abort on reading base of a store coroutine transform promotes temps that live _across a suspend into the frame_ (almost never
+      //  occurs in reg code); during gimple emit it rewrites the defs but leaves one redundant use behind important to note that ONLY THE
+      //  STANDARD PLACEMENT NEW (in co_await form) materialize an additional saved pointer temporary (three tmps instead of two)
+      // fully invariant across std spec exceptions arches and importantly optimization levels
+      // the gimple lowering almost certainly misses the spurious third temporary that is entirely unexpected at a later pass (real reg
+      // emit?)
+
+      // UPDATE
+      // looked at the gcc source
+      // gcc_assert fires in expand_expr_real_1
+      //
+      /* Variables inherited from containing functions should have
+         been lowered by this point.  */
+      //  tree context = decl_function_context (exp);
+      // gcc_assert (SCOPE_FILE_SCOPE_P (context)
+      //            || context == current_function_decl
+      //            || TREE_STATIC (exp) || DECL_EXTERNAL (exp)
+      //            || TREE_CODE (exp) == FUNCTION_DECL);
+      // full trigger is in cp/init.cc:3543-3559:
+      //  if (call_expr_nargs (alloc_call) == 2
+      //      &amp;&amp; TYPE_PTR_P (TREE_TYPE (CALL_EXPR_ARG (alloc_call, 1))))
+      //    if (placement_first != NULL_TREE &amp;&amp; (INTEGRAL_OR_ENUMERATION_TYPE_P (TREE_TYPE (TREE_TYPE (placement)))
+      //     || VOID_TYPE_P (TREE_TYPE (TREE_TYPE (placement)))))
+      //     placement_expr = get_internal_target_expr (placement_first);  // extra TARGET_EXPR
+      // stabilize_call later hoists it, which in turn makes alloc_expr a nested COMPOUND_EXPR rather than a simple TARGET_EXPR
+      // it also has NOTHING to do with placement new (placement new is incidental only), only fires for two promoted tmps rather than one,
+      // ie operator new(size_t, char) and it will NEVER fire for ::new (nullptr) [do note that nullptr is not a TYPE_PTR_T] OR for
+      // placement-new cases where the target pointer is a class
+      //
+      //
+      // final final issue is with cp/coroutines.cc| flatten_await_stmt; by hoisting each TARGET_EXPR into a frame tmp it later must repoint
+      // every ref to the old TARGET_EXPR_SLOT; alloc_node &lt;await result&gt; sits at the other end of the enclosing COMPOUND_EXPR, according to
+      // gccs own source
+      //
+      /* ... and any other uses of it or its slot.  */
+      /* Compiler-generated temporaries can also have uses in
+         following arms of compound expressions, which will be listed
+         in &#x27;replace_in&#x27; if present.  */
+      // thus only the replace_in parameter can patch it but it&#x27;s never forwarded down the chain
+      //  3160: case COMPOUND_EXPR:
+      //  3180: flatten_await_stmt (ins, promoted, temps_used, &amp;n-&gt;init);
+      //  3289: flatten_await_stmt (n,   promoted, temps_used, NULL);   -&gt; replace_in discarded(?!?!)
+      // a simple TARGET_EXPR [meaning one tmp only], replace_in = &amp;rest and the store is rewritten, yet nested COMPOUND_EXPRs (two temp
+      // forms), the replace_in is discarded, case reenters, the _slot gets rewritten at its definition_ and _read zero times_; VAR_DECL
+      // keeps DECL_CONTEXT [original unrewritten raw fn] and the gcc_assert fires
+      //
+      // CRAZY OBSERVATION is that wrapping the new expression in
+      // a comma statement, MAKES THE STORE COME OUT CORRECTLY and the assert no longer fires (?!?!)
+      // effectively stopping here, analyzing this further requires effectively recompiling gcc with proper instrumentation attached, and i
+      // don&#x27;t have the time right now, patching replace_in _should_ in principle fix this
+      T __v = co_await micron::move(__r);
+      ::new (static_cast&lt;void *&gt;(__s)) T(micron::move(__v));
+    }(micron::move(root), slot);
+    bridge.__h.promise().__done = &amp;done;
+    __global_engine-&gt;submit(&amp;bridge.__h.promise());
+    __sync_spin(done);
+    while ( done.get(micron::memory_order_acquire) == 0 ) micron::wait_futex(done.ptr(), 0u);
+    bridge.__h.destroy();
+    T r = micron::move(*slot);
+    slot-&gt;~T();
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L924">line 924</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1036">line 1036</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cl_sched.hpp.html#f-63d830b17b9e450c">start_coroutine_runtime</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="cl_sched.hpp.html#f-8d740c97f5e0d057">__sync_spin</a>, <a href="../../sync/futex.hpp.html#f-a70e24e93053d68c">micron::wait_futex</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;T *&gt;</a>.</p></section><section class="function-entry" id="f-a3a2b487a1c15d81"><h3><code>micron::coro::detach(task&lt;T&gt; &amp;&amp;__root)</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1100">line 1100</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T&gt;
+void
+detach(task&lt;T&gt; &amp;&amp;__root)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>task&lt;T&gt; &amp;&amp;__root</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T&gt;
+void
+detach(task&lt;T&gt; &amp;&amp;__root)
+{
+  start_coroutine_runtime();
+  __detached_bridge __b = [](task&lt;T&gt; __r) -&gt; __detached_bridge { co_await micron::move(__r); }(micron::move(__root));
+  if ( __b.__h ) __global_engine-&gt;submit(&amp;__b.__h.promise());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="cl_sched.hpp.html#f-63d830b17b9e450c">start_coroutine_runtime</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-986dc6a8d39d06a4"><h3><code>micron::coro::schedule(task&lt;T&gt; &amp;&amp;__root)</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1109">line 1109</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T&gt;
+[[nodiscard]] micron::futex_future&lt;T&gt;
+schedule(task&lt;T&gt; &amp;&amp;__root)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>task&lt;T&gt; &amp;&amp;__root</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T&gt;
+[[nodiscard]] micron::futex_future&lt;T&gt;
+schedule(task&lt;T&gt; &amp;&amp;__root)
+{
+  start_coroutine_runtime();
+  micron::futex_promise&lt;T&gt; __prom;
+  micron::futex_future&lt;T&gt; __fut = __prom.get_future();
+  if constexpr ( micron::is_void_v&lt;T&gt; ) {
+    __detached_bridge __b = [](task&lt;void&gt; __r, micron::futex_promise&lt;void&gt; __p) -&gt; __detached_bridge {
+      co_await micron::move(__r);
+      __p.set_value();
+    }(micron::move(__root), micron::move(__prom));
+    if ( __b.__h ) __global_engine-&gt;submit(&amp;__b.__h.promise());
+  } else {
+    __detached_bridge __b = [](task&lt;T&gt; __r, micron::futex_promise&lt;T&gt; __p) -&gt; __detached_bridge {
+      T __v = co_await micron::move(__r);      // split co_await out of set_value (GCC ICE on co_await in a call arg)
+      __p.set_value(micron::move(__v));
+    }(micron::move(__root), micron::move(__prom));
+    if ( __b.__h ) __global_engine-&gt;submit(&amp;__b.__h.promise());
+  }
+  return __fut;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fut</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1127">line 1127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cl_sched.hpp.html#f-63d830b17b9e450c">start_coroutine_runtime</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-5ceeb437b093ebb0"><h3><code>micron::coro::reschedule() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1190">line 1190</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline __reschedule_awaitable
+reschedule() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline __reschedule_awaitable
+reschedule() noexcept
+{
+  return {};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1192">line 1192</a></td></tr></tbody></table></section><section class="function-entry" id="f-8d0750a962bdb726"><h3><code>micron::coro::reschedule_fair() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1239">line 1239</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline __reschedule_fair_awaitable
+reschedule_fair() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline __reschedule_fair_awaitable
+reschedule_fair() noexcept
+{
+  return {};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1241">line 1241</a></td></tr></tbody></table></section><section class="function-entry" id="f-e9afca3383b21927"><h3><code>micron::coro::when_any(micron::futex_future&lt;T&gt; *__futs, usize __n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1328">line 1328</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T&gt;
+[[nodiscard]] __when_any_awaiter&lt;T&gt;
+when_any(micron::futex_future&lt;T&gt; *__futs, usize __n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::futex_future&lt;T&gt; *__futs</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Returns <code>__when_any_awaiter&lt;T&gt;{ __futs, __n }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T&gt;
+[[nodiscard]] __when_any_awaiter&lt;T&gt;
+when_any(micron::futex_future&lt;T&gt; *__futs, usize __n) noexcept
+{
+  return __when_any_awaiter&lt;T&gt;{ __futs, __n };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__when_any_awaiter&lt;T&gt;{ __futs, __n }</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1330">line 1330</a></td></tr></tbody></table></section><section class="function-entry" id="f-79dc5844b7d2b57d"><h3><code>micron::coro::sleep_until(const timespec_t &amp;__deadline_monotonic) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1400">line 1400</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline __sleep_awaiter
+sleep_until(const timespec_t &amp;__deadline_monotonic) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const timespec_t &amp;__deadline_monotonic</code></li></ul><h4>Effects</h4><p>Returns <code>__sleep_awaiter{ __deadline_monotonic }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline __sleep_awaiter
+sleep_until(const timespec_t &amp;__deadline_monotonic) noexcept
+{
+  return __sleep_awaiter{ __deadline_monotonic };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sleep_awaiter{ __deadline_monotonic }</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1402">line 1402</a></td></tr></tbody></table></section><section class="function-entry" id="f-2d7ae579fd8771ce"><h3><code>micron::coro::sleep_for(u64 __nanos) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1406">line 1406</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline __sleep_awaiter
+sleep_for(u64 __nanos) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 __nanos</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline __sleep_awaiter
+sleep_for(u64 __nanos) noexcept
+{
+  timespec_t __dl{};
+  micron::clock_gettime(micron::clock_monotonic, __dl);
+  __dl.tv_sec += static_cast&lt;decltype(__dl.tv_sec)&gt;(__nanos / 1000000000ull);
+  __dl.tv_nsec += static_cast&lt;decltype(__dl.tv_nsec)&gt;(__nanos % 1000000000ull);
+  if ( __dl.tv_nsec &gt;= 1000000000l ) {
+    __dl.tv_sec += 1;
+    __dl.tv_nsec -= 1000000000l;
+  }
+  return __sleep_awaiter{ __dl };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sleep_awaiter{ __dl }</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1416">line 1416</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/sys/time.hpp.html#f-50f28f374b0aa921">micron::clock_gettime</a>.</p></section><section class="function-entry" id="f-848f38c1861c5b8b"><h3><code>micron::coro::sleep_for_ms(u64 __ms) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1420">line 1420</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline __sleep_awaiter
+sleep_for_ms(u64 __ms) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 __ms</code></li></ul><h4>Effects</h4><p>Returns <code>sleep_for(__ms * 1000000ull)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline __sleep_awaiter
+sleep_for_ms(u64 __ms) noexcept
+{
+  return sleep_for(__ms * 1000000ull);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sleep_for(__ms * 1000000ull)</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1422">line 1422</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cl_sched.hpp.html#f-2d7ae579fd8771ce">sleep_for</a>.</p></section><section class="function-entry" id="f-50e0d855c7c4ffcc"><h3><code>micron::operator co_await(const micron::futex_future&lt;T&gt; &amp;__f) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1430">line 1430</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T&gt;
+inline coro::__futex_future_awaiter&lt;T&gt;
+operator co_await(const micron::futex_future&lt;T&gt; &amp;__f) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::futex_future&lt;T&gt; &amp;__f</code></li></ul><h4>Effects</h4><p>Returns <code>coro::__futex_future_awaiter&lt;T&gt;{ __f.__shared() }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T&gt;
+inline coro::__futex_future_awaiter&lt;T&gt;
+operator co_await(const micron::futex_future&lt;T&gt; &amp;__f) noexcept
+{
+  return coro::__futex_future_awaiter&lt;T&gt;{ __f.__shared() };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>coro::__futex_future_awaiter&lt;T&gt;{ __f.__shared() }</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1432">line 1432</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-848c52623437507f"><h3><code>micron::coro::__cl_hot_entry(micron::fiber::fiber *self) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L50">line 50</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__cl_hot_entry(micron::fiber::fiber *self) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::fiber::fiber *self</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__cl_hot_entry(micron::fiber::fiber *self) noexcept
+{
+  for ( ;; ) {
+    void *a = self-&gt;arg;
+    if ( a == nullptr ) return;
+    static_cast&lt;__frame_base *&gt;(a)-&gt;__self.resume();
+    self-&gt;arg = nullptr;
+    micron::ar::__micron_swap_context(&amp;self-&gt;ctx, self-&gt;link);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L54">line 54</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__ar.hpp.html#f-2c308c1a02ba53fc">micron::ar::__micron_swap_context</a>.</p></section><section class="function-entry" id="f-a6a37b694f64f6ec"><h3><code>micron::coro::engine::__retire_hot(worker *w) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __retire_hot(worker *w) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>worker *w</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __retire_hot(worker *w) noexcept
+  {
+    micron::fiber::fiber *f = w-&gt;hot;
+    if ( f == nullptr ) return;
+    w-&gt;hot = nullptr;
+    micron::fiber::resume(f);
+    micron::fiber::destroy_fiber(f);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L84">line 84</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fiber.hpp.html#f-7ac05d43b1476e9c">micron::fiber::resume</a>, <a href="fiber.hpp.html#f-859c6d7350f248bc">micron::fiber::destroy_fiber</a>.</p></section><section class="function-entry" id="f-9f762f4e8619c200"><h3><code>micron::coro::engine::__run(worker *w, __frame_base *cont) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L91">line 91</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] void
+  __run(worker *w, __frame_base *cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>worker *w</code></li><li><code>__frame_base *cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] void
+  __run(worker *w, __frame_base *cont) noexcept
+  {
+    // steal accounting happens at the take sites
+    micron::fiber::fiber *f = w-&gt;hot;
+    if ( f == nullptr ) [[unlikely]] {
+      f = micron::fiber::create_fiber(&amp;__cl_hot_entry, nullptr, static_cast&lt;usize&gt;(small_stack_size));
+      while ( f == nullptr ) [[unlikely]] {
+        // stack/VA reservation is exhausted
+        if ( stopping.get(micron::memory_order_acquire) ) return;
+        micron::yield();
+        f = micron::fiber::create_fiber(&amp;__cl_hot_entry, nullptr, static_cast&lt;usize&gt;(small_stack_size));
+      }
+      w-&gt;hot = f;
+    }
+    f-&gt;arg = cont;
+    micron::fiber::resume(f);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    // hard trap out if an exception escaped the coroutine
+    if ( f-&gt;escaped ) [[unlikely]]
+      __builtin_trap();
+#endif
+    if ( f-&gt;refs.get(micron::memory_order_acquire) != 1 ) [[unlikely]]
+      __retire_hot(w);
+    else
+      f-&gt;frame_sp = f-&gt;region.frame_base;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L99">line 99</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fiber.hpp.html#f-f21971299a03b2ac">micron::fiber::create_fiber</a>, <a href="../../sync/yield.hpp.html#f-8d551fb247ff4b47">micron::yield</a>, <a href="fiber.hpp.html#f-7ac05d43b1476e9c">micron::fiber::resume</a>, <a href="cl_sched.hpp.html#f-a6a37b694f64f6ec">__retire_hot</a>.</p></section><section class="function-entry" id="f-bfd9887e0daaf936"><h3><code>micron::coro::engine::__steal(worker *w, u32 &amp;seed) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L121">line 121</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__frame_base *
+  __steal(worker *w, u32 &amp;seed) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>worker *w</code></li><li><code>u32 &amp;seed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__frame_base *
+  __steal(worker *w, u32 &amp;seed) noexcept
+  {
+    if ( n &lt;= 1 ) return nullptr;
+    for ( u32 sweep = 0; sweep &lt; 2u; ++sweep ) {
+      seed ^= seed &lt;&lt; 13;      // one xorshift per sweep; random start avoids thief convoys
+      seed ^= seed &gt;&gt; 17;
+      seed ^= seed &lt;&lt; 5;
+      // Lemire reduction instead of seed % n (integer division), then a linear probe (faster)
+      u32 v = static_cast&lt;u32&gt;((static_cast&lt;u64&gt;(seed) * n) &gt;&gt; 32);
+      for ( u32 i = 0; i &lt; n; ++i ) {
+        if ( v != w-&gt;id ) {
+#if defined(MICRON_CORO_STEAL_MIN_DEPTH)
+          // experiment: first sweep skips depth-1 victims
+          if ( sweep == 0 &amp;&amp; workers[v].deque.size() &lt;= 1 ) {
+            if ( ++v == n ) v = 0;
+            continue;
+          }
+#endif
+          for ( u32 r = 0; r &lt; __cl_steal_retries; ++r ) {
+            const micron::steal_result&lt;__frame_base *&gt; s = workers[v].deque.try_steal();
+            if ( s.__st == micron::steal_status::got ) {
+              if ( s.__more ) __notify_work();      // wake propagation
+              return s.__v;
+            }
+            if ( s.__st == micron::steal_status::empty ) break;
+            __cpu_pause();      // lost
+          }
+        }
+        if ( ++v == n ) v = 0;
+      }
+    }
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L123">line 123</a></td></tr><tr class="t-dsc"><td><code>s.__v</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L143">line 143</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L152">line 152</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../coro_core.hpp.html#f-ead298c1fa1ce624">__notify_work</a>, <a href="../../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-c77ee12e45bec27f"><h3><code>micron::coro::engine::__search(worker *w, u32 &amp;seed) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L156">line 156</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__frame_base *
+  __search(worker *w, u32 &amp;seed) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>worker *w</code></li><li><code>u32 &amp;seed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__frame_base *
+  __search(worker *w, u32 &amp;seed) noexcept
+  {
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+    if ( __cl_searchers.get(micron::memory_order_relaxed) &gt;= __cl_max_searchers ) return nullptr;
+#else
+    const u32 __awake = n - static_cast&lt;u32&gt;(__builtin_popcount(__cl_sleeper_mask.get(micron::memory_order_relaxed)));
+    const u32 __s = __cl_searchers.get(micron::memory_order_relaxed);
+    if ( __s != 0 &amp;&amp; 2u * __s &gt;= __awake ) return nullptr;
+#endif
+    __cl_searchers.fetch_add(1, micron::memory_order_acq_rel);
+    __frame_base *cont = nullptr;
+    u32 backoff = 16;
+    for ( u32 round = 0; round &lt; 6; ++round ) {      // 16+32+..+512 pauses ~= 1-2 us total
+      for ( u32 p = 0; p &lt; backoff; ++p ) __cpu_pause();
+      if ( stopping.get(micron::memory_order_acquire) ) break;
+      cont = __find(w, seed);
+      if ( cont != nullptr ) break;
+      if ( backoff &lt; 512 ) backoff &lt;&lt;= 1;
+    }
+    __cl_searchers.sub_fetch(1, micron::memory_order_acq_rel);
+    return cont;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L159">line 159</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L163">line 163</a></td></tr><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L176">line 176</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>, <a href="cl_sched.hpp.html#f-b8149f15c684cf57">__find</a>.</p></section><section class="function-entry" id="f-b8149f15c684cf57"><h3><code>micron::coro::engine::__find(worker *w, u32 &amp;seed) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L180">line 180</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__frame_base *
+  __find(worker *w, u32 &amp;seed) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>worker *w</code></li><li><code>u32 &amp;seed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__frame_base *
+  __find(worker *w, u32 &amp;seed) noexcept
+  {
+    __frame_base *cont = nullptr;
+    if ( (++w-&gt;tick &amp; 63u) == 0u ) {      // periodic inbox-first so roots aren&#x27;t starved by deep local work
+      if ( inbox.pop(cont) &amp;&amp; cont != nullptr ) return cont;
+    }
+    cont = w-&gt;deque.pop_bottom();
+    if ( cont != nullptr ) {
+      __count_take(cont);      // a locally-popped fork continuation was detached from its child (it suspended)
+      return cont;
+    }
+    if ( w-&gt;ovf != nullptr ) [[unlikely]] {      // deque-overflow spill
+      cont = w-&gt;ovf;
+      w-&gt;ovf = cont-&gt;__ovf_next;
+      cont-&gt;__ovf_next = nullptr;
+      return cont;
+    }
+    if ( inbox.pop(cont) &amp;&amp; cont != nullptr ) return cont;
+#if defined(MICRON_CORO_URING)
+    cont = __io_ovf_pop();      // completions the inbox had no room for
+    if ( cont != nullptr ) return cont;
+    if ( __io.any_live.get(micron::memory_order_acquire) != 0 ) {
+      if ( __drain_io(w, seed) ) {
+        if ( inbox.pop(cont) &amp;&amp; cont != nullptr ) return cont;
+        cont = __io_ovf_pop();
+        if ( cont != nullptr ) return cont;
+      }
+    }
+#endif
+    cont = __steal(w, seed);
+    if ( cont != nullptr ) __count_take(cont);
+    return cont;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L184">line 184</a></td></tr><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L189">line 189</a></td></tr><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L195">line 195</a></td></tr><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L200">line 200</a></td></tr><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L203">line 203</a></td></tr><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L211">line 211</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../coro_core.hpp.html#f-bc973c559a84c5b6">__count_take</a>, <a href="cl_sched.hpp.html#f-0840dbc0c4c3d374">__io_ovf_pop</a>, <a href="cl_sched.hpp.html#f-be75e995909473da">__drain_io</a>, <a href="cl_sched.hpp.html#f-bfd9887e0daaf936">__steal</a>.</p></section><section class="function-entry" id="f-efb46fb9d994f358"><h3><code>micron::coro::engine::__submit_io(__frame_base *fb) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L323">line 323</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __submit_io(__frame_base *fb) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__frame_base *fb</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __submit_io(__frame_base *fb) noexcept
+  {
+    if ( !inbox.push(fb) ) [[unlikely]] {
+      __io_lock(__io_ovf_lk);
+      fb-&gt;__io_next = __io_ovf;
+      __io_ovf = fb;
+      __io_ovf_n.fetch_add(1, micron::memory_order_acq_rel);
+      __io_unlock(__io_ovf_lk);
+    }
+    if ( __cl_sleeper_mask.get(micron::memory_order_relaxed) != 0 ) __cl_wake_one&lt;true&gt;();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>, <a href="../coro_core.hpp.html#f-e9fe9449c00b3144">__cl_wake_one&lt;true&gt;</a>.</p></section><section class="function-entry" id="f-0840dbc0c4c3d374"><h3><code>micron::coro::engine::__io_ovf_pop() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L336">line 336</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__frame_base *
+  __io_ovf_pop() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__frame_base *
+  __io_ovf_pop() noexcept
+  {
+    if ( __io_ovf_n.get(micron::memory_order_acquire) == 0 ) return nullptr;
+    __io_lock(__io_ovf_lk);
+    __frame_base *fb = __io_ovf;
+    if ( fb != nullptr ) {
+      __io_ovf = fb-&gt;__io_next;
+      fb-&gt;__io_next = nullptr;
+      __io_ovf_n.sub_fetch(1, micron::memory_order_acq_rel);
+    }
+    __io_unlock(__io_ovf_lk);
+    return fb;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L338">line 338</a></td></tr><tr class="t-dsc"><td><code>fb</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L347">line 347</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-cef5b4410917e7fb"><h3><code>micron::coro::engine::__io_ovf_empty() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L351">line 351</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  __io_ovf_empty() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__io_ovf_n.get(micron::memory_order_acquire) == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  __io_ovf_empty() const noexcept
+  {
+    return __io_ovf_n.get(micron::memory_order_acquire) == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__io_ovf_n.get(micron::memory_order_acquire) == 0</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L353">line 353</a></td></tr></tbody></table></section><section class="function-entry" id="f-3184c86cbafc796b"><h3><code>micron::coro::engine::__dispatch_cqe(__wring &amp;__wr, const micron::uring::cqe &amp;__c) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L358">line 358</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __dispatch_cqe(__wring &amp;__wr, const micron::uring::cqe &amp;__c) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li><li><code>const micron::uring::cqe &amp;__c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __dispatch_cqe(__wring &amp;__wr, const micron::uring::cqe &amp;__c) noexcept
+  {
+    const u8 __tag = __io_ud_tag(__c.user_data);
+    if ( __tag == __io_ud_park ) {
+      if ( __c.res == -22 || __c.res == -95 ) __io.futex_ok.store(0, micron::memory_order_release);
+      __wr.__park_fired.store(1, micron::memory_order_release);
+      return;
+    }
+    if ( __tag == __io_ud_mop ) {
+      __io_mop *__m = reinterpret_cast&lt;__io_mop *&gt;(__io_ud_payload(__c.user_data));
+      __io_mev __e;
+      __e.__res = __c.res;
+      __e.__ring = __m-&gt;__ring;
+      __e.__fl = 0;
+      if ( (__c.flags &amp; micron::uring::cqe_f_buffer) != 0 ) {
+        __e.__bid = micron::uring::cqe_buffer_id(__c.flags);
+        __e.__fl |= __io_mev_buf;
+      }
+      if ( (__c.flags &amp; micron::uring::cqe_f_more) != 0 )
+        __e.__fl |= __io_mev_more;
+      else {
+        __m-&gt;__live.store(0, micron::memory_order_release);
+        __wr.__pending.sub_fetch(1, micron::memory_order_acq_rel);
+      }
+      __m-&gt;__push(__e);
+      // three state park handoff
+      u32 __cur = __m-&gt;__st.get(micron::memory_order_seq_cst);
+      for ( ;; ) {
+        if ( __cur == __io_mop_parked ) {
+          if ( !__m-&gt;__st.compare_exchange_weak(__cur, __io_mop_idle, micron::memory_order_seq_cst, micron::memory_order_seq_cst) )
+            continue;
+          __frame_base *__fb = __m-&gt;__f;      // lst read of *__m
+          __submit_io(__fb);
+          break;
+        }
+        if ( __cur == __io_mop_parking ) {
+          if ( !__m-&gt;__st.compare_exchange_weak(__cur, __io_mop_pending, micron::memory_order_seq_cst, micron::memory_order_seq_cst) )
+            continue;
+          break;
+        }
+        break;
+      }
+      return;
+    }
+    if ( __tag == __io_ud_wop ) {
+      __io_wop *__wp = reinterpret_cast&lt;__io_wop *&gt;(__io_ud_payload(__c.user_data));
+      __wp-&gt;__res = __c.res;
+      __io_wave *__wv = __wp-&gt;__w;
+      if ( __wv-&gt;__left.sub_fetch(1, micron::memory_order_acq_rel) != 0 ) return;
+      u32 __exp = __io_st_submitted;
+      if ( __wv-&gt;__st.compare_exchange_strong(__exp, __io_st_done_early, micron::memory_order_acq_rel, micron::memory_order_acquire) )
+        return;
+      __wr.__pending.sub_fetch(1, micron::memory_order_acq_rel);
+      u32 __sus = __io_st_suspended;
+      if ( !__wv-&gt;__st.compare_exchange_strong(__sus, __io_st_resumed, micron::memory_order_acq_rel, micron::memory_order_acquire) )
+        return;      // the owner is tearing the wave down and frees it itself
+      __submit_io(__wv-&gt;__f);
+      return;
+    }
+    if ( __tag != __io_ud_op ) return;      // cancel / ltimer / reclaim
+    __io_op *__op = reinterpret_cast&lt;__io_op *&gt;(__c.user_data);
+    __op-&gt;__res = __c.res;
+    u32 __exp = __io_st_submitted;
+    if ( __op-&gt;__st.compare_exchange_strong(__exp, __io_st_done_early, micron::memory_order_acq_rel, micron::memory_order_acquire) ) return;
+    __wr.__pending.sub_fetch(1, micron::memory_order_acq_rel);
+    __submit_io(__op-&gt;__f);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L400">line 400</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L406">line 406</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L409">line 409</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L413">line 413</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L415">line 415</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L417">line 417</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L421">line 421</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-8b14b899ff051ce9">__io_ud_tag</a>, <a href="reactor.hpp.html#f-01c86b26a9ac5617">__io_ud_payload</a>, <a href="../../linux/sys/uring.hpp.html#f-56ff365ebe55352e">micron::uring::cqe_buffer_id</a>, <a href="cl_sched.hpp.html#f-efb46fb9d994f358">__submit_io</a>.</p></section><section class="function-entry" id="f-75d0c5dbf4e58c2b"><h3><code>micron::coro::engine::__drain_ring(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L427">line 427</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  __drain_ring(__wring &amp;__wr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  __drain_ring(__wring &amp;__wr) noexcept
+  {
+    if ( !__io_cq_acquire(__wr) ) return false;
+    micron::uring::cqe __c{};
+    bool __any = false;
+    while ( __wr.__r.peek_cqe(&amp;__c) ) {
+      __any = true;
+      __dispatch_cqe(__wr, __c);
+    }
+    __io_unlock(__wr.__cq_lk);
+    return __any;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L429">line 429</a></td></tr><tr class="t-dsc"><td><code>__any</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L437">line 437</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-786c6081d9205278">__io_cq_acquire</a>, <a href="cl_sched.hpp.html#f-3184c86cbafc796b">__dispatch_cqe</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-be75e995909473da"><h3><code>micron::coro::engine::__drain_io(worker *__w, u32 &amp;__seed) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L442">line 442</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  __drain_io(worker *__w, u32 &amp;__seed) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>worker *__w</code></li><li><code>u32 &amp;__seed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  __drain_io(worker *__w, u32 &amp;__seed) noexcept
+  {
+    bool __any = false;
+    __wring &amp;__own = __io_rings[__w-&gt;id];
+    if ( __own.__live.get(micron::memory_order_acquire) != 0 ) {
+      __io_flush_staged(__own);
+      if ( __own.__r.cq_overflowed() || (__own.__defer != 0 &amp;&amp; __own.__r.taskrun_pending()) )
+        (void)__own.__r.enter2(0, 0, micron::uring::enter_getevents, nullptr, 0);
+      if ( __own.__pending.get(micron::memory_order_relaxed) != 0 ) __any |= __drain_ring(__own);
+    }
+    if ( __io_fb.__pending.get(micron::memory_order_relaxed) != 0 ) {
+      if ( __io_fb.__r.cq_overflowed() ) (void)__io_fb.__r.enter2(0, 0, micron::uring::enter_getevents, nullptr, 0);
+      __any |= __drain_ring(__io_fb);
+    }
+    if ( n &gt; 1 ) {
+      __seed ^= __seed &lt;&lt; 13;
+      __seed ^= __seed &gt;&gt; 17;
+      __seed ^= __seed &lt;&lt; 5;
+      u32 __v = static_cast&lt;u32&gt;((static_cast&lt;u64&gt;(__seed) * n) &gt;&gt; 32);
+      if ( __v == __w-&gt;id &amp;&amp; ++__v == n ) __v = 0;
+      if ( __v != __w-&gt;id &amp;&amp; __io_rings[__v].__pending.get(micron::memory_order_relaxed) != 0 ) __any |= __drain_ring(__io_rings[__v]);
+    }
+    return __any;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__any</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L464">line 464</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-436877d07d9f268b">__io_flush_staged</a>, <a href="cl_sched.hpp.html#f-75d0c5dbf4e58c2b">__drain_ring</a>.</p></section><section class="function-entry" id="f-38d3f3b01103a998"><h3><code>micron::coro::engine::__drain_all() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L468">line 468</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  __drain_all() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  __drain_all() noexcept
+  {
+    bool __any = false;
+    for ( u32 __i = 0; __i &lt; n; ++__i ) __any |= __drain_ring(__io_rings[__i]);
+    __any |= __drain_ring(__io_fb);
+    return __any;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__any</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L473">line 473</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cl_sched.hpp.html#f-75d0c5dbf4e58c2b">__drain_ring</a>.</p></section><section class="function-entry" id="f-167721c37349ea69"><h3><code>micron::coro::engine::__ring_park(worker *__w, u32 __ep) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L477">line 477</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __ring_park(worker *__w, u32 __ep) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>worker *__w</code></li><li><code>u32 __ep</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __ring_park(worker *__w, u32 __ep) noexcept
+  {
+    __wring &amp;__wr = __io_rings[__w-&gt;id];
+    __wr.__park_fired.store(0, micron::memory_order_relaxed);
+    micron::uring::sqe __q;
+    micron::uring::prep_futex_wait(&amp;__q, __cl_park[__w-&gt;id].epoch.ptr(), __ep);
+    if ( !__io_submit_own(__wr, __q, __io_ud_make(__io_ud_park, __w-&gt;id)) ) {
+      timespec_t __ts{ 0, 100000000 };
+      micron::__futex(__cl_park[__w-&gt;id].epoch.ptr(), futex_wait | futex_private_flag, __ep, &amp;__ts, nullptr, 0);
+      return;
+    }
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.parks.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    const micron::uring::ktimespec __kt{ 0, 100000000 };
+    (void)__wr.__r.submit_and_wait_timeout(1, &amp;__kt);
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.wakes.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    __drain_ring(__wr);
+    if ( __wr.__park_fired.get(micron::memory_order_acquire) == 0 ) {
+      micron::uring::sqe __cq;
+      micron::uring::prep_cancel(&amp;__cq, __io_ud_make(__io_ud_park, __w-&gt;id));
+      while ( !__io_submit_own(__wr, __cq, __io_ud_make(__io_ud_cancel, 0)) ) {
+        if ( __wr.__park_fired.get(micron::memory_order_acquire) != 0 ) break;
+        (void)__wr.__r.submit_and_wait_timeout(1, &amp;__kt);
+        __drain_ring(__wr);
+      }
+      while ( __wr.__park_fired.get(micron::memory_order_acquire) == 0 ) {
+        (void)__wr.__r.submit_and_wait_timeout(1, &amp;__kt);
+        __drain_ring(__wr);
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L486">line 486</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/sys/uring.hpp.html#f-4113899793d01982">micron::uring::prep_futex_wait</a>, <a href="reactor.hpp.html#f-43459964fdc93542">__io_submit_own</a>, <a href="reactor.hpp.html#f-9695a84578c4e768">__io_ud_make</a>, <a href="../../sync/futex.hpp.html#f-4d11121a85bcfca1">micron::__futex</a>, <a href="cl_sched.hpp.html#f-75d0c5dbf4e58c2b">__drain_ring</a>, <a href="../../linux/sys/uring.hpp.html#f-adc85d381fdeecbe">micron::uring::prep_cancel</a>.</p></section><section class="function-entry" id="f-b1814a27c4f58584"><h3><code>micron::coro::__timer_lock() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L534">line 534</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__timer_lock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__timer_lock() noexcept
+{
+  u32 __e = 0;
+  while ( !__timer_lk.compare_exchange_weak(__e, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+    __e = 0;
+    micron::cpu_pause&lt;1&gt;();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../sync/pause.hpp.html#f-d4ab0415b16f2d48">micron::cpu_pause&lt;1&gt;</a>.</p></section><section class="function-entry" id="f-3ee0d136e8567dec"><h3><code>micron::coro::__timer_unlock() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L544">line 544</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__timer_unlock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__timer_unlock() noexcept
+{
+  __timer_lk.store(0u, micron::memory_order_release);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-325fae3741cdedf0"><h3><code>micron::coro::__ts_le(const timespec_t &amp;__a, const timespec_t &amp;__b) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L550">line 550</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+__ts_le(const timespec_t &amp;__a, const timespec_t &amp;__b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const timespec_t &amp;__a</code></li><li><code>const timespec_t &amp;__b</code></li></ul><h4>Effects</h4><p>Returns <code>__a.tv_sec &lt; __b.tv_sec || (__a.tv_sec == __b.tv_sec &amp;&amp; __a.tv_nsec &lt;= __b.tv_nsec)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+__ts_le(const timespec_t &amp;__a, const timespec_t &amp;__b) noexcept
+{
+  return __a.tv_sec &lt; __b.tv_sec || (__a.tv_sec == __b.tv_sec &amp;&amp; __a.tv_nsec &lt;= __b.tv_nsec);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__a.tv_sec &lt; __b.tv_sec || (__a.tv_sec == __b.tv_sec &amp;&amp; __a.tv_nsec &lt;= __b.tv_nsec)</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L552">line 552</a></td></tr></tbody></table></section><section class="function-entry" id="f-f359164b3603343b"><h3><code>micron::coro::__ts_add_ns(timespec_t &amp;__t, u64 __ns) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L570">line 570</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__ts_add_ns(timespec_t &amp;__t, u64 __ns) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>timespec_t &amp;__t</code></li><li><code>u64 __ns</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__ts_add_ns(timespec_t &amp;__t, u64 __ns) noexcept
+{
+  __t.tv_sec += static_cast&lt;decltype(__t.tv_sec)&gt;(__ns / 1000000000ull);
+  __t.tv_nsec += static_cast&lt;decltype(__t.tv_nsec)&gt;(__ns % 1000000000ull);
+  if ( __t.tv_nsec &gt;= 1000000000 ) {
+    __t.tv_nsec -= 1000000000;
+    ++__t.tv_sec;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6945c4bd2b5dc8d1"><h3><code>micron::coro::__timer_main() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L581">line 581</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__timer_main() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__timer_main() noexcept
+{
+  for ( ;; ) {
+    engine *__e = __global_engine;
+    if ( __e == nullptr || __e-&gt;stopping.get(micron::memory_order_acquire) ) break;
+    const u32 __ep = __timer_epoch.get(micron::memory_order_acquire);
+    timespec_t __now{};
+    micron::clock_gettime(micron::clock_monotonic, __now);
+    __timer_node *__fired = nullptr;
+    bool __have_next = false;
+    timespec_t __next{};
+    __timer_lock();
+    __timer_node **__pp = &amp;__timer_head;
+    while ( *__pp != nullptr ) {
+      if ( __ts_le((*__pp)-&gt;__deadline, __now) ) {
+        __timer_node *__n = *__pp;
+        *__pp = __n-&gt;__next;
+        __n-&gt;__next = __fired;
+        __fired = __n;
+      } else {
+        if ( !__have_next || __ts_le((*__pp)-&gt;__deadline, __next) ) {
+          __next = (*__pp)-&gt;__deadline;
+          __have_next = true;
+        }
+        __pp = &amp;(*__pp)-&gt;__next;
+      }
+    }
+    __timer_unlock();
+    while ( __fired != nullptr ) {
+      __timer_node *__nx = __fired-&gt;__next;      // read before submit (the resumed frame may free the node)
+      __frame_base *__f = __fired-&gt;__frame;
+      __e-&gt;submit(__f);
+      __e-&gt;pending_timers.sub_fetch(1, micron::memory_order_acq_rel);
+      __fired = __nx;
+    }
+    if ( __have_next ) {
+      timespec_t __rel{ __next.tv_sec - __now.tv_sec, __next.tv_nsec - __now.tv_nsec };
+      if ( __rel.tv_nsec &lt; 0 ) {
+        __rel.tv_sec -= 1;
+        __rel.tv_nsec += 1000000000l;
+      }
+      if ( __rel.tv_sec &lt; 0 ) continue;      // already due; rescan
+      micron::__futex(__timer_epoch.ptr(), futex_wait | futex_private_flag, __ep, &amp;__rel, nullptr, 0);
+    } else {
+      micron::__futex(__timer_epoch.ptr(), futex_wait | futex_private_flag, __ep, nullptr, nullptr, 0);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../linux/sys/time.hpp.html#f-50f28f374b0aa921">micron::clock_gettime</a>, <a href="cl_sched.hpp.html#f-b1814a27c4f58584">__timer_lock</a>, <a href="cl_sched.hpp.html#f-325fae3741cdedf0">__ts_le</a>, <a href="cl_sched.hpp.html#f-3ee0d136e8567dec">__timer_unlock</a>, <a href="../../sync/futex.hpp.html#f-4d11121a85bcfca1">micron::__futex</a>.</p></section><section class="function-entry" id="f-3b14ec6c0a2837d9"><h3><code>micron::coro::__ensure_timer_thread() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L631">line 631</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__ensure_timer_thread() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__ensure_timer_thread() noexcept
+{
+  if ( __timer_state.get(micron::memory_order_acquire) == 2u ) return;
+  u32 __e = 0;
+  if ( __timer_state.compare_exchange_strong(__e, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+    __timer_thread = micron::solo::spawn&lt;micron::auto_thread&lt;&gt;&gt;([]() { __timer_main(); });
+    __timer_state.store(2u, micron::memory_order_release);
+    return;
+  }
+  while ( __timer_state.get(micron::memory_order_acquire) != 2u ) micron::yield();      // wait for publish
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L633">line 633</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L638">line 638</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../sync/yield.hpp.html#f-8d551fb247ff4b47">micron::yield</a>.</p></section><section class="function-entry" id="f-bfebab4ce554e015"><h3><code>micron::coro::__arm_runtime_reaper(void) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L648">line 648</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__arm_runtime_reaper(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__arm_runtime_reaper(void) noexcept
+{
+  static struct __rt_reaper {
+    ~__rt_reaper() noexcept { stop_coroutine_runtime(); }
+  } __r{};
+
+  (void)&amp;__r;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4b1708f48fec59f0"><h3><code>micron::coro::__rt_reaper::~__rt_reaper() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L651">line 651</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~__rt_reaper() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~__rt_reaper() noexcept { stop_coroutine_runtime(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="cl_sched.hpp.html#f-bfe8523a873c5588">stop_coroutine_runtime</a>.</p></section><section class="function-entry" id="f-bafec579905b172e"><h3><code>micron::coro::__sync_bridge::promise_type::get_return_object() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L821">line 821</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__sync_bridge
+    get_return_object() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__sync_bridge
+    get_return_object() noexcept
+    {
+      auto __h = std::coroutine_handle&lt;promise_type&gt;::from_promise(*this);
+      this-&gt;__self = __h;
+      return __sync_bridge{ __h };
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sync_bridge{ __h }</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L825">line 825</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../__special/coroutine.html#f-f5831864fa365cfb">std::coroutine_handle&lt;promise_type&gt;::from_promise</a>.</p></section><section class="function-entry" id="f-123e9887ed8569be"><h3><code>micron::coro::__sync_bridge::promise_type::initial_suspend() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L829">line 829</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>std::suspend_always
+    initial_suspend() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">std::suspend_always
+    initial_suspend() noexcept
+    {
+      return {};
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L831">line 831</a></td></tr></tbody></table></section><section class="function-entry" id="f-8ed1a904e1b150d0"><h3><code>micron::coro::__sync_bridge::promise_type::final_suspend() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L835">line 835</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+    final_suspend() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+    final_suspend() noexcept
+    {
+      struct __fa {
+        bool
+        await_ready() const noexcept
+        {
+          return false;
+        }
+
+        void
+        await_suspend(std::coroutine_handle&lt;promise_type&gt; __h) const noexcept
+        {
+          micron::atomic_token&lt;u32&gt; *__d = __h.promise().__done;
+          __d-&gt;store(1, micron::memory_order_release);
+          micron::wake_futex(__d-&gt;ptr());
+        }
+
+        void
+        await_resume() const noexcept
+        {
+        }
+      };
+
+      return __fa{};
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fa{}</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L858">line 858</a></td></tr></tbody></table></section><section class="function-entry" id="f-3a8f3330cf6a21de"><h3><code>micron::coro::__sync_bridge::promise_type::__fa::await_ready() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L839">line 839</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+        await_ready() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>false</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+        await_ready() const noexcept
+        {
+          return false;
+        }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L841">line 841</a></td></tr></tbody></table></section><section class="function-entry" id="f-28ba82e98e1cb26c"><h3><code>micron::coro::__sync_bridge::promise_type::__fa::await_suspend(std::coroutine_handle&lt;promise_type&gt; __h) const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L845">line 845</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+        await_suspend(std::coroutine_handle&lt;promise_type&gt; __h) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;promise_type&gt; __h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+        await_suspend(std::coroutine_handle&lt;promise_type&gt; __h) const noexcept
+        {
+          micron::atomic_token&lt;u32&gt; *__d = __h.promise().__done;
+          __d-&gt;store(1, micron::memory_order_release);
+          micron::wake_futex(__d-&gt;ptr());
+        }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../sync/futex.hpp.html#f-d0c4f067a82c7179">micron::wake_futex</a>.</p></section><section class="function-entry" id="f-43c48416d6b94a1b"><h3><code>micron::coro::__sync_bridge::promise_type::__fa::await_resume() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L853">line 853</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+        await_resume() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+        await_resume() const noexcept
+        {
+        }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4456e0c3ee76d328"><h3><code>micron::coro::__sync_bridge::promise_type::return_void() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L862">line 862</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    return_void() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    return_void() noexcept
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-49df24764b2d3b65"><h3><code>micron::coro::__sync_bridge::promise_type::unhandled_exception() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L867">line 867</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    unhandled_exception() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    unhandled_exception() noexcept
+    {
+      __builtin_trap();
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-259202463f68db4b"><h3><code>micron::coro::__sync_bridge::promise_type::operator new(usize __n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L873">line 873</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void *
+    operator new(usize __n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Returns <code>micron::fiber::__frame_alloc(__n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void *
+    operator new(usize __n) noexcept
+    {
+      return micron::fiber::__frame_alloc(__n);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::fiber::__frame_alloc(__n)</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L875">line 875</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fiber.hpp.html#f-23e32865853d3ce6">micron::fiber::__frame_alloc</a>.</p></section><section class="function-entry" id="f-79c17aa61dea22c6"><h3><code>micron::coro::__sync_bridge::promise_type::operator delete(void *__p, usize __n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L879">line 879</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+    operator delete(void *__p, usize __n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *__p</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+    operator delete(void *__p, usize __n) noexcept
+    {
+      micron::fiber::__frame_free(__p, __n);
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fiber.hpp.html#f-ec0e2dbfa9ac5113">micron::fiber::__frame_free</a>.</p></section><section class="function-entry" id="f-bc98f7b46b3810d9"><h3><code>micron::coro::__sync_bridge::promise_type::get_return_object_on_allocation_failure() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L884">line 884</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __sync_bridge get_return_object_on_allocation_failure() noexcept;</pre></td></tr></tbody></table><h4>Effects</h4><p>This is a declaration. Its body is supplied by the runtime, compiler, or host. The source declaration does not specify additional effects.</p></section><section class="function-entry" id="f-da39e2a0ae4b39d0"><h3><code>micron::coro::__sync_bridge::__sync_bridge() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L888">line 888</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__sync_bridge() noexcept = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-cfa83cf597622ee8"><h3><code>micron::coro::__sync_bridge::__sync_bridge(std::coroutine_handle&lt;promise_type&gt; __hh) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L890">line 890</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __sync_bridge(std::coroutine_handle&lt;promise_type&gt; __hh) noexcept : __h(__hh)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;promise_type&gt; __hh</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __sync_bridge(std::coroutine_handle&lt;promise_type&gt; __hh) noexcept : __h(__hh) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5237a015415bfb2a"><h3><code>micron::coro::__sync_bridge::promise_type::get_return_object_on_allocation_failure() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L894">line 894</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __sync_bridge
+__sync_bridge::promise_type::get_return_object_on_allocation_failure() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__sync_bridge{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __sync_bridge
+__sync_bridge::promise_type::get_return_object_on_allocation_failure() noexcept
+{
+  return __sync_bridge{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sync_bridge{}</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L896">line 896</a></td></tr></tbody></table></section><section class="function-entry" id="f-8d740c97f5e0d057"><h3><code>micron::coro::__sync_spin(const micron::atomic_token&lt;u32&gt; &amp;__done) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L900">line 900</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__sync_spin(const micron::atomic_token&lt;u32&gt; &amp;__done) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::atomic_token&lt;u32&gt; &amp;__done</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__sync_spin(const micron::atomic_token&lt;u32&gt; &amp;__done) noexcept
+{
+  for ( u32 __p = 0; __p &lt; 800; ++__p ) {
+    if ( __done.get(micron::memory_order_acquire) != 0 ) return;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L903">line 903</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-1e43480cb2d1199b"><h3><code>micron::coro::__detached_bridge::promise_type::get_return_object() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1043">line 1043</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__detached_bridge
+    get_return_object() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__detached_bridge
+    get_return_object() noexcept
+    {
+      auto __h = std::coroutine_handle&lt;promise_type&gt;::from_promise(*this);
+      this-&gt;__self = __h;
+      return __detached_bridge{ __h };
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__detached_bridge{ __h }</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1047">line 1047</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../__special/coroutine.html#f-f5831864fa365cfb">std::coroutine_handle&lt;promise_type&gt;::from_promise</a>.</p></section><section class="function-entry" id="f-42678af6371861fe"><h3><code>micron::coro::__detached_bridge::promise_type::initial_suspend() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1051">line 1051</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>std::suspend_always
+    initial_suspend() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">std::suspend_always
+    initial_suspend() noexcept
+    {
+      return {};
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1053">line 1053</a></td></tr></tbody></table></section><section class="function-entry" id="f-f1d5c47ecfd89fe4"><h3><code>micron::coro::__detached_bridge::promise_type::final_suspend() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1057">line 1057</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>std::suspend_never
+    final_suspend() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">std::suspend_never
+    final_suspend() noexcept
+    {
+      return {};
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1059">line 1059</a></td></tr></tbody></table></section><section class="function-entry" id="f-eebfa254d8e979c0"><h3><code>micron::coro::__detached_bridge::promise_type::return_void() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1063">line 1063</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    return_void() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    return_void() noexcept
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7f4b97c873f1e7d6"><h3><code>micron::coro::__detached_bridge::promise_type::unhandled_exception() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1068">line 1068</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    unhandled_exception() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    unhandled_exception() noexcept
+    {
+      __builtin_trap();
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-0cc17ec7b038f48c"><h3><code>micron::coro::__detached_bridge::promise_type::operator new(usize __n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1074">line 1074</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void *
+    operator new(usize __n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Returns <code>::operator new(__n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void *
+    operator new(usize __n) noexcept
+    {
+      return ::operator new(__n);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>::operator new(__n)</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1076">line 1076</a></td></tr></tbody></table></section><section class="function-entry" id="f-fc695483e29a1408"><h3><code>micron::coro::__detached_bridge::promise_type::operator delete(void *__p, usize) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1080">line 1080</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+    operator delete(void *__p, usize) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *__p</code></li><li><code>usize</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+    operator delete(void *__p, usize) noexcept
+    {
+      ::operator delete(__p);
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7ec263d5cfcee2a1"><h3><code>micron::coro::__detached_bridge::promise_type::get_return_object_on_allocation_failure() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1086">line 1086</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __detached_bridge
+    get_return_object_on_allocation_failure() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __detached_bridge
+    get_return_object_on_allocation_failure() noexcept
+    {
+      return {};
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1088">line 1088</a></td></tr></tbody></table></section><section class="function-entry" id="f-0207f1261efbe438"><h3><code>micron::coro::__detached_bridge::__detached_bridge() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1093">line 1093</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__detached_bridge() noexcept = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-0c4b8fdc3a769fcd"><h3><code>micron::coro::__detached_bridge::__detached_bridge(std::coroutine_handle&lt;promise_type&gt; __hh) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1095">line 1095</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __detached_bridge(std::coroutine_handle&lt;promise_type&gt; __hh) noexcept : __h(__hh)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;promise_type&gt; __hh</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __detached_bridge(std::coroutine_handle&lt;promise_type&gt; __hh) noexcept : __h(__hh) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-96844cf514719f07"><h3><code>micron::coro::__futex_future_awaiter::await_ready() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1134">line 1134</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  await_ready() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__s == nullptr || __s-&gt;is_ready()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  await_ready() const noexcept
+  {
+    return __s == nullptr || __s-&gt;is_ready();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__s == nullptr || __s-&gt;is_ready()</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1136">line 1136</a></td></tr></tbody></table></section><section class="function-entry" id="f-5c8a5b3fc04507b9"><h3><code>micron::coro::__futex_future_awaiter::await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1141">line 1141</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;P&gt; __h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept
+  {
+    __frame_base *__f = &amp;__h.promise();
+    bool __ready = __s-&gt;__arm_waiter(
+        reinterpret_cast&lt;usize&gt;(__f), +[](usize __t) { __global_engine-&gt;submit(reinterpret_cast&lt;__frame_base *&gt;(__t)); });
+    return !__ready;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>!__ready</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1146">line 1146</a></td></tr></tbody></table></section><section class="function-entry" id="f-f1281928c8c432e7"><h3><code>micron::coro::__futex_future_awaiter::await_resume()</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1150">line 1150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>decltype(auto)
+  await_resume()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">decltype(auto)
+  await_resume()
+  {
+    if ( __s == nullptr ) [[unlikely]]
+      exc&lt;except::future_error&gt;(&quot;micron::futex_future: co_await on a future with no shared state&quot;);
+    return __s-&gt;get();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__s-&gt;get()</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1154">line 1154</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::future_error&gt;(&quot;micron::futex_future: co_await on a future with no shared state&quot;)</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1153">line 1153</a><br>Within <code>( __s == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::future_error&gt;</a>.</p></section><section class="function-entry" id="f-287db2ce5fa3edbb"><h3><code>micron::coro::__reschedule_awaitable::await_ready() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1164">line 1164</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  await_ready() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>false</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  await_ready() const noexcept
+  {
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1166">line 1166</a></td></tr></tbody></table></section><section class="function-entry" id="f-72b4213e50fa996b"><h3><code>micron::coro::__reschedule_awaitable::await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1171">line 1171</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;P&gt; __h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept
+  {
+    __frame_base *__f = &amp;__h.promise();                   // already suspended here; safe to publish (same rule as fork)
+    __f-&gt;__pushed_kind = __frame_base::__kind_plain;      // a rescheduled frame is never steal-counted
+    worker *__w = current_worker();
+    if ( __w != nullptr &amp;&amp; __w-&gt;deque.push_bottom(__f) ) {
+      __notify_work();
+      return true;      // suspended; a worker (maybe this one) resumes it
+    }
+    return false;      // off-engine or full deque: no-op yield (resume inline)
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1178">line 1178</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1180">line 1180</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../coro_core.hpp.html#f-9498d62c9a1e8e2c">current_worker</a>, <a href="../coro_core.hpp.html#f-ead298c1fa1ce624">__notify_work</a>.</p></section><section class="function-entry" id="f-fb547905fa25f0d0"><h3><code>micron::coro::__reschedule_awaitable::await_resume() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1184">line 1184</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  await_resume() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  await_resume() const noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e9b6b1e3d1294665"><h3><code>micron::coro::__reschedule_fair_awaitable::await_ready() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1197">line 1197</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  await_ready() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>false</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  await_ready() const noexcept
+  {
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1199">line 1199</a></td></tr></tbody></table></section><section class="function-entry" id="f-49413a4eaad33e0b"><h3><code>micron::coro::__reschedule_fair_awaitable::await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1204">line 1204</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;P&gt; __h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept
+  {
+    worker *__w = current_worker();
+#if defined(MICRON_CORO_URING)
+    if ( __w != nullptr &amp;&amp; __global_engine != nullptr &amp;&amp; __io.any_live.get(micron::memory_order_acquire) != 0 ) {
+      u32 __seed = __w-&gt;id * 2654435761u + 1u;
+      (void)__global_engine-&gt;__drain_io(__w, __seed);
+    }
+#endif
+    __frame_base *__f = &amp;__h.promise();      // safe to publish
+    __f-&gt;__pushed_kind = __frame_base::__kind_plain;
+    if ( __global_engine != nullptr &amp;&amp; __global_engine-&gt;inbox.push(__f) ) {
+      // same wake pairing as engine::submit
+#if defined(MICRON_CORO_GLOBAL_SIGNAL)
+      __cl_signal.fetch_add(1, micron::memory_order_seq_cst);
+      if ( __cl_sleepers.get(micron::memory_order_seq_cst) != 0 ) micron::wake_futex(__cl_signal.ptr(), 1);
+#else
+      __cl_wake_one&lt;true&gt;();
+#endif
+      return true;
+    }
+    if ( __w != nullptr &amp;&amp; __w-&gt;deque.push_bottom(__f) ) {      // fall back to the LIFO route
+      __notify_work();
+      return true;
+    }
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1223">line 1223</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1227">line 1227</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1229">line 1229</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../coro_core.hpp.html#f-9498d62c9a1e8e2c">current_worker</a>, <a href="../../sync/futex.hpp.html#f-d0c4f067a82c7179">micron::wake_futex</a>, <a href="../coro_core.hpp.html#f-e9fe9449c00b3144">__cl_wake_one&lt;true&gt;</a>, <a href="../coro_core.hpp.html#f-ead298c1fa1ce624">__notify_work</a>.</p></section><section class="function-entry" id="f-7a8552d1308788f2"><h3><code>micron::coro::__reschedule_fair_awaitable::await_resume() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1233">line 1233</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  await_resume() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  await_resume() const noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-131f767230f98147"><h3><code>micron::coro::__sel_state::__sel_state(usize __r, usize __n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1254">line 1254</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __sel_state(usize __r, usize __n) noexcept : __refs(__r), __nodes(__n ? new __node[__n] : nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize __r</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __sel_state(usize __r, usize __n) noexcept : __refs(__r), __nodes(__n ? new __node[__n] : nullptr) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-85a80c7973ccd784"><h3><code>micron::coro::__sel_state::~__sel_state() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1256">line 1256</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~__sel_state() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~__sel_state() noexcept
+  {
+    if ( __nodes != nullptr ) delete[] __nodes;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-24619c79fee83676"><h3><code>micron::coro::__sel_state::__rel() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1262">line 1262</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __rel() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __rel() noexcept
+  {
+    if ( __refs.sub_fetch(1, micron::memory_order_acq_rel) == 0 ) delete this;      // ~__sel_state frees __nodes
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9722836f2385f8ae"><h3><code>micron::coro::__sel_fire(usize __t) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1269">line 1269</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__sel_fire(usize __t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize __t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__sel_fire(usize __t) noexcept
+{
+  __sel_state::__node *__n = reinterpret_cast&lt;__sel_state::__node *&gt;(__t);
+  __sel_state *__s = __n-&gt;__st;
+  i32 __exp = -1;
+  if ( __s-&gt;__winner.compare_exchange_strong(__exp, __n-&gt;__idx, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+    __s-&gt;__rel();
+    return;
+  }
+  if ( __exp == -2 ) {
+    i32 __e2 = -2;
+    if ( __s-&gt;__winner.compare_exchange_strong(__e2, __n-&gt;__idx, micron::memory_order_acq_rel, micron::memory_order_acquire) )
+      __global_engine-&gt;submit(__s-&gt;__parent);
+  }
+  __s-&gt;__rel();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1276">line 1276</a></td></tr></tbody></table></section><section class="function-entry" id="f-8523b529b8efec1c"><h3><code>micron::coro::__when_any_awaiter::await_ready() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1292">line 1292</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  await_ready() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>false</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  await_ready() const noexcept
+  {
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1294">line 1294</a></td></tr></tbody></table></section><section class="function-entry" id="f-069831cd1fc4576e"><h3><code>micron::coro::__when_any_awaiter::await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1299">line 1299</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;P&gt; __h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept
+  {
+    for ( usize __i = 0; __i &lt; __n; ++__i )
+      if ( __futs[__i].__shared() == nullptr ) [[unlikely]]
+        exc&lt;except::future_error&gt;(&quot;micron::when_any: co_await on a future with no shared state&quot;);
+    __st = new __sel_state(__n + 1u, __n);
+    __st-&gt;__parent = &amp;__h.promise();
+    for ( usize __i = 0; __i &lt; __n; ++__i ) {
+      __st-&gt;__nodes[__i] = { __st, static_cast&lt;i32&gt;(__i) };
+      bool __ready = __futs[__i].__shared()-&gt;__arm_waiter(reinterpret_cast&lt;usize&gt;(&amp;__st-&gt;__nodes[__i]), __sel_fire);
+      if ( __ready ) __sel_fire(reinterpret_cast&lt;usize&gt;(&amp;__st-&gt;__nodes[__i]));      // already ready: fire inline
+    }
+    i32 __exp = -1;
+    if ( __st-&gt;__winner.compare_exchange_strong(__exp, -2, micron::memory_order_acq_rel, micron::memory_order_acquire) ) return true;
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1312">line 1312</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1313">line 1313</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::future_error&gt;(&quot;micron::when_any: co_await on a future with no shared state&quot;)</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1303">line 1303</a><br>Within <code>__i &lt; __n</code>, <code>( __futs[__i].__shared() == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::future_error&gt;</a>, <a href="cl_sched.hpp.html#f-9722836f2385f8ae">__sel_fire</a>.</p></section><section class="function-entry" id="f-186f864c7aff7a69"><h3><code>micron::coro::__when_any_awaiter::await_resume() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1317">line 1317</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>i32
+  await_resume() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">i32
+  await_resume() noexcept
+  {
+    i32 __w = __st-&gt;__winner.get(micron::memory_order_acquire);
+    __st-&gt;__rel();
+    return (__w &gt;= 0) ? __w : -1;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__w &gt;= 0) ? __w : -1</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1321">line 1321</a></td></tr></tbody></table></section><section class="function-entry" id="f-6803fd050a464829"><h3><code>micron::coro::__sleep_awaiter::await_ready() noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1343">line 1343</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  await_ready() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  await_ready() noexcept
+  {
+    timespec_t __now{};
+    micron::clock_gettime(micron::clock_monotonic, __now);
+    return __ts_le(__deadline, __now);      // already elapsed -&gt; don&#x27;t suspend
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ts_le(__deadline, __now)</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1347">line 1347</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/sys/time.hpp.html#f-50f28f374b0aa921">micron::clock_gettime</a>, <a href="cl_sched.hpp.html#f-325fae3741cdedf0">__ts_le</a>.</p></section><section class="function-entry" id="f-f8385d7ab9665ab1"><h3><code>micron::coro::__sleep_awaiter::await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1352">line 1352</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;P&gt; __h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class P&gt;
+  bool
+  await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept
+  {
+#if defined(MICRON_CORO_URING)
+    if ( __io.any_live.get(micron::memory_order_acquire) != 0 ) {
+      __op.__f = &amp;__h.promise();
+      __kts = { static_cast&lt;i64&gt;(__deadline.tv_sec), static_cast&lt;i64&gt;(__deadline.tv_nsec) };
+      micron::uring::sqe __q;
+      micron::uring::prep_timeout(&amp;__q, &amp;__kts, micron::uring::timeout_abs);
+      __wring *__r = __io_own_ring();
+      bool __ok = false;
+      if ( __r != nullptr ) {
+        __r-&gt;__pending.fetch_add(1, micron::memory_order_acq_rel);
+        __ok = __io_submit_own(*__r, __q, reinterpret_cast&lt;u64&gt;(&amp;__op));
+      } else if ( __io_fb.__live.get(micron::memory_order_acquire) != 0 ) {
+        __r = &amp;__io_fb;
+        __r-&gt;__pending.fetch_add(1, micron::memory_order_acq_rel);
+        __ok = __io_submit_fb(__q, reinterpret_cast&lt;u64&gt;(&amp;__op));
+      }
+      if ( __ok ) {
+        u32 __exp = __io_st_submitted;
+        if ( __op.__st.compare_exchange_strong(__exp, __io_st_suspended, micron::memory_order_acq_rel, micron::memory_order_acquire) )
+          return true;
+        __r-&gt;__pending.sub_fetch(1, micron::memory_order_acq_rel);
+        return false;
+      }
+      if ( __r != nullptr ) __r-&gt;__pending.sub_fetch(1, micron::memory_order_acq_rel);
+    }
+#endif
+    __ensure_timer_thread();
+    __node.__deadline = __deadline;
+    __node.__frame = &amp;__h.promise();
+    __global_engine-&gt;pending_timers.fetch_add(1, micron::memory_order_acq_rel);
+    __timer_lock();
+    __node.__next = __timer_head;
+    __timer_head = &amp;__node;
+    __timer_unlock();
+    __timer_epoch.fetch_add(1, micron::memory_order_release);
+    micron::wake_futex(__timer_epoch.ptr(), 1);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1373">line 1373</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1375">line 1375</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1390">line 1390</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/sys/uring.hpp.html#f-a476380577ae4fb8">micron::uring::prep_timeout</a>, <a href="reactor.hpp.html#f-b13d47e4d3c8c086">__io_own_ring</a>, <a href="reactor.hpp.html#f-43459964fdc93542">__io_submit_own</a>, <a href="reactor.hpp.html#f-e91d52de75a894f3">__io_submit_fb</a>, <a href="cl_sched.hpp.html#f-3b14ec6c0a2837d9">__ensure_timer_thread</a>, <a href="cl_sched.hpp.html#f-b1814a27c4f58584">__timer_lock</a>, <a href="cl_sched.hpp.html#f-3ee0d136e8567dec">__timer_unlock</a>, <a href="../../sync/futex.hpp.html#f-d0c4f067a82c7179">micron::wake_futex</a>.</p></section><section class="function-entry" id="f-ce63a3f92cfa23db"><h3><code>micron::coro::__sleep_awaiter::await_resume() const noexcept</code></h3><p>Defined in <code>tasks/coroutine/cl_sched.hpp</code>, <a href="../../../source/tasks/coroutine/cl_sched.hpp.html#L1394">line 1394</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  await_resume() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  await_resume() const noexcept
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

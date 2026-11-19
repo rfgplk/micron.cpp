@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/parallel/reduce.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/parallel/reduce.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/parallel.html">Parallel algorithms</a></div><p>Defined in header <code>&lt;micron/parallel/reduce.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/parallel/reduce.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-17e49d06d2b20938">micron::parallel::reduce(It __first, It __last, T __init, Op __op)</a></td><td>function; line 21</td></tr><tr class="t-dsc"><td><a href="#f-b7e1f2260e12061c">micron::parallel::all_of(It __first, It __last, Pred __p)</a></td><td>function; line 40</td></tr><tr class="t-dsc"><td><a href="#f-99c812d8056faebd">micron::parallel::any_of(It __first, It __last, Pred __p)</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-83cf9bb70702f58a">micron::parallel::none_of(It __first, It __last, Pred __p)</a></td><td>function; line 68</td></tr><tr class="t-dsc"><td><a href="#f-8ff904d2ea23e883">micron::parallel::count_if(It __first, It __last, Pred __p)</a></td><td>function; line 76</td></tr><tr class="t-dsc"><td><a href="#f-a0903c0d61d16dc9">micron::parallel::reduce_range(C &amp;__c, T __init, Op __op)</a></td><td>function; line 91</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-17e49d06d2b20938"><h3><code>micron::parallel::reduce(It __first, It __last, T __init, Op __op)</code></h3><p>Defined in <code>parallel/reduce.hpp</code>, <a href="../../source/parallel/reduce.hpp.html#L21">line 21</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class T, class Op&gt;
+[[nodiscard]] micron::task&lt;T&gt;
+reduce(It __first, It __last, T __init, Op __op)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>T __init</code></li><li><code>Op __op</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class T, class Op&gt;
+[[nodiscard]] micron::task&lt;T&gt;
+reduce(It __first, It __last, T __init, Op __op)
+{
+  if ( __first == __last ) co_return __init;
+  auto __leaf = [__op](It __a, It __b) -&gt; T {
+    T __acc = static_cast&lt;T&gt;(*__a);
+    for ( ++__a; __a != __b; ++__a ) __acc = __op(__acc, static_cast&lt;T&gt;(*__a));
+    return __acc;
+  };
+  auto __comb = [__op](T __l, T __r) -&gt; T { return __op(__l, __r); };
+  T __part = co_await __pmapreduce&lt;It, decltype(__leaf), decltype(__comb), T&gt;(__first, __last, __leaf, __comb,
+                                                                              __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+  co_return __op(__init, __part);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), decltype(__comb), T&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-b7e1f2260e12061c"><h3><code>micron::parallel::all_of(It __first, It __last, Pred __p)</code></h3><p>Defined in <code>parallel/reduce.hpp</code>, <a href="../../source/parallel/reduce.hpp.html#L40">line 40</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;bool&gt;
+all_of(It __first, It __last, Pred __p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Pred __p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;bool&gt;
+all_of(It __first, It __last, Pred __p)
+{
+  auto __leaf = [__p](It __a, It __b) -&gt; bool {
+    for ( ; __a != __b; ++__a )
+      if ( !__p(*__a) ) return false;
+    return true;
+  };
+  auto __comb = [](bool __l, bool __r) -&gt; bool { return __l &amp;&amp; __r; };
+  return __pmapreduce&lt;It, decltype(__leaf), decltype(__comb), bool&gt;(__first, __last, __leaf, __comb,
+                                                                    __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pmapreduce&lt;It, decltype(__leaf), decltype(__comb), bool&gt;(__first, __last, __leaf, __comb,
+                                                                    __grain_for(static_cast&lt;usize&gt;(__last - __first)))</code></td><td><a href="../../source/parallel/reduce.hpp.html#L48">line 48</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), decltype(__comb), bool&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-99c812d8056faebd"><h3><code>micron::parallel::any_of(It __first, It __last, Pred __p)</code></h3><p>Defined in <code>parallel/reduce.hpp</code>, <a href="../../source/parallel/reduce.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;bool&gt;
+any_of(It __first, It __last, Pred __p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Pred __p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;bool&gt;
+any_of(It __first, It __last, Pred __p)
+{
+  auto __leaf = [__p](It __a, It __b) -&gt; bool {
+    for ( ; __a != __b; ++__a )
+      if ( __p(*__a) ) return true;
+    return false;
+  };
+  auto __comb = [](bool __l, bool __r) -&gt; bool { return __l || __r; };
+  return __pmapreduce&lt;It, decltype(__leaf), decltype(__comb), bool&gt;(__first, __last, __leaf, __comb,
+                                                                    __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pmapreduce&lt;It, decltype(__leaf), decltype(__comb), bool&gt;(__first, __last, __leaf, __comb,
+                                                                    __grain_for(static_cast&lt;usize&gt;(__last - __first)))</code></td><td><a href="../../source/parallel/reduce.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), decltype(__comb), bool&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-83cf9bb70702f58a"><h3><code>micron::parallel::none_of(It __first, It __last, Pred __p)</code></h3><p>Defined in <code>parallel/reduce.hpp</code>, <a href="../../source/parallel/reduce.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;bool&gt;
+none_of(It __first, It __last, Pred __p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Pred __p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;bool&gt;
+none_of(It __first, It __last, Pred __p)
+{
+  bool __any = co_await any_of&lt;It, Pred&gt;(__first, __last, __p);
+  co_return !__any;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-99c812d8056faebd">any_of&lt;It, Pred&gt;</a>.</p></section><section class="function-entry" id="f-8ff904d2ea23e883"><h3><code>micron::parallel::count_if(It __first, It __last, Pred __p)</code></h3><p>Defined in <code>parallel/reduce.hpp</code>, <a href="../../source/parallel/reduce.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;usize&gt;
+count_if(It __first, It __last, Pred __p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Pred __p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;usize&gt;
+count_if(It __first, It __last, Pred __p)
+{
+  auto __leaf = [__p](It __a, It __b) -&gt; usize {
+    usize __c = 0;
+    for ( ; __a != __b; ++__a )
+      if ( __p(*__a) ) ++__c;
+    return __c;
+  };
+  auto __comb = [](usize __l, usize __r) -&gt; usize { return __l + __r; };
+  return __pmapreduce&lt;It, decltype(__leaf), decltype(__comb), usize&gt;(__first, __last, __leaf, __comb,
+                                                                     __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pmapreduce&lt;It, decltype(__leaf), decltype(__comb), usize&gt;(__first, __last, __leaf, __comb,
+                                                                     __grain_for(static_cast&lt;usize&gt;(__last - __first)))</code></td><td><a href="../../source/parallel/reduce.hpp.html#L85">line 85</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), decltype(__comb), usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-a0903c0d61d16dc9"><h3><code>micron::parallel::reduce_range(C &amp;__c, T __init, Op __op)</code></h3><p>Defined in <code>parallel/reduce.hpp</code>, <a href="../../source/parallel/reduce.hpp.html#L91">line 91</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class C, class T, class Op&gt;
+[[nodiscard]] auto
+reduce_range(C &amp;__c, T __init, Op __op)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;__c</code></li><li><code>T __init</code></li><li><code>Op __op</code></li></ul><h4>Effects</h4><p>Returns <code>reduce(__c.begin(), __c.end(), __init, __op)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class C, class T, class Op&gt;
+[[nodiscard]] auto
+reduce_range(C &amp;__c, T __init, Op __op)
+{
+  return reduce(__c.begin(), __c.end(), __init, __op);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reduce(__c.begin(), __c.end(), __init, __op)</code></td><td><a href="../../source/parallel/reduce.hpp.html#L93">line 93</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-17e49d06d2b20938">reduce</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

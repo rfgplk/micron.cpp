@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bits/__exceptions.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">bits/__exceptions.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/bits/__exceptions.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../exit.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #if defined(__micron_arch_wasm32)</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;wasm/host.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #else</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;../syscall.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #endif</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../memory/addr.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> </span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../memory/actions.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;../memory/cstring.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> </span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;../defs.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> </span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #include &quot;../errno.hpp&quot;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> </span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> namespace micron</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> {</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> namespace except</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> {</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> </span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> // so we don&#x27;t rely on io</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> inline void</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> __write_n(const char *str_err)</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> {</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> #if defined(__micron_arch_wasm32)</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>   wasm::write_diag(str_err);</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> #else</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> #endif</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> #if defined(__micron_arch_wasm32)</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   wasm::write_diag(&quot;\n&quot;);</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> #else</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   micron::syscall(SYS_write, 2, micron::voidify(&quot;\n&quot;), 1);</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> #endif</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> }</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> </span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> inline void</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> __write(const char *str_err, usize sz)</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> {</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> #if defined(__micron_arch_wasm32)</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   wasm::write_diag(str_err, sz);</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> #else</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   micron::syscall(SYS_write, 2, micron::voidify(str_err), sz);</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> #endif</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> }</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> </span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> inline void</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> __write(const char *str_err)</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> {</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> #if defined(__micron_arch_wasm32)</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>   wasm::write_diag(str_err);</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> #else</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>   micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> #endif</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> }</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> </span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> template&lt;typename T&gt;</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> inline void</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> __write_unsigned(T n)</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> {</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   char buf[32];</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>   int i = 0;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>   if ( n == 0 ) {</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     buf[i++] = &#x27;0&#x27;;</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   } else {</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>     while ( n &gt; 0 ) {</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>       buf[i++] = static_cast&lt;char&gt;(&#x27;0&#x27; + (n % 10));</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>       n /= 10;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>     }</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     // reverse</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>     for ( int j = 0; j &lt; i / 2; ++j ) {</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>       char tmp = buf[j];</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>       buf[j] = buf[i - j - 1];</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>       buf[i - j - 1] = tmp;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     }</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   }</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>   __write(buf, static_cast&lt;usize&gt;(i));</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> }</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> </span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> template&lt;typename T, typename... Args&gt;</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> __attribute__((always_inline, noreturn)) inline void</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> raise(Args &amp;&amp;...args)</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> {</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>   T ex(args...);</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>   __write(&quot;exception raised: &quot;);</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>   __write_n(ex.what());</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>   __write(&quot;errno: &quot;);</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>   __write_unsigned(errno);</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   __write(&quot;\n&quot;);</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   abort(ex.which());</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> }</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> </span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> template&lt;typename T, typename... Args&gt;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> __attribute__((always_inline, noreturn)) inline void</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> raise(u32 eno, Args &amp;&amp;...args)</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> {</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   T ex(args...);</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   __write(&quot;exception raised: &quot;);</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   __write_n(ex.what());</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>   __write(&quot;errno: &quot;);</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>   __write_unsigned(eno);</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   __write(&quot;\n&quot;);</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   abort(ex.which());</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> }</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> </span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> template&lt;typename T, typename... Args&gt;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> __attribute__((always_inline, noreturn)) inline void</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> raise_silent(Args &amp;&amp;...args)</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> {</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>   T ex(args...);</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>   abort(ex.which());</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> }</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> </span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> };      // namespace except</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> </span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> template&lt;typename T, typename... Args&gt;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> __attribute__((always_inline, noreturn)) inline void</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> exc_silent(Args &amp;&amp;...args)</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> {</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>   if constexpr ( micron::except::__use_exceptions )</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>     throw T(micron::forward&lt;Args&gt;(args)...);</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   else {</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>     except::raise_silent&lt;T&gt;(micron::forward&lt;Args&gt;(args)...);</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   }</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> }</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> </span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> template&lt;typename T, typename... Args&gt;</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> __attribute__((always_inline, noreturn)) inline void</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> exc(Args &amp;&amp;...args)</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> {</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>   if constexpr ( micron::except::__use_exceptions )</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     throw T(micron::forward&lt;Args&gt;(args)...);</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>   else {</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>     except::raise&lt;T&gt;(micron::forward&lt;Args&gt;(args)...);</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>   }</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> }</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> </span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> // exc with explicit errno</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a> template&lt;typename T, typename... Args&gt;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a> __attribute__((always_inline, noreturn)) inline void</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> exc_e(i32 eno, Args &amp;&amp;...args)</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> {</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>   if constexpr ( micron::except::__use_exceptions )</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>     throw T(micron::forward&lt;Args&gt;(args)...);</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   else {</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     except::raise&lt;T&gt;(static_cast&lt;u32&gt;(-eno), micron::forward&lt;Args&gt;(args)...);</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>   }</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a> }</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> </span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

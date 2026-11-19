@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/trees/art.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/trees/art.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/trees.html">Trees</a></div><p>Defined in header <code>&lt;micron/trees/art.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/trees/art.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-a52ecff0f09f72f3">micron::art</code></td><td>class; line 25</td></tr><tr class="t-dsc"><td><code id="s-a7d0255c61a9caf7">micron::art::category_type</code></td><td>typedef; line 771</td></tr><tr class="t-dsc"><td><code id="s-4d1fd5f3808ad11a">micron::art::mutability_type</code></td><td>typedef; line 772</td></tr><tr class="t-dsc"><td><code id="s-74f7b37e96ef0ec7">micron::art::memory_type</code></td><td>typedef; line 773</td></tr><tr class="t-dsc"><td><code id="s-1c19349cb79b17ca">micron::art::size_type</code></td><td>typedef; line 774</td></tr><tr class="t-dsc"><td><code id="s-05f70a53af4f06d4">micron::art::key_type</code></td><td>typedef; line 775</td></tr><tr class="t-dsc"><td><code id="s-2ad7f09419dadcb7">micron::art::mapped_type</code></td><td>typedef; line 776</td></tr><tr class="t-dsc"><td><code id="s-e06cece949e9d71d">micron::art::const_iterator</code></td><td>class; line 964</td></tr><tr class="t-dsc"><td><code id="s-4edb60672cb12654">micron::art::const_iterator::value_type</code></td><td>typedef; line 1060</td></tr><tr class="t-dsc"><td><code id="s-d0d3d201cd964e5d">micron::art::const_iterator::reference</code></td><td>typedef; line 1061</td></tr><tr class="t-dsc"><td><code id="s-325aa8affa992d58">micron::art::const_iterator::difference_type</code></td><td>typedef; line 1062</td></tr><tr class="t-dsc"><td><code id="s-1c4bc741ffa19cf3">micron::art::iterator</code></td><td>typedef; line 1110</td></tr><tr class="t-dsc"><td><a href="#f-46c3d6c89b61d371">micron::art::~art()</a></td><td>function; line 778</td></tr><tr class="t-dsc"><td><a href="#f-ed3f3f3c35d11a2d">micron::art::art()</a></td><td>function; line 780</td></tr><tr class="t-dsc"><td><a href="#f-08fe96fa8c725ace">micron::art::art(Fn build)</a></td><td>function; line 784</td></tr><tr class="t-dsc"><td><a href="#f-7e895695b2770adb">micron::art::art(const art &amp;)</a></td><td>function; line 789</td></tr><tr class="t-dsc"><td><a href="#f-720aac892f832ed3">micron::art::operator=(const art &amp;)</a></td><td>function; line 790</td></tr><tr class="t-dsc"><td><a href="#f-403deda6e020d496">micron::art::art(art &amp;&amp;o) noexcept</a></td><td>function; line 792</td></tr><tr class="t-dsc"><td><a href="#f-9d8097822d33b9b7">micron::art::operator=(art &amp;&amp;o) noexcept</a></td><td>function; line 801</td></tr><tr class="t-dsc"><td><a href="#f-06fb56bd376755f0">micron::art::size() const noexcept</a></td><td>function; line 818</td></tr><tr class="t-dsc"><td><a href="#f-6b81c97d13e118c3">micron::art::empty() const noexcept</a></td><td>function; line 824</td></tr><tr class="t-dsc"><td><a href="#f-f3d893931b59d58a">micron::art::clear()</a></td><td>function; line 830</td></tr><tr class="t-dsc"><td><a href="#f-12ecad1f8ce84eaf">micron::art::node_bytes_live() const noexcept</a></td><td>function; line 837</td></tr><tr class="t-dsc"><td><a href="#f-a7591c048102f4a7">micron::art::blocks_allocated() const noexcept</a></td><td>function; line 843</td></tr><tr class="t-dsc"><td><a href="#f-f0d635109fcfb54f">micron::art::pool_bytes() const noexcept</a></td><td>function; line 849</td></tr><tr class="t-dsc"><td><a href="#f-217428058a2c6890">micron::art::insert(const K &amp;k, V v)</a></td><td>function; line 855</td></tr><tr class="t-dsc"><td><a href="#f-65eb4041476d71cc">micron::art::insert_or_assign(const K &amp;k, V v)</a></td><td>function; line 864</td></tr><tr class="t-dsc"><td><a href="#f-c31366756d0c6aca">micron::art::update(const K &amp;k, Fn fn)</a></td><td>function; line 875</td></tr><tr class="t-dsc"><td><a href="#f-d8ae54fc90d0ad6d">micron::art::insert_or_modify(const K &amp;k, MakeV make, Modify modify)</a></td><td>function; line 885</td></tr><tr class="t-dsc"><td><a href="#f-f93027e93ab90d41">micron::art::emplace(const K &amp;k, Args &amp;&amp;...args)</a></td><td>function; line 898</td></tr><tr class="t-dsc"><td><a href="#f-5a1747bdef0db2df">micron::art::count(const K &amp;k) const noexcept</a></td><td>function; line 904</td></tr><tr class="t-dsc"><td><a href="#f-fd4f0059fd8f9c1d">micron::art::max_size() const noexcept</a></td><td>function; line 910</td></tr><tr class="t-dsc"><td><a href="#f-1ef6f13fde7d1897">micron::art::swap(art &amp;o) noexcept</a></td><td>function; line 916</td></tr><tr class="t-dsc"><td><a href="#f-3060bb985794af90">micron::art::find(const K &amp;k) noexcept</a></td><td>function; line 928</td></tr><tr class="t-dsc"><td><a href="#f-324d64049f52913f">micron::art::find(const K &amp;k) const noexcept</a></td><td>function; line 935</td></tr><tr class="t-dsc"><td><a href="#f-926447fd20a5910e">micron::art::contains(const K &amp;k) const noexcept</a></td><td>function; line 941</td></tr><tr class="t-dsc"><td><a href="#f-25124761156b1df0">micron::art::at(const K &amp;k)</a></td><td>function; line 947</td></tr><tr class="t-dsc"><td><a href="#f-b3318528e46e22a8">micron::art::erase(const K &amp;k)</a></td><td>function; line 956</td></tr><tr class="t-dsc"><td><a href="#f-f35fe6ae52701f47">micron::art::const_iterator::const_iterator()</a></td><td>function; line 1064</td></tr><tr class="t-dsc"><td><a href="#f-1c1628aebb4cdfb9">micron::art::const_iterator::const_iterator(const __node_base *root)</a></td><td>function; line 1066</td></tr><tr class="t-dsc"><td><a href="#f-259e9f154cdc045f">micron::art::const_iterator::operator*() const</a></td><td>function; line 1072</td></tr><tr class="t-dsc"><td><a href="#f-8c046fba58bb0571">micron::art::const_iterator::operator++()</a></td><td>function; line 1078</td></tr><tr class="t-dsc"><td><a href="#f-2c7844cb59d521b0">micron::art::const_iterator::operator++(int)</a></td><td>function; line 1090</td></tr><tr class="t-dsc"><td><a href="#f-df176d21c3b3a395">micron::art::const_iterator::operator==(const const_iterator &amp;__o) const noexcept</a></td><td>function; line 1098</td></tr><tr class="t-dsc"><td><a href="#f-e7bd42b32399c095">micron::art::const_iterator::operator!=(const const_iterator &amp;__o) const noexcept</a></td><td>function; line 1104</td></tr><tr class="t-dsc"><td><a href="#f-a0f4c7fd589dd176">micron::art::begin() const</a></td><td>function; line 1113</td></tr><tr class="t-dsc"><td><a href="#f-ededcd2dea193779">micron::art::end() const</a></td><td>function; line 1119</td></tr><tr class="t-dsc"><td><a href="#f-9b6b4d6d87627a56">micron::art::cbegin() const</a></td><td>function; line 1125</td></tr><tr class="t-dsc"><td><a href="#f-f826661482c507cb">micron::art::cend() const</a></td><td>function; line 1131</td></tr><tr class="t-dsc"><td><a href="#f-76f9eccb44b7e4be">micron::art::for_each(Fn &amp;&amp;fn)</a></td><td>function; line 1138</td></tr><tr class="t-dsc"><td><a href="#f-2cd66f61e691d773">micron::art::for_each(Fn &amp;&amp;fn) const</a></td><td>function; line 1145</td></tr><tr class="t-dsc"><td><a href="#f-e1df261378a69f60">micron::art::map(Fn fn) const</a></td><td>function; line 1152</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-46c3d6c89b61d371"><h3><code>micron::art::~art()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L778">line 778</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~art()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~art() { __release_all(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="art.hpp.html#f-743b435295d02563">__release_all</a>.</p></section><section class="function-entry" id="f-ed3f3f3c35d11a2d"><h3><code>micron::art::art()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L780">line 780</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>art() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-08fe96fa8c725ace"><h3><code>micron::art::art(Fn build)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L784">line 784</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, art &amp;&gt;)
+  explicit art(Fn build) : art()</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn build</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, art &amp;&gt;)
+  explicit art(Fn build) : art()
+  {
+    build(*this);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7e895695b2770adb"><h3><code>micron::art::art(const art &amp;)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L789">line 789</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>art(const art &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const art &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-720aac892f832ed3"><h3><code>micron::art::operator=(const art &amp;)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L790">line 790</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>art &amp;operator=(const art &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const art &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-403deda6e020d496"><h3><code>micron::art::art(art &amp;&amp;o) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L792">line 792</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>art(art &amp;&amp;o) noexcept
+      : __root(o.__root), __size(o.__size), __pleaf(micron::move(o.__pleaf)), __p4(micron::move(o.__p4)), __p16(micron::move(o.__p16)),
+        __p48(micron::move(o.__p48)), __p256(micron::move(o.__p256))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>art &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">art(art &amp;&amp;o) noexcept
+      : __root(o.__root), __size(o.__size), __pleaf(micron::move(o.__pleaf)), __p4(micron::move(o.__p4)), __p16(micron::move(o.__p16)),
+        __p48(micron::move(o.__p48)), __p256(micron::move(o.__p256))
+  {
+    o.__root = nullptr;
+    o.__size = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9d8097822d33b9b7"><h3><code>micron::art::operator=(art &amp;&amp;o) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L801">line 801</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>art &amp;
+  operator=(art &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>art &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">art &amp;
+  operator=(art &amp;&amp;o) noexcept
+  {
+    if ( this == &amp;o ) return *this;
+    __release_all();
+    __root = o.__root;
+    __size = o.__size;
+    __pleaf = micron::move(o.__pleaf);
+    __p4 = micron::move(o.__p4);
+    __p16 = micron::move(o.__p16);
+    __p48 = micron::move(o.__p48);
+    __p256 = micron::move(o.__p256);
+    o.__root = nullptr;
+    o.__size = 0;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/trees/art.hpp.html#L803">line 803</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/trees/art.hpp.html#L814">line 814</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-743b435295d02563">__release_all</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-06fb56bd376755f0"><h3><code>micron::art::size() const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L818">line 818</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__size</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return __size;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__size</code></td><td><a href="../../source/trees/art.hpp.html#L820">line 820</a></td></tr></tbody></table></section><section class="function-entry" id="f-6b81c97d13e118c3"><h3><code>micron::art::empty() const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L824">line 824</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__size == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const noexcept
+  {
+    return __size == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__size == 0</code></td><td><a href="../../source/trees/art.hpp.html#L826">line 826</a></td></tr></tbody></table></section><section class="function-entry" id="f-f3d893931b59d58a"><h3><code>micron::art::clear()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L830">line 830</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear()
+  {
+    __release_all();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="art.hpp.html#f-743b435295d02563">__release_all</a>.</p></section><section class="function-entry" id="f-12ecad1f8ce84eaf"><h3><code>micron::art::node_bytes_live() const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L837">line 837</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  node_bytes_live() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__bytes_rec(const_cast&lt;art *&gt;(this)-&gt;__root)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  node_bytes_live() const noexcept
+  {
+    return __bytes_rec(const_cast&lt;art *&gt;(this)-&gt;__root);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__bytes_rec(const_cast&lt;art *&gt;(this)-&gt;__root)</code></td><td><a href="../../source/trees/art.hpp.html#L839">line 839</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-f7d4a19894c7031b">__bytes_rec</a>.</p></section><section class="function-entry" id="f-a7591c048102f4a7"><h3><code>micron::art::blocks_allocated() const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L843">line 843</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  blocks_allocated() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__pleaf.blocks() + __p4.blocks() + __p16.blocks() + __p48.blocks() + __p256.blocks()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  blocks_allocated() const noexcept
+  {
+    return __pleaf.blocks() + __p4.blocks() + __p16.blocks() + __p48.blocks() + __p256.blocks();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pleaf.blocks() + __p4.blocks() + __p16.blocks() + __p48.blocks() + __p256.blocks()</code></td><td><a href="../../source/trees/art.hpp.html#L845">line 845</a></td></tr></tbody></table></section><section class="function-entry" id="f-f0d635109fcfb54f"><h3><code>micron::art::pool_bytes() const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L849">line 849</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  pool_bytes() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__pleaf.bytes_held() + __p4.bytes_held() + __p16.bytes_held() + __p48.bytes_held() + __p256.bytes_held()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  pool_bytes() const noexcept
+  {
+    return __pleaf.bytes_held() + __p4.bytes_held() + __p16.bytes_held() + __p48.bytes_held() + __p256.bytes_held();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pleaf.bytes_held() + __p4.bytes_held() + __p16.bytes_held() + __p48.bytes_held() + __p256.bytes_held()</code></td><td><a href="../../source/trees/art.hpp.html#L851">line 851</a></td></tr></tbody></table></section><section class="function-entry" id="f-217428058a2c6890"><h3><code>micron::art::insert(const K &amp;k, V v)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L855">line 855</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  insert(const K &amp;k, V v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>V v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  insert(const K &amp;k, V v)
+  {
+    bool ins = false;
+    __root = __insert(__root, hash&lt;hash64_t&gt;(k), k, micron::move(v), 0, ins);
+    if ( ins ) ++__size;
+    return ins;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ins</code></td><td><a href="../../source/trees/art.hpp.html#L860">line 860</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-b0a32ae6d4f36bd9">__insert</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-65eb4041476d71cc"><h3><code>micron::art::insert_or_assign(const K &amp;k, V v)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L864">line 864</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  insert_or_assign(const K &amp;k, V v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>V v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  insert_or_assign(const K &amp;k, V v)
+  {
+    bool ins = false;
+    hash64_t h = hash&lt;hash64_t&gt;(k);
+    __root = __insert(__root, h, k, micron::move(v), 0, ins);
+    if ( ins ) ++__size;
+    return ins;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ins</code></td><td><a href="../../source/trees/art.hpp.html#L870">line 870</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>, <a href="art.hpp.html#f-b0a32ae6d4f36bd9">__insert</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-c31366756d0c6aca"><h3><code>micron::art::update(const K &amp;k, Fn fn)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L875">line 875</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  V &amp;
+  update(const K &amp;k, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  V &amp;
+  update(const K &amp;k, Fn fn)
+  {
+    V *cur = find(k);
+    V nv = fn(static_cast&lt;const V *&gt;(cur));
+    insert_or_assign(k, micron::move(nv));
+    return *find(k);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*find(k)</code></td><td><a href="../../source/trees/art.hpp.html#L880">line 880</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-3060bb985794af90">find</a>, <a href="art.hpp.html#f-65eb4041476d71cc">insert_or_assign</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-d8ae54fc90d0ad6d"><h3><code>micron::art::insert_or_modify(const K &amp;k, MakeV make, Modify modify)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L885">line 885</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class MakeV, class Modify&gt;
+  V &amp;
+  insert_or_modify(const K &amp;k, MakeV make, Modify modify)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>MakeV make</code></li><li><code>Modify modify</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class MakeV, class Modify&gt;
+  V &amp;
+  insert_or_modify(const K &amp;k, MakeV make, Modify modify)
+  {
+    V *cur = find(k);
+    if ( cur ) {
+      modify(*cur);
+      return *cur;
+    }
+    insert(k, make());
+    return *find(k);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*cur</code></td><td><a href="../../source/trees/art.hpp.html#L890">line 890</a></td></tr><tr class="t-dsc"><td><code>*find(k)</code></td><td><a href="../../source/trees/art.hpp.html#L893">line 893</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-3060bb985794af90">find</a>, <a href="art.hpp.html#f-217428058a2c6890">insert</a>.</p></section><section class="function-entry" id="f-f93027e93ab90d41"><h3><code>micron::art::emplace(const K &amp;k, Args &amp;&amp;...args)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L898">line 898</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  bool
+  emplace(const K &amp;k, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Returns <code>insert(k, V(micron::forward&lt;Args&gt;(args)...))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  bool
+  emplace(const K &amp;k, Args &amp;&amp;...args)
+  {
+    return insert(k, V(micron::forward&lt;Args&gt;(args)...));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>insert(k, V(micron::forward&lt;Args&gt;(args)...))</code></td><td><a href="../../source/trees/art.hpp.html#L900">line 900</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-217428058a2c6890">insert</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-5a1747bdef0db2df"><h3><code>micron::art::count(const K &amp;k) const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L904">line 904</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  count(const K &amp;k) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>contains(k) ? 1u : 0u</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  count(const K &amp;k) const noexcept
+  {
+    return contains(k) ? 1u : 0u;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>contains(k) ? 1u : 0u</code></td><td><a href="../../source/trees/art.hpp.html#L906">line 906</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-926447fd20a5910e">contains</a>.</p></section><section class="function-entry" id="f-fd4f0059fd8f9c1d"><h3><code>micron::art::max_size() const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L910">line 910</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  max_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__size</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  max_size() const noexcept
+  {
+    return __size;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__size</code></td><td><a href="../../source/trees/art.hpp.html#L912">line 912</a></td></tr></tbody></table></section><section class="function-entry" id="f-1ef6f13fde7d1897"><h3><code>micron::art::swap(art &amp;o) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L916">line 916</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  swap(art &amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>art &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  swap(art &amp;o) noexcept
+  {
+    __pleaf.swap(o.__pleaf);
+    __p4.swap(o.__p4);
+    __p16.swap(o.__p16);
+    __p48.swap(o.__p48);
+    __p256.swap(o.__p256);
+    micron::swap(__root, o.__root);
+    micron::swap(__size, o.__size);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-3060bb985794af90"><h3><code>micron::art::find(const K &amp;k) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L928">line 928</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>V *
+  find(const K &amp;k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">V *
+  find(const K &amp;k) noexcept
+  {
+    __leaf *lf = __find_leaf(__root, hash&lt;hash64_t&gt;(k), k, 0);
+    return lf ? &amp;lf-&gt;value : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lf ? &amp;lf-&gt;value : nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L931">line 931</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-96c16fed23af86c2">__find_leaf</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>.</p></section><section class="function-entry" id="f-324d64049f52913f"><h3><code>micron::art::find(const K &amp;k) const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L935">line 935</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const V *
+  find(const K &amp;k) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>const_cast&lt;art *&gt;(this)-&gt;find(k)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const V *
+  find(const K &amp;k) const noexcept
+  {
+    return const_cast&lt;art *&gt;(this)-&gt;find(k);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;art *&gt;(this)-&gt;find(k)</code></td><td><a href="../../source/trees/art.hpp.html#L937">line 937</a></td></tr></tbody></table></section><section class="function-entry" id="f-926447fd20a5910e"><h3><code>micron::art::contains(const K &amp;k) const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L941">line 941</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  contains(const K &amp;k) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>find(k) != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  contains(const K &amp;k) const noexcept
+  {
+    return find(k) != nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>find(k) != nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L943">line 943</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-3060bb985794af90">find</a>.</p></section><section class="function-entry" id="f-25124761156b1df0"><h3><code>micron::art::at(const K &amp;k)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L947">line 947</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>V &amp;
+  at(const K &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">V &amp;
+  at(const K &amp;k)
+  {
+    V *v = find(k);
+    if ( !v ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;art::at(): key not found&quot;);
+    return *v;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*v</code></td><td><a href="../../source/trees/art.hpp.html#L952">line 952</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;art::at(): key not found&quot;)</code></td><td><a href="../../source/trees/art.hpp.html#L951">line 951</a><br>Within <code>( !v )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-3060bb985794af90">find</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-b3318528e46e22a8"><h3><code>micron::art::erase(const K &amp;k)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L956">line 956</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  erase(const K &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  erase(const K &amp;k)
+  {
+    bool ok = __erase(__root, hash&lt;hash64_t&gt;(k), k, 0);
+    if ( ok ) --__size;
+    return ok;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ok</code></td><td><a href="../../source/trees/art.hpp.html#L960">line 960</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-7d3e2ba7222668f8">__erase</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>.</p></section><section class="function-entry" id="f-f35fe6ae52701f47"><h3><code>micron::art::const_iterator::const_iterator()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1064">line 1064</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const_iterator() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-1c1628aebb4cdfb9"><h3><code>micron::art::const_iterator::const_iterator(const __node_base *root)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1066">line 1066</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit const_iterator(const __node_base *root)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __node_base *root</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit const_iterator(const __node_base *root)
+    {
+      if ( root ) __descend(root);
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="art.hpp.html#f-5491e38be1a4a94d">__descend</a>.</p></section><section class="function-entry" id="f-259e9f154cdc045f"><h3><code>micron::art::const_iterator::operator*() const</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1072">line 1072</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>reference
+    operator*() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>reference{ __lf-&gt;key, __lf-&gt;value }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">reference
+    operator*() const
+    {
+      return reference{ __lf-&gt;key, __lf-&gt;value };
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reference{ __lf-&gt;key, __lf-&gt;value }</code></td><td><a href="../../source/trees/art.hpp.html#L1074">line 1074</a></td></tr></tbody></table></section><section class="function-entry" id="f-8c046fba58bb0571"><h3><code>micron::art::const_iterator::operator++()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1078">line 1078</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator &amp;
+    operator++()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator &amp;
+    operator++()
+    {
+      if ( __lf &amp;&amp; __lf-&gt;next ) {
+        __lf = __lf-&gt;next;
+        return *this;
+      }
+      __lf = nullptr;
+      __unwind();
+      return *this;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/trees/art.hpp.html#L1082">line 1082</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/trees/art.hpp.html#L1086">line 1086</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-a74ab523d4b002ee">__unwind</a>.</p></section><section class="function-entry" id="f-2c7844cb59d521b0"><h3><code>micron::art::const_iterator::operator++(int)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1090">line 1090</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+    operator++(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+    operator++(int)
+    {
+      const_iterator __t = *this;
+      ++*this;
+      return __t;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__t</code></td><td><a href="../../source/trees/art.hpp.html#L1094">line 1094</a></td></tr></tbody></table></section><section class="function-entry" id="f-df176d21c3b3a395"><h3><code>micron::art::const_iterator::operator==(const const_iterator &amp;__o) const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1098">line 1098</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator==(const const_iterator &amp;__o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;__o</code></li></ul><h4>Effects</h4><p>Returns <code>__lf == __o.__lf</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator==(const const_iterator &amp;__o) const noexcept
+    {
+      return __lf == __o.__lf;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__lf == __o.__lf</code></td><td><a href="../../source/trees/art.hpp.html#L1100">line 1100</a></td></tr></tbody></table></section><section class="function-entry" id="f-e7bd42b32399c095"><h3><code>micron::art::const_iterator::operator!=(const const_iterator &amp;__o) const noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1104">line 1104</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator!=(const const_iterator &amp;__o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;__o</code></li></ul><h4>Effects</h4><p>Returns <code>__lf != __o.__lf</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator!=(const const_iterator &amp;__o) const noexcept
+    {
+      return __lf != __o.__lf;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__lf != __o.__lf</code></td><td><a href="../../source/trees/art.hpp.html#L1106">line 1106</a></td></tr></tbody></table></section><section class="function-entry" id="f-a0f4c7fd589dd176"><h3><code>micron::art::begin() const</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1113">line 1113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  begin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator{ __root }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  begin() const
+  {
+    return const_iterator{ __root };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator{ __root }</code></td><td><a href="../../source/trees/art.hpp.html#L1115">line 1115</a></td></tr></tbody></table></section><section class="function-entry" id="f-ededcd2dea193779"><h3><code>micron::art::end() const</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1119">line 1119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  end() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  end() const
+  {
+    return const_iterator{};
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator{}</code></td><td><a href="../../source/trees/art.hpp.html#L1121">line 1121</a></td></tr></tbody></table></section><section class="function-entry" id="f-9b6b4d6d87627a56"><h3><code>micron::art::cbegin() const</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1125">line 1125</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  cbegin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>begin()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  cbegin() const
+  {
+    return begin();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>begin()</code></td><td><a href="../../source/trees/art.hpp.html#L1127">line 1127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-a0f4c7fd589dd176">begin</a>.</p></section><section class="function-entry" id="f-f826661482c507cb"><h3><code>micron::art::cend() const</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1131">line 1131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  cend() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>end()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  cend() const
+  {
+    return end();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>end()</code></td><td><a href="../../source/trees/art.hpp.html#L1133">line 1133</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-ededcd2dea193779">end</a>.</p></section><section class="function-entry" id="f-76f9eccb44b7e4be"><h3><code>micron::art::for_each(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1138">line 1138</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn)
+  {
+    __walk(__root, micron::forward&lt;Fn&gt;(fn));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="art.hpp.html#f-bf4a9631ec293785">__walk</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-2cd66f61e691d773"><h3><code>micron::art::for_each(Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1145">line 1145</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const
+  {
+    const_cast&lt;art *&gt;(this)-&gt;__walk(__root, [&amp;](const K &amp;k, V &amp;v) { fn(k, static_cast&lt;const V &amp;&gt;(v)); });
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e1df261378a69f60"><h3><code>micron::art::map(Fn fn) const</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1152">line 1152</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  auto
+  map(Fn fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  auto
+  map(Fn fn) const
+  {
+    if constexpr ( micron::is_invocable_v&lt;Fn, const K &amp;, const V &amp;&gt; ) {
+      using V2 = micron::remove_cvref_t&lt;micron::invoke_result_t&lt;Fn, const K &amp;, const V &amp;&gt;&gt;;
+      art&lt;K, V2&gt; out;
+      for_each([&amp;](const K &amp;k, const V &amp;v) { out.insert(k, fn(k, v)); });
+      return out;
+    } else {
+      using V2 = micron::remove_cvref_t&lt;micron::invoke_result_t&lt;Fn, const V &amp;&gt;&gt;;
+      art&lt;K, V2&gt; out;
+      for_each([&amp;](const K &amp;k, const V &amp;v) { out.insert(k, fn(v)); });
+      return out;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/trees/art.hpp.html#L1158">line 1158</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/trees/art.hpp.html#L1163">line 1163</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-76f9eccb44b7e4be">for_each</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-fea847477b098090"><h3><code>micron::art::__node_base::__node_base(__node_kind k)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L33">line 33</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_base(__node_kind k) : kind(k), num_children(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_kind k</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node_base(__node_kind k) : kind(k), num_children(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8b78d75cc23e2246"><h3><code>micron::art::__leaf::__leaf(hash64_t h, const K &amp;k, const V &amp;v)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L42">line 42</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__leaf(hash64_t h, const K &amp;k, const V &amp;v) : __node_base(__node_kind::leaf), hash(h), key(k), value(v), next(nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>const V &amp;v</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__leaf(hash64_t h, const K &amp;k, const V &amp;v) : __node_base(__node_kind::leaf), hash(h), key(k), value(v), next(nullptr) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b44370af89b85e3c"><h3><code>micron::art::__leaf::__leaf(hash64_t h, const K &amp;k, V &amp;&amp;v)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__leaf(hash64_t h, const K &amp;k, V &amp;&amp;v) : __node_base(__node_kind::leaf), hash(h), key(k), value(micron::move(v)), next(nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>V &amp;&amp;v</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__leaf(hash64_t h, const K &amp;k, V &amp;&amp;v) : __node_base(__node_kind::leaf), hash(h), key(k), value(micron::move(v)), next(nullptr) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fc727b064b0c7faf"><h3><code>micron::art::__n4::__n4()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L51">line 51</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__n4() : __node_base(__node_kind::n4)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__n4() : __node_base(__node_kind::n4)
+    {
+      for ( int i = 0; i &lt; 4; ++i ) {
+        keys[i] = 0;
+        children[i] = nullptr;
+      }
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e3cc9cf8e7b9a068"><h3><code>micron::art::__n16::__n16()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L64">line 64</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__n16() : __node_base(__node_kind::n16)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__n16() : __node_base(__node_kind::n16)
+    {
+      for ( int i = 0; i &lt; 16; ++i ) {
+        keys[i] = 0;
+        children[i] = nullptr;
+      }
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-dc10eca3d0950da8"><h3><code>micron::art::__n48::__n48()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L77">line 77</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__n48() : __node_base(__node_kind::n48)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__n48() : __node_base(__node_kind::n48)
+    {
+      for ( int i = 0; i &lt; 256; ++i ) idx[i] = 0;
+      for ( int i = 0; i &lt; 48; ++i ) children[i] = nullptr;
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f6bf2b8de9c4da17"><h3><code>micron::art::__n256::__n256()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L87">line 87</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__n256() : __node_base(__node_kind::n256)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__n256() : __node_base(__node_kind::n256)
+    {
+      for ( int i = 0; i &lt; 256; ++i ) children[i] = nullptr;
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8e39c7651cdc23c7"><h3><code>micron::art::__mk(__tree_store::block_pool&lt;N&gt; &amp;pool, A &amp;&amp;...a)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L107">line 107</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class N, class... A&gt;
+  [[gnu::always_inline]] N *
+  __mk(__tree_store::block_pool&lt;N&gt; &amp;pool, A &amp;&amp;...a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__tree_store::block_pool&lt;N&gt; &amp;pool</code></li><li><code>A &amp;&amp;...a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class N, class... A&gt;
+  [[gnu::always_inline]] N *
+  __mk(__tree_store::block_pool&lt;N&gt; &amp;pool, A &amp;&amp;...a)
+  {
+    N *mem = pool.take();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      return new (static_cast&lt;void *&gt;(mem)) N(micron::forward&lt;A&gt;(a)...);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      pool.give(mem);
+      throw;
+    }
+#endif
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>new (static_cast&lt;void *&gt;(mem)) N(micron::forward&lt;A&gt;(a)...)</code></td><td><a href="../../source/trees/art.hpp.html#L113">line 113</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/trees/art.hpp.html#L117">line 117</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;A&gt;</a>.</p></section><section class="function-entry" id="f-53b379b5f04fe0d3"><h3><code>micron::art::__rm(__tree_store::block_pool&lt;N&gt; &amp;pool, N *p) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L124">line 124</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class N&gt;
+  [[gnu::always_inline]] void
+  __rm(__tree_store::block_pool&lt;N&gt; &amp;pool, N *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__tree_store::block_pool&lt;N&gt; &amp;pool</code></li><li><code>N *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class N&gt;
+  [[gnu::always_inline]] void
+  __rm(__tree_store::block_pool&lt;N&gt; &amp;pool, N *p) noexcept
+  {
+    p-&gt;~N();
+    pool.give(p);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ec82b2e269718e86"><h3><code>micron::art::__free_node(__node_base *n) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L131">line 131</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __free_node(__node_base *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __free_node(__node_base *n) noexcept
+  {
+    switch ( n-&gt;kind ) {
+    case __node_kind::leaf:
+      __rm(__pleaf, static_cast&lt;__leaf *&gt;(n));
+      break;
+    case __node_kind::n4:
+      __rm(__p4, static_cast&lt;__n4 *&gt;(n));
+      break;
+    case __node_kind::n16:
+      __rm(__p16, static_cast&lt;__n16 *&gt;(n));
+      break;
+    case __node_kind::n48:
+      __rm(__p48, static_cast&lt;__n48 *&gt;(n));
+      break;
+    case __node_kind::n256:
+      __rm(__p256, static_cast&lt;__n256 *&gt;(n));
+      break;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="art.hpp.html#f-53b379b5f04fe0d3">__rm</a>.</p></section><section class="function-entry" id="f-19aebb53652b2bb1"><h3><code>micron::art::__destroy_leaves(__node_base *n) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L154">line 154</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __destroy_leaves(__node_base *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __destroy_leaves(__node_base *n) noexcept
+  {
+    if ( !n ) return;
+    if ( n-&gt;kind == __node_kind::leaf ) {
+      __leaf *cur = static_cast&lt;__leaf *&gt;(n);
+      while ( cur ) {
+        __leaf *next = cur-&gt;next;
+        cur-&gt;~__leaf();
+        cur = next;
+      }
+      return;
+    }
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) __destroy_leaves(p-&gt;children[i]);
+      break;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) __destroy_leaves(p-&gt;children[i]);
+      break;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      for ( u16 i = 0; i &lt; 48; ++i )
+        if ( p-&gt;children[i] ) __destroy_leaves(p-&gt;children[i]);
+      break;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      for ( u16 i = 0; i &lt; 256; ++i ) __destroy_leaves(p-&gt;children[i]);
+      break;
+    }
+    default:
+      break;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/art.hpp.html#L156">line 156</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/art.hpp.html#L164">line 164</a></td></tr></tbody></table></section><section class="function-entry" id="f-743b435295d02563"><h3><code>micron::art::__release_all() noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L194">line 194</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __release_all() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __release_all() noexcept
+  {
+    if constexpr ( !(micron::is_trivially_destructible_v&lt;K&gt; &amp;&amp; micron::is_trivially_destructible_v&lt;V&gt;)) __destroy_leaves(__root);
+    __pleaf.release();
+    __p4.release();
+    __p16.release();
+    __p48.release();
+    __p256.release();
+    __root = nullptr;
+    __size = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="art.hpp.html#f-19aebb53652b2bb1">__destroy_leaves</a>.</p></section><section class="function-entry" id="f-8fc679649b10505b"><h3><code>micron::art::__byte_at(hash64_t h, usize depth) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L209">line 209</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static u8
+  __byte_at(hash64_t h, usize depth) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>usize depth</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static u8
+  __byte_at(hash64_t h, usize depth) noexcept
+  {
+    if ( depth &gt;= __hash_bytes ) [[unlikely]]
+      return 0u;
+    return static_cast&lt;u8&gt;((h &gt;&gt; (8u * depth)) &amp; 0xFFu);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0u</code></td><td><a href="../../source/trees/art.hpp.html#L212">line 212</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;u8&gt;((h &gt;&gt; (8u * depth)) &amp; 0xFFu)</code></td><td><a href="../../source/trees/art.hpp.html#L213">line 213</a></td></tr></tbody></table></section><section class="function-entry" id="f-6894be4c88e89cba"><h3><code>micron::art::__find_child(__node_base *n, u8 b) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L217">line 217</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __node_base *
+  __find_child(__node_base *n, u8 b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li><li><code>u8 b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __node_base *
+  __find_child(__node_base *n, u8 b) noexcept
+  {
+    if ( !n || n-&gt;kind == __node_kind::leaf ) return nullptr;
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i )
+        if ( p-&gt;keys[i] == b ) return p-&gt;children[i];
+      return nullptr;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i )
+        if ( p-&gt;keys[i] == b ) return p-&gt;children[i];
+      return nullptr;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      u8 ix = p-&gt;idx[b];
+      return ix == 0 ? nullptr : p-&gt;children[ix - 1];
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      return p-&gt;children[b];
+    }
+    default:
+      return nullptr;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L219">line 219</a></td></tr><tr class="t-dsc"><td><code>p-&gt;children[i]</code></td><td><a href="../../source/trees/art.hpp.html#L224">line 224</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L225">line 225</a></td></tr><tr class="t-dsc"><td><code>p-&gt;children[i]</code></td><td><a href="../../source/trees/art.hpp.html#L230">line 230</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L231">line 231</a></td></tr><tr class="t-dsc"><td><code>ix == 0 ? nullptr : p-&gt;children[ix - 1]</code></td><td><a href="../../source/trees/art.hpp.html#L236">line 236</a></td></tr><tr class="t-dsc"><td><code>p-&gt;children[b]</code></td><td><a href="../../source/trees/art.hpp.html#L240">line 240</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L243">line 243</a></td></tr></tbody></table></section><section class="function-entry" id="f-08d4a57ec4a914a9"><h3><code>micron::art::__find_child_slot(__node_base *n, u8 b) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L248">line 248</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __node_base **
+  __find_child_slot(__node_base *n, u8 b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li><li><code>u8 b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __node_base **
+  __find_child_slot(__node_base *n, u8 b) noexcept
+  {
+    if ( !n || n-&gt;kind == __node_kind::leaf ) return nullptr;
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i )
+        if ( p-&gt;keys[i] == b ) return &amp;p-&gt;children[i];
+      return nullptr;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i )
+        if ( p-&gt;keys[i] == b ) return &amp;p-&gt;children[i];
+      return nullptr;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      u8 ix = p-&gt;idx[b];
+      return ix == 0 ? nullptr : &amp;p-&gt;children[ix - 1];
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      return p-&gt;children[b] ? &amp;p-&gt;children[b] : nullptr;
+    }
+    default:
+      return nullptr;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L250">line 250</a></td></tr><tr class="t-dsc"><td><code>&amp;p-&gt;children[i]</code></td><td><a href="../../source/trees/art.hpp.html#L255">line 255</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L256">line 256</a></td></tr><tr class="t-dsc"><td><code>&amp;p-&gt;children[i]</code></td><td><a href="../../source/trees/art.hpp.html#L261">line 261</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L262">line 262</a></td></tr><tr class="t-dsc"><td><code>ix == 0 ? nullptr : &amp;p-&gt;children[ix - 1]</code></td><td><a href="../../source/trees/art.hpp.html#L267">line 267</a></td></tr><tr class="t-dsc"><td><code>p-&gt;children[b] ? &amp;p-&gt;children[b] : nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L271">line 271</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L274">line 274</a></td></tr></tbody></table></section><section class="function-entry" id="f-766a0c0f5f9e2996"><h3><code>micron::art::__grow(__node_base *n)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L279">line 279</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_base *
+  __grow(__node_base *n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node_base *
+  __grow(__node_base *n)
+  {
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      auto *q = __mk(__p16);
+      q-&gt;num_children = p-&gt;num_children;
+      for ( u8 i = 0; i &lt; 4u; ++i ) {
+        q-&gt;keys[i] = p-&gt;keys[i];
+        q-&gt;children[i] = p-&gt;children[i];
+      }
+      __rm(__p4, p);
+      return q;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      auto *q = __mk(__p48);
+      q-&gt;num_children = p-&gt;num_children;
+      for ( u8 i = 0; i &lt; 16u; ++i ) {
+        q-&gt;idx[p-&gt;keys[i]] = i + 1;
+        q-&gt;children[i] = p-&gt;children[i];
+      }
+      __rm(__p16, p);
+      return q;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      auto *q = __mk(__p256);
+      q-&gt;num_children = p-&gt;num_children;
+      for ( int b = 0; b &lt; 256; ++b ) {
+        if ( p-&gt;idx[b] != 0 ) q-&gt;children[b] = p-&gt;children[p-&gt;idx[b] - 1];
+      }
+      __rm(__p48, p);
+      return q;
+    }
+    default:
+      return n;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>q</code></td><td><a href="../../source/trees/art.hpp.html#L291">line 291</a></td></tr><tr class="t-dsc"><td><code>q</code></td><td><a href="../../source/trees/art.hpp.html#L302">line 302</a></td></tr><tr class="t-dsc"><td><code>q</code></td><td><a href="../../source/trees/art.hpp.html#L312">line 312</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L315">line 315</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-8e39c7651cdc23c7">__mk</a>, <a href="art.hpp.html#f-53b379b5f04fe0d3">__rm</a>.</p></section><section class="function-entry" id="f-59dcecfcdf8c6b41"><h3><code>micron::art::__add_child(__node_base *n, u8 b, __node_base *child)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L320">line 320</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_base *
+  __add_child(__node_base *n, u8 b, __node_base *child)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li><li><code>u8 b</code></li><li><code>__node_base *child</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node_base *
+  __add_child(__node_base *n, u8 b, __node_base *child)
+  {
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      if ( p-&gt;num_children == 4 ) {
+        n = __grow(n);
+        return __add_child(n, b, child);
+      }
+      p-&gt;keys[p-&gt;num_children] = b;
+      p-&gt;children[p-&gt;num_children] = child;
+      ++p-&gt;num_children;
+      return n;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      if ( p-&gt;num_children == 16 ) {
+        n = __grow(n);
+        return __add_child(n, b, child);
+      }
+      p-&gt;keys[p-&gt;num_children] = b;
+      p-&gt;children[p-&gt;num_children] = child;
+      ++p-&gt;num_children;
+      return n;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      if ( p-&gt;num_children == 48 ) {
+        n = __grow(n);
+        return __add_child(n, b, child);
+      }
+      p-&gt;idx[b] = p-&gt;num_children + 1;
+      p-&gt;children[p-&gt;num_children] = child;
+      ++p-&gt;num_children;
+      return n;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      if ( !p-&gt;children[b] ) ++p-&gt;num_children;
+      p-&gt;children[b] = child;
+      return n;
+    }
+    default:
+      return n;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__add_child(n, b, child)</code></td><td><a href="../../source/trees/art.hpp.html#L327">line 327</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L332">line 332</a></td></tr><tr class="t-dsc"><td><code>__add_child(n, b, child)</code></td><td><a href="../../source/trees/art.hpp.html#L338">line 338</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>__add_child(n, b, child)</code></td><td><a href="../../source/trees/art.hpp.html#L349">line 349</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L354">line 354</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L360">line 360</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L363">line 363</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-766a0c0f5f9e2996">__grow</a>.</p></section><section class="function-entry" id="f-7a6d09a7b726f826"><h3><code>micron::art::__shrink(__node_base *n)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L368">line 368</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_base *
+  __shrink(__node_base *n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node_base *
+  __shrink(__node_base *n)
+  {
+    switch ( n-&gt;kind ) {
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      auto *q = __mk(__p4);
+      q-&gt;num_children = p-&gt;num_children;
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) {
+        q-&gt;keys[i] = p-&gt;keys[i];
+        q-&gt;children[i] = p-&gt;children[i];
+      }
+      __rm(__p16, p);
+      return q;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      auto *q = __mk(__p16);
+      u8 m = 0;
+      for ( int bb = 0; bb &lt; 256; ++bb )
+        if ( p-&gt;idx[bb] != 0 ) {
+          q-&gt;keys[m] = static_cast&lt;u8&gt;(bb);
+          q-&gt;children[m] = p-&gt;children[p-&gt;idx[bb] - 1];
+          ++m;
+        }
+      q-&gt;num_children = m;
+      __rm(__p48, p);
+      return q;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      auto *q = __mk(__p48);
+      u8 m = 0;
+      for ( int bb = 0; bb &lt; 256; ++bb )
+        if ( p-&gt;children[bb] ) {
+          q-&gt;children[m] = p-&gt;children[bb];
+          q-&gt;idx[bb] = static_cast&lt;u8&gt;(m + 1);
+          ++m;
+        }
+      q-&gt;num_children = m;
+      __rm(__p256, p);
+      return q;
+    }
+    default:
+      return n;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>q</code></td><td><a href="../../source/trees/art.hpp.html#L380">line 380</a></td></tr><tr class="t-dsc"><td><code>q</code></td><td><a href="../../source/trees/art.hpp.html#L394">line 394</a></td></tr><tr class="t-dsc"><td><code>q</code></td><td><a href="../../source/trees/art.hpp.html#L408">line 408</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L411">line 411</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-8e39c7651cdc23c7">__mk</a>, <a href="art.hpp.html#f-53b379b5f04fe0d3">__rm</a>.</p></section><section class="function-entry" id="f-1fe7be5f022045b9"><h3><code>micron::art::__remove_child(__node_base *n, u8 b)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L416">line 416</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_base *
+  __remove_child(__node_base *n, u8 b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li><li><code>u8 b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node_base *
+  __remove_child(__node_base *n, u8 b)
+  {
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) {
+        if ( p-&gt;keys[i] == b ) {
+          for ( u8 j = i; j + 1 &lt; p-&gt;num_children; ++j ) {
+            p-&gt;keys[j] = p-&gt;keys[j + 1];
+            p-&gt;children[j] = p-&gt;children[j + 1];
+          }
+          --p-&gt;num_children;
+          if ( p-&gt;num_children == 0 ) {
+            __rm(__p4, p);
+            return nullptr;
+          }
+          return n;
+        }
+      }
+      return n;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) {
+        if ( p-&gt;keys[i] == b ) {
+          for ( u8 j = i; j + 1 &lt; p-&gt;num_children; ++j ) {
+            p-&gt;keys[j] = p-&gt;keys[j + 1];
+            p-&gt;children[j] = p-&gt;children[j + 1];
+          }
+          --p-&gt;num_children;
+          if ( p-&gt;num_children == 0 ) {
+            __rm(__p16, p);
+            return nullptr;
+          }
+          if ( p-&gt;num_children &lt;= 3 ) return __shrink(n);
+          return n;
+        }
+      }
+      return n;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      u8 ix = p-&gt;idx[b];
+      if ( ix == 0 ) return n;
+      u16 slot = static_cast&lt;u16&gt;(ix - 1);
+      u16 last = static_cast&lt;u16&gt;(p-&gt;num_children - 1);
+      if ( slot != last ) {
+        p-&gt;children[slot] = p-&gt;children[last];
+        for ( int bb = 0; bb &lt; 256; ++bb ) {
+          if ( p-&gt;idx[bb] == last + 1 ) {
+            p-&gt;idx[bb] = static_cast&lt;u8&gt;(slot + 1);
+            break;
+          }
+        }
+      }
+      p-&gt;children[last] = nullptr;
+      p-&gt;idx[b] = 0;
+      --p-&gt;num_children;
+      if ( p-&gt;num_children == 0 ) {
+        __rm(__p48, p);
+        return nullptr;
+      }
+      if ( p-&gt;num_children &lt;= 12 ) return __shrink(n);
+      return n;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      if ( p-&gt;children[b] ) {
+        p-&gt;children[b] = nullptr;
+        --p-&gt;num_children;
+      }
+      if ( p-&gt;num_children == 0 ) {
+        __rm(__p256, p);
+        return nullptr;
+      }
+      if ( p-&gt;num_children &lt;= 37 ) return __shrink(n);
+      return n;
+    }
+    default:
+      return n;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L430">line 430</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L432">line 432</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L435">line 435</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L448">line 448</a></td></tr><tr class="t-dsc"><td><code>__shrink(n)</code></td><td><a href="../../source/trees/art.hpp.html#L450">line 450</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L451">line 451</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L454">line 454</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L459">line 459</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L476">line 476</a></td></tr><tr class="t-dsc"><td><code>__shrink(n)</code></td><td><a href="../../source/trees/art.hpp.html#L478">line 478</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L479">line 479</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L489">line 489</a></td></tr><tr class="t-dsc"><td><code>__shrink(n)</code></td><td><a href="../../source/trees/art.hpp.html#L491">line 491</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L492">line 492</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L495">line 495</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-53b379b5f04fe0d3">__rm</a>, <a href="art.hpp.html#f-7a6d09a7b726f826">__shrink</a>.</p></section><section class="function-entry" id="f-b09c262794afe136"><h3><code>micron::art::__release(__node_base *n)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L500">line 500</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __release(__node_base *n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __release(__node_base *n)
+  {
+    if ( !n ) return;
+    if ( n-&gt;kind == __node_kind::leaf ) {
+      __leaf *cur = static_cast&lt;__leaf *&gt;(n);
+      while ( cur ) {
+        __leaf *nx = cur-&gt;next;
+        __rm(__pleaf, cur);
+        cur = nx;
+      }
+      return;
+    }
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) __release(p-&gt;children[i]);
+      __rm(__p4, p);
+      break;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) __release(p-&gt;children[i]);
+      __rm(__p16, p);
+      break;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      for ( u8 i = 0; i &lt; 48; ++i )
+        if ( p-&gt;children[i] ) __release(p-&gt;children[i]);
+      __rm(__p48, p);
+      break;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      for ( int i = 0; i &lt; 256; ++i ) __release(p-&gt;children[i]);
+      __rm(__p256, p);
+      break;
+    }
+    default:
+      break;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/art.hpp.html#L502">line 502</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/art.hpp.html#L510">line 510</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-53b379b5f04fe0d3">__rm</a>.</p></section><section class="function-entry" id="f-b0a32ae6d4f36bd9"><h3><code>micron::art::__insert(__node_base *n, hash64_t h, const K &amp;k, V v, usize depth, bool &amp;inserted)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L544">line 544</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_base *
+  __insert(__node_base *n, hash64_t h, const K &amp;k, V v, usize depth, bool &amp;inserted)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>V v</code></li><li><code>usize depth</code></li><li><code>bool &amp;inserted</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node_base *
+  __insert(__node_base *n, hash64_t h, const K &amp;k, V v, usize depth, bool &amp;inserted)
+  {
+    if ( !n ) {
+      inserted = true;
+      return __mk(__pleaf, h, k, micron::move(v));
+    }
+    if ( n-&gt;kind == __node_kind::leaf ) {
+      auto *lf = static_cast&lt;__leaf *&gt;(n);
+      if ( lf-&gt;hash == h ) {
+
+        __leaf *cur = lf;
+        while ( true ) {
+          if ( cur-&gt;key == k ) {
+            cur-&gt;value = micron::move(v);
+            inserted = false;
+            return n;
+          }
+          if ( !cur-&gt;next ) {
+            cur-&gt;next = __mk(__pleaf, h, k, micron::move(v));
+            inserted = true;
+            return n;
+          }
+          cur = cur-&gt;next;
+        }
+      }
+
+      if ( depth &gt;= __hash_bytes ) [[unlikely]] {
+        __leaf *cur = lf;
+        while ( cur-&gt;next ) cur = cur-&gt;next;
+        cur-&gt;next = __mk(__pleaf, h, k, micron::move(v));
+        inserted = true;
+        return n;
+      }
+
+      u8 b_old = __byte_at(lf-&gt;hash, depth);
+      u8 b_new = __byte_at(h, depth);
+      auto *inner = __mk(__p4);
+      __node_base *new_root = inner;
+      if ( b_old == b_new ) {
+
+        __node_base *deeper = __split_descend(lf, h, k, micron::move(v), depth + 1);
+        new_root = __add_child(new_root, b_old, deeper);
+        inserted = true;
+        return new_root;
+      }
+      __node_base *new_leaf = __mk(__pleaf, h, k, micron::move(v));
+      new_root = __add_child(new_root, b_old, lf);
+      new_root = __add_child(new_root, b_new, new_leaf);
+      inserted = true;
+      return new_root;
+    }
+
+    u8 b = __byte_at(h, depth);
+    __node_base **slot = __find_child_slot(n, b);
+    if ( slot ) {
+      *slot = __insert(*slot, h, k, micron::move(v), depth + 1, inserted);
+      return n;
+    }
+
+    auto *new_leaf = __mk(__pleaf, h, k, micron::move(v));
+    inserted = true;
+    return __add_child(n, b, new_leaf);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mk(__pleaf, h, k, micron::move(v))</code></td><td><a href="../../source/trees/art.hpp.html#L548">line 548</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L559">line 559</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L564">line 564</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L575">line 575</a></td></tr><tr class="t-dsc"><td><code>new_root</code></td><td><a href="../../source/trees/art.hpp.html#L587">line 587</a></td></tr><tr class="t-dsc"><td><code>new_root</code></td><td><a href="../../source/trees/art.hpp.html#L593">line 593</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/art.hpp.html#L600">line 600</a></td></tr><tr class="t-dsc"><td><code>__add_child(n, b, new_leaf)</code></td><td><a href="../../source/trees/art.hpp.html#L605">line 605</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-8e39c7651cdc23c7">__mk</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="art.hpp.html#f-8fc679649b10505b">__byte_at</a>, <a href="art.hpp.html#f-6b4a439b2995c577">__split_descend</a>, <a href="art.hpp.html#f-59dcecfcdf8c6b41">__add_child</a>, <a href="art.hpp.html#f-08d4a57ec4a914a9">__find_child_slot</a>.</p></section><section class="function-entry" id="f-6b4a439b2995c577"><h3><code>micron::art::__split_descend(__leaf *lf, hash64_t h, const K &amp;k, V v, usize depth)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L609">line 609</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_base *
+  __split_descend(__leaf *lf, hash64_t h, const K &amp;k, V v, usize depth)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__leaf *lf</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>V v</code></li><li><code>usize depth</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node_base *
+  __split_descend(__leaf *lf, hash64_t h, const K &amp;k, V v, usize depth)
+  {
+    if ( depth &gt;= __hash_bytes ) [[unlikely]] {
+      __leaf *cur = lf;
+      while ( cur-&gt;next ) cur = cur-&gt;next;
+      cur-&gt;next = __mk(__pleaf, h, k, micron::move(v));
+      return lf;
+    }
+    u8 b_old = __byte_at(lf-&gt;hash, depth);
+    u8 b_new = __byte_at(h, depth);
+    if ( b_old != b_new ) {
+      __node_base *new_root = __mk(__p4);
+      __node_base *new_leaf = __mk(__pleaf, h, k, micron::move(v));
+      new_root = __add_child(new_root, b_old, lf);
+      new_root = __add_child(new_root, b_new, new_leaf);
+      return new_root;
+    }
+    auto *inner = __mk(__p4);
+    __node_base *deeper = __split_descend(lf, h, k, micron::move(v), depth + 1);
+    return __add_child(inner, b_old, deeper);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lf</code></td><td><a href="../../source/trees/art.hpp.html#L615">line 615</a></td></tr><tr class="t-dsc"><td><code>new_root</code></td><td><a href="../../source/trees/art.hpp.html#L624">line 624</a></td></tr><tr class="t-dsc"><td><code>__add_child(inner, b_old, deeper)</code></td><td><a href="../../source/trees/art.hpp.html#L628">line 628</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-8e39c7651cdc23c7">__mk</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="art.hpp.html#f-8fc679649b10505b">__byte_at</a>, <a href="art.hpp.html#f-59dcecfcdf8c6b41">__add_child</a>.</p></section><section class="function-entry" id="f-7d3e2ba7222668f8"><h3><code>micron::art::__erase(__node_base *&amp;n, hash64_t h, const K &amp;k, usize depth)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L632">line 632</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  __erase(__node_base *&amp;n, hash64_t h, const K &amp;k, usize depth)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *&amp;n</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>usize depth</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  __erase(__node_base *&amp;n, hash64_t h, const K &amp;k, usize depth)
+  {
+    if ( !n ) return false;
+    if ( n-&gt;kind == __node_kind::leaf ) {
+      __leaf *head = static_cast&lt;__leaf *&gt;(n);
+
+      __leaf *prev = nullptr;
+      for ( __leaf *cur = head; cur; cur = cur-&gt;next ) {
+        if ( cur-&gt;hash == h &amp;&amp; cur-&gt;key == k ) {
+          if ( !prev ) {
+
+            if ( cur-&gt;next ) {
+              n = cur-&gt;next;
+              cur-&gt;next = nullptr;
+              __rm(__pleaf, cur);
+              return true;
+            }
+            __rm(__pleaf, cur);
+            n = nullptr;
+            return true;
+          }
+          prev-&gt;next = cur-&gt;next;
+          cur-&gt;next = nullptr;
+          __rm(__pleaf, cur);
+          return true;
+        }
+        prev = cur;
+      }
+      return false;
+    }
+    u8 b = __byte_at(h, depth);
+    __node_base **slot = __find_child_slot(n, b);
+    if ( !slot ) return false;
+    __node_base *child = *slot;
+    bool e = __erase(child, h, k, depth + 1);
+    if ( !e ) return false;
+    if ( child == nullptr ) {
+      n = __remove_child(n, b);
+    } else {
+      *slot = child;
+    }
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/art.hpp.html#L634">line 634</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/art.hpp.html#L647">line 647</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/art.hpp.html#L651">line 651</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/art.hpp.html#L656">line 656</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/art.hpp.html#L660">line 660</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/art.hpp.html#L664">line 664</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/art.hpp.html#L667">line 667</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/art.hpp.html#L673">line 673</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-53b379b5f04fe0d3">__rm</a>, <a href="art.hpp.html#f-8fc679649b10505b">__byte_at</a>, <a href="art.hpp.html#f-08d4a57ec4a914a9">__find_child_slot</a>, <a href="art.hpp.html#f-1fe7be5f022045b9">__remove_child</a>.</p></section><section class="function-entry" id="f-96c16fed23af86c2"><h3><code>micron::art::__find_leaf(__node_base *n, hash64_t h, const K &amp;k, usize depth)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L677">line 677</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__leaf *
+  __find_leaf(__node_base *n, hash64_t h, const K &amp;k, usize depth)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>usize depth</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__leaf *
+  __find_leaf(__node_base *n, hash64_t h, const K &amp;k, usize depth)
+  {
+    while ( n ) {
+      if ( n-&gt;kind == __node_kind::leaf ) {
+        for ( __leaf *lf = static_cast&lt;__leaf *&gt;(n); lf; lf = lf-&gt;next ) {
+          if ( lf-&gt;hash == h &amp;&amp; lf-&gt;key == k ) return lf;
+        }
+        return nullptr;
+      }
+      u8 b = __byte_at(h, depth);
+      n = __find_child(n, b);
+      ++depth;
+    }
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lf</code></td><td><a href="../../source/trees/art.hpp.html#L682">line 682</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L684">line 684</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L690">line 690</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-8fc679649b10505b">__byte_at</a>, <a href="art.hpp.html#f-6894be4c88e89cba">__find_child</a>.</p></section><section class="function-entry" id="f-bf4a9631ec293785"><h3><code>micron::art::__walk(__node_base *n, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L695">line 695</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  __walk(__node_base *n, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  __walk(__node_base *n, Fn &amp;&amp;fn)
+  {
+    if ( !n ) return;
+    if ( n-&gt;kind == __node_kind::leaf ) {
+      for ( auto *lf = static_cast&lt;__leaf *&gt;(n); lf; lf = lf-&gt;next ) fn(lf-&gt;key, lf-&gt;value);
+      return;
+    }
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) __walk(p-&gt;children[i], micron::forward&lt;Fn&gt;(fn));
+      break;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) __walk(p-&gt;children[i], micron::forward&lt;Fn&gt;(fn));
+      break;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      for ( u8 i = 0; i &lt; 48; ++i )
+        if ( p-&gt;children[i] ) __walk(p-&gt;children[i], micron::forward&lt;Fn&gt;(fn));
+      break;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      for ( int i = 0; i &lt; 256; ++i )
+        if ( p-&gt;children[i] ) __walk(p-&gt;children[i], micron::forward&lt;Fn&gt;(fn));
+      break;
+    }
+    default:
+      break;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/art.hpp.html#L697">line 697</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/art.hpp.html#L700">line 700</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-f7d4a19894c7031b"><h3><code>micron::art::__bytes_rec(__node_base *n) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L731">line 731</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static usize
+  __bytes_rec(__node_base *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node_base *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static usize
+  __bytes_rec(__node_base *n) noexcept
+  {
+    if ( !n ) return 0;
+    if ( n-&gt;kind == __node_kind::leaf ) {
+      usize t = 0;
+      for ( __leaf *c = static_cast&lt;__leaf *&gt;(n); c; c = c-&gt;next ) t += sizeof(__leaf);
+      return t;
+    }
+    switch ( n-&gt;kind ) {
+    case __node_kind::n4: {
+      auto *p = static_cast&lt;__n4 *&gt;(n);
+      usize t = sizeof(__n4);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) t += __bytes_rec(p-&gt;children[i]);
+      return t;
+    }
+    case __node_kind::n16: {
+      auto *p = static_cast&lt;__n16 *&gt;(n);
+      usize t = sizeof(__n16);
+      for ( u8 i = 0; i &lt; p-&gt;num_children; ++i ) t += __bytes_rec(p-&gt;children[i]);
+      return t;
+    }
+    case __node_kind::n48: {
+      auto *p = static_cast&lt;__n48 *&gt;(n);
+      usize t = sizeof(__n48);
+      for ( u16 i = 0; i &lt; 48; ++i )
+        if ( p-&gt;children[i] ) t += __bytes_rec(p-&gt;children[i]);
+      return t;
+    }
+    case __node_kind::n256: {
+      auto *p = static_cast&lt;__n256 *&gt;(n);
+      usize t = sizeof(__n256);
+      for ( u16 i = 0; i &lt; 256; ++i ) t += __bytes_rec(p-&gt;children[i]);
+      return t;
+    }
+    default:
+      return 0;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/trees/art.hpp.html#L733">line 733</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/trees/art.hpp.html#L737">line 737</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/trees/art.hpp.html#L744">line 744</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/trees/art.hpp.html#L750">line 750</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/trees/art.hpp.html#L757">line 757</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/trees/art.hpp.html#L763">line 763</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/trees/art.hpp.html#L766">line 766</a></td></tr></tbody></table></section><section class="function-entry" id="f-d5bb6d41c7f5142c"><h3><code>micron::art::const_iterator::__child_at(const __node_base *n, u16 i) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L976">line 976</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static const __node_base *
+    __child_at(const __node_base *n, u16 i) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __node_base *n</code></li><li><code>u16 i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static const __node_base *
+    __child_at(const __node_base *n, u16 i) noexcept
+    {
+      switch ( n-&gt;kind ) {
+      case __node_kind::n4: {
+        auto *p = static_cast&lt;const __n4 *&gt;(n);
+        return i &lt; p-&gt;num_children ? p-&gt;children[i] : nullptr;
+      }
+      case __node_kind::n16: {
+        auto *p = static_cast&lt;const __n16 *&gt;(n);
+        return i &lt; p-&gt;num_children ? p-&gt;children[i] : nullptr;
+      }
+      case __node_kind::n48: {
+        auto *p = static_cast&lt;const __n48 *&gt;(n);
+        return i &lt; 48u ? p-&gt;children[i] : nullptr;
+      }
+      case __node_kind::n256: {
+        auto *p = static_cast&lt;const __n256 *&gt;(n);
+        return i &lt; 256u ? p-&gt;children[i] : nullptr;
+      }
+      default:
+        return nullptr;
+      }
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>i &lt; p-&gt;num_children ? p-&gt;children[i] : nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L981">line 981</a></td></tr><tr class="t-dsc"><td><code>i &lt; p-&gt;num_children ? p-&gt;children[i] : nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L985">line 985</a></td></tr><tr class="t-dsc"><td><code>i &lt; 48u ? p-&gt;children[i] : nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L989">line 989</a></td></tr><tr class="t-dsc"><td><code>i &lt; 256u ? p-&gt;children[i] : nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L993">line 993</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L996">line 996</a></td></tr></tbody></table></section><section class="function-entry" id="f-9f106df281203701"><h3><code>micron::art::const_iterator::__slot_count(const __node_base *n) noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1001">line 1001</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static u16
+    __slot_count(const __node_base *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __node_base *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static u16
+    __slot_count(const __node_base *n) noexcept
+    {
+      switch ( n-&gt;kind ) {
+      case __node_kind::n4:
+        return static_cast&lt;const __n4 *&gt;(n)-&gt;num_children;
+      case __node_kind::n16:
+        return static_cast&lt;const __n16 *&gt;(n)-&gt;num_children;
+      case __node_kind::n48:
+        return 48u;
+      case __node_kind::n256:
+        return 256u;
+      default:
+        return 0u;
+      }
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;const __n4 *&gt;(n)-&gt;num_children</code></td><td><a href="../../source/trees/art.hpp.html#L1005">line 1005</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;const __n16 *&gt;(n)-&gt;num_children</code></td><td><a href="../../source/trees/art.hpp.html#L1007">line 1007</a></td></tr><tr class="t-dsc"><td><code>48u</code></td><td><a href="../../source/trees/art.hpp.html#L1009">line 1009</a></td></tr><tr class="t-dsc"><td><code>256u</code></td><td><a href="../../source/trees/art.hpp.html#L1011">line 1011</a></td></tr><tr class="t-dsc"><td><code>0u</code></td><td><a href="../../source/trees/art.hpp.html#L1013">line 1013</a></td></tr></tbody></table></section><section class="function-entry" id="f-5491e38be1a4a94d"><h3><code>micron::art::const_iterator::__descend(const __node_base *n)</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1019">line 1019</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    __descend(const __node_base *n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __node_base *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    __descend(const __node_base *n)
+    {
+      while ( n ) {
+        if ( n-&gt;kind == __node_kind::leaf ) {
+          __lf = static_cast&lt;const __leaf *&gt;(n);
+          return;
+        }
+        __st[++__top] = __frame{ n, 0 };
+        n = __step_top();
+      }
+      __unwind();
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/art.hpp.html#L1024">line 1024</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-d179ba975b4596d8">__step_top</a>, <a href="art.hpp.html#f-a74ab523d4b002ee">__unwind</a>.</p></section><section class="function-entry" id="f-d179ba975b4596d8"><h3><code>micron::art::const_iterator::__step_top() noexcept</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1033">line 1033</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const __node_base *
+    __step_top() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const __node_base *
+    __step_top() noexcept
+    {
+      __frame &amp;f = __st[__top];
+      const u16 cnt = __slot_count(f.n);
+      while ( f.i &lt; cnt ) {
+        const __node_base *c = __child_at(f.n, f.i++);
+        if ( c ) return c;
+      }
+      return nullptr;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../source/trees/art.hpp.html#L1039">line 1039</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/art.hpp.html#L1041">line 1041</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-9f106df281203701">__slot_count</a>, <a href="art.hpp.html#f-d5bb6d41c7f5142c">__child_at</a>.</p></section><section class="function-entry" id="f-a74ab523d4b002ee"><h3><code>micron::art::const_iterator::__unwind()</code></h3><p>Defined in <code>trees/art.hpp</code>, <a href="../../source/trees/art.hpp.html#L1046">line 1046</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    __unwind()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    __unwind()
+    {
+      while ( __top &gt;= 0 ) {
+        const __node_base *c = __step_top();
+        if ( c ) {
+          __descend(c);
+          return;
+        }
+        --__top;
+      }
+      __lf = nullptr;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/art.hpp.html#L1052">line 1052</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="art.hpp.html#f-d179ba975b4596d8">__step_top</a>, <a href="art.hpp.html#f-5491e38be1a4a94d">__descend</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

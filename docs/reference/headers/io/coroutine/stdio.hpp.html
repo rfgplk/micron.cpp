@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/coroutine/stdio.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/coroutine/stdio.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/io_coro.html">Coroutine I/O</a></div><p>Defined in header <code>&lt;micron/io/coroutine/stdio.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/io/coroutine/stdio.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-05509e3209b29ac3">micron::io::coro::stdin_lines(usize chunk_sz = __lines::chunk)</a></td><td>function; line 24<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-a48dab1447ae6863">micron::io::coro::read_in(micron::string &amp;out)</a></td><td>function; line 30<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-253a3a41572aa8fe">micron::io::coro::write_out(const void *p, usize n)</a></td><td>function; line 53<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-925db65134d6580a">micron::io::coro::write_out(const S &amp;s)</a></td><td>function; line 61<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-0ab8bd12911e1230">micron::io::coro::write_err(const void *p, usize n)</a></td><td>function; line 68<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-d716de6e7f144043">micron::io::coro::write_err(const S &amp;s)</a></td><td>function; line 76<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-05509e3209b29ac3"><h3><code>micron::io::coro::stdin_lines(usize chunk_sz = __lines::chunk)</code></h3><p>Defined in <code>io/coroutine/stdio.hpp</code>, <a href="../../../source/io/coroutine/stdio.hpp.html#L24">line 24</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline __aline_cursor
+stdin_lines(usize chunk_sz = __lines::chunk)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize chunk_sz = __lines::chunk</code></li></ul><h4>Effects</h4><p>Returns <code>__aline_cursor(0, static_cast&lt;u64&gt;(-1), chunk_sz)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline __aline_cursor
+stdin_lines(usize chunk_sz = __lines::chunk)
+{
+  return __aline_cursor(0, static_cast&lt;u64&gt;(-1), chunk_sz);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__aline_cursor(0, static_cast&lt;u64&gt;(-1), chunk_sz)</code></td><td><a href="../../../source/io/coroutine/stdio.hpp.html#L26">line 26</a></td></tr></tbody></table></section><section class="function-entry" id="f-a48dab1447ae6863"><h3><code>micron::io::coro::read_in(micron::string &amp;out)</code></h3><p>Defined in <code>io/coroutine/stdio.hpp</code>, <a href="../../../source/io/coroutine/stdio.hpp.html#L30">line 30</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline micron::task&lt;max_t&gt;
+read_in(micron::string &amp;out)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::string &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline micron::task&lt;max_t&gt;
+read_in(micron::string &amp;out)
+{
+  micron::buffer chunk(__lines::chunk);
+  max_t total = 0;
+  i32 nb = __impl::__nb_unknown;
+  u32 spun = 0;
+  for ( ;; ) {
+    i32 r = co_await micron::coro::io::read(0, chunk.data(), static_cast&lt;u32&gt;(chunk.size()));
+    if ( r &lt; 0 ) [[unlikely]] {
+      if ( r == -4 /*EINTR*/ ) continue;
+      const i32 a = co_await __impl::__retry_after(r, 0, micron::uring::poll_in, nb, spun);
+      if ( a == 0 ) continue;
+      co_return static_cast&lt;max_t&gt;(a);
+    }
+    if ( r == 0 ) break;
+    out.append(reinterpret_cast&lt;const char *&gt;(chunk.data()), static_cast&lt;usize&gt;(r));
+    total += r;
+    spun = 0;
+  }
+  co_return total;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../tasks/coroutine/aio.hpp.html#f-6987bdf54f8f07d3">micron::coro::io::read</a>, <a href="__acore.hpp.html#f-1143ad7e0e0a1e74">__impl::__retry_after</a>.</p></section><section class="function-entry" id="f-253a3a41572aa8fe"><h3><code>micron::io::coro::write_out(const void *p, usize n)</code></h3><p>Defined in <code>io/coroutine/stdio.hpp</code>, <a href="../../../source/io/coroutine/stdio.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline micron::task&lt;max_t&gt;
+write_out(const void *p, usize n)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline micron::task&lt;max_t&gt;
+write_out(const void *p, usize n)
+{
+  max_t w = co_await __impl::__write_full(1, p, n, static_cast&lt;u64&gt;(-1));
+  co_return w;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__acore.hpp.html#f-f5b729b95825b3dd">__impl::__write_full</a>.</p></section><section class="function-entry" id="f-925db65134d6580a"><h3><code>micron::io::coro::write_out(const S &amp;s)</code></h3><p>Defined in <code>io/coroutine/stdio.hpp</code>, <a href="../../../source/io/coroutine/stdio.hpp.html#L61">line 61</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S&gt;
+[[nodiscard]] micron::task&lt;max_t&gt;
+write_out(const S &amp;s)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S&gt;
+[[nodiscard]] micron::task&lt;max_t&gt;
+write_out(const S &amp;s)
+{
+  max_t w = co_await __impl::__write_full(1, s.c_str(), micron::string_len(s) * sizeof(typename S::value_type), static_cast&lt;u64&gt;(-1));
+  co_return w;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__acore.hpp.html#f-f5b729b95825b3dd">__impl::__write_full</a>, <a href="../../concepts.hpp.html#f-f453d2b5f82853d5">micron::string_len</a>.</p></section><section class="function-entry" id="f-0ab8bd12911e1230"><h3><code>micron::io::coro::write_err(const void *p, usize n)</code></h3><p>Defined in <code>io/coroutine/stdio.hpp</code>, <a href="../../../source/io/coroutine/stdio.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline micron::task&lt;max_t&gt;
+write_err(const void *p, usize n)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline micron::task&lt;max_t&gt;
+write_err(const void *p, usize n)
+{
+  max_t w = co_await __impl::__write_full(2, p, n, static_cast&lt;u64&gt;(-1));
+  co_return w;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__acore.hpp.html#f-f5b729b95825b3dd">__impl::__write_full</a>.</p></section><section class="function-entry" id="f-d716de6e7f144043"><h3><code>micron::io::coro::write_err(const S &amp;s)</code></h3><p>Defined in <code>io/coroutine/stdio.hpp</code>, <a href="../../../source/io/coroutine/stdio.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S&gt;
+[[nodiscard]] micron::task&lt;max_t&gt;
+write_err(const S &amp;s)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S&gt;
+[[nodiscard]] micron::task&lt;max_t&gt;
+write_err(const S &amp;s)
+{
+  max_t w = co_await __impl::__write_full(2, s.c_str(), micron::string_len(s) * sizeof(typename S::value_type), static_cast&lt;u64&gt;(-1));
+  co_return w;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__acore.hpp.html#f-f5b729b95825b3dd">__impl::__write_full</a>, <a href="../../concepts.hpp.html#f-f453d2b5f82853d5">micron::string_len</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

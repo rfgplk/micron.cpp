@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/mutex/locks/__node_pool.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/mutex/locks/__node_pool.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/mutex/locks/__node_pool.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/mutex/locks/__node_pool.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-c99befe6ffb12f3b">MICRON_MCS_DEPTH</code></td><td>macro; line 19<br><small><code>#ifndef MICRON_MCS_DEPTH</code></small></td></tr></tbody></table><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-2d7d5175e4fcb0d0"><h3><code>micron::__next_lock_slot_id() noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L25">line 25</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline u64
+__next_lock_slot_id() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__lock_slot_ids.fetch_add(1, memory_order::acq_rel)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline u64
+__next_lock_slot_id() noexcept
+{
+  return __lock_slot_ids.fetch_add(1, memory_order::acq_rel);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__lock_slot_ids.fetch_add(1, memory_order::acq_rel)</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L27">line 27</a></td></tr></tbody></table></section><section class="function-entry" id="f-dabd02b3a2dac9d7"><h3><code>micron::__lock_slot_table::__tls() noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L45">line 45</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __table &amp;
+  __tls() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __table &amp;
+  __tls() noexcept
+  {
+    static thread_local __table t{};
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L48">line 48</a></td></tr></tbody></table></section><section class="function-entry" id="f-a0a6cd1f5196fd84"><h3><code>micron::__lock_slot_table::__claim_keyed(const void *lock, u64 id, bool &amp;fresh, Pred evictable) noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L53">line 53</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Pred&gt;
+  [[nodiscard]] static Slot *
+  __claim_keyed(const void *lock, u64 id, bool &amp;fresh, Pred evictable) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li><li><code>u64 id</code></li><li><code>bool &amp;fresh</code></li><li><code>Pred evictable</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Pred&gt;
+  [[nodiscard]] static Slot *
+  __claim_keyed(const void *lock, u64 id, bool &amp;fresh, Pred evictable) noexcept
+  {
+    __table &amp;t = __tls();
+    usize free = Depth;
+    for ( usize i = 0; i &lt; Depth; ++i ) {
+      if ( t.e[i].owner == lock ) {
+        if ( t.e[i].id != id ) {      // same address, different lock
+          fresh = true;
+          t.e[i].id = id;
+        }
+        return &amp;t.e[i].slot;
+      }
+      if ( t.e[i].owner == nullptr and free == Depth ) free = i;
+    }
+    if ( free == Depth ) {
+      for ( usize i = 0; i &lt; Depth; ++i )
+        if ( evictable(static_cast&lt;const Slot &amp;&gt;(t.e[i].slot)) ) {
+          free = i;
+          break;
+        }
+    }
+    if ( free == Depth ) return nullptr;
+    t.e[free].owner = lock;
+    t.e[free].id = id;
+    fresh = true;
+    return &amp;t.e[free].slot;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;t.e[i].slot</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L63">line 63</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L74">line 74</a></td></tr><tr class="t-dsc"><td><code>&amp;t.e[free].slot</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L78">line 78</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-dabd02b3a2dac9d7">__tls</a>.</p></section><section class="function-entry" id="f-e7c20e039addcfad"><h3><code>micron::__lock_slot_table::find(const void *lock) noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L83">line 83</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static Slot *
+  find(const void *lock) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static Slot *
+  find(const void *lock) noexcept
+  {
+    __table &amp;t = __tls();
+    for ( usize i = 0; i &lt; Depth; ++i )
+      if ( t.e[i].owner == lock ) return &amp;t.e[i].slot;
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;t.e[i].slot</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L87">line 87</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L88">line 88</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-dabd02b3a2dac9d7">__tls</a>.</p></section><section class="function-entry" id="f-d2d9993e4c6706b0"><h3><code>micron::__lock_slot_table::find(const void *lock, u64 id) noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L92">line 92</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static Slot *
+  find(const void *lock, u64 id) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li><li><code>u64 id</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static Slot *
+  find(const void *lock, u64 id) noexcept
+  {
+    __table &amp;t = __tls();
+    for ( usize i = 0; i &lt; Depth; ++i )
+      if ( t.e[i].owner == lock and t.e[i].id == id ) return &amp;t.e[i].slot;
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;t.e[i].slot</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L97">line 97</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-dabd02b3a2dac9d7">__tls</a>.</p></section><section class="function-entry" id="f-5e61e3ed675b04af"><h3><code>micron::__lock_slot_table::claim(const void *lock)</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L101">line 101</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static Slot *
+  claim(const void *lock)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static Slot *
+  claim(const void *lock)
+  {
+    __table &amp;t = __tls();
+    usize free = Depth;
+    for ( usize i = 0; i &lt; Depth; ++i ) {
+      if ( t.e[i].owner == lock ) return &amp;t.e[i].slot;
+      if ( t.e[i].owner == nullptr and free == Depth ) free = i;
+    }
+    if ( free == Depth ) micron::exc&lt;except::thread_error&gt;(&quot;queue-lock slot table exhausted; raise MICRON_MCS_DEPTH&quot;);
+    t.e[free].owner = lock;
+    t.e[free].id = 0;
+    return &amp;t.e[free].slot;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;t.e[i].slot</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>&amp;t.e[free].slot</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::exc&lt;except::thread_error&gt;(&quot;queue-lock slot table exhausted; raise MICRON_MCS_DEPTH&quot;)</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L109">line 109</a><br>Within <code>( free == Depth )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-dabd02b3a2dac9d7">__tls</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">micron::exc&lt;except::thread_error&gt;</a>.</p></section><section class="function-entry" id="f-106c18a7f0d9375e"><h3><code>micron::__lock_slot_table::claim(const void *lock, u64 id, bool &amp;fresh)</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L116">line 116</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static Slot *
+  claim(const void *lock, u64 id, bool &amp;fresh)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li><li><code>u64 id</code></li><li><code>bool &amp;fresh</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static Slot *
+  claim(const void *lock, u64 id, bool &amp;fresh)
+  {
+    Slot *s = __claim_keyed(lock, id, fresh, [](const Slot &amp;) { return false; });
+    if ( s == nullptr ) micron::exc&lt;except::thread_error&gt;(&quot;queue-lock slot table exhausted; raise MICRON_MCS_DEPTH&quot;);
+    return s;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L120">line 120</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::exc&lt;except::thread_error&gt;(&quot;queue-lock slot table exhausted; raise MICRON_MCS_DEPTH&quot;)</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L119">line 119</a><br>Within <code>( s == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-a0a6cd1f5196fd84">__claim_keyed</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">micron::exc&lt;except::thread_error&gt;</a>.</p></section><section class="function-entry" id="f-c14c5746617c6419"><h3><code>micron::__lock_slot_table::claim_evicting(const void *lock, Pred evictable)</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L125">line 125</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Pred&gt;
+  [[nodiscard]] static Slot *
+  claim_evicting(const void *lock, Pred evictable)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li><li><code>Pred evictable</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Pred&gt;
+  [[nodiscard]] static Slot *
+  claim_evicting(const void *lock, Pred evictable)
+  {
+    __table &amp;t = __tls();
+    usize free = Depth;
+    for ( usize i = 0; i &lt; Depth; ++i ) {
+      if ( t.e[i].owner == lock ) return &amp;t.e[i].slot;
+      if ( t.e[i].owner == nullptr and free == Depth ) free = i;
+    }
+    if ( free == Depth ) {
+      for ( usize i = 0; i &lt; Depth; ++i )
+        if ( evictable(t.e[i].slot) ) {
+          free = i;
+          break;
+        }
+    }
+    if ( free == Depth )
+      micron::exc&lt;except::thread_error&gt;(&quot;queue-lock slot table exhausted and every entry is held; raise MICRON_MCS_DEPTH&quot;);
+    t.e[free].owner = lock;
+    t.e[free].id = 0;
+    return &amp;t.e[free].slot;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;t.e[i].slot</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L130">line 130</a></td></tr><tr class="t-dsc"><td><code>&amp;t.e[free].slot</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L144">line 144</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::exc&lt;except::thread_error&gt;(&quot;queue-lock slot table exhausted and every entry is held; raise MICRON_MCS_DEPTH&quot;)</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L141">line 141</a><br>Within <code>( free == Depth )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-dabd02b3a2dac9d7">__tls</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">micron::exc&lt;except::thread_error&gt;</a>.</p></section><section class="function-entry" id="f-317258a3a8b77301"><h3><code>micron::__lock_slot_table::claim_evicting(const void *lock, u64 id, bool &amp;fresh, Pred evictable)</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L149">line 149</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Pred&gt;
+  [[nodiscard]] static Slot *
+  claim_evicting(const void *lock, u64 id, bool &amp;fresh, Pred evictable)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li><li><code>u64 id</code></li><li><code>bool &amp;fresh</code></li><li><code>Pred evictable</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Pred&gt;
+  [[nodiscard]] static Slot *
+  claim_evicting(const void *lock, u64 id, bool &amp;fresh, Pred evictable)
+  {
+    Slot *s = __claim_keyed(lock, id, fresh, evictable);
+    if ( s == nullptr )
+      micron::exc&lt;except::thread_error&gt;(&quot;queue-lock slot table exhausted and every entry is held; raise MICRON_MCS_DEPTH&quot;);
+    return s;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L154">line 154</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::exc&lt;except::thread_error&gt;(&quot;queue-lock slot table exhausted and every entry is held; raise MICRON_MCS_DEPTH&quot;)</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L153">line 153</a><br>Within <code>( s == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-a0a6cd1f5196fd84">__claim_keyed</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">micron::exc&lt;except::thread_error&gt;</a>.</p></section><section class="function-entry" id="f-d9824c05845fdf96"><h3><code>micron::__lock_slot_table::try_claim(const void *lock, u64 id, bool &amp;fresh, Pred evictable) noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L159">line 159</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Pred&gt;
+  [[nodiscard]] static Slot *
+  try_claim(const void *lock, u64 id, bool &amp;fresh, Pred evictable) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li><li><code>u64 id</code></li><li><code>bool &amp;fresh</code></li><li><code>Pred evictable</code></li></ul><h4>Effects</h4><p>Returns <code>__claim_keyed(lock, id, fresh, evictable)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Pred&gt;
+  [[nodiscard]] static Slot *
+  try_claim(const void *lock, u64 id, bool &amp;fresh, Pred evictable) noexcept
+  {
+    return __claim_keyed(lock, id, fresh, evictable);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__claim_keyed(lock, id, fresh, evictable)</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L161">line 161</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-a0a6cd1f5196fd84">__claim_keyed</a>.</p></section><section class="function-entry" id="f-cd1f7ead43eecf33"><h3><code>micron::__lock_slot_table::release(const void *lock) noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L165">line 165</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  release(const void *lock) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *lock</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  release(const void *lock) noexcept
+  {
+    __table &amp;t = __tls();
+    for ( usize i = 0; i &lt; Depth; ++i )
+      if ( t.e[i].owner == lock ) {
+        t.e[i].owner = nullptr;
+        t.e[i].id = 0;
+        return;
+      }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L172">line 172</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-dabd02b3a2dac9d7">__tls</a>.</p></section><section class="function-entry" id="f-7188207aa74ee774"><h3><code>micron::__lock_slot_table::depth() noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L177">line 177</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static usize
+  depth() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static usize
+  depth() noexcept
+  {
+    __table &amp;t = __tls();
+    usize n = 0;
+    for ( usize i = 0; i &lt; Depth; ++i )
+      if ( t.e[i].owner != nullptr ) ++n;
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L183">line 183</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__node_pool.hpp.html#f-dabd02b3a2dac9d7">__tls</a>.</p></section><section class="function-entry" id="f-7b2a2a9309f6f0e8"><h3><code>micron::__lock_slot_table::capacity() noexcept</code></h3><p>Defined in <code>mutex/locks/__node_pool.hpp</code>, <a href="../../../source/mutex/locks/__node_pool.hpp.html#L187">line 187</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static constexpr usize
+  capacity() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>Depth</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static constexpr usize
+  capacity() noexcept
+  {
+    return Depth;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>Depth</code></td><td><a href="../../../source/mutex/locks/__node_pool.hpp.html#L189">line 189</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

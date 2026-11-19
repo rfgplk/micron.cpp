@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/linalg/matfunc.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/linalg/matfunc.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/matrix.html">Matrices and linear algebra</a></div><p>Defined in header <code>&lt;micron/math/linalg/matfunc.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/linalg/matfunc.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-e83a075b569f9c35">micron::math::linalg::matfunc::expm_result</code></td><td>struct; line 234</td></tr><tr class="t-dsc"><td><code id="s-665e89f18faf35b3">micron::math::linalg::matfunc::expm_result::X</code></td><td>member; line 235</td></tr><tr class="t-dsc"><td><code id="s-828ed3e0dfc4edb2">micron::math::linalg::matfunc::expm_result::finite</code></td><td>member; line 236</td></tr><tr class="t-dsc"><td><code id="s-277c9985d344cd1c">micron::math::linalg::matfunc::parlett_sqrt_result</code></td><td>struct; line 329</td></tr><tr class="t-dsc"><td><code id="s-64254a18bc507ab3">micron::math::linalg::matfunc::parlett_sqrt_result::U</code></td><td>member; line 330</td></tr><tr class="t-dsc"><td><code id="s-7c8bbd97daccf218">micron::math::linalg::matfunc::parlett_sqrt_result::real_sqrt_exists</code></td><td>member; line 331</td></tr><tr class="t-dsc"><td><code id="s-d90c00deec832262">micron::math::linalg::matfunc::parlett_sqrt_result::converged</code></td><td>member; line 332</td></tr><tr class="t-dsc"><td><code id="s-97f4af484bdd4879">micron::math::linalg::matfunc::sqrtm_result</code></td><td>struct; line 425</td></tr><tr class="t-dsc"><td><code id="s-0a3d9262e1de034b">micron::math::linalg::matfunc::sqrtm_result::X</code></td><td>member; line 426</td></tr><tr class="t-dsc"><td><code id="s-1f5672b68026102d">micron::math::linalg::matfunc::sqrtm_result::real_sqrt_exists</code></td><td>member; line 427</td></tr><tr class="t-dsc"><td><code id="s-cbbec58a36014d01">micron::math::linalg::matfunc::sqrtm_result::converged</code></td><td>member; line 428</td></tr><tr class="t-dsc"><td><code id="s-35da117ab73ca3d9">micron::math::linalg::matfunc::parlett_log_result</code></td><td>struct; line 464</td></tr><tr class="t-dsc"><td><code id="s-6b1b213db4c71966">micron::math::linalg::matfunc::parlett_log_result::L</code></td><td>member; line 465</td></tr><tr class="t-dsc"><td><code id="s-cdc86fc21490ccb4">micron::math::linalg::matfunc::parlett_log_result::real_log_exists</code></td><td>member; line 466</td></tr><tr class="t-dsc"><td><code id="s-3291cf1b4c4843bc">micron::math::linalg::matfunc::parlett_log_result::converged</code></td><td>member; line 467</td></tr><tr class="t-dsc"><td><code id="s-16f73729523846a9">micron::math::linalg::matfunc::logm_result</code></td><td>struct; line 550</td></tr><tr class="t-dsc"><td><code id="s-d72879e4a9de6c74">micron::math::linalg::matfunc::logm_result::X</code></td><td>member; line 551</td></tr><tr class="t-dsc"><td><code id="s-0edd3743a77e8263">micron::math::linalg::matfunc::logm_result::real_log_exists</code></td><td>member; line 552</td></tr><tr class="t-dsc"><td><code id="s-29a17c5fff5818b4">micron::math::linalg::matfunc::logm_result::converged</code></td><td>member; line 553</td></tr><tr class="t-dsc"><td><a href="#f-f913fb9d070d0456">micron::math::linalg::matfunc::expm(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 241</td></tr><tr class="t-dsc"><td><a href="#f-b47538c7db03f78c">micron::math::linalg::matfunc::parlett_sqrt(const mat&lt;F, N, N&gt; &amp;T) noexcept</a></td><td>function; line 337</td></tr><tr class="t-dsc"><td><a href="#f-1e03cd2d97fe84f3">micron::math::linalg::matfunc::sqrtm(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 433</td></tr><tr class="t-dsc"><td><a href="#f-1ee238c94e648a6c">micron::math::linalg::matfunc::parlett_log(const mat&lt;F, N, N&gt; &amp;T_in) noexcept</a></td><td>function; line 472</td></tr><tr class="t-dsc"><td><a href="#f-197df90e25208cd0">micron::math::linalg::matfunc::logm(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 558</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f913fb9d070d0456"><h3><code>micron::math::linalg::matfunc::expm(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L241">line 241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline expm_result&lt;F, N&gt;
+expm(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline expm_result&lt;F, N&gt;
+expm(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  expm_result&lt;F, N&gt; r{};
+  r.X = mat&lt;F, N, N&gt;::zero();
+  r.finite = true;
+  if constexpr ( N == 0 ) {
+    return r;
+  } else {
+    constexpr F b[14] = { F(64764752532480000.0),
+                          F(32382376266240000.0),
+                          F(7771770303897600.0),
+                          F(1187353796428800.0),
+                          F(129060195264000.0),
+                          F(10559470521600.0),
+                          F(670442572800.0),
+                          F(33522128640.0),
+                          F(1323241920.0),
+                          F(40840800.0),
+                          F(960960.0),
+                          F(16380.0),
+                          F(182.0),
+                          F(1.0) };
+    constexpr F theta13 = F(5.371920351148152);
+
+    F alpha = norm_l1_mat&lt;F, N, N&gt;(A);
+    if ( !ieee::is_finite(alpha) ) {
+      r.finite = false;
+      __impl_matfunc::nan_fill&lt;F, N&gt;(r.X);
+      return r;
+    }
+
+    int s = 0;
+    F bound = theta13;
+    while ( alpha &gt; bound &amp;&amp; s &lt; 60 ) {
+      bound *= F(2);
+      ++s;
+    }
+    F scale_factor = F(1);
+    for ( int i = 0; i &lt; s; ++i ) scale_factor *= F(0.5);
+
+    mat&lt;F, N, N&gt; B = A;
+    for ( usize i = 0; i &lt; N * N; ++i ) B.data[i] *= scale_factor;
+
+    auto B2 = ops::gemm(B, B);
+    auto B4 = ops::gemm(B2, B2);
+    auto B6 = ops::gemm(B4, B2);
+
+    mat&lt;F, N, N&gt; u_inner{};
+    for ( usize i = 0; i &lt; N * N; ++i ) u_inner.data[i] = b[13] * B6.data[i] + b[11] * B4.data[i] + b[9] * B2.data[i];
+    auto u_mid = ops::gemm(B6, u_inner);
+    mat&lt;F, N, N&gt; u_pre{};
+    for ( usize i = 0; i &lt; N * N; ++i ) u_pre.data[i] = u_mid.data[i] + b[7] * B6.data[i] + b[5] * B4.data[i] + b[3] * B2.data[i];
+    for ( usize i = 0; i &lt; N; ++i ) u_pre.data[i * N + i] += b[1];
+    auto U = ops::gemm(B, u_pre);
+
+    mat&lt;F, N, N&gt; v_inner{};
+    for ( usize i = 0; i &lt; N * N; ++i ) v_inner.data[i] = b[12] * B6.data[i] + b[10] * B4.data[i] + b[8] * B2.data[i];
+    auto v_mid = ops::gemm(B6, v_inner);
+    mat&lt;F, N, N&gt; V{};
+    for ( usize i = 0; i &lt; N * N; ++i ) V.data[i] = v_mid.data[i] + b[6] * B6.data[i] + b[4] * B4.data[i] + b[2] * B2.data[i];
+    for ( usize i = 0; i &lt; N; ++i ) V.data[i * N + i] += b[0];
+
+    mat&lt;F, N, N&gt; VU_minus{}, VU_plus{};
+    for ( usize i = 0; i &lt; N * N; ++i ) {
+      VU_minus.data[i] = V.data[i] - U.data[i];
+      VU_plus.data[i] = V.data[i] + U.data[i];
+    }
+    auto VU_inv = inv&lt;F, N&gt;(VU_minus);
+    if ( ieee::is_nan(VU_inv.data[0]) ) {
+      r.finite = false;
+      __impl_matfunc::nan_fill&lt;F, N&gt;(r.X);
+      return r;
+    }
+    auto R_mat = ops::gemm(VU_inv, VU_plus);
+
+    for ( int i = 0; i &lt; s; ++i ) {
+      R_mat = ops::gemm(R_mat, R_mat);
+      if ( !ieee::is_finite(R_mat.data[0]) ) {
+        r.finite = false;
+        __impl_matfunc::nan_fill&lt;F, N&gt;(r.X);
+        return r;
+      }
+    }
+    r.X = R_mat;
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L247">line 247</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L269">line 269</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L312">line 312</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L321">line 321</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L325">line 325</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="generic.hpp.html#f-a529e66edfee7c89">norm_l1_mat&lt;F, N, N&gt;</a>, <a href="../ieee.hpp.html#f-2410899f0a93a5c0">ieee::is_finite</a>, <a href="matfunc.hpp.html#f-5b49da96d8f8763b">__impl_matfunc::nan_fill&lt;F, N&gt;</a>, <a href="ops.hpp.html#f-e162a1447f6563c7">ops::gemm</a>, <a href="generic.hpp.html#f-ba1f4ffcbf7a05f6">inv&lt;F, N&gt;</a>, <a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>.</p></section><section class="function-entry" id="f-b47538c7db03f78c"><h3><code>micron::math::linalg::matfunc::parlett_sqrt(const mat&lt;F, N, N&gt; &amp;T) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L337">line 337</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline parlett_sqrt_result&lt;F, N&gt;
+parlett_sqrt(const mat&lt;F, N, N&gt; &amp;T) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;T</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline parlett_sqrt_result&lt;F, N&gt;
+parlett_sqrt(const mat&lt;F, N, N&gt; &amp;T) noexcept
+{
+  parlett_sqrt_result&lt;F, N&gt; r{};
+  r.U = mat&lt;F, N, N&gt;::zero();
+  r.real_sqrt_exists = true;
+  r.converged = true;
+  if constexpr ( N == 0 ) return r;
+
+  const F eps = default_eps&lt;F&gt;();
+
+  // Identify blocks
+  usize block_starts[N + 1];
+  usize block_sizes[N + 1];
+  for ( usize i = 0; i &lt;= N; ++i ) {
+    block_starts[i] = 0;
+    block_sizes[i] = 0;
+  }
+  usize n_blocks = __impl_matfunc::identify_blocks&lt;F, N&gt;(T, block_starts, block_sizes);
+
+  for ( usize bk = 0; bk &lt; n_blocks; ++bk ) {
+    usize i = block_starts[bk];
+    if ( block_sizes[bk] == 1 ) {
+      F t = T.data[i * N + i];
+      if ( t &lt; F(0) ) {
+        r.real_sqrt_exists = false;
+        r.U.data[i * N + i] = ieee::qnan_v&lt;F&gt;();
+      } else {
+        r.U.data[i * N + i] = math::fsqrt(t);
+      }
+    } else {
+      F a = T.data[i * N + i];
+      F b = T.data[i * N + (i + 1)];
+      F c = T.data[(i + 1) * N + i];
+      F d = T.data[(i + 1) * N + (i + 1)];
+      F x00, x01, x10, x11;
+      if ( !__impl_matfunc::sqrt_2x2_block&lt;F&gt;(x00, x01, x10, x11, a, b, c, d) ) {
+        r.real_sqrt_exists = false;
+        r.U.data[i * N + i] = ieee::qnan_v&lt;F&gt;();
+        r.U.data[i * N + (i + 1)] = ieee::qnan_v&lt;F&gt;();
+        r.U.data[(i + 1) * N + i] = ieee::qnan_v&lt;F&gt;();
+        r.U.data[(i + 1) * N + (i + 1)] = ieee::qnan_v&lt;F&gt;();
+      } else {
+        r.U.data[i * N + i] = x00;
+        r.U.data[i * N + (i + 1)] = x01;
+        r.U.data[(i + 1) * N + i] = x10;
+        r.U.data[(i + 1) * N + (i + 1)] = x11;
+      }
+    }
+  }
+
+  if ( !r.real_sqrt_exists ) {
+    __impl_matfunc::nan_fill&lt;F, N&gt;(r.U);
+    r.converged = false;
+    return r;
+  }
+
+  for ( usize bj = 1; bj &lt; n_blocks; ++bj ) {
+    for ( usize bi_signed = bj; bi_signed-- &gt; 0; ) {
+      usize bi = bi_signed;
+      usize si = block_starts[bi];
+      usize sj = block_starts[bj];
+      usize bs_i = block_sizes[bi];
+      usize bs_j = block_sizes[bj];
+      F rhs[4] = { F(0), F(0), F(0), F(0) };
+      for ( usize ii = 0; ii &lt; bs_i; ++ii ) {
+        for ( usize jj = 0; jj &lt; bs_j; ++jj ) {
+          F t = T.data[(si + ii) * N + (sj + jj)];
+          F sum = F(0);
+          for ( usize bk = bi + 1; bk &lt; bj; ++bk ) {
+            usize sk = block_starts[bk];
+            usize bs_k = block_sizes[bk];
+            for ( usize kk = 0; kk &lt; bs_k; ++kk )
+              sum = math::fma&lt;F&gt;(r.U.data[(si + ii) * N + (sk + kk)], r.U.data[(sk + kk) * N + (sj + jj)], sum);
+          }
+          rhs[ii * bs_j + jj] = t - sum;
+        }
+      }
+      if ( !__impl_matfunc::solve_sylvester_block&lt;F, N&gt;(r.U, si, bs_i, sj, bs_j, rhs, eps) ) {
+        r.real_sqrt_exists = false;
+        r.converged = false;
+        __impl_matfunc::nan_fill&lt;F, N&gt;(r.U);
+        return r;
+      }
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L390">line 390</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L418">line 418</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L422">line 422</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>, <a href="matfunc.hpp.html#f-27524446221f2f71">__impl_matfunc::identify_blocks&lt;F, N&gt;</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="matfunc.hpp.html#f-9f84bf1c27055e13">__impl_matfunc::sqrt_2x2_block&lt;F&gt;</a>, <a href="matfunc.hpp.html#f-5b49da96d8f8763b">__impl_matfunc::nan_fill&lt;F, N&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="matfunc.hpp.html#f-531ce92114eda7d3">__impl_matfunc::solve_sylvester_block&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-1e03cd2d97fe84f3"><h3><code>micron::math::linalg::matfunc::sqrtm(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L433">line 433</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline sqrtm_result&lt;F, N&gt;
+sqrtm(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline sqrtm_result&lt;F, N&gt;
+sqrtm(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  sqrtm_result&lt;F, N&gt; r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat&lt;F, N, N&gt;::zero();
+    r.real_sqrt_exists = true;
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur&lt;F, N&gt;(A);
+    r.converged = sr.converged;
+    if ( !sr.converged ) {
+      r.real_sqrt_exists = false;
+      __impl_matfunc::nan_fill&lt;F, N&gt;(r.X);
+      return r;
+    }
+    auto pr = parlett_sqrt&lt;F, N&gt;(sr.T);
+    r.real_sqrt_exists = pr.real_sqrt_exists;
+    r.converged = r.converged &amp;&amp; pr.converged;
+    if ( !pr.real_sqrt_exists ) {
+      __impl_matfunc::nan_fill&lt;F, N&gt;(r.X);
+      return r;
+    }
+    // X = Z * U * Zᵀ
+    auto Zt = ops::transpose(sr.Z);
+    auto ZU = ops::gemm(sr.Z, pr.U);
+    r.X = ops::gemm(ZU, Zt);
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L440">line 440</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L447">line 447</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L454">line 454</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L460">line 460</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="decomp_ext.hpp.html#f-fb61be3933a2fc53">decomp::schur&lt;F, N&gt;</a>, <a href="matfunc.hpp.html#f-5b49da96d8f8763b">__impl_matfunc::nan_fill&lt;F, N&gt;</a>, <a href="matfunc.hpp.html#f-b47538c7db03f78c">parlett_sqrt&lt;F, N&gt;</a>, <a href="ops.hpp.html#f-267cf7da56e54efa">ops::transpose</a>, <a href="ops.hpp.html#f-e162a1447f6563c7">ops::gemm</a>.</p></section><section class="function-entry" id="f-1ee238c94e648a6c"><h3><code>micron::math::linalg::matfunc::parlett_log(const mat&lt;F, N, N&gt; &amp;T_in) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L472">line 472</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline parlett_log_result&lt;F, N&gt;
+parlett_log(const mat&lt;F, N, N&gt; &amp;T_in) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;T_in</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline parlett_log_result&lt;F, N&gt;
+parlett_log(const mat&lt;F, N, N&gt; &amp;T_in) noexcept
+{
+  parlett_log_result&lt;F, N&gt; r{};
+  r.L = mat&lt;F, N, N&gt;::zero();
+  r.real_log_exists = true;
+  r.converged = true;
+  if constexpr ( N == 0 ) return r;
+
+  for ( usize i = 0; i &lt; N; ++i ) {
+    bool is_2x2 = (i + 1 &lt; N) &amp;&amp; (T_in.data[(i + 1) * N + i] != F(0));
+    if ( !is_2x2 ) {
+      if ( T_in.data[i * N + i] &lt;= F(0) ) {
+        r.real_log_exists = false;
+        __impl_matfunc::nan_fill&lt;F, N&gt;(r.L);
+        return r;
+      }
+    } else {
+      F a = T_in.data[i * N + i];
+      F b = T_in.data[i * N + (i + 1)];
+      F c = T_in.data[(i + 1) * N + i];
+      F d = T_in.data[(i + 1) * N + (i + 1)];
+      F det_block = a * d - b * c;
+      if ( det_block &lt;= F(0) ) {
+        r.real_log_exists = false;
+        __impl_matfunc::nan_fill&lt;F, N&gt;(r.L);
+        return r;
+      }
+      ++i;
+    }
+  }
+
+  constexpr F threshold = F(0.005);
+  mat&lt;F, N, N&gt; T = T_in;
+  int s = 0;
+  while ( s &lt; 60 ) {
+    F diff = F(0);
+    for ( usize i = 0; i &lt; N; ++i ) {
+      for ( usize j = 0; j &lt; N; ++j ) {
+        F e = T.data[i * N + j] - ((i == j) ? F(1) : F(0));
+        diff += e * e;
+      }
+    }
+    diff = math::fsqrt(diff);
+    if ( diff &lt; threshold ) break;
+    auto pr = parlett_sqrt&lt;F, N&gt;(T);
+    if ( !pr.real_sqrt_exists ) {
+      r.real_log_exists = false;
+      r.converged = false;
+      __impl_matfunc::nan_fill&lt;F, N&gt;(r.L);
+      return r;
+    }
+    T = pr.U;
+    ++s;
+  }
+  if ( s &gt;= 60 ) r.converged = false;
+
+  mat&lt;F, N, N&gt; X = T;
+  for ( usize i = 0; i &lt; N; ++i ) X.data[i * N + i] -= F(1);
+
+  mat&lt;F, N, N&gt; X_pow = X;      // X^1
+  mat&lt;F, N, N&gt; L = mat&lt;F, N, N&gt;::zero();
+  for ( usize i = 0; i &lt; N * N; ++i ) L.data[i] = X.data[i];
+  constexpr int n_terms = 20;
+  F sign = F(-1);
+  for ( int k = 2; k &lt;= n_terms; ++k ) {
+    X_pow = ops::gemm(X_pow, X);
+    F coeff = sign / F(k);
+    for ( usize i = 0; i &lt; N * N; ++i ) L.data[i] += coeff * X_pow.data[i];
+    sign = -sign;
+  }
+
+  F factor = F(1);
+  for ( int i = 0; i &lt; s; ++i ) factor *= F(2);
+  for ( usize i = 0; i &lt; N * N; ++i ) L.data[i] *= factor;
+  r.L = L;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L478">line 478</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L486">line 486</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L497">line 497</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L521">line 521</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L547">line 547</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="matfunc.hpp.html#f-5b49da96d8f8763b">__impl_matfunc::nan_fill&lt;F, N&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="matfunc.hpp.html#f-b47538c7db03f78c">parlett_sqrt&lt;F, N&gt;</a>, <a href="ops.hpp.html#f-e162a1447f6563c7">ops::gemm</a>.</p></section><section class="function-entry" id="f-197df90e25208cd0"><h3><code>micron::math::linalg::matfunc::logm(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L558">line 558</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline logm_result&lt;F, N&gt;
+logm(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline logm_result&lt;F, N&gt;
+logm(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  logm_result&lt;F, N&gt; r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat&lt;F, N, N&gt;::zero();
+    r.real_log_exists = true;
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur&lt;F, N&gt;(A);
+    r.converged = sr.converged;
+    if ( !sr.converged ) {
+      r.real_log_exists = false;
+      __impl_matfunc::nan_fill&lt;F, N&gt;(r.X);
+      return r;
+    }
+    auto pl = parlett_log&lt;F, N&gt;(sr.T);
+    r.real_log_exists = pl.real_log_exists;
+    r.converged = r.converged &amp;&amp; pl.converged;
+    if ( !pl.real_log_exists ) {
+      __impl_matfunc::nan_fill&lt;F, N&gt;(r.X);
+      return r;
+    }
+    auto Zt = ops::transpose(sr.Z);
+    auto ZL = ops::gemm(sr.Z, pl.L);
+    r.X = ops::gemm(ZL, Zt);
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L565">line 565</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L572">line 572</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L579">line 579</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L584">line 584</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="decomp_ext.hpp.html#f-fb61be3933a2fc53">decomp::schur&lt;F, N&gt;</a>, <a href="matfunc.hpp.html#f-5b49da96d8f8763b">__impl_matfunc::nan_fill&lt;F, N&gt;</a>, <a href="matfunc.hpp.html#f-1ee238c94e648a6c">parlett_log&lt;F, N&gt;</a>, <a href="ops.hpp.html#f-267cf7da56e54efa">ops::transpose</a>, <a href="ops.hpp.html#f-e162a1447f6563c7">ops::gemm</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-5b49da96d8f8763b"><h3><code>micron::math::linalg::matfunc::__impl_matfunc::nan_fill(mat&lt;F, N, N&gt; &amp;X) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L39">line 39</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+inline void
+nan_fill(mat&lt;F, N, N&gt; &amp;X) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat&lt;F, N, N&gt; &amp;X</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+inline void
+nan_fill(mat&lt;F, N, N&gt; &amp;X) noexcept
+{
+  const F nan = ieee::qnan_v&lt;F&gt;();
+  for ( usize i = 0; i &lt; N * N; ++i ) X.data[i] = nan;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-9f84bf1c27055e13"><h3><code>micron::math::linalg::matfunc::__impl_matfunc::sqrt_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L47">line 47</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline bool
+sqrt_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;x00</code></li><li><code>F &amp;x01</code></li><li><code>F &amp;x10</code></li><li><code>F &amp;x11</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>F c</code></li><li><code>F d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline bool
+sqrt_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept
+{
+  F tr = a + d;
+  F det = a * d - b * c;
+  if ( det &lt; F(0) ) return false;
+  F sd = math::fsqrt(det);
+  F tau_sq = tr + F(2) * sd;
+  if ( tau_sq &lt;= F(0) ) return false;
+  F tau = math::fsqrt(tau_sq);
+  F inv_tau = F(1) / tau;
+  x00 = (a + sd) * inv_tau;
+  x01 = b * inv_tau;
+  x10 = c * inv_tau;
+  x11 = (d + sd) * inv_tau;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L51">line 51</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L54">line 54</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-420a05c5aaadd4ec"><h3><code>micron::math::linalg::matfunc::__impl_matfunc::log_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L66">line 66</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline bool
+log_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;x00</code></li><li><code>F &amp;x01</code></li><li><code>F &amp;x10</code></li><li><code>F &amp;x11</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>F c</code></li><li><code>F d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline bool
+log_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept
+{
+  F tr = a + d;
+  F det = a * d - b * c;
+  F disc = (tr * F(0.5)) * (tr * F(0.5)) - det;
+  if ( disc &gt;= F(0) ) {
+    F sq = math::fsqrt(disc);
+    F l1 = tr * F(0.5) + sq;
+    F l2 = tr * F(0.5) - sq;
+    if ( l1 &lt;= F(0) || l2 &lt;= F(0) ) return false;
+    F denom = l1 - l2;
+    if ( denom == F(0) ) {
+      F l = math::log&lt;F&gt;(l1);
+      x00 = l + (a - l1) / l1;
+      x01 = b / l1;
+      x10 = c / l1;
+      x11 = l + (d - l1) / l1;
+      return true;
+    }
+    F log_l1 = math::log&lt;F&gt;(l1);
+    F log_l2 = math::log&lt;F&gt;(l2);
+    F inv = F(1) / denom;
+    F p1_00 = (a - l2) * inv;
+    F p1_01 = b * inv;
+    F p1_10 = c * inv;
+    F p1_11 = (d - l2) * inv;
+    F p2_00 = -(a - l1) * inv;
+    F p2_01 = -b * inv;
+    F p2_10 = -c * inv;
+    F p2_11 = -(d - l1) * inv;
+    x00 = log_l1 * p1_00 + log_l2 * p2_00;
+    x01 = log_l1 * p1_01 + log_l2 * p2_01;
+    x10 = log_l1 * p1_10 + log_l2 * p2_10;
+    x11 = log_l1 * p1_11 + log_l2 * p2_11;
+    return true;
+  }
+  F alpha = tr * F(0.5);
+  F mu = math::fsqrt(-disc);
+  if ( det &lt;= F(0) ) return false;
+  F log_r = F(0.5) * math::log&lt;F&gt;(det);
+  F theta = math::atan2&lt;F&gt;(mu, alpha);
+  F coeff = theta / mu;
+  x00 = log_r + coeff * (a - alpha);
+  x01 = coeff * b;
+  x10 = coeff * c;
+  x11 = log_r + coeff * (d - alpha);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L83">line 83</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../log.hpp.html#f-73546d0f9713cb61">math::log&lt;F&gt;</a>, <a href="../mk.hpp.html#f-4db5683eb6ab85c6">math::atan2&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-27524446221f2f71"><h3><code>micron::math::linalg::matfunc::__impl_matfunc::identify_blocks(const mat&lt;F, N, N&gt; &amp;T, usize *out_starts, usize *out_sizes) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L117">line 117</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+inline usize
+identify_blocks(const mat&lt;F, N, N&gt; &amp;T, usize *out_starts, usize *out_sizes) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;T</code></li><li><code>usize *out_starts</code></li><li><code>usize *out_sizes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+inline usize
+identify_blocks(const mat&lt;F, N, N&gt; &amp;T, usize *out_starts, usize *out_sizes) noexcept
+{
+  usize n_blocks = 0;
+  usize i = 0;
+  while ( i &lt; N ) {
+    bool is_2x2 = (i + 1 &lt; N) &amp;&amp; (T.data[(i + 1) * N + i] != F(0));
+    out_starts[n_blocks] = i;
+    out_sizes[n_blocks] = is_2x2 ? 2 : 1;
+    ++n_blocks;
+    i += is_2x2 ? 2 : 1;
+  }
+  return n_blocks;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n_blocks</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L128">line 128</a></td></tr></tbody></table></section><section class="function-entry" id="f-531ce92114eda7d3"><h3><code>micron::math::linalg::matfunc::__impl_matfunc::solve_sylvester_block(mat&lt;F, N, N&gt; &amp;U, usize start_i, usize bi, usize start_j, usize bj, const F *rhs, F eps) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc.hpp</code>, <a href="../../../source/math/linalg/matfunc.hpp.html#L133">line 133</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+inline bool
+solve_sylvester_block(mat&lt;F, N, N&gt; &amp;U, usize start_i, usize bi, usize start_j, usize bj, const F *rhs, F eps) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat&lt;F, N, N&gt; &amp;U</code></li><li><code>usize start_i</code></li><li><code>usize bi</code></li><li><code>usize start_j</code></li><li><code>usize bj</code></li><li><code>const F *rhs</code></li><li><code>F eps</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+inline bool
+solve_sylvester_block(mat&lt;F, N, N&gt; &amp;U, usize start_i, usize bi, usize start_j, usize bj, const F *rhs, F eps) noexcept
+{
+  if ( bi == 1 &amp;&amp; bj == 1 ) {
+    F u_ii = U.data[start_i * N + start_i];
+    F u_jj = U.data[start_j * N + start_j];
+    F denom = u_ii + u_jj;
+    if ( math::fabs(denom) &lt; eps ) return false;
+    U.data[start_i * N + start_j] = rhs[0] / denom;
+    return true;
+  }
+  if ( bi == 1 &amp;&amp; bj == 2 ) {
+    // u_ii * [x0 x1] + [x0 x1] * U_jj = rhs[0..2]
+    // u_ii * x0 + x0 * U_jj[0,0] + x1 * U_jj[1,0] = rhs[0]
+    // u_ii * x1 + x0 * U_jj[0,1] + x1 * U_jj[1,1] = rhs[1]
+    F u_ii = U.data[start_i * N + start_i];
+    F j00 = U.data[start_j * N + start_j];
+    F j01 = U.data[start_j * N + (start_j + 1)];
+    F j10 = U.data[(start_j + 1) * N + start_j];
+    F j11 = U.data[(start_j + 1) * N + (start_j + 1)];
+    mat&lt;F, 2, 2&gt; M{};
+    M.data[0] = u_ii + j00;
+    M.data[1] = j10;
+    M.data[2] = j01;
+    M.data[3] = u_ii + j11;
+    F d = ops::det2&lt;F&gt;(M);
+    if ( math::fabs(d) &lt; eps ) return false;
+    auto Mi = ops::inv2&lt;F&gt;(M);
+    F x0 = Mi.data[0] * rhs[0] + Mi.data[1] * rhs[1];
+    F x1 = Mi.data[2] * rhs[0] + Mi.data[3] * rhs[1];
+    U.data[start_i * N + start_j] = x0;
+    U.data[start_i * N + (start_j + 1)] = x1;
+    return true;
+  }
+  if ( bi == 2 &amp;&amp; bj == 1 ) {
+    // U_ii * [x0; x1] + [x0; x1] * u_jj = rhs[0..2]
+    // U_ii[0,0]*x0 + U_ii[0,1]*x1 + x0*u_jj = rhs[0]
+    // U_ii[1,0]*x0 + U_ii[1,1]*x1 + x1*u_jj = rhs[1]
+    F i00 = U.data[start_i * N + start_i];
+    F i01 = U.data[start_i * N + (start_i + 1)];
+    F i10 = U.data[(start_i + 1) * N + start_i];
+    F i11 = U.data[(start_i + 1) * N + (start_i + 1)];
+    F u_jj = U.data[start_j * N + start_j];
+    mat&lt;F, 2, 2&gt; M{};
+    M.data[0] = i00 + u_jj;
+    M.data[1] = i01;
+    M.data[2] = i10;
+    M.data[3] = i11 + u_jj;
+    F d = ops::det2&lt;F&gt;(M);
+    if ( math::fabs(d) &lt; eps ) return false;
+    auto Mi = ops::inv2&lt;F&gt;(M);
+    F x0 = Mi.data[0] * rhs[0] + Mi.data[1] * rhs[1];
+    F x1 = Mi.data[2] * rhs[0] + Mi.data[3] * rhs[1];
+    U.data[start_i * N + start_j] = x0;
+    U.data[(start_i + 1) * N + start_j] = x1;
+    return true;
+  }
+  if ( bi == 2 &amp;&amp; bj == 2 ) {
+    F i00 = U.data[start_i * N + start_i];
+    F i01 = U.data[start_i * N + (start_i + 1)];
+    F i10 = U.data[(start_i + 1) * N + start_i];
+    F i11 = U.data[(start_i + 1) * N + (start_i + 1)];
+    F j00 = U.data[start_j * N + start_j];
+    F j01 = U.data[start_j * N + (start_j + 1)];
+    F j10 = U.data[(start_j + 1) * N + start_j];
+    F j11 = U.data[(start_j + 1) * N + (start_j + 1)];
+    mat&lt;F, 4, 4&gt; M = mat&lt;F, 4, 4&gt;::zero();
+    // row 0 (eqn r=0, c=0): X00 coefficient = i00 + j00; X01 coeff = j10; X10 coeff = i01; X11 coeff = 0
+    M.data[0] = i00 + j00;
+    M.data[1] = j10;
+    M.data[2] = i01;
+    M.data[3] = F(0);
+    // row 1 (eqn r=0, c=1): X00 coeff = j01; X01 coeff = i00 + j11; X10 coeff = 0; X11 coeff = i01
+    M.data[4] = j01;
+    M.data[5] = i00 + j11;
+    M.data[6] = F(0);
+    M.data[7] = i01;
+    // row 2 (eqn r=1, c=0): X00 coeff = i10; X01 coeff = 0; X10 coeff = i11 + j00; X11 coeff = j10
+    M.data[8] = i10;
+    M.data[9] = F(0);
+    M.data[10] = i11 + j00;
+    M.data[11] = j10;
+    // row 3 (eqn r=1, c=1): X00 coeff = 0; X01 coeff = i10; X10 coeff = j01; X11 coeff = i11 + j11
+    M.data[12] = F(0);
+    M.data[13] = i10;
+    M.data[14] = j01;
+    M.data[15] = i11 + j11;
+    F d = ops::det4&lt;F&gt;(M);
+    if ( math::fabs(d) &lt; eps ) return false;
+    vec&lt;F, 4&gt; b{ rhs[0], rhs[1], rhs[2], rhs[3] };
+    vec&lt;F, 4&gt; x = ops::solve4&lt;F&gt;(M, b);
+    U.data[start_i * N + start_j] = x.data[0];
+    U.data[start_i * N + (start_j + 1)] = x.data[1];
+    U.data[(start_i + 1) * N + start_j] = x.data[2];
+    U.data[(start_i + 1) * N + (start_j + 1)] = x.data[3];
+    return true;
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L158">line 158</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L164">line 164</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L220">line 220</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L227">line 227</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc.hpp.html#L229">line 229</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="ops.hpp.html#f-70cd99eb9dc903f4">ops::det2&lt;F&gt;</a>, <a href="ops.hpp.html#f-3b3094a88765df93">ops::inv2&lt;F&gt;</a>, <a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, 4, 4&gt;::zero</a>, <a href="ops.hpp.html#f-09f31bbd3da556ed">ops::det4&lt;F&gt;</a>, <a href="ops.hpp.html#f-ae1c17c3af6534dc">ops::solve4&lt;F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

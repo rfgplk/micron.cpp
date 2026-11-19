@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/maps/rb_map.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/maps/rb_map.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/maps.html">Maps</a></div><p>Defined in header <code>&lt;micron/maps/rb_map.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/maps/rb_map.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-dc83c2b40018468f">micron::rb_map</code></td><td>class; line 37</td></tr><tr class="t-dsc"><td><code id="s-3b14f860fc9d148c">micron::rb_map::category_type</code></td><td>typedef; line 594</td></tr><tr class="t-dsc"><td><code id="s-a6d485dde23d1670">micron::rb_map::mutability_type</code></td><td>typedef; line 595</td></tr><tr class="t-dsc"><td><code id="s-3744302360e54910">micron::rb_map::memory_type</code></td><td>typedef; line 596</td></tr><tr class="t-dsc"><td><code id="s-7217636c283acc8e">micron::rb_map::size_type</code></td><td>typedef; line 597</td></tr><tr class="t-dsc"><td><code id="s-791105bf39d1dec6">micron::rb_map::key_type</code></td><td>typedef; line 598</td></tr><tr class="t-dsc"><td><code id="s-5b10bda469fcc298">micron::rb_map::mapped_type</code></td><td>typedef; line 599</td></tr><tr class="t-dsc"><td><code id="s-e8fb17b76e3fb329">micron::rb_map::const_iterator</code></td><td>class; line 848</td></tr><tr class="t-dsc"><td><code id="s-2565f939c8d9a87f">micron::rb_map::const_iterator::value_type</code></td><td>typedef; line 871</td></tr><tr class="t-dsc"><td><code id="s-bcf6024dbf9f9801">micron::rb_map::const_iterator::reference</code></td><td>typedef; line 872</td></tr><tr class="t-dsc"><td><code id="s-93c9b835f31af52e">micron::rb_map::const_iterator::difference_type</code></td><td>typedef; line 873</td></tr><tr class="t-dsc"><td><code id="s-7667bf7c56f03a91">micron::rb_map::iterator</code></td><td>typedef; line 925</td></tr><tr class="t-dsc"><td><code id="s-c2461f4a78577122">micron::rmap</code></td><td>typedef; line 976</td></tr><tr class="t-dsc"><td><a href="#f-7946d4dfa0dbee0c">micron::rb_map::~rb_map()</a></td><td>function; line 601</td></tr><tr class="t-dsc"><td><a href="#f-8fff4d77f9c1a236">micron::rb_map::rb_map()</a></td><td>function; line 603</td></tr><tr class="t-dsc"><td><a href="#f-96622c91eae34b9a">micron::rb_map::rb_map(usize cap)</a></td><td>function; line 605</td></tr><tr class="t-dsc"><td><a href="#f-0228936abce14ec6">micron::rb_map::rb_map(const rb_map &amp;)</a></td><td>function; line 607</td></tr><tr class="t-dsc"><td><a href="#f-72449b070ff96890">micron::rb_map::operator=(const rb_map &amp;)</a></td><td>function; line 608</td></tr><tr class="t-dsc"><td><a href="#f-6b81ed3d43c9b2af">micron::rb_map::rb_map(rb_map &amp;&amp;o) noexcept</a></td><td>function; line 610</td></tr><tr class="t-dsc"><td><a href="#f-6a98e419f09f6fc9">micron::rb_map::operator=(rb_map &amp;&amp;o) noexcept</a></td><td>function; line 624</td></tr><tr class="t-dsc"><td><a href="#f-8d343f03b6b81f3a">micron::rb_map::size() const noexcept</a></td><td>function; line 650</td></tr><tr class="t-dsc"><td><a href="#f-f7fe7adf7f65c384">micron::rb_map::bin_count() const noexcept</a></td><td>function; line 656</td></tr><tr class="t-dsc"><td><a href="#f-42c5e766a3ea460e">micron::rb_map::empty() const noexcept</a></td><td>function; line 662</td></tr><tr class="t-dsc"><td><a href="#f-7176b9e57b3d0d1c">micron::rb_map::load_factor() const noexcept</a></td><td>function; line 668</td></tr><tr class="t-dsc"><td><a href="#f-4669cc525814cf9a">micron::rb_map::clear()</a></td><td>function; line 674</td></tr><tr class="t-dsc"><td><a href="#f-5c01f867aa9afbd1">micron::rb_map::treeified(usize bin) const noexcept</a></td><td>function; line 681</td></tr><tr class="t-dsc"><td><a href="#f-ac0009bd1da4efbc">micron::rb_map::find_hash(hash64_t h, const K &amp;key)</a></td><td>function; line 687</td></tr><tr class="t-dsc"><td><a href="#f-7f29ec8028cf323b">micron::rb_map::find_hash(hash64_t h, const K &amp;key) const</a></td><td>function; line 693</td></tr><tr class="t-dsc"><td><a href="#f-f072f10b07ec3565">micron::rb_map::find(const K &amp;key)</a></td><td>function; line 699</td></tr><tr class="t-dsc"><td><a href="#f-98e859a065f3e8e4">micron::rb_map::find(const K &amp;key) const</a></td><td>function; line 705</td></tr><tr class="t-dsc"><td><a href="#f-37c44c1d583e3a21">micron::rb_map::contains(const K &amp;k) const</a></td><td>function; line 711</td></tr><tr class="t-dsc"><td><a href="#f-f71354ce888db649">micron::rb_map::count(const K &amp;k) const</a></td><td>function; line 717</td></tr><tr class="t-dsc"><td><a href="#f-8475a5548129f216">micron::rb_map::at(const K &amp;k)</a></td><td>function; line 723</td></tr><tr class="t-dsc"><td><a href="#f-1db84bf372342b2b">micron::rb_map::at(const K &amp;k) const</a></td><td>function; line 732</td></tr><tr class="t-dsc"><td><a href="#f-e8f3f79e01334b4c">micron::rb_map::insert_or_assign(KK &amp;&amp;k, VV &amp;&amp;v)</a></td><td>function; line 743</td></tr><tr class="t-dsc"><td><a href="#f-0f48d9e114a4456f">micron::rb_map::insert(KK &amp;&amp;k, VV &amp;&amp;v)</a></td><td>function; line 756</td></tr><tr class="t-dsc"><td><a href="#f-72fdd31103c28d2a">micron::rb_map::insert_hash(hash64_t h, KK &amp;&amp;k, VV &amp;&amp;v)</a></td><td>function; line 766</td></tr><tr class="t-dsc"><td><a href="#f-286beb01fafeff4e">micron::rb_map::emplace(KK &amp;&amp;k, Args &amp;&amp;...args)</a></td><td>function; line 775</td></tr><tr class="t-dsc"><td><a href="#f-de7388d762901e88">micron::rb_map::operator[](const K &amp;k)</a></td><td>function; line 783</td></tr><tr class="t-dsc"><td><a href="#f-cfe35b5174b09eef">micron::rb_map::erase(const K &amp;k)</a></td><td>function; line 793</td></tr><tr class="t-dsc"><td><a href="#f-d45105f140517e2c">micron::rb_map::max_size() const noexcept</a></td><td>function; line 825</td></tr><tr class="t-dsc"><td><a href="#f-437cf7a76f462d9b">micron::rb_map::swap(rb_map &amp;o) noexcept</a></td><td>function; line 831</td></tr><tr class="t-dsc"><td><a href="#f-d3c7b647d04051e7">micron::rb_map::const_iterator::const_iterator()</a></td><td>function; line 875</td></tr><tr class="t-dsc"><td><a href="#f-8e26e048f280550d">micron::rb_map::const_iterator::const_iterator(const rb_map *__mm, bool __end)</a></td><td>function; line 877</td></tr><tr class="t-dsc"><td><a href="#f-3f848478b262737d">micron::rb_map::const_iterator::operator*() const</a></td><td>function; line 884</td></tr><tr class="t-dsc"><td><a href="#f-b7fd1ac6db2ae2d0">micron::rb_map::const_iterator::operator++()</a></td><td>function; line 891</td></tr><tr class="t-dsc"><td><a href="#f-63eaa1fda3086542">micron::rb_map::const_iterator::operator++(int)</a></td><td>function; line 905</td></tr><tr class="t-dsc"><td><a href="#f-f035e0002daa1699">micron::rb_map::const_iterator::operator==(const const_iterator &amp;__o) const noexcept</a></td><td>function; line 913</td></tr><tr class="t-dsc"><td><a href="#f-b3c850b2ac930976">micron::rb_map::const_iterator::operator!=(const const_iterator &amp;__o) const noexcept</a></td><td>function; line 919</td></tr><tr class="t-dsc"><td><a href="#f-29dc9f0ada7cabda">micron::rb_map::begin() const</a></td><td>function; line 928</td></tr><tr class="t-dsc"><td><a href="#f-414b2b2e65604e3e">micron::rb_map::end() const</a></td><td>function; line 934</td></tr><tr class="t-dsc"><td><a href="#f-728429c1108517b4">micron::rb_map::cbegin() const</a></td><td>function; line 940</td></tr><tr class="t-dsc"><td><a href="#f-71550103d3ac819a">micron::rb_map::cend() const</a></td><td>function; line 946</td></tr><tr class="t-dsc"><td><a href="#f-241e5a4f605544c0">micron::rb_map::for_each(Fn &amp;&amp;fn)</a></td><td>function; line 953</td></tr><tr class="t-dsc"><td><a href="#f-77f22545f09e88ba">micron::rb_map::for_each(Fn &amp;&amp;fn) const</a></td><td>function; line 965</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-7946d4dfa0dbee0c"><h3><code>micron::rb_map::~rb_map()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L601">line 601</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~rb_map()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~rb_map() { __free_all(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-d708238ec8733045">__free_all</a>.</p></section><section class="function-entry" id="f-8fff4d77f9c1a236"><h3><code>micron::rb_map::rb_map()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L603">line 603</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>rb_map()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">rb_map() { __alloc_bins(__min_bins); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-41b0a5a8f4b8842a">__alloc_bins</a>.</p></section><section class="function-entry" id="f-96622c91eae34b9a"><h3><code>micron::rb_map::rb_map(usize cap)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L605">line 605</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit rb_map(usize cap)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize cap</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit rb_map(usize cap) { __alloc_bins(__round_pow2(cap)); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-41b0a5a8f4b8842a">__alloc_bins</a>, <a href="rb_map.hpp.html#f-a3a9cc19b71ba0b9">__round_pow2</a>.</p></section><section class="function-entry" id="f-0228936abce14ec6"><h3><code>micron::rb_map::rb_map(const rb_map &amp;)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L607">line 607</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>rb_map(const rb_map &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const rb_map &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-72449b070ff96890"><h3><code>micron::rb_map::operator=(const rb_map &amp;)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L608">line 608</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>rb_map &amp;operator=(const rb_map &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const rb_map &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-6b81ed3d43c9b2af"><h3><code>micron::rb_map::rb_map(rb_map &amp;&amp;o) noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L610">line 610</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>rb_map(rb_map &amp;&amp;o) noexcept
+      : __hashes(o.__hashes), __keys(o.__keys), __values(o.__values), __next(o.__next), __home_bin(o.__home_bin), __n_soa(o.__n_soa),
+        __cap_soa(o.__cap_soa), __bins(o.__bins), __n_bins(o.__n_bins), __bin_mask(o.__bin_mask), __total(o.__total)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>rb_map &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">rb_map(rb_map &amp;&amp;o) noexcept
+      : __hashes(o.__hashes), __keys(o.__keys), __values(o.__values), __next(o.__next), __home_bin(o.__home_bin), __n_soa(o.__n_soa),
+        __cap_soa(o.__cap_soa), __bins(o.__bins), __n_bins(o.__n_bins), __bin_mask(o.__bin_mask), __total(o.__total)
+  {
+    o.__hashes = nullptr;
+    o.__keys = nullptr;
+    o.__values = nullptr;
+    o.__next = nullptr;
+    o.__home_bin = nullptr;
+    o.__bins = nullptr;
+    o.__n_soa = o.__cap_soa = o.__n_bins = o.__bin_mask = o.__total = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6a98e419f09f6fc9"><h3><code>micron::rb_map::operator=(rb_map &amp;&amp;o) noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L624">line 624</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>rb_map &amp;
+  operator=(rb_map &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>rb_map &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">rb_map &amp;
+  operator=(rb_map &amp;&amp;o) noexcept
+  {
+    if ( this == &amp;o ) return *this;
+    __free_all();
+    __hashes = o.__hashes;
+    __keys = o.__keys;
+    __values = o.__values;
+    __next = o.__next;
+    __home_bin = o.__home_bin;
+    __n_soa = o.__n_soa;
+    __cap_soa = o.__cap_soa;
+    __bins = o.__bins;
+    __n_bins = o.__n_bins;
+    __bin_mask = o.__bin_mask;
+    __total = o.__total;
+    o.__hashes = nullptr;
+    o.__keys = nullptr;
+    o.__values = nullptr;
+    o.__next = nullptr;
+    o.__home_bin = nullptr;
+    o.__bins = nullptr;
+    o.__n_soa = o.__cap_soa = o.__n_bins = o.__bin_mask = o.__total = 0;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/maps/rb_map.hpp.html#L626">line 626</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/maps/rb_map.hpp.html#L646">line 646</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-d708238ec8733045">__free_all</a>.</p></section><section class="function-entry" id="f-8d343f03b6b81f3a"><h3><code>micron::rb_map::size() const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L650">line 650</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__total</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return __total;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__total</code></td><td><a href="../../source/maps/rb_map.hpp.html#L652">line 652</a></td></tr></tbody></table></section><section class="function-entry" id="f-f7fe7adf7f65c384"><h3><code>micron::rb_map::bin_count() const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L656">line 656</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  bin_count() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__n_bins</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  bin_count() const noexcept
+  {
+    return __n_bins;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__n_bins</code></td><td><a href="../../source/maps/rb_map.hpp.html#L658">line 658</a></td></tr></tbody></table></section><section class="function-entry" id="f-42c5e766a3ea460e"><h3><code>micron::rb_map::empty() const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L662">line 662</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__total == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const noexcept
+  {
+    return __total == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__total == 0</code></td><td><a href="../../source/maps/rb_map.hpp.html#L664">line 664</a></td></tr></tbody></table></section><section class="function-entry" id="f-7176b9e57b3d0d1c"><h3><code>micron::rb_map::load_factor() const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L668">line 668</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>float
+  load_factor() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__n_bins &gt; 0u ? static_cast&lt;float&gt;(__total) / static_cast&lt;float&gt;(__n_bins) : 0.0f</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">float
+  load_factor() const noexcept
+  {
+    return __n_bins &gt; 0u ? static_cast&lt;float&gt;(__total) / static_cast&lt;float&gt;(__n_bins) : 0.0f;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__n_bins &gt; 0u ? static_cast&lt;float&gt;(__total) / static_cast&lt;float&gt;(__n_bins) : 0.0f</code></td><td><a href="../../source/maps/rb_map.hpp.html#L670">line 670</a></td></tr></tbody></table></section><section class="function-entry" id="f-4669cc525814cf9a"><h3><code>micron::rb_map::clear()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L674">line 674</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear()
+  {
+    __free_all();
+    __alloc_bins(__min_bins);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-d708238ec8733045">__free_all</a>, <a href="rb_map.hpp.html#f-41b0a5a8f4b8842a">__alloc_bins</a>.</p></section><section class="function-entry" id="f-5c01f867aa9afbd1"><h3><code>micron::rb_map::treeified(usize bin) const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L681">line 681</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  treeified(usize bin) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize bin</code></li></ul><h4>Effects</h4><p>Returns <code>bin &lt; __n_bins &amp;&amp; __bins[bin].tree != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  treeified(usize bin) const noexcept
+  {
+    return bin &lt; __n_bins &amp;&amp; __bins[bin].tree != nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>bin &lt; __n_bins &amp;&amp; __bins[bin].tree != nullptr</code></td><td><a href="../../source/maps/rb_map.hpp.html#L683">line 683</a></td></tr></tbody></table></section><section class="function-entry" id="f-ac0009bd1da4efbc"><h3><code>micron::rb_map::find_hash(hash64_t h, const K &amp;key)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L687">line 687</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>V *
+  find_hash(hash64_t h, const K &amp;key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;key</code></li></ul><h4>Effects</h4><p>Returns <code>__find_hash(h, key)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">V *
+  find_hash(hash64_t h, const K &amp;key)
+  {
+    return __find_hash(h, key);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__find_hash(h, key)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L689">line 689</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>.</p></section><section class="function-entry" id="f-7f29ec8028cf323b"><h3><code>micron::rb_map::find_hash(hash64_t h, const K &amp;key) const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L693">line 693</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const V *
+  find_hash(hash64_t h, const K &amp;key) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;key</code></li></ul><h4>Effects</h4><p>Returns <code>__find_hash(h, key)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const V *
+  find_hash(hash64_t h, const K &amp;key) const
+  {
+    return __find_hash(h, key);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__find_hash(h, key)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L695">line 695</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>.</p></section><section class="function-entry" id="f-f072f10b07ec3565"><h3><code>micron::rb_map::find(const K &amp;key)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L699">line 699</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>V *
+  find(const K &amp;key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;key</code></li></ul><h4>Effects</h4><p>Returns <code>__find_hash(hash&lt;hash64_t&gt;(key), key)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">V *
+  find(const K &amp;key)
+  {
+    return __find_hash(hash&lt;hash64_t&gt;(key), key);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__find_hash(hash&lt;hash64_t&gt;(key), key)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L701">line 701</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>.</p></section><section class="function-entry" id="f-98e859a065f3e8e4"><h3><code>micron::rb_map::find(const K &amp;key) const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L705">line 705</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const V *
+  find(const K &amp;key) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;key</code></li></ul><h4>Effects</h4><p>Returns <code>__find_hash(hash&lt;hash64_t&gt;(key), key)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const V *
+  find(const K &amp;key) const
+  {
+    return __find_hash(hash&lt;hash64_t&gt;(key), key);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__find_hash(hash&lt;hash64_t&gt;(key), key)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L707">line 707</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>.</p></section><section class="function-entry" id="f-37c44c1d583e3a21"><h3><code>micron::rb_map::contains(const K &amp;k) const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L711">line 711</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  contains(const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>find(k) != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  contains(const K &amp;k) const
+  {
+    return find(k) != nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>find(k) != nullptr</code></td><td><a href="../../source/maps/rb_map.hpp.html#L713">line 713</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-f072f10b07ec3565">find</a>.</p></section><section class="function-entry" id="f-f71354ce888db649"><h3><code>micron::rb_map::count(const K &amp;k) const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L717">line 717</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  count(const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>find(k) ? 1u : 0u</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  count(const K &amp;k) const
+  {
+    return find(k) ? 1u : 0u;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>find(k) ? 1u : 0u</code></td><td><a href="../../source/maps/rb_map.hpp.html#L719">line 719</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-f072f10b07ec3565">find</a>.</p></section><section class="function-entry" id="f-8475a5548129f216"><h3><code>micron::rb_map::at(const K &amp;k)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L723">line 723</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>V &amp;
+  at(const K &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">V &amp;
+  at(const K &amp;k)
+  {
+    V *v = find(k);
+    if ( !v ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;rb_map::at(): key not found&quot;);
+    return *v;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*v</code></td><td><a href="../../source/maps/rb_map.hpp.html#L728">line 728</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;rb_map::at(): key not found&quot;)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L727">line 727</a><br>Within <code>( !v )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-f072f10b07ec3565">find</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-1db84bf372342b2b"><h3><code>micron::rb_map::at(const K &amp;k) const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L732">line 732</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const V &amp;
+  at(const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const V &amp;
+  at(const K &amp;k) const
+  {
+    const V *v = find(k);
+    if ( !v ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;rb_map::at(): key not found&quot;);
+    return *v;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*v</code></td><td><a href="../../source/maps/rb_map.hpp.html#L737">line 737</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;rb_map::at(): key not found&quot;)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L736">line 736</a><br>Within <code>( !v )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-f072f10b07ec3565">find</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-e8f3f79e01334b4c"><h3><code>micron::rb_map::insert_or_assign(KK &amp;&amp;k, VV &amp;&amp;v)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L743">line 743</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class KK, class VV&gt;
+    requires(micron::is_same_v&lt;micron::remove_cvref_t&lt;KK&gt;, K&gt; &amp;&amp; micron::is_same_v&lt;micron::remove_cvref_t&lt;VV&gt;, V&gt;)
+  micron::pair&lt;bool, V *&gt;
+  insert_or_assign(KK &amp;&amp;k, VV &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>KK &amp;&amp;k</code></li><li><code>VV &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class KK, class VV&gt;
+    requires(micron::is_same_v&lt;micron::remove_cvref_t&lt;KK&gt;, K&gt; &amp;&amp; micron::is_same_v&lt;micron::remove_cvref_t&lt;VV&gt;, V&gt;)
+  micron::pair&lt;bool, V *&gt;
+  insert_or_assign(KK &amp;&amp;k, VV &amp;&amp;v)
+  {
+    hash64_t h = hash&lt;hash64_t&gt;(k);
+    if ( V *existing = __find_hash(h, k) ) {
+      *existing = micron::forward&lt;VV&gt;(v);
+      return { false, existing };
+    }
+    return __insert_absent(h, micron::forward&lt;KK&gt;(k), micron::forward&lt;VV&gt;(v));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ false, existing }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L748">line 748</a></td></tr><tr class="t-dsc"><td><code>__insert_absent(h, micron::forward&lt;KK&gt;(k), micron::forward&lt;VV&gt;(v))</code></td><td><a href="../../source/maps/rb_map.hpp.html#L750">line 750</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>, <a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;VV&gt;</a>, <a href="rb_map.hpp.html#f-9c2e31e7b2f200d9">__insert_absent</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;KK&gt;</a>.</p></section><section class="function-entry" id="f-0f48d9e114a4456f"><h3><code>micron::rb_map::insert(KK &amp;&amp;k, VV &amp;&amp;v)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L756">line 756</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class KK, class VV&gt;
+    requires(micron::is_same_v&lt;micron::remove_cvref_t&lt;KK&gt;, K&gt; &amp;&amp; micron::is_same_v&lt;micron::remove_cvref_t&lt;VV&gt;, V&gt;)
+  micron::pair&lt;bool, V *&gt;
+  insert(KK &amp;&amp;k, VV &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>KK &amp;&amp;k</code></li><li><code>VV &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class KK, class VV&gt;
+    requires(micron::is_same_v&lt;micron::remove_cvref_t&lt;KK&gt;, K&gt; &amp;&amp; micron::is_same_v&lt;micron::remove_cvref_t&lt;VV&gt;, V&gt;)
+  micron::pair&lt;bool, V *&gt;
+  insert(KK &amp;&amp;k, VV &amp;&amp;v)
+  {
+    hash64_t h = hash&lt;hash64_t&gt;(k);
+    if ( V *existing = __find_hash(h, k) ) return { false, existing };
+    return __insert_absent(h, micron::forward&lt;KK&gt;(k), micron::forward&lt;VV&gt;(v));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ false, existing }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L759">line 759</a></td></tr><tr class="t-dsc"><td><code>__insert_absent(h, micron::forward&lt;KK&gt;(k), micron::forward&lt;VV&gt;(v))</code></td><td><a href="../../source/maps/rb_map.hpp.html#L760">line 760</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>, <a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>, <a href="rb_map.hpp.html#f-9c2e31e7b2f200d9">__insert_absent</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;KK&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;VV&gt;</a>.</p></section><section class="function-entry" id="f-72fdd31103c28d2a"><h3><code>micron::rb_map::insert_hash(hash64_t h, KK &amp;&amp;k, VV &amp;&amp;v)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L766">line 766</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class KK, class VV&gt;
+    requires(micron::is_same_v&lt;micron::remove_cvref_t&lt;KK&gt;, K&gt; &amp;&amp; micron::is_same_v&lt;micron::remove_cvref_t&lt;VV&gt;, V&gt;)
+  micron::pair&lt;bool, V *&gt;
+  insert_hash(hash64_t h, KK &amp;&amp;k, VV &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>KK &amp;&amp;k</code></li><li><code>VV &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class KK, class VV&gt;
+    requires(micron::is_same_v&lt;micron::remove_cvref_t&lt;KK&gt;, K&gt; &amp;&amp; micron::is_same_v&lt;micron::remove_cvref_t&lt;VV&gt;, V&gt;)
+  micron::pair&lt;bool, V *&gt;
+  insert_hash(hash64_t h, KK &amp;&amp;k, VV &amp;&amp;v)
+  {
+    if ( V *existing = __find_hash(h, k) ) return { false, existing };
+    return __insert_absent(h, micron::forward&lt;KK&gt;(k), micron::forward&lt;VV&gt;(v));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ false, existing }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L768">line 768</a></td></tr><tr class="t-dsc"><td><code>__insert_absent(h, micron::forward&lt;KK&gt;(k), micron::forward&lt;VV&gt;(v))</code></td><td><a href="../../source/maps/rb_map.hpp.html#L769">line 769</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>, <a href="rb_map.hpp.html#f-9c2e31e7b2f200d9">__insert_absent</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;KK&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;VV&gt;</a>.</p></section><section class="function-entry" id="f-286beb01fafeff4e"><h3><code>micron::rb_map::emplace(KK &amp;&amp;k, Args &amp;&amp;...args)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L775">line 775</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class KK, typename... Args&gt;
+    requires micron::is_same_v&lt;micron::remove_cvref_t&lt;KK&gt;, K&gt;
+  micron::pair&lt;bool, V *&gt;
+  emplace(KK &amp;&amp;k, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>KK &amp;&amp;k</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class KK, typename... Args&gt;
+    requires micron::is_same_v&lt;micron::remove_cvref_t&lt;KK&gt;, K&gt;
+  micron::pair&lt;bool, V *&gt;
+  emplace(KK &amp;&amp;k, Args &amp;&amp;...args)
+  {
+    hash64_t h = hash&lt;hash64_t&gt;(k);
+    if ( V *existing = __find_hash(h, k) ) return { false, existing };
+    return __insert_absent(h, micron::forward&lt;KK&gt;(k), V(micron::forward&lt;Args&gt;(args)...));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ false, existing }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L778">line 778</a></td></tr><tr class="t-dsc"><td><code>__insert_absent(h, micron::forward&lt;KK&gt;(k), V(micron::forward&lt;Args&gt;(args)...))</code></td><td><a href="../../source/maps/rb_map.hpp.html#L779">line 779</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>, <a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>, <a href="rb_map.hpp.html#f-9c2e31e7b2f200d9">__insert_absent</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;KK&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-de7388d762901e88"><h3><code>micron::rb_map::operator[](const K &amp;k)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L783">line 783</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>V &amp;
+  operator[](const K &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">V &amp;
+  operator[](const K &amp;k)
+  {
+    hash64_t h = hash&lt;hash64_t&gt;(k);
+    V *v = __find_hash(h, k);
+    if ( v ) return *v;
+    auto r = __insert_absent(h, k, V{});
+    return *r.b;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*v</code></td><td><a href="../../source/maps/rb_map.hpp.html#L787">line 787</a></td></tr><tr class="t-dsc"><td><code>*r.b</code></td><td><a href="../../source/maps/rb_map.hpp.html#L789">line 789</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>, <a href="rb_map.hpp.html#f-757c2f127a22a247">__find_hash</a>, <a href="rb_map.hpp.html#f-9c2e31e7b2f200d9">__insert_absent</a>.</p></section><section class="function-entry" id="f-cfe35b5174b09eef"><h3><code>micron::rb_map::erase(const K &amp;k)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L793">line 793</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  erase(const K &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  erase(const K &amp;k)
+  {
+    hash64_t h = hash&lt;hash64_t&gt;(k);
+    usize bi = __bin_of(h);
+    __bin_t &amp;b = __bins[bi];
+    if ( b.tree ) {
+      bool ok = b.tree-&gt;erase_by([h, &amp;k](const __tree_entry &amp;d) { return h != d.hash ? h &lt; d.hash : k &lt; d.key; },
+                                 [h, &amp;k](const __tree_entry &amp;d) { return d.hash != h ? d.hash &lt; h : d.key &lt; k; });
+      if ( ok ) {
+        --__total;
+        if ( b.tree-&gt;size() &lt; __untreeify_threshold ) __untreeify(bi);
+      }
+      return ok;
+    }
+    i32 prev = -1;
+    for ( i32 i = b.list_head; i != -1; i = __next[i] ) {
+      if ( __hashes[i] == h &amp;&amp; __keys[i] == k ) {
+        if ( prev == -1 )
+          b.list_head = __next[i];
+        else
+          __next[prev] = __next[i];
+        --b.chain_len;
+        --__total;
+        __soa_remove(i);
+        return true;
+      }
+      prev = i;
+    }
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ok</code></td><td><a href="../../source/maps/rb_map.hpp.html#L805">line 805</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/maps/rb_map.hpp.html#L817">line 817</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/maps/rb_map.hpp.html#L821">line 821</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>, <a href="rb_map.hpp.html#f-7fb86384794e19de">__bin_of</a>, <a href="rb_map.hpp.html#f-31b754455de744d0">__untreeify</a>, <a href="rb_map.hpp.html#f-044da2d63c193f27">__soa_remove</a>.</p></section><section class="function-entry" id="f-d45105f140517e2c"><h3><code>micron::rb_map::max_size() const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L825">line 825</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  max_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__n_bins</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  max_size() const noexcept
+  {
+    return __n_bins;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__n_bins</code></td><td><a href="../../source/maps/rb_map.hpp.html#L827">line 827</a></td></tr></tbody></table></section><section class="function-entry" id="f-437cf7a76f462d9b"><h3><code>micron::rb_map::swap(rb_map &amp;o) noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L831">line 831</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  swap(rb_map &amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>rb_map &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  swap(rb_map &amp;o) noexcept
+  {
+    micron::swap(__hashes, o.__hashes);
+    micron::swap(__keys, o.__keys);
+    micron::swap(__values, o.__values);
+    micron::swap(__next, o.__next);
+    micron::swap(__home_bin, o.__home_bin);
+    micron::swap(__n_soa, o.__n_soa);
+    micron::swap(__cap_soa, o.__cap_soa);
+    micron::swap(__bins, o.__bins);
+    micron::swap(__n_bins, o.__n_bins);
+    micron::swap(__bin_mask, o.__bin_mask);
+    micron::swap(__total, o.__total);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-d3c7b647d04051e7"><h3><code>micron::rb_map::const_iterator::const_iterator()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L875">line 875</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const_iterator() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-8e26e048f280550d"><h3><code>micron::rb_map::const_iterator::const_iterator(const rb_map *__mm, bool __end)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L877">line 877</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator(const rb_map *__mm, bool __end) : __m(__mm), __soa_i(__end ? __mm-&gt;__n_soa : 0), __bin_i(__end ? __mm-&gt;__n_bins : 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const rb_map *__mm</code></li><li><code>bool __end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator(const rb_map *__mm, bool __end) : __m(__mm), __soa_i(__end ? __mm-&gt;__n_soa : 0), __bin_i(__end ? __mm-&gt;__n_bins : 0)
+    {
+      if ( __end ) return;
+      if ( __soa_i &gt;= __m-&gt;__n_soa ) __enter_bin(0);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/rb_map.hpp.html#L879">line 879</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-dbae709be90525ef">__enter_bin</a>.</p></section><section class="function-entry" id="f-3f848478b262737d"><h3><code>micron::rb_map::const_iterator::operator*() const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L884">line 884</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>reference
+    operator*() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">reference
+    operator*() const
+    {
+      if ( __soa_i &lt; __m-&gt;__n_soa ) return reference{ __m-&gt;__keys[__soa_i], __m-&gt;__values[__soa_i] };
+      return reference{ __ti-&gt;key, __ti-&gt;value };
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reference{ __m-&gt;__keys[__soa_i], __m-&gt;__values[__soa_i] }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L886">line 886</a></td></tr><tr class="t-dsc"><td><code>reference{ __ti-&gt;key, __ti-&gt;value }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L887">line 887</a></td></tr></tbody></table></section><section class="function-entry" id="f-b7fd1ac6db2ae2d0"><h3><code>micron::rb_map::const_iterator::operator++()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L891">line 891</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator &amp;
+    operator++()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator &amp;
+    operator++()
+    {
+      if ( __soa_i &lt; __m-&gt;__n_soa ) {
+        ++__soa_i;
+        if ( __soa_i &gt;= __m-&gt;__n_soa ) __enter_bin(0);
+        return *this;
+      }
+      ++__ti;
+      const __tree_t *t = __m-&gt;__bins[__bin_i].tree;
+      if ( __ti == t-&gt;end() ) __enter_bin(__bin_i + 1);
+      return *this;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/maps/rb_map.hpp.html#L896">line 896</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/maps/rb_map.hpp.html#L901">line 901</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-dbae709be90525ef">__enter_bin</a>.</p></section><section class="function-entry" id="f-63eaa1fda3086542"><h3><code>micron::rb_map::const_iterator::operator++(int)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L905">line 905</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+    operator++(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+    operator++(int)
+    {
+      const_iterator __t = *this;
+      ++*this;
+      return __t;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__t</code></td><td><a href="../../source/maps/rb_map.hpp.html#L909">line 909</a></td></tr></tbody></table></section><section class="function-entry" id="f-f035e0002daa1699"><h3><code>micron::rb_map::const_iterator::operator==(const const_iterator &amp;__o) const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L913">line 913</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator==(const const_iterator &amp;__o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;__o</code></li></ul><h4>Effects</h4><p>Returns <code>__soa_i == __o.__soa_i &amp;&amp; __bin_i == __o.__bin_i &amp;&amp; __ti == __o.__ti</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator==(const const_iterator &amp;__o) const noexcept
+    {
+      return __soa_i == __o.__soa_i &amp;&amp; __bin_i == __o.__bin_i &amp;&amp; __ti == __o.__ti;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__soa_i == __o.__soa_i &amp;&amp; __bin_i == __o.__bin_i &amp;&amp; __ti == __o.__ti</code></td><td><a href="../../source/maps/rb_map.hpp.html#L915">line 915</a></td></tr></tbody></table></section><section class="function-entry" id="f-b3c850b2ac930976"><h3><code>micron::rb_map::const_iterator::operator!=(const const_iterator &amp;__o) const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L919">line 919</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator!=(const const_iterator &amp;__o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;__o</code></li></ul><h4>Effects</h4><p>Returns <code>!(*this == __o)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator!=(const const_iterator &amp;__o) const noexcept
+    {
+      return !(*this == __o);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>!(*this == __o)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L921">line 921</a></td></tr></tbody></table></section><section class="function-entry" id="f-29dc9f0ada7cabda"><h3><code>micron::rb_map::begin() const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L928">line 928</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  begin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator{ this, false }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  begin() const
+  {
+    return const_iterator{ this, false };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator{ this, false }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L930">line 930</a></td></tr></tbody></table></section><section class="function-entry" id="f-414b2b2e65604e3e"><h3><code>micron::rb_map::end() const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L934">line 934</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  end() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator{ this, true }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  end() const
+  {
+    return const_iterator{ this, true };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator{ this, true }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L936">line 936</a></td></tr></tbody></table></section><section class="function-entry" id="f-728429c1108517b4"><h3><code>micron::rb_map::cbegin() const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L940">line 940</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  cbegin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>begin()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  cbegin() const
+  {
+    return begin();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>begin()</code></td><td><a href="../../source/maps/rb_map.hpp.html#L942">line 942</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-29dc9f0ada7cabda">begin</a>.</p></section><section class="function-entry" id="f-71550103d3ac819a"><h3><code>micron::rb_map::cend() const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L946">line 946</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  cend() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>end()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  cend() const
+  {
+    return end();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>end()</code></td><td><a href="../../source/maps/rb_map.hpp.html#L948">line 948</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-414b2b2e65604e3e">end</a>.</p></section><section class="function-entry" id="f-241e5a4f605544c0"><h3><code>micron::rb_map::for_each(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L953">line 953</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn)
+  {
+    for ( usize i = 0; i &lt; __n_soa; ++i ) fn(__keys[i], __values[i]);
+    for ( usize i = 0; i &lt; __n_bins; ++i ) {
+      __tree_t *t = __bins[i].tree;
+      if ( !t ) continue;
+      t-&gt;for_each([&amp;fn](__tree_entry &amp;e) { fn(e.key, e.value); });
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-77f22545f09e88ba"><h3><code>micron::rb_map::for_each(Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L965">line 965</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const
+  {
+    for ( usize i = 0; i &lt; __n_soa; ++i ) fn(__keys[i], __values[i]);
+    for ( usize i = 0; i &lt; __n_bins; ++i ) {
+      const __tree_t *t = __bins[i].tree;
+      if ( !t ) continue;
+      t-&gt;for_each([&amp;fn](const __tree_entry &amp;e) { fn(e.key, e.value); });
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-6d583d93011a48e7"><h3><code>micron::rb_map::__tree_entry::__tree_entry()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L52">line 52</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__tree_entry() : hash(0), key{}, value{}</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__tree_entry() : hash(0), key{}, value{} { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-1c3b31773be682ca"><h3><code>micron::rb_map::__tree_entry::__tree_entry(hash64_t h, const K &amp;k, const V &amp;v)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L54">line 54</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__tree_entry(hash64_t h, const K &amp;k, const V &amp;v) : hash(h), key(k), value(v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>const V &amp;v</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__tree_entry(hash64_t h, const K &amp;k, const V &amp;v) : hash(h), key(k), value(v) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-58746650dc5850c8"><h3><code>micron::rb_map::__tree_entry::__tree_entry(hash64_t h, K &amp;&amp;k, V &amp;&amp;v)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L56">line 56</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__tree_entry(hash64_t h, K &amp;&amp;k, V &amp;&amp;v) : hash(h), key(micron::move(k)), value(micron::move(v))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>K &amp;&amp;k</code></li><li><code>V &amp;&amp;v</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__tree_entry(hash64_t h, K &amp;&amp;k, V &amp;&amp;v) : hash(h), key(micron::move(k)), value(micron::move(v)) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b1a41d4b35e89539"><h3><code>micron::rb_map::__tree_entry::__tree_entry(const __tree_entry &amp;)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L58">line 58</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__tree_entry(const __tree_entry &amp;) = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __tree_entry &amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-4501b84aa938a927"><h3><code>micron::rb_map::__tree_entry::__tree_entry(__tree_entry &amp;&amp;)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L59">line 59</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__tree_entry(__tree_entry &amp;&amp;) = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__tree_entry &amp;&amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-63308d0a77ef55e6"><h3><code>micron::rb_map::__tree_entry::operator=(const __tree_entry &amp;)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L60">line 60</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__tree_entry &amp;operator=(const __tree_entry &amp;) = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __tree_entry &amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-75306108cf3800f4"><h3><code>micron::rb_map::__tree_entry::operator=(__tree_entry &amp;&amp;)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L61">line 61</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__tree_entry &amp;operator=(__tree_entry &amp;&amp;) = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__tree_entry &amp;&amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-c53e6f7ad26b6dd9"><h3><code>micron::rb_map::__tree_entry::operator&lt;(const __tree_entry &amp;o) const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L64">line 64</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator&lt;(const __tree_entry &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __tree_entry &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator&lt;(const __tree_entry &amp;o) const
+    {
+      if ( hash != o.hash ) return hash &lt; o.hash;
+      return key &lt; o.key;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>hash &lt; o.hash</code></td><td><a href="../../source/maps/rb_map.hpp.html#L66">line 66</a></td></tr><tr class="t-dsc"><td><code>key &lt; o.key</code></td><td><a href="../../source/maps/rb_map.hpp.html#L67">line 67</a></td></tr></tbody></table></section><section class="function-entry" id="f-a5950ce040fd1409"><h3><code>micron::rb_map::__alloc_array(usize count)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L96">line 96</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  static T *
+  __alloc_array(usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize count</code></li></ul><h4>Effects</h4><p>Returns <code>__allocator_allocate_array&lt;Alloc, T&gt;(count)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  static T *
+  __alloc_array(usize count)
+  {
+    return __allocator_allocate_array&lt;Alloc, T&gt;(count);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__allocator_allocate_array&lt;Alloc, T&gt;(count)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-760cbea5bea3d50b">__allocator_allocate_array&lt;Alloc, T&gt;</a>.</p></section><section class="function-entry" id="f-a7bd6920f30e466a"><h3><code>micron::rb_map::__free_array(T *ptr) noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  static void
+  __free_array(T *ptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  static void
+  __free_array(T *ptr) noexcept
+  {
+    __allocator_deallocate_array&lt;Alloc&gt;(ptr);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-caf5214ca3693726">__allocator_deallocate_array&lt;Alloc&gt;</a>.</p></section><section class="function-entry" id="f-e9592f3b3538e588"><h3><code>micron::rb_map::__make_tree()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L109">line 109</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __tree_t *
+  __make_tree()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __tree_t *
+  __make_tree()
+  {
+    __tree_t *memory = __allocator_allocate_array&lt;Alloc, __tree_t&gt;(1);
+    return new (static_cast&lt;void *&gt;(memory)) __tree_t();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>new (static_cast&lt;void *&gt;(memory)) __tree_t()</code></td><td><a href="../../source/maps/rb_map.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-760cbea5bea3d50b">__allocator_allocate_array&lt;Alloc, __tree_t&gt;</a>.</p></section><section class="function-entry" id="f-04a420250a52ec0e"><h3><code>micron::rb_map::__free_tree(__tree_t *tree) noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L116">line 116</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __free_tree(__tree_t *tree) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__tree_t *tree</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __free_tree(__tree_t *tree) noexcept
+  {
+    if ( !tree ) return;
+    tree-&gt;~__tree_t();
+    __allocator_deallocate_array&lt;Alloc&gt;(tree);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/rb_map.hpp.html#L118">line 118</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-caf5214ca3693726">__allocator_deallocate_array&lt;Alloc&gt;</a>.</p></section><section class="function-entry" id="f-476b1451b5054ab4"><h3><code>micron::rb_map::rb_map(__raw_bins_tag, usize count)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L126">line 126</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>rb_map(__raw_bins_tag, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__raw_bins_tag</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">rb_map(__raw_bins_tag, usize count) { __alloc_bins(count); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-41b0a5a8f4b8842a">__alloc_bins</a>.</p></section><section class="function-entry" id="f-a3a9cc19b71ba0b9"><h3><code>micron::rb_map::__round_pow2(usize n) noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L129">line 129</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static usize
+  __round_pow2(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static usize
+  __round_pow2(usize n) noexcept
+  {
+    if ( n &lt;= __min_bins ) return __min_bins;
+    usize p = 1;
+    while ( p &lt; n ) {
+      usize next = p &lt;&lt; 1u;
+      if ( next &lt;= p ) return p;
+      p = next;
+    }
+    return p;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__min_bins</code></td><td><a href="../../source/maps/rb_map.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../source/maps/rb_map.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../source/maps/rb_map.hpp.html#L138">line 138</a></td></tr></tbody></table></section><section class="function-entry" id="f-704a83e1e9f80aab"><h3><code>micron::rb_map::__load_limit(usize bins) noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L142">line 142</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr usize
+  __load_limit(usize bins) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize bins</code></li></ul><h4>Effects</h4><p>Returns <code>(bins / __load_denom) * __load_num + ((bins % __load_denom) * __load_num) / __load_denom</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr usize
+  __load_limit(usize bins) noexcept
+  {
+    return (bins / __load_denom) * __load_num + ((bins % __load_denom) * __load_num) / __load_denom;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(bins / __load_denom) * __load_num + ((bins % __load_denom) * __load_num) / __load_denom</code></td><td><a href="../../source/maps/rb_map.hpp.html#L144">line 144</a></td></tr></tbody></table></section><section class="function-entry" id="f-41b0a5a8f4b8842a"><h3><code>micron::rb_map::__alloc_bins(usize count)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L148">line 148</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __alloc_bins(usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __alloc_bins(usize count)
+  {
+    if ( count &gt; static_cast&lt;usize&gt;(numeric_limits&lt;i32&gt;::max()) ) exc&lt;except::library_error&gt;(&quot;rb_map: bin index capacity overflow&quot;);
+    __bins = __alloc_array&lt;__bin_t&gt;(count);
+    for ( usize i = 0; i &lt; count; ++i ) {
+      __bins[i].list_head = -1;
+      __bins[i].tree = nullptr;
+      __bins[i].chain_len = 0;
+    }
+    __n_bins = count;
+    __bin_mask = count - 1u;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;rb_map: bin index capacity overflow&quot;)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L150">line 150</a><br>Within <code>( count &gt; static_cast&lt;usize&gt;(numeric_limits&lt;i32&gt;::max()) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../numerics.hpp.html#f-089d5d7e4cc4c66a">numeric_limits&lt;i32&gt;::max</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="rb_map.hpp.html#f-a5950ce040fd1409">__alloc_array&lt;__bin_t&gt;</a>.</p></section><section class="function-entry" id="f-7fb86384794e19de"><h3><code>micron::rb_map::__bin_of(hash64_t h) const noexcept</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L162">line 162</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) usize
+  __bin_of(hash64_t h) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;usize&gt;(h) &amp; __bin_mask</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) usize
+  __bin_of(hash64_t h) const noexcept
+  {
+    return static_cast&lt;usize&gt;(h) &amp; __bin_mask;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(h) &amp; __bin_mask</code></td><td><a href="../../source/maps/rb_map.hpp.html#L164">line 164</a></td></tr></tbody></table></section><section class="function-entry" id="f-4532794e3645902b"><h3><code>micron::rb_map::__grow_soa()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L168">line 168</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __grow_soa()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __grow_soa()
+  {
+    if ( __cap_soa &gt; static_cast&lt;usize&gt;(numeric_limits&lt;i32&gt;::max()) / 2u )
+      exc&lt;except::library_error&gt;(&quot;rb_map: SoA index capacity overflow&quot;);
+    usize new_cap = __cap_soa == 0 ? 16 : __cap_soa * 2;
+    hash64_t *nh = nullptr;
+    i32 *nn = nullptr;
+    i32 *nb = nullptr;
+    K *nk = nullptr;
+    V *nv = nullptr;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      nh = __alloc_array&lt;hash64_t&gt;(new_cap);
+      nn = __alloc_array&lt;i32&gt;(new_cap);
+      nb = __alloc_array&lt;i32&gt;(new_cap);
+      nk = __alloc_array&lt;K&gt;(new_cap);
+      nv = __alloc_array&lt;V&gt;(new_cap);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __free_array(nv);
+      __free_array(nk);
+      __free_array(nb);
+      __free_array(nn);
+      __free_array(nh);
+      throw;
+    }
+#endif
+    usize moved = 0;
+    if ( __n_soa &gt; 0 ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+        for ( ; moved &lt; __n_soa; ++moved ) {
+          if constexpr ( micron::is_nothrow_move_constructible_v&lt;K&gt; &amp;&amp; micron::is_nothrow_move_constructible_v&lt;V&gt; )
+            new (nk + moved) K(micron::move(__keys[moved]));
+          else if constexpr ( micron::is_copy_constructible_v&lt;K&gt; )
+            new (nk + moved) K(__keys[moved]);
+          else
+            new (nk + moved) K(micron::move(__keys[moved]));
+          try {
+            if constexpr ( micron::is_nothrow_move_constructible_v&lt;K&gt; &amp;&amp; micron::is_nothrow_move_constructible_v&lt;V&gt; )
+              new (nv + moved) V(micron::move(__values[moved]));
+            else if constexpr ( micron::is_copy_constructible_v&lt;K&gt; )
+              new (nv + moved) V(__values[moved]);
+            else
+              new (nv + moved) V(micron::move(__values[moved]));
+          } catch ( ... ) {
+            nk[moved].~K();
+            throw;
+          }
+        }
+      } catch ( ... ) {
+        for ( usize i = 0; i &lt; moved; ++i ) {
+          nv[i].~V();
+          nk[i].~K();
+        }
+        __free_array(nv);
+        __free_array(nk);
+        __free_array(nb);
+        __free_array(nn);
+        __free_array(nh);
+        throw;
+      }
+#else
+      for ( ; moved &lt; __n_soa; ++moved ) {
+        new (nk + moved) K(micron::move(__keys[moved]));
+        new (nv + moved) V(micron::move(__values[moved]));
+      }
+#endif
+      micron::memcpy(reinterpret_cast&lt;byte *&gt;(nh), reinterpret_cast&lt;byte *&gt;(__hashes), __n_soa * sizeof(hash64_t));
+      micron::memcpy(reinterpret_cast&lt;byte *&gt;(nn), reinterpret_cast&lt;byte *&gt;(__next), __n_soa * sizeof(i32));
+      micron::memcpy(reinterpret_cast&lt;byte *&gt;(nb), reinterpret_cast&lt;byte *&gt;(__home_bin), __n_soa * sizeof(i32));
+      for ( usize i = 0; i &lt; __n_soa; ++i ) {
+        __keys[i].~K();
+        __values[i].~V();
+      }
+    }
+    __free_array(__hashes);
+    __free_array(__keys);
+    __free_array(__values);
+    __free_array(__next);
+    __free_array(__home_bin);
+    __hashes = nh;
+    __keys = nk;
+    __values = nv;
+    __next = nn;
+    __home_bin = nb;
+    __cap_soa = new_cap;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;rb_map: SoA index capacity overflow&quot;)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L171">line 171</a><br>Within <code>( __cap_soa &gt; static_cast&lt;usize&gt;(numeric_limits&lt;i32&gt;::max()) / 2u )</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/rb_map.hpp.html#L193">line 193</a></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/rb_map.hpp.html#L216">line 216</a><br>Within <code>( __n_soa &gt; 0 )</code>, <code>moved &lt; __n_soa</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/rb_map.hpp.html#L229">line 229</a><br>Within <code>( __n_soa &gt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../numerics.hpp.html#f-089d5d7e4cc4c66a">numeric_limits&lt;i32&gt;::max</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="rb_map.hpp.html#f-a5950ce040fd1409">__alloc_array&lt;hash64_t&gt;</a>, <a href="rb_map.hpp.html#f-a5950ce040fd1409">__alloc_array&lt;i32&gt;</a>, <a href="rb_map.hpp.html#f-a5950ce040fd1409">__alloc_array&lt;K&gt;</a>, <a href="rb_map.hpp.html#f-a5950ce040fd1409">__alloc_array&lt;V&gt;</a>, <a href="rb_map.hpp.html#f-a7bd6920f30e466a">__free_array</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-044da2d63c193f27"><h3><code>micron::rb_map::__soa_remove(i32 idx)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L259">line 259</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __soa_remove(i32 idx)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __soa_remove(i32 idx)
+  {
+    i32 last = static_cast&lt;i32&gt;(__n_soa) - 1;
+    if ( idx != last ) {
+
+      i32 last_home = __home_bin[last];
+      __bin_t &amp;lb = __bins[last_home];
+      if ( !lb.tree ) {
+
+        if ( lb.list_head == last ) {
+          lb.list_head = idx;
+        } else {
+          i32 prev = lb.list_head;
+          while ( prev != -1 &amp;&amp; __next[prev] != last ) prev = __next[prev];
+          if ( prev != -1 ) __next[prev] = idx;
+        }
+      }
+      __hashes[idx] = __hashes[last];
+      __next[idx] = __next[last];
+      __home_bin[idx] = __home_bin[last];
+      __keys[idx] = micron::move(__keys[last]);
+      __values[idx] = micron::move(__values[last]);
+    }
+    __keys[__n_soa - 1].~K();
+    __values[__n_soa - 1].~V();
+    --__n_soa;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-4195ec26f7623cdb"><h3><code>micron::rb_map::__treeify(usize bin_idx)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L288">line 288</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __treeify(usize bin_idx)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize bin_idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __treeify(usize bin_idx)
+  {
+    __bin_t &amp;b = __bins[bin_idx];
+    if ( b.tree ) return;
+    auto *t = __make_tree();
+
+    i32 cur = b.list_head;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      while ( cur != -1 ) {
+        i32 nxt = __next[cur];
+        if constexpr ( micron::is_copy_constructible_v&lt;K&gt; )
+          t-&gt;insert(__tree_entry(__hashes[cur], __keys[cur], __values[cur]));
+        else
+          t-&gt;insert(__tree_entry(__hashes[cur], micron::move(__keys[cur]), micron::move(__values[cur])));
+        cur = nxt;
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __free_tree(t);
+      throw;
+    }
+#endif
+
+    b.list_head = -1;
+    b.tree = t;
+    b.chain_len = 0;
+
+    i32 i = 0;
+    while ( i &lt; static_cast&lt;i32&gt;(__n_soa) ) {
+      if ( __home_bin[i] == static_cast&lt;i32&gt;(bin_idx) ) {
+        __soa_remove(i);
+      } else {
+        ++i;
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/rb_map.hpp.html#L291">line 291</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/rb_map.hpp.html#L309">line 309</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-e9592f3b3538e588">__make_tree</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="rb_map.hpp.html#f-04a420250a52ec0e">__free_tree</a>, <a href="rb_map.hpp.html#f-044da2d63c193f27">__soa_remove</a>.</p></section><section class="function-entry" id="f-31b754455de744d0"><h3><code>micron::rb_map::__untreeify(usize bin_idx)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L328">line 328</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __untreeify(usize bin_idx)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize bin_idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __untreeify(usize bin_idx)
+  {
+    __bin_t &amp;b = __bins[bin_idx];
+    if ( !b.tree ) return;
+    __tree_t *t = b.tree;
+
+    while ( __n_soa + t-&gt;size() &gt; __cap_soa ) __grow_soa();
+
+    b.tree = nullptr;
+    b.list_head = -1;
+    b.chain_len = 0;
+    while ( !t-&gt;empty() ) {
+      __tree_entry e = t-&gt;extract_min();
+      i32 ix = static_cast&lt;i32&gt;(__n_soa);
+      new (__keys + ix) K(micron::move(e.key));
+      new (__values + ix) V(micron::move(e.value));
+      __hashes[ix] = e.hash;
+      __next[ix] = b.list_head;
+      __home_bin[ix] = static_cast&lt;i32&gt;(bin_idx);
+      b.list_head = ix;
+      ++b.chain_len;
+      ++__n_soa;
+    }
+    __free_tree(t);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/rb_map.hpp.html#L331">line 331</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-4532794e3645902b">__grow_soa</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="rb_map.hpp.html#f-04a420250a52ec0e">__free_tree</a>.</p></section><section class="function-entry" id="f-b604678a4e60cac4"><h3><code>micron::rb_map::__resize_if_needed()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L355">line 355</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  __resize_if_needed()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  __resize_if_needed()
+  {
+    if ( __total &lt; __load_limit(__n_bins) ) return false;
+    if ( __n_bins &gt; static_cast&lt;usize&gt;(numeric_limits&lt;i32&gt;::max()) / 2u ) exc&lt;except::library_error&gt;(&quot;rb_map: bin index capacity overflow&quot;);
+    __rehash(__n_bins * 2);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/maps/rb_map.hpp.html#L357">line 357</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/maps/rb_map.hpp.html#L360">line 360</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;rb_map: bin index capacity overflow&quot;)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L358">line 358</a><br>Within <code>( __n_bins &gt; static_cast&lt;usize&gt;(numeric_limits&lt;i32&gt;::max()) / 2u )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-704a83e1e9f80aab">__load_limit</a>, <a href="../numerics.hpp.html#f-089d5d7e4cc4c66a">numeric_limits&lt;i32&gt;::max</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="rb_map.hpp.html#f-f7b6af397b59699b">__rehash</a>.</p></section><section class="function-entry" id="f-f7b6af397b59699b"><h3><code>micron::rb_map::__rehash(usize new_n_bins)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L364">line 364</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __rehash(usize new_n_bins)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize new_n_bins</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __rehash(usize new_n_bins)
+  {
+    if ( new_n_bins &lt; __min_bins ) new_n_bins = __min_bins;
+    new_n_bins = __round_pow2(new_n_bins);
+
+    if constexpr ( micron::is_copy_constructible_v&lt;K&gt; ) {
+      rb_map next(__raw_bins_tag{}, new_n_bins);
+      for ( usize i = 0; i &lt; __n_soa; ++i ) next.__insert_absent(__hashes[i], __keys[i], __values[i]);
+      for ( usize i = 0; i &lt; __n_bins; ++i ) {
+        const __tree_t *tree = __bins[i].tree;
+        if ( !tree ) continue;
+        tree-&gt;for_each([&amp;next](const __tree_entry &amp;entry) { next.__insert_absent(entry.hash, entry.key, entry.value); });
+      }
+      swap(next);
+      return;
+    }
+
+    usize total = __total;
+    auto *snap = total ? __alloc_array&lt;__tree_entry&gt;(total) : nullptr;
+    usize w = 0;
+
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( usize i = 0; i &lt; __n_soa; ++i ) {
+        new (snap + w) __tree_entry(__hashes[i], micron::move(__keys[i]), micron::move(__values[i]));
+        ++w;
+      }
+    } catch ( ... ) {
+      for ( usize j = 0; j &lt; w; ++j ) snap[j].~__tree_entry();
+      __free_array(snap);
+      throw;
+    }
+#else
+    for ( usize i = 0; i &lt; __n_soa; ++i ) {
+      new (snap + w) __tree_entry(__hashes[i], micron::move(__keys[i]), micron::move(__values[i]));
+      ++w;
+    }
+#endif
+    for ( usize i = 0; i &lt; __n_soa; ++i ) {
+      __keys[i].~K();
+      __values[i].~V();
+    }
+    __n_soa = 0;
+
+    if ( __bins ) {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+        for ( usize i = 0; i &lt; __n_bins; ++i ) {
+          __tree_t *t = __bins[i].tree;
+          if ( !t ) continue;
+          while ( !t-&gt;empty() ) {
+            new (snap + w) __tree_entry(t-&gt;extract_min());
+            ++w;
+          }
+        }
+      } catch ( ... ) {
+        for ( usize j = 0; j &lt; w; ++j ) snap[j].~__tree_entry();
+        __free_array(snap);
+        for ( usize i = 0; i &lt; __n_bins; ++i )
+          if ( __bins[i].tree ) __free_tree(__bins[i].tree);
+        __free_array(__bins);
+        __bins = nullptr;
+        __n_bins = 0;
+        __bin_mask = 0;
+        __total = 0;
+        throw;
+      }
+#else
+      for ( usize i = 0; i &lt; __n_bins; ++i ) {
+        __tree_t *t = __bins[i].tree;
+        if ( !t ) continue;
+        while ( !t-&gt;empty() ) {
+          new (snap + w) __tree_entry(t-&gt;extract_min());
+          ++w;
+        }
+      }
+#endif
+      for ( usize i = 0; i &lt; __n_bins; ++i )
+        if ( __bins[i].tree ) __free_tree(__bins[i].tree);
+      __free_array(__bins);
+      __bins = nullptr;
+    }
+
+    __bins = __alloc_array&lt;__bin_t&gt;(new_n_bins);
+    for ( usize i = 0; i &lt; new_n_bins; ++i ) {
+      __bins[i].list_head = -1;
+      __bins[i].tree = nullptr;
+      __bins[i].chain_len = 0;
+    }
+    __n_bins = new_n_bins;
+    __bin_mask = new_n_bins - 1u;
+    __total = 0;
+
+    usize consumed = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( ; consumed &lt; w; ++consumed ) {
+        __tree_entry &amp;e = snap[consumed];
+        usize bi = __bin_of(e.hash);
+        __bin_t &amp;b = __bins[bi];
+        if ( b.tree ) {
+          b.tree-&gt;insert(micron::move(e));
+          ++__total;
+        } else {
+          if ( __n_soa == __cap_soa ) __grow_soa();
+          i32 ix = static_cast&lt;i32&gt;(__n_soa);
+          new (__keys + ix) K(micron::move(e.key));
+          new (__values + ix) V(micron::move(e.value));
+          __hashes[ix] = e.hash;
+          __next[ix] = b.list_head;
+          __home_bin[ix] = static_cast&lt;i32&gt;(bi);
+          b.list_head = ix;
+          ++b.chain_len;
+          ++__n_soa;
+          ++__total;
+          if ( b.chain_len &gt;= __treeify_threshold &amp;&amp; __n_bins &gt;= __min_treeify_cap ) {
+            __treeify(bi);
+          }
+        }
+        e.~__tree_entry();
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      for ( usize j = consumed; j &lt; w; ++j ) snap[j].~__tree_entry();
+      __free_array(snap);
+      throw;
+    }
+#endif
+    __free_array(snap);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/rb_map.hpp.html#L378">line 378</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/rb_map.hpp.html#L394">line 394</a></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/rb_map.hpp.html#L429">line 429</a><br>Within <code>( __bins )</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/rb_map.hpp.html#L490">line 490</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-a3a9cc19b71ba0b9">__round_pow2</a>, <a href="rb_map.hpp.html#f-437cf7a76f462d9b">swap</a>, <a href="rb_map.hpp.html#f-a5950ce040fd1409">__alloc_array&lt;__tree_entry&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="rb_map.hpp.html#f-a7bd6920f30e466a">__free_array</a>, <a href="rb_map.hpp.html#f-04a420250a52ec0e">__free_tree</a>, <a href="rb_map.hpp.html#f-a5950ce040fd1409">__alloc_array&lt;__bin_t&gt;</a>, <a href="rb_map.hpp.html#f-7fb86384794e19de">__bin_of</a>, <a href="rb_map.hpp.html#f-4532794e3645902b">__grow_soa</a>, <a href="rb_map.hpp.html#f-4195ec26f7623cdb">__treeify</a>.</p></section><section class="function-entry" id="f-d708238ec8733045"><h3><code>micron::rb_map::__free_all()</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L497">line 497</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __free_all()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __free_all()
+  {
+    if ( __bins ) {
+      for ( usize i = 0; i &lt; __n_bins; ++i )
+        if ( __bins[i].tree ) __free_tree(__bins[i].tree);
+      __free_array(__bins);
+      __bins = nullptr;
+    }
+    if ( __n_soa &gt; 0 ) {
+      for ( usize i = 0; i &lt; __n_soa; ++i ) {
+        __keys[i].~K();
+        __values[i].~V();
+      }
+    }
+    __free_array(__hashes);
+    __free_array(__keys);
+    __free_array(__values);
+    __free_array(__next);
+    __free_array(__home_bin);
+    __hashes = nullptr;
+    __keys = nullptr;
+    __values = nullptr;
+    __next = nullptr;
+    __home_bin = nullptr;
+    __n_soa = 0;
+    __cap_soa = 0;
+    __n_bins = 0;
+    __bin_mask = 0;
+    __total = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-04a420250a52ec0e">__free_tree</a>, <a href="rb_map.hpp.html#f-a7bd6920f30e466a">__free_array</a>.</p></section><section class="function-entry" id="f-757c2f127a22a247"><h3><code>micron::rb_map::__find_hash(hash64_t h, const K &amp;key)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L529">line 529</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>V *
+  __find_hash(hash64_t h, const K &amp;key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;key</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">V *
+  __find_hash(hash64_t h, const K &amp;key)
+  {
+    if ( !__bins ) return nullptr;
+    __bin_t &amp;bin = __bins[__bin_of(h)];
+    if ( bin.tree ) {
+      __tree_entry *entry
+          = bin.tree-&gt;find_by([h, &amp;key](const __tree_entry &amp;data) { return h != data.hash ? h &lt; data.hash : key &lt; data.key; },
+                              [h, &amp;key](const __tree_entry &amp;data) { return data.hash != h ? data.hash &lt; h : data.key &lt; key; });
+      return entry ? micron::addressof(entry-&gt;value) : nullptr;
+    }
+    for ( i32 i = bin.list_head; i != -1; i = __next[i] )
+      if ( __hashes[i] == h &amp;&amp; __keys[i] == key ) return micron::addressof(__values[i]);
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/maps/rb_map.hpp.html#L531">line 531</a></td></tr><tr class="t-dsc"><td><code>entry ? micron::addressof(entry-&gt;value) : nullptr</code></td><td><a href="../../source/maps/rb_map.hpp.html#L537">line 537</a></td></tr><tr class="t-dsc"><td><code>micron::addressof(__values[i])</code></td><td><a href="../../source/maps/rb_map.hpp.html#L540">line 540</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/maps/rb_map.hpp.html#L541">line 541</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rb_map.hpp.html#f-7fb86384794e19de">__bin_of</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-a7dde2c98fa4ab8b"><h3><code>micron::rb_map::__find_hash(hash64_t h, const K &amp;key) const</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L545">line 545</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const V *
+  __find_hash(hash64_t h, const K &amp;key) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;key</code></li></ul><h4>Effects</h4><p>Returns <code>const_cast&lt;rb_map *&gt;(this)-&gt;__find_hash(h, key)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const V *
+  __find_hash(hash64_t h, const K &amp;key) const
+  {
+    return const_cast&lt;rb_map *&gt;(this)-&gt;__find_hash(h, key);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;rb_map *&gt;(this)-&gt;__find_hash(h, key)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L547">line 547</a></td></tr></tbody></table></section><section class="function-entry" id="f-9c2e31e7b2f200d9"><h3><code>micron::rb_map::__insert_absent(hash64_t h, KK &amp;&amp;key, VV &amp;&amp;value)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L552">line 552</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class KK, class VV&gt;
+  micron::pair&lt;bool, V *&gt;
+  __insert_absent(hash64_t h, KK &amp;&amp;key, VV &amp;&amp;value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>KK &amp;&amp;key</code></li><li><code>VV &amp;&amp;value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class KK, class VV&gt;
+  micron::pair&lt;bool, V *&gt;
+  __insert_absent(hash64_t h, KK &amp;&amp;key, VV &amp;&amp;value)
+  {
+    if ( __total == numeric_limits&lt;usize&gt;::max() ) exc&lt;except::library_error&gt;(&quot;rb_map: size overflow&quot;);
+    if ( __total + 1u &gt; __load_limit(__n_bins) ) {
+      if ( __n_bins &gt; static_cast&lt;usize&gt;(numeric_limits&lt;i32&gt;::max()) / 2u )
+        exc&lt;except::library_error&gt;(&quot;rb_map: bin index capacity overflow&quot;);
+      __rehash(__n_bins * 2u);
+    }
+    usize bin_index = __bin_of(h);
+    __bin_t &amp;bin = __bins[bin_index];
+
+    if ( !bin.tree &amp;&amp; bin.chain_len + 1u &gt;= __treeify_threshold &amp;&amp; __n_bins &gt;= __min_treeify_cap ) __treeify(bin_index);
+    if ( bin.tree ) {
+      __tree_entry &amp;inserted = bin.tree-&gt;insert(__tree_entry(h, K(micron::forward&lt;KK&gt;(key)), V(micron::forward&lt;VV&gt;(value))));
+      ++__total;
+      return { true, micron::addressof(inserted.value) };
+    }
+
+    if ( __n_soa == __cap_soa ) __grow_soa();
+    i32 index = static_cast&lt;i32&gt;(__n_soa);
+    new (__keys + index) K(micron::forward&lt;KK&gt;(key));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      new (__values + index) V(micron::forward&lt;VV&gt;(value));
+    } catch ( ... ) {
+      __keys[index].~K();
+      throw;
+    }
+#else
+    new (__values + index) V(micron::forward&lt;VV&gt;(value));
+#endif
+    __hashes[index] = h;
+    __next[index] = bin.list_head;
+    __home_bin[index] = static_cast&lt;i32&gt;(bin_index);
+    bin.list_head = index;
+    ++bin.chain_len;
+    ++__n_soa;
+    ++__total;
+    return { true, micron::addressof(__values[index]) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ true, micron::addressof(inserted.value) }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L567">line 567</a></td></tr><tr class="t-dsc"><td><code>{ true, micron::addressof(__values[index]) }</code></td><td><a href="../../source/maps/rb_map.hpp.html#L590">line 590</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;rb_map: size overflow&quot;)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L554">line 554</a><br>Within <code>( __total == numeric_limits&lt;usize&gt;::max() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;rb_map: bin index capacity overflow&quot;)</code></td><td><a href="../../source/maps/rb_map.hpp.html#L557">line 557</a><br>Within <code>( __total + 1u &gt; __load_limit(__n_bins) )</code>, <code>( __n_bins &gt; static_cast&lt;usize&gt;(numeric_limits&lt;i32&gt;::max()) / 2u )</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/rb_map.hpp.html#L578">line 578</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../numerics.hpp.html#f-089d5d7e4cc4c66a">numeric_limits&lt;usize&gt;::max</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="rb_map.hpp.html#f-704a83e1e9f80aab">__load_limit</a>, <a href="../numerics.hpp.html#f-089d5d7e4cc4c66a">numeric_limits&lt;i32&gt;::max</a>, <a href="rb_map.hpp.html#f-f7b6af397b59699b">__rehash</a>, <a href="rb_map.hpp.html#f-7fb86384794e19de">__bin_of</a>, <a href="rb_map.hpp.html#f-4195ec26f7623cdb">__treeify</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;KK&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;VV&gt;</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="rb_map.hpp.html#f-4532794e3645902b">__grow_soa</a>.</p></section><section class="function-entry" id="f-dbae709be90525ef"><h3><code>micron::rb_map::const_iterator::__enter_bin(usize b)</code></h3><p>Defined in <code>maps/rb_map.hpp</code>, <a href="../../source/maps/rb_map.hpp.html#L856">line 856</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    __enter_bin(usize b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    __enter_bin(usize b)
+    {
+      __bin_i = b;
+      while ( __bin_i &lt; __m-&gt;__n_bins ) {
+        const __tree_t *t = __m-&gt;__bins[__bin_i].tree;
+        if ( t ) {
+          __ti = t-&gt;begin();
+          if ( __ti != t-&gt;end() ) return;
+        }
+        ++__bin_i;
+      }
+      __ti = typename __tree_t::const_iterator{};
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/rb_map.hpp.html#L863">line 863</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

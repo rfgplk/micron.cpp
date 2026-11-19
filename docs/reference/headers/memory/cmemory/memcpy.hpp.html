@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/cmemory/memcpy.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/cmemory/memcpy.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/memory.html">Memory operations</a></div><p>Defined in header <code>&lt;micron/memory/cmemory/memcpy.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/memory/cmemory/memcpy.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-278d3b6ae76a56c3">micron::n</code></td><td>variable; line 104</td></tr><tr class="t-dsc"><td><code id="s-7c885c60fb598657">micron::n</code></td><td>variable; line 111</td></tr><tr class="t-dsc"><td><code id="s-926208d271833fd7">micron::n</code></td><td>variable; line 359</td></tr><tr class="t-dsc"><td><a href="#f-1c90cb4c544c1c46">micron::_rmemcpy_32(T &amp;restrict _d, const F &amp;restrict _s, const S n) noexcept</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-33352f4bbe2dd7cf">micron::memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</a></td><td>function; line 95</td></tr><tr class="t-dsc"><td><a href="#f-664b31325c70b00a">micron::rmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</a></td><td>function; line 117</td></tr><tr class="t-dsc"><td><a href="#f-72e7b91700458fda">micron::constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</a></td><td>function; line 141</td></tr><tr class="t-dsc"><td><a href="#f-f6a6375968daa392">micron::constexpr_rmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</a></td><td>function; line 158</td></tr><tr class="t-dsc"><td><a href="#f-1184d0b445404eda">micron::cmemcpy(F *restrict dest, const D *restrict src) noexcept</a></td><td>function; line 176</td></tr><tr class="t-dsc"><td><a href="#f-9fa1bb6db38a4c8e">micron::crmemcpy(F &amp;restrict dest, const D &amp;restrict src) noexcept</a></td><td>function; line 197</td></tr><tr class="t-dsc"><td><a href="#f-ff0b28f4833f1043">micron::smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</a></td><td>function; line 220</td></tr><tr class="t-dsc"><td><a href="#f-898b3080130b6406">micron::rsmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</a></td><td>function; line 245</td></tr><tr class="t-dsc"><td><a href="#f-d979fada67f635e4">micron::scmemcpy(F *restrict dest, const D *restrict src) noexcept</a></td><td>function; line 271</td></tr><tr class="t-dsc"><td><a href="#f-65c6c7878b0b8307">micron::rscmemcpy(F &amp;restrict dest, const D &amp;restrict src) noexcept</a></td><td>function; line 296</td></tr><tr class="t-dsc"><td><a href="#f-95166e01bb68ea54">micron::bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</a></td><td>function; line 323</td></tr><tr class="t-dsc"><td><a href="#f-ed15decae5fc6179">micron::rbytecpy(F &amp;restrict _dest, const D &amp;restrict _src, const u64 cnt) noexcept</a></td><td>function; line 332</td></tr><tr class="t-dsc"><td><a href="#f-f83eb69224816588">micron::constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</a></td><td>function; line 341</td></tr><tr class="t-dsc"><td><a href="#f-c91312fd0690789c">micron::cbytecpy(F *restrict _dest, const D *restrict _src) noexcept</a></td><td>function; line 366</td></tr><tr class="t-dsc"><td><a href="#f-c47e00d89ded7d26">micron::crbytecpy(F &amp;restrict _dest, const D &amp;restrict _src) noexcept</a></td><td>function; line 375</td></tr><tr class="t-dsc"><td><a href="#f-f6830d801680ed52">micron::sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</a></td><td>function; line 384</td></tr><tr class="t-dsc"><td><a href="#f-95657f7ab7a8b609">micron::rsbytecpy(F &amp;restrict _dest, const D &amp;restrict _src, const u64 cnt) noexcept</a></td><td>function; line 396</td></tr><tr class="t-dsc"><td><a href="#f-5444157a36b8e60c">micron::scbytecpy(F *restrict _dest, const D *restrict _src) noexcept</a></td><td>function; line 407</td></tr><tr class="t-dsc"><td><a href="#f-38a9d397768a742d">micron::rscbytecpy(F &amp;restrict _dest, const D &amp;restrict _src) noexcept</a></td><td>function; line 419</td></tr><tr class="t-dsc"><td><a href="#f-4d3d1afe10e81f53">micron::voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept</a></td><td>function; line 428</td></tr><tr class="t-dsc"><td><a href="#f-b2230078a3674c60">micron::svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept</a></td><td>function; line 436</td></tr><tr class="t-dsc"><td><a href="#f-e5f1fdb5bc86a53f">micron::mempcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</a></td><td>function; line 450</td></tr><tr class="t-dsc"><td><a href="#f-0c2e35dfded6abd6">memcpy(void *__restrict d, const void *__restrict s, __SIZE_TYPE__ n) noexcept</a></td><td>function; line 467<br><small><code>#if defined(__micron_freestanding)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-1c90cb4c544c1c46"><h3><code>micron::_rmemcpy_32(T &amp;restrict _d, const F &amp;restrict _s, const S n) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename S = u64&gt;
+T *
+_rmemcpy_32(T &amp;restrict _d, const F &amp;restrict _s, const S n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;restrict _d</code></li><li><code>const F &amp;restrict _s</code></li><li><code>const S n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename S = u64&gt;
+T *
+_rmemcpy_32(T &amp;restrict _d, const F &amp;restrict _s, const S n) noexcept
+{
+  T *d = &amp;_d;
+  const F *s = &amp;_s;
+  return __memcpy_32(d, s, n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__memcpy_32(d, s, n)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L90">line 90</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-e80f0e7c2c76f404">__memcpy_32</a>.</p></section><section class="function-entry" id="f-33352f4bbe2dd7cf"><h3><code>micron::memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L95">line 95</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+constexpr F *
+memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict dest</code></li><li><code>const D *restrict src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+constexpr F *
+memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
+{
+  if !consteval {
+    if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+      __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(dest), reinterpret_cast&lt;const byte *&gt;(src), cnt * sizeof(D));
+      return dest;
+    }
+  }
+  if ( cnt % 4 == 0 ) [[likely]]
+    for ( u64 n = 0; n &lt; cnt; n += 4 ) {
+      dest[n] = static_cast&lt;F&gt;(src[n]);
+      dest[n + 1] = static_cast&lt;F&gt;(src[n + 1]);
+      dest[n + 2] = static_cast&lt;F&gt;(src[n + 2]);
+      dest[n + 3] = static_cast&lt;F&gt;(src[n + 3]);
+    }
+  else
+    for ( u64 n = 0; n &lt; cnt; n++ ) dest[n] = static_cast&lt;F&gt;(src[n]);
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-664b31325c70b00a"><h3><code>micron::rmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L117">line 117</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+F &amp;
+rmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict dest</code></li><li><code>const D &amp;restrict src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+F &amp;
+rmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept
+{
+  F *d = &amp;dest;
+  const D *s = &amp;src;
+  if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+    __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(d), reinterpret_cast&lt;const byte *&gt;(s), cnt * sizeof(D));
+    return dest;
+  } else {
+    if ( cnt % 4 == 0 ) [[likely]]
+      for ( u64 n = 0; n &lt; cnt; n += 4 ) {
+        d[n] = static_cast&lt;F&gt;(s[n]);
+        d[n + 1] = static_cast&lt;F&gt;(s[n + 1]);
+        d[n + 2] = static_cast&lt;F&gt;(s[n + 2]);
+        d[n + 3] = static_cast&lt;F&gt;(s[n + 3]);
+      }
+    else
+      for ( u64 n = 0; n &lt; cnt; n++ ) d[n] = static_cast&lt;F&gt;(s[n]);
+    return dest;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L123">line 123</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L134">line 134</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-72e7b91700458fda"><h3><code>micron::constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L141">line 141</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+constexpr F *
+constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict dest</code></li><li><code>const D *restrict src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+constexpr F *
+constexpr_memcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
+{
+  if ( cnt % 4 == 0 )
+    for ( u64 n = 0; n &lt; cnt; n += 4 ) {
+      dest[n] = static_cast&lt;F&gt;(src[n]);
+      dest[n + 1] = static_cast&lt;F&gt;(src[n + 1]);
+      dest[n + 2] = static_cast&lt;F&gt;(src[n + 2]);
+      dest[n + 3] = static_cast&lt;F&gt;(src[n + 3]);
+    }
+  else
+    for ( u64 n = 0; n &lt; cnt; n++ ) dest[n] = static_cast&lt;F&gt;(src[n]);
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L152">line 152</a></td></tr></tbody></table></section><section class="function-entry" id="f-f6a6375968daa392"><h3><code>micron::constexpr_rmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L158">line 158</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+constexpr F &amp;
+constexpr_rmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict dest</code></li><li><code>const D &amp;restrict src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+constexpr F &amp;
+constexpr_rmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept
+{
+  F *d = &amp;dest;
+  const D *s = &amp;src;
+  if ( cnt % 4 == 0 )
+    for ( u64 n = 0; n &lt; cnt; n += 4 ) {
+      d[n] = static_cast&lt;F&gt;(s[n]);
+      d[n + 1] = static_cast&lt;F&gt;(s[n + 1]);
+      d[n + 2] = static_cast&lt;F&gt;(s[n + 2]);
+      d[n + 3] = static_cast&lt;F&gt;(s[n + 3]);
+    }
+  else
+    for ( u64 n = 0; n &lt; cnt; n++ ) d[n] = static_cast&lt;F&gt;(s[n]);
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L171">line 171</a></td></tr></tbody></table></section><section class="function-entry" id="f-1184d0b445404eda"><h3><code>micron::cmemcpy(F *restrict dest, const D *restrict src) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L176">line 176</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 M, typename F, typename D&gt;
+F *
+cmemcpy(F *restrict dest, const D *restrict src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict dest</code></li><li><code>const D *restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 M, typename F, typename D&gt;
+F *
+cmemcpy(F *restrict dest, const D *restrict src) noexcept
+{
+  if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+    __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(dest), reinterpret_cast&lt;const byte *&gt;(src), M * sizeof(D));
+    return dest;
+  } else {
+    if constexpr ( M % 4 == 0 )
+      for ( u64 n = 0; n &lt; M; n += 4 ) {
+        dest[n] = static_cast&lt;F&gt;(src[n]);
+        dest[n + 1] = static_cast&lt;F&gt;(src[n + 1]);
+        dest[n + 2] = static_cast&lt;F&gt;(src[n + 2]);
+        dest[n + 3] = static_cast&lt;F&gt;(src[n + 3]);
+      }
+    else
+      for ( u64 n = 0; n &lt; M; n++ ) dest[n] = static_cast&lt;F&gt;(src[n]);
+    return dest;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L180">line 180</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L191">line 191</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-9fa1bb6db38a4c8e"><h3><code>micron::crmemcpy(F &amp;restrict dest, const D &amp;restrict src) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L197">line 197</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 M, typename F, typename D&gt;
+F &amp;
+crmemcpy(F &amp;restrict dest, const D &amp;restrict src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict dest</code></li><li><code>const D &amp;restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 M, typename F, typename D&gt;
+F &amp;
+crmemcpy(F &amp;restrict dest, const D &amp;restrict src) noexcept
+{
+  F *d = &amp;dest;
+  const D *s = &amp;src;
+  if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+    __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(d), reinterpret_cast&lt;const byte *&gt;(s), M * sizeof(D));
+    return dest;
+  } else {
+    if constexpr ( M % 4 == 0 )
+      for ( u64 n = 0; n &lt; M; n += 4 ) {
+        d[n] = static_cast&lt;F&gt;(s[n]);
+        d[n + 1] = static_cast&lt;F&gt;(s[n + 1]);
+        d[n + 2] = static_cast&lt;F&gt;(s[n + 2]);
+        d[n + 3] = static_cast&lt;F&gt;(s[n + 3]);
+      }
+    else
+      for ( u64 n = 0; n &lt; M; n++ ) d[n] = static_cast&lt;F&gt;(s[n]);
+    return dest;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L203">line 203</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L214">line 214</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-ff0b28f4833f1043"><h3><code>micron::smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L220">line 220</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D, u64 alignment = alignof(F)&gt;
+F *
+smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict dest</code></li><li><code>const D *restrict src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D, u64 alignment = alignof(F)&gt;
+F *
+smemcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
+{
+  if ( dest == nullptr || src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
+
+  if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+    __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(dest), reinterpret_cast&lt;const byte *&gt;(src), cnt * sizeof(D));
+  } else {
+    if ( cnt % 4 == 0 ) [[likely]]
+      for ( u64 n = 0; n &lt; cnt; n += 4 ) {
+        dest[n] = static_cast&lt;F&gt;(src[n]);
+        dest[n + 1] = static_cast&lt;F&gt;(src[n + 1]);
+        dest[n + 2] = static_cast&lt;F&gt;(src[n + 2]);
+        dest[n + 3] = static_cast&lt;F&gt;(src[n + 3]);
+      }
+    else
+      for ( u64 n = 0; n &lt; cnt; n++ ) dest[n] = static_cast&lt;F&gt;(src[n]);
+  }
+
+  __mem_barrier();
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L222">line 222</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L223">line 223</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L240">line 240</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f9fb9d7da5695e31">__is_aligned_to</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-898b3080130b6406"><h3><code>micron::rsmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L245">line 245</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D, u64 alignment = alignof(F)&gt;
+bool
+rsmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict dest</code></li><li><code>const D &amp;restrict src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D, u64 alignment = alignof(F)&gt;
+bool
+rsmemcpy(F &amp;restrict dest, const D &amp;restrict src, const u64 cnt) noexcept
+{
+  if ( !__is_aligned_to_r(dest, alignment) || !__is_aligned_to_r(src, alignment) ) return false;
+
+  F *d = &amp;dest;
+  const D *s = &amp;src;
+  if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+    __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(d), reinterpret_cast&lt;const byte *&gt;(s), cnt * sizeof(D));
+  } else {
+    if ( cnt % 4 == 0 ) [[likely]]
+      for ( u64 n = 0; n &lt; cnt; n += 4 ) {
+        d[n] = static_cast&lt;F&gt;(s[n]);
+        d[n + 1] = static_cast&lt;F&gt;(s[n + 1]);
+        d[n + 2] = static_cast&lt;F&gt;(s[n + 2]);
+        d[n + 3] = static_cast&lt;F&gt;(s[n + 3]);
+      }
+    else
+      for ( u64 n = 0; n &lt; cnt; n++ ) d[n] = static_cast&lt;F&gt;(s[n]);
+  }
+
+  __mem_barrier();
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L247">line 247</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L266">line 266</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-a3ed7a617f08d7a4">__is_aligned_to_r</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-d979fada67f635e4"><h3><code>micron::scmemcpy(F *restrict dest, const D *restrict src) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L271">line 271</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 M, typename F, typename D, u64 alignment = alignof(F)&gt;
+F *
+scmemcpy(F *restrict dest, const D *restrict src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict dest</code></li><li><code>const D *restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 M, typename F, typename D, u64 alignment = alignof(F)&gt;
+F *
+scmemcpy(F *restrict dest, const D *restrict src) noexcept
+{
+  if ( dest == nullptr || src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return nullptr;
+
+  if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+    __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(dest), reinterpret_cast&lt;const byte *&gt;(src), M * sizeof(D));
+  } else {
+    if constexpr ( M % 4 == 0 )
+      for ( u64 n = 0; n &lt; M; n += 4 ) {
+        dest[n] = static_cast&lt;F&gt;(src[n]);
+        dest[n + 1] = static_cast&lt;F&gt;(src[n + 1]);
+        dest[n + 2] = static_cast&lt;F&gt;(src[n + 2]);
+        dest[n + 3] = static_cast&lt;F&gt;(src[n + 3]);
+      }
+    else
+      for ( u64 n = 0; n &lt; M; n++ ) dest[n] = static_cast&lt;F&gt;(src[n]);
+  }
+
+  __mem_barrier();
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L273">line 273</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L274">line 274</a></td></tr><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L291">line 291</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f9fb9d7da5695e31">__is_aligned_to</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-65c6c7878b0b8307"><h3><code>micron::rscmemcpy(F &amp;restrict dest, const D &amp;restrict src) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L296">line 296</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 M, typename F, typename D, u64 alignment = alignof(F)&gt;
+bool
+rscmemcpy(F &amp;restrict dest, const D &amp;restrict src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict dest</code></li><li><code>const D &amp;restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 M, typename F, typename D, u64 alignment = alignof(F)&gt;
+bool
+rscmemcpy(F &amp;restrict dest, const D &amp;restrict src) noexcept
+{
+  if ( !__is_aligned_to(dest, alignment) || !__is_aligned_to(src, alignment) ) return false;
+
+  F *d = &amp;dest;
+  const D *s = &amp;src;
+  if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+    __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(d), reinterpret_cast&lt;const byte *&gt;(s), M * sizeof(D));
+  } else {
+    if constexpr ( M % 4 == 0 )
+      for ( u64 n = 0; n &lt; M; n += 4 ) {
+        d[n] = static_cast&lt;F&gt;(s[n]);
+        d[n + 1] = static_cast&lt;F&gt;(s[n + 1]);
+        d[n + 2] = static_cast&lt;F&gt;(s[n + 2]);
+        d[n + 3] = static_cast&lt;F&gt;(s[n + 3]);
+      }
+    else
+      for ( u64 n = 0; n &lt; M; n++ ) d[n] = static_cast&lt;F&gt;(s[n]);
+  }
+
+  __mem_barrier();
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L298">line 298</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L317">line 317</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f9fb9d7da5695e31">__is_aligned_to</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-95166e01bb68ea54"><h3><code>micron::bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L323">line 323</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F *
+bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict _dest</code></li><li><code>const D *restrict _src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F *
+bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
+{
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(_dest), reinterpret_cast&lt;const byte *&gt;(_src), cnt);
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L326">line 326</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-ed15decae5fc6179"><h3><code>micron::rbytecpy(F &amp;restrict _dest, const D &amp;restrict _src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L332">line 332</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F &amp;
+rbytecpy(F &amp;restrict _dest, const D &amp;restrict _src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict _dest</code></li><li><code>const D &amp;restrict _src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F &amp;
+rbytecpy(F &amp;restrict _dest, const D &amp;restrict _src, const u64 cnt) noexcept
+{
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(&amp;_dest), reinterpret_cast&lt;const byte *&gt;(&amp;_src), cnt);
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L335">line 335</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-f83eb69224816588"><h3><code>micron::constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L341">line 341</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+constexpr F *
+constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict _dest</code></li><li><code>const D *restrict _src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+constexpr F *
+constexpr_bytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
+{
+  if !consteval {
+    byte *dest = reinterpret_cast&lt;byte *&gt;(_dest);
+    const byte *src = reinterpret_cast&lt;const byte *&gt;(_src);
+
+    if ( cnt % 4 == 0 )
+      for ( u64 n = 0; n &lt; cnt; n += 4 ) {
+        dest[n] = src[n];
+        dest[n + 1] = src[n + 1];
+        dest[n + 2] = src[n + 2];
+        dest[n + 3] = src[n + 3];
+      }
+    else
+      for ( u64 n = 0; n &lt; cnt; n++ ) dest[n] = src[n];
+
+    return _dest;
+  }
+  for ( u64 n = 0; n &lt; cnt / sizeof(F); ++n ) _dest[n] = static_cast&lt;F&gt;(_src[n]);
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L357">line 357</a></td></tr><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L360">line 360</a></td></tr></tbody></table></section><section class="function-entry" id="f-c91312fd0690789c"><h3><code>micron::cbytecpy(F *restrict _dest, const D *restrict _src) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L366">line 366</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 M, typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F *
+cbytecpy(F *restrict _dest, const D *restrict _src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict _dest</code></li><li><code>const D *restrict _src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 M, typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F *
+cbytecpy(F *restrict _dest, const D *restrict _src) noexcept
+{
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(_dest), reinterpret_cast&lt;const byte *&gt;(_src), M);
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L369">line 369</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-c47e00d89ded7d26"><h3><code>micron::crbytecpy(F &amp;restrict _dest, const D &amp;restrict _src) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L375">line 375</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 M, typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F &amp;
+crbytecpy(F &amp;restrict _dest, const D &amp;restrict _src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict _dest</code></li><li><code>const D &amp;restrict _src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 M, typename F, typename D&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F &amp;
+crbytecpy(F &amp;restrict _dest, const D &amp;restrict _src) noexcept
+{
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(&amp;_dest), reinterpret_cast&lt;const byte *&gt;(&amp;_src), M);
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L378">line 378</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-f6830d801680ed52"><h3><code>micron::sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L384">line 384</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D, u64 alignment = 1&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F *
+sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict _dest</code></li><li><code>const D *restrict _src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D, u64 alignment = 1&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F *
+sbytecpy(F *restrict _dest, const D *restrict _src, const u64 cnt) noexcept
+{
+  if ( _dest == nullptr || _src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(_dest), reinterpret_cast&lt;const byte *&gt;(_src), cnt);
+  __mem_barrier();
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L386">line 386</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L387">line 387</a></td></tr><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L390">line 390</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f9fb9d7da5695e31">__is_aligned_to</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-95657f7ab7a8b609"><h3><code>micron::rsbytecpy(F &amp;restrict _dest, const D &amp;restrict _src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L396">line 396</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D, u64 alignment = 1&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+bool
+rsbytecpy(F &amp;restrict _dest, const D &amp;restrict _src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict _dest</code></li><li><code>const D &amp;restrict _src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D, u64 alignment = 1&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+bool
+rsbytecpy(F &amp;restrict _dest, const D &amp;restrict _src, const u64 cnt) noexcept
+{
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return false;
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(&amp;_dest), reinterpret_cast&lt;const byte *&gt;(&amp;_src), cnt);
+  __mem_barrier();
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L398">line 398</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L401">line 401</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f9fb9d7da5695e31">__is_aligned_to</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-5444157a36b8e60c"><h3><code>micron::scbytecpy(F *restrict _dest, const D *restrict _src) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L407">line 407</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 M, typename F, typename D, u64 alignment = 1&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F *
+scbytecpy(F *restrict _dest, const D *restrict _src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict _dest</code></li><li><code>const D *restrict _src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 M, typename F, typename D, u64 alignment = 1&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+F *
+scbytecpy(F *restrict _dest, const D *restrict _src) noexcept
+{
+  if ( _dest == nullptr || _src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(_dest), reinterpret_cast&lt;const byte *&gt;(_src), M);
+  __mem_barrier();
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L409">line 409</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L410">line 410</a></td></tr><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L413">line 413</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f9fb9d7da5695e31">__is_aligned_to</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-38a9d397768a742d"><h3><code>micron::rscbytecpy(F &amp;restrict _dest, const D &amp;restrict _src) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L419">line 419</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 M, typename F, typename D, u64 alignment = 1&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+bool
+rscbytecpy(F &amp;restrict _dest, const D &amp;restrict _src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;restrict _dest</code></li><li><code>const D &amp;restrict _src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 M, typename F, typename D, u64 alignment = 1&gt;
+  requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;D&gt;)
+bool
+rscbytecpy(F &amp;restrict _dest, const D &amp;restrict _src) noexcept
+{
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return false;
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(&amp;_dest), reinterpret_cast&lt;const byte *&gt;(&amp;_src), M);
+  __mem_barrier();
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L421">line 421</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L424">line 424</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f9fb9d7da5695e31">__is_aligned_to</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-4d3d1afe10e81f53"><h3><code>micron::voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L428">line 428</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void *
+voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *restrict _dest</code></li><li><code>const void *restrict _src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void *
+voidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
+{
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(_dest), reinterpret_cast&lt;const byte *&gt;(_src), cnt);
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L431">line 431</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-b2230078a3674c60"><h3><code>micron::svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L436">line 436</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 alignment = 1&gt;
+void *
+svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *restrict _dest</code></li><li><code>const void *restrict _src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 alignment = 1&gt;
+void *
+svoidcpy(void *restrict _dest, const void *restrict _src, const u64 cnt) noexcept
+{
+  if ( _dest == nullptr || _src == nullptr ) return nullptr;
+  if ( !__is_aligned_to(_dest, alignment) || !__is_aligned_to(_src, alignment) ) return nullptr;
+  __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(_dest), reinterpret_cast&lt;const byte *&gt;(_src), cnt);
+  __mem_barrier();
+  return _dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L438">line 438</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L439">line 439</a></td></tr><tr class="t-dsc"><td><code>_dest</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L442">line 442</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f9fb9d7da5695e31">__is_aligned_to</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>, <a href="bits.hpp.html#f-7990e9aef29f57ae">__mem_barrier</a>.</p></section><section class="function-entry" id="f-e5f1fdb5bc86a53f"><h3><code>micron::mempcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L450">line 450</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename D&gt;
+F *
+mempcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *restrict dest</code></li><li><code>const D *restrict src</code></li><li><code>const u64 cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename D&gt;
+F *
+mempcpy(F *restrict dest, const D *restrict src, const u64 cnt) noexcept
+{
+  if constexpr ( sizeof(F) == sizeof(D) &amp;&amp; micron::is_trivially_copyable_v&lt;F&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;D&gt; ) {
+    const u64 bytes = cnt * sizeof(D);
+    __memcpy_bytes(reinterpret_cast&lt;byte *&gt;(dest), reinterpret_cast&lt;const byte *&gt;(src), bytes);
+    return reinterpret_cast&lt;F *&gt;(reinterpret_cast&lt;byte *&gt;(dest) + bytes);
+  } else {
+    for ( u64 n = 0; n &lt; cnt; n++ ) dest[n] = static_cast&lt;F&gt;(src[n]);
+    return dest + cnt;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;F *&gt;(reinterpret_cast&lt;byte *&gt;(dest) + bytes)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L455">line 455</a></td></tr><tr class="t-dsc"><td><code>dest + cnt</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L458">line 458</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><section class="function-entry" id="f-0c2e35dfded6abd6"><h3><code>memcpy(void *__restrict d, const void *__restrict s, __SIZE_TYPE__ n) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L467">line 467</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((used)) __micron_optimize_no_tree_loop_distribute inline void *
+memcpy(void *__restrict d, const void *__restrict s, __SIZE_TYPE__ n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_freestanding)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *__restrict d</code></li><li><code>const void *__restrict s</code></li><li><code>__SIZE_TYPE__ n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((used)) __micron_optimize_no_tree_loop_distribute inline void *
+memcpy(void *__restrict d, const void *__restrict s, __SIZE_TYPE__ n) noexcept
+{
+  micron::__memcpy_bytes(static_cast&lt;byte *&gt;(d), static_cast&lt;const byte *&gt;(s), static_cast&lt;u64&gt;(n));
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L470">line 470</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memcpy.hpp.html#f-85fe84f80a955ab8">micron::__memcpy_bytes</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-5a86f896a3442f97"><h3><code>micron::__memcpy_large(byte *restrict d, const byte *restrict s, const u64 n) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L24">line 24</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::noinline]] static __micron_optimize_no_tree_loop_distribute byte *
+__memcpy_large(byte *restrict d, const byte *restrict s, const u64 n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *restrict d</code></li><li><code>const byte *restrict s</code></li><li><code>const u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::noinline]] static __micron_optimize_no_tree_loop_distribute byte *
+__memcpy_large(byte *restrict d, const byte *restrict s, const u64 n) noexcept
+{
+#if defined(__micron_arch_x86_any)
+  if ( n &lt; __mem_rep_min ) return simd::__memcpy_bulk(d, s, n);
+  const __mem_tunables &amp;t = __mem_tun_get();
+  if ( n &gt;= t.nt_copy_threshold ) return simd::__memcpy_bulk_nt(d, s, n);
+  if ( n &gt;= t.rep_movsb_threshold ) {
+    simd::__bits::__rep_movsb(d, s, static_cast&lt;usize&gt;(n));
+    return d;
+  }
+  return simd::__memcpy_bulk(d, s, n);
+#elif defined(__micron_arch_arm64)
+  if ( n &gt;= __mem_nt_threshold_arm64 ) return simd::__memcpy_bulk_nt(d, s, n);
+  return simd::__memcpy_bulk(d, s, n);
+#else
+  return simd::__memcpy_bulk(d, s, n);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>simd::__memcpy_bulk(d, s, n)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L27">line 27</a></td></tr><tr class="t-dsc"><td><code>simd::__memcpy_bulk_nt(d, s, n)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L29">line 29</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L32">line 32</a></td></tr><tr class="t-dsc"><td><code>simd::__memcpy_bulk(d, s, n)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L34">line 34</a></td></tr><tr class="t-dsc"><td><code>simd::__memcpy_bulk_nt(d, s, n)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L36">line 36</a></td></tr><tr class="t-dsc"><td><code>simd::__memcpy_bulk(d, s, n)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L37">line 37</a></td></tr><tr class="t-dsc"><td><code>simd::__memcpy_bulk(d, s, n)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L39">line 39</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/memory.hpp.html#f-23e95374d871e970">simd::__memcpy_bulk</a>, <a href="bits.hpp.html#f-feef821aeee8f358">__mem_tun_get</a>, <a href="../../bits/wasm/simd/memory.hpp.html#f-0965bd3b388bea31">simd::__memcpy_bulk_nt</a>, <a href="../../simd/__bits/__asm_blocks_amd64.hpp.html#f-d514f8cfada49314">simd::__bits::__rep_movsb</a>.</p></section><section class="function-entry" id="f-85fe84f80a955ab8"><h3><code>micron::__memcpy_bytes(byte *restrict d, const byte *restrict s, const u64 bytes) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline byte *
+__memcpy_bytes(byte *restrict d, const byte *restrict s, const u64 bytes) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *restrict d</code></li><li><code>const byte *restrict s</code></li><li><code>const u64 bytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline byte *
+__memcpy_bytes(byte *restrict d, const byte *restrict s, const u64 bytes) noexcept
+{
+  if ( bytes == 0 ) return d;
+  if ( bytes &lt;= 32 ) {
+    __ml::__copy_le32(d, s, bytes);
+    return d;
+  }
+  if ( bytes &lt;= 64 ) {
+    __ml::__copy_33_64(d, s, bytes);
+    return d;
+  }
+  if ( bytes &lt;= 128 ) {
+    __ml::__copy_65_128(d, s, bytes);
+    return d;
+  }
+#if defined(__micron_x86_avx2)
+  if ( bytes &lt;= 256 ) {
+    __ml::__copy_129_256(d, s, bytes);
+    return d;
+  }
+#endif
+  return __memcpy_large(d, s, bytes);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L49">line 49</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L57">line 57</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L62">line 62</a></td></tr><tr class="t-dsc"><td><code>__memcpy_large(d, s, bytes)</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L65">line 65</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-437fa7c027a5d52b">__ml::__copy_le32</a>, <a href="bits.hpp.html#f-7be04444d9916bd9">__ml::__copy_33_64</a>, <a href="bits.hpp.html#f-4f52fdf9257c2e12">__ml::__copy_65_128</a>, <a href="bits.hpp.html#f-7560e8cbc4b7a2d5">__ml::__copy_129_256</a>, <a href="memcpy.hpp.html#f-5a86f896a3442f97">__memcpy_large</a>.</p></section><section class="function-entry" id="f-e80f0e7c2c76f404"><h3><code>micron::__memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept</code></h3><p>Defined in <code>memory/cmemory/memcpy.hpp</code>, <a href="../../../source/memory/cmemory/memcpy.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename S = u64&gt;
+[[gnu::always_inline]] inline T *
+__memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict d</code></li><li><code>const F *__restrict s</code></li><li><code>const S n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename S = u64&gt;
+[[gnu::always_inline]] inline T *
+__memcpy_32(T *__restrict d, const F *__restrict s, const S n) noexcept
+{
+  if ( n == 0 ) return d;
+  byte *dest = reinterpret_cast&lt;byte *&gt;(d);
+  const byte *src = reinterpret_cast&lt;const byte *&gt;(s);
+  if ( n &lt;= 32 ) {
+    __ml::__copy_le32(dest, src, static_cast&lt;u64&gt;(n));
+    return d;
+  }
+  __memcpy_bytes(dest, src, static_cast&lt;u64&gt;(n));
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L73">line 73</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L78">line 78</a></td></tr><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/memory/cmemory/memcpy.hpp.html#L81">line 81</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-437fa7c027a5d52b">__ml::__copy_le32</a>, <a href="memcpy.hpp.html#f-85fe84f80a955ab8">__memcpy_bytes</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

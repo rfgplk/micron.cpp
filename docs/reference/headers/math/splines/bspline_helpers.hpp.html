@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/splines/bspline_helpers.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/splines/bspline_helpers.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/splines.html">Splines and interpolation</a></div><p>Defined in header <code>&lt;micron/math/splines/bspline_helpers.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/splines/bspline_helpers.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-b3d4ce30ef2ed3ed">micron::math::splines::bspline_split</code></td><td>struct; line 435</td></tr><tr class="t-dsc"><td><code id="s-27f98786b50b05bb">micron::math::splines::bspline_split::left</code></td><td>member; line 436</td></tr><tr class="t-dsc"><td><code id="s-3cfbc4e9f8f9ec53">micron::math::splines::bspline_split::right</code></td><td>member; line 437</td></tr><tr class="t-dsc"><td><a href="#f-8998750f0586db57">micron::math::splines::make_unclamped_uniform_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept</a></td><td>function; line 29</td></tr><tr class="t-dsc"><td><a href="#f-32f987c6a2620909">micron::math::splines::make_periodic_uniform_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-baafbaa03b0d0ca8">micron::math::splines::greville_abscissae(raw_slice&lt;const F&gt; knots, u32 degree) noexcept</a></td><td>function; line 49</td></tr><tr class="t-dsc"><td><a href="#f-3a510a7a899d7c15">micron::math::splines::make_knots(knot_style style, usize n_ctrl, u32 degree, F t_min, F t_max, raw_slice&lt;const F&gt; samples = {}) noexcept</a></td><td>function; line 65</td></tr><tr class="t-dsc"><td><a href="#f-96e6faf615794928">micron::math::splines::basis(const bspline&lt;F&gt; &amp;s, F x, F *__restrict__ out, usize out_count) noexcept</a></td><td>function; line 76</td></tr><tr class="t-dsc"><td><a href="#f-43cbee4ea266ebad">micron::math::splines::basis(const bspline&lt;F&gt; &amp;s, F x) noexcept</a></td><td>function; line 94</td></tr><tr class="t-dsc"><td><a href="#f-d989081938c866e1">micron::math::splines::basis_derivatives(const bspline&lt;F&gt; &amp;s, F x, u32 order) noexcept</a></td><td>function; line 291</td></tr><tr class="t-dsc"><td><a href="#f-26073d03159f4901">micron::math::splines::design_matrix(const bspline&lt;F&gt; &amp;s, raw_slice&lt;const F&gt; x) noexcept</a></td><td>function; line 313</td></tr><tr class="t-dsc"><td><a href="#f-f1f31bb571bca04c">micron::math::splines::antiderivative_spline(const bspline&lt;F&gt; &amp;s, F constant = F(0)) noexcept</a></td><td>function; line 341</td></tr><tr class="t-dsc"><td><a href="#f-89ff3ca33d75b432">micron::math::splines::integral(const bspline&lt;F&gt; &amp;s, F a, F b) noexcept</a></td><td>function; line 364</td></tr><tr class="t-dsc"><td><a href="#f-bb670ed4f8bf845a">micron::math::splines::insert_knot(const bspline&lt;F&gt; &amp;s, F knot, u32 repetitions = 1, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 372</td></tr><tr class="t-dsc"><td><a href="#f-81d78b362950ab67">micron::math::splines::refine_knots(const bspline&lt;F&gt; &amp;s, raw_slice&lt;const F&gt; knots, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 420</td></tr><tr class="t-dsc"><td><a href="#f-c66f756e18200ef1">micron::math::splines::split(const bspline&lt;F&gt; &amp;s, F knot, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 442</td></tr><tr class="t-dsc"><td><a href="#f-4bbd3449b20ce57b">micron::math::splines::make_lsq_bspline(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; knots, u32 degree, raw_slice&lt;const F&gt; weights = {},
+                 lsq_method method = lsq_method::householder_qr, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 481</td></tr><tr class="t-dsc"><td><a href="#f-6d0223b7ce8e9efb">micron::math::splines::evaluate(const bspline&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</a></td><td>function; line 528</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-8998750f0586db57"><h3><code>micron::math::splines::make_unclamped_uniform_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L29">line 29</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+make_unclamped_uniform_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n_ctrl</code></li><li><code>u32 degree</code></li><li><code>F t_min</code></li><li><code>F t_max</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+make_unclamped_uniform_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept
+{
+  vector&lt;F&gt; out;
+  if ( degree == 0 || n_ctrl &lt; degree + 1 || !(t_max &gt; t_min) ) return out;
+  const usize count = n_ctrl + degree + 1;
+  const F spacing = (t_max - t_min) / F(n_ctrl - degree);
+  out.reserve(count);
+  for ( usize i = 0; i &lt; count; ++i ) out.emplace_back(t_min + (F(i) - F(degree)) * spacing);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L32">line 32</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L37">line 37</a></td></tr></tbody></table></section><section class="function-entry" id="f-32f987c6a2620909"><h3><code>micron::math::splines::make_periodic_uniform_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+make_periodic_uniform_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n_ctrl</code></li><li><code>u32 degree</code></li><li><code>F t_min</code></li><li><code>F t_max</code></li></ul><h4>Effects</h4><p>Returns <code>make_unclamped_uniform_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+make_periodic_uniform_knots(usize n_ctrl, u32 degree, F t_min, F t_max) noexcept
+{
+  return make_unclamped_uniform_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>make_unclamped_uniform_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max)</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L44">line 44</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-8998750f0586db57">make_unclamped_uniform_knots&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-baafbaa03b0d0ca8"><h3><code>micron::math::splines::greville_abscissae(raw_slice&lt;const F&gt; knots, u32 degree) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L49">line 49</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+greville_abscissae(raw_slice&lt;const F&gt; knots, u32 degree) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; knots</code></li><li><code>u32 degree</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+greville_abscissae(raw_slice&lt;const F&gt; knots, u32 degree) noexcept
+{
+  vector&lt;F&gt; out;
+  if ( degree == 0 || knots.size() &lt; usize(2 * degree + 2) ) return out;
+  const usize n_ctrl = knots.size() - degree - 1;
+  out.reserve(n_ctrl);
+  for ( usize i = 0; i &lt; n_ctrl; ++i ) {
+    F sum = F(0);
+    for ( u32 j = 1; j &lt;= degree; ++j ) sum += knots[i + j];
+    out.emplace_back(sum / F(degree));
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L52">line 52</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L60">line 60</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><section class="function-entry" id="f-3a510a7a899d7c15"><h3><code>micron::math::splines::make_knots(knot_style style, usize n_ctrl, u32 degree, F t_min, F t_max, raw_slice&lt;const F&gt; samples = {}) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L65">line 65</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+make_knots(knot_style style, usize n_ctrl, u32 degree, F t_min, F t_max, raw_slice&lt;const F&gt; samples = {}) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>knot_style style</code></li><li><code>usize n_ctrl</code></li><li><code>u32 degree</code></li><li><code>F t_min</code></li><li><code>F t_max</code></li><li><code>raw_slice&lt;const F&gt; samples = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+make_knots(knot_style style, usize n_ctrl, u32 degree, F t_min, F t_max, raw_slice&lt;const F&gt; samples = {}) noexcept
+{
+  if ( style == knot_style::clamped_uniform ) return make_uniform_clamped_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max);
+  if ( style == knot_style::unclamped_uniform ) return make_unclamped_uniform_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max);
+  if ( style == knot_style::periodic_uniform ) return make_periodic_uniform_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max);
+  if ( samples.size() != n_ctrl ) return {};
+  return make_averaged_clamped_knots&lt;F&gt;(samples.ptr, samples.size(), degree);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>make_uniform_clamped_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max)</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L67">line 67</a></td></tr><tr class="t-dsc"><td><code>make_unclamped_uniform_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max)</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L68">line 68</a></td></tr><tr class="t-dsc"><td><code>make_periodic_uniform_knots&lt;F&gt;(n_ctrl, degree, t_min, t_max)</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L69">line 69</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L70">line 70</a></td></tr><tr class="t-dsc"><td><code>make_averaged_clamped_knots&lt;F&gt;(samples.ptr, samples.size(), degree)</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L71">line 71</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline.hpp.html#f-c20cc86b57727c28">make_uniform_clamped_knots&lt;F&gt;</a>, <a href="bspline_helpers.hpp.html#f-8998750f0586db57">make_unclamped_uniform_knots&lt;F&gt;</a>, <a href="bspline_helpers.hpp.html#f-32f987c6a2620909">make_periodic_uniform_knots&lt;F&gt;</a>, <a href="bspline.hpp.html#f-ebbd7b69fdde7f57">make_averaged_clamped_knots&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-96e6faf615794928"><h3><code>micron::math::splines::basis(const bspline&lt;F&gt; &amp;s, F x, F *__restrict__ out, usize out_count) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+basis(const bspline&lt;F&gt; &amp;s, F x, F *__restrict__ out, usize out_count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>F *__restrict__ out</code></li><li><code>usize out_count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+basis(const bspline&lt;F&gt; &amp;s, F x, F *__restrict__ out, usize out_count) noexcept
+{
+  const usize n_ctrl = s.ctrl.size();
+  for ( usize i = 0; i &lt; out_count; ++i ) out[i] = F(0);
+  if ( n_ctrl == 0 || out_count &lt; n_ctrl || s.degree == 0 ) return;
+  const u32 p = s.degree;
+  const F *u = s.knots.data();
+  if ( x &lt; u[p] ) x = u[p];
+  if ( x &gt; u[n_ctrl] ) x = u[n_ctrl];
+  usize last = s.last_hit;
+  const usize span = __impl_bspline::bspline_span&lt;F&gt;(u, n_ctrl, p, x, last);
+  F local[bspline_max_degree + 1];
+  __impl_bspline::bspline_basis&lt;F&gt;(u, span, p, x, local);
+  for ( u32 j = 0; j &lt;= p; ++j ) out[span - p + j] = local[j];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L80">line 80</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="bspline.hpp.html#f-0391ae5f22f23645">__impl_bspline::bspline_basis&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-43cbee4ea266ebad"><h3><code>micron::math::splines::basis(const bspline&lt;F&gt; &amp;s, F x) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L94">line 94</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+basis(const bspline&lt;F&gt; &amp;s, F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+basis(const bspline&lt;F&gt; &amp;s, F x) noexcept
+{
+  vector&lt;F&gt; out(s.ctrl.size(), F(0));
+  out.set_size(s.ctrl.size());
+  basis&lt;F&gt;(s, x, out.data(), out.size());
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L99">line 99</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-96e6faf615794928">basis&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d989081938c866e1"><h3><code>micron::math::splines::basis_derivatives(const bspline&lt;F&gt; &amp;s, F x, u32 order) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L291">line 291</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+basis_derivatives(const bspline&lt;F&gt; &amp;s, F x, u32 order) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>u32 order</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+basis_derivatives(const bspline&lt;F&gt; &amp;s, F x, u32 order) noexcept
+{
+  vector&lt;F&gt; out;
+  const usize n_ctrl = s.ctrl.size();
+  if ( n_ctrl == 0 || s.degree == 0 ) return out;
+  if ( order &gt; s.degree ) order = s.degree;
+  out = vector&lt;F&gt;(usize(order + 1) * n_ctrl, F(0));
+  out.set_size(usize(order + 1) * n_ctrl);
+  const F *u = s.knots.data();
+  if ( x &lt; u[s.degree] ) x = u[s.degree];
+  if ( x &gt; u[n_ctrl] ) x = u[n_ctrl];
+  usize last = s.last_hit;
+  const usize span = __impl_bspline::bspline_span&lt;F&gt;(u, n_ctrl, s.degree, x, last);
+  F local[bspline_max_degree + 1][bspline_max_degree + 1]{};
+  __impl_bspline_helpers::local_basis_derivatives&lt;F&gt;(u, span, s.degree, x, order, local);
+  for ( u32 k = 0; k &lt;= order; ++k )
+    for ( u32 j = 0; j &lt;= s.degree; ++j ) out[usize(k) * n_ctrl + span - s.degree + j] = local[k][j];
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L295">line 295</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L308">line 308</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../vector/vector.hpp.html#s-13add2142a04074d">vector&lt;F&gt;</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="bspline_helpers.hpp.html#f-50411f7445ffae11">__impl_bspline_helpers::local_basis_derivatives&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-26073d03159f4901"><h3><code>micron::math::splines::design_matrix(const bspline&lt;F&gt; &amp;s, raw_slice&lt;const F&gt; x) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L313">line 313</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline sparse::csr&lt;F, u32&gt;
+design_matrix(const bspline&lt;F&gt; &amp;s, raw_slice&lt;const F&gt; x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>raw_slice&lt;const F&gt; x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline sparse::csr&lt;F, u32&gt;
+design_matrix(const bspline&lt;F&gt; &amp;s, raw_slice&lt;const F&gt; x) noexcept
+{
+  const usize n_ctrl = s.ctrl.size();
+  sparse::csr&lt;F, u32&gt; out(x.size(), n_ctrl);
+  if ( n_ctrl == 0 || s.degree == 0 ) return out;
+  const usize per_row = usize(s.degree + 1);
+  out.inner.reserve(x.size() * per_row);
+  out.values.reserve(x.size() * per_row);
+  out.outer[0] = 0;
+  usize last = s.last_hit;
+  for ( usize i = 0; i &lt; x.size(); ++i ) {
+    F value = x[i];
+    if ( value &lt; s.knots[s.degree] ) value = s.knots[s.degree];
+    if ( value &gt; s.knots[n_ctrl] ) value = s.knots[n_ctrl];
+    const usize span = __impl_bspline::bspline_span&lt;F&gt;(s.knots.data(), n_ctrl, s.degree, value, last);
+    F local[bspline_max_degree + 1];
+    __impl_bspline::bspline_basis&lt;F&gt;(s.knots.data(), span, s.degree, value, local);
+    for ( u32 j = 0; j &lt;= s.degree; ++j ) {
+      out.inner.emplace_back(u32(span - s.degree + j));
+      out.values.emplace_back(local[j]);
+    }
+    out.outer[i + 1] = u32(out.values.size());
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L317">line 317</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L336">line 336</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="bspline.hpp.html#f-0391ae5f22f23645">__impl_bspline::bspline_basis&lt;F&gt;</a>, <a href="../../types.hpp.html#s-f3fe2e99a2368c8e">u32</a>.</p></section><section class="function-entry" id="f-f1f31bb571bca04c"><h3><code>micron::math::splines::antiderivative_spline(const bspline&lt;F&gt; &amp;s, F constant = F(0)) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L341">line 341</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline&lt;F&gt;
+antiderivative_spline(const bspline&lt;F&gt; &amp;s, F constant = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>F constant = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline&lt;F&gt;
+antiderivative_spline(const bspline&lt;F&gt; &amp;s, F constant = F(0)) noexcept
+{
+  bspline&lt;F&gt; out{};
+  const usize n_ctrl = s.ctrl.size();
+  if ( n_ctrl == 0 || s.degree &gt;= bspline_max_degree ) return out;
+  const u32 p = s.degree;
+  out.degree = p + 1;
+  out.knots.reserve(s.knots.size() + 2);
+  out.knots.emplace_back(s.knots[0]);
+  for ( usize i = 0; i &lt; s.knots.size(); ++i ) out.knots.emplace_back(s.knots[i]);
+  out.knots.emplace_back(s.knots[s.knots.size() - 1]);
+  out.ctrl.reserve(n_ctrl + 1);
+  F value = constant;
+  out.ctrl.emplace_back(value);
+  for ( usize i = 0; i &lt; n_ctrl; ++i ) {
+    value += (s.knots[i + p + 1] - s.knots[i]) * s.ctrl[i] / F(p + 1);
+    out.ctrl.emplace_back(value);
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L345">line 345</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L359">line 359</a></td></tr></tbody></table></section><section class="function-entry" id="f-89ff3ca33d75b432"><h3><code>micron::math::splines::integral(const bspline&lt;F&gt; &amp;s, F a, F b) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L364">line 364</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+integral(const bspline&lt;F&gt; &amp;s, F a, F b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>F a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+integral(const bspline&lt;F&gt; &amp;s, F a, F b) noexcept
+{
+  const auto anti = antiderivative_spline&lt;F&gt;(s);
+  return evaluate&lt;F&gt;(anti, b) - evaluate&lt;F&gt;(anti, a);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(anti, b) - evaluate&lt;F&gt;(anti, a)</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L367">line 367</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-f1f31bb571bca04c">antiderivative_spline&lt;F&gt;</a>, <a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-bb670ed4f8bf845a"><h3><code>micron::math::splines::insert_knot(const bspline&lt;F&gt; &amp;s, F knot, u32 repetitions = 1, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L372">line 372</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline&lt;F&gt;
+insert_knot(const bspline&lt;F&gt; &amp;s, F knot, u32 repetitions = 1, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>F knot</code></li><li><code>u32 repetitions = 1</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline&lt;F&gt;
+insert_knot(const bspline&lt;F&gt; &amp;s, F knot, u32 repetitions = 1, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  bspline&lt;F&gt; current = s;
+  if ( s.ctrl.size() == 0 || repetitions == 0 ) {
+    if ( info ) info-&gt;status = build_status::ok;
+    return current;
+  }
+  for ( u32 repeat = 0; repeat &lt; repetitions; ++repeat ) {
+    const u32 p = current.degree;
+    const usize n_ctrl = current.ctrl.size();
+    const F lo = current.knots[p];
+    const F hi = current.knots[n_ctrl];
+    if ( knot &lt; lo || knot &gt; hi ) {
+      if ( info ) info-&gt;status = build_status::invalid_argument;
+      return {};
+    }
+    usize last = current.last_hit;
+    const usize span = __impl_bspline::bspline_span&lt;F&gt;(current.knots.data(), n_ctrl, p, knot, last);
+    u32 multiplicity = 0;
+    for ( usize i = 0; i &lt; current.knots.size(); ++i )
+      if ( current.knots[i] == knot ) ++multiplicity;
+    const u32 limit = (knot == lo || knot == hi) ? p + 1 : p;
+    if ( multiplicity &gt;= limit ) {
+      if ( info ) info-&gt;status = build_status::degenerate;
+      return {};
+    }
+    bspline&lt;F&gt; next{};
+    next.degree = p;
+    next.knots.reserve(current.knots.size() + 1);
+    for ( usize i = 0; i &lt;= span; ++i ) next.knots.emplace_back(current.knots[i]);
+    next.knots.emplace_back(knot);
+    for ( usize i = span + 1; i &lt; current.knots.size(); ++i ) next.knots.emplace_back(current.knots[i]);
+    next.ctrl.reserve(n_ctrl + 1);
+    for ( usize i = 0; i &lt;= span - p; ++i ) next.ctrl.emplace_back(current.ctrl[i]);
+    for ( usize i = span - p + 1; i &lt;= span - multiplicity; ++i ) {
+      const F denom = current.knots[i + p] - current.knots[i];
+      const F alpha = denom &gt; F(0) ? (knot - current.knots[i]) / denom : F(0);
+      next.ctrl.emplace_back(math::fma&lt;F&gt;(alpha, current.ctrl[i] - current.ctrl[i - 1], current.ctrl[i - 1]));
+    }
+    for ( usize i = span - multiplicity; i &lt; n_ctrl; ++i ) next.ctrl.emplace_back(current.ctrl[i]);
+    current = micron::move(next);
+  }
+  if ( info ) info-&gt;status = build_status::ok;
+  return current;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>current</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L377">line 377</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L386">line 386</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L396">line 396</a></td></tr><tr class="t-dsc"><td><code>current</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L415">line 415</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-81d78b362950ab67"><h3><code>micron::math::splines::refine_knots(const bspline&lt;F&gt; &amp;s, raw_slice&lt;const F&gt; knots, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L420">line 420</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline&lt;F&gt;
+refine_knots(const bspline&lt;F&gt; &amp;s, raw_slice&lt;const F&gt; knots, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>raw_slice&lt;const F&gt; knots</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline&lt;F&gt;
+refine_knots(const bspline&lt;F&gt; &amp;s, raw_slice&lt;const F&gt; knots, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  bspline&lt;F&gt; out = s;
+  for ( usize i = 0; i &lt; knots.size(); ++i ) {
+    build_info&lt;F&gt; local{};
+    out = insert_knot&lt;F&gt;(out, knots[i], 1, &amp;local);
+    if ( local.status != build_status::ok ) {
+      if ( info ) info-&gt;status = local.status;
+      return {};
+    }
+  }
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L428">line 428</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L432">line 432</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-bb670ed4f8bf845a">insert_knot&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c66f756e18200ef1"><h3><code>micron::math::splines::split(const bspline&lt;F&gt; &amp;s, F knot, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L442">line 442</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline_split&lt;F&gt;
+split(const bspline&lt;F&gt; &amp;s, F knot, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>F knot</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline_split&lt;F&gt;
+split(const bspline&lt;F&gt; &amp;s, F knot, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  bspline_split&lt;F&gt; out{};
+  if ( s.ctrl.size() == 0 || !(knot &gt; s.knots[s.degree] &amp;&amp; knot &lt; s.knots[s.ctrl.size()]) ) {
+    if ( info ) info-&gt;status = build_status::invalid_argument;
+    return out;
+  }
+  u32 multiplicity = 0;
+  for ( usize i = 0; i &lt; s.knots.size(); ++i )
+    if ( s.knots[i] == knot ) ++multiplicity;
+  const u32 insertions = multiplicity &lt; s.degree ? s.degree - multiplicity : 0;
+  auto refined = insert_knot&lt;F&gt;(s, knot, insertions, info);
+  if ( refined.ctrl.size() == 0 ) return out;
+  usize first = 0;
+  while ( first &lt; refined.knots.size() &amp;&amp; refined.knots[first] &lt; knot ) ++first;
+  const usize left_ctrl = first;
+  // The p-fold knot is shared by both children.  Its shared control point is
+  // immediately before the first copy of the split knot.
+  const usize right_start = first - 1;
+
+  out.left.degree = refined.degree;
+  out.left.ctrl.reserve(left_ctrl);
+  for ( usize i = 0; i &lt; left_ctrl; ++i ) out.left.ctrl.emplace_back(refined.ctrl[i]);
+  out.left.knots.reserve(left_ctrl + refined.degree + 1);
+  for ( usize i = 0; i &lt; first; ++i ) out.left.knots.emplace_back(refined.knots[i]);
+  for ( u32 i = 0; i &lt;= refined.degree; ++i ) out.left.knots.emplace_back(knot);
+
+  out.right.degree = refined.degree;
+  out.right.ctrl.reserve(refined.ctrl.size() - right_start);
+  for ( usize i = right_start; i &lt; refined.ctrl.size(); ++i ) out.right.ctrl.emplace_back(refined.ctrl[i]);
+  out.right.knots.reserve(out.right.ctrl.size() + refined.degree + 1);
+  for ( u32 i = 0; i &lt;= refined.degree; ++i ) out.right.knots.emplace_back(knot);
+  for ( usize i = first + refined.degree; i &lt; refined.knots.size(); ++i ) out.right.knots.emplace_back(refined.knots[i]);
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L447">line 447</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L454">line 454</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L476">line 476</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-bb670ed4f8bf845a">insert_knot&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-4bbd3449b20ce57b"><h3><code>micron::math::splines::make_lsq_bspline(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; knots, u32 degree, raw_slice&lt;const F&gt; weights = {},
+                 lsq_method method = lsq_method::householder_qr, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L481">line 481</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline&lt;F&gt;
+make_lsq_bspline(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; knots, u32 degree, raw_slice&lt;const F&gt; weights = {},
+                 lsq_method method = lsq_method::householder_qr, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>raw_slice&lt;const F&gt; knots</code></li><li><code>u32 degree</code></li><li><code>raw_slice&lt;const F&gt; weights = {}</code></li><li><code>lsq_method method = lsq_method::householder_qr</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bspline&lt;F&gt;
+make_lsq_bspline(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; knots, u32 degree, raw_slice&lt;const F&gt; weights = {},
+                 lsq_method method = lsq_method::householder_qr, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  bspline&lt;F&gt; out{};
+  out.degree = degree;
+  if ( xs.size() != ys.size() || (weights.size() != 0 &amp;&amp; weights.size() != xs.size()) ) {
+    if ( info ) info-&gt;status = build_status::size_mismatch;
+    return out;
+  }
+  if ( knots.size() &lt;= degree + 1 ) {
+    if ( info ) info-&gt;status = build_status::too_few_points;
+    return out;
+  }
+  const usize n_ctrl = knots.size() - degree - 1;
+  if ( xs.size() &lt; n_ctrl || !__impl_bspline_helpers::valid_knots&lt;F&gt;(knots, n_ctrl, degree) ) {
+    if ( info ) info-&gt;status = build_status::invalid_argument;
+    return out;
+  }
+  if ( !__impl_splines_bits::strictly_increasing&lt;F&gt;(xs.ptr, xs.size()) ) {
+    if ( info ) info-&gt;status = build_status::non_monotonic_x;
+    return out;
+  }
+  out.knots.reserve(knots.size());
+  for ( usize i = 0; i &lt; knots.size(); ++i ) out.knots.emplace_back(knots[i]);
+  vector&lt;F&gt; solution(n_ctrl, F(0));
+  solution.set_size(n_ctrl);
+  for ( usize i = 0; i &lt; xs.size(); ++i ) {
+    if ( xs[i] &lt; knots[degree] || xs[i] &gt; knots[n_ctrl] || (weights.size() &amp;&amp; !(weights[i] &gt; F(0))) ) {
+      if ( info ) info-&gt;status = build_status::invalid_argument;
+      return {};
+    }
+  }
+  const bool solved = method == lsq_method::householder_qr
+                          ? __impl_bspline_helpers::banded_qr_solve&lt;F&gt;(xs, ys, weights, knots, n_ctrl, degree, solution.data())
+                          : __impl_bspline_helpers::banded_normal_solve&lt;F&gt;(xs, ys, weights, knots, n_ctrl, degree, solution.data());
+  if ( !solved ) {
+    if ( info ) info-&gt;status = build_status::singular_system;
+    return {};
+  }
+  out.ctrl.reserve(n_ctrl);
+  for ( usize i = 0; i &lt; n_ctrl; ++i ) out.ctrl.emplace_back(solution[i]);
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L488">line 488</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L492">line 492</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L497">line 497</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L501">line 501</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L510">line 510</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L518">line 518</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L523">line 523</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-9256e0bbbe77a96e">__impl_bspline_helpers::valid_knots&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-c21f6140604e40e0">__impl_splines_bits::strictly_increasing&lt;F&gt;</a>, <a href="bspline_helpers.hpp.html#f-3b7c3a8bed3a9c90">__impl_bspline_helpers::banded_qr_solve&lt;F&gt;</a>, <a href="bspline_helpers.hpp.html#f-98f578f819578b42">__impl_bspline_helpers::banded_normal_solve&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-6d0223b7ce8e9efb"><h3><code>micron::math::splines::evaluate(const bspline&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L528">line 528</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const bspline&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const bspline&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-50411f7445ffae11"><h3><code>micron::math::splines::__impl_bspline_helpers::local_basis_derivatives(const F *u, usize span, u32 degree, F x, u32 order, F out[bspline_max_degree + 1][bspline_max_degree + 1]) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L107">line 107</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+local_basis_derivatives(const F *u, usize span, u32 degree, F x, u32 order, F out[bspline_max_degree + 1][bspline_max_degree + 1]) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *u</code></li><li><code>usize span</code></li><li><code>u32 degree</code></li><li><code>F x</code></li><li><code>u32 order</code></li><li><code>F out[bspline_max_degree + 1][bspline_max_degree + 1]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+local_basis_derivatives(const F *u, usize span, u32 degree, F x, u32 order, F out[bspline_max_degree + 1][bspline_max_degree + 1]) noexcept
+{
+  F ndu[bspline_max_degree + 1][bspline_max_degree + 1]{};
+  F left[bspline_max_degree + 1]{};
+  F right[bspline_max_degree + 1]{};
+  ndu[0][0] = F(1);
+  for ( u32 j = 1; j &lt;= degree; ++j ) {
+    left[j] = x - u[span + 1 - j];
+    right[j] = u[span + j] - x;
+    F saved = F(0);
+    for ( u32 r = 0; r &lt; j; ++r ) {
+      ndu[j][r] = right[r + 1] + left[j - r];
+      const F temp = ndu[j][r] != F(0) ? ndu[r][j - 1] / ndu[j][r] : F(0);
+      ndu[r][j] = saved + right[r + 1] * temp;
+      saved = left[j - r] * temp;
+    }
+    ndu[j][j] = saved;
+  }
+  for ( u32 j = 0; j &lt;= degree; ++j ) out[0][j] = ndu[j][degree];
+
+  F a[2][bspline_max_degree + 1]{};
+  for ( u32 r = 0; r &lt;= degree; ++r ) {
+    u32 s1 = 0, s2 = 1;
+    a[0][0] = F(1);
+    for ( u32 k = 1; k &lt;= order; ++k ) {
+      F d = F(0);
+      const i32 rk = i32(r) - i32(k);
+      const i32 pk = i32(degree) - i32(k);
+      if ( r &gt;= k ) {
+        const F denom = ndu[pk + 1][rk];
+        a[s2][0] = denom != F(0) ? a[s1][0] / denom : F(0);
+        d = a[s2][0] * ndu[rk][pk];
+      }
+      const i32 j1 = rk &gt;= -1 ? 1 : -rk;
+      const i32 j2 = i32(r) - 1 &lt;= pk ? i32(k) - 1 : i32(degree) - i32(r);
+      for ( i32 j = j1; j &lt;= j2; ++j ) {
+        const F denom = ndu[pk + 1][rk + j];
+        a[s2][j] = denom != F(0) ? (a[s1][j] - a[s1][j - 1]) / denom : F(0);
+        d += a[s2][j] * ndu[rk + j][pk];
+      }
+      if ( i32(r) &lt;= pk ) {
+        const F denom = ndu[pk + 1][r];
+        a[s2][k] = denom != F(0) ? -a[s1][k - 1] / denom : F(0);
+        d += a[s2][k] * ndu[r][pk];
+      }
+      out[k][r] = d;
+      const u32 swap = s1;
+      s1 = s2;
+      s2 = swap;
+    }
+  }
+  F scale = F(degree);
+  for ( u32 k = 1; k &lt;= order; ++k ) {
+    for ( u32 j = 0; j &lt;= degree; ++j ) out[k][j] *= scale;
+    scale *= F(degree - k);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8d97db0388a5a975">i32</a>.</p></section><section class="function-entry" id="f-9256e0bbbe77a96e"><h3><code>micron::math::splines::__impl_bspline_helpers::valid_knots(raw_slice&lt;const F&gt; knots, usize n_ctrl, u32 degree) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L167">line 167</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bool
+valid_knots(raw_slice&lt;const F&gt; knots, usize n_ctrl, u32 degree) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; knots</code></li><li><code>usize n_ctrl</code></li><li><code>u32 degree</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bool
+valid_knots(raw_slice&lt;const F&gt; knots, usize n_ctrl, u32 degree) noexcept
+{
+  if ( degree == 0 || degree &gt; bspline_max_degree || n_ctrl &lt; degree + 1 ) return false;
+  if ( knots.size() != n_ctrl + degree + 1 ) return false;
+  for ( usize i = 1; i &lt; knots.size(); ++i )
+    if ( knots[i] &lt; knots[i - 1] ) return false;
+  return knots[degree] &lt; knots[n_ctrl];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L169">line 169</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L170">line 170</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L172">line 172</a></td></tr><tr class="t-dsc"><td><code>knots[degree] &lt; knots[n_ctrl]</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L173">line 173</a></td></tr></tbody></table></section><section class="function-entry" id="f-3b7c3a8bed3a9c90"><h3><code>micron::math::splines::__impl_bspline_helpers::banded_qr_solve(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; weights, raw_slice&lt;const F&gt; knots, usize n_ctrl,
+                u32 degree, F *solution) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L178">line 178</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bool
+banded_qr_solve(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; weights, raw_slice&lt;const F&gt; knots, usize n_ctrl,
+                u32 degree, F *solution) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>raw_slice&lt;const F&gt; weights</code></li><li><code>raw_slice&lt;const F&gt; knots</code></li><li><code>usize n_ctrl</code></li><li><code>u32 degree</code></li><li><code>F *solution</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bool
+banded_qr_solve(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; weights, raw_slice&lt;const F&gt; knots, usize n_ctrl,
+                u32 degree, F *solution) noexcept
+{
+  const usize width = usize(degree + 1);
+  vector&lt;F&gt; R(n_ctrl * width, F(0));
+  R.set_size(n_ctrl * width);
+  vector&lt;F&gt; transformed(n_ctrl, F(0));
+  transformed.set_size(n_ctrl);
+  usize last = degree;
+  for ( usize sample = 0; sample &lt; xs.size(); ++sample ) {
+    const usize span = __impl_bspline::bspline_span&lt;F&gt;(knots.ptr, n_ctrl, degree, xs[sample], last);
+    const usize first = span - degree;
+    F row[bspline_max_degree + 1]{};
+    __impl_bspline::bspline_basis&lt;F&gt;(knots.ptr, span, degree, xs[sample], row);
+    const F scale = weights.size() ? F(math::fsqrt(weights[sample])) : F(1);
+    for ( u32 j = 0; j &lt;= degree; ++j ) row[j] *= scale;
+    F rhs = scale * ys[sample];
+    for ( usize column = first; column &lt;= span; ++column ) {
+      const usize local_column = column - first;
+      const F a = R[column * width];
+      const F b = row[local_column];
+      if ( b == F(0) ) continue;
+      const F radius = F(math::fsqrt(a * a + b * b));
+      if ( !(radius &gt; F(0)) ) continue;
+      const F inverse_radius = F(1) / radius;
+      const F cosine = a * inverse_radius;
+      const F sine = b * inverse_radius;
+      const usize last_column = span &lt; column + degree ? span : column + degree;
+      for ( usize j = column; j &lt;= last_column; ++j ) {
+        const usize r_index = column * width + j - column;
+        const usize row_index = j - first;
+        const F old_r = R[r_index];
+        const F old_row = row[row_index];
+        R[r_index] = math::fma&lt;F&gt;(sine, old_row, cosine * old_r);
+        row[row_index] = math::fma&lt;F&gt;(cosine, old_row, -sine * old_r);
+      }
+      const F old_rhs = transformed[column];
+      transformed[column] = math::fma&lt;F&gt;(sine, rhs, cosine * old_rhs);
+      rhs = math::fma&lt;F&gt;(cosine, rhs, -sine * old_rhs);
+    }
+  }
+  const F tiny = sizeof(F) &lt;= 4 ? F(1e-12) : F(1e-28);
+  for ( usize ii = n_ctrl; ii-- &gt; 0; ) {
+    F rhs = transformed[ii];
+    const usize end = ii + degree &lt; n_ctrl - 1 ? ii + degree : n_ctrl - 1;
+    for ( usize j = ii + 1; j &lt;= end; ++j ) rhs -= R[ii * width + j - ii] * solution[j];
+    const F diagonal = R[ii * width];
+    if ( !(math::fabs(diagonal) &gt; tiny) ) return false;
+    solution[ii] = rhs / diagonal;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L225">line 225</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L228">line 228</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="bspline.hpp.html#f-0391ae5f22f23645">__impl_bspline::bspline_basis&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>.</p></section><section class="function-entry" id="f-98f578f819578b42"><h3><code>micron::math::splines::__impl_bspline_helpers::banded_normal_solve(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; weights, raw_slice&lt;const F&gt; knots, usize n_ctrl,
+                    u32 degree, F *solution) noexcept</code></h3><p>Defined in <code>math/splines/bspline_helpers.hpp</code>, <a href="../../../source/math/splines/bspline_helpers.hpp.html#L233">line 233</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bool
+banded_normal_solve(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; weights, raw_slice&lt;const F&gt; knots, usize n_ctrl,
+                    u32 degree, F *solution) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>raw_slice&lt;const F&gt; weights</code></li><li><code>raw_slice&lt;const F&gt; knots</code></li><li><code>usize n_ctrl</code></li><li><code>u32 degree</code></li><li><code>F *solution</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bool
+banded_normal_solve(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; weights, raw_slice&lt;const F&gt; knots, usize n_ctrl,
+                    u32 degree, F *solution) noexcept
+{
+  const usize width = usize(degree + 1);
+  vector&lt;F&gt; lower(n_ctrl * width, F(0));
+  lower.set_size(n_ctrl * width);
+  for ( usize i = 0; i &lt; n_ctrl; ++i ) solution[i] = F(0);
+  usize last = degree;
+  for ( usize sample = 0; sample &lt; xs.size(); ++sample ) {
+    const usize span = __impl_bspline::bspline_span&lt;F&gt;(knots.ptr, n_ctrl, degree, xs[sample], last);
+    const usize first = span - degree;
+    F row[bspline_max_degree + 1]{};
+    __impl_bspline::bspline_basis&lt;F&gt;(knots.ptr, span, degree, xs[sample], row);
+    const F weight = weights.size() ? weights[sample] : F(1);
+    for ( u32 j = 0; j &lt;= degree; ++j ) {
+      const usize column = first + j;
+      solution[column] = math::fma&lt;F&gt;(weight * row[j], ys[sample], solution[column]);
+      for ( u32 k = 0; k &lt;= j; ++k ) {
+        const usize other = first + k;
+        lower[column * width + column - other] = math::fma&lt;F&gt;(weight * row[j], row[k], lower[column * width + column - other]);
+      }
+    }
+  }
+  for ( usize i = 0; i &lt; n_ctrl; ++i ) {
+    const usize begin = i &gt; degree ? i - degree : 0;
+    for ( usize j = begin; j &lt;= i; ++j ) {
+      F value = lower[i * width + i - j];
+      usize k_begin = i &gt; degree ? i - degree : 0;
+      const usize j_begin = j &gt; degree ? j - degree : 0;
+      if ( j_begin &gt; k_begin ) k_begin = j_begin;
+      for ( usize k = k_begin; k &lt; j; ++k ) value -= lower[i * width + i - k] * lower[j * width + j - k];
+      if ( i == j ) {
+        if ( !(value &gt; F(0)) ) return false;
+        lower[i * width] = F(math::fsqrt(value));
+      } else {
+        lower[i * width + i - j] = value / lower[j * width];
+      }
+    }
+  }
+  for ( usize i = 0; i &lt; n_ctrl; ++i ) {
+    F value = solution[i];
+    const usize begin = i &gt; degree ? i - degree : 0;
+    for ( usize j = begin; j &lt; i; ++j ) value -= lower[i * width + i - j] * solution[j];
+    solution[i] = value / lower[i * width];
+  }
+  for ( usize ii = n_ctrl; ii-- &gt; 0; ) {
+    F value = solution[ii];
+    const usize end = ii + degree &lt; n_ctrl - 1 ? ii + degree : n_ctrl - 1;
+    for ( usize j = ii + 1; j &lt;= end; ++j ) value -= lower[j * width + j - ii] * solution[j];
+    solution[ii] = value / lower[ii * width];
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L265">line 265</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/splines/bspline_helpers.hpp.html#L284">line 284</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="bspline.hpp.html#f-0391ae5f22f23645">__impl_bspline::bspline_basis&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/generators.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/generators.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/generators.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/generators.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-87023799aa408879">micron::math::graphs::topology_graph_t</code></td><td>typedef; line 254</td></tr><tr class="t-dsc"><td><code id="s-a0849824aa4c9f47">micron::math::graphs::product_graph_t</code></td><td>typedef; line 406</td></tr><tr class="t-dsc"><td><a href="#f-d582376cc8627ca9">micron::math::graphs::empty_graph(usize vertices)</a></td><td>function; line 18</td></tr><tr class="t-dsc"><td><a href="#f-5862dd7aa15f9dc9">micron::math::graphs::path_graph(usize vertices)</a></td><td>function; line 27</td></tr><tr class="t-dsc"><td><a href="#f-de1def17f9b10af3">micron::math::graphs::cycle_graph(usize vertices)</a></td><td>function; line 38</td></tr><tr class="t-dsc"><td><a href="#f-c1c226f5ff9cfc89">micron::math::graphs::complete_graph(usize vertices)</a></td><td>function; line 47</td></tr><tr class="t-dsc"><td><a href="#f-d61a7edb254f6bd0">micron::math::graphs::star_graph(usize leaves)</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-7cbf6f7761979513">micron::math::graphs::wheel_graph(usize vertices)</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-2dcfd85d43bd3a3e">micron::math::graphs::grid_graph(usize rows, usize columns, bool periodic_rows = false, bool periodic_columns = false)</a></td><td>function; line 88</td></tr><tr class="t-dsc"><td><a href="#f-62a9e88a39ed975b">micron::math::graphs::balanced_tree(usize branching, usize height)</a></td><td>function; line 111</td></tr><tr class="t-dsc"><td><a href="#f-940ffd90694a33eb">micron::math::graphs::erdos_renyi(usize vertices, f64 probability, Rng &amp;&amp;rng)</a></td><td>function; line 143</td></tr><tr class="t-dsc"><td><a href="#f-0e1f198923b65b83">micron::math::graphs::barabasi_albert(usize vertices, usize attachments, Rng &amp;&amp;rng)</a></td><td>function; line 162</td></tr><tr class="t-dsc"><td><a href="#f-e588d929d607bdc5">micron::math::graphs::watts_strogatz(usize vertices, usize neighbors, f64 rewire_probability, Rng &amp;&amp;rng)</a></td><td>function; line 198</td></tr><tr class="t-dsc"><td><a href="#f-15a75ce469822c49">micron::math::graphs::rmat(usize scale, usize edges, Rng &amp;&amp;rng, f64 a = 0.57, f64 b = 0.19, f64 c = 0.19)</a></td><td>function; line 227</td></tr><tr class="t-dsc"><td><a href="#f-2041922e3e7c1ff1">micron::math::graphs::topology_vertices(const G &amp;source)</a></td><td>function; line 259</td></tr><tr class="t-dsc"><td><a href="#f-25481c955c23f430">micron::math::graphs::topology_copy(const G &amp;source)</a></td><td>function; line 274</td></tr><tr class="t-dsc"><td><a href="#f-073876f3245e467b">micron::math::graphs::graph_union(const A &amp;a, const B &amp;b)</a></td><td>function; line 283</td></tr><tr class="t-dsc"><td><a href="#f-0649ebecfb01eae3">micron::math::graphs::graph_intersection(const A &amp;a, const B &amp;b)</a></td><td>function; line 302</td></tr><tr class="t-dsc"><td><a href="#f-3c33001882df8c86">micron::math::graphs::graph_difference(const A &amp;a, const B &amp;b)</a></td><td>function; line 321</td></tr><tr class="t-dsc"><td><a href="#f-08d5ef75ab4ec036">micron::math::graphs::complement(const G &amp;graph)</a></td><td>function; line 338</td></tr><tr class="t-dsc"><td><a href="#f-b97c0f7379ce801d">micron::math::graphs::compose(const A &amp;a, const B &amp;b)</a></td><td>function; line 361</td></tr><tr class="t-dsc"><td><a href="#f-9820b3ca9bf9bd69">micron::math::graphs::line_graph(const G &amp;source)</a></td><td>function; line 368</td></tr><tr class="t-dsc"><td><a href="#f-86c5d25e82247304">micron::math::graphs::ego_graph(const G &amp;source, typename G::vertex_descriptor center, usize radius = 1)</a></td><td>function; line 386</td></tr><tr class="t-dsc"><td><a href="#f-7168248236eea3a1">micron::math::graphs::cartesian_product(const A &amp;a, const B &amp;b)</a></td><td>function; line 411</td></tr><tr class="t-dsc"><td><a href="#f-372eb5cf3f2dcc19">micron::math::graphs::tensor_product(const A &amp;a, const B &amp;b)</a></td><td>function; line 436</td></tr><tr class="t-dsc"><td><a href="#f-40a958cd2cc68926">micron::math::graphs::strong_product(const A &amp;a, const B &amp;b)</a></td><td>function; line 460</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-d582376cc8627ca9"><h3><code>micron::math::graphs::empty_graph(usize vertices)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L18">line 18</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+empty_graph(usize vertices)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+empty_graph(usize vertices)
+{
+  G result;
+  (void)result.add_vertices(vertices);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L22">line 22</a></td></tr></tbody></table></section><section class="function-entry" id="f-5862dd7aa15f9dc9"><h3><code>micron::math::graphs::path_graph(usize vertices)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L27">line 27</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+path_graph(usize vertices)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+path_graph(usize vertices)
+{
+  G result;
+  (void)result.add_vertices(vertices);
+  for ( usize i = 1; i &lt; vertices; ++i )
+    (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(i - 1), static_cast&lt;typename G::index_type&gt;(i));
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L33">line 33</a></td></tr></tbody></table></section><section class="function-entry" id="f-de1def17f9b10af3"><h3><code>micron::math::graphs::cycle_graph(usize vertices)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L38">line 38</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+cycle_graph(usize vertices)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+cycle_graph(usize vertices)
+{
+  G result = path_graph&lt;G&gt;(vertices);
+  if ( vertices &gt; 2 ) (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(vertices - 1), typename G::index_type(0));
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L42">line 42</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-5862dd7aa15f9dc9">path_graph&lt;G&gt;</a>.</p></section><section class="function-entry" id="f-c1c226f5ff9cfc89"><h3><code>micron::math::graphs::complete_graph(usize vertices)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L47">line 47</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+complete_graph(usize vertices)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+complete_graph(usize vertices)
+{
+  G result;
+  (void)result.add_vertices(vertices);
+  for ( usize i = 0; i &lt; vertices; ++i ) {
+    const usize begin = G::is_directed ? 0 : i + 1;
+    for ( usize j = begin; j &lt; vertices; ++j ) {
+      if ( i == j &amp;&amp; !G::allows_loops ) continue;
+      (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(i), static_cast&lt;typename G::index_type&gt;(j));
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L58">line 58</a></td></tr></tbody></table></section><section class="function-entry" id="f-d61a7edb254f6bd0"><h3><code>micron::math::graphs::star_graph(usize leaves)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+star_graph(usize leaves)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize leaves</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+star_graph(usize leaves)
+{
+  G result;
+  (void)result.add_vertices(leaves + 1);
+  for ( usize i = 1; i &lt;= leaves; ++i ) (void)result.add_edge(typename G::index_type(0), static_cast&lt;typename G::index_type&gt;(i));
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L68">line 68</a></td></tr></tbody></table></section><section class="function-entry" id="f-7cbf6f7761979513"><h3><code>micron::math::graphs::wheel_graph(usize vertices)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+wheel_graph(usize vertices)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+wheel_graph(usize vertices)
+{
+  if ( vertices &lt; 2 ) return empty_graph&lt;G&gt;(vertices);
+  G result;
+  (void)result.add_vertices(vertices);
+  for ( usize i = 1; i &lt; vertices; ++i ) {
+    (void)result.add_edge(typename G::index_type(0), static_cast&lt;typename G::index_type&gt;(i));
+    if ( vertices &gt; 3 )
+      (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(i), static_cast&lt;typename G::index_type&gt;(i + 1 &lt; vertices ? i + 1 : 1));
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>empty_graph&lt;G&gt;(vertices)</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L83">line 83</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-d582376cc8627ca9">empty_graph&lt;G&gt;</a>.</p></section><section class="function-entry" id="f-2dcfd85d43bd3a3e"><h3><code>micron::math::graphs::grid_graph(usize rows, usize columns, bool periodic_rows = false, bool periodic_columns = false)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L88">line 88</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+grid_graph(usize rows, usize columns, bool periodic_rows = false, bool periodic_columns = false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize rows</code></li><li><code>usize columns</code></li><li><code>bool periodic_rows = false</code></li><li><code>bool periodic_columns = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+grid_graph(usize rows, usize columns, bool periodic_rows = false, bool periodic_columns = false)
+{
+  G result;
+  if ( rows == 0 || columns == 0 ) return result;
+  (void)result.add_vertices(rows * columns);
+  auto id = [columns](usize row, usize column) { return static_cast&lt;typename G::index_type&gt;(row * columns + column); };
+  for ( usize row = 0; row &lt; rows; ++row ) {
+    for ( usize column = 0; column &lt; columns; ++column ) {
+      if ( column + 1 &lt; columns )
+        (void)result.add_edge(id(row, column), id(row, column + 1));
+      else if ( periodic_columns &amp;&amp; columns &gt; 2 )
+        (void)result.add_edge(id(row, column), id(row, 0));
+      if ( row + 1 &lt; rows )
+        (void)result.add_edge(id(row, column), id(row + 1, column));
+      else if ( periodic_rows &amp;&amp; rows &gt; 2 )
+        (void)result.add_edge(id(row, column), id(0, column));
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L91">line 91</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L106">line 106</a></td></tr></tbody></table></section><section class="function-entry" id="f-62a9e88a39ed975b"><h3><code>micron::math::graphs::balanced_tree(usize branching, usize height)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L111">line 111</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+balanced_tree(usize branching, usize height)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize branching</code></li><li><code>usize height</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;&gt;
+[[nodiscard]] G
+balanced_tree(usize branching, usize height)
+{
+  G result;
+  (void)result.add_vertex();
+  usize level_begin = 0;
+  usize level_size = 1;
+  for ( usize depth = 0; depth &lt; height; ++depth ) {
+    const usize child_begin = result.vertices_count();
+    (void)result.add_vertices(level_size * branching);
+    usize child = child_begin;
+    for ( usize parent = level_begin; parent &lt; level_begin + level_size; ++parent )
+      for ( usize branch = 0; branch &lt; branching; ++branch )
+        (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(parent), static_cast&lt;typename G::index_type&gt;(child++));
+    level_begin = child_begin;
+    level_size *= branching;
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L127">line 127</a></td></tr></tbody></table></section><section class="function-entry" id="f-940ffd90694a33eb"><h3><code>micron::math::graphs::erdos_renyi(usize vertices, f64 probability, Rng &amp;&amp;rng)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L143">line 143</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;, typename Rng&gt;
+[[nodiscard]] G
+erdos_renyi(usize vertices, f64 probability, Rng &amp;&amp;rng)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li><li><code>f64 probability</code></li><li><code>Rng &amp;&amp;rng</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;, typename Rng&gt;
+[[nodiscard]] G
+erdos_renyi(usize vertices, f64 probability, Rng &amp;&amp;rng)
+{
+  G result;
+  (void)result.add_vertices(vertices);
+  if ( probability &lt;= f64(0) ) return result;
+  if ( probability &gt; f64(1) ) probability = f64(1);
+  for ( usize i = 0; i &lt; vertices; ++i ) {
+    const usize begin = G::is_directed ? 0 : i + 1;
+    for ( usize j = begin; j &lt; vertices; ++j ) {
+      if ( i == j &amp;&amp; !G::allows_loops ) continue;
+      if ( __impl::unit_random(rng) &lt; probability )
+        (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(i), static_cast&lt;typename G::index_type&gt;(j));
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L147">line 147</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L157">line 157</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="generators.hpp.html#f-1614b33cb64a033b">__impl::unit_random</a>.</p></section><section class="function-entry" id="f-0e1f198923b65b83"><h3><code>micron::math::graphs::barabasi_albert(usize vertices, usize attachments, Rng &amp;&amp;rng)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L162">line 162</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;, typename Rng&gt;
+[[nodiscard]] G
+barabasi_albert(usize vertices, usize attachments, Rng &amp;&amp;rng)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li><li><code>usize attachments</code></li><li><code>Rng &amp;&amp;rng</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;, typename Rng&gt;
+[[nodiscard]] G
+barabasi_albert(usize vertices, usize attachments, Rng &amp;&amp;rng)
+{
+  G result;
+  if ( vertices == 0 || attachments == 0 ) return result;
+  const usize initial = attachments + 1 &lt; vertices ? attachments + 1 : vertices;
+  result = complete_graph&lt;G&gt;(initial);
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; degree(vertices, usize(0));
+  for ( usize i = 0; i &lt; initial; ++i )
+    degree.data()[i] = result.degree(typename G::vertex_descriptor(static_cast&lt;typename G::index_type&gt;(i)));
+  for ( usize vertex = initial; vertex &lt; vertices; ++vertex ) {
+    (void)result.add_vertex();
+    usize added = 0;
+    usize attempts = 0;
+    while ( added &lt; attachments &amp;&amp; attempts++ &lt; attachments * vertices * 4 ) {
+      usize total = 0;
+      for ( usize i = 0; i &lt; vertex; ++i ) total += degree.data()[i] + 1;
+      usize pick = static_cast&lt;usize&gt;(micron::invoke(rng)) % total;
+      usize target = 0;
+      for ( ; target &lt; vertex; ++target ) {
+        const usize weight = degree.data()[target] + 1;
+        if ( pick &lt; weight ) break;
+        pick -= weight;
+      }
+      auto inserted = result.add_edge(static_cast&lt;typename G::index_type&gt;(vertex), static_cast&lt;typename G::index_type&gt;(target));
+      if ( inserted.inserted() ) {
+        ++degree.data()[vertex];
+        ++degree.data()[target];
+        ++added;
+      }
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L193">line 193</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-c1c226f5ff9cfc89">complete_graph&lt;G&gt;</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../sync/invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>.</p></section><section class="function-entry" id="f-e588d929d607bdc5"><h3><code>micron::math::graphs::watts_strogatz(usize vertices, usize neighbors, f64 rewire_probability, Rng &amp;&amp;rng)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L198">line 198</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;, typename Rng&gt;
+[[nodiscard]] G
+watts_strogatz(usize vertices, usize neighbors, f64 rewire_probability, Rng &amp;&amp;rng)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li><li><code>usize neighbors</code></li><li><code>f64 rewire_probability</code></li><li><code>Rng &amp;&amp;rng</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;, typename Rng&gt;
+[[nodiscard]] G
+watts_strogatz(usize vertices, usize neighbors, f64 rewire_probability, Rng &amp;&amp;rng)
+{
+  G result;
+  (void)result.add_vertices(vertices);
+  if ( vertices &lt; 2 ) return result;
+  if ( neighbors &gt;= vertices ) neighbors = vertices - 1;
+  if ( neighbors &amp; 1u ) --neighbors;
+  const usize half = neighbors / 2;
+  for ( usize u = 0; u &lt; vertices; ++u ) {
+    for ( usize offset = 1; offset &lt;= half; ++offset ) {
+      usize v = (u + offset) % vertices;
+      if ( __impl::unit_random(rng) &lt; rewire_probability ) {
+        for ( usize attempt = 0; attempt &lt; vertices * 2; ++attempt ) {
+          const usize candidate = static_cast&lt;usize&gt;(micron::invoke(rng)) % vertices;
+          if ( candidate != u
+               &amp;&amp; !result.has_edge(static_cast&lt;typename G::index_type&gt;(u), static_cast&lt;typename G::index_type&gt;(candidate)) ) {
+            v = candidate;
+            break;
+          }
+        }
+      }
+      (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(u), static_cast&lt;typename G::index_type&gt;(v));
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L202">line 202</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L222">line 222</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-1614b33cb64a033b">__impl::unit_random</a>, <a href="../../sync/invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>.</p></section><section class="function-entry" id="f-15a75ce469822c49"><h3><code>micron::math::graphs::rmat(usize scale, usize edges, Rng &amp;&amp;rng, f64 a = 0.57, f64 b = 0.19, f64 c = 0.19)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L227">line 227</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G = graph&lt;&gt;, typename Rng&gt;
+[[nodiscard]] G
+rmat(usize scale, usize edges, Rng &amp;&amp;rng, f64 a = 0.57, f64 b = 0.19, f64 c = 0.19)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize scale</code></li><li><code>usize edges</code></li><li><code>Rng &amp;&amp;rng</code></li><li><code>f64 a = 0.57</code></li><li><code>f64 b = 0.19</code></li><li><code>f64 c = 0.19</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G = graph&lt;&gt;, typename Rng&gt;
+[[nodiscard]] G
+rmat(usize scale, usize edges, Rng &amp;&amp;rng, f64 a = 0.57, f64 b = 0.19, f64 c = 0.19)
+{
+  const usize vertices = usize(1) &lt;&lt; scale;
+  G result;
+  (void)result.add_vertices(vertices);
+  for ( usize e = 0; e &lt; edges; ++e ) {
+    usize u = 0;
+    usize v = 0;
+    for ( usize bit = scale; bit &gt; 0; --bit ) {
+      const f64 p = __impl::unit_random(rng);
+      const usize mask = usize(1) &lt;&lt; (bit - 1);
+      if ( p &lt; a ) {
+      } else if ( p &lt; a + b ) {
+        v |= mask;
+      } else if ( p &lt; a + b + c ) {
+        u |= mask;
+      } else {
+        u |= mask;
+        v |= mask;
+      }
+    }
+    (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(u), static_cast&lt;typename G::index_type&gt;(v));
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L250">line 250</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="generators.hpp.html#f-1614b33cb64a033b">__impl::unit_random</a>.</p></section><section class="function-entry" id="f-2041922e3e7c1ff1"><h3><code>micron::math::graphs::topology_vertices(const G &amp;source)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L259">line 259</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+topology_vertices(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+topology_vertices(const G &amp;source)
+{
+  topology_graph_t&lt;G&gt; result;
+  for ( usize slot = 0; slot &lt; source.vertex_slots(); ++slot ) {
+    const typename G::vertex_descriptor vertex(static_cast&lt;typename G::index_type&gt;(slot));
+    if ( source.has_vertex(vertex) )
+      (void)result.add_vertex();
+    else
+      (void)result.__import_dead_vertex_slot();
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L269">line 269</a></td></tr></tbody></table></section><section class="function-entry" id="f-25481c955c23f430"><h3><code>micron::math::graphs::topology_copy(const G &amp;source)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L274">line 274</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+topology_copy(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+topology_copy(const G &amp;source)
+{
+  auto result = topology_vertices(source);
+  for ( auto edge : source.edges() ) (void)result.add_edge(edge.source, edge.target);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L278">line 278</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-2041922e3e7c1ff1">topology_vertices</a>.</p></section><section class="function-entry" id="f-073876f3245e467b"><h3><code>micron::math::graphs::graph_union(const A &amp;a, const B &amp;b)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L283">line 283</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] topology_graph_t&lt;A&gt;
+graph_union(const A &amp;a, const B &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;a</code></li><li><code>const B &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] topology_graph_t&lt;A&gt;
+graph_union(const A &amp;a, const B &amp;b)
+{
+  topology_graph_t&lt;A&gt; result;
+  const usize slots = a.vertex_slots() &gt; b.vertex_slots() ? a.vertex_slots() : b.vertex_slots();
+  for ( usize slot = 0; slot &lt; slots; ++slot ) {
+    const bool in_a = slot &lt; a.vertex_slots() &amp;&amp; a.has_vertex(typename A::vertex_descriptor(static_cast&lt;typename A::index_type&gt;(slot)));
+    const bool in_b = slot &lt; b.vertex_slots() &amp;&amp; b.has_vertex(typename B::vertex_descriptor(static_cast&lt;typename B::index_type&gt;(slot)));
+    if ( in_a || in_b )
+      (void)result.add_vertex();
+    else
+      (void)result.__import_dead_vertex_slot();
+  }
+  for ( auto edge : a.edges() ) (void)result.add_edge(edge.source, edge.target);
+  for ( auto edge : b.edges() ) (void)result.add_edge(edge.source, edge.target);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L297">line 297</a></td></tr></tbody></table></section><section class="function-entry" id="f-0649ebecfb01eae3"><h3><code>micron::math::graphs::graph_intersection(const A &amp;a, const B &amp;b)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L302">line 302</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] topology_graph_t&lt;A&gt;
+graph_intersection(const A &amp;a, const B &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;a</code></li><li><code>const B &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] topology_graph_t&lt;A&gt;
+graph_intersection(const A &amp;a, const B &amp;b)
+{
+  topology_graph_t&lt;A&gt; result;
+  const usize slots = a.vertex_slots() &gt; b.vertex_slots() ? a.vertex_slots() : b.vertex_slots();
+  for ( usize slot = 0; slot &lt; slots; ++slot ) {
+    const bool in_a = slot &lt; a.vertex_slots() &amp;&amp; a.has_vertex(typename A::vertex_descriptor(static_cast&lt;typename A::index_type&gt;(slot)));
+    const bool in_b = slot &lt; b.vertex_slots() &amp;&amp; b.has_vertex(typename B::vertex_descriptor(static_cast&lt;typename B::index_type&gt;(slot)));
+    if ( in_a &amp;&amp; in_b )
+      (void)result.add_vertex();
+    else
+      (void)result.__import_dead_vertex_slot();
+  }
+  for ( auto edge : a.edges() )
+    if ( b.has_edge(edge.source, edge.target) ) (void)result.add_edge(edge.source, edge.target);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L316">line 316</a></td></tr></tbody></table></section><section class="function-entry" id="f-3c33001882df8c86"><h3><code>micron::math::graphs::graph_difference(const A &amp;a, const B &amp;b)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L321">line 321</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] topology_graph_t&lt;A&gt;
+graph_difference(const A &amp;a, const B &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;a</code></li><li><code>const B &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] topology_graph_t&lt;A&gt;
+graph_difference(const A &amp;a, const B &amp;b)
+{
+  topology_graph_t&lt;A&gt; result;
+  for ( usize slot = 0; slot &lt; a.vertex_slots(); ++slot ) {
+    const typename A::vertex_descriptor vertex(static_cast&lt;typename A::index_type&gt;(slot));
+    if ( a.has_vertex(vertex) )
+      (void)result.add_vertex();
+    else
+      (void)result.__import_dead_vertex_slot();
+  }
+  for ( auto edge : a.edges() )
+    if ( !b.has_edge(edge.source, edge.target) ) (void)result.add_edge(edge.source, edge.target);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L333">line 333</a></td></tr></tbody></table></section><section class="function-entry" id="f-08d5ef75ab4ec036"><h3><code>micron::math::graphs::complement(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L338">line 338</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+complement(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+complement(const G &amp;graph)
+{
+  topology_graph_t&lt;G&gt; result;
+  for ( usize slot = 0; slot &lt; graph.vertex_slots(); ++slot ) {
+    const typename G::vertex_descriptor vertex(static_cast&lt;typename G::index_type&gt;(slot));
+    if ( graph.has_vertex(vertex) )
+      (void)result.add_vertex();
+    else
+      (void)result.__import_dead_vertex_slot();
+  }
+  for ( auto u : graph.vertices() ) {
+    for ( auto v : graph.vertices() ) {
+      if ( u == v &amp;&amp; !topology_graph_t&lt;G&gt;::allows_loops ) continue;
+      if constexpr ( !G::is_directed )
+        if ( v.value &lt;= u.value ) continue;
+      if ( !graph.has_edge(u, v) ) (void)result.add_edge(u, v);
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L356">line 356</a></td></tr></tbody></table></section><section class="function-entry" id="f-b97c0f7379ce801d"><h3><code>micron::math::graphs::compose(const A &amp;a, const B &amp;b)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L361">line 361</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] auto
+compose(const A &amp;a, const B &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;a</code></li><li><code>const B &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>graph_union(a, b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] auto
+compose(const A &amp;a, const B &amp;b)
+{
+  return graph_union(a, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>graph_union(a, b)</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L363">line 363</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-073876f3245e467b">graph_union</a>.</p></section><section class="function-entry" id="f-9820b3ca9bf9bd69"><h3><code>micron::math::graphs::line_graph(const G &amp;source)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L368">line 368</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] graph&lt;edge_id&lt;typename G::index_type&gt;, empty_property, empty_property, typename G::index_type&gt;
+line_graph(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] graph&lt;edge_id&lt;typename G::index_type&gt;, empty_property, empty_property, typename G::index_type&gt;
+line_graph(const G &amp;source)
+{
+  using I = typename G::index_type;
+  graph&lt;edge_id&lt;I&gt;, empty_property, empty_property, I&gt; result;
+  micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; edge_vertex(source.edge_slots(), vertex_id&lt;I&gt;::invalid());
+  for ( auto edge : source.edges() ) edge_vertex.data()[static_cast&lt;usize&gt;(edge.id.value)] = result.add_vertex(edge.id);
+  for ( auto a : source.edges() ) {
+    for ( auto b : source.edges() ) {
+      if ( b.id.value &lt;= a.id.value ) continue;
+      if ( a.source == b.source || a.source == b.target || a.target == b.source || a.target == b.target )
+        (void)result.add_edge(edge_vertex.data()[static_cast&lt;usize&gt;(a.id.value)], edge_vertex.data()[static_cast&lt;usize&gt;(b.id.value)]);
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L381">line 381</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="descriptors.hpp.html#f-67b6ee49c7d91c89">vertex_id&lt;I&gt;::invalid</a>.</p></section><section class="function-entry" id="f-86c5d25e82247304"><h3><code>micron::math::graphs::ego_graph(const G &amp;source, typename G::vertex_descriptor center, usize radius = 1)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L386">line 386</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+ego_graph(const G &amp;source, typename G::vertex_descriptor center, usize radius = 1)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li><li><code>typename G::vertex_descriptor center</code></li><li><code>usize radius = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+ego_graph(const G &amp;source, typename G::vertex_descriptor center, usize radius = 1)
+{
+  auto reached = diffusion(source, center, radius);
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; include(source.vertex_slots(), u8(0));
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; remap(source.vertex_slots(),
+                                                                                         G::vertex_descriptor::invalid());
+  topology_graph_t&lt;G&gt; result;
+  for ( auto vertex : reached.order ) {
+    const usize slot = static_cast&lt;usize&gt;(vertex.value);
+    include.data()[slot] = 1;
+    remap.data()[slot] = result.add_vertex();
+  }
+  for ( auto edge : source.edges() )
+    if ( include.data()[static_cast&lt;usize&gt;(edge.source.value)] &amp;&amp; include.data()[static_cast&lt;usize&gt;(edge.target.value)] )
+      (void)result.add_edge(remap.data()[static_cast&lt;usize&gt;(edge.source.value)], remap.data()[static_cast&lt;usize&gt;(edge.target.value)]);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L401">line 401</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-039db375431b7bc2">diffusion</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-7168248236eea3a1"><h3><code>micron::math::graphs::cartesian_product(const A &amp;a, const B &amp;b)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L411">line 411</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model A, graph_model B&gt;
+  requires micron::is_same_v&lt;typename A::direction_type, typename B::direction_type&gt;
+[[nodiscard]] product_graph_t&lt;A, B&gt;
+cartesian_product(const A &amp;a, const B &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;a</code></li><li><code>const B &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model A, graph_model B&gt;
+  requires micron::is_same_v&lt;typename A::direction_type, typename B::direction_type&gt;
+[[nodiscard]] product_graph_t&lt;A, B&gt;
+cartesian_product(const A &amp;a, const B &amp;b)
+{
+  product_graph_t&lt;A, B&gt; result;
+  auto a_mapping = __dense_vertex_mapping(a);
+  auto b_mapping = __dense_vertex_mapping(b);
+  const usize an = a.vertices_count();
+  const usize bn = b.vertices_count();
+  (void)result.add_vertices(an * bn);
+  auto id = [bn](usize av, usize bv) { return av * bn + bv; };
+  for ( auto edge : a.edges() ) {
+    const usize u = static_cast&lt;usize&gt;(a_mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);
+    const usize v = static_cast&lt;usize&gt;(a_mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);
+    for ( usize bv = 0; bv &lt; bn; ++bv ) (void)result.add_edge(id(u, bv), id(v, bv));
+  }
+  for ( auto edge : b.edges() ) {
+    const usize u = static_cast&lt;usize&gt;(b_mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);
+    const usize v = static_cast&lt;usize&gt;(b_mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);
+    for ( usize av = 0; av &lt; an; ++av ) (void)result.add_edge(id(av, u), id(av, v));
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L430">line 430</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="matrix.hpp.html#f-44fac56732d2d13c">__dense_vertex_mapping</a>.</p></section><section class="function-entry" id="f-372eb5cf3f2dcc19"><h3><code>micron::math::graphs::tensor_product(const A &amp;a, const B &amp;b)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L436">line 436</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model A, graph_model B&gt;
+  requires micron::is_same_v&lt;typename A::direction_type, typename B::direction_type&gt;
+[[nodiscard]] product_graph_t&lt;A, B&gt;
+tensor_product(const A &amp;a, const B &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;a</code></li><li><code>const B &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model A, graph_model B&gt;
+  requires micron::is_same_v&lt;typename A::direction_type, typename B::direction_type&gt;
+[[nodiscard]] product_graph_t&lt;A, B&gt;
+tensor_product(const A &amp;a, const B &amp;b)
+{
+  product_graph_t&lt;A, B&gt; result;
+  auto a_mapping = __dense_vertex_mapping(a);
+  auto b_mapping = __dense_vertex_mapping(b);
+  const usize bn = b.vertices_count();
+  (void)result.add_vertices(a.vertices_count() * bn);
+  auto id = [bn](usize av, usize bv) { return av * bn + bv; };
+  for ( auto ae : a.edges() ) {
+    const usize au = static_cast&lt;usize&gt;(a_mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(ae.source.value)]);
+    const usize av = static_cast&lt;usize&gt;(a_mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(ae.target.value)]);
+    for ( auto be : b.edges() ) {
+      const usize bu = static_cast&lt;usize&gt;(b_mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(be.source.value)]);
+      const usize bv = static_cast&lt;usize&gt;(b_mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(be.target.value)]);
+      (void)result.add_edge(id(au, bu), id(av, bv));
+      if constexpr ( !A::is_directed ) (void)result.add_edge(id(au, bv), id(av, bu));
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L454">line 454</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="matrix.hpp.html#f-44fac56732d2d13c">__dense_vertex_mapping</a>.</p></section><section class="function-entry" id="f-40a958cd2cc68926"><h3><code>micron::math::graphs::strong_product(const A &amp;a, const B &amp;b)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L460">line 460</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model A, graph_model B&gt;
+  requires micron::is_same_v&lt;typename A::direction_type, typename B::direction_type&gt;
+[[nodiscard]] product_graph_t&lt;A, B&gt;
+strong_product(const A &amp;a, const B &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;a</code></li><li><code>const B &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model A, graph_model B&gt;
+  requires micron::is_same_v&lt;typename A::direction_type, typename B::direction_type&gt;
+[[nodiscard]] product_graph_t&lt;A, B&gt;
+strong_product(const A &amp;a, const B &amp;b)
+{
+  auto result = cartesian_product(a, b);
+  auto diagonal = tensor_product(a, b);
+  for ( auto edge : diagonal.edges() ) (void)result.add_edge(edge.source, edge.target);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L465">line 465</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-7168248236eea3a1">cartesian_product</a>, <a href="generators.hpp.html#f-372eb5cf3f2dcc19">tensor_product</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-1614b33cb64a033b"><h3><code>micron::math::graphs::__impl::unit_random(Rng &amp;rng)</code></h3><p>Defined in <code>math/graph/generators.hpp</code>, <a href="../../../source/math/graph/generators.hpp.html#L134">line 134</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rng&gt;
+[[nodiscard]] inline f64
+unit_random(Rng &amp;rng)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;rng</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rng&gt;
+[[nodiscard]] inline f64
+unit_random(Rng &amp;rng)
+{
+  const u64 raw = static_cast&lt;u64&gt;(micron::invoke(rng));
+  return static_cast&lt;f64&gt;(raw &gt;&gt; 11u) * static_cast&lt;f64&gt;(1.0 / 9007199254740992.0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;f64&gt;(raw &gt;&gt; 11u) * static_cast&lt;f64&gt;(1.0 / 9007199254740992.0)</code></td><td><a href="../../../source/math/graph/generators.hpp.html#L137">line 137</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../sync/invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

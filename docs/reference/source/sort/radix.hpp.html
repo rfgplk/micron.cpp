@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sort/radix.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">sort/radix.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/sort/radix.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> // radix sort</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> //   time:  O(n * ceil(keybits/8))</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> //   space: O(n)</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> //   stable: yes (non-comparison)</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> //</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> //   use: large integer/float arrays; key-projection overloads sort structs by key</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../algorithm/algorithm.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../math/generic.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;../memory/memory.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../memory/new.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;../type_traits.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;../types.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> </span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #include &quot;../concepts.hpp&quot;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> </span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> namespace micron</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> {</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> namespace sort</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> {</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> </span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> template&lt;typename U&gt; struct __sort_scratch {</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   U *p;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> </span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>   explicit __sort_scratch(usize n) : p(n ? new U[n] : nullptr) { }</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> </span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   ~__sort_scratch() { delete[] p; }</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> </span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   __sort_scratch(const __sort_scratch &amp;) = delete;</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   __sort_scratch &amp;operator=(const __sort_scratch &amp;) = delete;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> </span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   U *</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   get() noexcept</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   {</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>     return p;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>   }</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> };</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> </span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> template&lt;is_iterable_container T, typename KeyFn&gt;</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> void</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> __radix_pass(T &amp;arr, T &amp;carr, usize n, i64 shift, umax_t bias_min, KeyFn key)</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> {</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   usize bckt[256] = {};</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> </span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   for ( usize i = 0; i &lt; n; ++i ) {</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>     umax_t k = static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(key(arr[i])) - bias_min);</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>     bckt[(k &gt;&gt; shift) &amp; 0xFFu]++;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>   }</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   for ( i32 i = 1; i &lt; 256; ++i ) bckt[i] += bckt[i - 1];</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> </span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>   for ( usize k = n; k-- &gt; 0; ) {</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>     umax_t kk = static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(key(arr[k])) - bias_min);</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>     carr[--bckt[(kk &gt;&gt; shift) &amp; 0xFFu]] = arr[k];</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>   }</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>   micron::memcpy(&amp;arr[0], &amp;carr[0], n);      // element-count copy-back</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> }</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> </span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> template&lt;is_iterable_container T, typename KeyFn&gt;</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> void</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> __radix_int(T &amp;arr, KeyFn key)</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> {</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>   using key_t = micron::remove_cvref_t&lt;decltype(key(arr[0]))&gt;;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>   const usize n = arr.size();</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>   if ( n &lt; 2 ) return;      // empty / single: sorted</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> </span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   key_t kmin = key(arr[0]), kmax = key(arr[0]);</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>   for ( usize i = 1; i &lt; n; ++i ) {</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>     key_t k = key(arr[i]);</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>     if ( k &lt; kmin ) kmin = k;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     if ( kmax &lt; k ) kmax = k;</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   }</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>   const umax_t bias_min = static_cast&lt;umax_t&gt;(kmin);</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>   const umax_t span = static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(kmax) - static_cast&lt;umax_t&gt;(kmin));      // biased max</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> </span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>   T carr = arr;      // scratch (overwritten each pass)</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   for ( i64 shift = 0; shift &lt; static_cast&lt;i64&gt;(sizeof(umax_t)) * 8; shift += 8 ) {</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>     if ( (span &gt;&gt; shift) == 0 ) break;      // no more significant bytes</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>     __radix_pass(arr, carr, n, shift, bias_min, key);</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   }</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> }</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> </span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> template&lt;is_iterable_container T&gt;</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>   requires micron::is_integral_v&lt;typename T::value_type&gt;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> void</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> radix(T &amp;arr)</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> {</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>   __radix_int(arr, [](const auto &amp;e) { return e; });</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> }</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> </span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> template&lt;is_iterable_container T, typename KeyFn&gt;</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   requires(is_integral_key_fn&lt;KeyFn, T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> void</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> radix(T &amp;arr, KeyFn key)</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> {</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   __radix_int(arr, key);</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> }</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> </span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> template&lt;is_iterable_container T&gt;</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   requires micron::is_integral_v&lt;typename T::value_type&gt;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> void</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> radix(typename T::iterator start, typename T::iterator end)</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> {</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   const max_t cnt = static_cast&lt;max_t&gt;(end - start);</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   if ( cnt &lt; 2 ) return;</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> </span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>   using value_t = typename T::value_type;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>   value_t vmin = start[0], vmax = start[0];</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   for ( max_t i = 1; i &lt; cnt; ++i ) {</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>     if ( start[i] &lt; vmin ) vmin = start[i];</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>     if ( vmax &lt; start[i] ) vmax = start[i];</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>   }</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>   const umax_t bias_min = static_cast&lt;umax_t&gt;(vmin);</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>   const umax_t span = static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(vmax) - static_cast&lt;umax_t&gt;(vmin));</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> </span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>   T carr(static_cast&lt;typename T::size_type&gt;(cnt));</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>   for ( i64 shift = 0; shift &lt; static_cast&lt;i64&gt;(sizeof(umax_t)) * 8; shift += 8 ) {</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     if ( (span &gt;&gt; shift) == 0 ) break;</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     usize bckt[256] = {};</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>     for ( max_t i = 0; i &lt; cnt; ++i ) bckt[(static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(start[i]) - bias_min) &gt;&gt; shift) &amp; 0xFFu]++;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>     for ( i32 i = 1; i &lt; 256; ++i ) bckt[i] += bckt[i - 1];</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>     for ( max_t k = cnt; k-- &gt; 0; )</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>       carr[--bckt[(static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(start[k]) - bias_min) &gt;&gt; shift) &amp; 0xFFu]] = start[k];</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>     micron::memcpy(start, &amp;carr[0], static_cast&lt;u64&gt;(cnt));</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   }</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> }</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> </span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> template&lt;is_iterable_container T&gt;</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>   requires(micron::is_floating_point_v&lt;typename T::value_type&gt;</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>            &amp;&amp; (sizeof(typename T::value_type) == 4 || sizeof(typename T::value_type) == 8))</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> void</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> fradix(T &amp;arr)</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> {</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>   using V = typename T::value_type;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>   using U = micron::__conditional_t&lt;sizeof(V) == 4, u32, u64&gt;;</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>   constexpr i64 W = static_cast&lt;i64&gt;(sizeof(V));</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>   constexpr i64 TOP = W * 8 - 1;</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>   const U signbit = static_cast&lt;U&gt;(1) &lt;&lt; TOP;</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> </span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>   const usize n = arr.size();</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>   if ( n &lt; 2 ) return;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> </span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>   __sort_scratch&lt;U&gt; kbuf(n), tbuf(n);</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>   U *keys = kbuf.get();</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>   U *tmp = tbuf.get();</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a> </span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   for ( usize i = 0; i &lt; n; ++i ) {</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     U u = 0;</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     micron::bytecpy(&amp;u, &amp;arr[i], W);                                 // bit-pun float -&gt; unsigned</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>     keys[i] = u ^ ((static_cast&lt;U&gt;(0) - (u &gt;&gt; TOP)) | signbit);      // order-preserving forward transform</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   }</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> </span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>   for ( i64 b = 0; b &lt; W; ++b ) {</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>     i32 cnt[256] = {};</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     for ( usize i = 0; i &lt; n; ++i ) cnt[static_cast&lt;byte&gt;(keys[i] &gt;&gt; (b * 8))]++;</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>     for ( i32 i = 1; i &lt; 256; ++i ) cnt[i] += cnt[i - 1];</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     for ( usize i = n; i-- &gt; 0; ) tmp[--cnt[static_cast&lt;byte&gt;(keys[i] &gt;&gt; (b * 8))]] = keys[i];</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     U *swap = keys;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>     keys = tmp;</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>     tmp = swap;</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>   }</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a> </span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   for ( usize i = 0; i &lt; n; ++i ) {</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>     U u = keys[i] ^ (((keys[i] &gt;&gt; TOP) - static_cast&lt;U&gt;(1)) | signbit);      // inverse transform</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>     micron::bytecpy(&amp;arr[i], &amp;u, W);                                         // bit-pun back to float</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>   }</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a> }</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a> </span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a> template&lt;is_iterable_container T, typename KeyFn&gt;</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>   requires(is_floating_key_fn&lt;KeyFn, T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> void</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> fradix(T &amp;arr, KeyFn key)</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> {</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>   using V = micron::remove_cvref_t&lt;decltype(key(arr[0]))&gt;;</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>   using U = micron::__conditional_t&lt;sizeof(V) == 4, u32, u64&gt;;</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>   constexpr i64 W = static_cast&lt;i64&gt;(sizeof(V));</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   constexpr i64 TOP = W * 8 - 1;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   const U signbit = static_cast&lt;U&gt;(1) &lt;&lt; TOP;</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a> </span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>   const usize n = arr.size();</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>   if ( n &lt; 2 ) return;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a> </span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   auto tkey = [&amp;](const typename T::value_type &amp;e) -&gt; U {</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>     V v = key(e);</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>     U u = 0;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>     micron::bytecpy(&amp;u, &amp;v, W);</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>     return u ^ ((static_cast&lt;U&gt;(0) - (u &gt;&gt; TOP)) | signbit);</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   };</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> </span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>   T carr = arr;</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   for ( i64 b = 0; b &lt; W; ++b ) {</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>     usize cnt[256] = {};</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>     for ( usize i = 0; i &lt; n; ++i ) cnt[static_cast&lt;byte&gt;(tkey(arr[i]) &gt;&gt; (b * 8))]++;</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>     for ( i32 i = 1; i &lt; 256; ++i ) cnt[i] += cnt[i - 1];</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>     for ( usize k = n; k-- &gt; 0; ) carr[--cnt[static_cast&lt;byte&gt;(tkey(arr[k]) &gt;&gt; (b * 8))]] = arr[k];</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>     micron::memcpy(&amp;arr[0], &amp;carr[0], n);</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   }</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a> }</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> </span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> };      // namespace sort</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

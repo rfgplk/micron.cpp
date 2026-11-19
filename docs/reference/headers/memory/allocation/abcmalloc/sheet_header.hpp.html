@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/allocation/abcmalloc/sheet_header.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/allocation/abcmalloc/sheet_header.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/allocation.html">Allocation</a></div><p>Defined in header <code>&lt;micron/memory/allocation/abcmalloc/sheet_header.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ffb2edb9935d7c90"><h3><code>abc::__block_index(const void *p) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/sheet_header.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L39">line 39</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline u64
+__block_index(const void *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline u64
+__block_index(const void *p) noexcept
+{
+  addr_t *base = __va_base.get(micron::memory_order_relaxed);
+  return (reinterpret_cast&lt;uintptr_t&gt;(p) - reinterpret_cast&lt;uintptr_t&gt;(base)) &gt;&gt; __sheet_align_log2;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(reinterpret_cast&lt;uintptr_t&gt;(p) - reinterpret_cast&lt;uintptr_t&gt;(base)) &gt;&gt; __sheet_align_log2</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L42">line 42</a></td></tr></tbody></table></section><section class="function-entry" id="f-e1259d416dfe548f"><h3><code>abc::__oor_insert(__arena *arena, const void *base, usize len) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/sheet_header.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L56">line 56</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__oor_insert(__arena *arena, const void *base, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__arena *arena</code></li><li><code>const void *base</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__oor_insert(__arena *arena, const void *base, usize len) noexcept
+{
+  const uintptr_t lo = reinterpret_cast&lt;uintptr_t&gt;(base);
+  const uintptr_t hi = lo + len;
+  for ( __oor_sheet *n = __oor_head.get(micron::memory_order_acquire); n != nullptr; n = n-&gt;next ) {
+    if ( n-&gt;lo != lo || n-&gt;hi != hi ) continue;
+    __arena *expect = nullptr;
+    if ( __atomic_compare_exchange_n(&amp;n-&gt;owner, &amp;expect, arena, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) ) {
+      __oor_live.fetch_add(1, micron::memory_order_acq_rel);
+      return;
+    }
+  }
+  byte *mem = micron::sys_allocator&lt;byte&gt;::alloc(sizeof(__oor_sheet));
+  if ( !mem ) [[unlikely]]
+    return;      // cannot track it; degrades to the old behaviour for this sheet only
+  __oor_sheet *n = new (mem) __oor_sheet{ lo, hi, arena, nullptr };
+  n-&gt;next = __oor_head.get(micron::memory_order_acquire);
+  while ( !__oor_head.compare_exchange_weak(n-&gt;next, n, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+  }
+  __oor_live.fetch_add(1, micron::memory_order_acq_rel);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L65">line 65</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L70">line 70</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__sys.hpp.html#f-07f5dc5593c7d77f">micron::sys_allocator&lt;byte&gt;::alloc</a>.</p></section><section class="function-entry" id="f-a586d3192fce453b"><h3><code>abc::__oor_retire(const void *base, usize len) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/sheet_header.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L79">line 79</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__oor_retire(const void *base, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *base</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__oor_retire(const void *base, usize len) noexcept
+{
+  if ( __oor_live.get(micron::memory_order_acquire) == 0 ) return;
+  const uintptr_t lo = reinterpret_cast&lt;uintptr_t&gt;(base);
+  for ( __oor_sheet *n = __oor_head.get(micron::memory_order_acquire); n != nullptr; n = n-&gt;next ) {
+    if ( n-&gt;lo == lo &amp;&amp; n-&gt;hi == lo + len &amp;&amp; __atomic_load_n(&amp;n-&gt;owner, __ATOMIC_ACQUIRE) != nullptr ) {
+      __atomic_store_n(&amp;n-&gt;owner, static_cast&lt;__arena *&gt;(nullptr), __ATOMIC_RELEASE);
+      __oor_live.sub_fetch(1, micron::memory_order_acq_rel);
+      return;
+    }
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L81">line 81</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L87">line 87</a></td></tr></tbody></table></section><section class="function-entry" id="f-5fc862113b6b3ac8"><h3><code>abc::__oor_owner_of(const void *p) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/sheet_header.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L93">line 93</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold, gnu::noinline]] inline __arena *
+__oor_owner_of(const void *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold, gnu::noinline]] inline __arena *
+__oor_owner_of(const void *p) noexcept
+{
+  if ( __oor_live.get(micron::memory_order_acquire) == 0 ) return nullptr;
+  const uintptr_t a = reinterpret_cast&lt;uintptr_t&gt;(p);
+  for ( __oor_sheet *n = __oor_head.get(micron::memory_order_acquire); n != nullptr; n = n-&gt;next ) {
+    if ( a &gt;= n-&gt;lo &amp;&amp; a &lt; n-&gt;hi ) return __atomic_load_n(&amp;n-&gt;owner, __ATOMIC_ACQUIRE);
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L95">line 95</a></td></tr><tr class="t-dsc"><td><code>__atomic_load_n(&amp;n-&gt;owner, __ATOMIC_ACQUIRE)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L98">line 98</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L100">line 100</a></td></tr></tbody></table></section><section class="function-entry" id="f-771596bc27e94297"><h3><code>abc::__sheet_register(__arena *arena, const void *base, usize len) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/sheet_header.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L104">line 104</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__sheet_register(__arena *arena, const void *base, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__arena *arena</code></li><li><code>const void *base</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__sheet_register(__arena *arena, const void *base, usize len) noexcept
+{
+  if ( !__va_contains(base) ) {
+    __oor_insert(arena, base, len);
+    return;
+  }
+  const u64 first = __block_index(base);
+  const usize blocks = (len + __sheet_align_mask) &gt;&gt; __sheet_align_log2;
+  for ( usize i = 0; i &lt; blocks; ++i ) {
+    __atomic_store_n(&amp;__block_owner_table[first + i], arena, __ATOMIC_RELEASE);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="va_reserve.hpp.html#f-eecb6818e0c61c70">__va_contains</a>, <a href="sheet_header.hpp.html#f-e1259d416dfe548f">__oor_insert</a>, <a href="sheet_header.hpp.html#f-ffb2edb9935d7c90">__block_index</a>.</p></section><section class="function-entry" id="f-3d1f5cfc225020f0"><h3><code>abc::__sheet_unregister(const void *base, usize len) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/sheet_header.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L118">line 118</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__sheet_unregister(const void *base, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *base</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__sheet_unregister(const void *base, usize len) noexcept
+{
+  if ( !__va_contains(base) ) {
+    __oor_retire(base, len);
+    return;
+  }
+  const u64 first = __block_index(base);
+  const usize blocks = (len + __sheet_align_mask) &gt;&gt; __sheet_align_log2;
+  for ( usize i = 0; i &lt; blocks; ++i ) {
+    __atomic_store_n(&amp;__block_owner_table[first + i], static_cast&lt;__arena *&gt;(nullptr), __ATOMIC_RELEASE);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L122">line 122</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="va_reserve.hpp.html#f-eecb6818e0c61c70">__va_contains</a>, <a href="sheet_header.hpp.html#f-a586d3192fce453b">__oor_retire</a>, <a href="sheet_header.hpp.html#f-ffb2edb9935d7c90">__block_index</a>.</p></section><section class="function-entry" id="f-b4af13f755f2ec7f"><h3><code>abc::__owner_of(const void *p) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/sheet_header.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L132">line 132</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline __arena *
+__owner_of(const void *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline __arena *
+__owner_of(const void *p) noexcept
+{
+  if ( !__va_contains(p) ) [[unlikely]]
+    return __oor_owner_of(p);
+  return __atomic_load_n(&amp;__block_owner_table[__block_index(p)], __ATOMIC_ACQUIRE);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__oor_owner_of(p)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>__atomic_load_n(&amp;__block_owner_table[__block_index(p)], __ATOMIC_ACQUIRE)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/sheet_header.hpp.html#L136">line 136</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="va_reserve.hpp.html#f-eecb6818e0c61c70">__va_contains</a>, <a href="sheet_header.hpp.html#f-5fc862113b6b3ac8">__oor_owner_of</a>, <a href="sheet_header.hpp.html#f-ffb2edb9935d7c90">__block_index</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

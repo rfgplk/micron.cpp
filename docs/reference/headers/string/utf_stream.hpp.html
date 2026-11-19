@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/string/utf_stream.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/string/utf_stream.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/strings.html">Strings</a></div><p>Defined in header <code>&lt;micron/string/utf_stream.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/string/utf_stream.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-d3c41fecf5a7e96b">micron::unicode::encoding</code></td><td>enum; line 13</td></tr><tr class="t-dsc"><td><code id="s-259e2823b953677b">micron::unicode::encoding::automatic</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-5de9b7a089569a0d">micron::unicode::encoding::utf16_be</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-a1ef0361271d2083">micron::unicode::encoding::utf16_le</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-efece32530fe5626">micron::unicode::encoding::utf8</code></td><td>enumerator; line 13</td></tr><tr class="t-dsc"><td><code id="s-a49f063d621fd4fd">micron::unicode::decode_status</code></td><td>enum; line 14</td></tr><tr class="t-dsc"><td><code id="s-76f2238736096757">micron::unicode::decode_status::done</code></td><td>enumerator; line 14</td></tr><tr class="t-dsc"><td><code id="s-2131e1b61d75dd0e">micron::unicode::decode_status::invalid</code></td><td>enumerator; line 14</td></tr><tr class="t-dsc"><td><code id="s-78ccf830c5322e79">micron::unicode::decode_status::need_input</code></td><td>enumerator; line 14</td></tr><tr class="t-dsc"><td><code id="s-b251268e98bde31b">micron::unicode::decode_status::scalar</code></td><td>enumerator; line 14</td></tr><tr class="t-dsc"><td><code id="s-131c53a64051de69">micron::unicode::decode_status::truncated</code></td><td>enumerator; line 14</td></tr><tr class="t-dsc"><td><code id="s-9a827ebf92884b35">micron::unicode::decode_status::unsupported_encoding</code></td><td>enumerator; line 14</td></tr><tr class="t-dsc"><td><code id="s-8f026895a0fb66ed">micron::unicode::decode_result</code></td><td>struct; line 16</td></tr><tr class="t-dsc"><td><code id="s-fde1d30cb7f4ca12">micron::unicode::decode_result::status</code></td><td>member; line 17</td></tr><tr class="t-dsc"><td><code id="s-d72552a26c40d579">micron::unicode::decode_result::consumed</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><code id="s-8cbfe6405e40681b">micron::unicode::decode_result::scalar</code></td><td>member; line 19</td></tr><tr class="t-dsc"><td><code id="s-1fb030484746621b">micron::unicode::decode_result::byte_offset</code></td><td>member; line 20</td></tr><tr class="t-dsc"><td><code id="s-359a27d234341799">micron::unicode::stream_decoder</code></td><td>class; line 104</td></tr><tr class="t-dsc"><td><a href="#f-c567034534f7d990">micron::unicode::is_scalar(u32 value) noexcept</a></td><td>function; line 24</td></tr><tr class="t-dsc"><td><a href="#f-7666d237989f93b1">micron::unicode::encode_utf8(u32 value, char *output) noexcept</a></td><td>function; line 30</td></tr><tr class="t-dsc"><td><a href="#f-510603f67173a779">micron::unicode::decode_utf8(const Character *input, usize size, usize &amp;position, u32 &amp;scalar) noexcept</a></td><td>function; line 57</td></tr><tr class="t-dsc"><td><a href="#f-701eb5b8c2247936">micron::unicode::validate_utf8(const Character *input, usize size) noexcept</a></td><td>function; line 92</td></tr><tr class="t-dsc"><td><a href="#f-6ac48f27713807b0">micron::unicode::stream_decoder::stream_decoder(encoding source = encoding::automatic) noexcept</a></td><td>function; line 164</td></tr><tr class="t-dsc"><td><a href="#f-81762d42be8f913d">micron::unicode::stream_decoder::had_bom() const noexcept</a></td><td>function; line 167</td></tr><tr class="t-dsc"><td><a href="#f-6d9f0c57593c2f05">micron::unicode::stream_decoder::source_encoding() const noexcept</a></td><td>function; line 173</td></tr><tr class="t-dsc"><td><a href="#f-ec8c3227312c2e85">micron::unicode::stream_decoder::byte_offset() const noexcept</a></td><td>function; line 179</td></tr><tr class="t-dsc"><td><a href="#f-26bd1ee2cc395bc8">micron::unicode::stream_decoder::at_scalar_boundary() const noexcept</a></td><td>function; line 185</td></tr><tr class="t-dsc"><td><a href="#f-165af1dec169f146">micron::unicode::stream_decoder::advance_ascii(usize bytes) noexcept</a></td><td>function; line 192</td></tr><tr class="t-dsc"><td><a href="#f-7366825b68e2ff31">micron::unicode::stream_decoder::next(const Character *input, usize size, bool final = false) noexcept</a></td><td>function; line 202</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-c567034534f7d990"><h3><code>micron::unicode::is_scalar(u32 value) noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L24">line 24</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+is_scalar(u32 value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 value</code></li></ul><h4>Effects</h4><p>Returns <code>value &lt;= 0x10ffff &amp;&amp; !(value &gt;= 0xd800 &amp;&amp; value &lt;= 0xdfff)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+is_scalar(u32 value) noexcept
+{
+  return value &lt;= 0x10ffff &amp;&amp; !(value &gt;= 0xd800 &amp;&amp; value &lt;= 0xdfff);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value &lt;= 0x10ffff &amp;&amp; !(value &gt;= 0xd800 &amp;&amp; value &lt;= 0xdfff)</code></td><td><a href="../../source/string/utf_stream.hpp.html#L26">line 26</a></td></tr></tbody></table></section><section class="function-entry" id="f-7666d237989f93b1"><h3><code>micron::unicode::encode_utf8(u32 value, char *output) noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L30">line 30</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u32
+encode_utf8(u32 value, char *output) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 value</code></li><li><code>char *output</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u32
+encode_utf8(u32 value, char *output) noexcept
+{
+  if ( !is_scalar(value) ) return 0;
+  if ( value &lt; 0x80 ) {
+    output[0] = static_cast&lt;char&gt;(value);
+    return 1;
+  }
+  if ( value &lt; 0x800 ) {
+    output[0] = static_cast&lt;char&gt;(0xc0 | (value &gt;&gt; 6));
+    output[1] = static_cast&lt;char&gt;(0x80 | (value &amp; 63));
+    return 2;
+  }
+  if ( value &lt; 0x10000 ) {
+    output[0] = static_cast&lt;char&gt;(0xe0 | (value &gt;&gt; 12));
+    output[1] = static_cast&lt;char&gt;(0x80 | ((value &gt;&gt; 6) &amp; 63));
+    output[2] = static_cast&lt;char&gt;(0x80 | (value &amp; 63));
+    return 3;
+  }
+  output[0] = static_cast&lt;char&gt;(0xf0 | (value &gt;&gt; 18));
+  output[1] = static_cast&lt;char&gt;(0x80 | ((value &gt;&gt; 12) &amp; 63));
+  output[2] = static_cast&lt;char&gt;(0x80 | ((value &gt;&gt; 6) &amp; 63));
+  output[3] = static_cast&lt;char&gt;(0x80 | (value &amp; 63));
+  return 4;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/string/utf_stream.hpp.html#L32">line 32</a></td></tr><tr class="t-dsc"><td><code>1</code></td><td><a href="../../source/string/utf_stream.hpp.html#L35">line 35</a></td></tr><tr class="t-dsc"><td><code>2</code></td><td><a href="../../source/string/utf_stream.hpp.html#L40">line 40</a></td></tr><tr class="t-dsc"><td><code>3</code></td><td><a href="../../source/string/utf_stream.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>4</code></td><td><a href="../../source/string/utf_stream.hpp.html#L52">line 52</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="utf_stream.hpp.html#f-c567034534f7d990">is_scalar</a>.</p></section><section class="function-entry" id="f-510603f67173a779"><h3><code>micron::unicode::decode_utf8(const Character *input, usize size, usize &amp;position, u32 &amp;scalar) noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L57">line 57</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Character&gt;
+constexpr bool
+decode_utf8(const Character *input, usize size, usize &amp;position, u32 &amp;scalar) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Character *input</code></li><li><code>usize size</code></li><li><code>usize &amp;position</code></li><li><code>u32 &amp;scalar</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Character&gt;
+constexpr bool
+decode_utf8(const Character *input, usize size, usize &amp;position, u32 &amp;scalar) noexcept
+{
+  static_assert(sizeof(Character) == 1);
+  if ( position &gt;= size ) return false;
+  const auto head = static_cast&lt;u8&gt;(input[position++]);
+  if ( head &lt; 0x80 ) {
+    scalar = head;
+    return true;
+  }
+  u32 count = 0, minimum = 0;
+  if ( head &gt;= 0xc2 &amp;&amp; head &lt;= 0xdf ) {
+    scalar = head &amp; 31;
+    count = 1;
+    minimum = 0x80;
+  } else if ( head &gt;= 0xe0 &amp;&amp; head &lt;= 0xef ) {
+    scalar = head &amp; 15;
+    count = 2;
+    minimum = 0x800;
+  } else if ( head &gt;= 0xf0 &amp;&amp; head &lt;= 0xf4 ) {
+    scalar = head &amp; 7;
+    count = 3;
+    minimum = 0x10000;
+  } else
+    return false;
+  if ( count &gt; size - position ) return false;
+  while ( count-- ) {
+    const auto byte = static_cast&lt;u8&gt;(input[position++]);
+    if ( (byte &amp; 0xc0) != 0x80 ) return false;
+    scalar = (scalar &lt;&lt; 6) | (byte &amp; 63);
+  }
+  return scalar &gt;= minimum &amp;&amp; is_scalar(scalar);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/utf_stream.hpp.html#L60">line 60</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/string/utf_stream.hpp.html#L64">line 64</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/utf_stream.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/utf_stream.hpp.html#L81">line 81</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/utf_stream.hpp.html#L84">line 84</a></td></tr><tr class="t-dsc"><td><code>scalar &gt;= minimum &amp;&amp; is_scalar(scalar)</code></td><td><a href="../../source/string/utf_stream.hpp.html#L87">line 87</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(sizeof(Character) == 1);</code></td><td><a href="../../source/string/utf_stream.hpp.html#L59">line 59</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="utf_stream.hpp.html#f-c567034534f7d990">is_scalar</a>.</p></section><section class="function-entry" id="f-701eb5b8c2247936"><h3><code>micron::unicode::validate_utf8(const Character *input, usize size) noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L92">line 92</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Character&gt;
+constexpr bool
+validate_utf8(const Character *input, usize size) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Character *input</code></li><li><code>usize size</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Character&gt;
+constexpr bool
+validate_utf8(const Character *input, usize size) noexcept
+{
+  usize position = 0;
+  while ( position &lt; size ) {
+    u32 scalar = 0;
+    if ( !decode_utf8(input, size, position, scalar) ) return false;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/utf_stream.hpp.html#L97">line 97</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/string/utf_stream.hpp.html#L99">line 99</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="utf_stream.hpp.html#f-510603f67173a779">decode_utf8</a>.</p></section><section class="function-entry" id="f-6ac48f27713807b0"><h3><code>micron::unicode::stream_decoder::stream_decoder(encoding source = encoding::automatic) noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L164">line 164</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr explicit stream_decoder(encoding source = encoding::automatic) noexcept : __requested(source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>encoding source = encoding::automatic</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr explicit stream_decoder(encoding source = encoding::automatic) noexcept : __requested(source) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-81762d42be8f913d"><h3><code>micron::unicode::stream_decoder::had_bom() const noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L167">line 167</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  had_bom() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__bom</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  had_bom() const noexcept
+  {
+    return __bom;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__bom</code></td><td><a href="../../source/string/utf_stream.hpp.html#L169">line 169</a></td></tr></tbody></table></section><section class="function-entry" id="f-6d9f0c57593c2f05"><h3><code>micron::unicode::stream_decoder::source_encoding() const noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L173">line 173</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr encoding
+  source_encoding() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__selected</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr encoding
+  source_encoding() const noexcept
+  {
+    return __selected;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__selected</code></td><td><a href="../../source/string/utf_stream.hpp.html#L175">line 175</a></td></tr></tbody></table></section><section class="function-entry" id="f-ec8c3227312c2e85"><h3><code>micron::unicode::stream_decoder::byte_offset() const noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L179">line 179</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u64
+  byte_offset() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__offset</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u64
+  byte_offset() const noexcept
+  {
+    return __offset;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__offset</code></td><td><a href="../../source/string/utf_stream.hpp.html#L181">line 181</a></td></tr></tbody></table></section><section class="function-entry" id="f-26bd1ee2cc395bc8"><h3><code>micron::unicode::stream_decoder::at_scalar_boundary() const noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L185">line 185</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  at_scalar_boundary() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__detected &amp;&amp; __probe_read == __probe_size &amp;&amp; __remaining == 0 &amp;&amp; !__half_unit &amp;&amp; __high == 0 &amp;&amp; !__done</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  at_scalar_boundary() const noexcept
+  {
+    return __detected &amp;&amp; __probe_read == __probe_size &amp;&amp; __remaining == 0 &amp;&amp; !__half_unit &amp;&amp; __high == 0 &amp;&amp; !__done;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__detected &amp;&amp; __probe_read == __probe_size &amp;&amp; __remaining == 0 &amp;&amp; !__half_unit &amp;&amp; __high == 0 &amp;&amp; !__done</code></td><td><a href="../../source/string/utf_stream.hpp.html#L187">line 187</a></td></tr></tbody></table></section><section class="function-entry" id="f-165af1dec169f146"><h3><code>micron::unicode::stream_decoder::advance_ascii(usize bytes) noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L192">line 192</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  advance_ascii(usize bytes) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize bytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  advance_ascii(usize bytes) noexcept
+  {
+    if ( __selected != encoding::utf8 || !at_scalar_boundary() || static_cast&lt;u64&gt;(bytes) &gt; ~u64(0) - __offset ) return false;
+    __offset += bytes;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/utf_stream.hpp.html#L194">line 194</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/string/utf_stream.hpp.html#L196">line 196</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="utf_stream.hpp.html#f-26bd1ee2cc395bc8">at_scalar_boundary</a>, <a href="../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-7366825b68e2ff31"><h3><code>micron::unicode::stream_decoder::next(const Character *input, usize size, bool final = false) noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L202">line 202</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Character&gt;
+    requires(sizeof(Character) == 1)
+  constexpr decode_result
+  next(const Character *input, usize size, bool final = false) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Character *input</code></li><li><code>usize size</code></li><li><code>bool final = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Character&gt;
+    requires(sizeof(Character) == 1)
+  constexpr decode_result
+  next(const Character *input, usize size, bool final = false) noexcept
+  {
+    usize consumed = 0;
+    if ( __failure != decode_status::need_input ) return { __failure, 0, 0, __scalar_offset };
+    if ( __done ) {
+      if ( size == 0 ) return { decode_status::done, 0, 0, __offset };
+      __failure = decode_status::invalid;
+      __scalar_offset = __offset;
+      return { __failure, 0, 0, __offset };
+    }
+    if ( !__detected ) {
+      while ( __probe_size &lt; 4 &amp;&amp; consumed &lt; size ) {
+        __probe[__probe_size++] = static_cast&lt;u8&gt;(input[consumed++]);
+        ++__offset;
+      }
+      if ( __probe_size &lt; 4 &amp;&amp; !final ) return { decode_status::need_input, consumed, 0, __offset };
+      detect();
+      if ( __failure != decode_status::need_input ) return { __failure, consumed, 0, 0 };
+    }
+    for ( ;; ) {
+      u8 byte = 0;
+      u64 position = 0;
+      if ( __probe_read &lt; __probe_size ) {
+        position = __probe_read;
+        byte = __probe[__probe_read++];
+      } else if ( consumed &lt; size ) {
+        position = __offset++;
+        byte = static_cast&lt;u8&gt;(input[consumed++]);
+      } else {
+        if ( !final ) return { decode_status::need_input, consumed, 0, __offset };
+        if ( __remaining || __half_unit || __high ) {
+          __failure = decode_status::truncated;
+          return { __failure, consumed, 0, __scalar_offset };
+        }
+        __done = true;
+        return { decode_status::done, consumed, 0, __offset };
+      }
+      if ( __selected == encoding::utf8 ) {
+        if ( __remaining == 0 ) {
+          __scalar_offset = position;
+          if ( byte &lt; 0x80 ) return { decode_status::scalar, consumed, byte, __scalar_offset };
+          if ( byte &gt;= 0xc2 &amp;&amp; byte &lt;= 0xdf ) {
+            __remaining = 1;
+            __value = byte &amp; 31;
+            __minimum = 0x80;
+          } else if ( byte &gt;= 0xe0 &amp;&amp; byte &lt;= 0xef ) {
+            __remaining = 2;
+            __value = byte &amp; 15;
+            __minimum = 0x800;
+          } else if ( byte &gt;= 0xf0 &amp;&amp; byte &lt;= 0xf4 ) {
+            __remaining = 3;
+            __value = byte &amp; 7;
+            __minimum = 0x10000;
+          } else {
+            __failure = decode_status::invalid;
+            return { __failure, consumed, 0, __scalar_offset };
+          }
+        } else {
+          if ( (byte &amp; 0xc0) != 0x80 ) {
+            __failure = decode_status::invalid;
+            return { __failure, consumed, 0, __scalar_offset };
+          }
+          __value = (__value &lt;&lt; 6) | (byte &amp; 63);
+          if ( --__remaining == 0 ) {
+            if ( __value &lt; __minimum || !is_scalar(__value) ) {
+              __failure = decode_status::invalid;
+              return { __failure, consumed, 0, __scalar_offset };
+            }
+            return { decode_status::scalar, consumed, __value, __scalar_offset };
+          }
+        }
+      } else {
+        if ( !__half_unit ) {
+          if ( !__high ) __scalar_offset = position;
+          __unit_byte = byte;
+          __half_unit = true;
+          continue;
+        }
+        __half_unit = false;
+        const u16 unit = __selected == encoding::utf16_le ? static_cast&lt;u16&gt;(__unit_byte | (u16(byte) &lt;&lt; 8))
+                                                          : static_cast&lt;u16&gt;((u16(__unit_byte) &lt;&lt; 8) | byte);
+        if ( __high ) {
+          if ( unit &lt; 0xdc00 || unit &gt; 0xdfff ) {
+            __failure = decode_status::invalid;
+            return { __failure, consumed, 0, __scalar_offset };
+          }
+          const u32 value = 0x10000 + ((u32(__high) - 0xd800) &lt;&lt; 10) + (u32(unit) - 0xdc00);
+          __high = 0;
+          return { decode_status::scalar, consumed, value, __scalar_offset };
+        }
+        if ( unit &gt;= 0xd800 &amp;&amp; unit &lt;= 0xdbff )
+          __high = unit;
+        else if ( unit &gt;= 0xdc00 &amp;&amp; unit &lt;= 0xdfff ) {
+          __failure = decode_status::invalid;
+          return { __failure, consumed, 0, __scalar_offset };
+        } else
+          return { decode_status::scalar, consumed, unit, __scalar_offset };
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ __failure, 0, 0, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>{ decode_status::done, 0, 0, __offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L207">line 207</a></td></tr><tr class="t-dsc"><td><code>{ __failure, 0, 0, __offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L210">line 210</a></td></tr><tr class="t-dsc"><td><code>{ decode_status::need_input, consumed, 0, __offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L217">line 217</a></td></tr><tr class="t-dsc"><td><code>{ __failure, consumed, 0, 0 }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L219">line 219</a></td></tr><tr class="t-dsc"><td><code>{ decode_status::need_input, consumed, 0, __offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L231">line 231</a></td></tr><tr class="t-dsc"><td><code>{ __failure, consumed, 0, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L234">line 234</a></td></tr><tr class="t-dsc"><td><code>{ decode_status::done, consumed, 0, __offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L237">line 237</a></td></tr><tr class="t-dsc"><td><code>{ decode_status::scalar, consumed, byte, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L242">line 242</a></td></tr><tr class="t-dsc"><td><code>{ __failure, consumed, 0, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L257">line 257</a></td></tr><tr class="t-dsc"><td><code>{ __failure, consumed, 0, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L262">line 262</a></td></tr><tr class="t-dsc"><td><code>{ __failure, consumed, 0, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L268">line 268</a></td></tr><tr class="t-dsc"><td><code>{ decode_status::scalar, consumed, __value, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L270">line 270</a></td></tr><tr class="t-dsc"><td><code>{ __failure, consumed, 0, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L286">line 286</a></td></tr><tr class="t-dsc"><td><code>{ decode_status::scalar, consumed, value, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L290">line 290</a></td></tr><tr class="t-dsc"><td><code>{ __failure, consumed, 0, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L296">line 296</a></td></tr><tr class="t-dsc"><td><code>{ decode_status::scalar, consumed, unit, __scalar_offset }</code></td><td><a href="../../source/string/utf_stream.hpp.html#L298">line 298</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="utf_stream.hpp.html#f-a0a3003faba87a34">detect</a>, <a href="utf_stream.hpp.html#f-c567034534f7d990">is_scalar</a>, <a href="../types.hpp.html#s-ab0884075e75355b">u16</a>, <a href="../types.hpp.html#s-f3fe2e99a2368c8e">u32</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-a0a3003faba87a34"><h3><code>micron::unicode::stream_decoder::detect() noexcept</code></h3><p>Defined in <code>string/utf_stream.hpp</code>, <a href="../../source/string/utf_stream.hpp.html#L125">line 125</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  detect() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  detect() noexcept
+  {
+    __detected = true;
+    __selected = __requested == encoding::automatic ? encoding::utf8 : __requested;
+    if ( __requested == encoding::automatic &amp;&amp; __probe_size &gt;= 4
+         &amp;&amp; ((__probe[0] == 0 &amp;&amp; __probe[1] == 0 &amp;&amp; __probe[2] == 0xfe &amp;&amp; __probe[3] == 0xff)
+             || (__probe[0] == 0xff &amp;&amp; __probe[1] == 0xfe &amp;&amp; __probe[2] == 0 &amp;&amp; __probe[3] == 0)
+             || (__probe[0] == 0 &amp;&amp; __probe[1] == 0 &amp;&amp; __probe[2] == 0 &amp;&amp; __probe[3] != 0)
+             || (__probe[0] != 0 &amp;&amp; __probe[1] == 0 &amp;&amp; __probe[2] == 0 &amp;&amp; __probe[3] == 0)) ) {
+      __failure = decode_status::unsupported_encoding;
+      return;
+    }
+    if ( __probe_size &gt;= 3 &amp;&amp; __probe[0] == 0xef &amp;&amp; __probe[1] == 0xbb &amp;&amp; __probe[2] == 0xbf ) {
+      if ( __requested != encoding::automatic &amp;&amp; __requested != encoding::utf8 ) {
+        __failure = decode_status::invalid;
+        return;
+      }
+      __selected = encoding::utf8;
+      __bom = true;
+      __probe_read = 3;
+    } else if ( __probe_size &gt;= 2 &amp;&amp; ((__probe[0] == 0xff &amp;&amp; __probe[1] == 0xfe) || (__probe[0] == 0xfe &amp;&amp; __probe[1] == 0xff)) ) {
+      const auto bom = __probe[0] == 0xff ? encoding::utf16_le : encoding::utf16_be;
+      if ( __requested != encoding::automatic &amp;&amp; __requested != bom ) {
+        __failure = decode_status::invalid;
+        return;
+      }
+      __selected = bom;
+      __bom = true;
+      __probe_read = 2;
+    } else if ( __requested == encoding::automatic &amp;&amp; __probe_size &gt;= 4 ) {
+      // XML&#x27;s signature also permits an encoding declaration before a BOM-less UTF-16 document.
+      if ( __probe[0] == 0 &amp;&amp; __probe[1] == &#x27;&lt;&#x27; &amp;&amp; __probe[2] == 0 &amp;&amp; __probe[3] == &#x27;?&#x27; )
+        __selected = encoding::utf16_be;
+      else if ( __probe[0] == &#x27;&lt;&#x27; &amp;&amp; __probe[1] == 0 &amp;&amp; __probe[2] == &#x27;?&#x27; &amp;&amp; __probe[3] == 0 )
+        __selected = encoding::utf16_le;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/string/utf_stream.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/string/utf_stream.hpp.html#L140">line 140</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/string/utf_stream.hpp.html#L149">line 149</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

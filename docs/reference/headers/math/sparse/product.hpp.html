@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/sparse/product.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/sparse/product.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/sparse.html">Sparse matrices</a></div><p>Defined in header <code>&lt;micron/math/sparse/product.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/sparse/product.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-28e5c559d88d61a0">micron::math::sparse::spmv(T alpha, const csc&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</a></td><td>function; line 38</td></tr><tr class="t-dsc"><td><a href="#f-68edfe5501268f59">micron::math::sparse::spmv_transposed(T alpha, const csc&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</a></td><td>function; line 69</td></tr><tr class="t-dsc"><td><a href="#f-790a9979b5bc5af1">micron::math::sparse::spmv(T alpha, const csr&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</a></td><td>function; line 95</td></tr><tr class="t-dsc"><td><a href="#f-5b0d4a3c5106d735">micron::math::sparse::spmm(T alpha, const csc&lt;T, I&gt; &amp;A, const dynmat&lt;T&gt; &amp;X, T beta, dynmat&lt;T&gt; &amp;Y) noexcept</a></td><td>function; line 121</td></tr><tr class="t-dsc"><td><a href="#f-b71544592f369982">micron::math::sparse::spgemm(const csc&lt;T, I&gt; &amp;A, const csc&lt;T, I&gt; &amp;B) noexcept</a></td><td>function; line 140</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-28e5c559d88d61a0"><h3><code>micron::math::sparse::spmv(T alpha, const csc&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</code></h3><p>Defined in <code>math/sparse/product.hpp</code>, <a href="../../../source/math/sparse/product.hpp.html#L38">line 38</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+spmv(T alpha, const csc&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const csc&lt;T, I&gt; &amp;A</code></li><li><code>const dynvec&lt;T&gt; &amp;x</code></li><li><code>T beta</code></li><li><code>dynvec&lt;T&gt; &amp;y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+spmv(T alpha, const csc&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept
+{
+  // y := beta * y, over the A.rows the product defines
+  if ( beta == T(0) ) {
+    for ( usize i = 0; i &lt; A.rows; ++i ) y[i] = T(0);
+  } else if ( beta != T(1) ) {
+    scal_values&lt;T&gt;(beta, y.data(), A.rows);
+  }
+  if ( alpha == T(0) ) return;
+
+  const I *__restrict__ outer = A.outer.data();
+  const I *__restrict__ inner = A.inner.data();
+  const T *__restrict__ vals = A.values.data();
+  T *__restrict__ yp = y.data();
+
+  for ( usize j = 0; j &lt; A.cols; ++j ) {
+    const T xj = x[j];
+    if ( xj == T(0) ) continue;
+    const usize a = static_cast&lt;usize&gt;(outer[j]);
+    const usize b = static_cast&lt;usize&gt;(outer[j + 1]);
+    // guard non-monotone outer
+    const usize cnt = (b &gt;= a) ? (b - a) : usize(0);
+    if ( cnt != 0 ) spmv_col_scatter&lt;T, I&gt;(alpha, xj, vals + a, inner + a, yp, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/sparse/product.hpp.html#L46">line 46</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-f4df4258f4e2f7d8">scal_values&lt;T&gt;</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="simd_kernels.hpp.html#f-32ba5fab0eff6d3d">spmv_col_scatter&lt;T, I&gt;</a>.</p></section><section class="function-entry" id="f-68edfe5501268f59"><h3><code>micron::math::sparse::spmv_transposed(T alpha, const csc&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</code></h3><p>Defined in <code>math/sparse/product.hpp</code>, <a href="../../../source/math/sparse/product.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+spmv_transposed(T alpha, const csc&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const csc&lt;T, I&gt; &amp;A</code></li><li><code>const dynvec&lt;T&gt; &amp;x</code></li><li><code>T beta</code></li><li><code>dynvec&lt;T&gt; &amp;y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+spmv_transposed(T alpha, const csc&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept
+{
+  if ( beta == T(0) ) {
+    for ( usize i = 0; i &lt; A.cols; ++i ) y[i] = T(0);
+  } else if ( beta != T(1) ) {
+    scal_values&lt;T&gt;(beta, y.data(), A.cols);
+  }
+  if ( alpha == T(0) ) return;
+
+  const I *__restrict__ outer = A.outer.data();
+  const I *__restrict__ inner = A.inner.data();
+  const T *__restrict__ vals = A.values.data();
+  const T *__restrict__ xp = x.data();
+
+  for ( usize j = 0; j &lt; A.cols; ++j ) {
+    const usize a = static_cast&lt;usize&gt;(outer[j]);
+    const usize b = static_cast&lt;usize&gt;(outer[j + 1]);
+    T s = T(0);
+    for ( usize k = a; k &lt; b; ++k ) s = math::fma&lt;T&gt;(vals[k], xp[inner[k]], s);
+    y[j] = math::fma&lt;T&gt;(alpha, s, y[j]);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/sparse/product.hpp.html#L76">line 76</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-f4df4258f4e2f7d8">scal_values&lt;T&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-790a9979b5bc5af1"><h3><code>micron::math::sparse::spmv(T alpha, const csr&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</code></h3><p>Defined in <code>math/sparse/product.hpp</code>, <a href="../../../source/math/sparse/product.hpp.html#L95">line 95</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+spmv(T alpha, const csr&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const csr&lt;T, I&gt; &amp;A</code></li><li><code>const dynvec&lt;T&gt; &amp;x</code></li><li><code>T beta</code></li><li><code>dynvec&lt;T&gt; &amp;y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+spmv(T alpha, const csr&lt;T, I&gt; &amp;A, const dynvec&lt;T&gt; &amp;x, T beta, dynvec&lt;T&gt; &amp;y) noexcept
+{
+  if ( beta == T(0) ) {
+    for ( usize i = 0; i &lt; A.rows; ++i ) y[i] = T(0);
+  } else if ( beta != T(1) ) {
+    scal_values&lt;T&gt;(beta, y.data(), A.rows);
+  }
+  if ( alpha == T(0) ) return;
+
+  const I *__restrict__ outer = A.outer.data();
+  const I *__restrict__ inner = A.inner.data();
+  const T *__restrict__ vals = A.values.data();
+  const T *__restrict__ xp = x.data();
+
+  for ( usize i = 0; i &lt; A.rows; ++i ) {
+    const usize a = static_cast&lt;usize&gt;(outer[i]);
+    const usize b = static_cast&lt;usize&gt;(outer[i + 1]);
+    T s = T(0);
+    for ( usize k = a; k &lt; b; ++k ) s = math::fma&lt;T&gt;(vals[k], xp[inner[k]], s);
+    y[i] = math::fma&lt;T&gt;(alpha, s, y[i]);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/sparse/product.hpp.html#L102">line 102</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-f4df4258f4e2f7d8">scal_values&lt;T&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-5b0d4a3c5106d735"><h3><code>micron::math::sparse::spmm(T alpha, const csc&lt;T, I&gt; &amp;A, const dynmat&lt;T&gt; &amp;X, T beta, dynmat&lt;T&gt; &amp;Y) noexcept</code></h3><p>Defined in <code>math/sparse/product.hpp</code>, <a href="../../../source/math/sparse/product.hpp.html#L121">line 121</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+spmm(T alpha, const csc&lt;T, I&gt; &amp;A, const dynmat&lt;T&gt; &amp;X, T beta, dynmat&lt;T&gt; &amp;Y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const csc&lt;T, I&gt; &amp;A</code></li><li><code>const dynmat&lt;T&gt; &amp;X</code></li><li><code>T beta</code></li><li><code>dynmat&lt;T&gt; &amp;Y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+spmm(T alpha, const csc&lt;T, I&gt; &amp;A, const dynmat&lt;T&gt; &amp;X, T beta, dynmat&lt;T&gt; &amp;Y) noexcept
+{
+  // Y is rows×nrhs
+  const usize nrhs = X.cols;
+  dynvec&lt;T&gt; xj(X.rows, T(0));
+  dynvec&lt;T&gt; yj(Y.rows, T(0));
+  for ( usize j = 0; j &lt; nrhs; ++j ) {
+    for ( usize i = 0; i &lt; X.rows; ++i ) xj[i] = X.at(i, j);
+    for ( usize i = 0; i &lt; Y.rows; ++i ) yj[i] = Y.at(i, j);
+    spmv&lt;T, I&gt;(alpha, A, xj, beta, yj);
+    for ( usize i = 0; i &lt; Y.rows; ++i ) Y.at(i, j) = yj[i];
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="product.hpp.html#f-28e5c559d88d61a0">spmv&lt;T, I&gt;</a>.</p></section><section class="function-entry" id="f-b71544592f369982"><h3><code>micron::math::sparse::spgemm(const csc&lt;T, I&gt; &amp;A, const csc&lt;T, I&gt; &amp;B) noexcept</code></h3><p>Defined in <code>math/sparse/product.hpp</code>, <a href="../../../source/math/sparse/product.hpp.html#L140">line 140</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline csc&lt;T, I&gt;
+spgemm(const csc&lt;T, I&gt; &amp;A, const csc&lt;T, I&gt; &amp;B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const csc&lt;T, I&gt; &amp;A</code></li><li><code>const csc&lt;T, I&gt; &amp;B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline csc&lt;T, I&gt;
+spgemm(const csc&lt;T, I&gt; &amp;A, const csc&lt;T, I&gt; &amp;B) noexcept
+{
+  csc&lt;T, I&gt; C(A.rows, B.cols);
+  // dimension mismatch
+  if ( B.rows != A.cols ) return C;
+
+  micron::vector&lt;T, micron::allocator_serial&lt;&gt;, false&gt; acc(A.rows, T(0));
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; marker(A.rows, u8(0));
+  micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; active(A.rows, I(0));
+
+  // compute outer
+  C.outer = typename csc&lt;T, I&gt;::vec_i(B.cols + 1, I(0));
+
+  for ( usize j = 0; j &lt; B.cols; ++j ) {
+    usize n_active = 0;
+    const usize bs = static_cast&lt;usize&gt;(B.outer.data()[j]);
+    const usize be = static_cast&lt;usize&gt;(B.outer.data()[j + 1]);
+    for ( usize bk = bs; bk &lt; be; ++bk ) {
+      const usize k = static_cast&lt;usize&gt;(B.inner.data()[bk]);
+      // guard malformed contraction index
+      if ( k &gt;= A.cols ) continue;
+      const T b_kj = B.values.data()[bk];
+      if ( b_kj == T(0) ) continue;
+      const usize ak_start = static_cast&lt;usize&gt;(A.outer.data()[k]);
+      const usize ak_end = static_cast&lt;usize&gt;(A.outer.data()[k + 1]);
+      for ( usize ai = ak_start; ai &lt; ak_end; ++ai ) {
+        const usize i = static_cast&lt;usize&gt;(A.inner.data()[ai]);
+        // guard malformed row index
+        if ( i &gt;= A.rows ) continue;
+        const T a_ik = A.values.data()[ai];
+        if ( marker.data()[i] == 0 ) {
+          marker.data()[i] = 1;
+          active.data()[n_active++] = static_cast&lt;I&gt;(i);
+          acc.data()[i] = a_ik * b_kj;
+        } else {
+          acc.data()[i] = math::fma&lt;T&gt;(a_ik, b_kj, acc.data()[i]);
+        }
+      }
+    }
+
+    // sort active indices ascending (small lists typical)
+    for ( usize ii = 1; ii &lt; n_active; ++ii ) {
+      I cur = active.data()[ii];
+      usize jj = ii;
+      while ( jj &gt; 0 &amp;&amp; active.data()[jj - 1] &gt; cur ) {
+        active.data()[jj] = active.data()[jj - 1];
+        --jj;
+      }
+      active.data()[jj] = cur;
+    }
+
+    // emit column j
+    const I old_size = static_cast&lt;I&gt;(C.inner.size());
+    for ( usize ii = 0; ii &lt; n_active; ++ii ) {
+      const I idx = active.data()[ii];
+      C.inner.push_back(idx);
+      C.values.push_back(acc.data()[static_cast&lt;usize&gt;(idx)]);
+      marker.data()[static_cast&lt;usize&gt;(idx)] = 0;
+      acc.data()[static_cast&lt;usize&gt;(idx)] = T(0);
+    }
+    C.outer.data()[j + 1] = old_size + static_cast&lt;I&gt;(n_active);
+  }
+  return C;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>C</code></td><td><a href="../../../source/math/sparse/product.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>C</code></td><td><a href="../../../source/math/sparse/product.hpp.html#L202">line 202</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/reduce.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/reduce.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/math.html">Mathematical functions</a></div><p>Defined in header <code>&lt;micron/math/reduce.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/math/reduce.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-a1bfd2bb875995bb">micron::math::moments</code></td><td>struct; line 92</td></tr><tr class="t-dsc"><td><code id="s-da523f19f6587fe8">micron::math::moments::mean</code></td><td>member; line 93</td></tr><tr class="t-dsc"><td><code id="s-d4ec5045c090e8b6">micron::math::moments::var</code></td><td>member; line 94</td></tr><tr class="t-dsc"><td><code id="s-8fcde80d868a97cb">micron::math::moments::n</code></td><td>member; line 95</td></tr><tr class="t-dsc"><td><a href="#f-f05cb907d387a1b1">micron::math::sum(const T *first, const T *last) noexcept</a></td><td>function; line 20</td></tr><tr class="t-dsc"><td><a href="#f-dd6f2ad8499c1c4f">micron::math::prod(const T *first, const T *last) noexcept</a></td><td>function; line 29</td></tr><tr class="t-dsc"><td><a href="#f-a64a8a88ceb383cd">micron::math::kahan_sum(const F *first, const F *last) noexcept</a></td><td>function; line 39</td></tr><tr class="t-dsc"><td><a href="#f-48c79f0dc4a7ab21">micron::math::neumaier_sum(const F *first, const F *last) noexcept</a></td><td>function; line 53</td></tr><tr class="t-dsc"><td><a href="#f-a724e4d0f36763e0">micron::math::mean(const F *first, const F *last) noexcept</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-ad499cb7104e0450">micron::math::mean(const T *first, const T *last) noexcept</a></td><td>function; line 83</td></tr><tr class="t-dsc"><td><a href="#f-71fa1d0495cac44c">micron::math::welford(const F *first, const F *last) noexcept</a></td><td>function; line 101</td></tr><tr class="t-dsc"><td><a href="#f-60e670879d4565c7">micron::math::var(const F *first, const F *last) noexcept</a></td><td>function; line 117</td></tr><tr class="t-dsc"><td><a href="#f-e7b2ebcb100825c6">micron::math::std_dev(const F *first, const F *last) noexcept</a></td><td>function; line 124</td></tr><tr class="t-dsc"><td><a href="#f-1a1bceee85b94035">micron::math::min(const T *first, const T *last) noexcept</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-36f329395e6fbf3f">micron::math::max(const T *first, const T *last) noexcept</a></td><td>function; line 142</td></tr><tr class="t-dsc"><td><a href="#f-4aa4f8192b8ca6c2">micron::math::argmin(const T *first, const T *last) noexcept</a></td><td>function; line 153</td></tr><tr class="t-dsc"><td><a href="#f-a308f604c030a799">micron::math::argmax(const T *first, const T *last) noexcept</a></td><td>function; line 169</td></tr><tr class="t-dsc"><td><a href="#f-01ea58b0cf5d2dff">micron::math::ptp(const T *first, const T *last) noexcept</a></td><td>function; line 185</td></tr><tr class="t-dsc"><td><a href="#f-11e981b28c60a8de">micron::math::nth_element(T *first, T *last, usize k) noexcept</a></td><td>function; line 249</td></tr><tr class="t-dsc"><td><a href="#f-a0dadab543a78a90">micron::math::median(T *first, T *last) noexcept</a></td><td>function; line 274</td></tr><tr class="t-dsc"><td><a href="#f-b01e7c1ac9234347">micron::math::quantile(F *first, F *last, F q) noexcept</a></td><td>function; line 287</td></tr><tr class="t-dsc"><td><a href="#f-05e98334f9d50423">micron::math::cumsum(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept</a></td><td>function; line 305</td></tr><tr class="t-dsc"><td><a href="#f-721217e34cdce062">micron::math::cumprod(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept</a></td><td>function; line 316</td></tr><tr class="t-dsc"><td><a href="#f-b12c56d5156c6e2b">micron::math::sum(const C &amp;c) noexcept</a></td><td>function; line 330</td></tr><tr class="t-dsc"><td><a href="#f-ca8145fbe0686707">micron::math::prod(const C &amp;c) noexcept</a></td><td>function; line 337</td></tr><tr class="t-dsc"><td><a href="#f-5470c59c2f5b85ed">micron::math::kahan_sum(const C &amp;c) noexcept</a></td><td>function; line 345</td></tr><tr class="t-dsc"><td><a href="#f-32e68d59774cd35f">micron::math::neumaier_sum(const C &amp;c) noexcept</a></td><td>function; line 353</td></tr><tr class="t-dsc"><td><a href="#f-75a8d677fc070db6">micron::math::mean(const C &amp;c) noexcept</a></td><td>function; line 360</td></tr><tr class="t-dsc"><td><a href="#f-ca0e2d349e7b006a">micron::math::var(const C &amp;c) noexcept</a></td><td>function; line 368</td></tr><tr class="t-dsc"><td><a href="#f-b8dbbf29e4602828">micron::math::std_dev(const C &amp;c) noexcept</a></td><td>function; line 376</td></tr><tr class="t-dsc"><td><a href="#f-1ef4ead4a18d5d89">micron::math::welford(const C &amp;c) noexcept</a></td><td>function; line 384</td></tr><tr class="t-dsc"><td><a href="#f-f1485914ca3891b5">micron::math::min(const C &amp;c) noexcept</a></td><td>function; line 391</td></tr><tr class="t-dsc"><td><a href="#f-6b605eee03e40704">micron::math::max(const C &amp;c) noexcept</a></td><td>function; line 398</td></tr><tr class="t-dsc"><td><a href="#f-d302729a29907046">micron::math::argmin(const C &amp;c) noexcept</a></td><td>function; line 405</td></tr><tr class="t-dsc"><td><a href="#f-51d58ceb7565749f">micron::math::argmax(const C &amp;c) noexcept</a></td><td>function; line 412</td></tr><tr class="t-dsc"><td><a href="#f-f6421e67bdf77b0c">micron::math::ptp(const C &amp;c) noexcept</a></td><td>function; line 419</td></tr><tr class="t-dsc"><td><a href="#f-823689a9cec73181">micron::math::median(C &amp;c) noexcept</a></td><td>function; line 426</td></tr><tr class="t-dsc"><td><a href="#f-8967679461ff2b84">micron::math::quantile(C &amp;c, typename C::value_type q) noexcept</a></td><td>function; line 434</td></tr><tr class="t-dsc"><td><a href="#f-762e481aa966c4a7">micron::math::cumsum(const C &amp;in, C &amp;out) noexcept</a></td><td>function; line 441</td></tr><tr class="t-dsc"><td><a href="#f-c81d75e533e8d2ac">micron::math::cumprod(const C &amp;in, C &amp;out) noexcept</a></td><td>function; line 448</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f05cb907d387a1b1"><h3><code>micron::math::sum(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L20">line 20</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+sum(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+sum(const T *first, const T *last) noexcept
+{
+  T acc{ 0 };
+  for ( ; first != last; ++first ) acc = acc + *first;
+  return acc;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>acc</code></td><td><a href="../../source/math/reduce.hpp.html#L24">line 24</a></td></tr></tbody></table></section><section class="function-entry" id="f-dd6f2ad8499c1c4f"><h3><code>micron::math::prod(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L29">line 29</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+prod(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+prod(const T *first, const T *last) noexcept
+{
+  T acc{ 1 };
+  for ( ; first != last; ++first ) acc = acc * *first;
+  return acc;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>acc</code></td><td><a href="../../source/math/reduce.hpp.html#L33">line 33</a></td></tr></tbody></table></section><section class="function-entry" id="f-a64a8a88ceb383cd"><h3><code>micron::math::kahan_sum(const F *first, const F *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L39">line 39</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+kahan_sum(const F *first, const F *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *first</code></li><li><code>const F *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+kahan_sum(const F *first, const F *last) noexcept
+{
+  F s = F(0), c = F(0);
+  for ( ; first != last; ++first ) {
+    const F y = *first - c;
+    const F t = s + y;
+    c = (t - s) - y;
+    s = t;
+  }
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/math/reduce.hpp.html#L48">line 48</a></td></tr></tbody></table></section><section class="function-entry" id="f-48c79f0dc4a7ab21"><h3><code>micron::math::neumaier_sum(const F *first, const F *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+neumaier_sum(const F *first, const F *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *first</code></li><li><code>const F *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+neumaier_sum(const F *first, const F *last) noexcept
+{
+  if ( first == last ) return F(0);
+  F s = *first++;
+  F c = F(0);
+  for ( ; first != last; ++first ) {
+    const F x = *first;
+    const F t = s + x;
+    if ( mk::manip::fabs&lt;F&gt;(s) &gt;= mk::manip::fabs&lt;F&gt;(x) ) {
+      c = c + ((s - t) + x);
+    } else {
+      c = c + ((x - t) + s);
+    }
+    s = t;
+  }
+  return s + c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../source/math/reduce.hpp.html#L55">line 55</a></td></tr><tr class="t-dsc"><td><code>s + c</code></td><td><a href="../../source/math/reduce.hpp.html#L68">line 68</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mk.hpp.html#f-ea6686215fb80348">mk::manip::fabs&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a724e4d0f36763e0"><h3><code>micron::math::mean(const F *first, const F *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr F
+mean(const F *first, const F *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *first</code></li><li><code>const F *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr F
+mean(const F *first, const F *last) noexcept
+{
+  const usize n = usize(last - first);
+  if ( n == 0 ) return F(0);
+  return kahan_sum&lt;F&gt;(first, last) / F(n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../source/math/reduce.hpp.html#L76">line 76</a></td></tr><tr class="t-dsc"><td><code>kahan_sum&lt;F&gt;(first, last) / F(n)</code></td><td><a href="../../source/math/reduce.hpp.html#L77">line 77</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="reduce.hpp.html#f-a64a8a88ceb383cd">kahan_sum&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ad499cb7104e0450"><h3><code>micron::math::mean(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires(micron::is_integral_v&lt;T&gt;)
+[[nodiscard, gnu::flatten]] inline constexpr f64
+mean(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires(micron::is_integral_v&lt;T&gt;)
+[[nodiscard, gnu::flatten]] inline constexpr f64
+mean(const T *first, const T *last) noexcept
+{
+  const usize n = usize(last - first);
+  if ( n == 0 ) return 0.0;
+  i64 s = 0;
+  for ( ; first != last; ++first ) s += i64(*first);
+  return f64(s) / f64(n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0.0</code></td><td><a href="../../source/math/reduce.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>f64(s) / f64(n)</code></td><td><a href="../../source/math/reduce.hpp.html#L89">line 89</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../types.hpp.html#s-e4e8792a62ffa8d0">i64</a>, <a href="../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-71fa1d0495cac44c"><h3><code>micron::math::welford(const F *first, const F *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L101">line 101</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr moments&lt;F&gt;
+welford(const F *first, const F *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *first</code></li><li><code>const F *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr moments&lt;F&gt;
+welford(const F *first, const F *last) noexcept
+{
+  moments&lt;F&gt; m{ F(0), F(0), 0 };
+  for ( ; first != last; ++first ) {
+    ++m.n;
+    const F delta = *first - m.mean;
+    m.mean += delta / F(m.n);
+    const F delta2 = *first - m.mean;
+    m.var += delta * delta2;
+  }
+  if ( m.n &gt; 0 ) m.var /= F(m.n);
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/math/reduce.hpp.html#L112">line 112</a></td></tr></tbody></table></section><section class="function-entry" id="f-60e670879d4565c7"><h3><code>micron::math::var(const F *first, const F *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L117">line 117</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr F
+var(const F *first, const F *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *first</code></li><li><code>const F *last</code></li></ul><h4>Effects</h4><p>Returns <code>welford&lt;F&gt;(first, last).var</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr F
+var(const F *first, const F *last) noexcept
+{
+  return welford&lt;F&gt;(first, last).var;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>welford&lt;F&gt;(first, last).var</code></td><td><a href="../../source/math/reduce.hpp.html#L119">line 119</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-71fa1d0495cac44c">welford&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-e7b2ebcb100825c6"><h3><code>micron::math::std_dev(const F *first, const F *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L124">line 124</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr F
+std_dev(const F *first, const F *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *first</code></li><li><code>const F *last</code></li></ul><h4>Effects</h4><p>Returns <code>mk::pow_ns::sqrt&lt;F&gt;(var&lt;F&gt;(first, last))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr F
+std_dev(const F *first, const F *last) noexcept
+{
+  return mk::pow_ns::sqrt&lt;F&gt;(var&lt;F&gt;(first, last));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mk::pow_ns::sqrt&lt;F&gt;(var&lt;F&gt;(first, last))</code></td><td><a href="../../source/math/reduce.hpp.html#L126">line 126</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mk.hpp.html#f-6a28713714e2db89">mk::pow_ns::sqrt&lt;F&gt;</a>, <a href="reduce.hpp.html#f-60e670879d4565c7">var&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-1a1bceee85b94035"><h3><code>micron::math::min(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+min(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+min(const T *first, const T *last) noexcept
+{
+  if ( first == last ) return T{};
+  T m = *first;
+  for ( ++first; first != last; ++first )
+    if ( *first &lt; m ) m = *first;
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>T{}</code></td><td><a href="../../source/math/reduce.hpp.html#L133">line 133</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/math/reduce.hpp.html#L137">line 137</a></td></tr></tbody></table></section><section class="function-entry" id="f-36f329395e6fbf3f"><h3><code>micron::math::max(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L142">line 142</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+max(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+max(const T *first, const T *last) noexcept
+{
+  if ( first == last ) return T{};
+  T m = *first;
+  for ( ++first; first != last; ++first )
+    if ( *first &gt; m ) m = *first;
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>T{}</code></td><td><a href="../../source/math/reduce.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/math/reduce.hpp.html#L148">line 148</a></td></tr></tbody></table></section><section class="function-entry" id="f-4aa4f8192b8ca6c2"><h3><code>micron::math::argmin(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L153">line 153</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+argmin(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+argmin(const T *first, const T *last) noexcept
+{
+  if ( first == last ) return usize(0);
+  usize idx = 0;
+  T m = *first;
+  for ( const T *p = first + 1; p != last; ++p ) {
+    if ( *p &lt; m ) {
+      m = *p;
+      idx = usize(p - first);
+    }
+  }
+  return idx;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>usize(0)</code></td><td><a href="../../source/math/reduce.hpp.html#L155">line 155</a></td></tr><tr class="t-dsc"><td><code>idx</code></td><td><a href="../../source/math/reduce.hpp.html#L164">line 164</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><section class="function-entry" id="f-a308f604c030a799"><h3><code>micron::math::argmax(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L169">line 169</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+argmax(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+argmax(const T *first, const T *last) noexcept
+{
+  if ( first == last ) return usize(0);
+  usize idx = 0;
+  T m = *first;
+  for ( const T *p = first + 1; p != last; ++p ) {
+    if ( *p &gt; m ) {
+      m = *p;
+      idx = usize(p - first);
+    }
+  }
+  return idx;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>usize(0)</code></td><td><a href="../../source/math/reduce.hpp.html#L171">line 171</a></td></tr><tr class="t-dsc"><td><code>idx</code></td><td><a href="../../source/math/reduce.hpp.html#L180">line 180</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><section class="function-entry" id="f-01ea58b0cf5d2dff"><h3><code>micron::math::ptp(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L185">line 185</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+ptp(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr T
+ptp(const T *first, const T *last) noexcept
+{
+  if ( first == last ) return T{};
+  T mn = *first, mx = *first;
+  for ( ++first; first != last; ++first ) {
+    if ( *first &lt; mn )
+      mn = *first;
+    else if ( *first &gt; mx )
+      mx = *first;
+  }
+  return T(mx - mn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>T{}</code></td><td><a href="../../source/math/reduce.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>T(mx - mn)</code></td><td><a href="../../source/math/reduce.hpp.html#L195">line 195</a></td></tr></tbody></table></section><section class="function-entry" id="f-11e981b28c60a8de"><h3><code>micron::math::nth_element(T *first, T *last, usize k) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L249">line 249</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard]] inline T
+nth_element(T *first, T *last, usize k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *first</code></li><li><code>T *last</code></li><li><code>usize k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard]] inline T
+nth_element(T *first, T *last, usize k) noexcept
+{
+  if ( k &gt;= usize(last - first) ) return T{};
+  __select::quickselect(first, last, first + k);
+  return first[k];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>T{}</code></td><td><a href="../../source/math/reduce.hpp.html#L251">line 251</a></td></tr><tr class="t-dsc"><td><code>first[k]</code></td><td><a href="../../source/math/reduce.hpp.html#L253">line 253</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="reduce.hpp.html#f-25e799a6d594f00a">__select::quickselect</a>.</p></section><section class="function-entry" id="f-a0dadab543a78a90"><h3><code>micron::math::median(T *first, T *last) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L274">line 274</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard]] inline T
+median(T *first, T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *first</code></li><li><code>T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard]] inline T
+median(T *first, T *last) noexcept
+{
+  const usize n = usize(last - first);
+  if ( n == 0 ) return T{};
+  const usize k = n / 2;
+  T hi = nth_element(first, last, k);
+  if ( n &amp; 1 ) return hi;
+  T lo = nth_element(first, first + k, k - 1);
+  return __mid2&lt;T&gt;(lo, hi);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>T{}</code></td><td><a href="../../source/math/reduce.hpp.html#L277">line 277</a></td></tr><tr class="t-dsc"><td><code>hi</code></td><td><a href="../../source/math/reduce.hpp.html#L280">line 280</a></td></tr><tr class="t-dsc"><td><code>__mid2&lt;T&gt;(lo, hi)</code></td><td><a href="../../source/math/reduce.hpp.html#L282">line 282</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="reduce.hpp.html#f-11e981b28c60a8de">nth_element</a>, <a href="reduce.hpp.html#f-4782798b864fe54d">__mid2&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-b01e7c1ac9234347"><h3><code>micron::math::quantile(F *first, F *last, F q) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L287">line 287</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+quantile(F *first, F *last, F q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *first</code></li><li><code>F *last</code></li><li><code>F q</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+quantile(F *first, F *last, F q) noexcept
+{
+  const usize n = usize(last - first);
+  if ( n == 0 ) return F(0);
+  if ( q &lt;= F(0) ) return min&lt;F&gt;(first, last);
+  if ( q &gt;= F(1) ) return max&lt;F&gt;(first, last);
+  const F idx = q * F(n - 1);
+  const F i_lo_f = mk::round_ns::floor&lt;F&gt;(idx);
+  const usize i_lo = usize(i_lo_f);
+  const usize i_hi = i_lo + (i_lo + 1 &lt; n ? 1 : 0);
+  const F frac = idx - i_lo_f;
+  const F a = nth_element(first, last, i_lo);
+  const F b = nth_element(first, last, i_hi);
+  return a + frac * (b - a);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../source/math/reduce.hpp.html#L290">line 290</a></td></tr><tr class="t-dsc"><td><code>min&lt;F&gt;(first, last)</code></td><td><a href="../../source/math/reduce.hpp.html#L291">line 291</a></td></tr><tr class="t-dsc"><td><code>max&lt;F&gt;(first, last)</code></td><td><a href="../../source/math/reduce.hpp.html#L292">line 292</a></td></tr><tr class="t-dsc"><td><code>a + frac * (b - a)</code></td><td><a href="../../source/math/reduce.hpp.html#L300">line 300</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="reduce.hpp.html#f-1a1bceee85b94035">min&lt;F&gt;</a>, <a href="reduce.hpp.html#f-36f329395e6fbf3f">max&lt;F&gt;</a>, <a href="mk.hpp.html#f-1059d10f36c84876">mk::round_ns::floor&lt;F&gt;</a>, <a href="reduce.hpp.html#f-11e981b28c60a8de">nth_element</a>.</p></section><section class="function-entry" id="f-05e98334f9d50423"><h3><code>micron::math::cumsum(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L305">line 305</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+cumsum(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict__ first</code></li><li><code>const T *__restrict__ last</code></li><li><code>T *__restrict__ out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+cumsum(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept
+{
+  T acc{ 0 };
+  for ( ; first != last; ++first, ++out ) {
+    acc = acc + *first;
+    *out = acc;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-721217e34cdce062"><h3><code>micron::math::cumprod(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L316">line 316</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+cumprod(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict__ first</code></li><li><code>const T *__restrict__ last</code></li><li><code>T *__restrict__ out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+cumprod(const T *__restrict__ first, const T *__restrict__ last, T *__restrict__ out) noexcept
+{
+  T acc{ 1 };
+  for ( ; first != last; ++first, ++out ) {
+    acc = acc * *first;
+    *out = acc;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b12c56d5156c6e2b"><h3><code>micron::math::sum(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L330">line 330</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+sum(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>sum(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+sum(const C &amp;c) noexcept
+{
+  return sum(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sum(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L332">line 332</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-f05cb907d387a1b1">sum</a>.</p></section><section class="function-entry" id="f-ca8145fbe0686707"><h3><code>micron::math::prod(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L337">line 337</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+prod(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>prod(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+prod(const C &amp;c) noexcept
+{
+  return prod(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>prod(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L339">line 339</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-dd6f2ad8499c1c4f">prod</a>.</p></section><section class="function-entry" id="f-5470c59c2f5b85ed"><h3><code>micron::math::kahan_sum(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L345">line 345</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+kahan_sum(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>kahan_sum&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+kahan_sum(const C &amp;c) noexcept
+{
+  return kahan_sum&lt;typename C::value_type&gt;(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>kahan_sum&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L347">line 347</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-a64a8a88ceb383cd">kahan_sum&lt;typename C::value_type&gt;</a>.</p></section><section class="function-entry" id="f-32e68d59774cd35f"><h3><code>micron::math::neumaier_sum(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L353">line 353</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+neumaier_sum(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>neumaier_sum&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+neumaier_sum(const C &amp;c) noexcept
+{
+  return neumaier_sum&lt;typename C::value_type&gt;(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neumaier_sum&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L355">line 355</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-48c79f0dc4a7ab21">neumaier_sum&lt;typename C::value_type&gt;</a>.</p></section><section class="function-entry" id="f-75a8d677fc070db6"><h3><code>micron::math::mean(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L360">line 360</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr auto
+mean(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>mean(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr auto
+mean(const C &amp;c) noexcept
+{
+  return mean(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mean(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L362">line 362</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-a724e4d0f36763e0">mean</a>.</p></section><section class="function-entry" id="f-ca0e2d349e7b006a"><h3><code>micron::math::var(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L368">line 368</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+var(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>var&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+var(const C &amp;c) noexcept
+{
+  return var&lt;typename C::value_type&gt;(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>var&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L370">line 370</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-60e670879d4565c7">var&lt;typename C::value_type&gt;</a>.</p></section><section class="function-entry" id="f-b8dbbf29e4602828"><h3><code>micron::math::std_dev(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L376">line 376</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+std_dev(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>std_dev&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+std_dev(const C &amp;c) noexcept
+{
+  return std_dev&lt;typename C::value_type&gt;(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>std_dev&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L378">line 378</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-e7b2ebcb100825c6">std_dev&lt;typename C::value_type&gt;</a>.</p></section><section class="function-entry" id="f-1ef4ead4a18d5d89"><h3><code>micron::math::welford(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L384">line 384</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr moments&lt;typename C::value_type&gt;
+welford(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>welford&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard, gnu::flatten]] inline constexpr moments&lt;typename C::value_type&gt;
+welford(const C &amp;c) noexcept
+{
+  return welford&lt;typename C::value_type&gt;(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>welford&lt;typename C::value_type&gt;(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L386">line 386</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-71fa1d0495cac44c">welford&lt;typename C::value_type&gt;</a>.</p></section><section class="function-entry" id="f-f1485914ca3891b5"><h3><code>micron::math::min(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L391">line 391</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+min(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>min(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+min(const C &amp;c) noexcept
+{
+  return min(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>min(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L393">line 393</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-1a1bceee85b94035">min</a>.</p></section><section class="function-entry" id="f-6b605eee03e40704"><h3><code>micron::math::max(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L398">line 398</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+max(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>max(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+max(const C &amp;c) noexcept
+{
+  return max(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>max(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L400">line 400</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-36f329395e6fbf3f">max</a>.</p></section><section class="function-entry" id="f-d302729a29907046"><h3><code>micron::math::argmin(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L405">line 405</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+argmin(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>argmin(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+argmin(const C &amp;c) noexcept
+{
+  return argmin(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>argmin(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L407">line 407</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-4aa4f8192b8ca6c2">argmin</a>.</p></section><section class="function-entry" id="f-51d58ceb7565749f"><h3><code>micron::math::argmax(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L412">line 412</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+argmax(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>argmax(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr usize
+argmax(const C &amp;c) noexcept
+{
+  return argmax(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>argmax(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L414">line 414</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-a308f604c030a799">argmax</a>.</p></section><section class="function-entry" id="f-f6421e67bdf77b0c"><h3><code>micron::math::ptp(const C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L419">line 419</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+ptp(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>ptp(c.cbegin(), c.cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard, gnu::flatten]] inline constexpr typename C::value_type
+ptp(const C &amp;c) noexcept
+{
+  return ptp(c.cbegin(), c.cend());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ptp(c.cbegin(), c.cend())</code></td><td><a href="../../source/math/reduce.hpp.html#L421">line 421</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-01ea58b0cf5d2dff">ptp</a>.</p></section><section class="function-entry" id="f-823689a9cec73181"><h3><code>micron::math::median(C &amp;c) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L426">line 426</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[nodiscard]] inline typename C::value_type
+median(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>median(c.begin(), c.end())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[nodiscard]] inline typename C::value_type
+median(C &amp;c) noexcept
+{
+  return median(c.begin(), c.end());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>median(c.begin(), c.end())</code></td><td><a href="../../source/math/reduce.hpp.html#L428">line 428</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-a0dadab543a78a90">median</a>.</p></section><section class="function-entry" id="f-8967679461ff2b84"><h3><code>micron::math::quantile(C &amp;c, typename C::value_type q) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L434">line 434</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard]] inline typename C::value_type
+quantile(C &amp;c, typename C::value_type q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::value_type q</code></li></ul><h4>Effects</h4><p>Returns <code>quantile&lt;typename C::value_type&gt;(c.begin(), c.end(), q)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+  requires ieee754_floating&lt;typename C::value_type&gt;
+[[nodiscard]] inline typename C::value_type
+quantile(C &amp;c, typename C::value_type q) noexcept
+{
+  return quantile&lt;typename C::value_type&gt;(c.begin(), c.end(), q);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quantile&lt;typename C::value_type&gt;(c.begin(), c.end(), q)</code></td><td><a href="../../source/math/reduce.hpp.html#L436">line 436</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-b01e7c1ac9234347">quantile&lt;typename C::value_type&gt;</a>.</p></section><section class="function-entry" id="f-762e481aa966c4a7"><h3><code>micron::math::cumsum(const C &amp;in, C &amp;out) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L441">line 441</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[gnu::flatten]] inline void
+cumsum(const C &amp;in, C &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;in</code></li><li><code>C &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[gnu::flatten]] inline void
+cumsum(const C &amp;in, C &amp;out) noexcept
+{
+  cumsum(in.cbegin(), in.cend(), out.begin());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-05e98334f9d50423">cumsum</a>.</p></section><section class="function-entry" id="f-c81d75e533e8d2ac"><h3><code>micron::math::cumprod(const C &amp;in, C &amp;out) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L448">line 448</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+[[gnu::flatten]] inline void
+cumprod(const C &amp;in, C &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;in</code></li><li><code>C &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+[[gnu::flatten]] inline void
+cumprod(const C &amp;in, C &amp;out) noexcept
+{
+  cumprod(in.cbegin(), in.cend(), out.begin());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-721217e34cdce062">cumprod</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-25e799a6d594f00a"><h3><code>micron::math::__select::quickselect(T *lo, T *hi, T *k) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L204">line 204</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline constexpr void
+quickselect(T *lo, T *hi, T *k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *lo</code></li><li><code>T *hi</code></li><li><code>T *k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline constexpr void
+quickselect(T *lo, T *hi, T *k) noexcept
+{
+  while ( hi - lo &gt; 1 ) {
+    T *mid = lo + (hi - lo) / 2;
+    if ( *lo &gt; *mid ) {
+      T tmp = *lo;
+      *lo = *mid;
+      *mid = tmp;
+    }
+    if ( *mid &gt; *(hi - 1) ) {
+      T tmp = *mid;
+      *mid = *(hi - 1);
+      *(hi - 1) = tmp;
+    }
+    if ( *lo &gt; *mid ) {
+      T tmp = *lo;
+      *lo = *mid;
+      *mid = tmp;
+    }
+    const T pivot = *mid;
+    T *i = lo, *j = hi - 1;
+    while ( i &lt;= j ) {
+      while ( *i &lt; pivot ) ++i;
+      while ( *j &gt; pivot ) --j;
+      if ( i &lt;= j ) {
+        T tmp = *i;
+        *i = *j;
+        *j = tmp;
+        ++i;
+        --j;
+      }
+    }
+    if ( k &lt;= j )
+      hi = j + 1;
+    else if ( k &gt;= i )
+      lo = i;
+    else
+      return;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/math/reduce.hpp.html#L241">line 241</a></td></tr></tbody></table></section><section class="function-entry" id="f-4782798b864fe54d"><h3><code>micron::math::__mid2(T lo, T hi) noexcept</code></h3><p>Defined in <code>math/reduce.hpp</code>, <a href="../../source/math/reduce.hpp.html#L259">line 259</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T
+__mid2(T lo, T hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T lo</code></li><li><code>T hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T
+__mid2(T lo, T hi) noexcept
+{
+  if constexpr ( micron::is_integral_v&lt;T&gt; &amp;&amp; !micron::is_same_v&lt;T, bool&gt; ) {
+    using U = micron::make_unsigned_t&lt;T&gt;;
+    const U d = U(U(hi) - U(lo));
+    T m = static_cast&lt;T&gt;(U(U(lo) + U(d &gt;&gt; 1)));
+    if constexpr ( micron::is_signed_v&lt;T&gt; )
+      if ( (d &amp; U(1)) &amp;&amp; m &lt; T(0) ) m = T(m + T(1));      // truncate toward zero, as (lo + hi) / 2 does
+    return m;
+  } else
+    return T((lo + hi) / T(2));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/math/reduce.hpp.html#L267">line 267</a></td></tr><tr class="t-dsc"><td><code>T((lo + hi) / T(2))</code></td><td><a href="../../source/math/reduce.hpp.html#L269">line 269</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

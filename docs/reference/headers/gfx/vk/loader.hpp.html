@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/gfx/vk/loader.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/gfx/vk/loader.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/vulkan.html">Vulkan</a></div><p>Defined in header <code>&lt;micron/gfx/vk/loader.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/gfx/vk/loader.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-f823e2e9af2e8cba">micron::gfx::vk::vk_lib_t</code></td><td>struct; line 33</td></tr><tr class="t-dsc"><td><code id="s-3e3b5b80d1d993c8">micron::gfx::vk::vk_lib_t::host</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-dea07bb55d98c5cd">micron::gfx::vk::vk_lib_t::vkGetInstanceProcAddr</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-09f52950bf5ac3e3">micron::gfx::vk::subset</code></td><td>class; line 146</td></tr><tr class="t-dsc"><td><code id="s-4d7e499fd13e09d8">micron::gfx::vk::subset::count</code></td><td>member; line 151</td></tr><tr class="t-dsc"><td><code id="s-9f51c1ae715d9abd">micron::gfx::vk::subset::indices</code></td><td>member; line 152</td></tr><tr class="t-dsc"><td><a href="#f-b2d16e3a65743a39">micron::gfx::vk::vk_lib_t::vk_lib_t()</a></td><td>function; line 37</td></tr><tr class="t-dsc"><td><a href="#f-4ebe3645c6683337">micron::gfx::vk::vk_lib() noexcept(false)</a></td><td>function; line 47</td></tr><tr class="t-dsc"><td><a href="#f-a44cf14b4f38e82e">micron::gfx::vk::has_instance_extension(const char *name) noexcept</a></td><td>function; line 94</td></tr><tr class="t-dsc"><td><a href="#f-d303aba9846ee966">micron::gfx::vk::has_instance_layer(const char *name) noexcept</a></td><td>function; line 112</td></tr><tr class="t-dsc"><td><a href="#f-018b1457f6a2bca7">micron::gfx::vk::has_device_extension(VkPhysicalDevice pd, const char *name) noexcept</a></td><td>function; line 130</td></tr><tr class="t-dsc"><td><a href="#f-cc8818bd5774bbdc">micron::gfx::vk::subset::load_global() noexcept</a></td><td>function; line 155</td></tr><tr class="t-dsc"><td><a href="#f-5a1b9184a25309c3">micron::gfx::vk::subset::load_instance(VkInstance instance) noexcept</a></td><td>function; line 163</td></tr><tr class="t-dsc"><td><a href="#f-832995b76041b5e1">micron::gfx::vk::subset::load_device(VkDevice device) noexcept</a></td><td>function; line 171</td></tr><tr class="t-dsc"><td><a href="#f-28435fd4bdf92a46">micron::gfx::vk::subset::position_of() noexcept</a></td><td>function; line 180</td></tr><tr class="t-dsc"><td><a href="#f-53a42ca75cc6dea3">micron::gfx::vk::subset::raw() const noexcept</a></td><td>function; line 199</td></tr><tr class="t-dsc"><td><a href="#f-d10b2c2c9675f569">micron::gfx::vk::subset::as() const noexcept</a></td><td>function; line 206</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-b2d16e3a65743a39"><h3><code>micron::gfx::vk::vk_lib_t::vk_lib_t()</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L37">line 37</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>vk_lib_t() : host(&quot;libvulkan.so.1&quot;)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">vk_lib_t() : host(&quot;libvulkan.so.1&quot;)
+  {
+    vkGetInstanceProcAddr = host.sym_as&lt;PFN_vkGetInstanceProcAddr&gt;(&quot;vkGetInstanceProcAddr&quot;);
+    if ( !vkGetInstanceProcAddr ) {
+      throw except::library_error(&quot;vulkan: vkGetInstanceProcAddr missing in libvulkan.so.1&quot;);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw except::library_error(&quot;vulkan: vkGetInstanceProcAddr missing in libvulkan.so.1&quot;);</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L41">line 41</a><br>Within <code>( !vkGetInstanceProcAddr )</code></td></tr></tbody></table></section><section class="function-entry" id="f-4ebe3645c6683337"><h3><code>micron::gfx::vk::vk_lib() noexcept(false)</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L47">line 47</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline vk_lib_t &amp;
+vk_lib() noexcept(false)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline vk_lib_t &amp;
+vk_lib() noexcept(false)
+{
+  static vk_lib_t lib;
+  return lib;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lib</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L50">line 50</a></td></tr></tbody></table></section><section class="function-entry" id="f-a44cf14b4f38e82e"><h3><code>micron::gfx::vk::has_instance_extension(const char *name) noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L94">line 94</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+has_instance_extension(const char *name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+has_instance_extension(const char *name) noexcept
+{
+  if ( !name || !vkEnumerateInstanceExtensionProperties ) return false;
+  u32 n = 0;
+  if ( vkEnumerateInstanceExtensionProperties(nullptr, &amp;n, nullptr) != VK_SUCCESS ) return false;
+  if ( n == 0 ) return false;
+  constexpr u32 cap = 256;
+  if ( n &gt; cap ) n = cap;
+  VkExtensionProperties props[cap]{};
+  const VkResult r = vkEnumerateInstanceExtensionProperties(nullptr, &amp;n, props);
+  if ( r != VK_SUCCESS &amp;&amp; r != VK_INCOMPLETE ) return false;
+  for ( u32 i = 0; i &lt; n; ++i ) {
+    if ( micron::strcmp(props[i].extensionName, name) == 0 ) return true;
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L98">line 98</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L99">line 99</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vulkan.hpp.html#s-8e8dc46d8aa21392">vkEnumerateInstanceExtensionProperties</a>, <a href="../../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>.</p></section><section class="function-entry" id="f-d303aba9846ee966"><h3><code>micron::gfx::vk::has_instance_layer(const char *name) noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L112">line 112</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+has_instance_layer(const char *name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+has_instance_layer(const char *name) noexcept
+{
+  if ( !name || !vkEnumerateInstanceLayerProperties ) return false;
+  u32 n = 0;
+  if ( vkEnumerateInstanceLayerProperties(&amp;n, nullptr) != VK_SUCCESS ) return false;
+  if ( n == 0 ) return false;
+  constexpr u32 cap = 64;
+  if ( n &gt; cap ) n = cap;
+  VkLayerProperties props[cap]{};
+  const VkResult r = vkEnumerateInstanceLayerProperties(&amp;n, props);
+  if ( r != VK_SUCCESS &amp;&amp; r != VK_INCOMPLETE ) return false;
+  for ( u32 i = 0; i &lt; n; ++i ) {
+    if ( micron::strcmp(props[i].layerName, name) == 0 ) return true;
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L114">line 114</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L116">line 116</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L117">line 117</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L122">line 122</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L124">line 124</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L126">line 126</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vulkan.hpp.html#s-4d63e634f7b1bce3">vkEnumerateInstanceLayerProperties</a>, <a href="../../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>.</p></section><section class="function-entry" id="f-018b1457f6a2bca7"><h3><code>micron::gfx::vk::has_device_extension(VkPhysicalDevice pd, const char *name) noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L130">line 130</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+has_device_extension(VkPhysicalDevice pd, const char *name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>VkPhysicalDevice pd</code></li><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+has_device_extension(VkPhysicalDevice pd, const char *name) noexcept
+{
+  if ( !pd || !name || !vkEnumerateDeviceExtensionProperties ) return false;
+  u32 n = 0;
+  if ( vkEnumerateDeviceExtensionProperties(pd, nullptr, &amp;n, nullptr) != VK_SUCCESS ) return false;
+  if ( n == 0 ) return false;
+  constexpr u32 cap = 512;
+  if ( n &gt; cap ) n = cap;
+  VkExtensionProperties props[cap]{};
+  if ( vkEnumerateDeviceExtensionProperties(pd, nullptr, &amp;n, props) != VK_SUCCESS ) return false;
+  for ( u32 i = 0; i &lt; n; ++i ) {
+    if ( micron::strcmp(props[i].extensionName, name) == 0 ) return true;
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L132">line 132</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L134">line 134</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L143">line 143</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vulkan.hpp.html#s-62998f36f62d6548">vkEnumerateDeviceExtensionProperties</a>, <a href="../../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>.</p></section><section class="function-entry" id="f-cc8818bd5774bbdc"><h3><code>micron::gfx::vk::subset::load_global() noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L155">line 155</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  load_global() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  load_global() noexcept
+  {
+    auto get = vk_lib().vkGetInstanceProcAddr;
+    usize k = 0;
+    ((__fns[k++] = reinterpret_cast&lt;void *&gt;(get(VK_NULL_HANDLE, vk_table[Indices].name))), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-4ebe3645c6683337">vk_lib</a>, <a href="../../tuple.hpp.html#f-99a9c97e75a0ac48">get</a>.</p></section><section class="function-entry" id="f-5a1b9184a25309c3"><h3><code>micron::gfx::vk::subset::load_instance(VkInstance instance) noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L163">line 163</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  load_instance(VkInstance instance) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>VkInstance instance</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  load_instance(VkInstance instance) noexcept
+  {
+    auto get = vk_lib().vkGetInstanceProcAddr;
+    usize k = 0;
+    ((__fns[k++] = reinterpret_cast&lt;void *&gt;(get(instance, vk_table[Indices].name))), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-4ebe3645c6683337">vk_lib</a>, <a href="../../tuple.hpp.html#f-99a9c97e75a0ac48">get</a>.</p></section><section class="function-entry" id="f-832995b76041b5e1"><h3><code>micron::gfx::vk::subset::load_device(VkDevice device) noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L171">line 171</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  load_device(VkDevice device) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>VkDevice device</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  load_device(VkDevice device) noexcept
+  {
+    if ( !vkGetDeviceProcAddr ) return;
+    usize k = 0;
+    ((__fns[k++] = reinterpret_cast&lt;void *&gt;(vkGetDeviceProcAddr(device, vk_table[Indices].name))), ...);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/gfx/vk/loader.hpp.html#L173">line 173</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vulkan.hpp.html#s-a76b5b1492ea1cb7">vkGetDeviceProcAddr</a>.</p></section><section class="function-entry" id="f-28435fd4bdf92a46"><h3><code>micron::gfx::vk::subset::position_of() noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L180">line 180</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u16 Idx&gt;
+  static consteval usize
+  position_of() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u16 Idx&gt;
+  static consteval usize
+  position_of() noexcept
+  {
+    static_assert(((Idx == Indices) || ...), &quot;subset does not contain that index&quot;);
+    usize pos = 0;
+    bool found = false;
+    auto check = [&amp;](u16 idx) {
+      if ( !found ) {
+        if ( idx == Idx )
+          found = true;
+        else
+          ++pos;
+      }
+    };
+    ((check(Indices)), ...);
+    return pos;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L194">line 194</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(((Idx == Indices) || ...), &quot;subset does not contain that index&quot;);</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L182">line 182</a></td></tr></tbody></table></section><section class="function-entry" id="f-53a42ca75cc6dea3"><h3><code>micron::gfx::vk::subset::raw() const noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L199">line 199</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u16 Idx&gt;
+  void *
+  raw() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__fns[position_of&lt;Idx&gt;()]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u16 Idx&gt;
+  void *
+  raw() const noexcept
+  {
+    return __fns[position_of&lt;Idx&gt;()];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fns[position_of&lt;Idx&gt;()]</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L201">line 201</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-28435fd4bdf92a46">position_of&lt;Idx&gt;</a>.</p></section><section class="function-entry" id="f-d10b2c2c9675f569"><h3><code>micron::gfx::vk::subset::as() const noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L206">line 206</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u16 Idx, class Fn&gt;
+  Fn
+  as() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;Fn&gt;(raw&lt;Idx&gt;())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u16 Idx, class Fn&gt;
+  Fn
+  as() const noexcept
+  {
+    return reinterpret_cast&lt;Fn&gt;(raw&lt;Idx&gt;());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;Fn&gt;(raw&lt;Idx&gt;())</code></td><td><a href="../../../source/gfx/vk/loader.hpp.html#L208">line 208</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-53a42ca75cc6dea3">raw&lt;Idx&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-913bee4979da961f"><h3><code>micron::gfx::vk::__load_global() noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__load_global() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__load_global() noexcept
+{
+  auto get = vk_lib().vkGetInstanceProcAddr;
+  for ( usize i = 0; i &lt; vk_table_size; ++i ) {
+    if ( vk_table[i].dispatch_kind != 0 ) continue;
+    *__vk_fnptr_slots[i] = reinterpret_cast&lt;void *&gt;(get(VK_NULL_HANDLE, vk_table[i].name));
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-4ebe3645c6683337">vk_lib</a>, <a href="../../tuple.hpp.html#f-99a9c97e75a0ac48">get</a>.</p></section><section class="function-entry" id="f-ae5d74d02d7d2704"><h3><code>micron::gfx::vk::__load_instance_1_3(VkInstance instance) noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L68">line 68</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__load_instance_1_3(VkInstance instance) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>VkInstance instance</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__load_instance_1_3(VkInstance instance) noexcept
+{
+  __current_instance_for_loader = instance;
+  auto get = vk_lib().vkGetInstanceProcAddr;
+  for ( usize i = 0; i &lt; vk_table_size; ++i ) {
+    if ( vk_table[i].dispatch_kind != 1 ) continue;
+    *__vk_fnptr_slots[i] = reinterpret_cast&lt;void *&gt;(get(instance, vk_table[i].name));
+  }
+  if ( !vkGetDeviceProcAddr ) {
+    vkGetDeviceProcAddr = reinterpret_cast&lt;PFN_vkGetDeviceProcAddr&gt;(get(instance, &quot;vkGetDeviceProcAddr&quot;));
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-4ebe3645c6683337">vk_lib</a>, <a href="../../tuple.hpp.html#f-99a9c97e75a0ac48">get</a>.</p></section><section class="function-entry" id="f-0547555a07b1bdc4"><h3><code>micron::gfx::vk::__load_device_1_3(VkDevice device) noexcept</code></h3><p>Defined in <code>gfx/vk/loader.hpp</code>, <a href="../../../source/gfx/vk/loader.hpp.html#L83">line 83</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__load_device_1_3(VkDevice device) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>VkDevice device</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__load_device_1_3(VkDevice device) noexcept
+{
+  if ( !vkGetDeviceProcAddr ) return;      // should be populated by __load_instance_1_3
+  for ( usize i = 0; i &lt; vk_table_size; ++i ) {
+    if ( vk_table[i].dispatch_kind != 2 ) continue;
+    *__vk_fnptr_slots[i] = reinterpret_cast&lt;void *&gt;(vkGetDeviceProcAddr(device, vk_table[i].name));
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/gfx/vk/loader.hpp.html#L85">line 85</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vulkan.hpp.html#s-a76b5b1492ea1cb7">vkGetDeviceProcAddr</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,38 @@
+Attribution and license notices
+===============================
+
+Cppreference and MediaWiki visual material
+-----------------------------------------
+The layout is adapted from the Cppreference2 MediaWiki skin, as distributed by
+Peter Feicht's cppreference-doc offline package, revision 4f773b7
+(v20251201): https://github.com/PeterFeicht/cppreference-doc
+
+The files in assets/cppreference2/ originate in that checkout:
+
+* screen.css and images/ are from skins/cppreference2/; Checker-16x16.png is
+  from skins/common/images/.
+* site_modules.css is from tests/preprocess_cssless_data/site_modules.css.
+  Its font-face declarations were removed and image URLs were changed to use
+  local assets. The screen stylesheet and images are otherwise unmodified.
+* The generated HTML uses the structure of skins/Cppreference2.php and the
+  package's rendered HTML fixtures, with changes for static offline use.
+
+The offline package includes the GNU GPL version 3 in
+cppreference-doc-gpl-3.0.txt. MediaWiki is distributed under the GNU GPL
+version 2 or later; the version 2 text is in mediawiki-gpl-2.0.txt. Skin and
+site assets can have their own notices and terms; the upstream source and its
+notices should be retained when redistributing or modifying them.
+
+Cppreference documentation content is licensed under CC BY-SA 3.0 Unported
+and the GNU Free Documentation License, as described at
+https://en.cppreference.com/Cppreference:Copyrights . A copy of CC BY-SA 3.0
+is included in cc-by-sa-3.0.txt. The micron-specific prose in this reference
+was written for micron; the supplied cppreference prose was not copied.
+
+Micron material
+---------------
+The API declarations, source-equivalent definitions, complete source snapshots,
+and examples describe or reproduce micron source code distributed
+under the licenses and copyright notices in that source. The Boost Software
+License 1.0 is included in micron-boost-1.0.txt. Other components retain their
+own notices; see their source headers and the project license information.

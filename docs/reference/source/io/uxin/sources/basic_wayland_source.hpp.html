@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>io/uxin/sources/basic_wayland_source.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../../headers/index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">io/uxin/sources/basic_wayland_source.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../../headers/io/uxin/sources/basic_wayland_source.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../../except.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;../../../gfx/platform/display.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../../../gfx/platform/wayland.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../../../linux/io/sys.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;../../../linux/sys/event_codes.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;../../../linux/sys/input.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #include &quot;../../../memory/mman.hpp&quot;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../../../memory/mmap_bits.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> </span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../wayland_seat.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> </span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../../../errno.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;../../../vector.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> </span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> namespace micron</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> {</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> namespace uxin</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> {</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> </span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> template&lt;typename Decoder&gt; class basic_wayland_source</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> {</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>   static void</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>   __on_global(void *data, gfx::platform::wl_registry *registry, u32 name, const char *interface, u32 version) noexcept</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   {</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>     auto streq = [](const char *a, const char *b) {</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>       while ( *a &amp;&amp; *a == *b ) {</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>         ++a;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>         ++b;</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>       }</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>       return *a == 0 &amp;&amp; *b == 0;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>     };</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>     if ( self-&gt;on_global ) self-&gt;on_global(self-&gt;user, registry, name, interface, version);</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>     if ( streq(interface, &quot;wl_seat&quot;) &amp;&amp; !self-&gt;__seat ) {</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>       const u32 use_ver = version &lt; 7 ? version : 7u;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>       void *p = self-&gt;__lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(registry), 0 /*wl_registry.bind*/,</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>                                                     &amp;__wl_seat_interface, use_ver, 0, name, &quot;wl_seat&quot;, use_ver, nullptr);</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>       self-&gt;__seat = reinterpret_cast&lt;gfx::platform::wl_seat *&gt;(p);</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>       self-&gt;__seat_version = use_ver;</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>       self-&gt;seat_name_ = name;</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> </span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>       static wl_seat_listener_t listener{ &amp;__on_seat_capabilities, &amp;__on_seat_name };</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>       self-&gt;__lib-&gt;wl_proxy_add_listener(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;__seat),</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>                                          reinterpret_cast&lt;void (**)(void)&gt;(&amp;listener), self);</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>     }</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   }</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> </span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   static void</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>   __on_global_remove(void *data, gfx::platform::wl_registry *, u32 name) noexcept</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   {</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>     if ( name == self-&gt;seat_name_ ) {</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>       self-&gt;drop_keyboard();</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>       self-&gt;drop_pointer();</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>       if ( self-&gt;__seat ) {</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>         if ( self-&gt;__seat_version &lt; 5 )</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>           self-&gt;__lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;__seat));</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>         else</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>           self-&gt;__lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;__seat), wl_seat_ops::wl_seat_release,</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>                                               nullptr, self-&gt;__seat_version, 1);</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>       }</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>       self-&gt;__seat = nullptr;</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>       self-&gt;error_ = -error::no_device;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>     }</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     if ( self-&gt;on_global_remove ) self-&gt;on_global_remove(self-&gt;user, name);</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   }</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> </span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>   static void</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>   __on_seat_capabilities(void *data, gfx::platform::wl_seat *seat, u32 caps) noexcept</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>   {</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>     if ( !(caps &amp; wl_seat_capability_pointer) ) self-&gt;drop_pointer();</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>     if ( !(caps &amp; wl_seat_capability_keyboard) ) self-&gt;drop_keyboard();</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>     if ( (caps &amp; wl_seat_capability_pointer) &amp;&amp; !self-&gt;pointer_ ) {</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>       void *p = self-&gt;__lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(seat), wl_seat_ops::wl_seat_get_pointer,</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>                                                     &amp;__wl_pointer_interface, self-&gt;__seat_version, 0, nullptr);</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>       self-&gt;pointer_ = reinterpret_cast&lt;gfx::platform::wl_pointer *&gt;(p);</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>       static wl_pointer_listener_t plistener{</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>         &amp;__on_p_enter,       &amp;__on_p_leave,     &amp;__on_p_motion,        &amp;__on_p_button,    &amp;__on_p_axis,         &amp;__on_p_frame,</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>         &amp;__on_p_axis_source, &amp;__on_p_axis_stop, &amp;__on_p_axis_discrete, &amp;__on_p_axis_v120, &amp;__on_p_axis_rel_dir,</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>       };</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>       self-&gt;__lib-&gt;wl_proxy_add_listener(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;pointer_),</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>                                          reinterpret_cast&lt;void (**)(void)&gt;(&amp;plistener), self);</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>     }</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>     if ( (caps &amp; wl_seat_capability_keyboard) &amp;&amp; !self-&gt;keyboard_ ) {</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>       void *p = self-&gt;__lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(seat), wl_seat_ops::wl_seat_get_keyboard,</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>                                                     &amp;__wl_keyboard_interface, self-&gt;__seat_version, 0, nullptr);</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>       self-&gt;keyboard_ = reinterpret_cast&lt;gfx::platform::wl_keyboard *&gt;(p);</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>       static wl_keyboard_listener_t klistener{</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>         &amp;__on_k_keymap, &amp;__on_k_enter, &amp;__on_k_leave, &amp;__on_k_key, &amp;__on_k_modifiers, &amp;__on_k_repeat_info,</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>       };</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>       self-&gt;__lib-&gt;wl_proxy_add_listener(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(self-&gt;keyboard_),</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>                                          reinterpret_cast&lt;void (**)(void)&gt;(&amp;klistener), self);</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>     }</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   }</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> </span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   static void</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   __on_seat_name(void *, gfx::platform::wl_seat *, const char *) noexcept</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   {</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   }</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> </span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>   // pointer callbacks</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   static void</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   __on_p_enter(void *data, gfx::platform::wl_pointer *pointer, u32 serial, gfx::platform::wl_surface *surface, i32 x, i32 y) noexcept</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   {</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     self-&gt;__pointer_inside = !self-&gt;__surface || self-&gt;__surface == surface;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>     if ( self-&gt;on_serial ) self-&gt;on_serial(self-&gt;user, serial);</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>     if ( self-&gt;on_pointer_focus ) self-&gt;on_pointer_focus(self-&gt;user, self-&gt;__pointer_inside);</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>     if ( self-&gt;__pointer_inside ) __on_p_motion(data, pointer, 0, x, y);</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>   }</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> </span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>   static void</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>   __on_p_leave(void *data, gfx::platform::wl_pointer *, u32, gfx::platform::wl_surface *) noexcept</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>   {</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     self-&gt;__pointer_inside = false;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     if ( self-&gt;on_pointer_focus ) self-&gt;on_pointer_focus(self-&gt;user, false);</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>   }</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> </span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>   static void</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>   __on_p_motion(void *data, gfx::platform::wl_pointer *, u32 time, i32 sx_fixed, i32 sy_fixed) noexcept</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   {</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>     if ( !self-&gt;__pointer_inside ) return;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>     if ( self-&gt;on_position ) self-&gt;on_position(self-&gt;user, float(sx_fixed) / 256.f, float(sy_fixed) / 256.f);</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     if ( !self-&gt;on_motion ) return;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>     input_event ev{};</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     ev.time.tv_sec = static_cast&lt;long&gt;(time / 1000);</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     ev.time.tv_usec = static_cast&lt;long&gt;((time % 1000) * 1000);</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>     ev.type = ev_rel;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>     ev.code = rel_x;</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     ev.value = sx_fixed &gt;&gt; 8;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>     self-&gt;on_motion(self-&gt;user, ev);</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>     ev.code = rel_y;</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>     ev.value = sy_fixed &gt;&gt; 8;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>     self-&gt;on_motion(self-&gt;user, ev);</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>   }</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> </span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>   static void</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>   __on_p_button(void *data, gfx::platform::wl_pointer *, u32 serial, u32 time, u32 button, u32 state) noexcept</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>   {</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>     if ( !self-&gt;__pointer_inside ) return;</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>     if ( self-&gt;on_serial ) self-&gt;on_serial(self-&gt;user, serial);</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>     if ( !self-&gt;on_button ) return;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     input_event ev{};</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     ev.time.tv_sec = static_cast&lt;long&gt;(time / 1000);</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     ev.time.tv_usec = static_cast&lt;long&gt;((time % 1000) * 1000);</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>     ev.type = ev_key;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>     ev.code = static_cast&lt;u16&gt;(button);      // Wayland button codes match BTN_*</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>     ev.value = (state == wl_pointer_button_state_pressed) ? 1 : 0;</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     self-&gt;on_button(self-&gt;user, ev);</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>   }</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a> </span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>   static void</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>   __on_p_axis(void *data, gfx::platform::wl_pointer *, u32 time, u32 axis, i32 value_fixed) noexcept</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>   {</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>     if ( !self-&gt;__pointer_inside ) return;</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>     if ( self-&gt;on_scroll ) self-&gt;on_scroll(self-&gt;user, axis, float(value_fixed) / 256.f);</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     if ( !self-&gt;on_axis ) return;</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>     input_event ev{};</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>     ev.time.tv_sec = static_cast&lt;long&gt;(time / 1000);</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>     ev.time.tv_usec = static_cast&lt;long&gt;((time % 1000) * 1000);</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>     ev.type = ev_rel;</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>     ev.code = static_cast&lt;u16&gt;((axis == 0) ? rel_wheel : rel_hwheel);</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     ev.value = value_fixed &gt;&gt; 8;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>     self-&gt;on_axis(self-&gt;user, ev);</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>   }</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> </span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>   static void</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>   __on_p_frame(void *, gfx::platform::wl_pointer *) noexcept</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>   {</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>   }</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> </span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   static void</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   __on_p_axis_source(void *, gfx::platform::wl_pointer *, u32) noexcept</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>   {</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>   }</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a> </span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>   static void</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   __on_p_axis_stop(void *, gfx::platform::wl_pointer *, u32, u32) noexcept</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>   {</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   }</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a> </span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>   static void</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   __on_p_axis_discrete(void *, gfx::platform::wl_pointer *, u32, i32) noexcept</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>   {</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>   }</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a> </span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>   static void</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>   __on_p_axis_v120(void *, gfx::platform::wl_pointer *, u32, i32) noexcept</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>   {</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>   }</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> </span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   static void</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>   __on_p_axis_rel_dir(void *, gfx::platform::wl_pointer *, u32, u32) noexcept</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>   {</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>   }</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> </span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   // keyboard callbacks</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>   static void</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>   __on_k_keymap(void *data, gfx::platform::wl_keyboard *, u32 format, i32 fd, u32 size) noexcept</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   {</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>     if ( !self-&gt;__xkb_available || fd &lt; 0 || size == 0 || size &gt; 4 * 1024 * 1024 || format != 1u ) {</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>       if ( fd &gt;= 0 ) posix::close(fd);</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>       self-&gt;__keymap.reset();</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>       self-&gt;error_ = size &gt; 4 * 1024 * 1024 ? -error::message_too_long : -error::op_not_supported;</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>       return;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>     }</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>     // An owned read also makes truncated/raced descriptors an error rather than a SIGBUS mapping fault.</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>     try {</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>       micron::vector&lt;char&gt; bytes;</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>       bytes.resize(size);</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>       usize done = 0;</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>       self-&gt;error_ = 0;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>       while ( done &lt; size ) {</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>         const auto count = posix::pread(fd, bytes.data() + done, size - done, static_cast&lt;posix::off64_t&gt;(done));</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>         if ( count == -error::interrupted ) continue;</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>         if ( count &lt;= 0 ) {</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>           self-&gt;error_ = count &lt; 0 ? static_cast&lt;i32&gt;(count) : -error::io_error;</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>           break;</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>         }</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>         done += static_cast&lt;usize&gt;(count);</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>       }</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>       if ( !self-&gt;error_ ) self-&gt;error_ = self-&gt;__keymap.load_map({ bytes.data(), bytes.size() });</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>     } catch ( ... ) {</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>       self-&gt;error_ = -error::out_of_memory;</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>     }</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>     if ( self-&gt;error_ ) self-&gt;__keymap.reset();</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>     posix::close(fd);</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   }</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a> </span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>   static void</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>   __on_k_enter(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *surface, void *) noexcept</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>   {</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>     self-&gt;__keyboard_inside = !self-&gt;__surface || self-&gt;__surface == surface;</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>     if ( self-&gt;on_keyboard_focus ) self-&gt;on_keyboard_focus(self-&gt;user, self-&gt;__keyboard_inside);</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>   }</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a> </span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>   static void</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>   __on_k_leave(void *data, gfx::platform::wl_keyboard *, u32, gfx::platform::wl_surface *) noexcept</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>   {</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>     self-&gt;__keyboard_inside = false;</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>     if ( self-&gt;on_keyboard_focus ) self-&gt;on_keyboard_focus(self-&gt;user, false);</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>   }</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> </span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>   static void</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>   __on_k_key(void *data, gfx::platform::wl_keyboard *, u32 serial, u32 time, u32 key, u32 state) noexcept</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>   {</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>     const bool pressed = (state == wl_keyboard_key_state_pressed);</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>     if ( !self-&gt;__keyboard_inside ) return;</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>     if ( self-&gt;on_serial ) self-&gt;on_serial(self-&gt;user, serial);</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a> </span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>     if ( self-&gt;on_key ) {</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>       input_event ev{};</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>       ev.time.tv_sec = static_cast&lt;long&gt;(time / 1000);</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a>       ev.time.tv_usec = static_cast&lt;long&gt;((time % 1000) * 1000);</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>       ev.type = ev_key;</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>       ev.code = static_cast&lt;u16&gt;(key);</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>       ev.value = pressed ? 1 : 0;</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>       self-&gt;on_key(self-&gt;user, ev);</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>     }</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> </span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>     if ( self-&gt;__keymap.valid() ) {</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>       self-&gt;__keymap.update_key(key, pressed);</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>       if ( self-&gt;on_keysym ) {</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>         u32 sym = self-&gt;__keymap.translate_key(key);</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>         u32 utf32 = self-&gt;__keymap.translate_utf32(key);</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a>         self-&gt;on_keysym(self-&gt;user, key, sym, utf32, pressed);</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>       }</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>     }</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>   }</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a> </span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>   static void</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a>   __on_k_modifiers(void *data, gfx::platform::wl_keyboard *, u32, u32 depressed, u32 latched, u32 locked, u32 group) noexcept</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>   {</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>     if ( self-&gt;__keymap.valid() ) self-&gt;__keymap.update_mods(depressed, latched, locked, group);</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>     if ( self-&gt;on_modifiers ) self-&gt;on_modifiers(self-&gt;user, depressed, latched, locked, group);</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a>   }</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a> </span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>   static void</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>   __on_k_repeat_info(void *data, gfx::platform::wl_keyboard *, i32 rate, i32 delay) noexcept</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>   {</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>     auto *self = static_cast&lt;basic_wayland_source *&gt;(data);</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>     if ( self-&gt;on_repeat ) self-&gt;on_repeat(self-&gt;user, rate, delay);</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>   }</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> </span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>   gfx::platform::wayland_display_t *__dpy = nullptr;</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>   gfx::platform::wayland_lib_t *__lib = nullptr;</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>   gfx::platform::wl_seat *__seat = nullptr;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a>   gfx::platform::wl_registry *__registry = nullptr;</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a>   gfx::platform::wl_surface *__surface = nullptr;</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a>   bool __pointer_inside = false;</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a>   bool __keyboard_inside = false;</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a>   gfx::platform::wl_pointer *pointer_ = nullptr;</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a>   gfx::platform::wl_keyboard *keyboard_ = nullptr;</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a>   u32 __seat_version = 0;</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a>   u32 seat_name_ = ~0u;</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a>   bool __xkb_available = false;</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a>   Decoder __keymap;</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>   i32 error_ = 0;</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a> </span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>   void</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>   drop_keyboard() noexcept</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>   {</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>     if ( !keyboard_ ) return;</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>     if ( __seat_version &lt; 3 )</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>       __lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(keyboard_));</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>     else</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a>       __lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(keyboard_), wl_seat_ops::wl_keyboard_release, nullptr,</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>                                     __seat_version, 1);</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a>     keyboard_ = nullptr;</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>     __keyboard_inside = false;</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>     __keymap.reset();</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>     if ( on_keyboard_focus ) on_keyboard_focus(user, false);</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>     if ( on_repeat ) on_repeat(user, 0, 0);</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>   }</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a> </span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>   void</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>   drop_pointer() noexcept</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>   {</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>     if ( !pointer_ ) return;</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>     if ( __seat_version &lt; 3 )</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>       __lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(pointer_));</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>     else</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>       __lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(pointer_), wl_seat_ops::wl_pointer_release, nullptr,</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>                                     __seat_version, 1);</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>     pointer_ = nullptr;</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>     __pointer_inside = false;</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>     if ( on_pointer_focus ) on_pointer_focus(user, false);</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a>   }</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a> </span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a> public:</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>   ~basic_wayland_source() { release(); }</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a> </span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>   basic_wayland_source() = default;</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a>   basic_wayland_source(const basic_wayland_source &amp;) = delete;</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>   basic_wayland_source &amp;operator=(const basic_wayland_source &amp;) = delete;</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a> </span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>   // NOTE: in terminal sessions that are run by a different user than host, this will fail, without reconfig</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>   void</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>   bind(gfx::platform::display &amp;dpy, gfx::platform::wl_surface *surface = nullptr, bool synchronous = true)</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>   {</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>     if ( dpy.backend() != gfx::platform::backend_tag_t::wayland ) {</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a>       exc&lt;except::logic_error&gt;(&quot;basic_wayland_source: gfx::platform::display is not Wayland&quot;);</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>     }</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a>     __dpy = dpy.as_wayland();</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>     if ( !__dpy || !__dpy-&gt;lib() ) exc&lt;except::logic_error&gt;(&quot;basic_wayland_source: wayland_display_t missing&quot;);</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a>     __lib = __dpy-&gt;lib();</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>     __surface = surface;</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a>     __registry = __lib-&gt;wl_display_get_registry(__dpy-&gt;display());</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>     if ( !__registry ) exc&lt;except::library_error&gt;(&quot;basic_wayland_source: registry unavailable&quot;);</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a> </span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>     static gfx::platform::wl_registry_listener_t reg_listener{ &amp;__on_global, &amp;__on_global_remove };</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>     __lib-&gt;wl_proxy_add_listener(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(__registry), reinterpret_cast&lt;void (**)(void)&gt;(&amp;reg_listener),</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>                                  this);</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a>     __xkb_available = __keymap.prepare();</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a>     if ( synchronous ) {</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a>       __lib-&gt;wl_display_roundtrip(__dpy-&gt;display());</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a>       __lib-&gt;wl_display_roundtrip(__dpy-&gt;display());</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>       if ( !__seat ) exc&lt;except::library_error&gt;(&quot;wayland_source: compositor advertises no input&quot;);</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>     }</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>   }</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a> </span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>   // raw evdev key event</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>   void (*on_key)(void *user, const input_event &amp;ev) = nullptr;</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>   // pointer button event</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a>   void (*on_button)(void *user, const input_event &amp;ev) = nullptr;</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>   // pointer motion</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>   void (*on_motion)(void *user, const input_event &amp;ev) = nullptr;</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>   // scroll wheel</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>   void (*on_axis)(void *user, const input_event &amp;ev) = nullptr;</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a>   // xkbcommon keysym</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>   void (*on_keysym)(void *user, u32 evdev_code, u32 keysym, u32 utf32, bool pressed) = nullptr;</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>   void *user = nullptr;</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>   void (*on_global)(void *, gfx::platform::wl_registry *, u32, const char *, u32) = nullptr;</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>   void (*on_global_remove)(void *, u32) = nullptr;</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>   void (*on_modifiers)(void *, u32, u32, u32, u32) = nullptr;</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a>   void (*on_pointer_focus)(void *, bool) = nullptr;</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>   void (*on_keyboard_focus)(void *, bool) = nullptr;</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a>   void (*on_position)(void *, float, float) = nullptr;</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a>   void (*on_scroll)(void *, u32, float) = nullptr;</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>   void (*on_repeat)(void *, i32, i32) = nullptr;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a>   void (*on_serial)(void *, u32) = nullptr;</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a> </span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a>   bool</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>   xkb_available() const noexcept</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>   {</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>     return __xkb_available &amp;&amp; __keymap.valid();</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>   }</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a> </span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>   void</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a>   poll() noexcept</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a>   {</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>     if ( __dpy ) __dpy-&gt;dispatch_pending();</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>   }</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a> </span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>   void</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>   release() noexcept</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>   {</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>     if ( !__lib ) return;</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>     drop_keyboard();</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>     drop_pointer();</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a>     if ( __seat ) {</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a>       if ( __seat_version &lt; 5 )</span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a>         __lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(__seat));</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>       else</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>         __lib-&gt;wl_proxy_marshal_flags(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(__seat), wl_seat_ops::wl_seat_release, nullptr,</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>                                       __seat_version, 1);</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>       __seat = nullptr;</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>     }</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>     if ( __registry ) __lib-&gt;wl_proxy_destroy(reinterpret_cast&lt;gfx::platform::wl_proxy *&gt;(__registry));</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>     __registry = nullptr;</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>     __lib = nullptr;</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>     __keymap.reset();</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>     __dpy = nullptr;</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>     __surface = nullptr;</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>     __pointer_inside = __keyboard_inside = false;</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a>   }</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a> </span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>   Decoder &amp;</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>   decoder() noexcept</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a>   {</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a>     return __keymap;</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a>   }</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a> </span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>   const Decoder &amp;</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>   decoder() const noexcept</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>   {</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>     return __keymap;</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>   }</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a> </span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>   i32</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>   take_error() noexcept</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>   {</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>     const auto result = error_;</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a>     error_ = 0;</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>     return result;</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a>   }</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a> </span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>   gfx::platform::wl_seat *</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>   seat() const noexcept</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>   {</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>     return __seat;</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a>   }</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a> };</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a> </span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a> };      // namespace uxin</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

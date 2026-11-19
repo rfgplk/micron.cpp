@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/bits/__thread_exit_hook.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/bits/__thread_exit_hook.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/bits/__thread_exit_hook.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/bits/__thread_exit_hook.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-e3f8dca3e5676444">MICRON_TDTOR_CAP</code></td><td>macro; line 51<br><small><code>#elif defined(__micron_attach_capable) || defined(__micron_freestanding)</code><br><code>#ifndef MICRON_TDTOR_CAP</code></small></td></tr></tbody></table><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-fa9a685c33743464"><h3><code>micron::__push_thread_dtor(void (*dtor)(void *), void *obj) noexcept</code></h3><p>Defined in <code>bits/__thread_exit_hook.hpp</code>, <a href="../../source/bits/__thread_exit_hook.hpp.html#L31">line 31</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__push_thread_dtor(void (*dtor)(void *), void *obj) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void (*dtor)(void *)</code></li><li><code>void *obj</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__push_thread_dtor(void (*dtor)(void *), void *obj) noexcept
+{
+  if ( __micron_attach_thread_atexit == nullptr ) return false;
+  return __micron_attach_thread_atexit(dtor, obj) == 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/bits/__thread_exit_hook.hpp.html#L33">line 33</a></td></tr><tr class="t-dsc"><td><code>__micron_attach_thread_atexit(dtor, obj) == 0</code></td><td><a href="../../source/bits/__thread_exit_hook.hpp.html#L34">line 34</a></td></tr></tbody></table></section><section class="function-entry" id="f-b5b82ee89d36a3e6"><h3><code>micron::__run_thread_dtors() noexcept</code></h3><p>Defined in <code>bits/__thread_exit_hook.hpp</code>, <a href="../../source/bits/__thread_exit_hook.hpp.html#L38">line 38</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__run_thread_dtors() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ATTACH_MODULE)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__run_thread_dtors() noexcept
+{
+  if ( __micron_attach_run_thread_dtors ) __micron_attach_run_thread_dtors();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3f6640716fb3de47"><h3><code>micron::__push_thread_dtor(void (*dtor)(void *), void *obj) noexcept</code></h3><p>Defined in <code>bits/__thread_exit_hook.hpp</code>, <a href="../../source/bits/__thread_exit_hook.hpp.html#L64">line 64</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__push_thread_dtor(void (*dtor)(void *), void *obj) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_attach_capable) || defined(__micron_freestanding)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void (*dtor)(void *)</code></li><li><code>void *obj</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__push_thread_dtor(void (*dtor)(void *), void *obj) noexcept
+{
+  if ( __tdtor_n &gt;= __tdtor_cap ) {
+    __atomic_fetch_add(&amp;__tdtor_dropped, 1u, __ATOMIC_RELAXED);
+    return false;
+  }
+  __tdtors[__tdtor_n].dtor = dtor;
+  __tdtors[__tdtor_n].obj = obj;
+  ++__tdtor_n;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/bits/__thread_exit_hook.hpp.html#L68">line 68</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/bits/__thread_exit_hook.hpp.html#L73">line 73</a></td></tr></tbody></table></section><section class="function-entry" id="f-3ac3d8db1034a126"><h3><code>micron::__run_thread_dtors() noexcept</code></h3><p>Defined in <code>bits/__thread_exit_hook.hpp</code>, <a href="../../source/bits/__thread_exit_hook.hpp.html#L78">line 78</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__run_thread_dtors() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_attach_capable) || defined(__micron_freestanding)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__run_thread_dtors() noexcept
+{
+  while ( __tdtor_n ) {
+    --__tdtor_n;
+    __tdtor_node e = __tdtors[__tdtor_n];
+    if ( e.dtor ) e.dtor(e.obj);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f606f11c17b8cee4"><h3><code>micron::__attach_thread_atexit(void (*dtor)(void *), void *obj) noexcept</code></h3><p>Defined in <code>bits/__thread_exit_hook.hpp</code>, <a href="../../source/bits/__thread_exit_hook.hpp.html#L90">line 90</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+__attach_thread_atexit(void (*dtor)(void *), void *obj) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_attach_capable) || defined(__micron_freestanding)
+#if defined(__micron_attach_capable)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void (*dtor)(void *)</code></li><li><code>void *obj</code></li></ul><h4>Effects</h4><p>Returns <code>__push_thread_dtor(dtor, obj) ? 0 : -1</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+__attach_thread_atexit(void (*dtor)(void *), void *obj) noexcept
+{
+  return __push_thread_dtor(dtor, obj) ? 0 : -1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__push_thread_dtor(dtor, obj) ? 0 : -1</code></td><td><a href="../../source/bits/__thread_exit_hook.hpp.html#L92">line 92</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__thread_exit_hook.hpp.html#f-fa9a685c33743464">__push_thread_dtor</a>.</p></section><section class="function-entry" id="f-0c940663aad6d709"><h3><code>micron::__attach_run_thread_dtors() noexcept</code></h3><p>Defined in <code>bits/__thread_exit_hook.hpp</code>, <a href="../../source/bits/__thread_exit_hook.hpp.html#L96">line 96</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__attach_run_thread_dtors() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_attach_capable) || defined(__micron_freestanding)
+#if defined(__micron_attach_capable)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__attach_run_thread_dtors() noexcept
+{
+  __run_thread_dtors();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__thread_exit_hook.hpp.html#f-b5b82ee89d36a3e6">__run_thread_dtors</a>.</p></section><section class="function-entry" id="f-a52ac85c5de00929"><h3><code>micron::__run_thread_dtors() noexcept</code></h3><p>Defined in <code>bits/__thread_exit_hook.hpp</code>, <a href="../../source/bits/__thread_exit_hook.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+__run_thread_dtors() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_ATTACH_MODULE)</pre><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+__run_thread_dtors() noexcept
+{
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-685d026463e391b4"><h3><code>micron::__micron_park_checkpoint() noexcept</code></h3><p>Defined in <code>bits/__thread_exit_hook.hpp</code>, <a href="../../source/bits/__thread_exit_hook.hpp.html#L126">line 126</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+__micron_park_checkpoint() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+__micron_park_checkpoint() noexcept
+{
+  u32 *p = __micron_thread_park;
+  if ( p == nullptr ) return;
+  u32 v = __atomic_load_n(p, __ATOMIC_ACQUIRE);
+  while ( v == __park_parked ) {
+    // NOTE: deliberately the RAW syscall, not micron::__futex, abcmalloc pulls this in
+#if defined(__micron_arch_wasm32)
+    (void)wasm::wait32(p, __park_parked);
+#else
+    micron::syscall(SYS_futex, p, 128 /*FUTEX_WAIT|FUTEX_PRIVATE_FLAG*/, __park_parked, nullptr, nullptr, 0);
+#endif
+    v = __atomic_load_n(p, __ATOMIC_ACQUIRE);
+  }
+  if ( v == __park_dying &amp;&amp; __micron_thread_die ) __micron_thread_die();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__thread_exit_hook.hpp.html#L129">line 129</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="wasm/runtime.hpp.html#f-6a47fcf00668d5d3">wasm::wait32</a>, <a href="../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

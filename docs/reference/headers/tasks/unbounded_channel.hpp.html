@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/unbounded_channel.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/unbounded_channel.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/unbounded_channel.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/tasks/unbounded_channel.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-1d8f4289d347becd">micron::unbounded_channel</code></td><td>class; line 23</td></tr><tr class="t-dsc"><td><a href="#f-c6eafc1049c6c5f6">micron::unbounded_channel::unbounded_channel()</a></td><td>function; line 53</td></tr><tr class="t-dsc"><td><a href="#f-b15e67cbb0956018">micron::unbounded_channel::unbounded_channel(const unbounded_channel &amp;)</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-9b158c37c6ebc432">micron::unbounded_channel::operator=(const unbounded_channel &amp;)</a></td><td>function; line 55</td></tr><tr class="t-dsc"><td><a href="#f-8f90cf4221386502">micron::unbounded_channel::~unbounded_channel()</a></td><td>function; line 57</td></tr><tr class="t-dsc"><td><a href="#f-05d419753b02ce33">micron::unbounded_channel::push(T __v)</a></td><td>function; line 67</td></tr><tr class="t-dsc"><td><a href="#f-d72694eb8028d15d">micron::unbounded_channel::pull()</a></td><td>function; line 83</td></tr><tr class="t-dsc"><td><a href="#f-2d692671daa969c3">micron::unbounded_channel::try_pull(T &amp;__out) noexcept</a></td><td>function; line 102</td></tr><tr class="t-dsc"><td><a href="#f-2326cf540553766f">micron::unbounded_channel::close() noexcept</a></td><td>function; line 121</td></tr><tr class="t-dsc"><td><a href="#f-d4b6b5ec4b9ff3cb">micron::unbounded_channel::is_closed() const noexcept</a></td><td>function; line 128</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-c6eafc1049c6c5f6"><h3><code>micron::unbounded_channel::unbounded_channel()</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>unbounded_channel() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-b15e67cbb0956018"><h3><code>micron::unbounded_channel::unbounded_channel(const unbounded_channel &amp;)</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>unbounded_channel(const unbounded_channel &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const unbounded_channel &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-9b158c37c6ebc432"><h3><code>micron::unbounded_channel::operator=(const unbounded_channel &amp;)</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>unbounded_channel &amp;operator=(const unbounded_channel &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const unbounded_channel &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-8f90cf4221386502"><h3><code>micron::unbounded_channel::~unbounded_channel()</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L57">line 57</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~unbounded_channel()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~unbounded_channel()
+  {
+    for ( __node *__n = __head; __n != nullptr; ) {
+      __node *__nx = __n-&gt;__next;
+      delete __n;
+      __n = __nx;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-05d419753b02ce33"><h3><code>micron::unbounded_channel::push(T __v)</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L67">line 67</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  push(T __v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T __v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  push(T __v)
+  {
+    if ( __closed.get(memory_order_acquire) ) return false;
+    __node *__n = new __node{ micron::move(__v), nullptr };
+    __lock();
+    if ( __tail != nullptr )
+      __tail-&gt;__next = __n;
+    else
+      __head = __n;
+    __tail = __n;
+    __unlock();
+    __items.release();
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/tasks/unbounded_channel.hpp.html#L69">line 69</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/tasks/unbounded_channel.hpp.html#L79">line 79</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="unbounded_channel.hpp.html#f-e913b90faade1ab2">__lock</a>, <a href="unbounded_channel.hpp.html#f-aae3620796959258">__unlock</a>.</p></section><section class="function-entry" id="f-d72694eb8028d15d"><h3><code>micron::unbounded_channel::pull()</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>micron::task&lt;chan_pull&lt;T&gt;&gt;
+  pull()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">micron::task&lt;chan_pull&lt;T&gt;&gt;
+  pull()
+  {
+    co_await __items.acquire();
+    __lock();
+    __node *__n = __head;
+    if ( __n != nullptr ) {
+      __head = __n-&gt;__next;
+      if ( __head == nullptr ) __tail = nullptr;
+    }
+    __unlock();
+    if ( __n != nullptr ) {
+      T __v = micron::move(__n-&gt;__val);
+      delete __n;
+      co_return chan_pull&lt;T&gt;{ true, micron::move(__v) };
+    }
+    co_return chan_pull&lt;T&gt;{ false, T{} };      // empty -&gt; closed &amp; drained
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="unbounded_channel.hpp.html#f-e913b90faade1ab2">__lock</a>, <a href="unbounded_channel.hpp.html#f-aae3620796959258">__unlock</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-2d692671daa969c3"><h3><code>micron::unbounded_channel::try_pull(T &amp;__out) noexcept</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L102">line 102</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>chan_status
+  try_pull(T &amp;__out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;__out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">chan_status
+  try_pull(T &amp;__out) noexcept
+  {
+    if ( !__items.try_acquire() &amp;&amp; !__closed.get(memory_order_acquire) ) return chan_status::empty;
+    __lock();
+    __node *__n = __head;
+    if ( __n != nullptr ) {
+      __head = __n-&gt;__next;
+      if ( __head == nullptr ) __tail = nullptr;
+    }
+    __unlock();
+    if ( __n != nullptr ) {
+      __out = micron::move(__n-&gt;__val);
+      delete __n;
+      return chan_status::ok;
+    }
+    return chan_status::closed;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>chan_status::empty</code></td><td><a href="../../source/tasks/unbounded_channel.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>chan_status::ok</code></td><td><a href="../../source/tasks/unbounded_channel.hpp.html#L115">line 115</a></td></tr><tr class="t-dsc"><td><code>chan_status::closed</code></td><td><a href="../../source/tasks/unbounded_channel.hpp.html#L117">line 117</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unbounded_channel.hpp.html#f-e913b90faade1ab2">__lock</a>, <a href="unbounded_channel.hpp.html#f-aae3620796959258">__unlock</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-2326cf540553766f"><h3><code>micron::unbounded_channel::close() noexcept</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L121">line 121</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  close() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  close() noexcept
+  {
+    __closed.store(1, memory_order_release);
+    __items.abort();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d4b6b5ec4b9ff3cb"><h3><code>micron::unbounded_channel::is_closed() const noexcept</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  is_closed() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__closed.get(memory_order_acquire) != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  is_closed() const noexcept
+  {
+    return __closed.get(memory_order_acquire) != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__closed.get(memory_order_acquire) != 0</code></td><td><a href="../../source/tasks/unbounded_channel.hpp.html#L130">line 130</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e913b90faade1ab2"><h3><code>micron::unbounded_channel::__lock() noexcept</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __lock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __lock() noexcept
+  {
+    u32 __e = 0;
+    while ( !__lk.compare_exchange_weak(__e, 1u, memory_order_acq_rel, memory_order_acquire) ) {
+      __e = 0;
+      __cpu_pause();
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-aae3620796959258"><h3><code>micron::unbounded_channel::__unlock() noexcept</code></h3><p>Defined in <code>tasks/unbounded_channel.hpp</code>, <a href="../../source/tasks/unbounded_channel.hpp.html#L47">line 47</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __unlock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __unlock() noexcept
+  {
+    __lk.store(0u, memory_order_release);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

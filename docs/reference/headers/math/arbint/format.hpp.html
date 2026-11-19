@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/format.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/format.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/format.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/format.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-fb9b05d853b9d78b">micron::format::formatter</code></td><td>struct; line 68</td></tr><tr class="t-dsc"><td><code id="s-971d334b9f02319e">micron::format::formatter</code></td><td>struct; line 76</td></tr><tr class="t-dsc"><td><a href="#f-f84a5bbb2a412812">micron::format::formatter::write_str(hstring&lt;schar&gt; &amp;out, const micron::math::arbuint&lt;B, S, A&gt; &amp;val, const __impl::fmt_spec &amp;spec)</a></td><td>function; line 70</td></tr><tr class="t-dsc"><td><a href="#f-1ecf3468a2743bab">micron::format::formatter::write_str(hstring&lt;schar&gt; &amp;out, const micron::math::arbint&lt;B, S, A&gt; &amp;val, const __impl::fmt_spec &amp;spec)</a></td><td>function; line 78</td></tr><tr class="t-dsc"><td><a href="#f-c18aab7650655630">micron::math::printk(Sk &amp;s, const arbuint&lt;B, S, A&gt; &amp;v)</a></td><td>function; line 93</td></tr><tr class="t-dsc"><td><a href="#f-c095d703a55f9120">micron::math::printk(Sk &amp;s, const arbint&lt;B, S, A&gt; &amp;v)</a></td><td>function; line 106</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f84a5bbb2a412812"><h3><code>micron::format::formatter::write_str(hstring&lt;schar&gt; &amp;out, const micron::math::arbuint&lt;B, S, A&gt; &amp;val, const __impl::fmt_spec &amp;spec)</code></h3><p>Defined in <code>math/arbint/format.hpp</code>, <a href="../../../source/math/arbint/format.hpp.html#L70">line 70</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline void
+  write_str(hstring&lt;schar&gt; &amp;out, const micron::math::arbuint&lt;B, S, A&gt; &amp;val, const __impl::fmt_spec &amp;spec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hstring&lt;schar&gt; &amp;out</code></li><li><code>const micron::math::arbuint&lt;B, S, A&gt; &amp;val</code></li><li><code>const __impl::fmt_spec &amp;spec</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline void
+  write_str(hstring&lt;schar&gt; &amp;out, const micron::math::arbuint&lt;B, S, A&gt; &amp;val, const __impl::fmt_spec &amp;spec)
+  {
+    __impl::__arb_write(out, val, spec, false);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="format.hpp.html#f-c32b5fb1f259747b">__impl::__arb_write</a>.</p></section><section class="function-entry" id="f-1ecf3468a2743bab"><h3><code>micron::format::formatter::write_str(hstring&lt;schar&gt; &amp;out, const micron::math::arbint&lt;B, S, A&gt; &amp;val, const __impl::fmt_spec &amp;spec)</code></h3><p>Defined in <code>math/arbint/format.hpp</code>, <a href="../../../source/math/arbint/format.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline void
+  write_str(hstring&lt;schar&gt; &amp;out, const micron::math::arbint&lt;B, S, A&gt; &amp;val, const __impl::fmt_spec &amp;spec)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hstring&lt;schar&gt; &amp;out</code></li><li><code>const micron::math::arbint&lt;B, S, A&gt; &amp;val</code></li><li><code>const __impl::fmt_spec &amp;spec</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline void
+  write_str(hstring&lt;schar&gt; &amp;out, const micron::math::arbint&lt;B, S, A&gt; &amp;val, const __impl::fmt_spec &amp;spec)
+  {
+    __impl::__arb_write(out, val.magnitude(), spec, val.negative());
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="format.hpp.html#f-c32b5fb1f259747b">__impl::__arb_write</a>.</p></section><section class="function-entry" id="f-c18aab7650655630"><h3><code>micron::math::printk(Sk &amp;s, const arbuint&lt;B, S, A&gt; &amp;v)</code></h3><p>Defined in <code>math/arbint/format.hpp</code>, <a href="../../../source/math/arbint/format.hpp.html#L93">line 93</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sk, usize B, arb_solver S, class A&gt;
+  requires requires(Sk &amp;s, const char *p, usize n) { s.put(p, n); }
+max_t
+printk(Sk &amp;s, const arbuint&lt;B, S, A&gt; &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Sk &amp;s</code></li><li><code>const arbuint&lt;B, S, A&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sk, usize B, arb_solver S, class A&gt;
+  requires requires(Sk &amp;s, const char *p, usize n) { s.put(p, n); }
+max_t
+printk(Sk &amp;s, const arbuint&lt;B, S, A&gt; &amp;v)
+{
+  const usize cap = v.bit_length() + 8u;
+  micron::vector&lt;char&gt; tmp;
+  tmp.resize(cap);
+  const usize n = micron::math::to_chars(&amp;tmp[0], cap, v, 10u, false);
+  if ( n == 0 ) return s.put(&quot;0&quot;, 1);
+  return s.put(&amp;tmp[0], n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.put(&quot;0&quot;, 1)</code></td><td><a href="../../../source/math/arbint/format.hpp.html#L99">line 99</a></td></tr><tr class="t-dsc"><td><code>s.put(&amp;tmp[0], n)</code></td><td><a href="../../../source/math/arbint/format.hpp.html#L100">line 100</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="convert.hpp.html#f-b3032c1851d78c34">micron::math::to_chars</a>.</p></section><section class="function-entry" id="f-c095d703a55f9120"><h3><code>micron::math::printk(Sk &amp;s, const arbint&lt;B, S, A&gt; &amp;v)</code></h3><p>Defined in <code>math/arbint/format.hpp</code>, <a href="../../../source/math/arbint/format.hpp.html#L106">line 106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sk, usize B, arb_solver S, class A&gt;
+  requires requires(Sk &amp;s, const char *p, usize n) { s.put(p, n); }
+max_t
+printk(Sk &amp;s, const arbint&lt;B, S, A&gt; &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Sk &amp;s</code></li><li><code>const arbint&lt;B, S, A&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sk, usize B, arb_solver S, class A&gt;
+  requires requires(Sk &amp;s, const char *p, usize n) { s.put(p, n); }
+max_t
+printk(Sk &amp;s, const arbint&lt;B, S, A&gt; &amp;v)
+{
+  const auto mag = v.magnitude();
+  const usize cap = mag.bit_length() + 9u;
+  micron::vector&lt;char&gt; tmp;
+  tmp.resize(cap);
+  usize off = 0;
+  if ( v.negative() ) {
+    tmp[0] = &#x27;-&#x27;;
+    off = 1;
+  }
+  const usize n = micron::math::to_chars(&amp;tmp[0] + off, cap - off, mag, 10u, false);
+  if ( n == 0 ) return s.put(&quot;0&quot;, 1);
+  return s.put(&amp;tmp[0], n + off);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.put(&quot;0&quot;, 1)</code></td><td><a href="../../../source/math/arbint/format.hpp.html#L118">line 118</a></td></tr><tr class="t-dsc"><td><code>s.put(&amp;tmp[0], n + off)</code></td><td><a href="../../../source/math/arbint/format.hpp.html#L119">line 119</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="convert.hpp.html#f-b3032c1851d78c34">micron::math::to_chars</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-c32b5fb1f259747b"><h3><code>micron::format::__impl::__arb_write(hstring&lt;schar&gt; &amp;out, const A &amp;v, const __impl::fmt_spec &amp;spec, bool neg)</code></h3><p>Defined in <code>math/arbint/format.hpp</code>, <a href="../../../source/math/arbint/format.hpp.html#L27">line 27</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+inline void
+__arb_write(hstring&lt;schar&gt; &amp;out, const A &amp;v, const __impl::fmt_spec &amp;spec, bool neg)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hstring&lt;schar&gt; &amp;out</code></li><li><code>const A &amp;v</code></li><li><code>const __impl::fmt_spec &amp;spec</code></li><li><code>bool neg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+inline void
+__arb_write(hstring&lt;schar&gt; &amp;out, const A &amp;v, const __impl::fmt_spec &amp;spec, bool neg)
+{
+  u32 base = 10;
+  bool upper = false;
+  if ( spec.type == &#x27;x&#x27; )
+    base = 16;
+  else if ( spec.type == &#x27;X&#x27; ) {
+    base = 16;
+    upper = true;
+  } else if ( spec.type == &#x27;o&#x27; )
+    base = 8;
+  else if ( spec.type == &#x27;b&#x27; )
+    base = 2;
+
+  if ( neg ) out += &#x27;-&#x27;;
+  if ( spec.alt ) {
+    if ( base == 16 ) {
+      out += &#x27;0&#x27;;
+      out += (upper ? &#x27;X&#x27; : &#x27;x&#x27;);
+    } else if ( base == 8 ) {
+      out += &#x27;0&#x27;;
+    } else if ( base == 2 ) {
+      out += &#x27;0&#x27;;
+      out += &#x27;b&#x27;;
+    }
+  }
+
+  // base 2; one character per bit, plus slack
+  const usize cap = v.bit_length() + 8u;
+  micron::vector&lt;char&gt; tmp;
+  tmp.resize(cap);
+  const usize n = micron::math::to_chars(&amp;tmp[0], cap, v, base, upper);
+  if ( n == 0 ) {
+    out += &#x27;0&#x27;;
+    return;
+  }
+  out.append(&amp;tmp[0], n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/format.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="convert.hpp.html#f-b3032c1851d78c34">micron::math::to_chars</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

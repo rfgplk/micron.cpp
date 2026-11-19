@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/file.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/file.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/filesystem.html">Files and filesystem</a></div><p>Defined in header <code>&lt;micron/io/file.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/io/file.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-9298ef15f34d07ac">micron::io::file</code></td><td>class; line 43</td></tr><tr class="t-dsc"><td><code id="s-2b72cb4efead6158">micron::io::file::os_file</code></td><td>name; line 187</td></tr><tr class="t-dsc"><td><a href="#f-8f8175a05675080a">micron::io::file::file()</a></td><td>function; line 190</td></tr><tr class="t-dsc"><td><a href="#f-4f0b2f2e04bb2f87">micron::io::file::~file()</a></td><td>function; line 191</td></tr><tr class="t-dsc"><td><a href="#f-1a3fa3740807b55c">micron::io::file::file(const file &amp;)</a></td><td>function; line 192</td></tr><tr class="t-dsc"><td><a href="#f-e43d97e89ed1147f">micron::io::file::file(file &amp;&amp;) noexcept</a></td><td>function; line 193</td></tr><tr class="t-dsc"><td><a href="#f-ba5de2f2de6ddd80">micron::io::file::operator=(const file &amp;)</a></td><td>function; line 194</td></tr><tr class="t-dsc"><td><a href="#f-7afd69cb62667e49">micron::io::file::operator=(file &amp;&amp;) noexcept</a></td><td>function; line 195</td></tr><tr class="t-dsc"><td><a href="#f-44a5c24b64a78380">micron::io::file::write(const T &amp;str)</a></td><td>function; line 202</td></tr><tr class="t-dsc"><td><a href="#f-c2aea81c52099094">micron::io::file::write(const T &amp;c)</a></td><td>function; line 213</td></tr><tr class="t-dsc"><td><a href="#f-7b9a66c8988d13f1">micron::io::file::write(const T &amp;c)</a></td><td>function; line 226</td></tr><tr class="t-dsc"><td><a href="#f-7021b0717dcac7e7">micron::io::file::write(const T &amp;obj)</a></td><td>function; line 245</td></tr><tr class="t-dsc"><td><a href="#f-c7fbf908119297da">micron::io::file::write(const char (&amp;lit)[N])</a></td><td>function; line 255</td></tr><tr class="t-dsc"><td><a href="#f-a924211c41edcf73">micron::io::file::write(const char *cstr)</a></td><td>function; line 263</td></tr><tr class="t-dsc"><td><a href="#f-1e166c170fb560b4">micron::io::file::write(const void *p, usize n)</a></td><td>function; line 273</td></tr><tr class="t-dsc"><td><a href="#f-7fc6c5a646e9b381">micron::io::file::read()</a></td><td>function; line 287</td></tr><tr class="t-dsc"><td><a href="#f-c18dcc12a47b7f0e">micron::io::file::read(T &amp;out)</a></td><td>function; line 328</td></tr><tr class="t-dsc"><td><a href="#f-7e866fb8a157dd04">micron::io::file::read(T &amp;out)</a></td><td>function; line 340</td></tr><tr class="t-dsc"><td><a href="#f-f14f8f6f3f8e3195">micron::io::file::read()</a></td><td>function; line 364</td></tr><tr class="t-dsc"><td><a href="#f-5b5a93b62ba922c0">micron::io::file::read(T &amp;obj)</a></td><td>function; line 376</td></tr><tr class="t-dsc"><td><a href="#f-ac2ebd0985771960">micron::io::file::read(void *p, usize n)</a></td><td>function; line 384</td></tr><tr class="t-dsc"><td><a href="#f-1e5c9277426f64f0">micron::io::file::write(Fn &amp;&amp;fn)</a></td><td>function; line 401</td></tr><tr class="t-dsc"><td><a href="#f-3d9ba4158b0278ae">micron::io::file::read(Fn &amp;&amp;fn) -&gt; micron::option&lt;__unit_if_void_t&lt;micron::invoke_result_t&lt;Fn, fn_arg0_exact_t&lt;Fn&gt;&gt;&gt;, io::error_t&gt;</a></td><td>function; line 413</td></tr><tr class="t-dsc"><td><a href="#f-fd088a983526e370">micron::io::file::modify(Fn &amp;&amp;fn)</a></td><td>function; line 437</td></tr><tr class="t-dsc"><td><a href="#f-928597cc12b6c8aa">micron::io::file::modify_atomic(Fn &amp;&amp;fn)</a></td><td>function; line 481</td></tr><tr class="t-dsc"><td><a href="#f-364b2a6a4d8f3541">micron::io::file::read_with(Fn &amp;&amp;fn)</a></td><td>function; line 520</td></tr><tr class="t-dsc"><td><a href="#f-0fac292cfb5d9ff3">micron::io::file::write_with(Fn &amp;&amp;fn)</a></td><td>function; line 541</td></tr><tr class="t-dsc"><td><a href="#f-42af284337207f73">micron::io::file::each_line(Fn &amp;&amp;fn)</a></td><td>function; line 566</td></tr><tr class="t-dsc"><td><a href="#f-8856ae502bc7140c">micron::io::file::fold_lines(R init, Fn &amp;&amp;fn) -&gt; micron::option&lt;R, io::error_t&gt;</a></td><td>function; line 588</td></tr><tr class="t-dsc"><td><a href="#f-a721807dbf76ea42">micron::io::file::lines(usize chunk_sz = __lines::chunk)</a></td><td>function; line 607</td></tr><tr class="t-dsc"><td><a href="#f-f3cf052136595910">micron::io::file::operator&gt;&gt;(T &amp;out)</a></td><td>function; line 617</td></tr><tr class="t-dsc"><td><a href="#f-79c08391e3a740e7">micron::io::file::operator&lt;&lt;(const T &amp;x)</a></td><td>function; line 626</td></tr><tr class="t-dsc"><td><a href="#f-6668158d8886d222">micron::io::file::operator&lt;&lt;(const char *cstr)</a></td><td>function; line 633</td></tr><tr class="t-dsc"><td><a href="#f-1fd4f654b2bbacbc">micron::io::file::seek(posix::off64_t offset)</a></td><td>function; line 642</td></tr><tr class="t-dsc"><td><a href="#f-90ad7a2b67e9c833">micron::io::file::pos(void) const</a></td><td>function; line 648</td></tr><tr class="t-dsc"><td><a href="#f-65abe53866162c71">micron::io::file::atomic_replace(const void *new_data, usize new_len)</a></td><td>function; line 656</td></tr><tr class="t-dsc"><td><a href="#f-c5f80b35bc647718">micron::io::file::atomic_replace(const T &amp;str)</a></td><td>function; line 765</td></tr><tr class="t-dsc"><td><a href="#f-92185cb4a99e382d">micron::io::file::atomic_replace(const T &amp;c)</a></td><td>function; line 773</td></tr><tr class="t-dsc"><td><a href="#f-9b75a5eb3385ba3e">micron::io::file::write_encoded(Fn &amp;&amp;fn, const byte *src, usize src_len)</a></td><td>function; line 782</td></tr><tr class="t-dsc"><td><a href="#f-63da8acfea77f1a4">micron::io::file::write_encoded(Fn &amp;&amp;fn, const Tp &amp;src)</a></td><td>function; line 793</td></tr><tr class="t-dsc"><td><a href="#f-406dd6ec3effe6a3">micron::io::file::append_encoded(Fn &amp;&amp;fn, const Tp &amp;src)</a></td><td>function; line 801</td></tr><tr class="t-dsc"><td><a href="#f-d9c549c0d2532e85">micron::io::file::to_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s) const</a></td><td>function; line 815</td></tr><tr class="t-dsc"><td><a href="#f-025b6d3c10346112">micron::io::file::from_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s)</a></td><td>function; line 825</td></tr><tr class="t-dsc"><td><a href="#f-17256e57562e7969">micron::io::file::as_path() const</a></td><td>function; line 838</td></tr><tr class="t-dsc"><td><a href="#f-d7b14da6dd775d6e">micron::io::file::fullpath() const</a></td><td>function; line 844</td></tr><tr class="t-dsc"><td><a href="#f-42ac2540d4ae3c92">micron::io::file::basename() const</a></td><td>function; line 850</td></tr><tr class="t-dsc"><td><a href="#f-6141aa022adabc66">micron::io::file::extension() const</a></td><td>function; line 856</td></tr><tr class="t-dsc"><td><a href="#f-78f4d263ae76b80b">micron::io::file::stem() const</a></td><td>function; line 862</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-8f8175a05675080a"><h3><code>micron::io::file::file()</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L190">line 190</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>file() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-4f0b2f2e04bb2f87"><h3><code>micron::io::file::~file()</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L191">line 191</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~file() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-1a3fa3740807b55c"><h3><code>micron::io::file::file(const file &amp;)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L192">line 192</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>file(const file &amp;) = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const file &amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-e43d97e89ed1147f"><h3><code>micron::io::file::file(file &amp;&amp;) noexcept</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L193">line 193</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>file(file &amp;&amp;) noexcept = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>file &amp;&amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-ba5de2f2de6ddd80"><h3><code>micron::io::file::operator=(const file &amp;)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L194">line 194</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>file &amp;operator=(const file &amp;) = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const file &amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-7afd69cb62667e49"><h3><code>micron::io::file::operator=(file &amp;&amp;) noexcept</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>file &amp;operator=(file &amp;&amp;) noexcept = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>file &amp;&amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-44a5c24b64a78380"><h3><code>micron::io::file::write(const T &amp;str)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L202">line 202</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string T&gt;
+  max_t
+  write(const T &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string T&gt;
+  max_t
+  write(const T &amp;str)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return __write_loop(str.c_str(), micron::string_len(str) * sizeof(typename T::value_type));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>__write_loop(str.c_str(), micron::string_len(str) * sizeof(typename T::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L206">line 206</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>, <a href="../concepts.hpp.html#f-f453d2b5f82853d5">micron::string_len</a>.</p></section><section class="function-entry" id="f-c2aea81c52099094"><h3><code>micron::io::file::write(const T &amp;c)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L213">line 213</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires(is_contiguous_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  max_t
+  write(const T &amp;c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires(is_contiguous_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  max_t
+  write(const T &amp;c)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return __write_loop(c.data(), c.size() * sizeof(typename T::value_type));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L216">line 216</a></td></tr><tr class="t-dsc"><td><code>__write_loop(c.data(), c.size() * sizeof(typename T::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L217">line 217</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>.</p></section><section class="function-entry" id="f-7b9a66c8988d13f1"><h3><code>micron::io::file::write(const T &amp;c)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L226">line 226</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires(is_node_container&lt;T&gt;
+             || (is_iterable_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !micron::is_trivially_copyable_v&lt;typename T::value_type&gt;))
+  max_t
+  write(const T &amp;c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires(is_node_container&lt;T&gt;
+             || (is_iterable_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !micron::is_trivially_copyable_v&lt;typename T::value_type&gt;))
+  max_t
+  write(const T &amp;c)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    max_t need = serialize::framed_size(c);
+    if ( need &lt; 0 ) [[unlikely]]
+      return need;
+    micron::buffer out(static_cast&lt;usize&gt;(need));
+    max_t n = serialize::frame_into(out.data(), out.size(), c);
+    if ( n &lt; 0 ) [[unlikely]]
+      return n;
+    return __write_loop(out.data(), static_cast&lt;usize&gt;(n));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L229">line 229</a></td></tr><tr class="t-dsc"><td><code>need</code></td><td><a href="../../source/io/file.hpp.html#L232">line 232</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/file.hpp.html#L236">line 236</a></td></tr><tr class="t-dsc"><td><code>__write_loop(out.data(), static_cast&lt;usize&gt;(n))</code></td><td><a href="../../source/io/file.hpp.html#L237">line 237</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__serial_core.hpp.html#f-e8249ecfadac07df">serialize::framed_size</a>, <a href="__serial_core.hpp.html#f-538890baef6d8f32">serialize::frame_into</a>, <a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>.</p></section><section class="function-entry" id="f-7021b0717dcac7e7"><h3><code>micron::io::file::write(const T &amp;obj)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L245">line 245</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires(micron::is_trivially_copyable_v&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !is_iterable_container&lt;T&gt; &amp;&amp; !is_node_container&lt;T&gt;
+             &amp;&amp; !micron::is_pointer_v&lt;T&gt; &amp;&amp; !micron::is_array_v&lt;T&gt; &amp;&amp; !fn_like&lt;T&gt;)
+  max_t
+  write(const T &amp;obj)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;obj</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires(micron::is_trivially_copyable_v&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !is_iterable_container&lt;T&gt; &amp;&amp; !is_node_container&lt;T&gt;
+             &amp;&amp; !micron::is_pointer_v&lt;T&gt; &amp;&amp; !micron::is_array_v&lt;T&gt; &amp;&amp; !fn_like&lt;T&gt;)
+  max_t
+  write(const T &amp;obj)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return __write_loop(&amp;obj, sizeof(T));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L248">line 248</a></td></tr><tr class="t-dsc"><td><code>__write_loop(&amp;obj, sizeof(T))</code></td><td><a href="../../source/io/file.hpp.html#L249">line 249</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>.</p></section><section class="function-entry" id="f-c7fbf908119297da"><h3><code>micron::io::file::write(const char (&amp;lit)[N])</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L255">line 255</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N&gt;
+  max_t
+  write(const char (&amp;lit)[N])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char (&amp;lit)[N]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N&gt;
+  max_t
+  write(const char (&amp;lit)[N])
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return __write_loop(lit, N ? N - 1 : 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L258">line 258</a></td></tr><tr class="t-dsc"><td><code>__write_loop(lit, N ? N - 1 : 0)</code></td><td><a href="../../source/io/file.hpp.html#L259">line 259</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>.</p></section><section class="function-entry" id="f-a924211c41edcf73"><h3><code>micron::io::file::write(const char *cstr)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L263">line 263</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  write(const char *cstr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *cstr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  write(const char *cstr)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( cstr == nullptr ) [[unlikely]]
+      return -error::invalid_arg;
+    return __write_loop(cstr, micron::strlen(cstr));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L266">line 266</a></td></tr><tr class="t-dsc"><td><code>-error::invalid_arg</code></td><td><a href="../../source/io/file.hpp.html#L268">line 268</a></td></tr><tr class="t-dsc"><td><code>__write_loop(cstr, micron::strlen(cstr))</code></td><td><a href="../../source/io/file.hpp.html#L269">line 269</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>, <a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>.</p></section><section class="function-entry" id="f-1e166c170fb560b4"><h3><code>micron::io::file::write(const void *p, usize n)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L273">line 273</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  write(const void *p, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  write(const void *p, usize n)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( p == nullptr ) [[unlikely]]
+      return -error::invalid_arg;
+    return __write_loop(p, n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L276">line 276</a></td></tr><tr class="t-dsc"><td><code>-error::invalid_arg</code></td><td><a href="../../source/io/file.hpp.html#L278">line 278</a></td></tr><tr class="t-dsc"><td><code>__write_loop(p, n)</code></td><td><a href="../../source/io/file.hpp.html#L279">line 279</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>.</p></section><section class="function-entry" id="f-7fc6c5a646e9b381"><h3><code>micron::io::file::read()</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L287">line 287</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires((is_string&lt;T&gt; || is_contiguous_container&lt;T&gt;) &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  T
+  read()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires((is_string&lt;T&gt; || is_contiguous_container&lt;T&gt;) &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  T
+  read()
+  {
+    T out{};
+    if ( __check() != 0 ) [[unlikely]]
+      return out;
+    stat&lt;STAT_OVERRIDE&gt;();
+    const usize total = static_cast&lt;usize&gt;(sd.st_size);
+    const posix::off64_t at = tell();
+    const usize remaining = (at &gt;= 0 &amp;&amp; total &gt; static_cast&lt;usize&gt;(at)) ? total - static_cast&lt;usize&gt;(at) : 0;
+    if ( remaining == 0 ) {
+      // virtual files (/proc, /sys) fstat to size 0; grow chunk-by-chunk until EOF
+      if constexpr ( sizeof(typename T::value_type) == 1 &amp;&amp; requires(T t, typename T::value_type v) { t.push_back(v); } ) {
+        byte chunk[4096];
+        for ( ;; ) {
+          max_t r = posix::read(__handle.fd, chunk, sizeof(chunk));
+          if ( r &lt; 0 &amp;&amp; -r == error::interrupted ) continue;
+          if ( r &lt;= 0 ) break;
+          for ( max_t i = 0; i &lt; r; ++i ) out.push_back(static_cast&lt;typename T::value_type&gt;(chunk[i]));
+        }
+      }
+      return out;
+    }
+    const usize elems = remaining / sizeof(typename T::value_type);
+    if constexpr ( requires(T t, usize n) { t.reserve(n); } ) out.reserve(elems + 1);
+    if constexpr ( requires(const T &amp;t) { t.max_size(); } ) {
+      if ( elems &gt; out.max_size() ) [[unlikely]] {
+        exc&lt;except::io_error&gt;(&quot;micron::io::file::read: destination cannot hold the file&quot;);
+        return out;      // exc&lt;&gt; may return; never read past capacity
+      }
+    }
+    max_t got = __read_loop(out.data(), elems * sizeof(typename T::value_type));
+    if ( got &lt; 0 ) [[unlikely]]      // EIO/EISDIR/EBADF etc
+      exc&lt;except::io_error&gt;(&quot;micron::io::file::read: read failed&quot;);
+    if ( got &gt; 0 ) __set_length(out, static_cast&lt;usize&gt;(got) / sizeof(typename T::value_type));
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/io/file.hpp.html#L291">line 291</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/io/file.hpp.html#L307">line 307</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/io/file.hpp.html#L314">line 314</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/io/file.hpp.html#L321">line 321</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::io_error&gt;(&quot;micron::io::file::read: destination cannot hold the file&quot;)</code></td><td><a href="../../source/io/file.hpp.html#L313">line 313</a><br>Within <code>( requires(const T &amp;t) { t.max_size(); } )</code>, <code>( elems &gt; out.max_size() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::io_error&gt;(&quot;micron::io::file::read: read failed&quot;)</code></td><td><a href="../../source/io/file.hpp.html#L319">line 319</a><br>Within <code>( got &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io.hpp.html#s-780e9756070bd055">stat&lt;STAT_OVERRIDE&gt;</a>, <a href="../linux/io/sys.hpp.html#f-4dae032f64ac939d">posix::read</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::io_error&gt;</a>, <a href="file.hpp.html#f-a89bab43c05630ba">__read_loop</a>, <a href="file.hpp.html#f-d18fbf0690641a00">__set_length</a>.</p></section><section class="function-entry" id="f-c18dcc12a47b7f0e"><h3><code>micron::io::file::read(T &amp;out)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L328">line 328</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires((is_string&lt;T&gt; || is_contiguous_container&lt;T&gt;) &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  max_t
+  read(T &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires((is_string&lt;T&gt; || is_contiguous_container&lt;T&gt;) &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  max_t
+  read(T &amp;out)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return __read_loop(out.data(), out.size() * sizeof(typename T::value_type));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L331">line 331</a></td></tr><tr class="t-dsc"><td><code>__read_loop(out.data(), out.size() * sizeof(typename T::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L332">line 332</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-a89bab43c05630ba">__read_loop</a>.</p></section><section class="function-entry" id="f-7e866fb8a157dd04"><h3><code>micron::io::file::read(T &amp;out)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L340">line 340</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires(is_node_container&lt;T&gt;
+             || (is_iterable_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !micron::is_trivially_copyable_v&lt;typename T::value_type&gt;))
+  max_t
+  read(T &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires(is_node_container&lt;T&gt;
+             || (is_iterable_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !micron::is_trivially_copyable_v&lt;typename T::value_type&gt;))
+  max_t
+  read(T &amp;out)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    const posix::off64_t at = tell();
+    if ( at &lt; 0 ) [[unlikely]]
+      return at;
+    stat&lt;STAT_OVERRIDE&gt;();
+    const usize total = static_cast&lt;usize&gt;(sd.st_size);
+    if ( total &lt;= static_cast&lt;usize&gt;(at) ) [[unlikely]]
+      return -error::invalid_arg;
+    const usize len = total - static_cast&lt;usize&gt;(at);
+    micron::buffer in(len);
+    max_t got = __read_loop(in.data(), len);
+    if ( got &lt; 0 ) [[unlikely]]
+      return got;
+    return serialize::unframe_from(in.data(), static_cast&lt;usize&gt;(got), out);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>at</code></td><td><a href="../../source/io/file.hpp.html#L346">line 346</a></td></tr><tr class="t-dsc"><td><code>-error::invalid_arg</code></td><td><a href="../../source/io/file.hpp.html#L350">line 350</a></td></tr><tr class="t-dsc"><td><code>got</code></td><td><a href="../../source/io/file.hpp.html#L355">line 355</a></td></tr><tr class="t-dsc"><td><code>serialize::unframe_from(in.data(), static_cast&lt;usize&gt;(got), out)</code></td><td><a href="../../source/io/file.hpp.html#L356">line 356</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io.hpp.html#s-780e9756070bd055">stat&lt;STAT_OVERRIDE&gt;</a>, <a href="file.hpp.html#f-a89bab43c05630ba">__read_loop</a>, <a href="__serial_core.hpp.html#f-0cd91ced14ec39b0">serialize::unframe_from</a>.</p></section><section class="function-entry" id="f-f14f8f6f3f8e3195"><h3><code>micron::io::file::read()</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L364">line 364</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires((is_node_container&lt;T&gt;
+              || (is_iterable_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !micron::is_trivially_copyable_v&lt;typename T::value_type&gt;))
+             &amp;&amp; micron::is_default_constructible_v&lt;T&gt;)
+  T
+  read()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires((is_node_container&lt;T&gt;
+              || (is_iterable_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !micron::is_trivially_copyable_v&lt;typename T::value_type&gt;))
+             &amp;&amp; micron::is_default_constructible_v&lt;T&gt;)
+  T
+  read()
+  {
+    T out{};
+    read(out);
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/io/file.hpp.html#L368">line 368</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-7fc6c5a646e9b381">read</a>.</p></section><section class="function-entry" id="f-5b5a93b62ba922c0"><h3><code>micron::io::file::read(T &amp;obj)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L376">line 376</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires(micron::is_trivially_copyable_v&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !is_iterable_container&lt;T&gt; &amp;&amp; !is_node_container&lt;T&gt;
+             &amp;&amp; !micron::is_pointer_v&lt;T&gt; &amp;&amp; !micron::is_array_v&lt;T&gt; &amp;&amp; !fn_like&lt;T&gt;)
+  max_t
+  read(T &amp;obj)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;obj</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires(micron::is_trivially_copyable_v&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; !is_iterable_container&lt;T&gt; &amp;&amp; !is_node_container&lt;T&gt;
+             &amp;&amp; !micron::is_pointer_v&lt;T&gt; &amp;&amp; !micron::is_array_v&lt;T&gt; &amp;&amp; !fn_like&lt;T&gt;)
+  max_t
+  read(T &amp;obj)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    return __read_loop(&amp;obj, sizeof(T));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L379">line 379</a></td></tr><tr class="t-dsc"><td><code>__read_loop(&amp;obj, sizeof(T))</code></td><td><a href="../../source/io/file.hpp.html#L380">line 380</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-a89bab43c05630ba">__read_loop</a>.</p></section><section class="function-entry" id="f-ac2ebd0985771960"><h3><code>micron::io::file::read(void *p, usize n)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L384">line 384</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  read(void *p, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  read(void *p, usize n)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( p == nullptr ) [[unlikely]]
+      return -error::invalid_arg;
+    return __read_loop(p, n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L387">line 387</a></td></tr><tr class="t-dsc"><td><code>-error::invalid_arg</code></td><td><a href="../../source/io/file.hpp.html#L389">line 389</a></td></tr><tr class="t-dsc"><td><code>__read_loop(p, n)</code></td><td><a href="../../source/io/file.hpp.html#L390">line 390</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-a89bab43c05630ba">__read_loop</a>.</p></section><section class="function-entry" id="f-1e5c9277426f64f0"><h3><code>micron::io::file::write(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L401">line 401</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(fn_like&lt;Fn&gt; &amp;&amp; micron::is_invocable_v&lt;Fn&gt; &amp;&amp; !micron::is_void_v&lt;micron::invoke_result_t&lt;Fn&gt;&gt;)
+  max_t
+  write(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Returns <code>write(micron::forward&lt;Fn&gt;(fn)())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(fn_like&lt;Fn&gt; &amp;&amp; micron::is_invocable_v&lt;Fn&gt; &amp;&amp; !micron::is_void_v&lt;micron::invoke_result_t&lt;Fn&gt;&gt;)
+  max_t
+  write(Fn &amp;&amp;fn)
+  {
+    return write(micron::forward&lt;Fn&gt;(fn)());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>write(micron::forward&lt;Fn&gt;(fn)())</code></td><td><a href="../../source/io/file.hpp.html#L403">line 403</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-44a5c24b64a78380">write</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-3d9ba4158b0278ae"><h3><code>micron::io::file::read(Fn &amp;&amp;fn) -&gt; micron::option&lt;__unit_if_void_t&lt;micron::invoke_result_t&lt;Fn, fn_arg0_exact_t&lt;Fn&gt;&gt;&gt;, io::error_t&gt;</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L413">line 413</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(fn_deducible&lt;Fn&gt; &amp;&amp; fn_arity_v&lt;Fn&gt; == 1 &amp;&amp; micron::is_default_constructible_v&lt;fn_arg0_t&lt;Fn&gt;&gt; &amp;&amp; __readable_value&lt;fn_arg0_t&lt;Fn&gt;&gt;
+             &amp;&amp; micron::is_invocable_v&lt;Fn, fn_arg0_exact_t&lt;Fn&gt;&gt;
+             &amp;&amp; micron::distinct&lt;__unit_if_void_t&lt;micron::invoke_result_t&lt;Fn, fn_arg0_exact_t&lt;Fn&gt;&gt;&gt;, io::error_t&gt;)
+  auto
+  read(Fn &amp;&amp;fn) -&gt; micron::option&lt;__unit_if_void_t&lt;micron::invoke_result_t&lt;Fn, fn_arg0_exact_t&lt;Fn&gt;&gt;&gt;, io::error_t&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(fn_deducible&lt;Fn&gt; &amp;&amp; fn_arity_v&lt;Fn&gt; == 1 &amp;&amp; micron::is_default_constructible_v&lt;fn_arg0_t&lt;Fn&gt;&gt; &amp;&amp; __readable_value&lt;fn_arg0_t&lt;Fn&gt;&gt;
+             &amp;&amp; micron::is_invocable_v&lt;Fn, fn_arg0_exact_t&lt;Fn&gt;&gt;
+             &amp;&amp; micron::distinct&lt;__unit_if_void_t&lt;micron::invoke_result_t&lt;Fn, fn_arg0_exact_t&lt;Fn&gt;&gt;&gt;, io::error_t&gt;)
+  auto
+  read(Fn &amp;&amp;fn) -&gt; micron::option&lt;__unit_if_void_t&lt;micron::invoke_result_t&lt;Fn, fn_arg0_exact_t&lt;Fn&gt;&gt;&gt;, io::error_t&gt;
+  {
+    using A0 = fn_arg0_exact_t&lt;Fn&gt;;
+    using Ret = micron::option&lt;__unit_if_void_t&lt;micron::invoke_result_t&lt;Fn, A0&gt;&gt;, io::error_t&gt;;
+    fn_arg0_t&lt;Fn&gt; val{};
+    if ( max_t r = __read_value(val); r &lt; 0 ) [[unlikely]]
+      return Ret{ io::error_t(static_cast&lt;i32&gt;(r)) };
+    if constexpr ( micron::is_void_v&lt;micron::invoke_result_t&lt;Fn, A0&gt;&gt; ) {
+      micron::forward&lt;Fn&gt;(fn)(micron::forward&lt;A0&gt;(val));
+      return Ret{ unit_t{} };
+    } else {
+      return Ret{ micron::forward&lt;Fn&gt;(fn)(micron::forward&lt;A0&gt;(val)) };
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>Ret{ io::error_t(static_cast&lt;i32&gt;(r)) }</code></td><td><a href="../../source/io/file.hpp.html#L419">line 419</a></td></tr><tr class="t-dsc"><td><code>Ret{ unit_t{} }</code></td><td><a href="../../source/io/file.hpp.html#L422">line 422</a></td></tr><tr class="t-dsc"><td><code>Ret{ micron::forward&lt;Fn&gt;(fn)(micron::forward&lt;A0&gt;(val)) }</code></td><td><a href="../../source/io/file.hpp.html#L424">line 424</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-57653a5aea710f96">__read_value</a>, <a href="bits.hpp.html#s-427ae3b819587d96">io::error_t</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;A0&gt;</a>.</p></section><section class="function-entry" id="f-fd088a983526e370"><h3><code>micron::io::file::modify(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L437">line 437</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(fn_deducible&lt;Fn&gt; &amp;&amp; fn_arity_v&lt;Fn&gt; == 1 &amp;&amp; micron::is_default_constructible_v&lt;fn_arg0_t&lt;Fn&gt;&gt; &amp;&amp; __readable_value&lt;fn_arg0_t&lt;Fn&gt;&gt;
+             &amp;&amp; ((micron::is_void_v&lt;fn_ret_t&lt;Fn&gt;&gt; &amp;&amp; micron::same_as&lt;fn_arg0_exact_t&lt;Fn&gt;, fn_arg0_t&lt;Fn&gt; &amp;&gt;)
+                 || micron::same_as&lt;micron::remove_cvref_t&lt;fn_ret_t&lt;Fn&gt;&gt;, fn_arg0_t&lt;Fn&gt;&gt;))
+  max_t
+  modify(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(fn_deducible&lt;Fn&gt; &amp;&amp; fn_arity_v&lt;Fn&gt; == 1 &amp;&amp; micron::is_default_constructible_v&lt;fn_arg0_t&lt;Fn&gt;&gt; &amp;&amp; __readable_value&lt;fn_arg0_t&lt;Fn&gt;&gt;
+             &amp;&amp; ((micron::is_void_v&lt;fn_ret_t&lt;Fn&gt;&gt; &amp;&amp; micron::same_as&lt;fn_arg0_exact_t&lt;Fn&gt;, fn_arg0_t&lt;Fn&gt; &amp;&gt;)
+                 || micron::same_as&lt;micron::remove_cvref_t&lt;fn_ret_t&lt;Fn&gt;&gt;, fn_arg0_t&lt;Fn&gt;&gt;))
+  max_t
+  modify(Fn &amp;&amp;fn)
+  {
+    using T = fn_arg0_t&lt;Fn&gt;;
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    // O_APPEND forces every write to EOF, so the rewrite below would land past the old content
+    // and the trailing truncate would then cut the file down to the new length -- destroying
+    // both versions. There is no way to rewrite in place through an append-only handle.
+    if ( i32 fl = get_status_flags(); fl &lt; 0 ) [[unlikely]]
+      return fl;
+    else if ( fl &amp; posix::o_append ) [[unlikely]]
+      return -error::invalid_arg;
+    if ( posix::off64_t s = seek_to(0); s &lt; 0 ) [[unlikely]]
+      return s;
+    T val{};
+    const max_t old_bytes = __read_value(val);      // empty file: default T, fn still applied
+    if ( old_bytes &lt; 0 ) [[unlikely]]
+      return old_bytes;
+    if constexpr ( micron::is_void_v&lt;fn_ret_t&lt;Fn&gt;&gt; )
+      micron::forward&lt;Fn&gt;(fn)(val);
+    else
+      val = micron::forward&lt;Fn&gt;(fn)(micron::move(val));
+    const max_t need = __marshal_size(val);
+    if ( need &lt; 0 ) [[unlikely]]
+      return need;
+    if ( posix::off64_t s = seek_to(0); s &lt; 0 ) [[unlikely]]
+      return s;
+    max_t n = write(val);
+    if ( n &lt; 0 ) [[unlikely]]
+      return n;
+    if ( n != need ) [[unlikely]]      // short write: old tail may survive past new content
+      return -error::io_error;
+    if ( n &lt; old_bytes )
+      if ( i32 t = truncate(static_cast&lt;posix::off64_t&gt;(n)); t != 0 ) [[unlikely]]
+        return t;
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L441">line 441</a></td></tr><tr class="t-dsc"><td><code>fl</code></td><td><a href="../../source/io/file.hpp.html#L446">line 446</a></td></tr><tr class="t-dsc"><td><code>-error::invalid_arg</code></td><td><a href="../../source/io/file.hpp.html#L448">line 448</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/io/file.hpp.html#L450">line 450</a></td></tr><tr class="t-dsc"><td><code>old_bytes</code></td><td><a href="../../source/io/file.hpp.html#L454">line 454</a></td></tr><tr class="t-dsc"><td><code>need</code></td><td><a href="../../source/io/file.hpp.html#L461">line 461</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/io/file.hpp.html#L463">line 463</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/file.hpp.html#L466">line 466</a></td></tr><tr class="t-dsc"><td><code>-error::io_error</code></td><td><a href="../../source/io/file.hpp.html#L468">line 468</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/io/file.hpp.html#L471">line 471</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/file.hpp.html#L472">line 472</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-57653a5aea710f96">__read_value</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="file.hpp.html#f-b25e3834d74ac1db">__marshal_size</a>, <a href="file.hpp.html#f-44a5c24b64a78380">write</a>, <a href="../linux/io.hpp.html#s-0b83ef99146470b1">truncate</a>.</p></section><section class="function-entry" id="f-928597cc12b6c8aa"><h3><code>micron::io::file::modify_atomic(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L481">line 481</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(fn_deducible&lt;Fn&gt; &amp;&amp; fn_arity_v&lt;Fn&gt; == 1 &amp;&amp; micron::is_default_constructible_v&lt;fn_arg0_t&lt;Fn&gt;&gt; &amp;&amp; __readable_value&lt;fn_arg0_t&lt;Fn&gt;&gt;
+             &amp;&amp; ((micron::is_void_v&lt;fn_ret_t&lt;Fn&gt;&gt; &amp;&amp; micron::same_as&lt;fn_arg0_exact_t&lt;Fn&gt;, fn_arg0_t&lt;Fn&gt; &amp;&gt;)
+                 || micron::same_as&lt;micron::remove_cvref_t&lt;fn_ret_t&lt;Fn&gt;&gt;, fn_arg0_t&lt;Fn&gt;&gt;))
+  max_t
+  modify_atomic(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(fn_deducible&lt;Fn&gt; &amp;&amp; fn_arity_v&lt;Fn&gt; == 1 &amp;&amp; micron::is_default_constructible_v&lt;fn_arg0_t&lt;Fn&gt;&gt; &amp;&amp; __readable_value&lt;fn_arg0_t&lt;Fn&gt;&gt;
+             &amp;&amp; ((micron::is_void_v&lt;fn_ret_t&lt;Fn&gt;&gt; &amp;&amp; micron::same_as&lt;fn_arg0_exact_t&lt;Fn&gt;, fn_arg0_t&lt;Fn&gt; &amp;&gt;)
+                 || micron::same_as&lt;micron::remove_cvref_t&lt;fn_ret_t&lt;Fn&gt;&gt;, fn_arg0_t&lt;Fn&gt;&gt;))
+  max_t
+  modify_atomic(Fn &amp;&amp;fn)
+  {
+    using T = fn_arg0_t&lt;Fn&gt;;
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( posix::off64_t s = seek_to(0); s &lt; 0 ) [[unlikely]]
+      return s;
+    T val{};
+    if ( max_t r = __read_value(val); r &lt; 0 ) [[unlikely]]
+      return r;
+    if constexpr ( micron::is_void_v&lt;fn_ret_t&lt;Fn&gt;&gt; )
+      micron::forward&lt;Fn&gt;(fn)(val);
+    else
+      val = micron::forward&lt;Fn&gt;(fn)(micron::move(val));
+    if constexpr ( __bulk_value&lt;T&gt; ) {
+      if ( i32 r = atomic_replace(val); r != 0 ) [[unlikely]]
+        return r;
+      return static_cast&lt;max_t&gt;(val.size() * sizeof(typename T::value_type));
+    } else if constexpr ( __framed_value&lt;T&gt; ) {
+      max_t need = serialize::framed_size(val);
+      if ( need &lt; 0 ) [[unlikely]]
+        return need;
+      micron::buffer out(static_cast&lt;usize&gt;(need));
+      max_t n = serialize::frame_into(out.data(), out.size(), val);
+      if ( n &lt; 0 ) [[unlikely]]
+        return n;
+      if ( i32 r = atomic_replace(static_cast&lt;const void *&gt;(out.data()), static_cast&lt;usize&gt;(n)); r != 0 ) [[unlikely]]
+        return r;
+      return n;
+    } else {
+      if ( i32 r = atomic_replace(static_cast&lt;const void *&gt;(micron::addressof(val)), sizeof(T)); r != 0 ) [[unlikely]]
+        return r;
+      return static_cast&lt;max_t&gt;(sizeof(T));
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L485">line 485</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/io/file.hpp.html#L487">line 487</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/file.hpp.html#L490">line 490</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/file.hpp.html#L497">line 497</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(val.size() * sizeof(typename T::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L498">line 498</a></td></tr><tr class="t-dsc"><td><code>need</code></td><td><a href="../../source/io/file.hpp.html#L502">line 502</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/file.hpp.html#L506">line 506</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/file.hpp.html#L508">line 508</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/file.hpp.html#L509">line 509</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/file.hpp.html#L512">line 512</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(sizeof(T))</code></td><td><a href="../../source/io/file.hpp.html#L513">line 513</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-57653a5aea710f96">__read_value</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="file.hpp.html#f-65abe53866162c71">atomic_replace</a>, <a href="__serial_core.hpp.html#f-e8249ecfadac07df">serialize::framed_size</a>, <a href="__serial_core.hpp.html#f-538890baef6d8f32">serialize::frame_into</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-364b2a6a4d8f3541"><h3><code>micron::io::file::read_with(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L520">line 520</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;chunk_fn Fn&gt;
+  max_t
+  read_with(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;chunk_fn Fn&gt;
+  max_t
+  read_with(Fn &amp;&amp;fn)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    micron::buffer win(fp_window);
+    max_t total = 0;
+    for ( ;; ) {
+      max_t r = __read_loop(win.data(), fp_window);
+      if ( r &lt; 0 ) [[unlikely]]
+        return r;      // a mid-stream failure is a failure: `total` here would be a plausible
+                       // short count the caller cannot tell apart from a clean smaller file
+      if ( r == 0 ) break;
+      fn(static_cast&lt;const byte *&gt;(win.data()), static_cast&lt;usize&gt;(r));
+      total += r;
+    }
+    return total;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L523">line 523</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/file.hpp.html#L529">line 529</a></td></tr><tr class="t-dsc"><td><code>total</code></td><td><a href="../../source/io/file.hpp.html#L535">line 535</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-a89bab43c05630ba">__read_loop</a>.</p></section><section class="function-entry" id="f-0fac292cfb5d9ff3"><h3><code>micron::io::file::write_with(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L541">line 541</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;producer_fn Fn&gt;
+  max_t
+  write_with(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;producer_fn Fn&gt;
+  max_t
+  write_with(Fn &amp;&amp;fn)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    micron::buffer win(fp_window);
+    max_t total = 0;
+    for ( ;; ) {
+      usize n = fn(win.data(), fp_window);
+      if ( n == 0 ) break;
+      if ( n &gt; fp_window ) [[unlikely]]
+        return -error::invalid_arg;
+      max_t w = __write_loop(win.data(), n);
+      if ( w &lt; 0 ) [[unlikely]]
+        return w;      // as in read_with: a byte count cannot express &quot;and then it failed&quot;
+      if ( static_cast&lt;usize&gt;(w) != n ) [[unlikely]]
+        return -error::io_error;
+      total += w;
+    }
+    return total;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L544">line 544</a></td></tr><tr class="t-dsc"><td><code>-error::invalid_arg</code></td><td><a href="../../source/io/file.hpp.html#L551">line 551</a></td></tr><tr class="t-dsc"><td><code>w</code></td><td><a href="../../source/io/file.hpp.html#L554">line 554</a></td></tr><tr class="t-dsc"><td><code>-error::io_error</code></td><td><a href="../../source/io/file.hpp.html#L556">line 556</a></td></tr><tr class="t-dsc"><td><code>total</code></td><td><a href="../../source/io/file.hpp.html#L559">line 559</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>.</p></section><section class="function-entry" id="f-42af284337207f73"><h3><code>micron::io::file::each_line(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L566">line 566</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(line_fn&lt;Fn&gt; || micron::is_invocable_v&lt;Fn, const micron::string &amp;&gt;)
+  max_t
+  each_line(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(line_fn&lt;Fn&gt; || micron::is_invocable_v&lt;Fn, const micron::string &amp;&gt;)
+  max_t
+  each_line(Fn &amp;&amp;fn)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    __line_cursor cur(__handle.fd);
+    max_t count = 0;
+    while ( cur.next() ) {
+      if constexpr ( line_fn&lt;Fn&gt; )
+        fn(cur.line().c_str(), cur.line().size());
+      else
+        fn(cur.line());
+      ++count;
+    }
+    if ( i32 e = cur.error() ) [[unlikely]]
+      return e;
+    return count;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L569">line 569</a></td></tr><tr class="t-dsc"><td><code>e</code></td><td><a href="../../source/io/file.hpp.html#L580">line 580</a></td></tr><tr class="t-dsc"><td><code>count</code></td><td><a href="../../source/io/file.hpp.html#L581">line 581</a></td></tr></tbody></table></section><section class="function-entry" id="f-8856ae502bc7140c"><h3><code>micron::io::file::fold_lines(R init, Fn &amp;&amp;fn) -&gt; micron::option&lt;R, io::error_t&gt;</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L588">line 588</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R, typename Fn&gt;
+    requires(micron::distinct&lt;R, io::error_t&gt; &amp;&amp; (line_fold_raw&lt;Fn, R&gt; || line_fold_str&lt;Fn, R&gt;))
+  auto
+  fold_lines(R init, Fn &amp;&amp;fn) -&gt; micron::option&lt;R, io::error_t&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R init</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R, typename Fn&gt;
+    requires(micron::distinct&lt;R, io::error_t&gt; &amp;&amp; (line_fold_raw&lt;Fn, R&gt; || line_fold_str&lt;Fn, R&gt;))
+  auto
+  fold_lines(R init, Fn &amp;&amp;fn) -&gt; micron::option&lt;R, io::error_t&gt;
+  {
+    using Ret = micron::option&lt;R, io::error_t&gt;;
+    if ( i32 __e = __check() ) [[unlikely]]
+      return Ret{ io::error_t(__e) };
+    __line_cursor cur(__handle.fd);
+    while ( cur.next() ) {
+      if constexpr ( line_fold_raw&lt;Fn, R&gt; )
+        init = fn(micron::move(init), cur.line().c_str(), cur.line().size());
+      else
+        init = fn(micron::move(init), cur.line());
+    }
+    if ( i32 e = cur.error() ) [[unlikely]]
+      return Ret{ io::error_t(e) };
+    return Ret{ micron::move(init) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>Ret{ io::error_t(__e) }</code></td><td><a href="../../source/io/file.hpp.html#L592">line 592</a></td></tr><tr class="t-dsc"><td><code>Ret{ io::error_t(e) }</code></td><td><a href="../../source/io/file.hpp.html#L601">line 601</a></td></tr><tr class="t-dsc"><td><code>Ret{ micron::move(init) }</code></td><td><a href="../../source/io/file.hpp.html#L602">line 602</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#s-427ae3b819587d96">io::error_t</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-a721807dbf76ea42"><h3><code>micron::io::file::lines(usize chunk_sz = __lines::chunk)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L607">line 607</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>lines_range
+  lines(usize chunk_sz = __lines::chunk)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize chunk_sz = __lines::chunk</code></li></ul><h4>Effects</h4><p>Returns <code>lines_range(__handle.fd, chunk_sz)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">lines_range
+  lines(usize chunk_sz = __lines::chunk)
+  {
+    return lines_range(__handle.fd, chunk_sz);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lines_range(__handle.fd, chunk_sz)</code></td><td><a href="../../source/io/file.hpp.html#L609">line 609</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__lines.hpp.html#s-0860bcc5d0773851">lines_range</a>.</p></section><section class="function-entry" id="f-f3cf052136595910"><h3><code>micron::io::file::operator&gt;&gt;(T &amp;out)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L617">line 617</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires((is_string&lt;T&gt; || is_contiguous_container&lt;T&gt;) &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  file &amp;
+  operator&gt;&gt;(T &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires((is_string&lt;T&gt; || is_contiguous_container&lt;T&gt;) &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  file &amp;
+  operator&gt;&gt;(T &amp;out)
+  {
+    seek_to(0);
+    out = read&lt;T&gt;();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/file.hpp.html#L621">line 621</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-7fc6c5a646e9b381">read&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-79c08391e3a740e7"><h3><code>micron::io::file::operator&lt;&lt;(const T &amp;x)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L626">line 626</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  file &amp;
+  operator&lt;&lt;(const T &amp;x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  file &amp;
+  operator&lt;&lt;(const T &amp;x)
+  {
+    write(x);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/file.hpp.html#L629">line 629</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-44a5c24b64a78380">write</a>.</p></section><section class="function-entry" id="f-6668158d8886d222"><h3><code>micron::io::file::operator&lt;&lt;(const char *cstr)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L633">line 633</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>file &amp;
+  operator&lt;&lt;(const char *cstr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *cstr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">file &amp;
+  operator&lt;&lt;(const char *cstr)
+  {
+    write(cstr);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/file.hpp.html#L636">line 636</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-44a5c24b64a78380">write</a>.</p></section><section class="function-entry" id="f-1fd4f654b2bbacbc"><h3><code>micron::io::file::seek(posix::off64_t offset)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L642">line 642</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>posix::off64_t
+  seek(posix::off64_t offset)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>posix::off64_t offset</code></li></ul><h4>Effects</h4><p>Returns <code>seek_to(offset)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">posix::off64_t
+  seek(posix::off64_t offset)
+  {
+    return seek_to(offset);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>seek_to(offset)</code></td><td><a href="../../source/io/file.hpp.html#L644">line 644</a></td></tr></tbody></table></section><section class="function-entry" id="f-90ad7a2b67e9c833"><h3><code>micron::io::file::pos(void) const</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L648">line 648</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>posix::off64_t
+  pos(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>tell()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">posix::off64_t
+  pos(void) const
+  {
+    return tell();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tell()</code></td><td><a href="../../source/io/file.hpp.html#L650">line 650</a></td></tr></tbody></table></section><section class="function-entry" id="f-65abe53866162c71"><h3><code>micron::io::file::atomic_replace(const void *new_data, usize new_len)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L656">line 656</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>i32
+  atomic_replace(const void *new_data, usize new_len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *new_data</code></li><li><code>usize new_len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">i32
+  atomic_replace(const void *new_data, usize new_len)
+  {
+    if ( fname.empty() ) [[unlikely]]
+      return -error::invalid_arg;
+    if ( fname.size() + 16 &gt;= max_name ) [[unlikely]]
+      return -error::name_too_long;
+
+    micron::sstr&lt;max_name&gt; tmp_name(fname);
+    tmp_name += &quot;.tmp.&quot;;
+    // u32 on purpose: linux pids fit, and u64 divmod emits libgcc calls on 32-bit targets
+    u32 pid = static_cast&lt;u32&gt;(posix::getpid());
+    char pid_buf[24];
+    usize pi = 0;
+    if ( pid == 0 ) {
+      pid_buf[pi++] = &#x27;0&#x27;;
+    } else {
+      u32 p = pid;
+      while ( p ) {
+        pid_buf[pi++] = &#x27;0&#x27; + static_cast&lt;char&gt;(p % 10);
+        p /= 10;
+      }
+    }
+    for ( usize l = 0, r = pi - 1; l &lt; r; ++l, --r ) {
+      char c = pid_buf[l];
+      pid_buf[l] = pid_buf[r];
+      pid_buf[r] = c;
+    }
+    pid_buf[pi] = &#x27;\0&#x27;;
+    tmp_name += pid_buf;
+
+    // preserve the original files permission bits
+    u32 keep_mode = posix::mode_file;
+    {
+      stat_t orig{};
+      if ( posix::exists(fname.c_str(), orig) ) keep_mode = static_cast&lt;u32&gt;(orig.st_mode) &amp; 0777u;
+    }
+
+    // create restrictively (0600)
+    posix::fd_t tmp{ (posix::openat(posix::at_fdcwd, tmp_name.c_str(),
+                                    posix::o_wronly | posix::o_create | posix::o_trunc | posix::o_cloexec | posix::o_nofollow, 0600u)) };
+    if ( !tmp ) [[unlikely]]
+      return tmp.fd &lt; 0 ? tmp.fd : -error::io_error;
+
+    usize written = 0;
+    while ( written &lt; new_len ) {
+      max_t n = posix::write(tmp.fd, static_cast&lt;const byte *&gt;(new_data) + written, new_len - written);
+      if ( n &lt; 0 &amp;&amp; -n == error::interrupted ) continue;
+      if ( n &lt;= 0 ) {
+        posix::close(tmp.fd);
+        posix::unlink(tmp_name.c_str());
+        return n &lt; 0 ? static_cast&lt;i32&gt;(n) : -error::io_error;
+      }
+      written += static_cast&lt;usize&gt;(n);
+    }
+
+    posix::fchmod(tmp.fd, keep_mode);
+
+    if ( max_t fe = posix::fsync(tmp.fd); fe &lt; 0 ) [[unlikely]] {
+      posix::close(tmp.fd);
+      posix::unlink(tmp_name.c_str());
+      return static_cast&lt;i32&gt;(fe);
+    }
+    if ( max_t ce = posix::close(tmp.fd); ce &lt; 0 ) [[unlikely]] {
+      posix::unlink(tmp_name.c_str());
+      return static_cast&lt;i32&gt;(ce);
+    }
+
+    if ( i32 r = static_cast&lt;i32&gt;(posix::rename(tmp_name.c_str(), fname.c_str())); r != 0 ) [[unlikely]] {
+      posix::unlink(tmp_name.c_str());
+      return r;
+    }
+
+    // fsync the parent directory
+    {
+      char dirbuf[max_name];
+      const char *s = fname.c_str();
+      const usize n = fname.size();
+      usize cut = 0;
+      bool have = false;
+      for ( usize k = 0; k &lt; n; ++k )
+        if ( s[k] == &#x27;/&#x27; ) {
+          cut = k;
+          have = true;
+        }
+      usize dl;
+      if ( !have ) {
+        dirbuf[0] = &#x27;.&#x27;;
+        dl = 1;
+      } else if ( cut == 0 ) {
+        dirbuf[0] = &#x27;/&#x27;;
+        dl = 1;
+      } else {
+        for ( usize k = 0; k &lt; cut; ++k ) dirbuf[k] = s[k];
+        dl = cut;
+      }
+      dirbuf[dl] = &#x27;\0&#x27;;
+      posix::fd_t d{ (posix::openat(posix::at_fdcwd, dirbuf, posix::o_rdonly | posix::o_directory | posix::o_cloexec, 0u)) };
+      if ( d ) {
+        posix::fsync(d.fd);
+        posix::close(d.fd);
+      }
+    }
+
+    // the contents are on disk, but this handle still refers to the replaced inode
+    return __rebind();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-error::invalid_arg</code></td><td><a href="../../source/io/file.hpp.html#L659">line 659</a></td></tr><tr class="t-dsc"><td><code>-error::name_too_long</code></td><td><a href="../../source/io/file.hpp.html#L661">line 661</a></td></tr><tr class="t-dsc"><td><code>tmp.fd &lt; 0 ? tmp.fd : -error::io_error</code></td><td><a href="../../source/io/file.hpp.html#L697">line 697</a></td></tr><tr class="t-dsc"><td><code>n &lt; 0 ? static_cast&lt;i32&gt;(n) : -error::io_error</code></td><td><a href="../../source/io/file.hpp.html#L706">line 706</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(fe)</code></td><td><a href="../../source/io/file.hpp.html#L716">line 716</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(ce)</code></td><td><a href="../../source/io/file.hpp.html#L720">line 720</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/file.hpp.html#L725">line 725</a></td></tr><tr class="t-dsc"><td><code>__rebind()</code></td><td><a href="../../source/io/file.hpp.html#L760">line 760</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/sys/system.hpp.html#f-02b340c9ce1eeab2">posix::getpid</a>, <a href="../linux/io/inode.hpp.html#f-1aa5d071935e91c4">posix::exists</a>, <a href="../linux/io/sys.hpp.html#f-127e383155e1e536">posix::openat</a>, <a href="../linux/io/sys.hpp.html#f-3125062f09a2bad4">posix::write</a>, <a href="../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../linux/io/sys.hpp.html#f-8aed84b0ce855f6b">posix::unlink</a>, <a href="../linux/io/sys.hpp.html#f-5c5888976ddea87f">posix::fchmod</a>, <a href="../linux/io/sys.hpp.html#f-17bc0d012e9e5c67">posix::fsync</a>, <a href="../linux/io/sys.hpp.html#f-10ba3e5bfbadc08c">posix::rename</a>, <a href="file.hpp.html#f-9dc71a534e546e1e">__rebind</a>.</p></section><section class="function-entry" id="f-c5f80b35bc647718"><h3><code>micron::io::file::atomic_replace(const T &amp;str)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L765">line 765</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string T&gt;
+  i32
+  atomic_replace(const T &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;str</code></li></ul><h4>Effects</h4><p>Returns <code>atomic_replace(static_cast&lt;const void *&gt;(str.c_str()), micron::string_len(str) * sizeof(typename T::value_type))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string T&gt;
+  i32
+  atomic_replace(const T &amp;str)
+  {
+    return atomic_replace(static_cast&lt;const void *&gt;(str.c_str()), micron::string_len(str) * sizeof(typename T::value_type));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>atomic_replace(static_cast&lt;const void *&gt;(str.c_str()), micron::string_len(str) * sizeof(typename T::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L767">line 767</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-65abe53866162c71">atomic_replace</a>, <a href="../concepts.hpp.html#f-f453d2b5f82853d5">micron::string_len</a>.</p></section><section class="function-entry" id="f-92185cb4a99e382d"><h3><code>micron::io::file::atomic_replace(const T &amp;c)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L773">line 773</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires(is_contiguous_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  i32
+  atomic_replace(const T &amp;c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>atomic_replace(static_cast&lt;const void *&gt;(c.data()), c.size() * sizeof(typename T::value_type))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires(is_contiguous_container&lt;T&gt; &amp;&amp; !is_string&lt;T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+  i32
+  atomic_replace(const T &amp;c)
+  {
+    return atomic_replace(static_cast&lt;const void *&gt;(c.data()), c.size() * sizeof(typename T::value_type));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>atomic_replace(static_cast&lt;const void *&gt;(c.data()), c.size() * sizeof(typename T::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L775">line 775</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-65abe53866162c71">atomic_replace</a>.</p></section><section class="function-entry" id="f-9b75a5eb3385ba3e"><h3><code>micron::io::file::write_encoded(Fn &amp;&amp;fn, const byte *src, usize src_len)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L782">line 782</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;encode_fn Fn&gt;
+  max_t
+  write_encoded(Fn &amp;&amp;fn, const byte *src, usize src_len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li><li><code>const byte *src</code></li><li><code>usize src_len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;encode_fn Fn&gt;
+  max_t
+  write_encoded(Fn &amp;&amp;fn, const byte *src, usize src_len)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    micron::buffer out(src_len * 4 + 64);
+    usize out_len = fn(out.begin(), out.size(), src, src_len);
+    return __write_loop(out.begin(), out_len);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L785">line 785</a></td></tr><tr class="t-dsc"><td><code>__write_loop(out.begin(), out_len)</code></td><td><a href="../../source/io/file.hpp.html#L788">line 788</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>.</p></section><section class="function-entry" id="f-63da8acfea77f1a4"><h3><code>micron::io::file::write_encoded(Fn &amp;&amp;fn, const Tp &amp;src)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L793">line 793</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;encode_fn Fn, is_string Tp&gt;
+  max_t
+  write_encoded(Fn &amp;&amp;fn, const Tp &amp;src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li><li><code>const Tp &amp;src</code></li></ul><h4>Effects</h4><p>Returns <code>write_encoded(static_cast&lt;Fn &amp;&amp;&gt;(fn), reinterpret_cast&lt;const byte *&gt;(src.c_str()),
+                         micron::string_len(src) * sizeof(typename Tp::value_type))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;encode_fn Fn, is_string Tp&gt;
+  max_t
+  write_encoded(Fn &amp;&amp;fn, const Tp &amp;src)
+  {
+    return write_encoded(static_cast&lt;Fn &amp;&amp;&gt;(fn), reinterpret_cast&lt;const byte *&gt;(src.c_str()),
+                         micron::string_len(src) * sizeof(typename Tp::value_type));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>write_encoded(static_cast&lt;Fn &amp;&amp;&gt;(fn), reinterpret_cast&lt;const byte *&gt;(src.c_str()),
+                         micron::string_len(src) * sizeof(typename Tp::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L795">line 795</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-9b75a5eb3385ba3e">write_encoded</a>, <a href="../concepts.hpp.html#f-f453d2b5f82853d5">micron::string_len</a>.</p></section><section class="function-entry" id="f-406dd6ec3effe6a3"><h3><code>micron::io::file::append_encoded(Fn &amp;&amp;fn, const Tp &amp;src)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L801">line 801</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;encode_fn Fn, is_string Tp&gt;
+  max_t
+  append_encoded(Fn &amp;&amp;fn, const Tp &amp;src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li><li><code>const Tp &amp;src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;encode_fn Fn, is_string Tp&gt;
+  max_t
+  append_encoded(Fn &amp;&amp;fn, const Tp &amp;src)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( posix::off64_t e = seek_end(); e &lt; 0 ) [[unlikely]]
+      return e;
+    return write_encoded(static_cast&lt;Fn &amp;&amp;&gt;(fn), reinterpret_cast&lt;const byte *&gt;(src.c_str()),
+                         micron::string_len(src) * sizeof(typename Tp::value_type));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L804">line 804</a></td></tr><tr class="t-dsc"><td><code>e</code></td><td><a href="../../source/io/file.hpp.html#L806">line 806</a></td></tr><tr class="t-dsc"><td><code>write_encoded(static_cast&lt;Fn &amp;&amp;&gt;(fn), reinterpret_cast&lt;const byte *&gt;(src.c_str()),
+                         micron::string_len(src) * sizeof(typename Tp::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L807">line 807</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-9b75a5eb3385ba3e">write_encoded</a>, <a href="../concepts.hpp.html#f-f453d2b5f82853d5">micron::string_len</a>.</p></section><section class="function-entry" id="f-d9c549c0d2532e85"><h3><code>micron::io::file::to_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s) const</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L815">line 815</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int SZ, int CK, bool IS&gt;
+  max_t
+  to_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>io::stream&lt;SZ, CK, IS&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int SZ, int CK, bool IS&gt;
+  max_t
+  to_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s) const
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    s &lt;&lt; __handle;
+    return static_cast&lt;max_t&gt;(s.size());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L818">line 818</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(s.size())</code></td><td><a href="../../source/io/file.hpp.html#L820">line 820</a></td></tr></tbody></table></section><section class="function-entry" id="f-025b6d3c10346112"><h3><code>micron::io::file::from_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L825">line 825</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int SZ, int CK, bool IS&gt;
+  max_t
+  from_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>io::stream&lt;SZ, CK, IS&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int SZ, int CK, bool IS&gt;
+  max_t
+  from_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( s.empty() ) return 0;
+    max_t n = __write_loop(s.data(), static_cast&lt;usize&gt;(s.size()));
+    s.rewind();
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L828">line 828</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/file.hpp.html#L829">line 829</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/file.hpp.html#L832">line 832</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-894da249458bed3a">__write_loop</a>.</p></section><section class="function-entry" id="f-17256e57562e7969"><h3><code>micron::io::file::as_path() const</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L838">line 838</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>io::path_t
+  as_path() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>io::path_t(fname.c_str())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">io::path_t
+  as_path() const
+  {
+    return io::path_t(fname.c_str());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>io::path_t(fname.c_str())</code></td><td><a href="../../source/io/file.hpp.html#L840">line 840</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#s-071320eb1266b89c">io::path_t</a>.</p></section><section class="function-entry" id="f-d7b14da6dd775d6e"><h3><code>micron::io::file::fullpath() const</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L844">line 844</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>io::path_t
+  fullpath() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>io::canonical(fname.c_str())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">io::path_t
+  fullpath() const
+  {
+    return io::canonical(fname.c_str());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>io::canonical(fname.c_str())</code></td><td><a href="../../source/io/file.hpp.html#L846">line 846</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-601617129361e90c">io::canonical</a>.</p></section><section class="function-entry" id="f-42ac2540d4ae3c92"><h3><code>micron::io::file::basename() const</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L850">line 850</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>io::path_t
+  basename() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>io::basename(fname.c_str())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">io::path_t
+  basename() const
+  {
+    return io::basename(fname.c_str());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>io::basename(fname.c_str())</code></td><td><a href="../../source/io/file.hpp.html#L852">line 852</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-e49b126ecd8a8368">io::basename</a>.</p></section><section class="function-entry" id="f-6141aa022adabc66"><h3><code>micron::io::file::extension() const</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L856">line 856</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>io::path_t
+  extension() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>io::extension(fname.c_str())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">io::path_t
+  extension() const
+  {
+    return io::extension(fname.c_str());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>io::extension(fname.c_str())</code></td><td><a href="../../source/io/file.hpp.html#L858">line 858</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-5f2f2249c0895573">io::extension</a>.</p></section><section class="function-entry" id="f-78f4d263ae76b80b"><h3><code>micron::io::file::stem() const</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L862">line 862</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>io::path_t
+  stem() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>io::stem(fname.c_str())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">io::path_t
+  stem() const
+  {
+    return io::stem(fname.c_str());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>io::stem(fname.c_str())</code></td><td><a href="../../source/io/file.hpp.html#L864">line 864</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-775f64036e76601e">io::stem</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-894da249458bed3a"><h3><code>micron::io::file::__write_loop(const void *src, usize len)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L46">line 46</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  __write_loop(const void *src, usize len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *src</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  __write_loop(const void *src, usize len)
+  {
+    const byte *p = static_cast&lt;const byte *&gt;(src);
+    usize done = 0;
+    while ( done &lt; len ) {
+      max_t w = posix::write(__handle.fd, p + done, len - done);
+      if ( w &lt; 0 ) [[unlikely]] {
+        if ( -w == error::interrupted ) continue;
+        if ( -w == error::try_again &amp;&amp; !is_nonblock() ) continue;
+        return done ? static_cast&lt;max_t&gt;(done) : w;
+      }
+      if ( w == 0 ) break;
+      done += static_cast&lt;usize&gt;(w);
+    }
+    if ( done ) micron::zero(&amp;sd);      // cached stat (st_size) is stale after a successful write
+    return static_cast&lt;max_t&gt;(done);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>done ? static_cast&lt;max_t&gt;(done) : w</code></td><td><a href="../../source/io/file.hpp.html#L55">line 55</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(done)</code></td><td><a href="../../source/io/file.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-3125062f09a2bad4">posix::write</a>, <a href="../algorithm/memory.hpp.html#f-43fbf1bfc5b0907d">micron::zero</a>.</p></section><section class="function-entry" id="f-a89bab43c05630ba"><h3><code>micron::io::file::__read_loop(void *dst, usize len) const</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L65">line 65</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  __read_loop(void *dst, usize len) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *dst</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  __read_loop(void *dst, usize len) const
+  {
+    byte *p = static_cast&lt;byte *&gt;(dst);
+    usize got = 0;
+    while ( got &lt; len ) {
+      max_t r = posix::read(__handle.fd, p + got, len - got);
+      if ( r &lt; 0 ) [[unlikely]] {
+        if ( -r == error::interrupted ) continue;
+        if ( -r == error::try_again &amp;&amp; !is_nonblock() ) continue;
+        return got ? static_cast&lt;max_t&gt;(got) : r;
+      }
+      if ( r == 0 ) break;
+      got += static_cast&lt;usize&gt;(r);
+    }
+    return static_cast&lt;max_t&gt;(got);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>got ? static_cast&lt;max_t&gt;(got) : r</code></td><td><a href="../../source/io/file.hpp.html#L74">line 74</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(got)</code></td><td><a href="../../source/io/file.hpp.html#L79">line 79</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-4dae032f64ac939d">posix::read</a>.</p></section><section class="function-entry" id="f-d18fbf0690641a00"><h3><code>micron::io::file::__set_length(T &amp;c, usize elems)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L84">line 84</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  static void
+  __set_length(T &amp;c, usize elems)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;c</code></li><li><code>usize elems</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  static void
+  __set_length(T &amp;c, usize elems)
+  {
+    if constexpr ( requires(T t, usize n) { t.set_size(n); } )
+      c.set_size(elems);
+    else if constexpr ( requires(T t, usize n) { t._buf_set_length(n); } )
+      c._buf_set_length(elems);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-57653a5aea710f96"><h3><code>micron::io::file::__read_value(T &amp;out)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L95">line 95</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+    requires __readable_value&lt;T&gt;
+  max_t
+  __read_value(T &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+    requires __readable_value&lt;T&gt;
+  max_t
+  __read_value(T &amp;out)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if constexpr ( __bulk_value&lt;T&gt; ) {
+      stat&lt;STAT_OVERRIDE&gt;();
+      const usize total = static_cast&lt;usize&gt;(sd.st_size);
+      const posix::off64_t at = tell();
+      const usize remaining = (at &gt;= 0 &amp;&amp; total &gt; static_cast&lt;usize&gt;(at)) ? total - static_cast&lt;usize&gt;(at) : 0;
+      if ( remaining == 0 ) {
+        // virtual files (/proc, /sys) fstat to size 0; grow chunk-by-chunk until EOF
+        max_t got = 0;
+        if constexpr ( sizeof(typename T::value_type) == 1 &amp;&amp; requires(T t, typename T::value_type v) { t.push_back(v); } ) {
+          byte chunk[4096];
+          for ( ;; ) {
+            max_t r = posix::read(__handle.fd, chunk, sizeof(chunk));
+            if ( r &lt; 0 ) [[unlikely]] {
+              if ( -r == error::interrupted ) continue;
+              return r;
+            }
+            if ( r == 0 ) break;
+            for ( max_t i = 0; i &lt; r; ++i ) out.push_back(static_cast&lt;typename T::value_type&gt;(chunk[i]));
+            got += r;
+          }
+        }
+        return got;
+      }
+      const usize elems = remaining / sizeof(typename T::value_type);
+      if constexpr ( requires(T t, usize n) { t.reserve(n); } ) out.reserve(elems + 1);
+      // a fixed-capacity destination that cannot hold the remainder is an error, not a silent
+      // prefix: modify() reads this count back as the file&#x27;s old size, so reporting a short
+      // read as a complete one makes it truncate away the tail it never saw.
+      if constexpr ( requires(const T &amp;t) { t.max_size(); } ) {
+        if ( elems &gt; out.max_size() ) [[unlikely]]
+          return -error::file_too_big;
+      }
+      max_t got = __read_loop(out.data(), elems * sizeof(typename T::value_type));
+      if ( got &lt; 0 ) [[unlikely]]
+        return got;
+      if ( got &gt; 0 ) __set_length(out, static_cast&lt;usize&gt;(got) / sizeof(typename T::value_type));
+      return got;
+    } else if constexpr ( __framed_value&lt;T&gt; ) {
+      const posix::off64_t at = tell();
+      if ( at &lt; 0 ) [[unlikely]]
+        return at;
+      stat&lt;STAT_OVERRIDE&gt;();
+      if ( static_cast&lt;usize&gt;(sd.st_size) &lt;= static_cast&lt;usize&gt;(at) ) return 0;
+      return read(out);      // non-throwing framed read
+    } else {
+      // trivially-copyable object: a short read is corruption
+      max_t got = __read_loop(static_cast&lt;void *&gt;(micron::addressof(out)), sizeof(T));
+      if ( got &lt; 0 ) [[unlikely]]
+        return got;
+      if ( static_cast&lt;usize&gt;(got) != sizeof(T) ) [[unlikely]]
+        return -error::io_error;
+      return got;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/file.hpp.html#L98">line 98</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/file.hpp.html#L113">line 113</a></td></tr><tr class="t-dsc"><td><code>got</code></td><td><a href="../../source/io/file.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>-error::file_too_big</code></td><td><a href="../../source/io/file.hpp.html#L129">line 129</a></td></tr><tr class="t-dsc"><td><code>got</code></td><td><a href="../../source/io/file.hpp.html#L133">line 133</a></td></tr><tr class="t-dsc"><td><code>got</code></td><td><a href="../../source/io/file.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>at</code></td><td><a href="../../source/io/file.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/file.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>read(out)</code></td><td><a href="../../source/io/file.hpp.html#L142">line 142</a></td></tr><tr class="t-dsc"><td><code>got</code></td><td><a href="../../source/io/file.hpp.html#L147">line 147</a></td></tr><tr class="t-dsc"><td><code>-error::io_error</code></td><td><a href="../../source/io/file.hpp.html#L149">line 149</a></td></tr><tr class="t-dsc"><td><code>got</code></td><td><a href="../../source/io/file.hpp.html#L150">line 150</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io.hpp.html#s-780e9756070bd055">stat&lt;STAT_OVERRIDE&gt;</a>, <a href="../linux/io/sys.hpp.html#f-4dae032f64ac939d">posix::read</a>, <a href="file.hpp.html#f-a89bab43c05630ba">__read_loop</a>, <a href="file.hpp.html#f-d18fbf0690641a00">__set_length</a>, <a href="file.hpp.html#f-7fc6c5a646e9b381">read</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-9dc71a534e546e1e"><h3><code>micron::io::file::__rebind(void)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L158">line 158</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>i32
+  __rebind(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">i32
+  __rebind(void)
+  {
+    const i32 fl = get_status_flags();
+    if ( fl &lt; 0 ) [[unlikely]]
+      return fl;
+    const bool keep_cloexec = is_cloexec();      // an fd flag, not reported by F_GETFL
+    const i32 nfd = static_cast&lt;i32&gt;(posix::openat(posix::at_fdcwd, fname.c_str(), fl | (keep_cloexec ? posix::o_cloexec : 0), 0u));
+    if ( nfd &lt; 0 ) [[unlikely]]
+      return nfd;
+    posix::close(__handle.fd);
+    __handle.fd = nfd;
+    micron::zero(&amp;sd);      // new inode: every cached stat field is stale
+    return 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fl</code></td><td><a href="../../source/io/file.hpp.html#L162">line 162</a></td></tr><tr class="t-dsc"><td><code>nfd</code></td><td><a href="../../source/io/file.hpp.html#L166">line 166</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/file.hpp.html#L170">line 170</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-127e383155e1e536">posix::openat</a>, <a href="../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../algorithm/memory.hpp.html#f-43fbf1bfc5b0907d">micron::zero</a>.</p></section><section class="function-entry" id="f-b25e3834d74ac1db"><h3><code>micron::io::file::__marshal_size(const T &amp;v)</code></h3><p>Defined in <code>io/file.hpp</code>, <a href="../../source/io/file.hpp.html#L176">line 176</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  static max_t
+  __marshal_size(const T &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  static max_t
+  __marshal_size(const T &amp;v)
+  {
+    if constexpr ( __bulk_value&lt;T&gt; )
+      return static_cast&lt;max_t&gt;(v.size() * sizeof(typename T::value_type));
+    else if constexpr ( __framed_value&lt;T&gt; )
+      return serialize::framed_size(v);
+    else
+      return static_cast&lt;max_t&gt;(sizeof(T));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(v.size() * sizeof(typename T::value_type))</code></td><td><a href="../../source/io/file.hpp.html#L179">line 179</a></td></tr><tr class="t-dsc"><td><code>serialize::framed_size(v)</code></td><td><a href="../../source/io/file.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(sizeof(T))</code></td><td><a href="../../source/io/file.hpp.html#L183">line 183</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__serial_core.hpp.html#f-e8249ecfadac07df">serialize::framed_size</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

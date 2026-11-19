@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/elf/tls.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/elf/tls.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/elf/tls.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/elf/tls.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-73b9442d481460d7">micron::elf::tls_max_modules</code></td><td>variable; line 25</td></tr><tr class="t-dsc"><td><code id="s-7325b294bccfdc44">micron::elf::tls_module_t</code></td><td>struct; line 27</td></tr><tr class="t-dsc"><td><code id="s-067c0ab3c2fa8de7">micron::elf::tls_module_t::modid</code></td><td>member; line 28</td></tr><tr class="t-dsc"><td><code id="s-b125869030745a91">micron::elf::tls_module_t::image</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-33ced92ed8a7677d">micron::elf::tls_module_t::image_size</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-4f3cbd89cf54eccf">micron::elf::tls_module_t::total_size</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-cb268ac698863c85">micron::elf::tls_module_t::align</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-f49f9151158d9c98">micron::elf::tls_module_t::active</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-5af21071e868425d">micron::elf::tls_block_t</code></td><td>struct; line 53</td></tr><tr class="t-dsc"><td><code id="s-49733130501bce78">micron::elf::tls_block_t::ptr</code></td><td>member; line 54</td></tr><tr class="t-dsc"><td><code id="s-131e4ed77b25c09f">micron::elf::tls_block_t::map</code></td><td>member; line 55</td></tr><tr class="t-dsc"><td><code id="s-38367bb3327688cd">micron::elf::tls_block_t::map_sz</code></td><td>member; line 56</td></tr><tr class="t-dsc"><td><code id="s-926ba3b71e21d8f4">micron::elf::tls_thread_block_t</code></td><td>struct; line 60</td></tr><tr class="t-dsc"><td><code id="s-5d1135b3ce79d705">micron::elf::tls_thread_block_t::tid</code></td><td>member; line 61</td></tr><tr class="t-dsc"><td><code id="s-a1565af1de582faf">micron::elf::tls_thread_block_t::blocks</code></td><td>member; line 62</td></tr><tr class="t-dsc"><td><code id="s-42e2dca036acb44f">micron::elf::tls_thread_block_t::next</code></td><td>member; line 63</td></tr><tr class="t-dsc"><td><code id="s-fff9a51ec2d52754">micron::elf::tls_index_t</code></td><td>struct; line 227</td></tr><tr class="t-dsc"><td><code id="s-e23cf95ad689092b">micron::elf::tls_index_t::ti_module</code></td><td>member; line 228</td></tr><tr class="t-dsc"><td><code id="s-97d311f5cf578aac">micron::elf::tls_index_t::ti_offset</code></td><td>member; line 229</td></tr><tr class="t-dsc"><td><a href="#f-a9b9d86bf3fc29f5">micron::elf::tls_register(const u8 *image, usize image_size, usize total_size, usize align) noexcept</a></td><td>function; line 170</td></tr><tr class="t-dsc"><td><a href="#f-114eac2c7f5be5ed">micron::elf::tls_unregister(u64 modid) noexcept</a></td><td>function; line 196</td></tr><tr class="t-dsc"><td><a href="#f-e62465e8562b161f">micron::elf::tls_alloc_block_for(const tls_module_t &amp;m) noexcept</a></td><td>function; line 212</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a9b9d86bf3fc29f5"><h3><code>micron::elf::tls_register(const u8 *image, usize image_size, usize total_size, usize align) noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L170">line 170</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+tls_register(const u8 *image, usize image_size, usize total_size, usize align) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *image</code></li><li><code>usize image_size</code></li><li><code>usize total_size</code></li><li><code>usize align</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+tls_register(const u8 *image, usize image_size, usize total_size, usize align) noexcept
+{
+  __tls_lock();
+  u64 mid = 0;
+  for ( u64 i = 1; i &lt; tls_max_modules; ++i ) {      // reuse the first inactive slot (modid free-list)
+    if ( !__tls_modules[i].active ) {
+      mid = i;
+      break;
+    }
+  }
+  if ( mid == 0 ) {
+    __tls_unlock();
+    return 0;
+  }
+  tls_module_t &amp;m = __tls_modules[mid];
+  m.modid = mid;
+  m.image = image;
+  m.image_size = image_size;
+  m.total_size = total_size;
+  m.align = align ? align : 8;
+  m.active = true;
+  __tls_unlock();
+  return mid;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L182">line 182</a></td></tr><tr class="t-dsc"><td><code>mid</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L192">line 192</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-067d422ce9bfb70e">__tls_lock</a>, <a href="tls.hpp.html#f-398e85f1cc0983e1">__tls_unlock</a>.</p></section><section class="function-entry" id="f-114eac2c7f5be5ed"><h3><code>micron::elf::tls_unregister(u64 modid) noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L196">line 196</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+tls_unregister(u64 modid) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 modid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+tls_unregister(u64 modid) noexcept
+{
+  if ( modid == 0 || modid &gt;= tls_max_modules ) return;
+  __tls_lock();
+  // free every thread&#x27;s block for this module; important if we cycle and not just allow the kernel to reclaim at eop
+  for ( tls_thread_block_t *t = __tls_thread_head; t; t = t-&gt;next ) {
+    if ( t-&gt;blocks[modid].map ) {
+      micron::munmap(reinterpret_cast&lt;addr_t *&gt;(t-&gt;blocks[modid].map), t-&gt;blocks[modid].map_sz);
+      t-&gt;blocks[modid] = tls_block_t{};
+    }
+  }
+  __tls_modules[modid] = tls_module_t{};
+  __tls_unlock();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/tls.hpp.html#L198">line 198</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-067d422ce9bfb70e">__tls_lock</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="tls.hpp.html#f-398e85f1cc0983e1">__tls_unlock</a>.</p></section><section class="function-entry" id="f-e62465e8562b161f"><h3><code>micron::elf::tls_alloc_block_for(const tls_module_t &amp;m) noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L212">line 212</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline tls_block_t
+tls_alloc_block_for(const tls_module_t &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tls_module_t &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline tls_block_t
+tls_alloc_block_for(const tls_module_t &amp;m) noexcept
+{
+  const usize align = m.align ? m.align : 8;
+  usize sz = (m.total_size + align - 1) &amp; ~(align - 1);
+  if ( sz == 0 ) sz = 16;
+  const usize extra = (align &gt; __micron_page_size_default) ? align : 0;
+  const usize map_sz = sz + extra;
+  u8 *base = reinterpret_cast&lt;u8 *&gt;(micron::mmap(nullptr, map_sz, prot_read | prot_write, map_private | map_anonymous, -1, 0));
+  if ( mmap_failed(base) ) return tls_block_t{};
+  u8 *aligned = extra ? reinterpret_cast&lt;u8 *&gt;((reinterpret_cast&lt;uintptr_t&gt;(base) + align - 1) &amp; ~static_cast&lt;uintptr_t&gt;(align - 1)) : base;
+  if ( m.image_size ) micron::memcpy(aligned, m.image, m.image_size);
+  if ( m.total_size &gt; m.image_size ) micron::memset(aligned + m.image_size, byte{ 0 }, m.total_size - m.image_size);
+  return tls_block_t{ aligned, base, map_sz };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tls_block_t{}</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L220">line 220</a></td></tr><tr class="t-dsc"><td><code>tls_block_t{ aligned, base, map_sz }</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L224">line 224</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">mmap_failed</a>, <a href="../../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../../memory/cmemory/memset.hpp.html#f-8464e1a1f787e9d0">micron::memset</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-067d422ce9bfb70e"><h3><code>micron::elf::__tls_lock() noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L41">line 41</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__tls_lock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__tls_lock() noexcept
+{
+  while ( __atomic_exchange_n(&amp;__tls_lock_flag, 1, __ATOMIC_ACQUIRE) ) {
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-398e85f1cc0983e1"><h3><code>micron::elf::__tls_unlock() noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L48">line 48</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__tls_unlock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__tls_unlock() noexcept
+{
+  __atomic_store_n(&amp;__tls_lock_flag, 0, __ATOMIC_RELEASE);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-1a3a3048d98956b0"><h3><code>micron::elf::__tls_release_block(void *ptr) noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__tls_release_block(void *ptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__tls_release_block(void *ptr) noexcept
+{
+  auto *block = static_cast&lt;tls_thread_block_t *&gt;(ptr);
+  if ( !block ) return;
+  __tls_lock();
+  auto **link = &amp;__tls_thread_head;
+  while ( *link &amp;&amp; *link != block ) link = &amp;(*link)-&gt;next;
+  if ( *link ) *link = block-&gt;next;
+  for ( usize i = 0; i &lt; tls_max_modules; ++i )
+    if ( block-&gt;blocks[i].map ) micron::munmap(reinterpret_cast&lt;addr_t *&gt;(block-&gt;blocks[i].map), block-&gt;blocks[i].map_sz);
+  micron::munmap(reinterpret_cast&lt;addr_t *&gt;(block), sizeof(tls_thread_block_t));
+  __tls_unlock();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/tls.hpp.html#L72">line 72</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-067d422ce9bfb70e">__tls_lock</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="tls.hpp.html#f-398e85f1cc0983e1">__tls_unlock</a>.</p></section><section class="function-entry" id="f-7f309f71c75aca1f"><h3><code>micron::elf::__tls_release_key(void *ptr) noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L90">line 90</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__tls_release_key(void *ptr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_freestanding)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__tls_release_key(void *ptr) noexcept
+{
+#if defined(__micron_tdtor_real)
+  // A native TLS destructor can append guest callbacks after the worker&#x27;s first sweep.
+  // pthreads cleared the key before calling us; those callbacks must still see this record.
+  (void)pthread_setspecific(__tls_thread_key, ptr);
+  micron::__run_thread_dtors();
+  (void)pthread_setspecific(__tls_thread_key, nullptr);
+#endif
+  __tls_release_block(ptr);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../__special/pthread_key.html#f-f71103ed50dad516">pthread_setspecific</a>, <a href="../../bits/__thread_exit_hook.hpp.html#f-b5b82ee89d36a3e6">micron::__run_thread_dtors</a>, <a href="tls.hpp.html#f-1a3a3048d98956b0">__tls_release_block</a>.</p></section><section class="function-entry" id="f-ec26dcabcc6a084a"><h3><code>micron::elf::__tls_ensure_key() noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__tls_ensure_key() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_freestanding)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__tls_ensure_key() noexcept
+{
+  for ( ;; ) {
+    int state = __atomic_load_n(&amp;__tls_key_state, __ATOMIC_ACQUIRE);
+    if ( state == 2 ) return true;
+    if ( state == 0 &amp;&amp; __atomic_compare_exchange_n(&amp;__tls_key_state, &amp;state, 1, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE) ) {
+      const bool ready = pthread_key_create(&amp;__tls_thread_key, __tls_release_key) == 0;
+      __atomic_store_n(&amp;__tls_key_state, ready ? 2 : 0, __ATOMIC_RELEASE);
+      return ready;
+    }
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L107">line 107</a></td></tr><tr class="t-dsc"><td><code>ready</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L111">line 111</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../__special/pthread_key.html#f-1b905713daf600c6">pthread_key_create</a>, <a href="../../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-f666a51312626f0f"><h3><code>micron::elf::__tls_release_thread() noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L119">line 119</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__tls_release_thread() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__tls_release_thread() noexcept
+{
+#if defined(__micron_freestanding)
+  auto *block = __tls_thread;
+  __tls_thread = nullptr;
+#else
+  if ( __atomic_load_n(&amp;__tls_key_state, __ATOMIC_ACQUIRE) != 2 ) return;
+  auto *block = static_cast&lt;tls_thread_block_t *&gt;(pthread_getspecific(__tls_thread_key));
+  if ( pthread_setspecific(__tls_thread_key, nullptr) != 0 ) return;
+#endif
+  micron::__dynamic_tls_exit_hook = nullptr;
+  __tls_release_block(block);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/tls.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/tls.hpp.html#L127">line 127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../__special/pthread_key.html#f-ff6c33d24e9e8d30">pthread_getspecific</a>, <a href="../../__special/pthread_key.html#f-f71103ed50dad516">pthread_setspecific</a>, <a href="tls.hpp.html#f-1a3a3048d98956b0">__tls_release_block</a>.</p></section><section class="function-entry" id="f-09632c44ca1fd741"><h3><code>micron::elf::__current_tid() noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L134">line 134</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline i32
+__current_tid() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>static_cast&lt;i32&gt;(micron::syscall(SYS_gettid))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline i32
+__current_tid() noexcept
+{
+  return static_cast&lt;i32&gt;(micron::syscall(SYS_gettid));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(micron::syscall(SYS_gettid))</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L136">line 136</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-b66f8d2c318dd32a"><h3><code>micron::elf::__tls_get_thread() noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L140">line 140</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline tls_thread_block_t *
+__tls_get_thread() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline tls_thread_block_t *
+__tls_get_thread() noexcept
+{
+#if defined(__micron_freestanding)
+  if ( __tls_thread ) return __tls_thread;
+#else
+  if ( !__tls_ensure_key() ) return nullptr;
+  if ( auto *t = static_cast&lt;tls_thread_block_t *&gt;(pthread_getspecific(__tls_thread_key)); t ) return t;
+#endif
+  tls_thread_block_t *t = reinterpret_cast&lt;tls_thread_block_t *&gt;(
+      micron::mmap(nullptr, sizeof(tls_thread_block_t), prot_read | prot_write, map_private | map_anonymous, -1, 0));
+  if ( mmap_failed(t) ) return nullptr;
+  t-&gt;tid = __current_tid();
+  for ( usize i = 0; i &lt; tls_max_modules; ++i ) t-&gt;blocks[i] = tls_block_t{};
+#if defined(__micron_freestanding)
+  __tls_thread = t;
+#else
+  if ( pthread_setspecific(__tls_thread_key, t) != 0 ) {
+    micron::munmap(reinterpret_cast&lt;addr_t *&gt;(t), sizeof(tls_thread_block_t));
+    return nullptr;
+  }
+#endif
+  micron::__dynamic_tls_exit_hook = &amp;__tls_release_thread;
+  __tls_lock();
+  t-&gt;next = __tls_thread_head;
+  __tls_thread_head = t;
+  __tls_unlock();
+  return t;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__tls_thread</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L143">line 143</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L146">line 146</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L158">line 158</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L166">line 166</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-ec26dcabcc6a084a">__tls_ensure_key</a>, <a href="../../__special/pthread_key.html#f-ff6c33d24e9e8d30">pthread_getspecific</a>, <a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">mmap_failed</a>, <a href="tls.hpp.html#f-09632c44ca1fd741">__current_tid</a>, <a href="../../__special/pthread_key.html#f-f71103ed50dad516">pthread_setspecific</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="tls.hpp.html#f-067d422ce9bfb70e">__tls_lock</a>, <a href="tls.hpp.html#f-398e85f1cc0983e1">__tls_unlock</a>.</p></section><section class="function-entry" id="f-62f29d7caaedaf09"><h3><code>__tls_get_addr(micron::elf::tls_index_t *ti) noexcept</code></h3><p>Defined in <code>linux/elf/tls.hpp</code>, <a href="../../../source/linux/elf/tls.hpp.html#L237">line 237</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void *
+__tls_get_addr(micron::elf::tls_index_t *ti) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::elf::tls_index_t *ti</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void *
+__tls_get_addr(micron::elf::tls_index_t *ti) noexcept
+{
+  using namespace micron::elf;
+  if ( !ti || ti-&gt;ti_module == 0 || ti-&gt;ti_module &gt;= tls_max_modules ) return nullptr;
+  tls_thread_block_t *t = __tls_get_thread();
+  if ( !t ) return nullptr;
+  __tls_lock();
+  const tls_module_t &amp;m = __tls_modules[ti-&gt;ti_module];
+  if ( !m.active ) {
+    __tls_unlock();
+    return nullptr;
+  }
+  if ( !t-&gt;blocks[ti-&gt;ti_module].ptr ) {
+    tls_block_t b = tls_alloc_block_for(m);
+    if ( !b.ptr ) {
+      __tls_unlock();
+      return nullptr;
+    }
+    t-&gt;blocks[ti-&gt;ti_module] = b;
+  }
+  void *p = reinterpret_cast&lt;u8 *&gt;(t-&gt;blocks[ti-&gt;ti_module].ptr) + ti-&gt;ti_offset;
+  __tls_unlock();
+  return p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L240">line 240</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L242">line 242</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L247">line 247</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L253">line 253</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/linux/elf/tls.hpp.html#L259">line 259</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

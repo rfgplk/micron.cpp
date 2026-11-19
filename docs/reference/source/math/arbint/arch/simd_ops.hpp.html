@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/arbint/arch/simd_ops.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../../headers/index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/arbint/arch/simd_ops.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../../headers/math/arbint/arch/simd_ops.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../../bits/__arch.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;../../../types.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../bits/carry.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../limb.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> // carry free mpn kernels, vectorized</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #if defined(__micron_x86_avx2)</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #define __micron_arbint_vec_bytes 32</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #elif defined(__micron_x86_sse2) || defined(__micron_arm_neon)</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #define __micron_arbint_vec_bytes 16</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #endif</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> </span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #if defined(__micron_arbint_vec_bytes)</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> </span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> namespace micron</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> {</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> namespace math</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> {</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> namespace mpn</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> {</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> namespace __kern</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> {</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> </span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> typedef limb_t vlimb __attribute__((vector_size(__micron_arbint_vec_bytes)));</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> typedef slimb_t vslimb __attribute__((vector_size(__micron_arbint_vec_bytes)));</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> </span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> inline constexpr usize vec_lanes = __micron_arbint_vec_bytes / sizeof(limb_t);</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> </span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> [[nodiscard, gnu::always_inline]] inline vlimb</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> vld(const limb_t *p) noexcept</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> {</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   vlimb v;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   __builtin_memcpy(&amp;v, p, sizeof(v));</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>   return v;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> }</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> </span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> [[gnu::always_inline]] inline void</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> vst(limb_t *p, vlimb v) noexcept</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> {</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   __builtin_memcpy(p, &amp;v, sizeof(v));</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> }</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> </span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> [[nodiscard, gnu::always_inline]] inline vslimb</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> vsigned(vlimb v) noexcept</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> {</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   vslimb out;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>   __builtin_memcpy(&amp;out, &amp;v, sizeof(out));</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   return out;</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> }</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> </span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> [[nodiscard, gnu::always_inline]] inline vlimb</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> vunsigned(vslimb v) noexcept</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> {</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>   vlimb out;</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>   __builtin_memcpy(&amp;out, &amp;v, sizeof(out));</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   return out;</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> }</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> </span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> [[gnu::always_inline]] inline void</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> __transpose_square(limb_t *rp, usize rs, const limb_t *ap, usize as) noexcept</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> {</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> #if defined(__micron_arch_width_64) &amp;&amp; __micron_arbint_vec_bytes == 16</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>   const vlimb x0 = vld(ap);</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   const vlimb x1 = vld(ap + as);</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   vst(rp, __builtin_shufflevector(x0, x1, 0, 2));</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>   vst(rp + rs, __builtin_shufflevector(x0, x1, 1, 3));</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> #elif (defined(__micron_arch_width_64) &amp;&amp; __micron_arbint_vec_bytes == 32)                                                                 \</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>     || (defined(__micron_arch_width_32) &amp;&amp; __micron_arbint_vec_bytes == 16)</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   const vlimb x0 = vld(ap);</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   const vlimb x1 = vld(ap + as);</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>   const vlimb x2 = vld(ap + 2u * as);</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>   const vlimb x3 = vld(ap + 3u * as);</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>   const vlimb t0 = __builtin_shufflevector(x0, x1, 0, 4, 1, 5);</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>   const vlimb t1 = __builtin_shufflevector(x0, x1, 2, 6, 3, 7);</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   const vlimb t2 = __builtin_shufflevector(x2, x3, 0, 4, 1, 5);</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>   const vlimb t3 = __builtin_shufflevector(x2, x3, 2, 6, 3, 7);</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>   vst(rp, __builtin_shufflevector(t0, t2, 0, 1, 4, 5));</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   vst(rp + rs, __builtin_shufflevector(t0, t2, 2, 3, 6, 7));</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   vst(rp + 2u * rs, __builtin_shufflevector(t1, t3, 0, 1, 4, 5));</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>   vst(rp + 3u * rs, __builtin_shufflevector(t1, t3, 2, 3, 6, 7));</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> #else</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>   const vlimb x0 = vld(ap);</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>   const vlimb x1 = vld(ap + as);</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>   const vlimb x2 = vld(ap + 2u * as);</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>   const vlimb x3 = vld(ap + 3u * as);</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>   const vlimb x4 = vld(ap + 4u * as);</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>   const vlimb x5 = vld(ap + 5u * as);</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   const vlimb x6 = vld(ap + 6u * as);</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   const vlimb x7 = vld(ap + 7u * as);</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   const vlimb a0 = __builtin_shufflevector(x0, x1, 0, 8, 1, 9, 2, 10, 3, 11);</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   const vlimb a1 = __builtin_shufflevector(x0, x1, 4, 12, 5, 13, 6, 14, 7, 15);</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>   const vlimb a2 = __builtin_shufflevector(x2, x3, 0, 8, 1, 9, 2, 10, 3, 11);</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   const vlimb a3 = __builtin_shufflevector(x2, x3, 4, 12, 5, 13, 6, 14, 7, 15);</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   const vlimb a4 = __builtin_shufflevector(x4, x5, 0, 8, 1, 9, 2, 10, 3, 11);</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   const vlimb a5 = __builtin_shufflevector(x4, x5, 4, 12, 5, 13, 6, 14, 7, 15);</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   const vlimb a6 = __builtin_shufflevector(x6, x7, 0, 8, 1, 9, 2, 10, 3, 11);</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   const vlimb a7 = __builtin_shufflevector(x6, x7, 4, 12, 5, 13, 6, 14, 7, 15);</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   const vlimb b0 = __builtin_shufflevector(a0, a2, 0, 1, 8, 9, 2, 3, 10, 11);</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>   const vlimb b1 = __builtin_shufflevector(a0, a2, 4, 5, 12, 13, 6, 7, 14, 15);</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>   const vlimb b2 = __builtin_shufflevector(a4, a6, 0, 1, 8, 9, 2, 3, 10, 11);</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   const vlimb b3 = __builtin_shufflevector(a4, a6, 4, 5, 12, 13, 6, 7, 14, 15);</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   const vlimb b4 = __builtin_shufflevector(a1, a3, 0, 1, 8, 9, 2, 3, 10, 11);</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   const vlimb b5 = __builtin_shufflevector(a1, a3, 4, 5, 12, 13, 6, 7, 14, 15);</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>   const vlimb b6 = __builtin_shufflevector(a5, a7, 0, 1, 8, 9, 2, 3, 10, 11);</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>   const vlimb b7 = __builtin_shufflevector(a5, a7, 4, 5, 12, 13, 6, 7, 14, 15);</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>   vst(rp, __builtin_shufflevector(b0, b2, 0, 1, 2, 3, 8, 9, 10, 11));</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   vst(rp + rs, __builtin_shufflevector(b0, b2, 4, 5, 6, 7, 12, 13, 14, 15));</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>   vst(rp + 2u * rs, __builtin_shufflevector(b1, b3, 0, 1, 2, 3, 8, 9, 10, 11));</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>   vst(rp + 3u * rs, __builtin_shufflevector(b1, b3, 4, 5, 6, 7, 12, 13, 14, 15));</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>   vst(rp + 4u * rs, __builtin_shufflevector(b4, b6, 0, 1, 2, 3, 8, 9, 10, 11));</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>   vst(rp + 5u * rs, __builtin_shufflevector(b4, b6, 4, 5, 6, 7, 12, 13, 14, 15));</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>   vst(rp + 6u * rs, __builtin_shufflevector(b5, b7, 0, 1, 2, 3, 8, 9, 10, 11));</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>   vst(rp + 7u * rs, __builtin_shufflevector(b5, b7, 4, 5, 6, 7, 12, 13, 14, 15));</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> #endif</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> }</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> </span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> inline void</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> coeff_transpose_square(limb_t *rlo, limb_t *rhi, usize rs, const limb_t *alo, const limb_t *ahi, usize as) noexcept</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> {</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>   __transpose_square(rlo, rs, alo, as);</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   __transpose_square(rhi, rs, ahi, as);</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> }</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a> </span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> // independent two-limb coefficient lanes</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> </span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> #define __micron_arbint_kern_coefficients 1</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> </span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> inline void</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> coeff_butterfly_to(limb_t *alo, limb_t *ahi, const limb_t *blo, const limb_t *bhi, limb_t *dlo, limb_t *dhi, usize n) noexcept</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> {</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>   usize i = 0u;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>   vlimb zero{};</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>   const vlimb one = zero + 1u;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>   for ( ; i + vec_lanes &lt;= n; i += vec_lanes ) {</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     const vlimb al = vld(alo + i);</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>     const vlimb ah = vld(ahi + i);</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>     const vlimb bl = vld(blo + i);</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>     const vlimb bh = vld(bhi + i);</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     const vlimb sum = al + bl;</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>     const vlimb diff = al - bl;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>     const vlimb cy = static_cast&lt;vlimb&gt;(sum &lt; al) &amp; one;</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>     const vlimb bw = static_cast&lt;vlimb&gt;(al &lt; bl) &amp; one;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>     vst(alo + i, sum);</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     vst(ahi + i, ah + bh + cy);</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     vst(dlo + i, diff);</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     vst(dhi + i, ah - bh - bw);</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>   }</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   for ( ; i &lt; n; ++i ) {</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>     const limb_t al = alo[i];</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     const limb_t ah = ahi[i];</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>     const limb_t bl = blo[i];</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     const limb_t bh = bhi[i];</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>     limb_t sum = 0u, diff = 0u;</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     const limb_t cy = addc(al, bl, 0u, sum);</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     const limb_t bw = subb(al, bl, 0u, diff);</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>     alo[i] = sum;</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>     (void)addc(ah, bh, cy, ahi[i]);</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>     dlo[i] = diff;</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     (void)subb(ah, bh, bw, dhi[i]);</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   }</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> }</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a> </span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> inline void</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a> coeff_butterfly(limb_t *alo, limb_t *ahi, limb_t *blo, limb_t *bhi, usize n) noexcept</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a> {</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>   coeff_butterfly_to(alo, ahi, blo, bhi, blo, bhi, n);</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a> }</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> </span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> inline void</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> coeff_add(limb_t *rlo, limb_t *rhi, const limb_t *alo, const limb_t *ahi, const limb_t *blo, const limb_t *bhi, usize n) noexcept</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> {</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>   usize i = 0u;</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>   vlimb zero{};</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   const vlimb one = zero + 1u;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   for ( ; i + vec_lanes &lt;= n; i += vec_lanes ) {</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>     const vlimb al = vld(alo + i);</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>     const vlimb sum = al + vld(blo + i);</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>     const vlimb cy = static_cast&lt;vlimb&gt;(sum &lt; al) &amp; one;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>     vst(rlo + i, sum);</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>     vst(rhi + i, vld(ahi + i) + vld(bhi + i) + cy);</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>   }</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   for ( ; i &lt; n; ++i ) {</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>     limb_t lo = 0u;</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>     const limb_t cy = addc(alo[i], blo[i], 0u, lo);</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>     rlo[i] = lo;</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>     (void)addc(ahi[i], bhi[i], cy, rhi[i]);</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>   }</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a> }</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a> </span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a> inline void</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a> coeff_copy_cneg(limb_t *rlo, limb_t *rhi, const limb_t *alo, const limb_t *ahi, usize n, bool negate) noexcept</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> {</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>   usize i = 0u;</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   if ( !negate ) {</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>     for ( ; i + vec_lanes &lt;= n; i += vec_lanes ) {</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>       vst(rlo + i, vld(alo + i));</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>       vst(rhi + i, vld(ahi + i));</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>     }</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>     for ( ; i &lt; n; ++i ) {</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>       rlo[i] = alo[i];</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>       rhi[i] = ahi[i];</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>     }</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>     return;</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>   }</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a> </span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   vlimb zero{};</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   for ( ; i + vec_lanes &lt;= n; i += vec_lanes ) {</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>     const vlimb al = vld(alo + i);</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>     const vlimb ah = vld(ahi + i);</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>     const vlimb lo = zero - al;</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>     const vlimb zmask = static_cast&lt;vlimb&gt;(al == zero);</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>     vst(rlo + i, lo);</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>     vst(rhi + i, ~ah - zmask);</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>   }</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>   for ( ; i &lt; n; ++i ) {</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>     const limb_t lo = static_cast&lt;limb_t&gt;(0u - alo[i]);</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>     rlo[i] = lo;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>     rhi[i] = static_cast&lt;limb_t&gt;(~ahi[i] + static_cast&lt;limb_t&gt;(alo[i] == 0u));</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>   }</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a> }</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a> </span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a> [[nodiscard]] inline bool</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a> coeff_divexact_pow2(limb_t *lo, limb_t *hi, usize n, usize shift) noexcept</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> {</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>   if ( shift == 0u ) return true;</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>   const limb_t smask = static_cast&lt;limb_t&gt;((limb_t{ 1 } &lt;&lt; shift) - 1u);</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   vlimb zero{};</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>   const vlimb mask = zero + smask;</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>   vlimb bad{};</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>   usize i = 0u;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   for ( ; i + vec_lanes &lt;= n; i += vec_lanes ) {</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>     const vlimb l = vld(lo + i);</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>     const vlimb h = vld(hi + i);</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>     bad |= l &amp; mask;</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>     vst(lo + i, static_cast&lt;vlimb&gt;(l &gt;&gt; shift) | static_cast&lt;vlimb&gt;(h &lt;&lt; (limb_bits - shift)));</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>     vst(hi + i, vunsigned(vsigned(h) &gt;&gt; shift));</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>   }</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>   bool exact = true;</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>   for ( usize lane = 0u; lane &lt; vec_lanes; ++lane ) exact = bad[lane] == 0u &amp;&amp; exact;</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>   for ( ; i &lt; n; ++i ) {</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     exact = (lo[i] &amp; smask) == 0u &amp;&amp; exact;</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>     const limb_t sign = static_cast&lt;limb_t&gt;(hi[i] &gt;&gt; (limb_bits - 1u));</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>     const limb_t sign_mask = static_cast&lt;limb_t&gt;(0u - sign);</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>     lo[i] = static_cast&lt;limb_t&gt;((lo[i] &gt;&gt; shift) | (hi[i] &lt;&lt; (limb_bits - shift)));</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>     hi[i] = static_cast&lt;limb_t&gt;((hi[i] &gt;&gt; shift) | (sign_mask &lt;&lt; (limb_bits - shift)));</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>   }</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>   return exact;</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> }</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> </span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a> // %%%%%%%%%%%%%%%</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a> // shifts</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a> </span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a> #define __micron_arbint_kern_lshift 1</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a> #define __micron_arbint_kern_rshift 1</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a> </span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a> [[nodiscard]] inline limb_t</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> lshift(limb_t *rp, const limb_t *ap, usize n, usize cnt) noexcept</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a> {</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>   if ( n == 0 ) return 0;</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a>   const usize tnc = limb_bits - cnt;</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>   const limb_t ret = static_cast&lt;limb_t&gt;(ap[n - 1] &gt;&gt; tnc);</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> </span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>   usize i = n - 1u;</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>   // each pass writes the block ending at i and reads one limb below it, so it needs ap[i - lanes]</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>   while ( i + 1u &gt;= vec_lanes + 1u ) {</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>     const usize base = i + 1u - vec_lanes;      // the block is [base, i]</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>     const vlimb hi = vld(ap + base);</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>     const vlimb lo = vld(ap + base - 1u);</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>     vst(rp + base, static_cast&lt;vlimb&gt;(hi &lt;&lt; cnt) | static_cast&lt;vlimb&gt;(lo &gt;&gt; tnc));</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>     i -= vec_lanes;</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>   }</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a>   for ( ; i &gt; 0; --i ) rp[i] = static_cast&lt;limb_t&gt;((ap[i] &lt;&lt; cnt) | (ap[i - 1] &gt;&gt; tnc));</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>   rp[0] = static_cast&lt;limb_t&gt;(ap[0] &lt;&lt; cnt);</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>   return ret;</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a> }</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a> </span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a> [[nodiscard]] inline limb_t</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> rshift(limb_t *rp, const limb_t *ap, usize n, usize cnt) noexcept</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a> {</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>   if ( n == 0 ) return 0;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>   const usize tnc = limb_bits - cnt;</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>   const limb_t ret = static_cast&lt;limb_t&gt;(ap[0] &lt;&lt; tnc);</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> </span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>   usize i = 0;</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>   // needs ap[i + lanes], so stop while that index is still inside the operand</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>   while ( i + vec_lanes &lt; n ) {</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>     const vlimb lo = vld(ap + i);</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>     const vlimb hi = vld(ap + i + 1u);</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>     vst(rp + i, static_cast&lt;vlimb&gt;(lo &gt;&gt; cnt) | static_cast&lt;vlimb&gt;(hi &lt;&lt; tnc));</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>     i += vec_lanes;</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a>   }</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>   for ( ; i + 1u &lt; n; ++i ) rp[i] = static_cast&lt;limb_t&gt;((ap[i] &gt;&gt; cnt) | (ap[i + 1] &lt;&lt; tnc));</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>   rp[n - 1u] = static_cast&lt;limb_t&gt;(ap[n - 1u] &gt;&gt; cnt);</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>   return ret;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> }</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> </span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a> // bitwise</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a> //</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a> // gcc already autovectorizes down to this, 0 gain</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a> </span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a> [[gnu::always_inline]] inline void</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a> __logic3(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n, int op) noexcept</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a> {</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>   usize i = 0;</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>   for ( ; i + vec_lanes &lt;= n; i += vec_lanes ) {</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>     const vlimb a = vld(ap + i);</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>     const vlimb b = vld(bp + i);</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>     vst(rp + i, op == 0 ? (a &amp; b) : (op == 1 ? (a | b) : (a ^ b)));</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>   }</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>   for ( ; i &lt; n; ++i )</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>     rp[i] = op == 0 ? static_cast&lt;limb_t&gt;(ap[i] &amp; bp[i])</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>                     : (op == 1 ? static_cast&lt;limb_t&gt;(ap[i] | bp[i]) : static_cast&lt;limb_t&gt;(ap[i] ^ bp[i]));</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a> }</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a> </span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a> inline void</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a> and_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a> {</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>   __logic3(rp, ap, bp, n, 0);</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a> }</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a> </span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a> inline void</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a> ior_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a> {</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>   __logic3(rp, ap, bp, n, 1);</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a> }</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a> </span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a> inline void</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a> xor_n(limb_t *rp, const limb_t *ap, const limb_t *bp, usize n) noexcept</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a> {</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>   __logic3(rp, ap, bp, n, 2);</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a> }</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a> </span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a> inline void</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a> com(limb_t *rp, const limb_t *ap, usize n) noexcept</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a> {</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>   usize i = 0;</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>   vlimb zero = {};</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>   const vlimb ones = ~zero;</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>   for ( ; i + vec_lanes &lt;= n; i += vec_lanes ) vst(rp + i, vld(ap + i) ^ ones);</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a>   for ( ; i &lt; n; ++i ) rp[i] = static_cast&lt;limb_t&gt;(~ap[i]);</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a> }</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a> </span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a> };      // namespace __kern</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a> };      // namespace mpn</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a> };      // namespace math</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a> };      // namespace micron</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a> </span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a> #endif      // __micron_arbint_vec_bytes</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

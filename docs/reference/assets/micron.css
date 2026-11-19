@@ -1,0 +1,29 @@
+/* Local additions to the cppreference2 skin. */
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+#cpp-head-search form { white-space: nowrap; }
+#cpp-head-search button { font-size: .85em; }
+.reference-tabs { padding-top: .45em; font-size: .85em; }
+.reference-tabs a { margin-right: 1em; }
+div#content { margin: 0 auto; position: relative; width: 780px; box-sizing: border-box; }
+.header-list { columns: 2; overflow-wrap: anywhere; }
+.header-list li { break-inside: avoid; }
+.symbol-letters { display: flex; flex-wrap: wrap; gap: .8em; list-style: none; padding: 0; }
+.t-dsc-begin { width: 100%; max-width: 100%; }
+.t-dsc > td:first-child { width: 30%; min-width: 12em; white-space: normal; overflow-wrap: break-word; }
+.t-dsc > td { vertical-align: top; }
+pre { width: auto; max-width: 100%; box-sizing: border-box; overflow: auto; }
+.function-entry { border-top: 1px solid #c8ccd1; padding-top: .4em; margin-top: 1.6em; }
+.function-entry h3 { overflow-wrap: anywhere; }
+.function-entry .t-dcl-begin { display: table; width: 100%; max-width: 100%; table-layout: fixed; }
+.equivalent-definition summary { cursor: pointer; color: #0645ad; }
+.source-listing { tab-size: 4; line-height: 1.45; }
+.source-line { display: block; min-width: max-content; }
+.source-line:target { background: #fff2cc; }
+.line-number { display: inline-block; width: 4.5em; text-align: right; color: #666; padding-right: 1em; user-select: none; }
+#search-results code { color: #555; font-size: .85em; }
+@media (max-width: 780px) {
+  body { min-width: 0; }
+  div#cpp-head-first, div#cpp-head-second, div#content, div#footer { width: auto; max-width: 100%; }
+  .header-list { columns: 1; }
+  #cpp-head-search input { width: 8em; }
+}

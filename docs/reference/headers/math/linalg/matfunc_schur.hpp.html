@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/linalg/matfunc_schur.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/linalg/matfunc_schur.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/matrix.html">Matrices and linear algebra</a></div><p>Defined in header <code>&lt;micron/math/linalg/matfunc_schur.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/linalg/matfunc_schur.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-33e0dc929bde2f48">micron::math::linalg::schur::expmat_result</code></td><td>struct; line 487</td></tr><tr class="t-dsc"><td><code id="s-495e60c3b642fcbf">micron::math::linalg::schur::expmat_result::X</code></td><td>member; line 488</td></tr><tr class="t-dsc"><td><code id="s-6bd671131dfdd8cb">micron::math::linalg::schur::expmat_result::converged</code></td><td>member; line 489</td></tr><tr class="t-dsc"><td><code id="s-d9a07028d8bbb678">micron::math::linalg::schur::sqrtmat_result</code></td><td>struct; line 540</td></tr><tr class="t-dsc"><td><code id="s-7ffaa4988a6ceeb3">micron::math::linalg::schur::sqrtmat_result::X</code></td><td>member; line 541</td></tr><tr class="t-dsc"><td><code id="s-88c1c0739100ddd1">micron::math::linalg::schur::sqrtmat_result::real_sqrt_exists</code></td><td>member; line 542</td></tr><tr class="t-dsc"><td><code id="s-cebafd4af62737bf">micron::math::linalg::schur::sqrtmat_result::converged</code></td><td>member; line 543</td></tr><tr class="t-dsc"><td><code id="s-5bfb8ced10624c34">micron::math::linalg::schur::logmat_result</code></td><td>struct; line 554</td></tr><tr class="t-dsc"><td><code id="s-b80b08f72950bcb5">micron::math::linalg::schur::logmat_result::X</code></td><td>member; line 555</td></tr><tr class="t-dsc"><td><code id="s-6eab9e788277617d">micron::math::linalg::schur::logmat_result::real_log_exists</code></td><td>member; line 556</td></tr><tr class="t-dsc"><td><code id="s-4557d0e01fa12104">micron::math::linalg::schur::logmat_result::converged</code></td><td>member; line 557</td></tr><tr class="t-dsc"><td><code id="s-668e62bff61bb01e">micron::math::linalg::schur::sinmat_result</code></td><td>struct; line 634</td></tr><tr class="t-dsc"><td><code id="s-aac6c9dcfa3ee057">micron::math::linalg::schur::sinmat_result::X</code></td><td>member; line 635</td></tr><tr class="t-dsc"><td><code id="s-fe7a04f6ad2c3f22">micron::math::linalg::schur::sinmat_result::converged</code></td><td>member; line 636</td></tr><tr class="t-dsc"><td><code id="s-3fb91ac25546372d">micron::math::linalg::schur::cosmat_result</code></td><td>struct; line 670</td></tr><tr class="t-dsc"><td><code id="s-0cb9d64e72b351ff">micron::math::linalg::schur::cosmat_result::X</code></td><td>member; line 671</td></tr><tr class="t-dsc"><td><code id="s-731fc0b51a35fc59">micron::math::linalg::schur::cosmat_result::converged</code></td><td>member; line 672</td></tr><tr class="t-dsc"><td><code id="s-59ed1a269cb11960">micron::math::linalg::schur::sinhmat_result</code></td><td>struct; line 703</td></tr><tr class="t-dsc"><td><code id="s-00fb84b278d1d0da">micron::math::linalg::schur::sinhmat_result::X</code></td><td>member; line 704</td></tr><tr class="t-dsc"><td><code id="s-8dbbcbf1773fd0b9">micron::math::linalg::schur::sinhmat_result::converged</code></td><td>member; line 705</td></tr><tr class="t-dsc"><td><code id="s-5d4faefef95eddc2">micron::math::linalg::schur::coshmat_result</code></td><td>struct; line 736</td></tr><tr class="t-dsc"><td><code id="s-ea11ef8dc70f9f97">micron::math::linalg::schur::coshmat_result::X</code></td><td>member; line 737</td></tr><tr class="t-dsc"><td><code id="s-304fbd26cf71d495">micron::math::linalg::schur::coshmat_result::converged</code></td><td>member; line 738</td></tr><tr class="t-dsc"><td><code id="s-a40af554d658cabc">micron::math::linalg::schur::powmat_result</code></td><td>struct; line 770</td></tr><tr class="t-dsc"><td><code id="s-6337da65885e41ec">micron::math::linalg::schur::powmat_result::X</code></td><td>member; line 771</td></tr><tr class="t-dsc"><td><code id="s-0dfb7db593a8b3ad">micron::math::linalg::schur::powmat_result::converged</code></td><td>member; line 772</td></tr><tr class="t-dsc"><td><a href="#f-f42c1c7b3504c88b">micron::math::linalg::schur::expmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 494</td></tr><tr class="t-dsc"><td><a href="#f-35d898c5f3c0569d">micron::math::linalg::schur::sqrtmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 548</td></tr><tr class="t-dsc"><td><a href="#f-c1aa0af2750f1f8c">micron::math::linalg::schur::logmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 562</td></tr><tr class="t-dsc"><td><a href="#f-157528fc8de6579e">micron::math::linalg::schur::sinmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 644</td></tr><tr class="t-dsc"><td><a href="#f-1302240e493db56e">micron::math::linalg::schur::cosmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 677</td></tr><tr class="t-dsc"><td><a href="#f-91f988ec124dcd07">micron::math::linalg::schur::sinhmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 710</td></tr><tr class="t-dsc"><td><a href="#f-5aea943d446bb643">micron::math::linalg::schur::coshmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 743</td></tr><tr class="t-dsc"><td><a href="#f-131ae41abf63782e">micron::math::linalg::schur::powmat(const mat&lt;F, N, N&gt; &amp;A, F p) noexcept</a></td><td>function; line 810</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f42c1c7b3504c88b"><h3><code>micron::math::linalg::schur::expmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L494">line 494</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline expmat_result&lt;F, N&gt;
+expmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline expmat_result&lt;F, N&gt;
+expmat(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  expmat_result&lt;F, N&gt; r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat&lt;F, N, N&gt;::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur&lt;F, N&gt;(A);
+    if ( sr.converged ) {
+      auto pr = __impl_matfunc_schur::parlett_exp&lt;F, N&gt;(sr.T);
+      if ( pr.converged ) {
+        // X = Z · F_T · Zᵀ
+        mat&lt;F, N, N&gt; ZF = mat&lt;F, N, N&gt;::zero();
+        for ( usize i = 0; i &lt; N; ++i ) {
+          F *__restrict__ row_zf = ZF.data + i * N;
+          const F *__restrict__ row_z = sr.Z.data + i * N;
+          for ( usize j = 0; j &lt; N; ++j ) {
+            F s = F(0);
+            const F *__restrict__ col_f = pr.F_T.data + j;
+            for ( usize k = 0; k &lt; N; ++k ) s = math::fma&lt;F&gt;(row_z[k], col_f[k * N], s);
+            row_zf[j] = s;
+          }
+        }
+        r.X = mat&lt;F, N, N&gt;::zero();
+        for ( usize i = 0; i &lt; N; ++i ) {
+          F *__restrict__ row_x = r.X.data + i * N;
+          const F *__restrict__ row_zf = ZF.data + i * N;
+          for ( usize j = 0; j &lt; N; ++j ) {
+            F s = F(0);
+            const F *__restrict__ row_z_j = sr.Z.data + j * N;      // Zᵀ col j == Z row j
+            for ( usize k = 0; k &lt; N; ++k ) s = math::fma&lt;F&gt;(row_zf[k], row_z_j[k], s);
+            row_x[j] = s;
+          }
+        }
+        r.converged = true;
+        return r;
+      }
+    }
+    auto fb = matfunc::expm&lt;F, N&gt;(A);
+    r.X = fb.X;
+    r.converged = fb.finite;
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L500">line 500</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L530">line 530</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L536">line 536</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="decomp_ext.hpp.html#f-fb61be3933a2fc53">decomp::schur&lt;F, N&gt;</a>, <a href="matfunc_schur.hpp.html#f-6ab1da54fae76525">__impl_matfunc_schur::parlett_exp&lt;F, N&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="matfunc.hpp.html#f-f913fb9d070d0456">matfunc::expm&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-35d898c5f3c0569d"><h3><code>micron::math::linalg::schur::sqrtmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L548">line 548</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline sqrtmat_result&lt;F, N&gt;
+sqrtmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline sqrtmat_result&lt;F, N&gt;
+sqrtmat(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  auto r = matfunc::sqrtm&lt;F, N&gt;(A);
+  return { r.X, r.real_sqrt_exists, r.converged };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ r.X, r.real_sqrt_exists, r.converged }</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L551">line 551</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="matfunc.hpp.html#f-1e03cd2d97fe84f3">matfunc::sqrtm&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-c1aa0af2750f1f8c"><h3><code>micron::math::linalg::schur::logmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L562">line 562</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline logmat_result&lt;F, N&gt;
+logmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline logmat_result&lt;F, N&gt;
+logmat(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  auto r = matfunc::logm&lt;F, N&gt;(A);
+  return { r.X, r.real_log_exists, r.converged };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ r.X, r.real_log_exists, r.converged }</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L565">line 565</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="matfunc.hpp.html#f-197df90e25208cd0">matfunc::logm&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-157528fc8de6579e"><h3><code>micron::math::linalg::schur::sinmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L644">line 644</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline sinmat_result&lt;F, N&gt;
+sinmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline sinmat_result&lt;F, N&gt;
+sinmat(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  sinmat_result&lt;F, N&gt; r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat&lt;F, N, N&gt;::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur&lt;F, N&gt;(A);
+    if ( !sr.converged ) {
+      r.converged = __impl_matfunc_schur::spectral_func&lt;__impl_matfunc_schur::mfn_sin_desc&lt;F&gt;, F, N&gt;(A, r.X);
+      if ( !r.converged ) r.X = mat&lt;F, N, N&gt;::zero();
+      return r;
+    }
+    auto pr = __impl_matfunc_schur::parlett_func&lt;__impl_matfunc_schur::mfn_sin_desc&lt;F&gt;, F, N&gt;(sr.T);
+    if ( !pr.converged ) {
+      r.converged = __impl_matfunc_schur::spectral_func&lt;__impl_matfunc_schur::mfn_sin_desc&lt;F&gt;, F, N&gt;(A, r.X);
+      if ( !r.converged ) r.X = mat&lt;F, N, N&gt;::zero();
+      return r;
+    }
+    r.X = __impl_matfunc_schur::back_transform&lt;F, N&gt;(sr.Z, pr.F_T);
+    r.converged = true;
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L650">line 650</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L656">line 656</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L662">line 662</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L666">line 666</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="decomp_ext.hpp.html#f-fb61be3933a2fc53">decomp::schur&lt;F, N&gt;</a>, <a href="matfunc_schur.hpp.html#f-20f6309a1614b504">__impl_matfunc_schur::back_transform&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-1302240e493db56e"><h3><code>micron::math::linalg::schur::cosmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L677">line 677</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline cosmat_result&lt;F, N&gt;
+cosmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline cosmat_result&lt;F, N&gt;
+cosmat(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  cosmat_result&lt;F, N&gt; r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat&lt;F, N, N&gt;::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur&lt;F, N&gt;(A);
+    if ( !sr.converged ) {
+      r.converged = __impl_matfunc_schur::spectral_func&lt;__impl_matfunc_schur::mfn_cos_desc&lt;F&gt;, F, N&gt;(A, r.X);
+      if ( !r.converged ) r.X = mat&lt;F, N, N&gt;::zero();
+      return r;
+    }
+    auto pr = __impl_matfunc_schur::parlett_func&lt;__impl_matfunc_schur::mfn_cos_desc&lt;F&gt;, F, N&gt;(sr.T);
+    if ( !pr.converged ) {
+      r.converged = __impl_matfunc_schur::spectral_func&lt;__impl_matfunc_schur::mfn_cos_desc&lt;F&gt;, F, N&gt;(A, r.X);
+      if ( !r.converged ) r.X = mat&lt;F, N, N&gt;::zero();
+      return r;
+    }
+    r.X = __impl_matfunc_schur::back_transform&lt;F, N&gt;(sr.Z, pr.F_T);
+    r.converged = true;
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L683">line 683</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L689">line 689</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L695">line 695</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L699">line 699</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="decomp_ext.hpp.html#f-fb61be3933a2fc53">decomp::schur&lt;F, N&gt;</a>, <a href="matfunc_schur.hpp.html#f-20f6309a1614b504">__impl_matfunc_schur::back_transform&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-91f988ec124dcd07"><h3><code>micron::math::linalg::schur::sinhmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L710">line 710</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline sinhmat_result&lt;F, N&gt;
+sinhmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline sinhmat_result&lt;F, N&gt;
+sinhmat(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  sinhmat_result&lt;F, N&gt; r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat&lt;F, N, N&gt;::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur&lt;F, N&gt;(A);
+    if ( !sr.converged ) {
+      r.converged = __impl_matfunc_schur::spectral_func&lt;__impl_matfunc_schur::mfn_sinh_desc&lt;F&gt;, F, N&gt;(A, r.X);
+      if ( !r.converged ) r.X = mat&lt;F, N, N&gt;::zero();
+      return r;
+    }
+    auto pr = __impl_matfunc_schur::parlett_func&lt;__impl_matfunc_schur::mfn_sinh_desc&lt;F&gt;, F, N&gt;(sr.T);
+    if ( !pr.converged ) {
+      r.converged = __impl_matfunc_schur::spectral_func&lt;__impl_matfunc_schur::mfn_sinh_desc&lt;F&gt;, F, N&gt;(A, r.X);
+      if ( !r.converged ) r.X = mat&lt;F, N, N&gt;::zero();
+      return r;
+    }
+    r.X = __impl_matfunc_schur::back_transform&lt;F, N&gt;(sr.Z, pr.F_T);
+    r.converged = true;
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L716">line 716</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L722">line 722</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L728">line 728</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L732">line 732</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="decomp_ext.hpp.html#f-fb61be3933a2fc53">decomp::schur&lt;F, N&gt;</a>, <a href="matfunc_schur.hpp.html#f-20f6309a1614b504">__impl_matfunc_schur::back_transform&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-5aea943d446bb643"><h3><code>micron::math::linalg::schur::coshmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L743">line 743</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline coshmat_result&lt;F, N&gt;
+coshmat(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline coshmat_result&lt;F, N&gt;
+coshmat(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  coshmat_result&lt;F, N&gt; r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat&lt;F, N, N&gt;::zero();
+    r.converged = true;
+    return r;
+  } else {
+    auto sr = decomp::schur&lt;F, N&gt;(A);
+    if ( !sr.converged ) {
+      r.converged = __impl_matfunc_schur::spectral_func&lt;__impl_matfunc_schur::mfn_cosh_desc&lt;F&gt;, F, N&gt;(A, r.X);
+      if ( !r.converged ) r.X = mat&lt;F, N, N&gt;::zero();
+      return r;
+    }
+    auto pr = __impl_matfunc_schur::parlett_func&lt;__impl_matfunc_schur::mfn_cosh_desc&lt;F&gt;, F, N&gt;(sr.T);
+    if ( !pr.converged ) {
+      r.converged = __impl_matfunc_schur::spectral_func&lt;__impl_matfunc_schur::mfn_cosh_desc&lt;F&gt;, F, N&gt;(A, r.X);
+      if ( !r.converged ) r.X = mat&lt;F, N, N&gt;::zero();
+      return r;
+    }
+    r.X = __impl_matfunc_schur::back_transform&lt;F, N&gt;(sr.Z, pr.F_T);
+    r.converged = true;
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L749">line 749</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L755">line 755</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L761">line 761</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L765">line 765</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="decomp_ext.hpp.html#f-fb61be3933a2fc53">decomp::schur&lt;F, N&gt;</a>, <a href="matfunc_schur.hpp.html#f-20f6309a1614b504">__impl_matfunc_schur::back_transform&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-131ae41abf63782e"><h3><code>micron::math::linalg::schur::powmat(const mat&lt;F, N, N&gt; &amp;A, F p) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L810">line 810</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline powmat_result&lt;F, N&gt;
+powmat(const mat&lt;F, N, N&gt; &amp;A, F p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li><li><code>F p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline powmat_result&lt;F, N&gt;
+powmat(const mat&lt;F, N, N&gt; &amp;A, F p) noexcept
+{
+  powmat_result&lt;F, N&gt; r{};
+  if constexpr ( N == 0 ) {
+    r.X = mat&lt;F, N, N&gt;::zero();
+    r.converged = true;
+    return r;
+  } else if ( __impl_matfunc_schur::is_integer_value&lt;F&gt;(p) ) {
+    long long e = static_cast&lt;long long&gt;(p);
+    if ( e == 0 ) {
+      r.X = mat&lt;F, N, N&gt;::identity();
+      r.converged = true;
+      return r;
+    }
+    bool negate = (e &lt; 0);
+    unsigned long long n = negate ? static_cast&lt;unsigned long long&gt;(-e) : static_cast&lt;unsigned long long&gt;(e);
+    mat&lt;F, N, N&gt; base = A;
+    mat&lt;F, N, N&gt; acc = mat&lt;F, N, N&gt;::identity();
+    bool have_acc = false;
+    while ( n &gt; 0 ) {
+      if ( n &amp; 1ULL ) {
+        if ( !have_acc ) {
+          acc = base;
+          have_acc = true;
+        } else {
+          acc = __impl_matfunc_schur::matmul&lt;F, N&gt;(acc, base);
+        }
+      }
+      n &gt;&gt;= 1ULL;
+      if ( n &gt; 0 ) base = __impl_matfunc_schur::matmul&lt;F, N&gt;(base, base);
+    }
+    if ( negate ) {
+      auto inv_r = decomp::inv&lt;F, N&gt;(acc);
+      if ( inv_r.singular ) {
+        r.X = mat&lt;F, N, N&gt;::zero();
+        r.converged = false;
+        return r;
+      }
+      r.X = inv_r.X;
+    } else {
+      r.X = acc;
+    }
+    r.converged = true;
+    return r;
+  } else {
+    auto lr = logmat&lt;F, N&gt;(A);
+    if ( !lr.converged ) {
+      r.X = mat&lt;F, N, N&gt;::zero();
+      r.converged = false;
+      return r;
+    }
+    mat&lt;F, N, N&gt; pL = lr.X;
+    for ( usize i = 0; i &lt; N * N; ++i ) pL.data[i] = p * pL.data[i];
+    auto er = expmat&lt;F, N&gt;(pL);
+    r.X = er.X;
+    r.converged = er.converged;
+    return r;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L816">line 816</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L822">line 822</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L846">line 846</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L853">line 853</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L859">line 859</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L866">line 866</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="matfunc_schur.hpp.html#f-8bb389ce98d7f509">__impl_matfunc_schur::is_integer_value&lt;F&gt;</a>, <a href="../matrix/mat.hpp.html#f-7ed1904ce493336f">mat&lt;F, N, N&gt;::identity</a>, <a href="matfunc_schur.hpp.html#f-8298ac2e2753767f">__impl_matfunc_schur::matmul&lt;F, N&gt;</a>, <a href="decomp.hpp.html#f-461bdfa47b9fa25f">decomp::inv&lt;F, N&gt;</a>, <a href="matfunc_schur.hpp.html#f-c1aa0af2750f1f8c">logmat&lt;F, N&gt;</a>, <a href="matfunc_schur.hpp.html#f-f42c1c7b3504c88b">expmat&lt;F, N&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-b509f045c4790c54"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_exp_desc::val(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::exp&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::exp&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::exp&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L39">line 39</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-c2bf050e5addb43c">math::exp&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-93e969422e62d9c8"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_exp_desc::deriv(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L43">line 43</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::exp&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return math::exp&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::exp&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L45">line 45</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-c2bf050e5addb43c">math::exp&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3624e17da7b22984"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_exp_desc::complex(F a, F b, F &amp;re, F &amp;im) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li><li><code>F &amp;re</code></li><li><code>F &amp;im</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept
+  {
+    const F ea = math::exp&lt;F&gt;(a);
+    re = ea * math::cos&lt;F&gt;(b);
+    im = ea * math::sin&lt;F&gt;(b);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-c2bf050e5addb43c">math::exp&lt;F&gt;</a>, <a href="../mk.hpp.html#f-9dffa80c4b8d94ba">math::cos&lt;F&gt;</a>, <a href="../mk.hpp.html#f-034a96b556c56223">math::sin&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3cf8f7631927ada7"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_sin_desc::val(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L59">line 59</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::sin&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::sin&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::sin&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-034a96b556c56223">math::sin&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-adb62dfbc481f53c"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_sin_desc::deriv(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L65">line 65</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::cos&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return math::cos&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::cos&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L67">line 67</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-9dffa80c4b8d94ba">math::cos&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2847f1ae231ab446"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_sin_desc::complex(F a, F b, F &amp;re, F &amp;im) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li><li><code>F &amp;re</code></li><li><code>F &amp;im</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept
+  {
+    // sin(a+ib) = sin(a) cosh(b) + i cos(a) sinh(b)
+    re = math::sin&lt;F&gt;(a) * math::cosh&lt;F&gt;(b);
+    im = math::cos&lt;F&gt;(a) * math::sinh&lt;F&gt;(b);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-034a96b556c56223">math::sin&lt;F&gt;</a>, <a href="../mk.hpp.html#f-6bc403b837b8a32e">math::cosh&lt;F&gt;</a>, <a href="../mk.hpp.html#f-9dffa80c4b8d94ba">math::cos&lt;F&gt;</a>, <a href="../mk.hpp.html#f-b6bc772511afbad9">math::sinh&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2e78a4087b0424f1"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_cos_desc::val(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::cos&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::cos&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::cos&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L83">line 83</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-9dffa80c4b8d94ba">math::cos&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c6fa037208a9c0dd"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_cos_desc::deriv(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L87">line 87</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>-math::sin&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return -math::sin&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-math::sin&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L89">line 89</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-034a96b556c56223">math::sin&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-752309b2ebddfa90"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_cos_desc::complex(F a, F b, F &amp;re, F &amp;im) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L93">line 93</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li><li><code>F &amp;re</code></li><li><code>F &amp;im</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept
+  {
+    // cos(a+ib) = cos(a) cosh(b) - i sin(a) sinh(b)
+    re = math::cos&lt;F&gt;(a) * math::cosh&lt;F&gt;(b);
+    im = -math::sin&lt;F&gt;(a) * math::sinh&lt;F&gt;(b);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-9dffa80c4b8d94ba">math::cos&lt;F&gt;</a>, <a href="../mk.hpp.html#f-6bc403b837b8a32e">math::cosh&lt;F&gt;</a>, <a href="../mk.hpp.html#f-034a96b556c56223">math::sin&lt;F&gt;</a>, <a href="../mk.hpp.html#f-b6bc772511afbad9">math::sinh&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-5a8cee4042bcd8ee"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_sinh_desc::val(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::sinh&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::sinh&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::sinh&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L105">line 105</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-b6bc772511afbad9">math::sinh&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ccbe74b82173551f"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_sinh_desc::deriv(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L109">line 109</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::cosh&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return math::cosh&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::cosh&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L111">line 111</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-6bc403b837b8a32e">math::cosh&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-cbbdc90019f413ff"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_sinh_desc::complex(F a, F b, F &amp;re, F &amp;im) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L115">line 115</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li><li><code>F &amp;re</code></li><li><code>F &amp;im</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept
+  {
+    // sinh(a+ib) = sinh(a) cos(b) + i cosh(a) sin(b)
+    re = math::sinh&lt;F&gt;(a) * math::cos&lt;F&gt;(b);
+    im = math::cosh&lt;F&gt;(a) * math::sin&lt;F&gt;(b);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-b6bc772511afbad9">math::sinh&lt;F&gt;</a>, <a href="../mk.hpp.html#f-9dffa80c4b8d94ba">math::cos&lt;F&gt;</a>, <a href="../mk.hpp.html#f-6bc403b837b8a32e">math::cosh&lt;F&gt;</a>, <a href="../mk.hpp.html#f-034a96b556c56223">math::sin&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-6791a8bb45b37935"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_cosh_desc::val(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L125">line 125</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::cosh&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  val(F x) noexcept
+  {
+    return math::cosh&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::cosh&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L127">line 127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-6bc403b837b8a32e">math::cosh&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c21a63c1683fac24"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_cosh_desc::deriv(F x) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L131">line 131</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>math::sinh&lt;F&gt;(x)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] static inline F
+  deriv(F x) noexcept
+  {
+    return math::sinh&lt;F&gt;(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::sinh&lt;F&gt;(x)</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L133">line 133</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-b6bc772511afbad9">math::sinh&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2247f4d4c3cdde1b"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::mfn_cosh_desc::complex(F a, F b, F &amp;re, F &amp;im) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L137">line 137</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li><li><code>F &amp;re</code></li><li><code>F &amp;im</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline void
+  complex(F a, F b, F &amp;re, F &amp;im) noexcept
+  {
+    // cosh(a+ib) = cosh(a) cos(b) + i sinh(a) sin(b)
+    re = math::cosh&lt;F&gt;(a) * math::cos&lt;F&gt;(b);
+    im = math::sinh&lt;F&gt;(a) * math::sin&lt;F&gt;(b);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-6bc403b837b8a32e">math::cosh&lt;F&gt;</a>, <a href="../mk.hpp.html#f-9dffa80c4b8d94ba">math::cos&lt;F&gt;</a>, <a href="../mk.hpp.html#f-b6bc772511afbad9">math::sinh&lt;F&gt;</a>, <a href="../mk.hpp.html#f-034a96b556c56223">math::sin&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-37d985b82d72e992"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::generic_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L149">line 149</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename FnDesc, ieee754_floating F&gt;
+[[gnu::flatten]] inline void
+generic_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;x00</code></li><li><code>F &amp;x01</code></li><li><code>F &amp;x10</code></li><li><code>F &amp;x11</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>F c</code></li><li><code>F d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename FnDesc, ieee754_floating F&gt;
+[[gnu::flatten]] inline void
+generic_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept
+{
+  const F tr = a + d;
+  const F det = a * d - b * c;
+  const F alpha = tr * F(0.5);
+  const F disc = alpha * alpha - det;
+  F coef_M;
+  F coef_I;
+  if ( disc &gt; F(0) ) {
+    const F sq = math::fsqrt(disc);
+    const F l1 = alpha + sq;
+    const F l2 = alpha - sq;
+    const F f1 = FnDesc::val(l1);
+    const F f2 = FnDesc::val(l2);
+    coef_M = (f1 - f2) / (l1 - l2);
+    coef_I = f1 - coef_M * l1;
+  } else if ( disc &lt; F(0) ) {
+    const F beta = math::fsqrt(-disc);
+    F re_f;
+    F im_f;
+    FnDesc::complex(alpha, beta, re_f, im_f);
+    coef_M = im_f / beta;
+    coef_I = re_f - alpha * coef_M;
+  } else {
+    const F fa = FnDesc::val(alpha);
+    const F fp = FnDesc::deriv(alpha);
+    coef_M = fp;
+    coef_I = fa - alpha * fp;
+  }
+  x00 = coef_M * a + coef_I;
+  x01 = coef_M * b;
+  x10 = coef_M * c;
+  x11 = coef_M * d + coef_I;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-9e84545bc518322e"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::exp_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L186">line 186</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[gnu::flatten]] inline void
+exp_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;x00</code></li><li><code>F &amp;x01</code></li><li><code>F &amp;x10</code></li><li><code>F &amp;x11</code></li><li><code>F a</code></li><li><code>F b</code></li><li><code>F c</code></li><li><code>F d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[gnu::flatten]] inline void
+exp_2x2_block(F &amp;x00, F &amp;x01, F &amp;x10, F &amp;x11, F a, F b, F c, F d) noexcept
+{
+  const F tr = a + d;
+  const F det = a * d - b * c;
+  const F alpha = tr * F(0.5);
+  const F disc = alpha * alpha - det;
+  F coef_M;      // alpha
+  F coef_I;      // beta
+  if ( disc &gt; F(0) ) {
+    const F sq = math::fsqrt(disc);
+    const F l1 = alpha + sq;
+    const F l2 = alpha - sq;
+    const F e1 = math::exp&lt;F&gt;(l1);
+    const F e2 = math::exp&lt;F&gt;(l2);
+    coef_M = (e1 - e2) / (l1 - l2);
+    coef_I = e1 - coef_M * l1;
+  } else if ( disc &lt; F(0) ) {
+    const F beta = math::fsqrt(-disc);
+    const F ea = math::exp&lt;F&gt;(alpha);
+    const F sb = math::sin&lt;F&gt;(beta);
+    const F cb = math::cos&lt;F&gt;(beta);
+    const F sb_over_b = sb / beta;
+    coef_M = ea * sb_over_b;
+    coef_I = ea * (cb - alpha * sb_over_b);
+  } else {
+    const F ea = math::exp&lt;F&gt;(alpha);
+    coef_M = ea;
+    coef_I = ea * (F(1) - alpha);
+  }
+  x00 = coef_M * a + coef_I;
+  x01 = coef_M * b;
+  x10 = coef_M * c;
+  x11 = coef_M * d + coef_I;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../mk.hpp.html#f-c2bf050e5addb43c">math::exp&lt;F&gt;</a>, <a href="../mk.hpp.html#f-034a96b556c56223">math::sin&lt;F&gt;</a>, <a href="../mk.hpp.html#f-9dffa80c4b8d94ba">math::cos&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-4623cd6d1304444d"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::solve_sylvester_minus(F a00, F a01, F a10, F a11, usize bi, F b00, F b01, F b10, F b11, usize bj, const F *rhs, F *out, F eps) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L223">line 223</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline bool
+solve_sylvester_minus(F a00, F a01, F a10, F a11, usize bi, F b00, F b01, F b10, F b11, usize bj, const F *rhs, F *out, F eps) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a00</code></li><li><code>F a01</code></li><li><code>F a10</code></li><li><code>F a11</code></li><li><code>usize bi</code></li><li><code>F b00</code></li><li><code>F b01</code></li><li><code>F b10</code></li><li><code>F b11</code></li><li><code>usize bj</code></li><li><code>const F *rhs</code></li><li><code>F *out</code></li><li><code>F eps</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline bool
+solve_sylvester_minus(F a00, F a01, F a10, F a11, usize bi, F b00, F b01, F b10, F b11, usize bj, const F *rhs, F *out, F eps) noexcept
+{
+  if ( bi == 1 &amp;&amp; bj == 1 ) {
+    const F denom = a00 - b00;
+    if ( math::fabs(denom) &lt; eps ) return false;
+    out[0] = rhs[0] / denom;
+    return true;
+  }
+  if ( bi == 1 &amp;&amp; bj == 2 ) {
+    // a00*[x0 x1] − [x0 x1]*B = rhs
+    // a00*x0 − (x0*b00 + x1*b10) = rhs[0]
+    // a00*x1 − (x0*b01 + x1*b11) = rhs[1]
+    mat&lt;F, 2, 2&gt; M{};
+    M.data[0] = a00 - b00;
+    M.data[1] = -b10;
+    M.data[2] = -b01;
+    M.data[3] = a00 - b11;
+    F dM = ops::det2&lt;F&gt;(M);
+    if ( math::fabs(dM) &lt; eps ) return false;
+    auto Mi = ops::inv2&lt;F&gt;(M);
+    out[0] = Mi.data[0] * rhs[0] + Mi.data[1] * rhs[1];
+    out[1] = Mi.data[2] * rhs[0] + Mi.data[3] * rhs[1];
+    return true;
+  }
+  if ( bi == 2 &amp;&amp; bj == 1 ) {
+    // A*[x0; x1] − [x0; x1]*b00 = rhs
+    // (A[0,0] − b00)*x0 + A[0,1]*x1 = rhs[0]
+    // A[1,0]*x0 + (A[1,1] − b00)*x1 = rhs[1]
+    mat&lt;F, 2, 2&gt; M{};
+    M.data[0] = a00 - b00;
+    M.data[1] = a01;
+    M.data[2] = a10;
+    M.data[3] = a11 - b00;
+    F dM = ops::det2&lt;F&gt;(M);
+    if ( math::fabs(dM) &lt; eps ) return false;
+    auto Mi = ops::inv2&lt;F&gt;(M);
+    out[0] = Mi.data[0] * rhs[0] + Mi.data[1] * rhs[1];
+    out[1] = Mi.data[2] * rhs[0] + Mi.data[3] * rhs[1];
+    return true;
+  }
+  if ( bi == 2 &amp;&amp; bj == 2 ) {
+    // (A*X)[r, c] = A[r, 0]*X[0, c] + A[r, 1]*X[1, c]
+    // (X*B)[r, c] = X[r, 0]*B[0, c] + X[r, 1]*B[1, c]
+    mat&lt;F, 4, 4&gt; M = mat&lt;F, 4, 4&gt;::zero();
+    F *__restrict__ Mp = M.data;
+    // (r, c) = (0, 0)
+    Mp[0] = a00 - b00;
+    Mp[1] = -b10;
+    Mp[2] = a01;
+    Mp[3] = F(0);
+    // (r, c) = (0, 1)
+    Mp[4] = -b01;
+    Mp[5] = a00 - b11;
+    Mp[6] = F(0);
+    Mp[7] = a01;
+    // (r, c) = (1, 0)
+    Mp[8] = a10;
+    Mp[9] = F(0);
+    Mp[10] = a11 - b00;
+    Mp[11] = -b10;
+    // (r, c) = (1, 1)
+    Mp[12] = F(0);
+    Mp[13] = a10;
+    Mp[14] = -b01;
+    Mp[15] = a11 - b11;
+
+    auto lu = decomp::lu_pivot&lt;F, 4&gt;(M);
+    if ( lu.singular ) return false;
+    vec&lt;F, 4&gt; r{};
+    F *__restrict__ rp = r.data;
+    rp[0] = rhs[0];
+    rp[1] = rhs[1];
+    rp[2] = rhs[2];
+    rp[3] = rhs[3];
+    decomp::lu_solve&lt;F, 4&gt;(lu, r);
+    out[0] = rp[0];
+    out[1] = rp[1];
+    out[2] = rp[2];
+    out[3] = rp[3];
+    return true;
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L227">line 227</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L229">line 229</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L241">line 241</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L245">line 245</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L257">line 257</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L261">line 261</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L290">line 290</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L302">line 302</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L304">line 304</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="ops.hpp.html#f-70cd99eb9dc903f4">ops::det2&lt;F&gt;</a>, <a href="ops.hpp.html#f-3b3094a88765df93">ops::inv2&lt;F&gt;</a>, <a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, 4, 4&gt;::zero</a>, <a href="decomp.hpp.html#f-c8063dd1853c6a62">decomp::lu_pivot&lt;F, 4&gt;</a>, <a href="decomp.hpp.html#f-a08863f7146f40d8">decomp::lu_solve&lt;F, 4&gt;</a>.</p></section><section class="function-entry" id="f-6ab1da54fae76525"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::parlett_exp(const mat&lt;F, N, N&gt; &amp;T) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L314">line 314</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline parlett_exp_result&lt;F, N&gt;
+parlett_exp(const mat&lt;F, N, N&gt; &amp;T) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;T</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline parlett_exp_result&lt;F, N&gt;
+parlett_exp(const mat&lt;F, N, N&gt; &amp;T) noexcept
+{
+  parlett_exp_result&lt;F, N&gt; r{ mat&lt;F, N, N&gt;::zero(), true };
+  if constexpr ( N == 0 ) return r;
+
+  const F eps = default_eps&lt;F&gt;();
+  usize block_starts[N + 1];
+  usize block_sizes[N + 1];
+  for ( usize i = 0; i &lt;= N; ++i ) {
+    block_starts[i] = 0;
+    block_sizes[i] = 0;
+  }
+  const usize n_blocks = matfunc::__impl_matfunc::identify_blocks&lt;F, N&gt;(T, block_starts, block_sizes);
+
+  F *__restrict__ F_T = r.F_T.data;
+  const F *__restrict__ Tp = T.data;
+  for ( usize bk = 0; bk &lt; n_blocks; ++bk ) {
+    const usize i = block_starts[bk];
+    if ( block_sizes[bk] == 1 ) {
+      F_T[i * N + i] = math::exp&lt;F&gt;(Tp[i * N + i]);
+    } else {
+      F a = Tp[i * N + i];
+      F b = Tp[i * N + (i + 1)];
+      F c = Tp[(i + 1) * N + i];
+      F d = Tp[(i + 1) * N + (i + 1)];
+      F x00, x01, x10, x11;
+      exp_2x2_block&lt;F&gt;(x00, x01, x10, x11, a, b, c, d);
+      F_T[i * N + i] = x00;
+      F_T[i * N + (i + 1)] = x01;
+      F_T[(i + 1) * N + i] = x10;
+      F_T[(i + 1) * N + (i + 1)] = x11;
+    }
+  }
+
+  for ( usize offset = 1; offset &lt; n_blocks; ++offset ) {
+    for ( usize bi = 0; bi + offset &lt; n_blocks; ++bi ) {
+      const usize bj = bi + offset;
+      const usize si = block_starts[bi];
+      const usize sj = block_starts[bj];
+      const usize bs_i = block_sizes[bi];
+      const usize bs_j = block_sizes[bj];
+      F rhs[4] = { F(0), F(0), F(0), F(0) };
+      for ( usize ii = 0; ii &lt; bs_i; ++ii ) {
+        for ( usize jj = 0; jj &lt; bs_j; ++jj ) {
+          F sum = F(0);
+          for ( usize kk = 0; kk &lt; bs_i; ++kk ) sum = math::fma&lt;F&gt;(F_T[(si + ii) * N + (si + kk)], Tp[(si + kk) * N + (sj + jj)], sum);
+          for ( usize kk = 0; kk &lt; bs_j; ++kk ) sum = math::fma&lt;F&gt;(-Tp[(si + ii) * N + (sj + kk)], F_T[(sj + kk) * N + (sj + jj)], sum);
+          rhs[ii * bs_j + jj] = sum;
+        }
+      }
+      for ( usize bk = bi + 1; bk &lt; bj; ++bk ) {
+        const usize sk = block_starts[bk];
+        const usize bs_k = block_sizes[bk];
+        for ( usize ii = 0; ii &lt; bs_i; ++ii ) {
+          for ( usize jj = 0; jj &lt; bs_j; ++jj ) {
+            F sum = F(0);
+            for ( usize kk = 0; kk &lt; bs_k; ++kk ) sum = math::fma&lt;F&gt;(F_T[(si + ii) * N + (sk + kk)], Tp[(sk + kk) * N + (sj + jj)], sum);
+            for ( usize kk = 0; kk &lt; bs_k; ++kk ) sum = math::fma&lt;F&gt;(-Tp[(si + ii) * N + (sk + kk)], F_T[(sk + kk) * N + (sj + jj)], sum);
+            rhs[ii * bs_j + jj] += sum;
+          }
+        }
+      }
+      F a00 = Tp[si * N + si];
+      F a01 = (bs_i == 2) ? Tp[si * N + (si + 1)] : F(0);
+      F a10 = (bs_i == 2) ? Tp[(si + 1) * N + si] : F(0);
+      F a11 = (bs_i == 2) ? Tp[(si + 1) * N + (si + 1)] : F(0);
+      F b00 = Tp[sj * N + sj];
+      F b01 = (bs_j == 2) ? Tp[sj * N + (sj + 1)] : F(0);
+      F b10 = (bs_j == 2) ? Tp[(sj + 1) * N + sj] : F(0);
+      F b11 = (bs_j == 2) ? Tp[(sj + 1) * N + (sj + 1)] : F(0);
+      F out[4] = { F(0), F(0), F(0), F(0) };
+      if ( !solve_sylvester_minus&lt;F&gt;(a00, a01, a10, a11, bs_i, b00, b01, b10, b11, bs_j, rhs, out, eps) ) {
+        r.converged = false;
+        return r;
+      }
+      for ( usize ii = 0; ii &lt; bs_i; ++ii )
+        for ( usize jj = 0; jj &lt; bs_j; ++jj ) F_T[(si + ii) * N + (sj + jj)] = out[ii * bs_j + jj];
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L317">line 317</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L387">line 387</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L393">line 393</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>, <a href="matfunc.hpp.html#f-27524446221f2f71">matfunc::__impl_matfunc::identify_blocks&lt;F, N&gt;</a>, <a href="../mk.hpp.html#f-c2bf050e5addb43c">math::exp&lt;F&gt;</a>, <a href="matfunc_schur.hpp.html#f-9e84545bc518322e">exp_2x2_block&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="matfunc_schur.hpp.html#f-4623cd6d1304444d">solve_sylvester_minus&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-130dcc1d823b5a74"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::parlett_func(const mat&lt;F, N, N&gt; &amp;T) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L403">line 403</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename FnDesc, ieee754_floating F, usize N&gt;
+[[nodiscard]] inline parlett_func_result&lt;F, N&gt;
+parlett_func(const mat&lt;F, N, N&gt; &amp;T) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;T</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename FnDesc, ieee754_floating F, usize N&gt;
+[[nodiscard]] inline parlett_func_result&lt;F, N&gt;
+parlett_func(const mat&lt;F, N, N&gt; &amp;T) noexcept
+{
+  parlett_func_result&lt;F, N&gt; r{ mat&lt;F, N, N&gt;::zero(), true };
+  if constexpr ( N == 0 ) return r;
+
+  const F eps = default_eps&lt;F&gt;();
+  usize block_starts[N + 1];
+  usize block_sizes[N + 1];
+  for ( usize i = 0; i &lt;= N; ++i ) {
+    block_starts[i] = 0;
+    block_sizes[i] = 0;
+  }
+  const usize n_blocks = matfunc::__impl_matfunc::identify_blocks&lt;F, N&gt;(T, block_starts, block_sizes);
+
+  F *__restrict__ F_T = r.F_T.data;
+  const F *__restrict__ Tp = T.data;
+  for ( usize bk = 0; bk &lt; n_blocks; ++bk ) {
+    const usize i = block_starts[bk];
+    if ( block_sizes[bk] == 1 ) {
+      F_T[i * N + i] = FnDesc::val(Tp[i * N + i]);
+    } else {
+      F a = Tp[i * N + i];
+      F b = Tp[i * N + (i + 1)];
+      F c = Tp[(i + 1) * N + i];
+      F d = Tp[(i + 1) * N + (i + 1)];
+      F x00, x01, x10, x11;
+      generic_2x2_block&lt;FnDesc, F&gt;(x00, x01, x10, x11, a, b, c, d);
+      F_T[i * N + i] = x00;
+      F_T[i * N + (i + 1)] = x01;
+      F_T[(i + 1) * N + i] = x10;
+      F_T[(i + 1) * N + (i + 1)] = x11;
+    }
+  }
+
+  for ( usize offset = 1; offset &lt; n_blocks; ++offset ) {
+    for ( usize bi = 0; bi + offset &lt; n_blocks; ++bi ) {
+      const usize bj = bi + offset;
+      const usize si = block_starts[bi];
+      const usize sj = block_starts[bj];
+      const usize bs_i = block_sizes[bi];
+      const usize bs_j = block_sizes[bj];
+      F rhs[4] = { F(0), F(0), F(0), F(0) };
+      for ( usize ii = 0; ii &lt; bs_i; ++ii ) {
+        for ( usize jj = 0; jj &lt; bs_j; ++jj ) {
+          F sum = F(0);
+          for ( usize kk = 0; kk &lt; bs_i; ++kk ) sum = math::fma&lt;F&gt;(F_T[(si + ii) * N + (si + kk)], Tp[(si + kk) * N + (sj + jj)], sum);
+          for ( usize kk = 0; kk &lt; bs_j; ++kk ) sum = math::fma&lt;F&gt;(-Tp[(si + ii) * N + (sj + kk)], F_T[(sj + kk) * N + (sj + jj)], sum);
+          rhs[ii * bs_j + jj] = sum;
+        }
+      }
+      for ( usize bk = bi + 1; bk &lt; bj; ++bk ) {
+        const usize sk = block_starts[bk];
+        const usize bs_k = block_sizes[bk];
+        for ( usize ii = 0; ii &lt; bs_i; ++ii ) {
+          for ( usize jj = 0; jj &lt; bs_j; ++jj ) {
+            F sum = F(0);
+            for ( usize kk = 0; kk &lt; bs_k; ++kk ) sum = math::fma&lt;F&gt;(F_T[(si + ii) * N + (sk + kk)], Tp[(sk + kk) * N + (sj + jj)], sum);
+            for ( usize kk = 0; kk &lt; bs_k; ++kk ) sum = math::fma&lt;F&gt;(-Tp[(si + ii) * N + (sk + kk)], F_T[(sk + kk) * N + (sj + jj)], sum);
+            rhs[ii * bs_j + jj] += sum;
+          }
+        }
+      }
+      F a00 = Tp[si * N + si];
+      F a01 = (bs_i == 2) ? Tp[si * N + (si + 1)] : F(0);
+      F a10 = (bs_i == 2) ? Tp[(si + 1) * N + si] : F(0);
+      F a11 = (bs_i == 2) ? Tp[(si + 1) * N + (si + 1)] : F(0);
+      F b00 = Tp[sj * N + sj];
+      F b01 = (bs_j == 2) ? Tp[sj * N + (sj + 1)] : F(0);
+      F b10 = (bs_j == 2) ? Tp[(sj + 1) * N + sj] : F(0);
+      F b11 = (bs_j == 2) ? Tp[(sj + 1) * N + (sj + 1)] : F(0);
+      F out[4] = { F(0), F(0), F(0), F(0) };
+      if ( !solve_sylvester_minus&lt;F&gt;(a00, a01, a10, a11, bs_i, b00, b01, b10, b11, bs_j, rhs, out, eps) ) {
+        r.converged = false;
+        return r;
+      }
+      for ( usize ii = 0; ii &lt; bs_i; ++ii )
+        for ( usize jj = 0; jj &lt; bs_j; ++jj ) F_T[(si + ii) * N + (sj + jj)] = out[ii * bs_j + jj];
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L406">line 406</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L476">line 476</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L482">line 482</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>, <a href="matfunc.hpp.html#f-27524446221f2f71">matfunc::__impl_matfunc::identify_blocks&lt;F, N&gt;</a>, <a href="matfunc_schur.hpp.html#f-37d985b82d72e992">generic_2x2_block&lt;FnDesc, F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="matfunc_schur.hpp.html#f-4623cd6d1304444d">solve_sylvester_minus&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-801c758ebf0dcdf4"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::spectral_func(const mat&lt;F, N, N&gt; &amp;A, mat&lt;F, N, N&gt; &amp;out) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L575">line 575</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename FnDesc, ieee754_floating F, usize N&gt;
+[[nodiscard]] inline bool
+spectral_func(const mat&lt;F, N, N&gt; &amp;A, mat&lt;F, N, N&gt; &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li><li><code>mat&lt;F, N, N&gt; &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename FnDesc, ieee754_floating F, usize N&gt;
+[[nodiscard]] inline bool
+spectral_func(const mat&lt;F, N, N&gt; &amp;A, mat&lt;F, N, N&gt; &amp;out) noexcept
+{
+  for ( usize i = 0; i &lt; N; ++i )
+    for ( usize j = i + 1; j &lt; N; ++j )
+      if ( A.data[i * N + j] != A.data[j * N + i] ) return false;
+
+  auto e = decomp::eigen_sym&lt;F, N&gt;(A);
+  if ( !e.converged ) return false;
+
+  F fl[N];
+  for ( usize k = 0; k &lt; N; ++k ) fl[k] = FnDesc::val(e.values.data[k]);
+
+  out = mat&lt;F, N, N&gt;::zero();
+  for ( usize i = 0; i &lt; N; ++i ) {
+    const F *__restrict__ row_i = e.vectors.data + i * N;
+    F *__restrict__ row_o = out.data + i * N;
+    for ( usize j = 0; j &lt; N; ++j ) {
+      const F *__restrict__ row_j = e.vectors.data + j * N;
+      F acc = F(0);
+      for ( usize k = 0; k &lt; N; ++k ) acc = math::fma&lt;F&gt;(row_i[k] * fl[k], row_j[k], acc);
+      row_o[j] = acc;
+    }
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L579">line 579</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L582">line 582</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L598">line 598</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp_ext.hpp.html#f-ae722be0a6ed4842">decomp::eigen_sym&lt;F, N&gt;</a>, <a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-20f6309a1614b504"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::back_transform(const mat&lt;F, N, N&gt; &amp;Z, const mat&lt;F, N, N&gt; &amp;F_T) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L603">line 603</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+inline mat&lt;F, N, N&gt;
+back_transform(const mat&lt;F, N, N&gt; &amp;Z, const mat&lt;F, N, N&gt; &amp;F_T) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;Z</code></li><li><code>const mat&lt;F, N, N&gt; &amp;F_T</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+inline mat&lt;F, N, N&gt;
+back_transform(const mat&lt;F, N, N&gt; &amp;Z, const mat&lt;F, N, N&gt; &amp;F_T) noexcept
+{
+  // ZF = Z * F_T
+  mat&lt;F, N, N&gt; ZF = mat&lt;F, N, N&gt;::zero();
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F *__restrict__ row_zf = ZF.data + i * N;
+    const F *__restrict__ row_z = Z.data + i * N;
+    for ( usize j = 0; j &lt; N; ++j ) {
+      F s = F(0);
+      const F *__restrict__ col_f = F_T.data + j;
+      for ( usize k = 0; k &lt; N; ++k ) s = math::fma&lt;F&gt;(row_z[k], col_f[k * N], s);
+      row_zf[j] = s;
+    }
+  }
+  // X = ZF * Z_T
+  mat&lt;F, N, N&gt; X = mat&lt;F, N, N&gt;::zero();
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F *__restrict__ row_x = X.data + i * N;
+    const F *__restrict__ row_zf = ZF.data + i * N;
+    for ( usize j = 0; j &lt; N; ++j ) {
+      F s = F(0);
+      const F *__restrict__ row_z_j = Z.data + j * N;      // Zᵀ col j == Z row j
+      for ( usize k = 0; k &lt; N; ++k ) s = math::fma&lt;F&gt;(row_zf[k], row_z_j[k], s);
+      row_x[j] = s;
+    }
+  }
+  return X;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>X</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L629">line 629</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-8298ac2e2753767f"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::matmul(const mat&lt;F, N, N&gt; &amp;A, const mat&lt;F, N, N&gt; &amp;B) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L780">line 780</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+inline mat&lt;F, N, N&gt;
+matmul(const mat&lt;F, N, N&gt; &amp;A, const mat&lt;F, N, N&gt; &amp;B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li><li><code>const mat&lt;F, N, N&gt; &amp;B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+inline mat&lt;F, N, N&gt;
+matmul(const mat&lt;F, N, N&gt; &amp;A, const mat&lt;F, N, N&gt; &amp;B) noexcept
+{
+  mat&lt;F, N, N&gt; C = mat&lt;F, N, N&gt;::zero();
+  for ( usize i = 0; i &lt; N; ++i ) {
+    const F *__restrict__ row_a = A.data + i * N;
+    F *__restrict__ row_c = C.data + i * N;
+    for ( usize j = 0; j &lt; N; ++j ) {
+      F s = F(0);
+      const F *__restrict__ col_b = B.data + j;
+      for ( usize k = 0; k &lt; N; ++k ) s = math::fma&lt;F&gt;(row_a[k], col_b[k * N], s);
+      row_c[j] = s;
+    }
+  }
+  return C;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>C</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L793">line 793</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-8bb389ce98d7f509"><h3><code>micron::math::linalg::schur::__impl_matfunc_schur::is_integer_value(F p) noexcept</code></h3><p>Defined in <code>math/linalg/matfunc_schur.hpp</code>, <a href="../../../source/math/linalg/matfunc_schur.hpp.html#L798">line 798</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline bool
+is_integer_value(F p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline bool
+is_integer_value(F p) noexcept
+{
+  // guard the float-&gt;long long cast for float cast overflow UB
+  if ( !math::ieee::is_finite(p) || math::fabs(p) &gt;= F(9.2e18) ) return false;
+  const F r = F(static_cast&lt;long long&gt;(p));
+  return r == p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L801">line 801</a></td></tr><tr class="t-dsc"><td><code>r == p</code></td><td><a href="../../../source/math/linalg/matfunc_schur.hpp.html#L803">line 803</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-2410899f0a93a5c0">math::ieee::is_finite</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

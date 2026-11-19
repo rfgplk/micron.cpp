@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/allocation/abcmalloc/mpsc_free.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/allocation/abcmalloc/mpsc_free.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/allocation.html">Allocation</a></div><p>Defined in header <code>&lt;micron/memory/allocation/abcmalloc/mpsc_free.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-8314b5a7584e780a"><h3><code>abc::__mpsc_free_queue::__mpsc_free_queue() noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__mpsc_free_queue() noexcept : __tail(0), __head(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__mpsc_free_queue() noexcept : __tail(0), __head(0)
+  {
+    for ( usize i = 0; i &lt; __capacity; ++i ) {
+      __cells[i].seq.store(i, micron::memory_order_relaxed);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d7ba2ec5dd543905"><h3><code>abc::__mpsc_free_queue::__mpsc_free_queue(const __mpsc_free_queue &amp;)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__mpsc_free_queue(const __mpsc_free_queue &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __mpsc_free_queue &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-a27f04d010cca9cd"><h3><code>abc::__mpsc_free_queue::__mpsc_free_queue(__mpsc_free_queue &amp;&amp;)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L70">line 70</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__mpsc_free_queue(__mpsc_free_queue &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__mpsc_free_queue &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-d1e4aa7cf38985d5"><h3><code>abc::__mpsc_free_queue::operator=(const __mpsc_free_queue &amp;)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__mpsc_free_queue &amp;operator=(const __mpsc_free_queue &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __mpsc_free_queue &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-f7bcc57a0e72039c"><h3><code>abc::__mpsc_free_queue::operator=(__mpsc_free_queue &amp;&amp;)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L72">line 72</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__mpsc_free_queue &amp;operator=(__mpsc_free_queue &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__mpsc_free_queue &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-dd19ecb1f8d774a4"><h3><code>abc::__mpsc_free_queue::capacity() noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr usize
+  capacity() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__capacity</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr usize
+  capacity() noexcept
+  {
+    return __capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__capacity</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L77">line 77</a></td></tr></tbody></table></section><section class="function-entry" id="f-e48168ff4a7fc8a2"><h3><code>abc::__mpsc_free_queue::maybe_nonempty() const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  maybe_nonempty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__tail.get(micron::memory_order_relaxed) != __head</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  maybe_nonempty() const noexcept
+  {
+    return __tail.get(micron::memory_order_relaxed) != __head;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__tail.get(micron::memory_order_relaxed) != __head</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L83">line 83</a></td></tr></tbody></table></section><section class="function-entry" id="f-16a325ebe969345d"><h3><code>abc::__mpsc_free_queue::push(byte *p, usize sz) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L87">line 87</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  push(byte *p, usize sz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *p</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  push(byte *p, usize sz) noexcept
+  {
+    usize tail = __tail.get(micron::memory_order_relaxed);
+    unsigned backoff = 1u;
+    for ( ;; ) {
+      __cell &amp;c = __cells[tail &amp; __mask];
+      const usize seq = c.seq.get(micron::memory_order_acquire);
+      const long long diff = static_cast&lt;long long&gt;(seq) - static_cast&lt;long long&gt;(tail);
+      if ( diff == 0 ) {
+        if ( __tail.compare_exchange_weak(tail, tail + 1u, micron::memory_order_relaxed, micron::memory_order_relaxed) ) {
+          c.payload.ptr = p;
+          c.payload.size = sz;
+          c.seq.store(tail + 1u, micron::memory_order_release);
+          return true;
+        }
+        backoff = micron::__spin_backoff(backoff);
+        tail = __tail.get(micron::memory_order_relaxed);
+      } else if ( diff &lt; 0 ) {
+        return false;
+      } else {
+        backoff = micron::__spin_backoff(backoff);
+        tail = __tail.get(micron::memory_order_relaxed);
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L105">line 105</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../bits/__backoff.hpp.html#f-099849a93a975aa4">micron::__spin_backoff</a>.</p></section><section class="function-entry" id="f-c8ab0ed33435ab85"><h3><code>abc::__mpsc_free_queue::pop(__mpsc_free_payload &amp;out) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L114">line 114</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  pop(__mpsc_free_payload &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__mpsc_free_payload &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  pop(__mpsc_free_payload &amp;out) noexcept
+  {
+    const usize head = __head;
+    __cell &amp;c = __cells[head &amp; __mask];
+    const usize seq = c.seq.get(micron::memory_order_acquire);
+    const long long diff = static_cast&lt;long long&gt;(seq) - static_cast&lt;long long&gt;(head + 1u);
+    if ( diff != 0 ) return false;
+    out = c.payload;
+    c.seq.store(head + __capacity, micron::memory_order_release);
+    __head = head + 1u;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L124">line 124</a></td></tr></tbody></table></section><section class="function-entry" id="f-fd4cae49ae5219a5"><h3><code>abc::__mpsc_free_queue::drain(Fn &amp;&amp;fn) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/mpsc_free.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L129">line 129</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  [[gnu::always_inline]] inline u32
+  drain(Fn &amp;&amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  [[gnu::always_inline]] inline u32
+  drain(Fn &amp;&amp;fn) noexcept
+  {
+    u32 n = 0;
+    __mpsc_free_payload p;
+    while ( pop(p) ) {
+      fn(p.ptr, p.size);
+      ++n;
+    }
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/mpsc_free.hpp.html#L137">line 137</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpsc_free.hpp.html#f-c8ab0ed33435ab85">pop</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

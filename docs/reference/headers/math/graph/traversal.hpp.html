@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/traversal.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/traversal.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/traversal.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/traversal.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-b6fe1e1fe1940156">micron::math::graphs::null_visitor</code></td><td>struct; line 16</td></tr><tr class="t-dsc"><td><code id="s-a19856036c3ce91a">micron::math::graphs::traversal_workspace</code></td><td>struct; line 19</td></tr><tr class="t-dsc"><td><code id="s-c7a72effa86d2b6c">micron::math::graphs::traversal_workspace::vertex_descriptor</code></td><td>typedef; line 20</td></tr><tr class="t-dsc"><td><code id="s-3b5ad00c69475a70">micron::math::graphs::traversal_workspace::frontier</code></td><td>member; line 22</td></tr><tr class="t-dsc"><td><code id="s-32190b9eedc2e110">micron::math::graphs::traversal_workspace::from</code></td><td>member; line 23</td></tr><tr class="t-dsc"><td><code id="s-a3c72cde50781292">micron::math::graphs::traversal_workspace::incoming</code></td><td>member; line 24</td></tr><tr class="t-dsc"><td><code id="s-b46d583c6ff1b688">micron::math::graphs::traversal_workspace::phase</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><code id="s-7791a24db3a36237">micron::math::graphs::traversal_workspace::order</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-1528e41c3dfab67c">micron::math::graphs::traversal_workspace::parent</code></td><td>member; line 27</td></tr><tr class="t-dsc"><td><code id="s-9aedf4f872c4d540">micron::math::graphs::traversal_workspace::depth</code></td><td>member; line 28</td></tr><tr class="t-dsc"><td><code id="s-6dd8d8126b0edebc">micron::math::graphs::traversal_workspace::discovered</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-f1f9c5139c6e1f2b">micron::math::graphs::traversal_result</code></td><td>struct; line 64</td></tr><tr class="t-dsc"><td><code id="s-4bba3c3cbcff74ef">micron::math::graphs::traversal_result::status</code></td><td>member; line 65</td></tr><tr class="t-dsc"><td><code id="s-6f7983c7c5a3081f">micron::math::graphs::traversal_result::order</code></td><td>member; line 66</td></tr><tr class="t-dsc"><td><code id="s-5f369f6e24629d76">micron::math::graphs::traversal_result::parent</code></td><td>member; line 67</td></tr><tr class="t-dsc"><td><code id="s-a380a125fe1db852">micron::math::graphs::traversal_result::depth</code></td><td>member; line 68</td></tr><tr class="t-dsc"><td><code id="s-9c5e3b1c6243a8e8">micron::math::graphs::traversal_result::reached</code></td><td>member; line 69</td></tr><tr class="t-dsc"><td><a href="#f-22db475078388869">micron::math::graphs::traversal_workspace::reserve(usize slots, usize stack_entries = 0)</a></td><td>function; line 32</td></tr><tr class="t-dsc"><td><a href="#f-33906e039e73cd91">micron::math::graphs::traversal_workspace::reset(usize slots)</a></td><td>function; line 48</td></tr><tr class="t-dsc"><td><a href="#f-8d258fd2ab3c7c0b">micron::math::graphs::traversal_result::contains(vertex_id&lt;I&gt; vertex) const noexcept</a></td><td>function; line 72</td></tr><tr class="t-dsc"><td><a href="#f-444b8c81c26e2d35">micron::math::graphs::bfs_into(const G &amp;graph, typename G::vertex_descriptor source, traversal_workspace&lt;typename G::index_type&gt; &amp;workspace, Visitor visitor = {})</a></td><td>function; line 119</td></tr><tr class="t-dsc"><td><a href="#f-d8378cf269c3e10b">micron::math::graphs::bfs(const G &amp;graph, typename G::vertex_descriptor source, Visitor visitor = {})</a></td><td>function; line 153</td></tr><tr class="t-dsc"><td><a href="#f-45b196b033592455">micron::math::graphs::bfs(const G &amp;graph, U source, Visitor visitor = {})</a></td><td>function; line 164</td></tr><tr class="t-dsc"><td><a href="#f-b3bb69e3f9ad7835">micron::math::graphs::dfs_into(const G &amp;graph, typename G::vertex_descriptor source, traversal_workspace&lt;typename G::index_type&gt; &amp;workspace, Visitor visitor = {})</a></td><td>function; line 171</td></tr><tr class="t-dsc"><td><a href="#f-21641defc1ec8841">micron::math::graphs::dfs(const G &amp;graph, typename G::vertex_descriptor source, Visitor visitor = {})</a></td><td>function; line 224</td></tr><tr class="t-dsc"><td><a href="#f-c9b98e5b76a05eea">micron::math::graphs::dfs(const G &amp;graph, U source, Visitor visitor = {})</a></td><td>function; line 235</td></tr><tr class="t-dsc"><td><a href="#f-bca188eacf304c9e">micron::math::graphs::reachable(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</a></td><td>function; line 242</td></tr><tr class="t-dsc"><td><a href="#f-0d410d649b3aa862">micron::math::graphs::reachable(const G &amp;graph, U source, V target)</a></td><td>function; line 252</td></tr><tr class="t-dsc"><td><a href="#f-039db375431b7bc2">micron::math::graphs::diffusion(const G &amp;graph, typename G::vertex_descriptor source, usize rounds)</a></td><td>function; line 260</td></tr><tr class="t-dsc"><td><a href="#f-18f82a8372e1f224">micron::math::graphs::random_walk(const G &amp;graph, typename G::vertex_descriptor source, usize steps, Rng &amp;&amp;rng)</a></td><td>function; line 271</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-22db475078388869"><h3><code>micron::math::graphs::traversal_workspace::reserve(usize slots, usize stack_entries = 0)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L32">line 32</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reserve(usize slots, usize stack_entries = 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize slots</code></li><li><code>usize stack_entries = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reserve(usize slots, usize stack_entries = 0)
+  {
+    const usize entries = stack_entries &gt; slots ? stack_entries : slots;
+    frontier.reserve(entries);
+    if ( stack_entries ) {
+      from.reserve(entries);
+      incoming.reserve(entries);
+      phase.reserve(entries);
+    }
+    order.reserve(slots);
+    parent.reserve(slots);
+    depth.reserve(slots);
+    discovered.reserve(slots);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-33906e039e73cd91"><h3><code>micron::math::graphs::traversal_workspace::reset(usize slots)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reset(usize slots)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize slots</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reset(usize slots)
+  {
+    frontier.clear();
+    from.clear();
+    incoming.clear();
+    phase.clear();
+    order.clear();
+    parent.resize(slots, vertex_descriptor::invalid());
+    parent.fill(vertex_descriptor::invalid());
+    depth.resize(slots, usize(0));
+    depth.fill(usize(0));
+    discovered.resize(slots, u8(0));
+    discovered.fill(u8(0));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-8d258fd2ab3c7c0b"><h3><code>micron::math::graphs::traversal_result::contains(vertex_id&lt;I&gt; vertex) const noexcept</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  contains(vertex_id&lt;I&gt; vertex) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>vertex_id&lt;I&gt; vertex</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  contains(vertex_id&lt;I&gt; vertex) const noexcept
+  {
+    const usize slot = static_cast&lt;usize&gt;(vertex.value);
+    return vertex.valid() &amp;&amp; slot &lt; reached.size() &amp;&amp; reached.data()[slot] != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>vertex.valid() &amp;&amp; slot &lt; reached.size() &amp;&amp; reached.data()[slot] != 0</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L75">line 75</a></td></tr></tbody></table></section><section class="function-entry" id="f-444b8c81c26e2d35"><h3><code>micron::math::graphs::bfs_into(const G &amp;graph, typename G::vertex_descriptor source, traversal_workspace&lt;typename G::index_type&gt; &amp;workspace, Visitor visitor = {})</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L119">line 119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename Visitor = null_visitor&gt;
+algorithm_status
+bfs_into(const G &amp;graph, typename G::vertex_descriptor source, traversal_workspace&lt;typename G::index_type&gt; &amp;workspace, Visitor visitor = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>traversal_workspace&lt;typename G::index_type&gt; &amp;workspace</code></li><li><code>Visitor visitor = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename Visitor = null_visitor&gt;
+algorithm_status
+bfs_into(const G &amp;graph, typename G::vertex_descriptor source, traversal_workspace&lt;typename G::index_type&gt; &amp;workspace, Visitor visitor = {})
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  if ( !graph.has_vertex(source) ) return algorithm_status::invalid_vertex;
+
+  workspace.reset(graph.vertex_slots());
+  workspace.frontier.push_back(source);
+  workspace.discovered.data()[static_cast&lt;usize&gt;(source.value)] = 1;
+  workspace.parent.data()[static_cast&lt;usize&gt;(source.value)] = source;
+  if ( !__impl::discover(visitor, graph, source) ) return algorithm_status::ok;
+
+  usize head = 0;
+  while ( head &lt; workspace.frontier.size() ) {
+    const vertex_descriptor u = workspace.frontier.data()[head++];
+    workspace.order.push_back(u);
+    for ( auto edge : graph.out_edges(u) ) {
+      if ( !__impl::examine_edge(visitor, graph, edge) ) return algorithm_status::ok;
+    }
+    for ( auto v : graph.out_neighbors(u) ) {
+      const usize slot = static_cast&lt;usize&gt;(v.value);
+      if ( workspace.discovered.data()[slot] ) continue;
+      workspace.discovered.data()[slot] = 1;
+      workspace.parent.data()[slot] = u;
+      workspace.depth.data()[slot] = workspace.depth.data()[static_cast&lt;usize&gt;(u.value)] + 1;
+      workspace.frontier.push_back(v);
+      if ( !__impl::discover(visitor, graph, v) ) return algorithm_status::ok;
+    }
+    __impl::finish(visitor, graph, u);
+  }
+  return algorithm_status::ok;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>algorithm_status::invalid_vertex</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L122">line 122</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::ok</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L128">line 128</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::ok</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::ok</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::ok</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L148">line 148</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-ea27205ff0a40800">__impl::discover</a>, <a href="traversal.hpp.html#f-258e48adf6029f15">__impl::examine_edge</a>, <a href="traversal.hpp.html#f-c3182faf98778f95">__impl::finish</a>.</p></section><section class="function-entry" id="f-d8378cf269c3e10b"><h3><code>micron::math::graphs::bfs(const G &amp;graph, typename G::vertex_descriptor source, Visitor visitor = {})</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L153">line 153</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename Visitor = null_visitor&gt;
+[[nodiscard]] traversal_result&lt;typename G::index_type&gt;
+bfs(const G &amp;graph, typename G::vertex_descriptor source, Visitor visitor = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>Visitor visitor = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename Visitor = null_visitor&gt;
+[[nodiscard]] traversal_result&lt;typename G::index_type&gt;
+bfs(const G &amp;graph, typename G::vertex_descriptor source, Visitor visitor = {})
+{
+  traversal_workspace&lt;typename G::index_type&gt; workspace;
+  workspace.reserve(graph.vertex_slots());
+  const algorithm_status status = bfs_into(graph, source, workspace, micron::move(visitor));
+  return { status, micron::move(workspace.order), micron::move(workspace.parent), micron::move(workspace.depth),
+           micron::move(workspace.discovered) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ status, micron::move(workspace.order), micron::move(workspace.parent), micron::move(workspace.depth),
+           micron::move(workspace.discovered) }</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L158">line 158</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-444b8c81c26e2d35">bfs_into</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-45b196b033592455"><h3><code>micron::math::graphs::bfs(const G &amp;graph, U source, Visitor visitor = {})</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L164">line 164</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, micron::integral U, typename Visitor = null_visitor&gt;
+[[nodiscard]] traversal_result&lt;typename G::index_type&gt;
+bfs(const G &amp;graph, U source, Visitor visitor = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>U source</code></li><li><code>Visitor visitor = {}</code></li></ul><h4>Effects</h4><p>Returns <code>bfs(graph, typename G::vertex_descriptor(static_cast&lt;typename G::index_type&gt;(source)), micron::move(visitor))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, micron::integral U, typename Visitor = null_visitor&gt;
+[[nodiscard]] traversal_result&lt;typename G::index_type&gt;
+bfs(const G &amp;graph, U source, Visitor visitor = {})
+{
+  return bfs(graph, typename G::vertex_descriptor(static_cast&lt;typename G::index_type&gt;(source)), micron::move(visitor));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>bfs(graph, typename G::vertex_descriptor(static_cast&lt;typename G::index_type&gt;(source)), micron::move(visitor))</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L166">line 166</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-d8378cf269c3e10b">bfs</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-b3bb69e3f9ad7835"><h3><code>micron::math::graphs::dfs_into(const G &amp;graph, typename G::vertex_descriptor source, traversal_workspace&lt;typename G::index_type&gt; &amp;workspace, Visitor visitor = {})</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L171">line 171</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename Visitor = null_visitor&gt;
+algorithm_status
+dfs_into(const G &amp;graph, typename G::vertex_descriptor source, traversal_workspace&lt;typename G::index_type&gt; &amp;workspace, Visitor visitor = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>traversal_workspace&lt;typename G::index_type&gt; &amp;workspace</code></li><li><code>Visitor visitor = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename Visitor = null_visitor&gt;
+algorithm_status
+dfs_into(const G &amp;graph, typename G::vertex_descriptor source, traversal_workspace&lt;typename G::index_type&gt; &amp;workspace, Visitor visitor = {})
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  if ( !graph.has_vertex(source) ) return algorithm_status::invalid_vertex;
+  workspace.reset(graph.vertex_slots());
+
+  workspace.frontier.push_back(source);
+  workspace.from.push_back(source);
+  workspace.incoming.push_back(edge_id&lt;typename G::index_type&gt;::invalid());
+  workspace.phase.push_back(0);
+
+  while ( !workspace.frontier.empty() ) {
+    const usize top = workspace.frontier.size() - 1;
+    const vertex_descriptor u = workspace.frontier.data()[top];
+    const vertex_descriptor from = workspace.from.data()[top];
+    const auto incoming = workspace.incoming.data()[top];
+    const u8 phase = workspace.phase.data()[top];
+    workspace.frontier.pop_back();
+    workspace.from.pop_back();
+    workspace.incoming.pop_back();
+    workspace.phase.pop_back();
+
+    if ( phase ) {
+      __impl::finish(visitor, graph, u);
+      continue;
+    }
+
+    if ( incoming.valid() &amp;&amp; !__impl::examine_edge(visitor, graph, incoming) ) return algorithm_status::ok;
+    const usize slot = static_cast&lt;usize&gt;(u.value);
+    if ( workspace.discovered.data()[slot] ) continue;
+    workspace.discovered.data()[slot] = 1;
+    workspace.parent.data()[slot] = from;
+    if ( u != source ) workspace.depth.data()[slot] = workspace.depth.data()[static_cast&lt;usize&gt;(from.value)] + 1;
+    if ( !__impl::discover(visitor, graph, u) ) return algorithm_status::ok;
+    workspace.order.push_back(u);
+
+    workspace.frontier.push_back(u);
+    workspace.from.push_back(from);
+    workspace.incoming.push_back(edge_id&lt;typename G::index_type&gt;::invalid());
+    workspace.phase.push_back(1);
+    for ( auto edge : graph.out_edges(u) ) {
+      const vertex_descriptor v = G::is_directed ? graph.target(edge) : graph.opposite(edge, u);
+      workspace.frontier.push_back(v);
+      workspace.from.push_back(u);
+      workspace.incoming.push_back(edge);
+      workspace.phase.push_back(0);
+    }
+  }
+  return algorithm_status::ok;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>algorithm_status::invalid_vertex</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L174">line 174</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::ok</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L198">line 198</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::ok</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L204">line 204</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::ok</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L219">line 219</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="descriptors.hpp.html#f-c53b29501dfdc86c">edge_id&lt;typename G::index_type&gt;::invalid</a>, <a href="traversal.hpp.html#f-c3182faf98778f95">__impl::finish</a>, <a href="traversal.hpp.html#f-258e48adf6029f15">__impl::examine_edge</a>, <a href="traversal.hpp.html#f-ea27205ff0a40800">__impl::discover</a>.</p></section><section class="function-entry" id="f-21641defc1ec8841"><h3><code>micron::math::graphs::dfs(const G &amp;graph, typename G::vertex_descriptor source, Visitor visitor = {})</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L224">line 224</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename Visitor = null_visitor&gt;
+[[nodiscard]] traversal_result&lt;typename G::index_type&gt;
+dfs(const G &amp;graph, typename G::vertex_descriptor source, Visitor visitor = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>Visitor visitor = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename Visitor = null_visitor&gt;
+[[nodiscard]] traversal_result&lt;typename G::index_type&gt;
+dfs(const G &amp;graph, typename G::vertex_descriptor source, Visitor visitor = {})
+{
+  traversal_workspace&lt;typename G::index_type&gt; workspace;
+  workspace.reserve(graph.vertex_slots(), graph.edges_count() * (G::is_directed ? 1 : 2) + 1);
+  const algorithm_status status = dfs_into(graph, source, workspace, micron::move(visitor));
+  return { status, micron::move(workspace.order), micron::move(workspace.parent), micron::move(workspace.depth),
+           micron::move(workspace.discovered) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ status, micron::move(workspace.order), micron::move(workspace.parent), micron::move(workspace.depth),
+           micron::move(workspace.discovered) }</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L229">line 229</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-b3bb69e3f9ad7835">dfs_into</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-c9b98e5b76a05eea"><h3><code>micron::math::graphs::dfs(const G &amp;graph, U source, Visitor visitor = {})</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L235">line 235</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, micron::integral U, typename Visitor = null_visitor&gt;
+[[nodiscard]] traversal_result&lt;typename G::index_type&gt;
+dfs(const G &amp;graph, U source, Visitor visitor = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>U source</code></li><li><code>Visitor visitor = {}</code></li></ul><h4>Effects</h4><p>Returns <code>dfs(graph, typename G::vertex_descriptor(static_cast&lt;typename G::index_type&gt;(source)), micron::move(visitor))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, micron::integral U, typename Visitor = null_visitor&gt;
+[[nodiscard]] traversal_result&lt;typename G::index_type&gt;
+dfs(const G &amp;graph, U source, Visitor visitor = {})
+{
+  return dfs(graph, typename G::vertex_descriptor(static_cast&lt;typename G::index_type&gt;(source)), micron::move(visitor));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dfs(graph, typename G::vertex_descriptor(static_cast&lt;typename G::index_type&gt;(source)), micron::move(visitor))</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L237">line 237</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-21641defc1ec8841">dfs</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-bca188eacf304c9e"><h3><code>micron::math::graphs::reachable(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L242">line 242</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] bool
+reachable(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor target</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] bool
+reachable(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)
+{
+  if ( !graph.has_vertex(source) || !graph.has_vertex(target) ) return false;
+  if ( source == target ) return true;
+  auto result = bfs(graph, source);
+  return result.contains(target);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L244">line 244</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L245">line 245</a></td></tr><tr class="t-dsc"><td><code>result.contains(target)</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L247">line 247</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-d8378cf269c3e10b">bfs</a>.</p></section><section class="function-entry" id="f-0d410d649b3aa862"><h3><code>micron::math::graphs::reachable(const G &amp;graph, U source, V target)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L252">line 252</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, micron::integral U, micron::integral V&gt;
+[[nodiscard]] bool
+reachable(const G &amp;graph, U source, V target)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>U source</code></li><li><code>V target</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, micron::integral U, micron::integral V&gt;
+[[nodiscard]] bool
+reachable(const G &amp;graph, U source, V target)
+{
+  using I = typename G::index_type;
+  return reachable(graph, typename G::vertex_descriptor(static_cast&lt;I&gt;(source)), typename G::vertex_descriptor(static_cast&lt;I&gt;(target)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reachable(graph, typename G::vertex_descriptor(static_cast&lt;I&gt;(source)), typename G::vertex_descriptor(static_cast&lt;I&gt;(target)))</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L255">line 255</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-bca188eacf304c9e">reachable</a>.</p></section><section class="function-entry" id="f-039db375431b7bc2"><h3><code>micron::math::graphs::diffusion(const G &amp;graph, typename G::vertex_descriptor source, usize rounds)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L260">line 260</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+diffusion(const G &amp;graph, typename G::vertex_descriptor source, usize rounds)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>usize rounds</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+diffusion(const G &amp;graph, typename G::vertex_descriptor source, usize rounds)
+{
+  auto result = bfs(graph, source);
+  usize keep = 0;
+  while ( keep &lt; result.order.size() &amp;&amp; result.depth.data()[static_cast&lt;usize&gt;(result.order.data()[keep].value)] &lt;= rounds ) ++keep;
+  result.order.resize(keep);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L266">line 266</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-d8378cf269c3e10b">bfs</a>.</p></section><section class="function-entry" id="f-18f82a8372e1f224"><h3><code>micron::math::graphs::random_walk(const G &amp;graph, typename G::vertex_descriptor source, usize steps, Rng &amp;&amp;rng)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L271">line 271</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename Rng&gt;
+[[nodiscard]] micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt;
+random_walk(const G &amp;graph, typename G::vertex_descriptor source, usize steps, Rng &amp;&amp;rng)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>usize steps</code></li><li><code>Rng &amp;&amp;rng</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename Rng&gt;
+[[nodiscard]] micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt;
+random_walk(const G &amp;graph, typename G::vertex_descriptor source, usize steps, Rng &amp;&amp;rng)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; walk;
+  if ( !graph.has_vertex(source) ) return walk;
+  walk.reserve(steps + 1);
+  walk.push_back(source);
+  vertex_descriptor current = source;
+  for ( usize step = 0; step &lt; steps; ++step ) {
+    const usize degree = graph.out_degree(current);
+    if ( degree == 0 ) break;
+    const usize selected = static_cast&lt;usize&gt;(micron::invoke(rng)) % degree;
+    usize at = 0;
+    vertex_descriptor next = current;
+    for ( auto neighbor : graph.out_neighbors(current) ) {
+      if ( at++ == selected ) {
+        next = neighbor;
+        break;
+      }
+    }
+    walk.push_back(next);
+    current = next;
+  }
+  return walk;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>walk</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L275">line 275</a></td></tr><tr class="t-dsc"><td><code>walk</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L294">line 294</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../sync/invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ea27205ff0a40800"><h3><code>micron::math::graphs::__impl::discover(Visitor &amp;visitor, const G &amp;graph, V vertex)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L84">line 84</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Visitor, typename G, typename V&gt;
+[[nodiscard]] inline bool
+discover(Visitor &amp;visitor, const G &amp;graph, V vertex)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Visitor &amp;visitor</code></li><li><code>const G &amp;graph</code></li><li><code>V vertex</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Visitor, typename G, typename V&gt;
+[[nodiscard]] inline bool
+discover(Visitor &amp;visitor, const G &amp;graph, V vertex)
+{
+  if constexpr ( requires {
+                   { visitor.discover_vertex(graph, vertex) } -&gt; micron::convertible_to&lt;bool&gt;;
+                 } )
+    return static_cast&lt;bool&gt;(visitor.discover_vertex(graph, vertex));
+  else if constexpr ( requires { visitor.discover_vertex(graph, vertex); } )
+    visitor.discover_vertex(graph, vertex);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;bool&gt;(visitor.discover_vertex(graph, vertex))</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L92">line 92</a></td></tr></tbody></table></section><section class="function-entry" id="f-258e48adf6029f15"><h3><code>micron::math::graphs::__impl::examine_edge(Visitor &amp;visitor, const G &amp;graph, E edge)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L97">line 97</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Visitor, typename G, typename E&gt;
+[[nodiscard]] inline bool
+examine_edge(Visitor &amp;visitor, const G &amp;graph, E edge)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Visitor &amp;visitor</code></li><li><code>const G &amp;graph</code></li><li><code>E edge</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Visitor, typename G, typename E&gt;
+[[nodiscard]] inline bool
+examine_edge(Visitor &amp;visitor, const G &amp;graph, E edge)
+{
+  if constexpr ( requires {
+                   { visitor.examine_edge(graph, edge) } -&gt; micron::convertible_to&lt;bool&gt;;
+                 } )
+    return static_cast&lt;bool&gt;(visitor.examine_edge(graph, edge));
+  else if constexpr ( requires { visitor.examine_edge(graph, edge); } )
+    visitor.examine_edge(graph, edge);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;bool&gt;(visitor.examine_edge(graph, edge))</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L102">line 102</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/traversal.hpp.html#L105">line 105</a></td></tr></tbody></table></section><section class="function-entry" id="f-c3182faf98778f95"><h3><code>micron::math::graphs::__impl::finish(Visitor &amp;visitor, const G &amp;graph, V vertex)</code></h3><p>Defined in <code>math/graph/traversal.hpp</code>, <a href="../../../source/math/graph/traversal.hpp.html#L110">line 110</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Visitor, typename G, typename V&gt;
+inline void
+finish(Visitor &amp;visitor, const G &amp;graph, V vertex)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Visitor &amp;visitor</code></li><li><code>const G &amp;graph</code></li><li><code>V vertex</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Visitor, typename G, typename V&gt;
+inline void
+finish(Visitor &amp;visitor, const G &amp;graph, V vertex)
+{
+  if constexpr ( requires { visitor.finish_vertex(graph, vertex); } ) visitor.finish_vertex(graph, vertex);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

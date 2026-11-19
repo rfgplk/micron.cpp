@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/fptree.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/fptree.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/functional.html">Functional algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/fptree.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/algorithm/fptree.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-0bf2eb4d03e9322a">micron::fp::keys(const Tree &amp;t)</a></td><td>function; line 31</td></tr><tr class="t-dsc"><td><a href="#f-280becb7ff7df1dc">micron::fp::values(const Tree &amp;t)</a></td><td>function; line 40</td></tr><tr class="t-dsc"><td><a href="#f-55736f3807f3be2d">micron::fp::unzip(const Tree &amp;t)</a></td><td>function; line 50</td></tr><tr class="t-dsc"><td><a href="#f-d7504ba7bccec32a">micron::fp::elem(const Tree &amp;t, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;x)</a></td><td>function; line 65</td></tr><tr class="t-dsc"><td><a href="#f-28b0fc3096450bdd">micron::fp::elem(const Tree &amp;t, const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;x)</a></td><td>function; line 76</td></tr><tr class="t-dsc"><td><a href="#f-0f768e9e449a3c50">micron::fp::find_first(const Tree &amp;t, Fn fn)</a></td><td>function; line 89</td></tr><tr class="t-dsc"><td><a href="#f-fe518bdc7314944c">micron::fp::find_first(const Tree &amp;t, Fn fn)</a></td><td>function; line 104</td></tr><tr class="t-dsc"><td><a href="#f-3051bdf97184a678">micron::fp::nub(const Tree &amp;t)</a></td><td>function; line 118</td></tr><tr class="t-dsc"><td><a href="#f-3dc5d2ad4d14848e">micron::fp::nub(const Tree &amp;t)</a></td><td>function; line 132</td></tr><tr class="t-dsc"><td><a href="#f-dc9763f2749b1284">micron::fp::flat_map(const Tree &amp;t, Fn fn)</a></td><td>function; line 148</td></tr><tr class="t-dsc"><td><a href="#f-23b26d93b919388f">micron::fp::flat_map(const Tree &amp;t, Fn fn)</a></td><td>function; line 165</td></tr><tr class="t-dsc"><td><a href="#f-3786e9ac0ee6cdb8">micron::fp::safe_max(const Tree &amp;t)</a></td><td>function; line 182</td></tr><tr class="t-dsc"><td><a href="#f-b9824da119a42a5a">micron::fp::safe_max(const Tree &amp;t)</a></td><td>function; line 191</td></tr><tr class="t-dsc"><td><a href="#f-b7641b529b7a0d87">micron::fp::safe_min(const Tree &amp;t)</a></td><td>function; line 200</td></tr><tr class="t-dsc"><td><a href="#f-bde8f135b4c633f1">micron::fp::safe_min(const Tree &amp;t)</a></td><td>function; line 209</td></tr><tr class="t-dsc"><td><a href="#f-b012bd3e10facefb">micron::fp::safe_sum(const Tree &amp;t)</a></td><td>function; line 219</td></tr><tr class="t-dsc"><td><a href="#f-73093254a22a69d9">micron::fp::safe_sum(const Tree &amp;t)</a></td><td>function; line 228</td></tr><tr class="t-dsc"><td><a href="#f-7cb13fcc1cf4e29d">micron::fp::safe_sum(const Tree &amp;t)</a></td><td>function; line 237</td></tr><tr class="t-dsc"><td><a href="#f-331cbcccfa61e020">micron::fp::safe_sum(const Tree &amp;t)</a></td><td>function; line 246</td></tr><tr class="t-dsc"><td><a href="#f-13d38c9dfc75843c">micron::fp::safe_mean(const Tree &amp;t)</a></td><td>function; line 254</td></tr><tr class="t-dsc"><td><a href="#f-f0b59937d511fc1d">micron::fp::safe_mean(const Tree &amp;t)</a></td><td>function; line 262</td></tr><tr class="t-dsc"><td><a href="#f-5bf12eef30cd9134">micron::fp::concat(const Tree &amp;a, const Tree &amp;b)</a></td><td>function; line 271</td></tr><tr class="t-dsc"><td><a href="#f-792a57e5b41cf3e2">micron::fp::concat(const Tree &amp;a, const Tree &amp;b)</a></td><td>function; line 281</td></tr><tr class="t-dsc"><td><a href="#f-6d81dcbc678db410">micron::fp::traverse(const Tree &amp;t, Fn fn)</a></td><td>function; line 293</td></tr><tr class="t-dsc"><td><a href="#f-e1fb2ad959c978d0">micron::fp::take(const Tree &amp;t, usize n)</a></td><td>function; line 320</td></tr><tr class="t-dsc"><td><a href="#f-50ac7d77c2a1053c">micron::fp::take(const Tree &amp;t, usize n)</a></td><td>function; line 333</td></tr><tr class="t-dsc"><td><a href="#f-6d08f7d381b18207">micron::fp::drop(const Tree &amp;t, usize n)</a></td><td>function; line 347</td></tr><tr class="t-dsc"><td><a href="#f-89a62a8a3ad0abf5">micron::fp::drop(const Tree &amp;t, usize n)</a></td><td>function; line 360</td></tr><tr class="t-dsc"><td><a href="#f-38c0620746c2779c">micron::fp::head(const Tree &amp;t)</a></td><td>function; line 374</td></tr><tr class="t-dsc"><td><a href="#f-af19e1ba3a112c7a">micron::fp::head(const Tree &amp;t)</a></td><td>function; line 391</td></tr><tr class="t-dsc"><td><a href="#f-22fb8dc5061029a4">micron::fp::last(const Tree &amp;t)</a></td><td>function; line 408</td></tr><tr class="t-dsc"><td><a href="#f-495146ca2ade7cad">micron::fp::last(const Tree &amp;t)</a></td><td>function; line 423</td></tr><tr class="t-dsc"><td><a href="#f-2c40f76017cceb88">micron::fp::take_while(const Tree &amp;t, Fn fn)</a></td><td>function; line 440</td></tr><tr class="t-dsc"><td><a href="#f-6a160b24e3a18677">micron::fp::take_while(const Tree &amp;t, Fn fn)</a></td><td>function; line 459</td></tr><tr class="t-dsc"><td><a href="#f-c24caa475e33d46b">micron::fp::drop_while(const Tree &amp;t, Fn fn)</a></td><td>function; line 477</td></tr><tr class="t-dsc"><td><a href="#f-3fcb63b3207909e2">micron::fp::drop_while(const Tree &amp;t, Fn fn)</a></td><td>function; line 493</td></tr><tr class="t-dsc"><td><a href="#f-3d90f3dba5bb4473">micron::fp::enumerate(const Tree &amp;t)</a></td><td>function; line 508</td></tr><tr class="t-dsc"><td><a href="#f-7de085717df4e4ef">micron::fp::enumerate(const Tree &amp;t)</a></td><td>function; line 519</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-0bf2eb4d03e9322a"><h3><code>micron::fp::keys(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L31">line 31</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::key_type&gt;
+keys(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::key_type&gt;
+keys(const Tree &amp;t)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::key_type&gt; out;
+  t.for_each([&amp;](const auto &amp;k, const auto &amp;) { out.push_back(k); });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L35">line 35</a></td></tr></tbody></table></section><section class="function-entry" id="f-280becb7ff7df1dc"><h3><code>micron::fp::values(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L40">line 40</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+values(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+values(const Tree &amp;t)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt; out;
+  t.for_each([&amp;](const auto &amp;, const auto &amp;v) { out.push_back(v); });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L44">line 44</a></td></tr></tbody></table></section><section class="function-entry" id="f-55736f3807f3be2d"><h3><code>micron::fp::unzip(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L50">line 50</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::pair&lt;micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::key_type&gt;,
+             micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;&gt;
+unzip(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::pair&lt;micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::key_type&gt;,
+             micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;&gt;
+unzip(const Tree &amp;t)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::key_type&gt; ks;
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt; vs;
+  t.for_each([&amp;](const auto &amp;k, const auto &amp;v) {
+    ks.push_back(k);
+    vs.push_back(v);
+  });
+  return micron::pair&lt;micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::key_type&gt;,
+                      micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;&gt;(micron::move(ks), micron::move(vs));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::pair&lt;micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::key_type&gt;,
+                      micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;&gt;(micron::move(ks), micron::move(vs))</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L58">line 58</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-d7504ba7bccec32a"><h3><code>micron::fp::elem(const Tree &amp;t, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;x)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L65">line 65</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+bool
+elem(const Tree &amp;t, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+bool
+elem(const Tree &amp;t, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;x)
+{
+  bool found = false;
+  t.for_each([&amp;](const auto &amp;e) {
+    if ( !found &amp;&amp; e == x ) found = true;
+  });
+  return found;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>found</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L71">line 71</a></td></tr></tbody></table></section><section class="function-entry" id="f-28b0fc3096450bdd"><h3><code>micron::fp::elem(const Tree &amp;t, const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;x)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+bool
+elem(const Tree &amp;t, const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+bool
+elem(const Tree &amp;t, const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;x)
+{
+  bool found = false;
+  t.for_each([&amp;](const auto &amp;, const auto &amp;v) {
+    if ( !found &amp;&amp; v == x ) found = true;
+  });
+  return found;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>found</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L82">line 82</a></td></tr></tbody></table></section><section class="function-entry" id="f-0f768e9e449a3c50"><h3><code>micron::fp::find_first(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L89">line 89</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+find_first(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+find_first(const Tree &amp;t, Fn fn)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::value_type;
+  const V *hit = nullptr;
+  t.for_each([&amp;](const auto &amp;e) {
+    if ( !hit &amp;&amp; fn(e) ) hit = micron::addressof(e);
+  });
+  if ( hit ) return micron::option&lt;V, empty_container_error&gt;{ *hit };
+  return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ *hit }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L97">line 97</a></td></tr></tbody></table></section><section class="function-entry" id="f-fe518bdc7314944c"><h3><code>micron::fp::find_first(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L104">line 104</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+find_first(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+find_first(const Tree &amp;t, Fn fn)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type;
+  const V *hit = nullptr;
+  t.for_each([&amp;](const auto &amp;k, const auto &amp;v) {
+    if ( !hit &amp;&amp; fn(k, v) ) hit = micron::addressof(v);
+  });
+  if ( hit ) return micron::option&lt;V, empty_container_error&gt;{ *hit };
+  return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ *hit }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L112">line 112</a></td></tr></tbody></table></section><section class="function-entry" id="f-3051bdf97184a678"><h3><code>micron::fp::nub(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L118">line 118</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+nub(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+nub(const Tree &amp;t)
+{
+  using E = typename micron::remove_cvref_t&lt;Tree&gt;::value_type;
+  micron::fvector&lt;E&gt; out;
+  micron::fp::__impl::seen_set&lt;E&gt; seen;
+  seen.reserve(t.size());
+  t.for_each([&amp;](const auto &amp;e) {
+    if ( seen.add(e) ) out.push_back(e);
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L127">line 127</a></td></tr></tbody></table></section><section class="function-entry" id="f-3dc5d2ad4d14848e"><h3><code>micron::fp::nub(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L132">line 132</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+nub(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+nub(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type;
+  micron::fvector&lt;V&gt; out;
+  micron::fp::__impl::seen_set&lt;V&gt; seen;
+  seen.reserve(t.size());
+  t.for_each([&amp;](const auto &amp;, const auto &amp;v) {
+    if ( seen.add(v) ) out.push_back(v);
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L141">line 141</a></td></tr></tbody></table></section><section class="function-entry" id="f-dc9763f2749b1284"><h3><code>micron::fp::flat_map(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L148">line 148</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;&gt;
+auto
+flat_map(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;&gt;
+auto
+flat_map(const Tree &amp;t, Fn fn)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::value_type;
+  using R = micron::remove_cvref_t&lt;decltype(fn(micron::declval&lt;const V &amp;&gt;()))&gt;;
+  using E = typename R::value_type;
+  micron::fvector&lt;E&gt; out;
+  t.for_each([&amp;](const auto &amp;e) {
+    auto sub = fn(e);
+    for ( const auto &amp;x : sub ) out.push_back(x);
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L158">line 158</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const V &amp;&gt;</a>.</p></section><section class="function-entry" id="f-23b26d93b919388f"><h3><code>micron::fp::flat_map(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L165">line 165</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+auto
+flat_map(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+auto
+flat_map(const Tree &amp;t, Fn fn)
+{
+  using K = typename micron::remove_cvref_t&lt;Tree&gt;::key_type;
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type;
+  using R = micron::remove_cvref_t&lt;decltype(fn(micron::declval&lt;const K &amp;&gt;(), micron::declval&lt;const V &amp;&gt;()))&gt;;
+  using E = typename R::value_type;
+  micron::fvector&lt;E&gt; out;
+  t.for_each([&amp;](const auto &amp;k, const auto &amp;v) {
+    auto sub = fn(k, v);
+    for ( const auto &amp;x : sub ) out.push_back(x);
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L176">line 176</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const K &amp;&gt;</a>, <a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const V &amp;&gt;</a>.</p></section><section class="function-entry" id="f-3786e9ac0ee6cdb8"><h3><code>micron::fp::safe_max(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L182">line 182</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+safe_max(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+safe_max(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::value_type;
+  if ( t.size() == 0 ) return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;V, empty_container_error&gt;{ micron::max(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L185">line 185</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ micron::max(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L186">line 186</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-57d618bd335b1a43">micron::max</a>.</p></section><section class="function-entry" id="f-b9824da119a42a5a"><h3><code>micron::fp::safe_max(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L191">line 191</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+safe_max(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+safe_max(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type;
+  if ( t.size() == 0 ) return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;V, empty_container_error&gt;{ micron::max(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L194">line 194</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ micron::max(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L195">line 195</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-57d618bd335b1a43">micron::max</a>.</p></section><section class="function-entry" id="f-b7641b529b7a0d87"><h3><code>micron::fp::safe_min(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L200">line 200</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+safe_min(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+safe_min(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::value_type;
+  if ( t.size() == 0 ) return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;V, empty_container_error&gt;{ micron::min(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L203">line 203</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ micron::min(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L204">line 204</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-4d14a8deebaf67db">micron::min</a>.</p></section><section class="function-entry" id="f-bde8f135b4c633f1"><h3><code>micron::fp::safe_min(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L209">line 209</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+safe_min(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+safe_min(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type;
+  if ( t.size() == 0 ) return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;V, empty_container_error&gt;{ micron::min(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L212">line 212</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ micron::min(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L213">line 213</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-4d14a8deebaf67db">micron::min</a>.</p></section><section class="function-entry" id="f-b012bd3e10facefb"><h3><code>micron::fp::safe_sum(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L219">line 219</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+  requires micron::is_integral_v&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+micron::option&lt;umax_t, empty_container_error&gt;
+safe_sum(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+  requires micron::is_integral_v&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+micron::option&lt;umax_t, empty_container_error&gt;
+safe_sum(const Tree &amp;t)
+{
+  if ( t.size() == 0 ) return micron::option&lt;umax_t, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;umax_t, empty_container_error&gt;{ micron::sum(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;umax_t, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L221">line 221</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;umax_t, empty_container_error&gt;{ micron::sum(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L222">line 222</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-61cdc8e0d93d233b">micron::sum</a>.</p></section><section class="function-entry" id="f-73093254a22a69d9"><h3><code>micron::fp::safe_sum(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L228">line 228</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+  requires micron::is_floating_point_v&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+micron::option&lt;f128, empty_container_error&gt;
+safe_sum(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+  requires micron::is_floating_point_v&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+micron::option&lt;f128, empty_container_error&gt;
+safe_sum(const Tree &amp;t)
+{
+  if ( t.size() == 0 ) return micron::option&lt;f128, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;f128, empty_container_error&gt;{ micron::sum(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;f128, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L230">line 230</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;f128, empty_container_error&gt;{ micron::sum(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L231">line 231</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-61cdc8e0d93d233b">micron::sum</a>.</p></section><section class="function-entry" id="f-7cb13fcc1cf4e29d"><h3><code>micron::fp::safe_sum(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L237">line 237</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+  requires micron::is_integral_v&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+micron::option&lt;umax_t, empty_container_error&gt;
+safe_sum(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+  requires micron::is_integral_v&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+micron::option&lt;umax_t, empty_container_error&gt;
+safe_sum(const Tree &amp;t)
+{
+  if ( t.size() == 0 ) return micron::option&lt;umax_t, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;umax_t, empty_container_error&gt;{ micron::sum(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;umax_t, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L239">line 239</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;umax_t, empty_container_error&gt;{ micron::sum(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L240">line 240</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-61cdc8e0d93d233b">micron::sum</a>.</p></section><section class="function-entry" id="f-331cbcccfa61e020"><h3><code>micron::fp::safe_sum(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L246">line 246</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+  requires micron::is_floating_point_v&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+micron::option&lt;f128, empty_container_error&gt;
+safe_sum(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+  requires micron::is_floating_point_v&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+micron::option&lt;f128, empty_container_error&gt;
+safe_sum(const Tree &amp;t)
+{
+  if ( t.size() == 0 ) return micron::option&lt;f128, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;f128, empty_container_error&gt;{ micron::sum(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;f128, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L248">line 248</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;f128, empty_container_error&gt;{ micron::sum(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L249">line 249</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-61cdc8e0d93d233b">micron::sum</a>.</p></section><section class="function-entry" id="f-13d38c9dfc75843c"><h3><code>micron::fp::safe_mean(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L254">line 254</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = f64, is_set_tree Tree&gt;
+micron::option&lt;R, empty_container_error&gt;
+safe_mean(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = f64, is_set_tree Tree&gt;
+micron::option&lt;R, empty_container_error&gt;
+safe_mean(const Tree &amp;t)
+{
+  if ( t.size() == 0 ) return micron::option&lt;R, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;R, empty_container_error&gt;{ micron::mean&lt;R&gt;(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;R, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L256">line 256</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;R, empty_container_error&gt;{ micron::mean&lt;R&gt;(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L257">line 257</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-2dea8b23fc8a2400">micron::mean&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-f0b59937d511fc1d"><h3><code>micron::fp::safe_mean(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L262">line 262</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = f64, is_tree_map Tree&gt;
+micron::option&lt;R, empty_container_error&gt;
+safe_mean(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = f64, is_tree_map Tree&gt;
+micron::option&lt;R, empty_container_error&gt;
+safe_mean(const Tree &amp;t)
+{
+  if ( t.size() == 0 ) return micron::option&lt;R, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;R, empty_container_error&gt;{ micron::mean&lt;R&gt;(t) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;R, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L264">line 264</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;R, empty_container_error&gt;{ micron::mean&lt;R&gt;(t) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L265">line 265</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-2dea8b23fc8a2400">micron::mean&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-5bf12eef30cd9134"><h3><code>micron::fp::concat(const Tree &amp;a, const Tree &amp;b)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L271">line 271</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::remove_cvref_t&lt;Tree&gt;
+concat(const Tree &amp;a, const Tree &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;a</code></li><li><code>const Tree &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::remove_cvref_t&lt;Tree&gt;
+concat(const Tree &amp;a, const Tree &amp;b)
+{
+  micron::remove_cvref_t&lt;Tree&gt; out;
+  a.for_each([&amp;](const auto &amp;e) { out.insert(e); });
+  b.for_each([&amp;](const auto &amp;e) { out.insert(e); });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L276">line 276</a></td></tr></tbody></table></section><section class="function-entry" id="f-792a57e5b41cf3e2"><h3><code>micron::fp::concat(const Tree &amp;a, const Tree &amp;b)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L281">line 281</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::remove_cvref_t&lt;Tree&gt;
+concat(const Tree &amp;a, const Tree &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;a</code></li><li><code>const Tree &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::remove_cvref_t&lt;Tree&gt;
+concat(const Tree &amp;a, const Tree &amp;b)
+{
+  micron::remove_cvref_t&lt;Tree&gt; out;
+  a.for_each([&amp;](const auto &amp;k, const auto &amp;v) { out.insert(k, v); });
+  b.for_each([&amp;](const auto &amp;k, const auto &amp;v) { out.insert(k, v); });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L286">line 286</a></td></tr></tbody></table></section><section class="function-entry" id="f-6d81dcbc678db410"><h3><code>micron::fp::traverse(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L293">line 293</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+auto
+traverse(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+auto
+traverse(const Tree &amp;t, Fn fn)
+{
+  using TT = micron::remove_cvref_t&lt;Tree&gt;;
+  using V = typename TT::mapped_type;
+  using Opt = micron::remove_cvref_t&lt;decltype(fn(micron::declval&lt;const V &amp;&gt;()))&gt;;
+  using E = typename Opt::second_type;
+
+  bool ok = true;
+  E err{};
+  TT out;
+  t.for_each([&amp;](const auto &amp;k, const auto &amp;v) {
+    if ( !ok ) return;
+    Opt r = fn(v);
+    if ( r.is_first() )
+      out.insert(k, r.template cast&lt;V&gt;());
+    else {
+      ok = false;
+      err = r.template cast&lt;E&gt;();
+    }
+  });
+  if ( ok ) return micron::option&lt;TT, E&gt;{ micron::move(out) };
+  return micron::option&lt;TT, E&gt;{ micron::move(err) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;TT, E&gt;{ micron::move(out) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L313">line 313</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;TT, E&gt;{ micron::move(err) }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L314">line 314</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const V &amp;&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-e1fb2ad959c978d0"><h3><code>micron::fp::take(const Tree &amp;t, usize n)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L320">line 320</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+take(const Tree &amp;t, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+take(const Tree &amp;t, usize n)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt; out;
+  usize i = 0;
+  t.for_each([&amp;](const auto &amp;e) {
+    if ( i &lt; n ) out.push_back(e);
+    ++i;
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L328">line 328</a></td></tr></tbody></table></section><section class="function-entry" id="f-50ac7d77c2a1053c"><h3><code>micron::fp::take(const Tree &amp;t, usize n)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L333">line 333</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+take(const Tree &amp;t, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+take(const Tree &amp;t, usize n)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt; out;
+  usize i = 0;
+  t.for_each([&amp;](const auto &amp;, const auto &amp;v) {
+    if ( i &lt; n ) out.push_back(v);
+    ++i;
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L341">line 341</a></td></tr></tbody></table></section><section class="function-entry" id="f-6d08f7d381b18207"><h3><code>micron::fp::drop(const Tree &amp;t, usize n)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L347">line 347</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+drop(const Tree &amp;t, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+drop(const Tree &amp;t, usize n)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt; out;
+  usize i = 0;
+  t.for_each([&amp;](const auto &amp;e) {
+    if ( i &gt;= n ) out.push_back(e);
+    ++i;
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L355">line 355</a></td></tr></tbody></table></section><section class="function-entry" id="f-89a62a8a3ad0abf5"><h3><code>micron::fp::drop(const Tree &amp;t, usize n)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L360">line 360</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+drop(const Tree &amp;t, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+drop(const Tree &amp;t, usize n)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt; out;
+  usize i = 0;
+  t.for_each([&amp;](const auto &amp;, const auto &amp;v) {
+    if ( i &gt;= n ) out.push_back(v);
+    ++i;
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L368">line 368</a></td></tr></tbody></table></section><section class="function-entry" id="f-38c0620746c2779c"><h3><code>micron::fp::head(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L374">line 374</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+head(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+head(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::value_type;
+  bool got = false;
+  V val{};
+  t.for_each([&amp;](const auto &amp;e) {
+    if ( !got ) {
+      val = e;
+      got = true;
+    }
+  });
+  if ( got ) return micron::option&lt;V, empty_container_error&gt;{ val };
+  return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ val }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L385">line 385</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L386">line 386</a></td></tr></tbody></table></section><section class="function-entry" id="f-af19e1ba3a112c7a"><h3><code>micron::fp::head(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L391">line 391</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+head(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+head(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type;
+  bool got = false;
+  V val{};
+  t.for_each([&amp;](const auto &amp;, const auto &amp;v) {
+    if ( !got ) {
+      val = v;
+      got = true;
+    }
+  });
+  if ( got ) return micron::option&lt;V, empty_container_error&gt;{ val };
+  return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ val }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L402">line 402</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L403">line 403</a></td></tr></tbody></table></section><section class="function-entry" id="f-22fb8dc5061029a4"><h3><code>micron::fp::last(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L408">line 408</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+last(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type, empty_container_error&gt;
+last(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::value_type;
+  bool got = false;
+  V val{};
+  t.for_each([&amp;](const auto &amp;e) {
+    val = e;
+    got = true;
+  });
+  if ( got ) return micron::option&lt;V, empty_container_error&gt;{ val };
+  return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ val }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L417">line 417</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L418">line 418</a></td></tr></tbody></table></section><section class="function-entry" id="f-495146ca2ade7cad"><h3><code>micron::fp::last(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L423">line 423</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+last(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type, empty_container_error&gt;
+last(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type;
+  bool got = false;
+  V val{};
+  t.for_each([&amp;](const auto &amp;, const auto &amp;v) {
+    val = v;
+    got = true;
+  });
+  if ( got ) return micron::option&lt;V, empty_container_error&gt;{ val };
+  return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ val }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L432">line 432</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L433">line 433</a></td></tr></tbody></table></section><section class="function-entry" id="f-2c40f76017cceb88"><h3><code>micron::fp::take_while(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L440">line 440</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+take_while(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+take_while(const Tree &amp;t, Fn fn)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt; out;
+  bool taking = true;
+  t.for_each([&amp;](const auto &amp;e) {
+    if ( taking ) {
+      if ( fn(e) )
+        out.push_back(e);
+      else
+        taking = false;
+    }
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L452">line 452</a></td></tr></tbody></table></section><section class="function-entry" id="f-6a160b24e3a18677"><h3><code>micron::fp::take_while(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L459">line 459</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+take_while(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+take_while(const Tree &amp;t, Fn fn)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt; out;
+  bool taking = true;
+  t.for_each([&amp;](const auto &amp;k, const auto &amp;v) {
+    if ( taking ) {
+      if ( fn(k, v) )
+        out.push_back(v);
+      else
+        taking = false;
+    }
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L471">line 471</a></td></tr></tbody></table></section><section class="function-entry" id="f-c24caa475e33d46b"><h3><code>micron::fp::drop_while(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L477">line 477</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+drop_while(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::value_type &amp;&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;
+drop_while(const Tree &amp;t, Fn fn)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt; out;
+  bool dropping = true;
+  t.for_each([&amp;](const auto &amp;e) {
+    if ( dropping &amp;&amp; fn(e) ) return;
+    dropping = false;
+    out.push_back(e);
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L486">line 486</a></td></tr></tbody></table></section><section class="function-entry" id="f-3fcb63b3207909e2"><h3><code>micron::fp::drop_while(const Tree &amp;t, Fn fn)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L493">line 493</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+drop_while(const Tree &amp;t, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;Tree&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type &amp;&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;
+drop_while(const Tree &amp;t, Fn fn)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt; out;
+  bool dropping = true;
+  t.for_each([&amp;](const auto &amp;k, const auto &amp;v) {
+    if ( dropping &amp;&amp; fn(k, v) ) return;
+    dropping = false;
+    out.push_back(v);
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L502">line 502</a></td></tr></tbody></table></section><section class="function-entry" id="f-3d90f3dba5bb4473"><h3><code>micron::fp::enumerate(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L508">line 508</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_set_tree Tree&gt;
+micron::fvector&lt;micron::pair&lt;usize, typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;&gt;
+enumerate(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_set_tree Tree&gt;
+micron::fvector&lt;micron::pair&lt;usize, typename micron::remove_cvref_t&lt;Tree&gt;::value_type&gt;&gt;
+enumerate(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::value_type;
+  micron::fvector&lt;micron::pair&lt;usize, V&gt;&gt; out;
+  usize i = 0;
+  t.for_each([&amp;](const auto &amp;e) { out.push_back(micron::pair&lt;usize, V&gt;(i++, e)); });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L514">line 514</a></td></tr></tbody></table></section><section class="function-entry" id="f-7de085717df4e4ef"><h3><code>micron::fp::enumerate(const Tree &amp;t)</code></h3><p>Defined in <code>algorithm/fptree.hpp</code>, <a href="../../source/algorithm/fptree.hpp.html#L519">line 519</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;micron::pair&lt;usize, typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;&gt;
+enumerate(const Tree &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tree &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_tree_map Tree&gt;
+micron::fvector&lt;micron::pair&lt;usize, typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type&gt;&gt;
+enumerate(const Tree &amp;t)
+{
+  using V = typename micron::remove_cvref_t&lt;Tree&gt;::mapped_type;
+  micron::fvector&lt;micron::pair&lt;usize, V&gt;&gt; out;
+  usize i = 0;
+  t.for_each([&amp;](const auto &amp;, const auto &amp;v) { out.push_back(micron::pair&lt;usize, V&gt;(i++, v)); });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fptree.hpp.html#L525">line 525</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

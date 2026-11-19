@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/bits/__ar.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/bits/__ar.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/bits/__ar.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/bits/__ar.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-a8c4b2c3bdb2e49a">micron::ar::record</code></td><td>struct; line 168<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-03dd993041a10a07">micron::ar::record::sp</code></td><td>member; line 169<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-c93f4176e85d9026">micron::ar::record::fp</code></td><td>member; line 170<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-37e2cd2c9c50d3cc">micron::ar::record::pc</code></td><td>member; line 171<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-5a468e31e4315e64">micron::ar::stack_pointer() noexcept</a></td><td>function; line 33<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-1770d8c6ea0252a7">micron::ar::frame_pointer() noexcept</a></td><td>function; line 47<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-9b134bab69f75d3f">micron::ar::program_counter() noexcept</a></td><td>function; line 53<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-c2793f3b8d7299d3">micron::ar::return_address() noexcept</a></td><td>function; line 72<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-778b1b7020f49199">micron::ar::frame_address() noexcept</a></td><td>function; line 79<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-385590bdc963d76d">micron::ar::thread_pointer() noexcept</a></td><td>function; line 85<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-5606e154e3724640">micron::ar::set_thread_pointer([[maybe_unused]] void *tp) noexcept</a></td><td>function; line 105<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-41e4664e07c6066e">micron::ar::code_segment() noexcept</a></td><td>function; line 120<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-ffb4791a514eda7f">micron::ar::data_segment() noexcept</a></td><td>function; line 128<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-de92d8ea45f849db">micron::ar::extra_segment() noexcept</a></td><td>function; line 136<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-ce5803e39f2cddc8">micron::ar::stack_segment() noexcept</a></td><td>function; line 144<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-c40ecb606483ed95">micron::ar::fs_segment() noexcept</a></td><td>function; line 152<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-0d6c3b18ce2571c0">micron::ar::gs_segment() noexcept</a></td><td>function; line 160<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-35c0fdea95ae0f34">micron::ar::here() noexcept</a></td><td>function; line 175<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-041e1eb85e369566">micron::ar::caller(record &amp;r) noexcept</a></td><td>function; line 182<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-1a48ede17b9b2756">micron::ar::set_stack_pointer(void *sp) noexcept</a></td><td>function; line 202<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-938b9f89ec69b3d0">micron::ar::call_on_stack([[maybe_unused]] void *stack_top, [[maybe_unused]] void (*fn)(void *), [[maybe_unused]] void *arg) noexcept</a></td><td>function; line 214<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-f53b42c002f01780">micron::ar::make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</a></td><td>function; line 337<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(__micron_arch_amd64)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-880136424cf3be15">micron::ar::make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</a></td><td>function; line 421<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#elif defined(__micron_arch_x86)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-4a589d771e1f54f2">micron::ar::make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</a></td><td>function; line 507<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#elif defined(__micron_arch_arm64)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-89f3a7a6b77ec6d8">micron::ar::make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</a></td><td>function; line 562<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#elif defined(__micron_arch_arm32)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-5a468e31e4315e64"><h3><code>micron::ar::stack_pointer() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L33">line 33</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline void *
+stack_pointer() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline void *
+stack_pointer() noexcept
+{
+  void *sp;
+#if defined(__micron_arch_amd64)
+  asm volatile(&quot;movq %%rsp, %0&quot; : &quot;=r&quot;(sp));
+#elif defined(__micron_arch_x86)
+  asm volatile(&quot;movl %%esp, %0&quot; : &quot;=r&quot;(sp));
+#elif defined(__micron_arch_arm64) || defined(__micron_arch_arm32)
+  asm volatile(&quot;mov %0, sp&quot; : &quot;=r&quot;(sp));
+#endif
+  return sp;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sp</code></td><td><a href="../../source/bits/__ar.hpp.html#L43">line 43</a></td></tr></tbody></table></section><section class="function-entry" id="f-1770d8c6ea0252a7"><h3><code>micron::ar::frame_pointer() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L47">line 47</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline void *
+frame_pointer() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Returns <code>__builtin_frame_address(0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline void *
+frame_pointer() noexcept
+{
+  return __builtin_frame_address(0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__builtin_frame_address(0)</code></td><td><a href="../../source/bits/__ar.hpp.html#L49">line 49</a></td></tr></tbody></table></section><section class="function-entry" id="f-9b134bab69f75d3f"><h3><code>micron::ar::program_counter() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline void *
+program_counter() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline void *
+program_counter() noexcept
+{
+  void *pc;
+#if defined(__micron_arch_amd64)
+  asm volatile(&quot;leaq (%%rip), %0&quot; : &quot;=r&quot;(pc));
+#elif defined(__micron_arch_x86)
+  asm volatile(&quot;call 1f\n\t&quot;      // i386 has no PC-relative LEA; read EIP via call/pop
+               &quot;1: popl %0&quot;
+               : &quot;=r&quot;(pc));
+#elif defined(__micron_arch_arm64)
+  asm volatile(&quot;adr %0, .&quot; : &quot;=r&quot;(pc));
+#elif defined(__micron_arch_arm32)
+  asm volatile(&quot;mov %0, pc&quot; : &quot;=r&quot;(pc));
+#endif
+  return pc;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pc</code></td><td><a href="../../source/bits/__ar.hpp.html#L67">line 67</a></td></tr></tbody></table></section><section class="function-entry" id="f-c2793f3b8d7299d3"><h3><code>micron::ar::return_address() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;unsigned Level = 0&gt;
+[[nodiscard, gnu::always_inline]] inline void *
+return_address() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Returns <code>__builtin_return_address(Level)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;unsigned Level = 0&gt;
+[[nodiscard, gnu::always_inline]] inline void *
+return_address() noexcept
+{
+  return __builtin_return_address(Level);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__builtin_return_address(Level)</code></td><td><a href="../../source/bits/__ar.hpp.html#L74">line 74</a></td></tr></tbody></table></section><section class="function-entry" id="f-778b1b7020f49199"><h3><code>micron::ar::frame_address() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L79">line 79</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;unsigned Level = 0&gt;
+[[nodiscard, gnu::always_inline]] inline void *
+frame_address() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Returns <code>__builtin_frame_address(Level)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;unsigned Level = 0&gt;
+[[nodiscard, gnu::always_inline]] inline void *
+frame_address() noexcept
+{
+  return __builtin_frame_address(Level);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__builtin_frame_address(Level)</code></td><td><a href="../../source/bits/__ar.hpp.html#L81">line 81</a></td></tr></tbody></table></section><section class="function-entry" id="f-385590bdc963d76d"><h3><code>micron::ar::thread_pointer() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L85">line 85</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline void *
+thread_pointer() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline void *
+thread_pointer() noexcept
+{
+  void *tp;
+#if defined(__micron_arch_amd64)
+#if defined(__micron_x86_fsgsbase)
+  asm volatile(&quot;rdfsbase %0&quot; : &quot;=r&quot;(tp));
+#else
+  asm volatile(&quot;movq %%fs:0, %0&quot; : &quot;=r&quot;(tp));
+#endif
+#elif defined(__micron_arch_x86)
+  asm volatile(&quot;movl %%gs:0, %0&quot; : &quot;=r&quot;(tp));
+#elif defined(__micron_arch_arm64)
+  asm volatile(&quot;mrs %0, tpidr_el0&quot; : &quot;=r&quot;(tp));
+#elif defined(__micron_arch_arm32)
+  asm volatile(&quot;mrc p15, 0, %0, c13, c0, 3&quot; : &quot;=r&quot;(tp));
+#endif
+  return tp;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tp</code></td><td><a href="../../source/bits/__ar.hpp.html#L101">line 101</a></td></tr></tbody></table></section><section class="function-entry" id="f-5606e154e3724640"><h3><code>micron::ar::set_thread_pointer([[maybe_unused]] void *tp) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L105">line 105</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+set_thread_pointer([[maybe_unused]] void *tp) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>[[maybe_unused]] void *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+set_thread_pointer([[maybe_unused]] void *tp) noexcept
+{
+#if defined(__micron_arch_arm64)
+  asm volatile(&quot;msr tpidr_el0, %0&quot; ::&quot;r&quot;(tp));
+  return true;
+#elif defined(__micron_arch_amd64) &amp;&amp; defined(__micron_x86_fsgsbase)
+  asm volatile(&quot;wrfsbase %0&quot; ::&quot;r&quot;(tp));
+  return true;
+#else
+  return false;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/bits/__ar.hpp.html#L109">line 109</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/bits/__ar.hpp.html#L112">line 112</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/bits/__ar.hpp.html#L114">line 114</a></td></tr></tbody></table></section><section class="function-entry" id="f-41e4664e07c6066e"><h3><code>micron::ar::code_segment() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L120">line 120</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline u16
+code_segment() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_x86_any)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline u16
+code_segment() noexcept
+{
+  u16 s;
+  asm volatile(&quot;mov %%cs, %0&quot; : &quot;=r&quot;(s));
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/bits/__ar.hpp.html#L124">line 124</a></td></tr></tbody></table></section><section class="function-entry" id="f-ffb4791a514eda7f"><h3><code>micron::ar::data_segment() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline u16
+data_segment() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_x86_any)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline u16
+data_segment() noexcept
+{
+  u16 s;
+  asm volatile(&quot;mov %%ds, %0&quot; : &quot;=r&quot;(s));
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/bits/__ar.hpp.html#L132">line 132</a></td></tr></tbody></table></section><section class="function-entry" id="f-de92d8ea45f849db"><h3><code>micron::ar::extra_segment() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L136">line 136</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline u16
+extra_segment() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_x86_any)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline u16
+extra_segment() noexcept
+{
+  u16 s;
+  asm volatile(&quot;mov %%es, %0&quot; : &quot;=r&quot;(s));
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/bits/__ar.hpp.html#L140">line 140</a></td></tr></tbody></table></section><section class="function-entry" id="f-ce5803e39f2cddc8"><h3><code>micron::ar::stack_segment() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L144">line 144</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline u16
+stack_segment() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_x86_any)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline u16
+stack_segment() noexcept
+{
+  u16 s;
+  asm volatile(&quot;mov %%ss, %0&quot; : &quot;=r&quot;(s));
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/bits/__ar.hpp.html#L148">line 148</a></td></tr></tbody></table></section><section class="function-entry" id="f-c40ecb606483ed95"><h3><code>micron::ar::fs_segment() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L152">line 152</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline u16
+fs_segment() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_x86_any)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline u16
+fs_segment() noexcept
+{
+  u16 s;
+  asm volatile(&quot;mov %%fs, %0&quot; : &quot;=r&quot;(s));
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/bits/__ar.hpp.html#L156">line 156</a></td></tr></tbody></table></section><section class="function-entry" id="f-0d6c3b18ce2571c0"><h3><code>micron::ar::gs_segment() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L160">line 160</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline u16
+gs_segment() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_x86_any)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline u16
+gs_segment() noexcept
+{
+  u16 s;
+  asm volatile(&quot;mov %%gs, %0&quot; : &quot;=r&quot;(s));
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/bits/__ar.hpp.html#L164">line 164</a></td></tr></tbody></table></section><section class="function-entry" id="f-35c0fdea95ae0f34"><h3><code>micron::ar::here() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L175">line 175</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline record
+here() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Returns <code>record{ stack_pointer(), frame_pointer(), program_counter() }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline record
+here() noexcept
+{
+  return record{ stack_pointer(), frame_pointer(), program_counter() };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>record{ stack_pointer(), frame_pointer(), program_counter() }</code></td><td><a href="../../source/bits/__ar.hpp.html#L177">line 177</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__ar.hpp.html#f-5a468e31e4315e64">stack_pointer</a>, <a href="__ar.hpp.html#f-1770d8c6ea0252a7">frame_pointer</a>, <a href="__ar.hpp.html#f-9b134bab69f75d3f">program_counter</a>.</p></section><section class="function-entry" id="f-041e1eb85e369566"><h3><code>micron::ar::caller(record &amp;r) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L182">line 182</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+caller(record &amp;r) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>record &amp;r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+caller(record &amp;r) noexcept
+{
+  if ( r.fp == nullptr ) return false;
+  void **fp = static_cast&lt;void **&gt;(r.fp);
+  void *saved_fp = fp[0];      // caller&#x27;s frame pointer
+  void *ret = fp[1];           // return address
+  // frames grow toward higher addresses up the chain; reject garbage / cycles
+  if ( saved_fp == nullptr || saved_fp &lt;= r.fp ) return false;
+  r.sp = static_cast&lt;void *&gt;(fp + 2);
+  r.fp = saved_fp;
+  r.pc = ret;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/bits/__ar.hpp.html#L184">line 184</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/bits/__ar.hpp.html#L189">line 189</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/bits/__ar.hpp.html#L193">line 193</a></td></tr></tbody></table></section><section class="function-entry" id="f-1a48ede17b9b2756"><h3><code>micron::ar::set_stack_pointer(void *sp) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L202">line 202</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+set_stack_pointer(void *sp) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *sp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+set_stack_pointer(void *sp) noexcept
+{
+#if defined(__micron_arch_amd64)
+  asm volatile(&quot;movq %0, %%rsp&quot; ::&quot;r&quot;(sp) : &quot;memory&quot;);
+#elif defined(__micron_arch_x86)
+  asm volatile(&quot;movl %0, %%esp&quot; ::&quot;r&quot;(sp) : &quot;memory&quot;);
+#elif defined(__micron_arch_arm64) || defined(__micron_arch_arm32)
+  asm volatile(&quot;mov sp, %0&quot; ::&quot;r&quot;(sp) : &quot;memory&quot;);
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-938b9f89ec69b3d0"><h3><code>micron::ar::call_on_stack([[maybe_unused]] void *stack_top, [[maybe_unused]] void (*fn)(void *), [[maybe_unused]] void *arg) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L214">line 214</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((noinline)) void
+call_on_stack([[maybe_unused]] void *stack_top, [[maybe_unused]] void (*fn)(void *), [[maybe_unused]] void *arg) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>[[maybe_unused]] void *stack_top</code></li><li><code>[[maybe_unused]] void (*fn)(void *)</code></li><li><code>[[maybe_unused]] void *arg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((noinline)) void
+call_on_stack([[maybe_unused]] void *stack_top, [[maybe_unused]] void (*fn)(void *), [[maybe_unused]] void *arg) noexcept
+{
+#if defined(__micron_arch_amd64)
+  asm volatile(&quot;movq %%rsp, %%r15\n\t&quot;      // save old sp (callee-saved, preserved by fn)
+               &quot;andq $-16, %0\n\t&quot;
+               &quot;movq %0, %%rsp\n\t&quot;         // pivot
+               &quot;movq %2, %%rdi\n\t&quot;         // arg -&gt; a1
+               &quot;callq *%1\n\t&quot;              // fn(arg)
+               &quot;movq %%r15, %%rsp\n\t&quot;      // restore
+               : &quot;+r&quot;(stack_top)
+               : &quot;r&quot;(fn), &quot;r&quot;(arg)
+               : &quot;r15&quot;, &quot;rdi&quot;, &quot;rax&quot;, &quot;rcx&quot;, &quot;rdx&quot;, &quot;rsi&quot;, &quot;r8&quot;, &quot;r9&quot;, &quot;r10&quot;, &quot;r11&quot;, &quot;memory&quot;, &quot;cc&quot;);
+#elif defined(__micron_arch_x86)
+  asm volatile(&quot;movl %%esp, %%edi\n\t&quot;      // save old sp (edi callee-saved on i386)
+               &quot;andl $-16, %0\n\t&quot;
+               &quot;movl %0, %%esp\n\t&quot;
+               &quot;subl $12, %%esp\n\t&quot;      // keep 16-byte alignment after the arg push
+               &quot;pushl %2\n\t&quot;             // arg
+               &quot;calll *%1\n\t&quot;
+               &quot;movl %%edi, %%esp\n\t&quot;      // restore
+               : &quot;+r&quot;(stack_top)
+               : &quot;r&quot;(fn), &quot;r&quot;(arg)
+               : &quot;edi&quot;, &quot;eax&quot;, &quot;ecx&quot;, &quot;edx&quot;, &quot;memory&quot;, &quot;cc&quot;);
+#elif defined(__micron_arch_arm64)
+  asm volatile(&quot;mov x19, sp\n\t&quot;      // save old sp (callee-saved)
+               &quot;and %0, %0, #-16\n\t&quot;
+               &quot;mov sp, %0\n\t&quot;
+               &quot;mov x0, %2\n\t&quot;       // arg
+               &quot;blr %1\n\t&quot;           // fn(arg)
+               &quot;mov sp, x19\n\t&quot;      // restore
+               : &quot;+r&quot;(stack_top)
+               : &quot;r&quot;(fn), &quot;r&quot;(arg)
+               : &quot;x19&quot;, &quot;x0&quot;, &quot;x1&quot;, &quot;x2&quot;, &quot;x3&quot;, &quot;x4&quot;, &quot;x5&quot;, &quot;x6&quot;, &quot;x7&quot;, &quot;x8&quot;, &quot;x9&quot;, &quot;x10&quot;, &quot;x11&quot;, &quot;x12&quot;, &quot;x13&quot;, &quot;x14&quot;, &quot;x15&quot;, &quot;x16&quot;, &quot;x17&quot;,
+                 &quot;x18&quot;, &quot;x30&quot;, &quot;memory&quot;, &quot;cc&quot;);
+#elif defined(__micron_arch_arm32)
+  asm volatile(&quot;mov r4, sp\n\t&quot;      // save old sp (callee-saved)
+               &quot;and %0, %0, #-8\n\t&quot;
+               &quot;mov sp, %0\n\t&quot;
+               &quot;mov r0, %2\n\t&quot;      // arg
+               &quot;blx %1\n\t&quot;          // fn(arg)
+               &quot;mov sp, r4\n\t&quot;      // restore
+               : &quot;+r&quot;(stack_top)
+               : &quot;r&quot;(fn), &quot;r&quot;(arg)
+               : &quot;r4&quot;, &quot;r0&quot;, &quot;r1&quot;, &quot;r2&quot;, &quot;r3&quot;, &quot;r12&quot;, &quot;lr&quot;, &quot;memory&quot;, &quot;cc&quot;);
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f53b42c002f01780"><h3><code>micron::ar::make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L337">line 337</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_amd64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fiber_ctx *ctx</code></li><li><code>void *stack_top</code></li><li><code>void (*fn)(void *)</code></li><li><code>void *arg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept
+{
+  // zero it first
+  *ctx = __fiber_ctx{};
+  ctx-&gt;rsp = reinterpret_cast&lt;u64&gt;(stack_top) &amp; ~static_cast&lt;u64&gt;(15);
+  ctx-&gt;rip = reinterpret_cast&lt;u64&gt;(&amp;__micron_fiber_trampoline);
+  ctx-&gt;r12 = reinterpret_cast&lt;u64&gt;(arg);
+  ctx-&gt;r13 = reinterpret_cast&lt;u64&gt;(fn);
+#if defined(MICRON_FIBER_FPENV)
+  // seed from the live control state, status bits masked
+  u32 __mx;
+  u16 __cw;
+  asm volatile(&quot;stmxcsr %0&quot; : &quot;=m&quot;(__mx));
+  asm volatile(&quot;fnstcw %0&quot; : &quot;=m&quot;(__cw));
+  ctx-&gt;mxcsr = __mx &amp; ~0x3Fu;
+  ctx-&gt;fcw = __cw;
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-880136424cf3be15"><h3><code>micron::ar::make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L421">line 421</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_x86)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fiber_ctx *ctx</code></li><li><code>void *stack_top</code></li><li><code>void (*fn)(void *)</code></li><li><code>void *arg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept
+{
+  *ctx = __fiber_ctx{};      // recycled FCBs: don&#x27;t leak the previous fiber&#x27;s callee-saved regs
+  ctx-&gt;esp = reinterpret_cast&lt;u32&gt;(stack_top) &amp; ~static_cast&lt;u32&gt;(15);
+  ctx-&gt;eip = reinterpret_cast&lt;u32&gt;(&amp;__micron_fiber_trampoline);
+  ctx-&gt;esi = reinterpret_cast&lt;u32&gt;(arg);
+  ctx-&gt;edi = reinterpret_cast&lt;u32&gt;(fn);
+#if defined(MICRON_FIBER_FPENV)
+  // live-seed, status bits masked
+  u16 __cw;
+  asm volatile(&quot;fnstcw %0&quot; : &quot;=m&quot;(__cw));
+  ctx-&gt;fcw = __cw;
+#if defined(__SSE__)
+  u32 __mx;
+  asm volatile(&quot;stmxcsr %0&quot; : &quot;=m&quot;(__mx));
+  ctx-&gt;mxcsr = __mx &amp; ~0x3Fu;
+#endif
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4a589d771e1f54f2"><h3><code>micron::ar::make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L507">line 507</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_arm64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fiber_ctx *ctx</code></li><li><code>void *stack_top</code></li><li><code>void (*fn)(void *)</code></li><li><code>void *arg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept
+{
+  *ctx = __fiber_ctx{};      // recycled FCBs: don&#x27;t leak the previous fiber&#x27;s x21..x28 / d8..d15
+  ctx-&gt;sp = reinterpret_cast&lt;u64&gt;(stack_top) &amp; ~static_cast&lt;u64&gt;(15);
+  ctx-&gt;x[11] = reinterpret_cast&lt;u64&gt;(&amp;__micron_fiber_trampoline);      // x30 = entry
+  ctx-&gt;x[0] = reinterpret_cast&lt;u64&gt;(arg);                              // x19
+  ctx-&gt;x[1] = reinterpret_cast&lt;u64&gt;(fn);                               // x20
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-89f3a7a6b77ec6d8"><h3><code>micron::ar::make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L562">line 562</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fiber_ctx *ctx</code></li><li><code>void *stack_top</code></li><li><code>void (*fn)(void *)</code></li><li><code>void *arg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept
+{
+  *ctx = __fiber_ctx{};      // recycled FCBs: don&#x27;t leak the previous fiber&#x27;s r6..r11 / d8..d15
+  ctx-&gt;sp = reinterpret_cast&lt;u32&gt;(stack_top) &amp; ~static_cast&lt;u32&gt;(15);
+  ctx-&gt;lr = reinterpret_cast&lt;u32&gt;(&amp;__micron_fiber_trampoline);
+  ctx-&gt;r[0] = reinterpret_cast&lt;u32&gt;(arg);      // r4
+  ctx-&gt;r[1] = reinterpret_cast&lt;u32&gt;(fn);       // r5
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-2c308c1a02ba53fc"><h3><code>micron::ar::__micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L294">line 294</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
+__micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_amd64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fiber_ctx *</code></li><li><code>__fiber_ctx *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
+__micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noexcept
+{
+  // WARNING: xmm0 through xmm15 aren&#x27;t saved explicitly
+  // red zones are _technically_ ignored (investigate)
+  // TODO: maybe do it via another macro? would suck up too many cycles unconditionally
+  asm volatile(&quot;movq %rbx, 0x00(%rdi)\n\t&quot;
+               &quot;movq %rbp, 0x08(%rdi)\n\t&quot;
+               &quot;movq %r12, 0x10(%rdi)\n\t&quot;
+               &quot;movq %r13, 0x18(%rdi)\n\t&quot;
+               &quot;movq %r14, 0x20(%rdi)\n\t&quot;
+               &quot;movq %r15, 0x28(%rdi)\n\t&quot;
+               &quot;movq (%rsp), %rax\n\t&quot;      // return address -&gt; from-&gt;rip
+               &quot;movq %rax, 0x38(%rdi)\n\t&quot;
+               &quot;leaq 8(%rsp), %rax\n\t&quot;
+               &quot;movq %rax, 0x30(%rdi)\n\t&quot;
+#if defined(MICRON_FIBER_FPENV)
+               &quot;stmxcsr 0x40(%rdi)\n\t&quot;
+               &quot;andl $-64, 0x40(%rdi)\n\t&quot;      // drop sticky status bits (0-5); control modes only
+               &quot;fnstcw 0x44(%rdi)\n\t&quot;
+               &quot;ldmxcsr 0x40(%rsi)\n\t&quot;      // restore *to
+               &quot;fldcw 0x44(%rsi)\n\t&quot;
+#endif
+               &quot;movq 0x00(%rsi), %rbx\n\t&quot;
+               &quot;movq 0x08(%rsi), %rbp\n\t&quot;
+               &quot;movq 0x10(%rsi), %r12\n\t&quot;
+               &quot;movq 0x18(%rsi), %r13\n\t&quot;
+               &quot;movq 0x20(%rsi), %r14\n\t&quot;
+               &quot;movq 0x28(%rsi), %r15\n\t&quot;
+               &quot;movq 0x30(%rsi), %rsp\n\t&quot;
+               &quot;jmp *0x38(%rsi)\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-db7d11b3195aeb35"><h3><code>micron::ar::__micron_fiber_trampoline() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L327">line 327</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
+__micron_fiber_trampoline() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_arch_amd64)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
+__micron_fiber_trampoline() noexcept
+{
+  asm volatile(&quot;andq $-16, %rsp\n\t&quot;      // defensive 16-align
+               &quot;xorl %ebp, %ebp\n\t&quot;      // terminate the unwind/backtrace chain
+               &quot;movq %r12, %rdi\n\t&quot;      // arg -&gt; a0
+               &quot;callq *%r13\n\t&quot;          // fn(arg)
+               &quot;ud2\n\t&quot;);                // fn must not return
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-556225e682e23ae6"><h3><code>micron::ar::__micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L375">line 375</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
+__micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_x86)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fiber_ctx *</code></li><li><code>__fiber_ctx *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
+__micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept
+{
+  // cdecl: from @ 4(%esp), to @ 8(%esp)
+  asm volatile(&quot;movl 4(%esp), %eax\n\t&quot;      // from
+               &quot;movl %ebx, 0x00(%eax)\n\t&quot;
+               &quot;movl %esi, 0x04(%eax)\n\t&quot;
+               &quot;movl %edi, 0x08(%eax)\n\t&quot;
+               &quot;movl %ebp, 0x0c(%eax)\n\t&quot;
+               &quot;movl (%esp), %ecx\n\t&quot;      // return addr -&gt; from-&gt;eip
+               &quot;movl %ecx, 0x14(%eax)\n\t&quot;
+               &quot;leal 4(%esp), %ecx\n\t&quot;      // caller esp past ret -&gt; from-&gt;esp
+               &quot;movl %ecx, 0x10(%eax)\n\t&quot;
+#if defined(MICRON_FIBER_FPENV)
+#if defined(__SSE__)
+               &quot;stmxcsr 0x18(%eax)\n\t&quot;
+               &quot;andl $-64, 0x18(%eax)\n\t&quot;      // drop sticky status bits (0-5); control modes only
+#endif
+               &quot;fnstcw 0x1c(%eax)\n\t&quot;
+#endif
+               &quot;movl 8(%esp), %eax\n\t&quot;      // to (esp still original here)
+#if defined(MICRON_FIBER_FPENV)
+#if defined(__SSE__)
+               &quot;ldmxcsr 0x18(%eax)\n\t&quot;
+#endif
+               &quot;fldcw 0x1c(%eax)\n\t&quot;
+#endif
+               &quot;movl 0x00(%eax), %ebx\n\t&quot;
+               &quot;movl 0x04(%eax), %esi\n\t&quot;
+               &quot;movl 0x08(%eax), %edi\n\t&quot;
+               &quot;movl 0x0c(%eax), %ebp\n\t&quot;
+               &quot;movl 0x10(%eax), %esp\n\t&quot;
+               &quot;jmp *0x14(%eax)\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a443a6cb59c5ba02"><h3><code>micron::ar::__micron_fiber_trampoline() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L410">line 410</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
+__micron_fiber_trampoline() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_x86)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
+__micron_fiber_trampoline() noexcept
+{
+  asm volatile(&quot;andl $-16, %esp\n\t&quot;
+               &quot;xorl %ebp, %ebp\n\t&quot;
+               &quot;subl $12, %esp\n\t&quot;      // keep 16-byte alignment after the arg push
+               &quot;pushl %esi\n\t&quot;          // arg
+               &quot;calll *%edi\n\t&quot;         // fn(arg)
+               &quot;ud2\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-0c39ebf7ea6dea8a"><h3><code>micron::ar::__micron_swap_context(__fiber_ctx *from, __fiber_ctx *to) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L453">line 453</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void __micron_swap_context(__fiber_ctx *from, __fiber_ctx *to) noexcept;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_arm64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fiber_ctx *from</code></li><li><code>__fiber_ctx *to</code></li></ul><h4>Effects</h4><p>See <a href="__ar.hpp.html#f-2c308c1a02ba53fc">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-1b02e30eb172db84"><h3><code>micron::ar::__micron_fiber_trampoline() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L454">line 454</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void __micron_fiber_trampoline() noexcept;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_arm64)</pre><h4>Effects</h4><p>See <a href="__ar.hpp.html#f-db7d11b3195aeb35">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-c6cb03faf8b6d297"><h3><code>micron::ar::__micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L531">line 531</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
+__micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__fiber_ctx *</code></li><li><code>__fiber_ctx *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void
+__micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept
+{
+  // r0 = from, r1 = to
+  asm volatile(&quot;stm r0, {r4-r11}\n\t&quot;      // r4..r11 at 0x00..0x1c
+               &quot;str sp, [r0, #0x20]\n\t&quot;
+               &quot;str lr, [r0, #0x24]\n\t&quot;
+#if defined(__ARM_FP)
+               &quot;add r2, r0, #0x28\n\t&quot;
+               &quot;vstm r2, {d8-d15}\n\t&quot;      // callee-saved VFP regs
+               &quot;add r2, r1, #0x28\n\t&quot;
+               &quot;vldm r2, {d8-d15}\n\t&quot;
+#endif
+               &quot;ldr sp, [r1, #0x20]\n\t&quot;
+               &quot;ldr lr, [r1, #0x24]\n\t&quot;
+               &quot;ldm r1, {r4-r11}\n\t&quot;
+               &quot;bx lr\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8ae240660d6e7dd2"><h3><code>micron::ar::__micron_fiber_trampoline() noexcept</code></h3><p>Defined in <code>bits/__ar.hpp</code>, <a href="../../source/bits/__ar.hpp.html#L550">line 550</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
+__micron_fiber_trampoline() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#elif defined(__micron_arch_arm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void
+__micron_fiber_trampoline() noexcept
+{
+  // gcc&#x27;s frame pointer is r11 in arm mode but r7 in thumb, and this
+  // toolchain defaults to thumb-2 (__thumb__), so zero both, we don&#x27;t know which mode we&#x27;re in
+  asm volatile(&quot;mov r11, #0\n\t&quot;
+               &quot;mov r7, #0\n\t&quot;
+               &quot;mov r0, r4\n\t&quot;      // arg -&gt; a0
+               &quot;blx r5\n\t&quot;          // fn(arg)
+               &quot;udf #0\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

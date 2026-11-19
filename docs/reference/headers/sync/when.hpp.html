@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sync/when.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sync/when.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/synchronization.html">Synchronization</a></div><p>Defined in header <code>&lt;micron/sync/when.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sync/when.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-6264745790e3696a">micron::when(atomic_token&lt;bool&gt; *result, Fn fn, Args... args)</a></td><td>function; line 32<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-2bf30b128d366084">micron::when_any(Fn fn, Flags *...flags)</a></td><td>function; line 43<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-6264745790e3696a"><h3><code>micron::when(atomic_token&lt;bool&gt; *result, Fn fn, Args... args)</code></h3><p>Defined in <code>sync/when.hpp</code>, <a href="../../source/sync/when.hpp.html#L32">line 32</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn, typename... Args&gt;
+void
+when(atomic_token&lt;bool&gt; *result, Fn fn, Args... args)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>atomic_token&lt;bool&gt; *result</code></li><li><code>Fn fn</code></li><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn, typename... Args&gt;
+void
+when(atomic_token&lt;bool&gt; *result, Fn fn, Args... args)
+{
+  go([result, fn = micron::move(fn), ... args = micron::move(args)]() mutable {
+    while ( result-&gt;get(memory_order::acquire) != true ) cpu_pause&lt;500&gt;();
+    fn(args...);
+  });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../thread/spawn.hpp.html#f-90fe0b2c64bd9069">go</a>.</p></section><section class="function-entry" id="f-2bf30b128d366084"><h3><code>micron::when_any(Fn fn, Flags *...flags)</code></h3><p>Defined in <code>sync/when.hpp</code>, <a href="../../source/sync/when.hpp.html#L43">line 43</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn, typename... Flags&gt;
+  requires(micron::is_invocable_v&lt;Fn&gt; &amp;&amp; (micron::is_same_v&lt;Flags, atomic_token&lt;bool&gt;&gt; &amp;&amp; ...))
+void
+when_any(Fn fn, Flags *...flags)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn fn</code></li><li><code>Flags *...flags</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn, typename... Flags&gt;
+  requires(micron::is_invocable_v&lt;Fn&gt; &amp;&amp; (micron::is_same_v&lt;Flags, atomic_token&lt;bool&gt;&gt; &amp;&amp; ...))
+void
+when_any(Fn fn, Flags *...flags)
+{
+  (go([f = flags, fn = fn]() mutable {
+     while ( f-&gt;get(memory_order::acquire) != true ) cpu_pause&lt;500&gt;();
+     fn();
+   }),
+   ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../thread/spawn.hpp.html#f-90fe0b2c64bd9069">go</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

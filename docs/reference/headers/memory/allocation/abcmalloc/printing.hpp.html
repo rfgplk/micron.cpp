@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/allocation/abcmalloc/printing.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/allocation/abcmalloc/printing.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/allocation.html">Allocation</a></div><p>Defined in header <code>&lt;micron/memory/allocation/abcmalloc/printing.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-a8da017264a86d8a"><h3><code>abc::__write_n(const char *str, usize len)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/printing.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html#L34">line 34</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__write_n(const char *str, usize len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__write_n(const char *str, usize len)
+{
+  micron::syscall(SYS_write, 2, micron::voidify(str), len);
+  micron::syscall(SYS_write, 2, micron::voidify(&quot;\n&quot;), 1);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>, <a href="../../addr.hpp.html#f-e74dbe26adf79385">micron::voidify</a>.</p></section><section class="function-entry" id="f-2ca1a6f4dcf12a19"><h3><code>abc::__write(const char *str, usize len)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/printing.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html#L41">line 41</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__write(const char *str, usize len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__write(const char *str, usize len)
+{
+  micron::syscall(SYS_write, 2, micron::voidify(str), len);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>, <a href="../../addr.hpp.html#f-e74dbe26adf79385">micron::voidify</a>.</p></section><section class="function-entry" id="f-956be273c1824650"><h3><code>abc::__print_unsigned(T n)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/printing.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html#L48">line 48</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+__print_unsigned(T n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+__print_unsigned(T n)
+{
+  char buf[32];
+  int i = 0;
+  if ( n == 0 ) {
+    buf[i++] = &#x27;0&#x27;;
+  } else {
+    while ( n &gt; 0 ) {
+      buf[i++] = &#x27;0&#x27; + (n % 10);
+      n /= 10;
+    }
+    // reverse
+    for ( int j = 0; j &lt; i / 2; ++j ) {
+      char tmp = buf[j];
+      buf[j] = buf[i - j - 1];
+      buf[i - j - 1] = tmp;
+    }
+  }
+  __write(buf, static_cast&lt;usize&gt;(i));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="printing.hpp.html#f-2ca1a6f4dcf12a19">__write</a>.</p></section><section class="function-entry" id="f-6fcd819ad18645a1"><h3><code>abc::__print_signed(T n)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/printing.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+__print_signed(T n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+__print_signed(T n)
+{
+  if constexpr ( micron::is_integral_v&lt;T&gt; ) {
+    using uT = micron::make_unsigned_t&lt;T&gt;;
+    if ( n &lt; 0 ) {
+      __write(&quot;-&quot;, 1);
+      __print_unsigned(static_cast&lt;uT&gt;(-n));
+    } else {
+      __print_unsigned(static_cast&lt;uT&gt;(n));
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="printing.hpp.html#f-2ca1a6f4dcf12a19">__write</a>, <a href="printing.hpp.html#f-956be273c1824650">__print_unsigned</a>.</p></section><section class="function-entry" id="f-de0b27e7fe3e5e7c"><h3><code>abc::__print_ptr(const void *p)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/printing.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html#L85">line 85</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__print_ptr(const void *p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__print_ptr(const void *p)
+{
+  uintptr_t addr = reinterpret_cast&lt;uintptr_t&gt;(p);
+  char buf[2 + sizeof(uintptr_t) * 2];
+  buf[0] = &#x27;0&#x27;;
+  buf[1] = &#x27;x&#x27;;
+  for ( int i = 0; i &lt; static_cast&lt;int&gt;(sizeof(uintptr_t) * 2); ++i ) {
+    char val = static_cast&lt;char&gt;((addr &gt;&gt; ((static_cast&lt;int&gt;(sizeof(uintptr_t) * 2) - i - 1) * 4)) &amp; 0xF);
+    buf[static_cast&lt;usize&gt;(2 + i)] = (val &lt; 10) ? (&#x27;0&#x27; + val) : (&#x27;a&#x27; + val - 10);
+  }
+  __write(buf, static_cast&lt;usize&gt;(2 + sizeof(uintptr_t) * 2));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="printing.hpp.html#f-2ca1a6f4dcf12a19">__write</a>.</p></section><section class="function-entry" id="f-d1c0fa36a171e532"><h3><code>abc::__debug_print(const char *str [[maybe_unused]], const T n [[maybe_unused]])</code></h3><p>Defined in <code>memory/allocation/abcmalloc/printing.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html#L100">line 100</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline __attribute__((always_inline)) void
+__debug_print(const char *str [[maybe_unused]], const T n [[maybe_unused]])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str [[maybe_unused]]</code></li><li><code>const T n [[maybe_unused]]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline __attribute__((always_inline)) void
+__debug_print(const char *str [[maybe_unused]], const T n [[maybe_unused]])
+{
+  if constexpr ( __default_debug_notices ) {
+    __write(&quot;\033[34mabcmalloc[] debug: \033[0m &quot;, 28);
+    __write(str, micron::strlen(str));
+    __print_signed(n);
+    __write(&quot;\n&quot;, 1);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="printing.hpp.html#f-2ca1a6f4dcf12a19">__write</a>, <a href="../../cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="printing.hpp.html#f-6fcd819ad18645a1">__print_signed</a>.</p></section><section class="function-entry" id="f-468118430cf3deda"><h3><code>abc::__debug_print_addr(const char *str [[maybe_unused]], T &amp;t [[maybe_unused]])</code></h3><p>Defined in <code>memory/allocation/abcmalloc/printing.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html#L112">line 112</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline __attribute__((always_inline)) void
+__debug_print_addr(const char *str [[maybe_unused]], T &amp;t [[maybe_unused]])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str [[maybe_unused]]</code></li><li><code>T &amp;t [[maybe_unused]]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline __attribute__((always_inline)) void
+__debug_print_addr(const char *str [[maybe_unused]], T &amp;t [[maybe_unused]])
+{
+  if constexpr ( __default_debug_notices ) {
+    __write(&quot;\033[34mabcmalloc[] debug: \033[0m &quot;, 28);
+    __write(str, micron::strlen(str));
+    __write(&quot;at addr: &quot;, 10);
+    __print_ptr(reinterpret_cast&lt;void *&gt;(&amp;t));
+    __write(&quot;\n&quot;, 1);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="printing.hpp.html#f-2ca1a6f4dcf12a19">__write</a>, <a href="../../cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="printing.hpp.html#f-de0b27e7fe3e5e7c">__print_ptr</a>.</p></section><section class="function-entry" id="f-ad43fc1df07ed64e"><h3><code>abc::__debug_print_addr(const char *str [[maybe_unused]], T *t [[maybe_unused]])</code></h3><p>Defined in <code>memory/allocation/abcmalloc/printing.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/printing.hpp.html#L125">line 125</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline __attribute__((always_inline)) void
+__debug_print_addr(const char *str [[maybe_unused]], T *t [[maybe_unused]])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str [[maybe_unused]]</code></li><li><code>T *t [[maybe_unused]]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline __attribute__((always_inline)) void
+__debug_print_addr(const char *str [[maybe_unused]], T *t [[maybe_unused]])
+{
+  if constexpr ( __default_debug_notices ) {
+    __write(&quot;\033[34mabcmalloc[] debug: \033[0m &quot;, 28);
+    __write(str, micron::strlen(str));
+    __write(&quot;at addr: &quot;, 10);
+    __print_ptr(reinterpret_cast&lt;void *&gt;(t));
+    __write(&quot;\n&quot;, 1);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="printing.hpp.html#f-2ca1a6f4dcf12a19">__write</a>, <a href="../../cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="printing.hpp.html#f-de0b27e7fe3e5e7c">__print_ptr</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

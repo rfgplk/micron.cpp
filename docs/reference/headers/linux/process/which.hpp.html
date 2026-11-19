@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/process/which.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/process/which.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/process/which.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/process/which.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-4ac5db1ed6cdc086">micron::default_path</code></td><td>variable; line 21</td></tr><tr class="t-dsc"><td><a href="#f-9be79dab51032ad4">micron::which_into(const char *cmd, char *out, usize cap) noexcept</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-ea42a513c4e2a65b">micron::which_into(const char *cmd, char (&amp;out)[posix::path_max]) noexcept</a></td><td>function; line 87</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-9be79dab51032ad4"><h3><code>micron::which_into(const char *cmd, char *out, usize cap) noexcept</code></h3><p>Defined in <code>linux/process/which.hpp</code>, <a href="../../../source/linux/process/which.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline max_t
+which_into(const char *cmd, char *out, usize cap) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *cmd</code></li><li><code>char *out</code></li><li><code>usize cap</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline max_t
+which_into(const char *cmd, char *out, usize cap) noexcept
+{
+  if ( cmd == nullptr || cmd[0] == 0 || out == nullptr || cap == 0 ) return -error::invalid_arg;
+
+  usize clen = 0;
+  bool slash = false;
+  for ( ; cmd[clen] != 0; ++clen )
+    if ( cmd[clen] == &#x27;/&#x27; ) slash = true;
+
+  if ( slash ) {
+    if ( clen + 1 &gt; cap ) return -error::name_too_long;
+    if ( !micron::posix::is_executable(cmd) ) return -error::no_entry;
+    for ( usize i = 0; i &lt;= clen; ++i ) out[i] = cmd[i];
+    return static_cast&lt;max_t&gt;(clen);
+  }
+
+  const char *path = micron::env_get(&quot;PATH&quot;);
+  if ( path == nullptr || path[0] == 0 ) path = default_path;
+
+  bool too_long = false;
+  for ( const char *p = path;; ) {
+    const char *e = p;
+    for ( ; *e != 0 &amp;&amp; *e != &#x27;:&#x27;; ++e );
+    const usize dlen = static_cast&lt;usize&gt;(e - p);
+
+    if ( dlen != 0 &amp;&amp; p[0] == &#x27;/&#x27; ) {
+      usize joined = 0;
+      if ( __impl::__which_join(out, cap, p, dlen, cmd, clen, joined) ) {
+        if ( micron::posix::is_executable(out) ) return static_cast&lt;max_t&gt;(joined);
+      } else {
+        too_long = true;
+      }
+    }
+
+    if ( *e == 0 ) break;
+    p = e + 1;
+  }
+
+  out[0] = 0;
+  return too_long ? -error::name_too_long : -error::no_entry;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-error::invalid_arg</code></td><td><a href="../../../source/linux/process/which.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>-error::name_too_long</code></td><td><a href="../../../source/linux/process/which.hpp.html#L54">line 54</a></td></tr><tr class="t-dsc"><td><code>-error::no_entry</code></td><td><a href="../../../source/linux/process/which.hpp.html#L55">line 55</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(clen)</code></td><td><a href="../../../source/linux/process/which.hpp.html#L57">line 57</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(joined)</code></td><td><a href="../../../source/linux/process/which.hpp.html#L72">line 72</a></td></tr><tr class="t-dsc"><td><code>too_long ? -error::name_too_long : -error::no_entry</code></td><td><a href="../../../source/linux/process/which.hpp.html#L83">line 83</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../io/inode.hpp.html#f-7ba0c793db140e65">micron::posix::is_executable</a>, <a href="environ.hpp.html#f-422fa9c97f629279">micron::env_get</a>, <a href="which.hpp.html#f-f1555b227e8b856c">__impl::__which_join</a>.</p></section><section class="function-entry" id="f-ea42a513c4e2a65b"><h3><code>micron::which_into(const char *cmd, char (&amp;out)[posix::path_max]) noexcept</code></h3><p>Defined in <code>linux/process/which.hpp</code>, <a href="../../../source/linux/process/which.hpp.html#L87">line 87</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline max_t
+which_into(const char *cmd, char (&amp;out)[posix::path_max]) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *cmd</code></li><li><code>char (&amp;out)[posix::path_max]</code></li></ul><h4>Effects</h4><p>Returns <code>which_into(cmd, out, posix::path_max)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline max_t
+which_into(const char *cmd, char (&amp;out)[posix::path_max]) noexcept
+{
+  return which_into(cmd, out, posix::path_max);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>which_into(cmd, out, posix::path_max)</code></td><td><a href="../../../source/linux/process/which.hpp.html#L89">line 89</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="which.hpp.html#f-9be79dab51032ad4">which_into</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-f1555b227e8b856c"><h3><code>micron::__impl::__which_join(char *out, usize cap, const char *dir, usize dlen, const char *cmd, usize clen, usize &amp;joined) noexcept</code></h3><p>Defined in <code>linux/process/which.hpp</code>, <a href="../../../source/linux/process/which.hpp.html#L28">line 28</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__which_join(char *out, usize cap, const char *dir, usize dlen, const char *cmd, usize clen, usize &amp;joined) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *out</code></li><li><code>usize cap</code></li><li><code>const char *dir</code></li><li><code>usize dlen</code></li><li><code>const char *cmd</code></li><li><code>usize clen</code></li><li><code>usize &amp;joined</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__which_join(char *out, usize cap, const char *dir, usize dlen, const char *cmd, usize clen, usize &amp;joined) noexcept
+{
+  // dir + &#x27;/&#x27; + cmd + &#x27;\0&#x27;
+  if ( dlen + 1 + clen + 1 &gt; cap ) return false;
+  for ( usize i = 0; i &lt; dlen; ++i ) out[i] = dir[i];
+  usize n = dlen;
+  if ( n == 0 || out[n - 1] != &#x27;/&#x27; ) out[n++] = &#x27;/&#x27;;
+  for ( usize i = 0; i &lt; clen; ++i ) out[n + i] = cmd[i];
+  out[n + clen] = 0;
+  joined = n + clen;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/process/which.hpp.html#L31">line 31</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/linux/process/which.hpp.html#L38">line 38</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

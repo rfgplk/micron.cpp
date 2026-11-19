@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/math.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/math.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/algorithms.html">Algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/math.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/algorithm/math.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-52529d28257df608">micron::sin(T &amp;cont) noexcept</a></td><td>function; line 31</td></tr><tr class="t-dsc"><td><a href="#f-8c575822f5a4daef">micron::cos(T &amp;cont) noexcept</a></td><td>function; line 39</td></tr><tr class="t-dsc"><td><a href="#f-0b90a3f15e8eeaba">micron::tan(T &amp;cont) noexcept</a></td><td>function; line 47</td></tr><tr class="t-dsc"><td><a href="#f-b5ecaf6983463c8b">micron::asin(T &amp;cont) noexcept</a></td><td>function; line 55</td></tr><tr class="t-dsc"><td><a href="#f-64b93f02381258cb">micron::acos(T &amp;cont) noexcept</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-01c991bb03123a57">micron::atan(T &amp;cont) noexcept</a></td><td>function; line 71</td></tr><tr class="t-dsc"><td><a href="#f-cb3a0019809404a7">micron::sinh(T &amp;cont) noexcept</a></td><td>function; line 79</td></tr><tr class="t-dsc"><td><a href="#f-5182d18b390d8405">micron::cosh(T &amp;cont) noexcept</a></td><td>function; line 87</td></tr><tr class="t-dsc"><td><a href="#f-0d41e3720786983f">micron::tanh(T &amp;cont) noexcept</a></td><td>function; line 95</td></tr><tr class="t-dsc"><td><a href="#f-3629b67d1d0d46f2">micron::exp(T &amp;cont) noexcept</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-f55b489fdb468810">micron::log(T &amp;cont) noexcept</a></td><td>function; line 111</td></tr><tr class="t-dsc"><td><a href="#f-3494de1afa9e2a46">micron::log10(T &amp;cont) noexcept</a></td><td>function; line 119</td></tr><tr class="t-dsc"><td><a href="#f-76f9e3f6da733a5d">micron::sqrt(T &amp;cont) noexcept</a></td><td>function; line 130</td></tr><tr class="t-dsc"><td><a href="#f-65bc51a2ffd9cc10">micron::cbrt(T &amp;cont) noexcept</a></td><td>function; line 138</td></tr><tr class="t-dsc"><td><a href="#f-fc18c24e3c96084d">micron::absolute(T &amp;cont) noexcept</a></td><td>function; line 146</td></tr><tr class="t-dsc"><td><a href="#f-8b2c732d009677f8">micron::sign(T &amp;cont) noexcept</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-4654f09d2ea94196">micron::clip(T &amp;cont, const typename T::value_type lo, const typename T::value_type hi) noexcept</a></td><td>function; line 165</td></tr><tr class="t-dsc"><td><a href="#f-fbe499a50822a9d7">micron::degrees(T &amp;cont) noexcept</a></td><td>function; line 173</td></tr><tr class="t-dsc"><td><a href="#f-1b45589bd6c3607a">micron::radians(T &amp;cont) noexcept</a></td><td>function; line 181</td></tr><tr class="t-dsc"><td><a href="#f-62a11d8ff9b31208">micron::asinh(T &amp;cont) noexcept</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-68ca082abb8d1364">micron::acosh(T &amp;cont) noexcept</a></td><td>function; line 200</td></tr><tr class="t-dsc"><td><a href="#f-5d44b4e21dfb4cc0">micron::atanh(T &amp;cont) noexcept</a></td><td>function; line 211</td></tr><tr class="t-dsc"><td><a href="#f-75b930f049043202">micron::sin(M &amp;m) noexcept</a></td><td>function; line 223</td></tr><tr class="t-dsc"><td><a href="#f-6daac245c6e90501">micron::cos(M &amp;m) noexcept</a></td><td>function; line 232</td></tr><tr class="t-dsc"><td><a href="#f-fcb7e2bf87da0bf6">micron::tan(M &amp;m) noexcept</a></td><td>function; line 241</td></tr><tr class="t-dsc"><td><a href="#f-b0231d5dfc6fa939">micron::asin(M &amp;m) noexcept</a></td><td>function; line 250</td></tr><tr class="t-dsc"><td><a href="#f-bf5b5ecc33568b27">micron::acos(M &amp;m) noexcept</a></td><td>function; line 259</td></tr><tr class="t-dsc"><td><a href="#f-05618c02d6283cd2">micron::atan(M &amp;m) noexcept</a></td><td>function; line 268</td></tr><tr class="t-dsc"><td><a href="#f-eef742e000121401">micron::sinh(M &amp;m) noexcept</a></td><td>function; line 277</td></tr><tr class="t-dsc"><td><a href="#f-33612af5e54522f5">micron::cosh(M &amp;m) noexcept</a></td><td>function; line 286</td></tr><tr class="t-dsc"><td><a href="#f-2767557703bd7250">micron::tanh(M &amp;m) noexcept</a></td><td>function; line 295</td></tr><tr class="t-dsc"><td><a href="#f-bbc7dd8585ca0d01">micron::exp(M &amp;m) noexcept</a></td><td>function; line 304</td></tr><tr class="t-dsc"><td><a href="#f-87289e9e39f7b033">micron::log(M &amp;m) noexcept</a></td><td>function; line 313</td></tr><tr class="t-dsc"><td><a href="#f-36eec7df9acee7a0">micron::log10(M &amp;m) noexcept</a></td><td>function; line 322</td></tr><tr class="t-dsc"><td><a href="#f-aff4ee8b43d547f7">micron::sqrt(M &amp;m) noexcept</a></td><td>function; line 332</td></tr><tr class="t-dsc"><td><a href="#f-f54e1f5a60a6f5ef">micron::cbrt(M &amp;m) noexcept</a></td><td>function; line 341</td></tr><tr class="t-dsc"><td><a href="#f-489fdf922a1ebaf8">micron::absolute(M &amp;m) noexcept</a></td><td>function; line 350</td></tr><tr class="t-dsc"><td><a href="#f-37192b82470d00f6">micron::sign(M &amp;m) noexcept</a></td><td>function; line 362</td></tr><tr class="t-dsc"><td><a href="#f-52f5e997c74606e7">micron::clip(M &amp;m, const typename M::mapped_type lo, const typename M::mapped_type hi) noexcept</a></td><td>function; line 371</td></tr><tr class="t-dsc"><td><a href="#f-d0ca7a058f5345c8">micron::degrees(M &amp;m) noexcept</a></td><td>function; line 380</td></tr><tr class="t-dsc"><td><a href="#f-5016a9fdc6a6cd7b">micron::radians(M &amp;m) noexcept</a></td><td>function; line 389</td></tr><tr class="t-dsc"><td><a href="#f-f3d82d8b1a54d330">micron::asinh(M &amp;m) noexcept</a></td><td>function; line 398</td></tr><tr class="t-dsc"><td><a href="#f-015e118c0ede6d39">micron::acosh(M &amp;m) noexcept</a></td><td>function; line 410</td></tr><tr class="t-dsc"><td><a href="#f-362cee85cf8e256b">micron::atanh(M &amp;m) noexcept</a></td><td>function; line 422</td></tr><tr class="t-dsc"><td><a href="#f-83586d63e6e83a55">micron::derivative(F f, T x, T h = T(1e-6)) noexcept</a></td><td>function; line 436</td></tr><tr class="t-dsc"><td><a href="#f-279a9ac9418f6481">micron::jacobian(F f, const V &amp;x, typename V::value_type h = typename V::value_type(1e-6)) noexcept</a></td><td>function; line 444</td></tr><tr class="t-dsc"><td><a href="#f-73cec998fd487030">micron::hessian(F f, const V &amp;x, typename V::value_type h = typename V::value_type(1e-5)) noexcept</a></td><td>function; line 467</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-52529d28257df608"><h3><code>micron::sin(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L31">line 31</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+sin(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+sin(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::sin(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L34">line 34</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-034a96b556c56223">math::sin</a>.</p></section><section class="function-entry" id="f-8c575822f5a4daef"><h3><code>micron::cos(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L39">line 39</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+cos(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+cos(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::cos(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L42">line 42</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-9dffa80c4b8d94ba">math::cos</a>.</p></section><section class="function-entry" id="f-0b90a3f15e8eeaba"><h3><code>micron::tan(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L47">line 47</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+tan(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+tan(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::tan(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L50">line 50</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-eb645e534614d3f4">math::tan</a>.</p></section><section class="function-entry" id="f-b5ecaf6983463c8b"><h3><code>micron::asin(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+asin(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+asin(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::asin(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L58">line 58</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-26dd5376087de178">math::asin</a>.</p></section><section class="function-entry" id="f-64b93f02381258cb"><h3><code>micron::acos(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+acos(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+acos(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::acos(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L66">line 66</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-e24d26d1923573d8">math::acos</a>.</p></section><section class="function-entry" id="f-01c991bb03123a57"><h3><code>micron::atan(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L71">line 71</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+atan(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+atan(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::atan(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L74">line 74</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-923d3c9d54ba1167">math::atan</a>.</p></section><section class="function-entry" id="f-cb3a0019809404a7"><h3><code>micron::sinh(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L79">line 79</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+sinh(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+sinh(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::sinh(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L82">line 82</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-b6bc772511afbad9">math::sinh</a>.</p></section><section class="function-entry" id="f-5182d18b390d8405"><h3><code>micron::cosh(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L87">line 87</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+cosh(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+cosh(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::cosh(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L90">line 90</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-6bc403b837b8a32e">math::cosh</a>.</p></section><section class="function-entry" id="f-0d41e3720786983f"><h3><code>micron::tanh(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L95">line 95</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+tanh(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+tanh(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::tanh(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-4cff59427c179b38">math::tanh</a>.</p></section><section class="function-entry" id="f-3629b67d1d0d46f2"><h3><code>micron::exp(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+exp(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+exp(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::exp(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L106">line 106</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-c2bf050e5addb43c">math::exp</a>.</p></section><section class="function-entry" id="f-f55b489fdb468810"><h3><code>micron::log(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L111">line 111</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+log(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+log(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::log(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L114">line 114</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/log.hpp.html#f-73546d0f9713cb61">math::log</a>.</p></section><section class="function-entry" id="f-3494de1afa9e2a46"><h3><code>micron::log10(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L119">line 119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+log10(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+log10(T &amp;cont) noexcept
+{
+  // micron::math has log10f32/log10f64 but no unqualified log10. Use the
+  // identity log10(x) = log(x) / log(10) via the generic log overload.
+  constexpr double ln10 = 2.30258509299404568402;
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::log(static_cast&lt;double&gt;(*it)) / ln10;
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L125">line 125</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/log.hpp.html#f-73546d0f9713cb61">math::log</a>.</p></section><section class="function-entry" id="f-76f9e3f6da733a5d"><h3><code>micron::sqrt(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L130">line 130</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+sqrt(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+sqrt(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::sqrt(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L133">line 133</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/sqrt.hpp.html#f-46c3d4c86e9c4191">math::sqrt</a>.</p></section><section class="function-entry" id="f-65bc51a2ffd9cc10"><h3><code>micron::cbrt(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L138">line 138</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+cbrt(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+cbrt(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = math::cbrt(static_cast&lt;double&gt;(*it));
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L141">line 141</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/mk.hpp.html#f-0a159cc9b0e8a785">math::cbrt</a>.</p></section><section class="function-entry" id="f-fc18c24e3c96084d"><h3><code>micron::absolute(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L146">line 146</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+absolute(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+absolute(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) {
+    auto v = *it;
+    *it = v &lt; typename T::value_type{} ? -v : v;
+  }
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L152">line 152</a></td></tr></tbody></table></section><section class="function-entry" id="f-8b2c732d009677f8"><h3><code>micron::sign(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+sign(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+sign(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = (*it &gt; 0) - (*it &lt; 0);
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L160">line 160</a></td></tr></tbody></table></section><section class="function-entry" id="f-4654f09d2ea94196"><h3><code>micron::clip(T &amp;cont, const typename T::value_type lo, const typename T::value_type hi) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L165">line 165</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+clip(T &amp;cont, const typename T::value_type lo, const typename T::value_type hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const typename T::value_type lo</code></li><li><code>const typename T::value_type hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+clip(T &amp;cont, const typename T::value_type lo, const typename T::value_type hi) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = (*it &lt; lo) ? lo : ((*it &gt; hi) ? hi : *it);
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L168">line 168</a></td></tr></tbody></table></section><section class="function-entry" id="f-fbe499a50822a9d7"><h3><code>micron::degrees(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L173">line 173</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+degrees(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+degrees(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = *it * (180.0 / math::pi);
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L176">line 176</a></td></tr></tbody></table></section><section class="function-entry" id="f-1b45589bd6c3607a"><h3><code>micron::radians(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L181">line 181</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+radians(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+radians(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) *it = *it * (math::pi / 180.0);
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L184">line 184</a></td></tr></tbody></table></section><section class="function-entry" id="f-62a11d8ff9b31208"><h3><code>micron::asinh(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+asinh(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+asinh(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) {
+    double x = static_cast&lt;double&gt;(*it);
+    *it = math::log(x + math::sqrt(x * x + 1.0));
+  }
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L195">line 195</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/log.hpp.html#f-73546d0f9713cb61">math::log</a>, <a href="../math/sqrt.hpp.html#f-46c3d4c86e9c4191">math::sqrt</a>.</p></section><section class="function-entry" id="f-68ca082abb8d1364"><h3><code>micron::acosh(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L200">line 200</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+acosh(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+acosh(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) {
+    double x = static_cast&lt;double&gt;(*it);
+    *it = math::log(x + math::sqrt(x * x - 1.0));
+  }
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L206">line 206</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/log.hpp.html#f-73546d0f9713cb61">math::log</a>, <a href="../math/sqrt.hpp.html#f-46c3d4c86e9c4191">math::sqrt</a>.</p></section><section class="function-entry" id="f-5d44b4e21dfb4cc0"><h3><code>micron::atanh(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+atanh(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+constexpr T &amp;
+atanh(T &amp;cont) noexcept
+{
+  for ( auto *it = cont.begin(); it != cont.end(); ++it ) {
+    double x = static_cast&lt;double&gt;(*it);
+    *it = 0.5 * math::log((1.0 + x) / (1.0 - x));
+  }
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/math.hpp.html#L217">line 217</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/log.hpp.html#f-73546d0f9713cb61">math::log</a>.</p></section><section class="function-entry" id="f-75b930f049043202"><h3><code>micron::sin(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L223">line 223</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+sin(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+sin(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::sin(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L226">line 226</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-6daac245c6e90501"><h3><code>micron::cos(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L232">line 232</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+cos(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+cos(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::cos(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L235">line 235</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-fcb7e2bf87da0bf6"><h3><code>micron::tan(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L241">line 241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+tan(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+tan(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::tan(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L244">line 244</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-b0231d5dfc6fa939"><h3><code>micron::asin(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L250">line 250</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+asin(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+asin(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::asin(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L253">line 253</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-bf5b5ecc33568b27"><h3><code>micron::acos(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L259">line 259</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+acos(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+acos(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::acos(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L262">line 262</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-05618c02d6283cd2"><h3><code>micron::atan(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L268">line 268</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+atan(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+atan(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::atan(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L271">line 271</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-eef742e000121401"><h3><code>micron::sinh(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L277">line 277</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+sinh(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+sinh(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::sinh(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L280">line 280</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-33612af5e54522f5"><h3><code>micron::cosh(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L286">line 286</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+cosh(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+cosh(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::cosh(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-2767557703bd7250"><h3><code>micron::tanh(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L295">line 295</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+tanh(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+tanh(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::tanh(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L298">line 298</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-bbc7dd8585ca0d01"><h3><code>micron::exp(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L304">line 304</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+exp(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+exp(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::exp(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L307">line 307</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-87289e9e39f7b033"><h3><code>micron::log(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L313">line 313</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+log(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+log(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::log(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L316">line 316</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-36eec7df9acee7a0"><h3><code>micron::log10(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L322">line 322</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+log10(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+log10(M &amp;m) noexcept
+{
+  constexpr double ln10 = 2.30258509299404568402;
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::log(static_cast&lt;double&gt;(v)) / ln10; });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L326">line 326</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-aff4ee8b43d547f7"><h3><code>micron::sqrt(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L332">line 332</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+sqrt(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+sqrt(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::sqrt(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L335">line 335</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-f54e1f5a60a6f5ef"><h3><code>micron::cbrt(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L341">line 341</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+cbrt(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+cbrt(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = math::cbrt(static_cast&lt;double&gt;(v)); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L344">line 344</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-489fdf922a1ebaf8"><h3><code>micron::absolute(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L350">line 350</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+absolute(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+absolute(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) {
+    auto x = v;
+    v = x &lt; typename M::mapped_type{} ? -x : x;
+  });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L356">line 356</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-37192b82470d00f6"><h3><code>micron::sign(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L362">line 362</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+sign(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+sign(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = (v &gt; 0) - (v &lt; 0); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L365">line 365</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-52f5e997c74606e7"><h3><code>micron::clip(M &amp;m, const typename M::mapped_type lo, const typename M::mapped_type hi) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L371">line 371</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+clip(M &amp;m, const typename M::mapped_type lo, const typename M::mapped_type hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li><li><code>const typename M::mapped_type lo</code></li><li><code>const typename M::mapped_type hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+clip(M &amp;m, const typename M::mapped_type lo, const typename M::mapped_type hi) noexcept
+{
+  __impl::visit_kv(m, [&amp;](const auto &amp;, auto &amp;v) { v = (v &lt; lo) ? lo : ((v &gt; hi) ? hi : v); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L374">line 374</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-d0ca7a058f5345c8"><h3><code>micron::degrees(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L380">line 380</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+degrees(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+degrees(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = v * (180.0 / math::pi); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L383">line 383</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-5016a9fdc6a6cd7b"><h3><code>micron::radians(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L389">line 389</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+radians(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+radians(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) { v = v * (math::pi / 180.0); });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L392">line 392</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-f3d82d8b1a54d330"><h3><code>micron::asinh(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L398">line 398</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+asinh(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+asinh(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) {
+    double x = static_cast&lt;double&gt;(v);
+    v = math::log(x + math::sqrt(x * x + 1.0));
+  });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L404">line 404</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-015e118c0ede6d39"><h3><code>micron::acosh(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L410">line 410</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+acosh(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+acosh(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) {
+    double x = static_cast&lt;double&gt;(v);
+    v = math::log(x + math::sqrt(x * x - 1.0));
+  });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L416">line 416</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-362cee85cf8e256b"><h3><code>micron::atanh(M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L422">line 422</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+atanh(M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M&gt;
+  requires micron::is_arithmetic_v&lt;typename M::mapped_type&gt;
+constexpr M &amp;
+atanh(M &amp;m) noexcept
+{
+  __impl::visit_kv(m, [](const auto &amp;, auto &amp;v) {
+    double x = static_cast&lt;double&gt;(v);
+    v = 0.5 * math::log((1.0 + x) / (1.0 - x));
+  });
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/algorithm/math.hpp.html#L428">line 428</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-83586d63e6e83a55"><h3><code>micron::derivative(F f, T x, T h = T(1e-6)) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L436">line 436</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename T&gt;
+constexpr T
+derivative(F f, T x, T h = T(1e-6)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F f</code></li><li><code>T x</code></li><li><code>T h = T(1e-6)</code></li></ul><h4>Effects</h4><p>Returns <code>(f(x + h) - f(x - h)) / (T(2) * h)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename T&gt;
+constexpr T
+derivative(F f, T x, T h = T(1e-6)) noexcept
+{
+  return (f(x + h) - f(x - h)) / (T(2) * h);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(f(x + h) - f(x - h)) / (T(2) * h)</code></td><td><a href="../../source/algorithm/math.hpp.html#L438">line 438</a></td></tr></tbody></table></section><section class="function-entry" id="f-279a9ac9418f6481"><h3><code>micron::jacobian(F f, const V &amp;x, typename V::value_type h = typename V::value_type(1e-6)) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L444">line 444</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename V&gt;
+V
+jacobian(F f, const V &amp;x, typename V::value_type h = typename V::value_type(1e-6)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F f</code></li><li><code>const V &amp;x</code></li><li><code>typename V::value_type h = typename V::value_type(1e-6)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename V&gt;
+V
+jacobian(F f, const V &amp;x, typename V::value_type h = typename V::value_type(1e-6)) noexcept
+{
+  using T = typename V::value_type;
+
+  V grad = x;
+  const usize n = x.size();
+
+  for ( usize i = 0; i &lt; n; ++i ) {
+    V xp = x;
+    V xm = x;
+
+    xp[i] += h;
+    xm[i] -= h;
+
+    grad[i] = (f(xp) - f(xm)) / (T(2) * h);
+  }
+
+  return grad;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>grad</code></td><td><a href="../../source/algorithm/math.hpp.html#L461">line 461</a></td></tr></tbody></table></section><section class="function-entry" id="f-73cec998fd487030"><h3><code>micron::hessian(F f, const V &amp;x, typename V::value_type h = typename V::value_type(1e-5)) noexcept</code></h3><p>Defined in <code>algorithm/math.hpp</code>, <a href="../../source/algorithm/math.hpp.html#L467">line 467</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename V&gt;
+auto
+hessian(F f, const V &amp;x, typename V::value_type h = typename V::value_type(1e-5)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F f</code></li><li><code>const V &amp;x</code></li><li><code>typename V::value_type h = typename V::value_type(1e-5)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename V&gt;
+auto
+hessian(F f, const V &amp;x, typename V::value_type h = typename V::value_type(1e-5)) noexcept
+{
+  using T = typename V::value_type;
+  const usize n = x.size();
+
+  typename V::template rebind&lt;V&gt;::type H(n, V(n));
+
+  for ( usize i = 0; i &lt; n; ++i ) {
+    for ( usize j = 0; j &lt; n; ++j ) {
+
+      V xpp = x;
+      V xpm = x;
+      V xmp = x;
+      V xmm = x;
+
+      xpp[i] += h;
+      xpp[j] += h;
+      xpm[i] += h;
+      xpm[j] -= h;
+      xmp[i] -= h;
+      xmp[j] += h;
+      xmm[i] -= h;
+      xmm[j] -= h;
+
+      H[i][j] = (f(xpp) - f(xpm) - f(xmp) + f(xmm)) / (T(4) * h * h);
+    }
+  }
+
+  return H;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>H</code></td><td><a href="../../source/algorithm/math.hpp.html#L495">line 495</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

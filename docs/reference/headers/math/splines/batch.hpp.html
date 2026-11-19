@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/splines/batch.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/splines/batch.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/splines.html">Splines and interpolation</a></div><p>Defined in header <code>&lt;micron/math/splines/batch.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/splines/batch.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-d55322af71b1eddc">micron::math::splines::domain(const S &amp;s) noexcept</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-537c91a9b74f7768">micron::math::splines::domain(const S &amp;s) noexcept</a></td><td>function; line 46</td></tr><tr class="t-dsc"><td><a href="#f-8bce7e1e73e8940e">micron::math::splines::domain(const bspline&lt;F&gt; &amp;s) noexcept</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-f68db343e77b4f4c">micron::math::splines::knot_count(const S &amp;s) noexcept</a></td><td>function; line 62</td></tr><tr class="t-dsc"><td><a href="#f-f451c0f861f2b645">micron::math::splines::knot_count(const S &amp;s) noexcept</a></td><td>function; line 70</td></tr><tr class="t-dsc"><td><a href="#f-f6926e507a4872fd">micron::math::splines::knot_count(const S &amp;s) noexcept</a></td><td>function; line 78</td></tr><tr class="t-dsc"><td><a href="#f-b833c20cb5339720">micron::math::splines::control_count(const S &amp;s) noexcept</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-4a501829b1d847ac">micron::math::splines::evaluate(const nearest_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 93</td></tr><tr class="t-dsc"><td><a href="#f-d5998041a0f7f4e5">micron::math::splines::evaluate(const linear_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-a1d4a4e07b3029ab">micron::math::splines::evaluate(const cubic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 114</td></tr><tr class="t-dsc"><td><a href="#f-fcf596ab48cb5f89">micron::math::splines::evaluate(const bspline&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 124</td></tr><tr class="t-dsc"><td><a href="#f-01ee9d4975b29830">micron::math::splines::evaluate(const cubic_curve_nd&lt;F, D&gt; &amp;c, F t, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 158</td></tr><tr class="t-dsc"><td><a href="#f-46b42d6503bf569d">micron::math::splines::evaluate_stateless(const S &amp;s, F x) noexcept</a></td><td>function; line 172</td></tr><tr class="t-dsc"><td><a href="#f-403f1b72af8e0972">micron::math::splines::evaluate_sorted(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</a></td><td>function; line 180</td></tr><tr class="t-dsc"><td><a href="#f-3114a816ea491ac6">micron::math::splines::evaluate_sorted(const linear_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</a></td><td>function; line 216</td></tr><tr class="t-dsc"><td><a href="#f-22c77d89b2a65ffa">micron::math::splines::evaluate_sorted(const nearest_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</a></td><td>function; line 246</td></tr><tr class="t-dsc"><td><a href="#f-835e52aff768ec8a">micron::math::splines::evaluate_sorted(const bspline&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</a></td><td>function; line 268</td></tr><tr class="t-dsc"><td><a href="#f-30365cf81c6b4d6f">micron::math::splines::evaluate_streaming(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</a></td><td>function; line 278</td></tr><tr class="t-dsc"><td><a href="#f-b8153af1cebf56c4">micron::math::splines::evaluate_streaming(const linear_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</a></td><td>function; line 307</td></tr><tr class="t-dsc"><td><a href="#f-14407adccdc7e08d">micron::math::splines::evaluate(const nearest_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</a></td><td>function; line 345</td></tr><tr class="t-dsc"><td><a href="#f-65eb662e20a60fc4">micron::math::splines::evaluate(const linear_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</a></td><td>function; line 352</td></tr><tr class="t-dsc"><td><a href="#f-89b0b8bd2e45cf7e">micron::math::splines::evaluate(const cubic_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</a></td><td>function; line 359</td></tr><tr class="t-dsc"><td><a href="#f-3ca505eb0df1ac7e">micron::math::splines::evaluate(const regular_cubic_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</a></td><td>function; line 366</td></tr><tr class="t-dsc"><td><a href="#f-36f641503adeb4e8">micron::math::splines::derivative(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count, u32 order = 1) noexcept</a></td><td>function; line 373</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-d55322af71b1eddc"><h3><code>micron::math::splines::domain(const S &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename S&gt;
+  requires requires(const S &amp;s) {
+    s.xs.size();
+    s.xs[0];
+  }
+[[nodiscard]] inline auto
+domain(const S &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename S&gt;
+  requires requires(const S &amp;s) {
+    s.xs.size();
+    s.xs[0];
+  }
+[[nodiscard]] inline auto
+domain(const S &amp;s) noexcept
+{
+  using F = typename decltype(s.xs)::value_type;
+  return s.xs.size() ? spline_domain&lt;F&gt;{ s.xs[0], s.xs[s.xs.size() - 1], true } : spline_domain&lt;F&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.xs.size() ? spline_domain&lt;F&gt;{ s.xs[0], s.xs[s.xs.size() - 1], true } : spline_domain&lt;F&gt;{}</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L37">line 37</a></td></tr></tbody></table></section><section class="function-entry" id="f-537c91a9b74f7768"><h3><code>micron::math::splines::domain(const S &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L46">line 46</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename S&gt;
+  requires requires(const S &amp;s) {
+    s.ts.size();
+    s.ts[0];
+  }
+[[nodiscard]] inline auto
+domain(const S &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename S&gt;
+  requires requires(const S &amp;s) {
+    s.ts.size();
+    s.ts[0];
+  }
+[[nodiscard]] inline auto
+domain(const S &amp;s) noexcept
+{
+  using F = typename decltype(s.ts)::value_type;
+  return s.ts.size() ? spline_domain&lt;F&gt;{ s.ts[0], s.ts[s.ts.size() - 1], true } : spline_domain&lt;F&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.ts.size() ? spline_domain&lt;F&gt;{ s.ts[0], s.ts[s.ts.size() - 1], true } : spline_domain&lt;F&gt;{}</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L49">line 49</a></td></tr></tbody></table></section><section class="function-entry" id="f-8bce7e1e73e8940e"><h3><code>micron::math::splines::domain(const bspline&lt;F&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline spline_domain&lt;F&gt;
+domain(const bspline&lt;F&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Returns <code>s.ctrl.size() &amp;&amp; s.knots.size() ? spline_domain&lt;F&gt;{ s.knots[s.degree], s.knots[s.ctrl.size()], true } : spline_domain&lt;F&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline spline_domain&lt;F&gt;
+domain(const bspline&lt;F&gt; &amp;s) noexcept
+{
+  return s.ctrl.size() &amp;&amp; s.knots.size() ? spline_domain&lt;F&gt;{ s.knots[s.degree], s.knots[s.ctrl.size()], true } : spline_domain&lt;F&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.ctrl.size() &amp;&amp; s.knots.size() ? spline_domain&lt;F&gt;{ s.knots[s.degree], s.knots[s.ctrl.size()], true } : spline_domain&lt;F&gt;{}</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L56">line 56</a></td></tr></tbody></table></section><section class="function-entry" id="f-f68db343e77b4f4c"><h3><code>micron::math::splines::knot_count(const S &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename S&gt;
+  requires requires(const S &amp;s) { s.xs.size(); }
+[[nodiscard, gnu::always_inline]] inline usize
+knot_count(const S &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Returns <code>s.xs.size()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename S&gt;
+  requires requires(const S &amp;s) { s.xs.size(); }
+[[nodiscard, gnu::always_inline]] inline usize
+knot_count(const S &amp;s) noexcept
+{
+  return s.xs.size();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.xs.size()</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L64">line 64</a></td></tr></tbody></table></section><section class="function-entry" id="f-f451c0f861f2b645"><h3><code>micron::math::splines::knot_count(const S &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L70">line 70</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename S&gt;
+  requires requires(const S &amp;s) { s.ts.size(); }
+[[nodiscard, gnu::always_inline]] inline usize
+knot_count(const S &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Returns <code>s.ts.size()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename S&gt;
+  requires requires(const S &amp;s) { s.ts.size(); }
+[[nodiscard, gnu::always_inline]] inline usize
+knot_count(const S &amp;s) noexcept
+{
+  return s.ts.size();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.ts.size()</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L72">line 72</a></td></tr></tbody></table></section><section class="function-entry" id="f-f6926e507a4872fd"><h3><code>micron::math::splines::knot_count(const S &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename S&gt;
+  requires requires(const S &amp;s) { s.knots.size(); }
+[[nodiscard, gnu::always_inline]] inline usize
+knot_count(const S &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Returns <code>s.knots.size()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename S&gt;
+  requires requires(const S &amp;s) { s.knots.size(); }
+[[nodiscard, gnu::always_inline]] inline usize
+knot_count(const S &amp;s) noexcept
+{
+  return s.knots.size();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.knots.size()</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L80">line 80</a></td></tr></tbody></table></section><section class="function-entry" id="f-b833c20cb5339720"><h3><code>micron::math::splines::control_count(const S &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename S&gt;
+  requires requires(const S &amp;s) { s.ctrl.size(); }
+[[nodiscard, gnu::always_inline]] inline usize
+control_count(const S &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Returns <code>s.ctrl.size()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename S&gt;
+  requires requires(const S &amp;s) { s.ctrl.size(); }
+[[nodiscard, gnu::always_inline]] inline usize
+control_count(const S &amp;s) noexcept
+{
+  return s.ctrl.size();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.ctrl.size()</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L88">line 88</a></td></tr></tbody></table></section><section class="function-entry" id="f-4a501829b1d847ac"><h3><code>micron::math::splines::evaluate(const nearest_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L93">line 93</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const nearest_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const nearest_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const nearest_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 || x &lt;= s.xs[0] || x &gt;= s.xs[n - 1] ) return evaluate&lt;F&gt;(s, x);
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(s.xs.data(), n, x, cursor.segment);
+  return ((x + x) &lt; (s.xs[segment] + s.xs[segment + 1])) ? s.ys[segment] : s.ys[segment + 1];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(s, x)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>((x + x) &lt; (s.xs[segment] + s.xs[segment + 1])) ? s.ys[segment] : s.ys[segment + 1]</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d5998041a0f7f4e5"><h3><code>micron::math::splines::evaluate(const linear_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const linear_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const linear_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const linear_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 || x &lt;= s.xs[0] || x &gt;= s.xs[n - 1] ) return evaluate&lt;F&gt;(s, x);
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(s.xs.data(), n, x, cursor.segment);
+  const F fraction = (x - s.xs[segment]) / (s.xs[segment + 1] - s.xs[segment]);
+  return math::fma&lt;F&gt;(fraction, s.ys[segment + 1] - s.ys[segment], s.ys[segment]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(s, x)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(fraction, s.ys[segment + 1] - s.ys[segment], s.ys[segment])</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L109">line 109</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a1d4a4e07b3029ab"><h3><code>micron::math::splines::evaluate(const cubic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L114">line 114</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const cubic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const cubic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 || x &lt;= s.xs[0] || x &gt;= s.xs[n - 1] ) return evaluate&lt;F&gt;(s, x);
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(s.xs.data(), n, x, cursor.segment);
+  return __impl_splines_bits::eval_cubic_local&lt;F&gt;(s.seg[segment], x - s.xs[segment]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(s, x)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L117">line 117</a></td></tr><tr class="t-dsc"><td><code>__impl_splines_bits::eval_cubic_local&lt;F&gt;(s.seg[segment], x - s.xs[segment])</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L119">line 119</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-a7018121eee8f27a">__impl_splines_bits::eval_cubic_local&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-fcf596ab48cb5f89"><h3><code>micron::math::splines::evaluate(const bspline&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L124">line 124</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const bspline&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const bspline&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  const usize n_ctrl = s.ctrl.size();
+  if ( n_ctrl == 0 || s.degree == 0 ) return F(0);
+  if ( x &lt; s.knots[s.degree] ) x = s.knots[s.degree];
+  if ( x &gt; s.knots[n_ctrl] ) x = s.knots[n_ctrl];
+  const usize span = __impl_bspline::bspline_span&lt;F&gt;(s.knots.data(), n_ctrl, s.degree, x, cursor.segment);
+  switch ( s.degree ) {
+  case 1:
+    return __impl_bspline::deboor_fixed&lt;1, F&gt;(s.knots.data(), s.ctrl.data(), span, x);
+  case 2:
+    return __impl_bspline::deboor_fixed&lt;2, F&gt;(s.knots.data(), s.ctrl.data(), span, x);
+  case 3:
+    return __impl_bspline::deboor_fixed&lt;3, F&gt;(s.knots.data(), s.ctrl.data(), span, x);
+  case 4:
+    return __impl_bspline::deboor_fixed&lt;4, F&gt;(s.knots.data(), s.ctrl.data(), span, x);
+  case 5:
+    return __impl_bspline::deboor_fixed&lt;5, F&gt;(s.knots.data(), s.ctrl.data(), span, x);
+  default:
+    break;
+  }
+  F d[bspline_max_degree + 1];
+  for ( u32 j = 0; j &lt;= s.degree; ++j ) d[j] = s.ctrl[span - s.degree + j];
+  for ( u32 r = 1; r &lt;= s.degree; ++r )
+    for ( u32 j = s.degree; j &gt;= r; --j ) {
+      const F denom = s.knots[span + 1 + j - r] - s.knots[span + j - s.degree];
+      const F alpha = denom &gt; F(0) ? (x - s.knots[span + j - s.degree]) / denom : F(0);
+      d[j] = math::fma&lt;F&gt;(alpha, d[j] - d[j - 1], d[j - 1]);
+    }
+  return d[s.degree];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L127">line 127</a></td></tr><tr class="t-dsc"><td><code>__impl_bspline::deboor_fixed&lt;1, F&gt;(s.knots.data(), s.ctrl.data(), span, x)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L133">line 133</a></td></tr><tr class="t-dsc"><td><code>__impl_bspline::deboor_fixed&lt;2, F&gt;(s.knots.data(), s.ctrl.data(), span, x)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>__impl_bspline::deboor_fixed&lt;3, F&gt;(s.knots.data(), s.ctrl.data(), span, x)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L137">line 137</a></td></tr><tr class="t-dsc"><td><code>__impl_bspline::deboor_fixed&lt;4, F&gt;(s.knots.data(), s.ctrl.data(), span, x)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>__impl_bspline::deboor_fixed&lt;5, F&gt;(s.knots.data(), s.ctrl.data(), span, x)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>d[s.degree]</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L153">line 153</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="bspline.hpp.html#f-c93008283a22d345">__impl_bspline::deboor_fixed&lt;1, F&gt;</a>, <a href="bspline.hpp.html#f-c93008283a22d345">__impl_bspline::deboor_fixed&lt;2, F&gt;</a>, <a href="bspline.hpp.html#f-c93008283a22d345">__impl_bspline::deboor_fixed&lt;3, F&gt;</a>, <a href="bspline.hpp.html#f-c93008283a22d345">__impl_bspline::deboor_fixed&lt;4, F&gt;</a>, <a href="bspline.hpp.html#f-c93008283a22d345">__impl_bspline::deboor_fixed&lt;5, F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-01ee9d4975b29830"><h3><code>micron::math::splines::evaluate(const cubic_curve_nd&lt;F, D&gt; &amp;c, F t, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L158">line 158</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize D&gt;
+[[nodiscard]] inline vec&lt;F, D&gt;
+evaluate(const cubic_curve_nd&lt;F, D&gt; &amp;c, F t, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cubic_curve_nd&lt;F, D&gt; &amp;c</code></li><li><code>F t</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize D&gt;
+[[nodiscard]] inline vec&lt;F, D&gt;
+evaluate(const cubic_curve_nd&lt;F, D&gt; &amp;c, F t, spline_cursor &amp;cursor) noexcept
+{
+  const usize n = c.ts.size();
+  if ( n &lt; 2 || t &lt;= c.ts[0] || t &gt;= c.ts[n - 1] ) return evaluate&lt;F, D&gt;(c, t);
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(c.ts.data(), n, t, cursor.segment);
+  const F u = t - c.ts[segment];
+  vec&lt;F, D&gt; out{};
+  __spline_arch::curve_horner(c.seg[segment].a.data, c.seg[segment].b.data, c.seg[segment].c.data, c.seg[segment].d.data, u, out.data, D);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>evaluate&lt;F, D&gt;(c, t)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L161">line 161</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L166">line 166</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F, D&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>, <a href="bits/arch/kernels_amd64.hpp.html#f-ecab8e6665c93bf7">__spline_arch::curve_horner</a>.</p></section><section class="function-entry" id="f-46b42d6503bf569d"><h3><code>micron::math::splines::evaluate_stateless(const S &amp;s, F x) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L172">line 172</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename S, ieee754_floating F&gt;
+  requires requires(const S &amp;s, F x, spline_cursor &amp;cursor) { evaluate(s, x, cursor); }
+[[nodiscard]] inline auto
+evaluate_stateless(const S &amp;s, F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename S, ieee754_floating F&gt;
+  requires requires(const S &amp;s, F x, spline_cursor &amp;cursor) { evaluate(s, x, cursor); }
+[[nodiscard]] inline auto
+evaluate_stateless(const S &amp;s, F x) noexcept
+{
+  spline_cursor cursor{};
+  return evaluate(s, x, cursor);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>evaluate(s, x, cursor)</code></td><td><a href="../../../source/math/splines/batch.hpp.html#L175">line 175</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate</a>.</p></section><section class="function-entry" id="f-403f1b72af8e0972"><h3><code>micron::math::splines::evaluate_sorted(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L180">line 180</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate_sorted(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate_sorted(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) {
+    for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+    return;
+  }
+  usize query = 0;
+  while ( query &lt; count &amp;&amp; xq[query] &lt;= s.xs[0] ) {
+    out[query] = evaluate&lt;F&gt;(s, xq[query]);
+    ++query;
+  }
+  usize segment = 0;
+  if ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] ) segment = __impl_splines_bits::locate_segment&lt;F&gt;(s.xs.data(), n, xq[query], segment);
+  while ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] ) {
+    while ( segment + 1 &lt; n - 1 &amp;&amp; xq[query] &gt; s.xs[segment + 1] ) ++segment;
+    const usize begin = query;
+    while ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] &amp;&amp; xq[query] &lt;= s.xs[segment + 1] ) ++query;
+    __spline_arch::cubic_horner_batch(s.seg[segment], s.xs[segment], xq + begin, out + begin, query - begin);
+  }
+  while ( query &lt; count ) {
+    out[query] = evaluate&lt;F&gt;(s, xq[query]);
+    ++query;
+  }
+  if ( count ) {
+    if ( xq[count - 1] &lt;= s.xs[0] )
+      s.last_hit = 0;
+    else if ( xq[count - 1] &gt;= s.xs[n - 1] )
+      s.last_hit = n - 2;
+    else
+      s.last_hit = segment;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/splines/batch.hpp.html#L185">line 185</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>, <a href="bits/arch/kernels_amd64.hpp.html#f-c0f2c63d3a63fc83">__spline_arch::cubic_horner_batch</a>.</p></section><section class="function-entry" id="f-3114a816ea491ac6"><h3><code>micron::math::splines::evaluate_sorted(const linear_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L216">line 216</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate_sorted(const linear_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const linear_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate_sorted(const linear_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) {
+    for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+    return;
+  }
+  usize query = 0;
+  while ( query &lt; count &amp;&amp; xq[query] &lt;= s.xs[0] ) {
+    out[query] = evaluate&lt;F&gt;(s, xq[query]);
+    ++query;
+  }
+  usize segment = 0;
+  if ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] ) segment = __impl_splines_bits::locate_segment&lt;F&gt;(s.xs.data(), n, xq[query], segment);
+  while ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] ) {
+    while ( segment + 1 &lt; n - 1 &amp;&amp; xq[query] &gt; s.xs[segment + 1] ) ++segment;
+    const usize begin = query;
+    while ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] &amp;&amp; xq[query] &lt;= s.xs[segment + 1] ) ++query;
+    const F slope = (s.ys[segment + 1] - s.ys[segment]) / (s.xs[segment + 1] - s.xs[segment]);
+    __spline_arch::linear_batch(s.xs[segment], s.ys[segment], slope, xq + begin, out + begin, query - begin);
+  }
+  while ( query &lt; count ) {
+    out[query] = evaluate&lt;F&gt;(s, xq[query]);
+    ++query;
+  }
+  if ( count ) s.last_hit = xq[count - 1] &gt;= s.xs[n - 1] ? n - 2 : segment;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/splines/batch.hpp.html#L221">line 221</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>, <a href="bits/arch/kernels_amd64.hpp.html#f-315f558dc093dd36">__spline_arch::linear_batch</a>.</p></section><section class="function-entry" id="f-22c77d89b2a65ffa"><h3><code>micron::math::splines::evaluate_sorted(const nearest_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L246">line 246</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate_sorted(const nearest_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const nearest_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate_sorted(const nearest_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) {
+    for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+    return;
+  }
+  usize segment = 0;
+  for ( usize i = 0; i &lt; count; ++i ) {
+    if ( xq[i] &lt;= s.xs[0] || xq[i] &gt;= s.xs[n - 1] ) {
+      out[i] = evaluate&lt;F&gt;(s, xq[i]);
+      if ( xq[i] &gt;= s.xs[n - 1] ) segment = n - 2;
+      continue;
+    }
+    while ( segment + 1 &lt; n - 1 &amp;&amp; xq[i] &gt; s.xs[segment + 1] ) ++segment;
+    out[i] = ((xq[i] + xq[i]) &lt; (s.xs[segment] + s.xs[segment + 1])) ? s.ys[segment] : s.ys[segment + 1];
+  }
+  if ( count ) s.last_hit = segment;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/splines/batch.hpp.html#L251">line 251</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-835e52aff768ec8a"><h3><code>micron::math::splines::evaluate_sorted(const bspline&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L268">line 268</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate_sorted(const bspline&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const bspline&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate_sorted(const bspline&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept
+{
+  spline_cursor cursor{};
+  cursor.segment = s.degree;
+  for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i], cursor);
+  if ( count ) s.last_hit = cursor.segment;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-30365cf81c6b4d6f"><h3><code>micron::math::splines::evaluate_streaming(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L278">line 278</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate_streaming(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate_streaming(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept
+{
+  if ( !__impl_splines_bits::is_sorted_nondecreasing&lt;F&gt;(xq, count) || s.xs.size() &lt; 2 ) {
+    for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+    return;
+  }
+  const usize n = s.xs.size();
+  usize query = 0;
+  while ( query &lt; count &amp;&amp; xq[query] &lt;= s.xs[0] ) {
+    out[query] = evaluate&lt;F&gt;(s, xq[query]);
+    ++query;
+  }
+  usize segment = 0;
+  if ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] ) segment = __impl_splines_bits::locate_segment&lt;F&gt;(s.xs.data(), n, xq[query], segment);
+  while ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] ) {
+    while ( segment + 1 &lt; n - 1 &amp;&amp; xq[query] &gt; s.xs[segment + 1] ) ++segment;
+    const usize begin = query;
+    while ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] &amp;&amp; xq[query] &lt;= s.xs[segment + 1] ) ++query;
+    __spline_arch::cubic_horner_stream_batch(s.seg[segment], s.xs[segment], xq + begin, out + begin, query - begin);
+  }
+  while ( query &lt; count ) {
+    out[query] = evaluate&lt;F&gt;(s, xq[query]);
+    ++query;
+  }
+  if ( count * sizeof(F) &gt;= 64 ) __spline_arch::spline_store_fence();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/splines/batch.hpp.html#L282">line 282</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-9477291630c28ebb">__impl_splines_bits::is_sorted_nondecreasing&lt;F&gt;</a>, <a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>, <a href="bits/arch/kernels_amd64.hpp.html#f-d223dd11107cc38f">__spline_arch::cubic_horner_stream_batch</a>, <a href="bits/kernels.hpp.html#f-954dcc34cac66dab">__spline_arch::spline_store_fence</a>.</p></section><section class="function-entry" id="f-b8153af1cebf56c4"><h3><code>micron::math::splines::evaluate_streaming(const linear_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L307">line 307</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate_streaming(const linear_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const linear_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate_streaming(const linear_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count) noexcept
+{
+  if ( !__impl_splines_bits::is_sorted_nondecreasing&lt;F&gt;(xq, count) || s.xs.size() &lt; 2 ) {
+    for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+    return;
+  }
+  const usize n = s.xs.size();
+  const F left_slope = (s.ys[1] - s.ys[0]) / (s.xs[1] - s.xs[0]);
+  const F right_slope = (s.ys[n - 1] - s.ys[n - 2]) / (s.xs[n - 1] - s.xs[n - 2]);
+  usize query = 0;
+  while ( query &lt; count &amp;&amp; xq[query] &lt;= s.xs[0] ) {
+    const F x = xq[query];
+    out[query] = s.mode == extrap::error_value
+                     ? F(0)
+                     : (s.mode == extrap::clamp_to_endpoints ? s.ys[0] : math::fma&lt;F&gt;(left_slope, x - s.xs[0], s.ys[0]));
+    ++query;
+  }
+  usize segment = 0;
+  if ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] ) segment = __impl_splines_bits::locate_segment&lt;F&gt;(s.xs.data(), n, xq[query], segment);
+  while ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] ) {
+    while ( segment + 1 &lt; n - 1 &amp;&amp; xq[query] &gt; s.xs[segment + 1] ) ++segment;
+    const usize begin = query;
+    while ( query &lt; count &amp;&amp; xq[query] &lt; s.xs[n - 1] &amp;&amp; xq[query] &lt;= s.xs[segment + 1] ) ++query;
+    const F slope = (s.ys[segment + 1] - s.ys[segment]) / (s.xs[segment + 1] - s.xs[segment]);
+    __spline_arch::linear_stream_batch(s.xs[segment], s.ys[segment], slope, xq + begin, out + begin, query - begin);
+  }
+  while ( query &lt; count ) {
+    const F x = xq[query];
+    out[query] = s.mode == extrap::error_value
+                     ? F(0)
+                     : (s.mode == extrap::clamp_to_endpoints ? s.ys[n - 1] : math::fma&lt;F&gt;(right_slope, x - s.xs[n - 1], s.ys[n - 1]));
+    ++query;
+  }
+  if ( count * sizeof(F) &gt;= 64 ) __spline_arch::spline_store_fence();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/splines/batch.hpp.html#L311">line 311</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-9477291630c28ebb">__impl_splines_bits::is_sorted_nondecreasing&lt;F&gt;</a>, <a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>, <a href="bits/arch/kernels_amd64.hpp.html#f-2a4e1b9cc1b6d217">__spline_arch::linear_stream_batch</a>, <a href="bits/kernels.hpp.html#f-954dcc34cac66dab">__spline_arch::spline_store_fence</a>.</p></section><section class="function-entry" id="f-14407adccdc7e08d"><h3><code>micron::math::splines::evaluate(const nearest_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L345">line 345</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize D&gt;
+inline void
+evaluate(const nearest_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const nearest_curve_nd&lt;F, D&gt; &amp;s</code></li><li><code>const F *__restrict__ tq</code></li><li><code>vec&lt;F, D&gt; *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize D&gt;
+inline void
+evaluate(const nearest_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept
+{
+  for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F, D&gt;(s, tq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F, D&gt;</a>.</p></section><section class="function-entry" id="f-65eb662e20a60fc4"><h3><code>micron::math::splines::evaluate(const linear_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L352">line 352</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize D&gt;
+inline void
+evaluate(const linear_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const linear_curve_nd&lt;F, D&gt; &amp;s</code></li><li><code>const F *__restrict__ tq</code></li><li><code>vec&lt;F, D&gt; *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize D&gt;
+inline void
+evaluate(const linear_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept
+{
+  for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F, D&gt;(s, tq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F, D&gt;</a>.</p></section><section class="function-entry" id="f-89b0b8bd2e45cf7e"><h3><code>micron::math::splines::evaluate(const cubic_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L359">line 359</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize D&gt;
+inline void
+evaluate(const cubic_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cubic_curve_nd&lt;F, D&gt; &amp;s</code></li><li><code>const F *__restrict__ tq</code></li><li><code>vec&lt;F, D&gt; *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize D&gt;
+inline void
+evaluate(const cubic_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept
+{
+  for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F, D&gt;(s, tq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F, D&gt;</a>.</p></section><section class="function-entry" id="f-3ca505eb0df1ac7e"><h3><code>micron::math::splines::evaluate(const regular_cubic_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L366">line 366</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize D&gt;
+inline void
+evaluate(const regular_cubic_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const regular_cubic_curve_nd&lt;F, D&gt; &amp;s</code></li><li><code>const F *__restrict__ tq</code></li><li><code>vec&lt;F, D&gt; *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize D&gt;
+inline void
+evaluate(const regular_cubic_curve_nd&lt;F, D&gt; &amp;s, const F *__restrict__ tq, vec&lt;F, D&gt; *__restrict__ out, usize count) noexcept
+{
+  for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F, D&gt;(s, tq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F, D&gt;</a>.</p></section><section class="function-entry" id="f-36f641503adeb4e8"><h3><code>micron::math::splines::derivative(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count, u32 order = 1) noexcept</code></h3><p>Defined in <code>math/splines/batch.hpp</code>, <a href="../../../source/math/splines/batch.hpp.html#L373">line 373</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+derivative(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count, u32 order = 1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize count</code></li><li><code>u32 order = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+derivative(const cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize count, u32 order = 1) noexcept
+{
+  for ( usize i = 0; i &lt; count; ++i ) out[i] = derivative&lt;F&gt;(s, xq[i], order);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

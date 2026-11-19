@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/chrono/arch/calib_i386.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/chrono/arch/calib_i386.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/chrono/arch/calib_i386.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/chrono/arch/calib_i386.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-8ae64dbab07ebd5f">micron::chrono::arch::calib_kernel_native</code></td><td>variable; line 36</td></tr><tr class="t-dsc"><td><a href="#f-fcc0a7b9b28e9206">micron::chrono::arch::calib_kernel(i64 iters64) noexcept</a></td><td>function; line 21</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-fcc0a7b9b28e9206"><h3><code>micron::chrono::arch::calib_kernel(i64 iters64) noexcept</code></h3><p>Defined in <code>chrono/arch/calib_i386.hpp</code>, <a href="../../../source/chrono/arch/calib_i386.hpp.html#L21">line 21</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::noinline]] inline void
+calib_kernel(i64 iters64) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 iters64</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::noinline]] inline void
+calib_kernel(i64 iters64) noexcept
+{
+  i32 iters = static_cast&lt;i32&gt;(iters64 &gt; 0x3FFF&#x27;FFFF ? 0x3FFF&#x27;FFFF : iters64);
+  __asm__ __volatile__(&quot;movl $-1, %%eax\n\t&quot;
+                       &quot;negl %%eax\n\t&quot;
+                       &quot;.p2align 5\n&quot;
+                       &quot;1:\n\t&quot;
+                       &quot;subl %%eax, %0\n\t&quot;
+                       &quot;subl %%eax, %0\n\t&quot;
+                       &quot;jge 1b&quot;
+                       : &quot;+r&quot;(iters)
+                       :
+                       : &quot;eax&quot;, &quot;cc&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

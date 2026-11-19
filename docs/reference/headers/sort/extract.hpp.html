@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sort/extract.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sort/extract.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/sorting.html">Sorting</a></div><p>Defined in header <code>&lt;micron/sort/extract.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sort/extract.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-843f774a5d64933c">micron::sort::micron::remove_cvref_t&lt;C&gt;::value_type</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><a href="#f-7e31c4abd36a4926">micron::sort::sorted(const C &amp;c, Cmp comp) -&gt; micron::vector&lt;micron::remove_cvref_t&lt;decltype(*c.begin())&gt;&gt;</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-7442eeaf1f8cc226">micron::sort::sorted(const C &amp;c) -&gt; micron::vector&lt;micron::remove_cvref_t&lt;decltype(*c.begin())&gt;&gt;</a></td><td>function; line 53</td></tr><tr class="t-dsc"><td><a href="#f-3dd05ccd326573b8">micron::sort::sorted(const C &amp;c, Cmp comp) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;C&gt;::value_type&gt;</a></td><td>function; line 60</td></tr><tr class="t-dsc"><td><a href="#f-e827a863d1d58928">micron::sort::sorted(const C &amp;c) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;C&gt;::value_type&gt;</a></td><td>function; line 71</td></tr><tr class="t-dsc"><td><a href="#f-2c94f7c74d92e6bf">micron::sort::sort_into(const C &amp;c, Out &amp;out, Cmp comp)</a></td><td>function; line 79</td></tr><tr class="t-dsc"><td><a href="#f-e5d95caf00e05649">micron::sort::sort_into(const C &amp;c, Out &amp;out)</a></td><td>function; line 88</td></tr><tr class="t-dsc"><td><a href="#f-493ee78cce9f9a15">micron::sort::drain_sorted(H &amp;h) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;H&gt;::value_type&gt;</a></td><td>function; line 96</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-7e31c4abd36a4926"><h3><code>micron::sort::sorted(const C &amp;c, Cmp comp) -&gt; micron::vector&lt;micron::remove_cvref_t&lt;decltype(*c.begin())&gt;&gt;</code></h3><p>Defined in <code>sort/extract.hpp</code>, <a href="../../source/sort/extract.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__range_harvestable C, typename Cmp&gt;
+auto
+sorted(const C &amp;c, Cmp comp) -&gt; micron::vector&lt;micron::remove_cvref_t&lt;decltype(*c.begin())&gt;&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__range_harvestable C, typename Cmp&gt;
+auto
+sorted(const C &amp;c, Cmp comp) -&gt; micron::vector&lt;micron::remove_cvref_t&lt;decltype(*c.begin())&gt;&gt;
+{
+  using E = micron::remove_cvref_t&lt;decltype(*c.begin())&gt;;
+  micron::vector&lt;E&gt; out;
+  for ( auto it = c.begin(); it != c.end(); ++it ) out.push_back(*it);
+  sort(out, comp);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/sort/extract.hpp.html#L48">line 48</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-c0cf7143ff29fd7d">sort</a>.</p></section><section class="function-entry" id="f-7442eeaf1f8cc226"><h3><code>micron::sort::sorted(const C &amp;c) -&gt; micron::vector&lt;micron::remove_cvref_t&lt;decltype(*c.begin())&gt;&gt;</code></h3><p>Defined in <code>sort/extract.hpp</code>, <a href="../../source/sort/extract.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__range_harvestable C&gt;
+auto
+sorted(const C &amp;c) -&gt; micron::vector&lt;micron::remove_cvref_t&lt;decltype(*c.begin())&gt;&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>sorted(c, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__range_harvestable C&gt;
+auto
+sorted(const C &amp;c) -&gt; micron::vector&lt;micron::remove_cvref_t&lt;decltype(*c.begin())&gt;&gt;
+{
+  return sorted(c, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sorted(c, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code></td><td><a href="../../source/sort/extract.hpp.html#L55">line 55</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="extract.hpp.html#f-7e31c4abd36a4926">sorted</a>.</p></section><section class="function-entry" id="f-3dd05ccd326573b8"><h3><code>micron::sort::sorted(const C &amp;c, Cmp comp) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;C&gt;::value_type&gt;</code></h3><p>Defined in <code>sort/extract.hpp</code>, <a href="../../source/sort/extract.hpp.html#L60">line 60</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__for_each_harvestable C, typename Cmp&gt;
+auto
+sorted(const C &amp;c, Cmp comp) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;C&gt;::value_type&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__for_each_harvestable C, typename Cmp&gt;
+auto
+sorted(const C &amp;c, Cmp comp) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;C&gt;::value_type&gt;
+{
+  using E = typename micron::remove_cvref_t&lt;C&gt;::value_type;
+  micron::vector&lt;E&gt; out;
+  c.for_each([&amp;](const E &amp;e) { out.push_back(e); });
+  sort(out, comp);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/sort/extract.hpp.html#L66">line 66</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-c0cf7143ff29fd7d">sort</a>.</p></section><section class="function-entry" id="f-e827a863d1d58928"><h3><code>micron::sort::sorted(const C &amp;c) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;C&gt;::value_type&gt;</code></h3><p>Defined in <code>sort/extract.hpp</code>, <a href="../../source/sort/extract.hpp.html#L71">line 71</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__for_each_harvestable C&gt;
+auto
+sorted(const C &amp;c) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;C&gt;::value_type&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Returns <code>sorted(c, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__for_each_harvestable C&gt;
+auto
+sorted(const C &amp;c) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;C&gt;::value_type&gt;
+{
+  return sorted(c, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sorted(c, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code></td><td><a href="../../source/sort/extract.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="extract.hpp.html#f-7e31c4abd36a4926">sorted</a>.</p></section><section class="function-entry" id="f-2c94f7c74d92e6bf"><h3><code>micron::sort::sort_into(const C &amp;c, Out &amp;out, Cmp comp)</code></h3><p>Defined in <code>sort/extract.hpp</code>, <a href="../../source/sort/extract.hpp.html#L79">line 79</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C, typename Out, typename Cmp&gt;
+  requires(__range_harvestable&lt;C&gt; || __for_each_harvestable&lt;C&gt;)
+void
+sort_into(const C &amp;c, Out &amp;out, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Out &amp;out</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C, typename Out, typename Cmp&gt;
+  requires(__range_harvestable&lt;C&gt; || __for_each_harvestable&lt;C&gt;)
+void
+sort_into(const C &amp;c, Out &amp;out, Cmp comp)
+{
+  auto s = sorted(c, comp);
+  for ( auto &amp;e : s ) out.push_back(e);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="extract.hpp.html#f-7e31c4abd36a4926">sorted</a>.</p></section><section class="function-entry" id="f-e5d95caf00e05649"><h3><code>micron::sort::sort_into(const C &amp;c, Out &amp;out)</code></h3><p>Defined in <code>sort/extract.hpp</code>, <a href="../../source/sort/extract.hpp.html#L88">line 88</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C, typename Out&gt;
+  requires(__range_harvestable&lt;C&gt; || __for_each_harvestable&lt;C&gt;)
+void
+sort_into(const C &amp;c, Out &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Out &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C, typename Out&gt;
+  requires(__range_harvestable&lt;C&gt; || __for_each_harvestable&lt;C&gt;)
+void
+sort_into(const C &amp;c, Out &amp;out)
+{
+  auto s = sorted(c);
+  for ( auto &amp;e : s ) out.push_back(e);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="extract.hpp.html#f-7e31c4abd36a4926">sorted</a>.</p></section><section class="function-entry" id="f-493ee78cce9f9a15"><h3><code>micron::sort::drain_sorted(H &amp;h) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;H&gt;::value_type&gt;</code></h3><p>Defined in <code>sort/extract.hpp</code>, <a href="../../source/sort/extract.hpp.html#L96">line 96</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_extractable_heap H&gt;
+auto
+drain_sorted(H &amp;h) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;H&gt;::value_type&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>H &amp;h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_extractable_heap H&gt;
+auto
+drain_sorted(H &amp;h) -&gt; micron::vector&lt;typename micron::remove_cvref_t&lt;H&gt;::value_type&gt;
+{
+  using E = typename micron::remove_cvref_t&lt;H&gt;::value_type;
+  micron::vector&lt;E&gt; out;
+  while ( h.size() &gt; 0 ) {
+    if constexpr ( requires { h.extract_min(); } )
+      out.push_back(h.extract_min());
+    else if constexpr ( requires { h.get(); } )
+      out.push_back(h.get());
+    else
+      out.push_back(h.pop());
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/sort/extract.hpp.html#L108">line 108</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

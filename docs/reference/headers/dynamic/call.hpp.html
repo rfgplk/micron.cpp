@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/dynamic/call.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/dynamic/call.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/dynamic.html">Dynamic loading</a></div><p>Defined in header <code>&lt;micron/dynamic/call.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/dynamic/call.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-a17cfd08317864a5">micron::dynamic_t</code></td><td>struct; line 21</td></tr><tr class="t-dsc"><td><code id="s-b8920cc14b2ccf52">micron::dynamic_t::index</code></td><td>member; line 22</td></tr><tr class="t-dsc"><td><code id="s-2f7390539663a6d6">micron::dynamic_t::generation</code></td><td>member; line 23</td></tr><tr class="t-dsc"><td><code id="s-8203310e1bce66b9">micron::dynamic_default</code></td><td>variable; line 38</td></tr><tr class="t-dsc"><td><code id="s-379d6f5dba3a9725">micron::dynamic_next</code></td><td>variable; line 39</td></tr><tr class="t-dsc"><td><a href="#f-4ef8ad96b1d205bf">micron::dynamic_t::operator bool() const noexcept</a></td><td>function; line 26</td></tr><tr class="t-dsc"><td><a href="#f-308fa967f6740288">micron::dynamic_t::operator==(const dynamic_t &amp;o) const noexcept</a></td><td>function; line 32</td></tr><tr class="t-dsc"><td><a href="#f-827a797485795db2">micron::dynamic_lazy_supported() noexcept</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-3417670272454211">micron::dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local, dynamic_options options = {})</a></td><td>function; line 48</td></tr><tr class="t-dsc"><td><a href="#f-182cc9a88c578aef">micron::dynamic_open(const T &amp;name, rtld flags = rtld::now | rtld::local, dynamic_options options = {})</a></td><td>function; line 106</td></tr><tr class="t-dsc"><td><a href="#f-041f01438167d942">micron::dynamic_finalize(dynamic_t d) noexcept</a></td><td>function; line 113</td></tr><tr class="t-dsc"><td><a href="#f-0a03f71059f49f3f">micron::dynamic_close(dynamic_t d) noexcept</a></td><td>function; line 124</td></tr><tr class="t-dsc"><td><a href="#f-0bdccfe27c33ff44">micron::dynamic_sym(dynamic_t d, const char *name) noexcept</a></td><td>function; line 145</td></tr><tr class="t-dsc"><td><a href="#f-56d0ee0cd97d99dc">micron::dynamic_sym(dynamic_t d, const S &amp;name) noexcept</a></td><td>function; line 183</td></tr><tr class="t-dsc"><td><a href="#f-e8c5beec425f0fb0">micron::dynamic_sym_as(dynamic_t d, const char *name) noexcept</a></td><td>function; line 190</td></tr><tr class="t-dsc"><td><a href="#f-74be0a7ce5d539b3">micron::dynamic_owner(const void *addr) noexcept</a></td><td>function; line 196</td></tr><tr class="t-dsc"><td><a href="#f-02067f48d8404899">micron::dynamic_path(dynamic_t d) noexcept</a></td><td>function; line 205</td></tr><tr class="t-dsc"><td><a href="#f-23d0e3ade6699388">micron::dynamic_soname(dynamic_t d) noexcept</a></td><td>function; line 214</td></tr><tr class="t-dsc"><td><a href="#f-5f2c6b3e468462ab">micron::dynamic_refcount(dynamic_t d) noexcept</a></td><td>function; line 223</td></tr><tr class="t-dsc"><td><a href="#f-6d163d27fa104447">micron::dynamic_call(dynamic_t d, const char *name, Args... args)</a></td><td>function; line 233</td></tr><tr class="t-dsc"><td><a href="#f-2bd86f8e5937e54e">micron::dynamic_call(dynamic_t d, const S &amp;name, Args... args)</a></td><td>function; line 248</td></tr><tr class="t-dsc"><td><a href="#f-9030c76c3d802b1a">micron::dynamic_call(const char *soname_or_path, const char *name, Args... args)</a></td><td>function; line 255</td></tr><tr class="t-dsc"><td><a href="#f-5fc7461a63a3175d">micron::dynamic_call(const T &amp;soname_or_path, const S &amp;name, Args... args)</a></td><td>function; line 263</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-4ef8ad96b1d205bf"><h3><code>micron::dynamic_t::operator bool() const noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L26">line 26</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit constexpr
+  operator bool() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>generation != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit constexpr
+  operator bool() const noexcept
+  {
+    return generation != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>generation != 0</code></td><td><a href="../../source/dynamic/call.hpp.html#L28">line 28</a></td></tr></tbody></table></section><section class="function-entry" id="f-308fa967f6740288"><h3><code>micron::dynamic_t::operator==(const dynamic_t &amp;o) const noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L32">line 32</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  operator==(const dynamic_t &amp;o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynamic_t &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>index == o.index &amp;&amp; generation == o.generation</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  operator==(const dynamic_t &amp;o) const noexcept
+  {
+    return index == o.index &amp;&amp; generation == o.generation;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>index == o.index &amp;&amp; generation == o.generation</code></td><td><a href="../../source/dynamic/call.hpp.html#L34">line 34</a></td></tr></tbody></table></section><section class="function-entry" id="f-827a797485795db2"><h3><code>micron::dynamic_lazy_supported() noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+dynamic_lazy_supported() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>false</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+dynamic_lazy_supported() noexcept
+{
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/call.hpp.html#L44">line 44</a></td></tr></tbody></table></section><section class="function-entry" id="f-3417670272454211"><h3><code>micron::dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local, dynamic_options options = {})</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline dynamic_t
+dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local, dynamic_options options = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *soname_or_path</code></li><li><code>rtld flags = rtld::now | rtld::local</code></li><li><code>dynamic_options options = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline dynamic_t
+dynamic_open(const char *soname_or_path, rtld flags = rtld::now | rtld::local, dynamic_options options = {})
+{
+  using namespace micron::elf::dl;
+  __err_clear();
+
+  if ( !soname_or_path || !*soname_or_path ) exc&lt;except::library_error&gt;(&quot;dynamic_open: empty name&quot;);
+
+  micron::lock_guard __lk(__registry_mtx);
+
+  if ( dl_module *hit = __find_by_path(soname_or_path) ) {
+    if ( hit-&gt;options.resolve != options.resolve || hit-&gt;options.validate != options.validate || hit-&gt;options.context != options.context )
+      exc&lt;except::library_error&gt;(&quot;dynamic_open: incompatible host resolver for existing module&quot;);
+    ++hit-&gt;refcount;
+    if ( has(flags, rtld::global) ) hit-&gt;global = true;
+    if ( has(flags, rtld::nodelete) ) hit-&gt;nodelete = true;
+    return dynamic_t{ hit-&gt;index, hit-&gt;generation };
+  }
+
+  const elf::path_str_t p = resolve_dependency(soname_or_path, nullptr, nullptr, nullptr);
+  if ( p.empty() ) {
+    __err_set_once(&quot;dynamic_open: not found&quot;, soname_or_path);
+    if ( has(flags, rtld::noload) ) return dynamic_t{};
+    exc&lt;except::library_error&gt;(&quot;dynamic_open: library not found in any search path&quot;);
+  }
+
+  if ( has(flags, rtld::noload) ) {
+    u64 dev = 0, ino = 0;
+    if ( !__file_ident(p.c_str(), dev, ino) ) return dynamic_t{};
+    dl_module *hit = __find_by_ident(dev, ino);
+    if ( !hit ) return dynamic_t{};
+    ++hit-&gt;refcount;
+    return dynamic_t{ hit-&gt;index, hit-&gt;generation };
+  }
+
+  load_state st;
+  st.options = options;
+  dl_module *root = __map_recursive(p.c_str(), flags, st, 0);
+  if ( !root || st.failed ) {
+    __unwind(st);
+    exc&lt;except::library_error&gt;(&quot;dynamic_open: failed to map the dependency closure&quot;);
+  }
+
+  if ( !__relocate_closure(root) ) {
+    __unwind(st);
+    exc&lt;except::library_error&gt;(&quot;dynamic_open: relocation failed&quot;);
+  }
+
+  elf::dl::__debug_publish(elf::dl::rt_add);
+  elf::dl::__debug_rebuild_chain();
+  elf::dl::__debug_publish(elf::dl::rt_consistent);
+
+  __init_closure(root);
+
+  return dynamic_t{ root-&gt;index, root-&gt;generation };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dynamic_t{ hit-&gt;index, hit-&gt;generation }</code></td><td><a href="../../source/dynamic/call.hpp.html#L63">line 63</a></td></tr><tr class="t-dsc"><td><code>dynamic_t{}</code></td><td><a href="../../source/dynamic/call.hpp.html#L69">line 69</a></td></tr><tr class="t-dsc"><td><code>dynamic_t{}</code></td><td><a href="../../source/dynamic/call.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>dynamic_t{}</code></td><td><a href="../../source/dynamic/call.hpp.html#L77">line 77</a></td></tr><tr class="t-dsc"><td><code>dynamic_t{ hit-&gt;index, hit-&gt;generation }</code></td><td><a href="../../source/dynamic/call.hpp.html#L79">line 79</a></td></tr><tr class="t-dsc"><td><code>dynamic_t{ root-&gt;index, root-&gt;generation }</code></td><td><a href="../../source/dynamic/call.hpp.html#L101">line 101</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;dynamic_open: empty name&quot;)</code></td><td><a href="../../source/dynamic/call.hpp.html#L53">line 53</a><br>Within <code>( !soname_or_path || !*soname_or_path )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;dynamic_open: incompatible host resolver for existing module&quot;)</code></td><td><a href="../../source/dynamic/call.hpp.html#L59">line 59</a><br>Within <code>( dl_module *hit = __find_by_path(soname_or_path) )</code>, <code>( hit-&gt;options.resolve != options.resolve || hit-&gt;options.validate != options.validate || hit-&gt;options.context != options.context )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;dynamic_open: library not found in any search path&quot;)</code></td><td><a href="../../source/dynamic/call.hpp.html#L70">line 70</a><br>Within <code>( p.empty() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;dynamic_open: failed to map the dependency closure&quot;)</code></td><td><a href="../../source/dynamic/call.hpp.html#L87">line 87</a><br>Within <code>( !root || st.failed )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;dynamic_open: relocation failed&quot;)</code></td><td><a href="../../source/dynamic/call.hpp.html#L92">line 92</a><br>Within <code>( !__relocate_closure(root) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="flags.hpp.html#f-c4736d77cb423cd3">has</a>, <a href="debug.hpp.html#f-0bb20610b56156f8">elf::dl::__debug_publish</a>, <a href="debug.hpp.html#f-35e748c2d0093ce3">elf::dl::__debug_rebuild_chain</a>.</p></section><section class="function-entry" id="f-182cc9a88c578aef"><h3><code>micron::dynamic_open(const T &amp;name, rtld flags = rtld::now | rtld::local, dynamic_options options = {})</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L106">line 106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string T&gt;
+inline dynamic_t
+dynamic_open(const T &amp;name, rtld flags = rtld::now | rtld::local, dynamic_options options = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;name</code></li><li><code>rtld flags = rtld::now | rtld::local</code></li><li><code>dynamic_options options = {}</code></li></ul><h4>Effects</h4><p>Returns <code>dynamic_open(name.c_str(), flags, options)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string T&gt;
+inline dynamic_t
+dynamic_open(const T &amp;name, rtld flags = rtld::now | rtld::local, dynamic_options options = {})
+{
+  return dynamic_open(name.c_str(), flags, options);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dynamic_open(name.c_str(), flags, options)</code></td><td><a href="../../source/dynamic/call.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="call.hpp.html#f-3417670272454211">dynamic_open</a>.</p></section><section class="function-entry" id="f-041f01438167d942"><h3><code>micron::dynamic_finalize(dynamic_t d) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+dynamic_finalize(dynamic_t d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+dynamic_finalize(dynamic_t d) noexcept
+{
+  using namespace micron::elf::dl;
+  micron::lock_guard __lk(__registry_mtx);
+  auto *m = __slot_at(d.index, d.generation);
+  if ( !m ) return false;
+  __finalize_closure(m);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/call.hpp.html#L118">line 118</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/dynamic/call.hpp.html#L120">line 120</a></td></tr></tbody></table></section><section class="function-entry" id="f-0a03f71059f49f3f"><h3><code>micron::dynamic_close(dynamic_t d) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L124">line 124</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+dynamic_close(dynamic_t d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+dynamic_close(dynamic_t d) noexcept
+{
+  using namespace micron::elf::dl;
+  __err_clear();
+  if ( d.generation == 0xffffffffu ) return false;
+
+  micron::lock_guard __lk(__registry_mtx);
+  dl_module *m = __slot_at(d.index, d.generation);
+  if ( !m ) {
+    __err_set_once(&quot;dynamic_close: stale or invalid handle&quot;);
+    return false;
+  }
+  const bool ok = __close_module(m);
+
+  __debug_publish(rt_delete);
+  __debug_rebuild_chain();
+  __debug_publish(rt_consistent);
+  return ok;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/call.hpp.html#L128">line 128</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/call.hpp.html#L134">line 134</a></td></tr><tr class="t-dsc"><td><code>ok</code></td><td><a href="../../source/dynamic/call.hpp.html#L141">line 141</a></td></tr></tbody></table></section><section class="function-entry" id="f-0bdccfe27c33ff44"><h3><code>micron::dynamic_sym(dynamic_t d, const char *name) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L145">line 145</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void *
+dynamic_sym(dynamic_t d, const char *name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void *
+dynamic_sym(dynamic_t d, const char *name) noexcept
+{
+  using namespace micron::elf::dl;
+  __err_clear();
+  if ( !name || !*name ) return nullptr;
+
+  micron::lock_guard __lk(__registry_mtx);
+
+  if ( d == dynamic_default ) {
+    if ( found_t f = __lookup_global(name, nullptr) ) return f.addr;
+    return __host_resolve(name);
+  }
+
+  if ( d == dynamic_next ) {
+
+    dl_module *caller = __find_by_address(__builtin_return_address(0));
+    if ( !caller ) {
+      __err_set_once(&quot;dynamic_sym: RTLD_NEXT called from outside any loaded module&quot;);
+      return nullptr;
+    }
+    if ( found_t f = __lookup_global(name, nullptr, caller-&gt;load_order) ) return f.addr;
+    __err_set_once(&quot;dynamic_sym: no next definition&quot;, name);
+    return nullptr;
+  }
+
+  dl_module *m = __slot_at(d.index, d.generation);
+  if ( !m ) {
+    __err_set_once(&quot;dynamic_sym: stale or invalid handle&quot;);
+    return nullptr;
+  }
+
+  if ( found_t f = __lookup_closure(m, name, nullptr) ) return f.addr;
+  __err_set_once(&quot;dynamic_sym: symbol not found&quot;, name);
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/call.hpp.html#L149">line 149</a></td></tr><tr class="t-dsc"><td><code>f.addr</code></td><td><a href="../../source/dynamic/call.hpp.html#L154">line 154</a></td></tr><tr class="t-dsc"><td><code>__host_resolve(name)</code></td><td><a href="../../source/dynamic/call.hpp.html#L155">line 155</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/call.hpp.html#L163">line 163</a></td></tr><tr class="t-dsc"><td><code>f.addr</code></td><td><a href="../../source/dynamic/call.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/call.hpp.html#L167">line 167</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/call.hpp.html#L173">line 173</a></td></tr><tr class="t-dsc"><td><code>f.addr</code></td><td><a href="../../source/dynamic/call.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/call.hpp.html#L178">line 178</a></td></tr></tbody></table></section><section class="function-entry" id="f-56d0ee0cd97d99dc"><h3><code>micron::dynamic_sym(dynamic_t d, const S &amp;name) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L183">line 183</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S&gt;
+inline void *
+dynamic_sym(dynamic_t d, const S &amp;name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li><li><code>const S &amp;name</code></li></ul><h4>Effects</h4><p>Returns <code>dynamic_sym(d, name.c_str())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S&gt;
+inline void *
+dynamic_sym(dynamic_t d, const S &amp;name) noexcept
+{
+  return dynamic_sym(d, name.c_str());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dynamic_sym(d, name.c_str())</code></td><td><a href="../../source/dynamic/call.hpp.html#L185">line 185</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="call.hpp.html#f-0bdccfe27c33ff44">dynamic_sym</a>.</p></section><section class="function-entry" id="f-e8c5beec425f0fb0"><h3><code>micron::dynamic_sym_as(dynamic_t d, const char *name) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L190">line 190</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+inline Fn
+dynamic_sym_as(dynamic_t d, const char *name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;Fn&gt;(dynamic_sym(d, name))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+inline Fn
+dynamic_sym_as(dynamic_t d, const char *name) noexcept
+{
+  return reinterpret_cast&lt;Fn&gt;(dynamic_sym(d, name));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;Fn&gt;(dynamic_sym(d, name))</code></td><td><a href="../../source/dynamic/call.hpp.html#L192">line 192</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="call.hpp.html#f-0bdccfe27c33ff44">dynamic_sym</a>.</p></section><section class="function-entry" id="f-74be0a7ce5d539b3"><h3><code>micron::dynamic_owner(const void *addr) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L196">line 196</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline dynamic_t
+dynamic_owner(const void *addr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *addr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline dynamic_t
+dynamic_owner(const void *addr) noexcept
+{
+  using namespace micron::elf::dl;
+  micron::lock_guard __lk(__registry_mtx);
+  dl_module *m = __find_by_address(addr);
+  return m ? dynamic_t{ m-&gt;index, m-&gt;generation } : dynamic_t{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m ? dynamic_t{ m-&gt;index, m-&gt;generation } : dynamic_t{}</code></td><td><a href="../../source/dynamic/call.hpp.html#L201">line 201</a></td></tr></tbody></table></section><section class="function-entry" id="f-02067f48d8404899"><h3><code>micron::dynamic_path(dynamic_t d) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L205">line 205</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+dynamic_path(dynamic_t d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+dynamic_path(dynamic_t d) noexcept
+{
+  using namespace micron::elf::dl;
+  micron::lock_guard __lk(__registry_mtx);
+  dl_module *m = __slot_at(d.index, d.generation);
+  return m ? m-&gt;mod.path.c_str() : nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m ? m-&gt;mod.path.c_str() : nullptr</code></td><td><a href="../../source/dynamic/call.hpp.html#L210">line 210</a></td></tr></tbody></table></section><section class="function-entry" id="f-23d0e3ade6699388"><h3><code>micron::dynamic_soname(dynamic_t d) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L214">line 214</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+dynamic_soname(dynamic_t d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+dynamic_soname(dynamic_t d) noexcept
+{
+  using namespace micron::elf::dl;
+  micron::lock_guard __lk(__registry_mtx);
+  dl_module *m = __slot_at(d.index, d.generation);
+  return m ? m-&gt;mod.dyn.soname : nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m ? m-&gt;mod.dyn.soname : nullptr</code></td><td><a href="../../source/dynamic/call.hpp.html#L219">line 219</a></td></tr></tbody></table></section><section class="function-entry" id="f-5f2c6b3e468462ab"><h3><code>micron::dynamic_refcount(dynamic_t d) noexcept</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L223">line 223</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u32
+dynamic_refcount(dynamic_t d) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u32
+dynamic_refcount(dynamic_t d) noexcept
+{
+  using namespace micron::elf::dl;
+  micron::lock_guard __lk(__registry_mtx);
+  dl_module *m = __slot_at(d.index, d.generation);
+  return m ? m-&gt;refcount : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m ? m-&gt;refcount : 0</code></td><td><a href="../../source/dynamic/call.hpp.html#L228">line 228</a></td></tr></tbody></table></section><section class="function-entry" id="f-6d163d27fa104447"><h3><code>micron::dynamic_call(dynamic_t d, const char *name, Args... args)</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L233">line 233</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class R = void, class... Args&gt;
+inline R
+dynamic_call(dynamic_t d, const char *name, Args... args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li><li><code>const char *name</code></li><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class R = void, class... Args&gt;
+inline R
+dynamic_call(dynamic_t d, const char *name, Args... args)
+{
+  using fn_t = R (*)(Args...);
+  fn_t fn = dynamic_sym_as&lt;fn_t&gt;(d, name);
+  if ( !fn ) exc&lt;except::library_error&gt;(&quot;dynamic_call: symbol not found&quot;);
+  if constexpr ( micron::is_void_v&lt;R&gt; ) {
+    fn(static_cast&lt;Args&gt;(args)...);
+    return;
+  } else {
+    return fn(static_cast&lt;Args&gt;(args)...);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/dynamic/call.hpp.html#L240">line 240</a></td></tr><tr class="t-dsc"><td><code>fn(static_cast&lt;Args&gt;(args)...)</code></td><td><a href="../../source/dynamic/call.hpp.html#L242">line 242</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;dynamic_call: symbol not found&quot;)</code></td><td><a href="../../source/dynamic/call.hpp.html#L237">line 237</a><br>Within <code>( !fn )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="call.hpp.html#f-e8c5beec425f0fb0">dynamic_sym_as&lt;fn_t&gt;</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-2bd86f8e5937e54e"><h3><code>micron::dynamic_call(dynamic_t d, const S &amp;name, Args... args)</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L248">line 248</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class R = void, is_string S, class... Args&gt;
+inline R
+dynamic_call(dynamic_t d, const S &amp;name, Args... args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dynamic_t d</code></li><li><code>const S &amp;name</code></li><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Returns <code>dynamic_call&lt;R&gt;(d, name.c_str(), static_cast&lt;Args&gt;(args)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class R = void, is_string S, class... Args&gt;
+inline R
+dynamic_call(dynamic_t d, const S &amp;name, Args... args)
+{
+  return dynamic_call&lt;R&gt;(d, name.c_str(), static_cast&lt;Args&gt;(args)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dynamic_call&lt;R&gt;(d, name.c_str(), static_cast&lt;Args&gt;(args)...)</code></td><td><a href="../../source/dynamic/call.hpp.html#L250">line 250</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="call.hpp.html#f-6d163d27fa104447">dynamic_call&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-9030c76c3d802b1a"><h3><code>micron::dynamic_call(const char *soname_or_path, const char *name, Args... args)</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L255">line 255</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class R = void, class... Args&gt;
+inline R
+dynamic_call(const char *soname_or_path, const char *name, Args... args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *soname_or_path</code></li><li><code>const char *name</code></li><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class R = void, class... Args&gt;
+inline R
+dynamic_call(const char *soname_or_path, const char *name, Args... args)
+{
+  dynamic_t d = dynamic_open(soname_or_path);
+  return dynamic_call&lt;R&gt;(d, name, static_cast&lt;Args&gt;(args)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dynamic_call&lt;R&gt;(d, name, static_cast&lt;Args&gt;(args)...)</code></td><td><a href="../../source/dynamic/call.hpp.html#L258">line 258</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="call.hpp.html#f-3417670272454211">dynamic_open</a>, <a href="call.hpp.html#f-6d163d27fa104447">dynamic_call&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-5fc7461a63a3175d"><h3><code>micron::dynamic_call(const T &amp;soname_or_path, const S &amp;name, Args... args)</code></h3><p>Defined in <code>dynamic/call.hpp</code>, <a href="../../source/dynamic/call.hpp.html#L263">line 263</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class R = void, is_string T, is_string S, class... Args&gt;
+inline R
+dynamic_call(const T &amp;soname_or_path, const S &amp;name, Args... args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;soname_or_path</code></li><li><code>const S &amp;name</code></li><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Returns <code>dynamic_call&lt;R&gt;(soname_or_path.c_str(), name.c_str(), static_cast&lt;Args&gt;(args)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class R = void, is_string T, is_string S, class... Args&gt;
+inline R
+dynamic_call(const T &amp;soname_or_path, const S &amp;name, Args... args)
+{
+  return dynamic_call&lt;R&gt;(soname_or_path.c_str(), name.c_str(), static_cast&lt;Args&gt;(args)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dynamic_call&lt;R&gt;(soname_or_path.c_str(), name.c_str(), static_cast&lt;Args&gt;(args)...)</code></td><td><a href="../../source/dynamic/call.hpp.html#L265">line 265</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="call.hpp.html#f-6d163d27fa104447">dynamic_call&lt;R&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

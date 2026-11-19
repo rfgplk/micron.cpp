@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/hash/meowhash.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/hash/meowhash.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/hashing.html">Hashing</a></div><p>Defined in header <code>&lt;micron/hash/meowhash.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/hash/meowhash.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-bb9236c52d869fd9">micron::hashes::meowhash128(const byte *data, usize sz) noexcept</a></td><td>function; line 296<br><small><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-4b8b27ca0759475d">micron::hashes::meowhash128(const byte *data, u64 seed, usize sz) noexcept</a></td><td>function; line 305<br><small><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-b4a3d50059d75e9b">micron::hashes::meowhash64(const byte *data, usize sz) noexcept</a></td><td>function; line 315<br><small><code>#if defined(__micron_arch_x86_any)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-55b6e80c79fa8650">micron::hashes::meowhash64(const byte *data, u64 seed, usize sz) noexcept</a></td><td>function; line 322<br><small><code>#if defined(__micron_arch_x86_any)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-bb9236c52d869fd9"><h3><code>micron::hashes::meowhash128(const byte *data, usize sz) noexcept</code></h3><p>Defined in <code>hash/meowhash.hpp</code>, <a href="../../source/hash/meowhash.hpp.html#L296">line 296</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Seed = 0&gt;
+[[gnu::target(&quot;aes,sse4.1&quot;)]] inline micron::pair&lt;u64, u64&gt;
+meowhash128(const byte *data, usize sz) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *data</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Seed = 0&gt;
+[[gnu::target(&quot;aes,sse4.1&quot;)]] inline micron::pair&lt;u64, u64&gt;
+meowhash128(const byte *data, usize sz) noexcept
+{
+  alignas(16) u8 seed128[128];
+  __meow_make_seed(seed128, Seed);
+  __m128i h = __meow_hash(seed128, sz, data);
+  return { (u64)_mm_extract_epi64(h, 0), (u64)_mm_extract_epi64(h, 1) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ (u64)_mm_extract_epi64(h, 0), (u64)_mm_extract_epi64(h, 1) }</code></td><td><a href="../../source/hash/meowhash.hpp.html#L301">line 301</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meowhash.hpp.html#f-caeeee618fdf64c6">__meow_make_seed</a>, <a href="meowhash.hpp.html#f-9c6b8440342661b4">__meow_hash</a>.</p></section><section class="function-entry" id="f-4b8b27ca0759475d"><h3><code>micron::hashes::meowhash128(const byte *data, u64 seed, usize sz) noexcept</code></h3><p>Defined in <code>hash/meowhash.hpp</code>, <a href="../../source/hash/meowhash.hpp.html#L305">line 305</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::target(&quot;aes,sse4.1&quot;)]] inline micron::pair&lt;u64, u64&gt;
+meowhash128(const byte *data, u64 seed, usize sz) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *data</code></li><li><code>u64 seed</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::target(&quot;aes,sse4.1&quot;)]] inline micron::pair&lt;u64, u64&gt;
+meowhash128(const byte *data, u64 seed, usize sz) noexcept
+{
+  alignas(16) u8 seed128[128];
+  __meow_make_seed(seed128, seed);
+  __m128i h = __meow_hash(seed128, sz, data);
+  return { (u64)_mm_extract_epi64(h, 0), (u64)_mm_extract_epi64(h, 1) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ (u64)_mm_extract_epi64(h, 0), (u64)_mm_extract_epi64(h, 1) }</code></td><td><a href="../../source/hash/meowhash.hpp.html#L310">line 310</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meowhash.hpp.html#f-caeeee618fdf64c6">__meow_make_seed</a>, <a href="meowhash.hpp.html#f-9c6b8440342661b4">__meow_hash</a>.</p></section><section class="function-entry" id="f-b4a3d50059d75e9b"><h3><code>micron::hashes::meowhash64(const byte *data, usize sz) noexcept</code></h3><p>Defined in <code>hash/meowhash.hpp</code>, <a href="../../source/hash/meowhash.hpp.html#L315">line 315</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Seed = 0&gt;
+[[gnu::target(&quot;aes,sse4.1&quot;)]] inline u64
+meowhash64(const byte *data, usize sz) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *data</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Seed = 0&gt;
+[[gnu::target(&quot;aes,sse4.1&quot;)]] inline u64
+meowhash64(const byte *data, usize sz) noexcept
+{
+  auto h = meowhash128&lt;Seed&gt;(data, sz);
+  return h.a ^ h.b;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>h.a ^ h.b</code></td><td><a href="../../source/hash/meowhash.hpp.html#L318">line 318</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meowhash.hpp.html#f-bb9236c52d869fd9">meowhash128&lt;Seed&gt;</a>.</p></section><section class="function-entry" id="f-55b6e80c79fa8650"><h3><code>micron::hashes::meowhash64(const byte *data, u64 seed, usize sz) noexcept</code></h3><p>Defined in <code>hash/meowhash.hpp</code>, <a href="../../source/hash/meowhash.hpp.html#L322">line 322</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::target(&quot;aes,sse4.1&quot;)]] inline u64
+meowhash64(const byte *data, u64 seed, usize sz) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *data</code></li><li><code>u64 seed</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::target(&quot;aes,sse4.1&quot;)]] inline u64
+meowhash64(const byte *data, u64 seed, usize sz) noexcept
+{
+  auto h = meowhash128(data, seed, sz);
+  return h.a ^ h.b;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>h.a ^ h.b</code></td><td><a href="../../source/hash/meowhash.hpp.html#L325">line 325</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meowhash.hpp.html#f-bb9236c52d869fd9">meowhash128</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-9c6b8440342661b4"><h3><code>micron::hashes::__meow_hash(const void *Seed128Init, usize Len, const void *SourceInit) noexcept</code></h3><p>Defined in <code>hash/meowhash.hpp</code>, <a href="../../source/hash/meowhash.hpp.html#L111">line 111</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::target(&quot;aes,sse4.1&quot;)]] static inline __m128i
+__meow_hash(const void *Seed128Init, usize Len, const void *SourceInit) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *Seed128Init</code></li><li><code>usize Len</code></li><li><code>const void *SourceInit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::target(&quot;aes,sse4.1&quot;)]] static inline __m128i
+__meow_hash(const void *Seed128Init, usize Len, const void *SourceInit) noexcept
+{
+  __m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7;            // hash accumulation lanes
+  __m128i xmm8, xmm9, xmm10, xmm11, xmm12, xmm13, xmm14, xmm15;      // residual / length ingests
+
+  const u8 *rax = (const u8 *)SourceInit;
+  const u8 *rcx = (const u8 *)Seed128Init;
+
+  // seed the eight hash registers
+  movdqu(xmm0, rcx + 0x00);
+  movdqu(xmm1, rcx + 0x10);
+  movdqu(xmm2, rcx + 0x20);
+  movdqu(xmm3, rcx + 0x30);
+  movdqu(xmm4, rcx + 0x40);
+  movdqu(xmm5, rcx + 0x50);
+  movdqu(xmm6, rcx + 0x60);
+  movdqu(xmm7, rcx + 0x70);
+
+  // hash all full 256-byte blocks
+  usize BlockCount = (Len &gt;&gt; 8);
+  if ( BlockCount &gt; MEOW_PREFETCH_LIMIT ) {
+    while ( BlockCount-- ) {
+      prefetcht0(rax + MEOW_PREFETCH + 0x00);
+      prefetcht0(rax + MEOW_PREFETCH + 0x40);
+      prefetcht0(rax + MEOW_PREFETCH + 0x80);
+      prefetcht0(rax + MEOW_PREFETCH + 0xc0);
+
+      MEOW_MIX(xmm0, xmm4, xmm6, xmm1, xmm2, rax + 0x00);
+      MEOW_MIX(xmm1, xmm5, xmm7, xmm2, xmm3, rax + 0x20);
+      MEOW_MIX(xmm2, xmm6, xmm0, xmm3, xmm4, rax + 0x40);
+      MEOW_MIX(xmm3, xmm7, xmm1, xmm4, xmm5, rax + 0x60);
+      MEOW_MIX(xmm4, xmm0, xmm2, xmm5, xmm6, rax + 0x80);
+      MEOW_MIX(xmm5, xmm1, xmm3, xmm6, xmm7, rax + 0xa0);
+      MEOW_MIX(xmm6, xmm2, xmm4, xmm7, xmm0, rax + 0xc0);
+      MEOW_MIX(xmm7, xmm3, xmm5, xmm0, xmm1, rax + 0xe0);
+
+      rax += 0x100;
+    }
+  } else {
+    while ( BlockCount-- ) {
+      MEOW_MIX(xmm0, xmm4, xmm6, xmm1, xmm2, rax + 0x00);
+      MEOW_MIX(xmm1, xmm5, xmm7, xmm2, xmm3, rax + 0x20);
+      MEOW_MIX(xmm2, xmm6, xmm0, xmm3, xmm4, rax + 0x40);
+      MEOW_MIX(xmm3, xmm7, xmm1, xmm4, xmm5, rax + 0x60);
+      MEOW_MIX(xmm4, xmm0, xmm2, xmm5, xmm6, rax + 0x80);
+      MEOW_MIX(xmm5, xmm1, xmm3, xmm6, xmm7, rax + 0xa0);
+      MEOW_MIX(xmm6, xmm2, xmm4, xmm7, xmm0, rax + 0xc0);
+      MEOW_MIX(xmm7, xmm3, xmm5, xmm0, xmm1, rax + 0xe0);
+
+      rax += 0x100;
+    }
+  }
+
+  // load any less-than-32-byte residual
+  pxor_clear(xmm9, xmm9);
+  pxor_clear(xmm11, xmm11);
+
+  // the part that is _not_ 16-byte aligned
+  const u8 *Last = (const u8 *)SourceInit + (Len &amp; ~(usize)0xf);
+  unsigned Len8 = (Len &amp; 0xf);
+  if ( Len8 ) {
+    movdqu(xmm8, &amp;__meow_mask_len[0x10 - Len8]);
+
+    const u8 *LastOk = (const u8 *)((((usize)(((const u8 *)SourceInit) + Len - 1)) | (MEOW_PAGESIZE - 1)) - 16);
+    int Align = (Last &gt; LastOk) ? ((int)(usize)Last) &amp; 0xf : 0;
+    movdqu(xmm10, &amp;__meow_shift_adjust[Align]);
+    movdqu(xmm9, Last - Align);
+    pshufb(xmm9, xmm10);
+
+    // and off the extra bytes (jeffr)
+    pand(xmm9, xmm8);
+  }
+
+  // the part that _is_ 16-byte aligned
+  if ( Len &amp; 0x10 ) {
+    xmm11 = xmm9;
+    movdqu(xmm9, Last - 0x10);
+  }
+
+  // construct the residual and length ingests
+  xmm8 = xmm9;
+  xmm10 = xmm9;
+  palignr(xmm8, xmm11, 15);
+  palignr(xmm10, xmm11, 1);
+
+  // room for a 128-bit + 64-bit nonce here; left zeroed by design
+  pxor_clear(xmm12, xmm12);
+  pxor_clear(xmm13, xmm13);
+  pxor_clear(xmm14, xmm14);
+  movq(xmm15, Len);
+  palignr(xmm12, xmm15, 15);
+  palignr(xmm14, xmm15, 1);
+
+  // always mix the less-than-32-byte residual, even if empty, to keep the pattern
+  MEOW_MIX_REG(xmm0, xmm4, xmm6, xmm1, xmm2, xmm8, xmm9, xmm10, xmm11);
+
+  // append the length, to avoid problems with the 32-byte padding
+  MEOW_MIX_REG(xmm1, xmm5, xmm7, xmm2, xmm3, xmm12, xmm13, xmm14, xmm15);
+
+  // hash all full 32-byte blocks
+  unsigned LaneCount = (Len &gt;&gt; 5) &amp; 0x7;
+  if ( LaneCount == 0 ) goto MixDown;
+  MEOW_MIX(xmm2, xmm6, xmm0, xmm3, xmm4, rax + 0x00);
+  --LaneCount;
+  if ( LaneCount == 0 ) goto MixDown;
+  MEOW_MIX(xmm3, xmm7, xmm1, xmm4, xmm5, rax + 0x20);
+  --LaneCount;
+  if ( LaneCount == 0 ) goto MixDown;
+  MEOW_MIX(xmm4, xmm0, xmm2, xmm5, xmm6, rax + 0x40);
+  --LaneCount;
+  if ( LaneCount == 0 ) goto MixDown;
+  MEOW_MIX(xmm5, xmm1, xmm3, xmm6, xmm7, rax + 0x60);
+  --LaneCount;
+  if ( LaneCount == 0 ) goto MixDown;
+  MEOW_MIX(xmm6, xmm2, xmm4, xmm7, xmm0, rax + 0x80);
+  --LaneCount;
+  if ( LaneCount == 0 ) goto MixDown;
+  MEOW_MIX(xmm7, xmm3, xmm5, xmm0, xmm1, rax + 0xa0);
+  --LaneCount;
+  if ( LaneCount == 0 ) goto MixDown;
+  MEOW_MIX(xmm0, xmm4, xmm6, xmm1, xmm2, rax + 0xc0);
+  --LaneCount;
+
+  // mix the eight lanes down to one 128-bit hash
+MixDown:
+
+  MEOW_SHUFFLE(xmm0, xmm1, xmm2, xmm4, xmm5, xmm6);
+  MEOW_SHUFFLE(xmm1, xmm2, xmm3, xmm5, xmm6, xmm7);
+  MEOW_SHUFFLE(xmm2, xmm3, xmm4, xmm6, xmm7, xmm0);
+  MEOW_SHUFFLE(xmm3, xmm4, xmm5, xmm7, xmm0, xmm1);
+  MEOW_SHUFFLE(xmm4, xmm5, xmm6, xmm0, xmm1, xmm2);
+  MEOW_SHUFFLE(xmm5, xmm6, xmm7, xmm1, xmm2, xmm3);
+  MEOW_SHUFFLE(xmm6, xmm7, xmm0, xmm2, xmm3, xmm4);
+  MEOW_SHUFFLE(xmm7, xmm0, xmm1, xmm3, xmm4, xmm5);
+  MEOW_SHUFFLE(xmm0, xmm1, xmm2, xmm4, xmm5, xmm6);
+  MEOW_SHUFFLE(xmm1, xmm2, xmm3, xmm5, xmm6, xmm7);
+  MEOW_SHUFFLE(xmm2, xmm3, xmm4, xmm6, xmm7, xmm0);
+  MEOW_SHUFFLE(xmm3, xmm4, xmm5, xmm7, xmm0, xmm1);
+
+  paddq(xmm0, xmm2);
+  paddq(xmm1, xmm3);
+  paddq(xmm4, xmm6);
+  paddq(xmm5, xmm7);
+  pxor(xmm0, xmm1);
+  pxor(xmm4, xmm5);
+  paddq(xmm0, xmm4);
+
+  return xmm0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>xmm0</code></td><td><a href="../../source/hash/meowhash.hpp.html#L258">line 258</a></td></tr></tbody></table></section><section class="function-entry" id="f-caeeee618fdf64c6"><h3><code>micron::hashes::__meow_make_seed(u8 seed128[128], u64 seed) noexcept</code></h3><p>Defined in <code>hash/meowhash.hpp</code>, <a href="../../source/hash/meowhash.hpp.html#L281">line 281</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__meow_make_seed(u8 seed128[128], u64 seed) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 seed128[128]</code></li><li><code>u64 seed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__meow_make_seed(u8 seed128[128], u64 seed) noexcept
+{
+  micron::cbytecpy&lt;128&gt;(seed128, __meow_default_seed);
+  u64 w0;
+  micron::cbytecpy&lt;sizeof(u64)&gt;(&amp;w0, seed128 + 0);
+  w0 ^= seed;
+  micron::cbytecpy&lt;sizeof(u64)&gt;(seed128 + 0, &amp;w0);
+  u64 w1;
+  micron::cbytecpy&lt;sizeof(u64)&gt;(&amp;w1, seed128 + 8);
+  w1 ^= seed * 0x9E3779B97F4A7C15ull;
+  micron::cbytecpy&lt;sizeof(u64)&gt;(seed128 + 8, &amp;w1);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-c91312fd0690789c">micron::cbytecpy&lt;128&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-c91312fd0690789c">micron::cbytecpy&lt;sizeof(u64)&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

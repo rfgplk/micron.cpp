@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/gcd_base.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/gcd_base.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/gcd_base.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/gcd_base.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-621b44929fd47665">micron::math::mpn::gcd_11(limb_t u, limb_t v) noexcept</a></td><td>function; line 80</td></tr><tr class="t-dsc"><td><a href="#f-0fa8cf2c51c28ebf">micron::math::mpn::gcd_11_any(limb_t u, limb_t v) noexcept</a></td><td>function; line 94</td></tr><tr class="t-dsc"><td><a href="#f-76ebfc7334477c7a">micron::math::mpn::gcd_1(const limb_t *up, usize un, limb_t v) noexcept</a></td><td>function; line 106</td></tr><tr class="t-dsc"><td><a href="#f-d94dfc88276fad82">micron::math::mpn::gcd_22(limb_t &amp;g1, limb_t &amp;g0, limb_t u1, limb_t u0, limb_t v1, limb_t v0) noexcept</a></td><td>function; line 117</td></tr><tr class="t-dsc"><td><a href="#f-65754b4822661a7a">micron::math::mpn::gcd_22_any(limb_t &amp;g1, limb_t &amp;g0, limb_t u1, limb_t u0, limb_t v1, limb_t v0) noexcept</a></td><td>function; line 147</td></tr><tr class="t-dsc"><td><a href="#f-be3f139139dc3134">micron::math::mpn::gcd_binary_itch(usize un, usize vn) noexcept</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-98a15805ad016617">micron::math::mpn::gcd_binary(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept</a></td><td>function; line 195</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-621b44929fd47665"><h3><code>micron::math::mpn::gcd_11(limb_t u, limb_t v) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L80">line 80</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr limb_t
+gcd_11(limb_t u, limb_t v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t u</code></li><li><code>limb_t v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr limb_t
+gcd_11(limb_t u, limb_t v) noexcept
+{
+  while ( u != v ) {
+    const limb_t d = static_cast&lt;limb_t&gt;(u - v);      // wraps when u &lt; v
+    const limb_t mask = static_cast&lt;limb_t&gt;(static_cast&lt;limb_t&gt;(0) - static_cast&lt;limb_t&gt;(u &lt; v));
+    v = static_cast&lt;limb_t&gt;(v + (mask &amp; d));         // v &lt;- min(u, v)
+    u = static_cast&lt;limb_t&gt;((d ^ mask) - mask);      // u &lt;- |u - v|, nonzero and even
+    u = static_cast&lt;limb_t&gt;(u &gt;&gt; limb_ctz(u));       // odd again
+  }
+  return u;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>u</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L89">line 89</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="limb.hpp.html#f-c8b09d2b55dce299">limb_ctz</a>.</p></section><section class="function-entry" id="f-0fa8cf2c51c28ebf"><h3><code>micron::math::mpn::gcd_11_any(limb_t u, limb_t v) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L94">line 94</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr limb_t
+gcd_11_any(limb_t u, limb_t v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t u</code></li><li><code>limb_t v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr limb_t
+gcd_11_any(limb_t u, limb_t v) noexcept
+{
+  if ( u == 0 ) return v;
+  if ( v == 0 ) return u;
+  const usize zu = limb_ctz(u);
+  const usize zv = limb_ctz(v);
+  const usize k = zu &lt; zv ? zu : zv;
+  return static_cast&lt;limb_t&gt;(gcd_11(static_cast&lt;limb_t&gt;(u &gt;&gt; zu), static_cast&lt;limb_t&gt;(v &gt;&gt; zv)) &lt;&lt; k);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L97">line 97</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;limb_t&gt;(gcd_11(static_cast&lt;limb_t&gt;(u &gt;&gt; zu), static_cast&lt;limb_t&gt;(v &gt;&gt; zv)) &lt;&lt; k)</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L101">line 101</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="limb.hpp.html#f-c8b09d2b55dce299">limb_ctz</a>, <a href="gcd_base.hpp.html#f-621b44929fd47665">gcd_11</a>.</p></section><section class="function-entry" id="f-76ebfc7334477c7a"><h3><code>micron::math::mpn::gcd_1(const limb_t *up, usize un, limb_t v) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L106">line 106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr limb_t
+gcd_1(const limb_t *up, usize un, limb_t v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const limb_t *up</code></li><li><code>usize un</code></li><li><code>limb_t v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr limb_t
+gcd_1(const limb_t *up, usize un, limb_t v) noexcept
+{
+  un = normalize(up, un);
+  if ( un == 0 ) return v;
+  return gcd_11_any(v, mod_1(up, un, v));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L109">line 109</a></td></tr><tr class="t-dsc"><td><code>gcd_11_any(v, mod_1(up, un, v))</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L110">line 110</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="gcd_base.hpp.html#f-0fa8cf2c51c28ebf">gcd_11_any</a>, <a href="div.hpp.html#f-6d56e3644d721642">mod_1</a>.</p></section><section class="function-entry" id="f-d94dfc88276fad82"><h3><code>micron::math::mpn::gcd_22(limb_t &amp;g1, limb_t &amp;g0, limb_t u1, limb_t u0, limb_t v1, limb_t v0) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L117">line 117</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline constexpr void
+gcd_22(limb_t &amp;g1, limb_t &amp;g0, limb_t u1, limb_t u0, limb_t v1, limb_t v0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t &amp;g1</code></li><li><code>limb_t &amp;g0</code></li><li><code>limb_t u1</code></li><li><code>limb_t u0</code></li><li><code>limb_t v1</code></li><li><code>limb_t v0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline constexpr void
+gcd_22(limb_t &amp;g1, limb_t &amp;g0, limb_t u1, limb_t u0, limb_t v1, limb_t v0) noexcept
+{
+  while ( (u1 | v1) != 0 ) {
+    limb_t t1 = 0, t0 = 0;
+    if ( u1 &gt; v1 || (u1 == v1 &amp;&amp; u0 &gt;= v0) ) {
+      sub2(t1, t0, u1, u0, v1, v0);
+    } else {
+      sub2(t1, t0, v1, v0, u1, u0);
+      v1 = u1;
+      v0 = u0;      // v &lt;- min
+    }
+    if ( (t1 | t0) == 0 ) {
+      g1 = v1;
+      g0 = v0;
+      return;
+    }
+    if ( t0 == 0 ) {
+      t0 = static_cast&lt;limb_t&gt;(t1 &gt;&gt; limb_ctz(t1));
+      t1 = 0;
+    } else {
+      __rsh2(t1, t0, limb_ctz(t0));
+    }
+    u1 = t1;
+    u0 = t0;
+  }
+  g1 = 0;
+  g0 = gcd_11(u0, v0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L131">line 131</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="div.hpp.html#f-f2a0eaa939da78c4">sub2</a>, <a href="limb.hpp.html#f-c8b09d2b55dce299">limb_ctz</a>, <a href="gcd_base.hpp.html#f-5a01f3f1d77e193f">__rsh2</a>, <a href="gcd_base.hpp.html#f-621b44929fd47665">gcd_11</a>.</p></section><section class="function-entry" id="f-65754b4822661a7a"><h3><code>micron::math::mpn::gcd_22_any(limb_t &amp;g1, limb_t &amp;g0, limb_t u1, limb_t u0, limb_t v1, limb_t v0) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L147">line 147</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline constexpr void
+gcd_22_any(limb_t &amp;g1, limb_t &amp;g0, limb_t u1, limb_t u0, limb_t v1, limb_t v0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t &amp;g1</code></li><li><code>limb_t &amp;g0</code></li><li><code>limb_t u1</code></li><li><code>limb_t u0</code></li><li><code>limb_t v1</code></li><li><code>limb_t v0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline constexpr void
+gcd_22_any(limb_t &amp;g1, limb_t &amp;g0, limb_t u1, limb_t u0, limb_t v1, limb_t v0) noexcept
+{
+  if ( (u1 | u0) == 0 ) {
+    g1 = v1;
+    g0 = v0;
+    return;
+  }
+  if ( (v1 | v0) == 0 ) {
+    g1 = u1;
+    g0 = u0;
+    return;
+  }
+  const usize zu = (u0 != 0) ? limb_ctz(u0) : limb_bits + limb_ctz(u1);
+  const usize zv = (v0 != 0) ? limb_ctz(v0) : limb_bits + limb_ctz(v1);
+  const usize k = zu &lt; zv ? zu : zv;
+
+  if ( zu &gt;= limb_bits ) {
+    u0 = static_cast&lt;limb_t&gt;(u1 &gt;&gt; (zu - limb_bits));
+    u1 = 0;
+  } else if ( zu != 0 )
+    __rsh2(u1, u0, zu);
+  if ( zv &gt;= limb_bits ) {
+    v0 = static_cast&lt;limb_t&gt;(v1 &gt;&gt; (zv - limb_bits));
+    v1 = 0;
+  } else if ( zv != 0 )
+    __rsh2(v1, v0, zv);
+
+  gcd_22(g1, g0, u1, u0, v1, v0);
+
+  if ( k &gt;= limb_bits ) {
+    g1 = static_cast&lt;limb_t&gt;(g0 &lt;&lt; (k - limb_bits));
+    g0 = 0;
+  } else if ( k != 0 ) {
+    g1 = static_cast&lt;limb_t&gt;((g1 &lt;&lt; k) | (g0 &gt;&gt; (limb_bits - k)));
+    g0 = static_cast&lt;limb_t&gt;(g0 &lt;&lt; k);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L152">line 152</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L157">line 157</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="limb.hpp.html#f-c8b09d2b55dce299">limb_ctz</a>, <a href="gcd_base.hpp.html#f-5a01f3f1d77e193f">__rsh2</a>, <a href="gcd_base.hpp.html#f-d94dfc88276fad82">gcd_22</a>.</p></section><section class="function-entry" id="f-be3f139139dc3134"><h3><code>micron::math::mpn::gcd_binary_itch(usize un, usize vn) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+gcd_binary_itch(usize un, usize vn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize un</code></li><li><code>usize vn</code></li></ul><h4>Effects</h4><p>Returns <code>un + vn</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+gcd_binary_itch(usize un, usize vn) noexcept
+{
+  return un + vn;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>un + vn</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L191">line 191</a></td></tr></tbody></table></section><section class="function-entry" id="f-98a15805ad016617"><h3><code>micron::math::mpn::gcd_binary(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+gcd_binary(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *gp</code></li><li><code>const limb_t *up</code></li><li><code>usize un</code></li><li><code>const limb_t *vp</code></li><li><code>usize vn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+gcd_binary(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept
+{
+  limb_t *a = scratch;           // un
+  limb_t *b = scratch + un;      // vn
+  usize an = un, bn = vn;
+  copyi(a, up, un);
+  copyi(b, vp, vn);
+
+  const usize za = scan1(a, an);
+  const usize zb = scan1(b, bn);
+  const usize k = za &lt; zb ? za : zb;
+  an = __rshift_bits(a, an, za);
+  bn = __rshift_bits(b, bn, zb);
+
+  limb_t g1 = 0, g0 = 0;
+  usize gn = 0;
+  const limb_t *gsrc = nullptr;
+
+  for ( ;; ) {
+    if ( bn == 0 ) {
+      gsrc = a;
+      gn = an;
+      break;
+    }
+    if ( an == 0 ) {
+      gsrc = b;
+      gn = bn;
+      break;
+    }
+    if ( an &lt;= 2 &amp;&amp; bn &lt;= 2 ) {
+      gcd_22_any(g1, g0, an &gt; 1 ? a[1] : 0, a[0], bn &gt; 1 ? b[1] : 0, b[0]);
+      a[0] = g0;
+      a[1] = g1;
+      gsrc = a;
+      gn = normalize(a, 2);
+      break;
+    }
+    if ( bn == 1 ) {
+      a[0] = gcd_1(a, an, b[0]);
+      gsrc = a;
+      gn = a[0] != 0 ? 1u : 0u;
+      break;
+    }
+    const int c = cmp_var(a, an, b, bn);
+    if ( c == 0 ) {
+      gsrc = a;
+      gn = an;
+      break;
+    }
+    if ( c &lt; 0 ) {
+      limb_t *t = a;
+      a = b;
+      b = t;
+      const usize tn = an;
+      an = bn;
+      bn = tn;
+    }
+    (void)sub(a, a, an, b, bn);
+    an = normalize(a, an);
+    an = __rshift_bits(a, an, scan1(a, an));
+  }
+
+  if ( gn == 0 ) return 0;
+  return __lshift_bits(gp, gsrc, gn, k);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L257">line 257</a></td></tr><tr class="t-dsc"><td><code>__lshift_bits(gp, gsrc, gn, k)</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L258">line 258</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-f08d3d151b375ff9">scan1</a>, <a href="gcd_base.hpp.html#f-86a47797feda420c">__rshift_bits</a>, <a href="gcd_base.hpp.html#f-65754b4822661a7a">gcd_22_any</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="gcd_base.hpp.html#f-76ebfc7334477c7a">gcd_1</a>, <a href="mpn_core.hpp.html#f-5b9ddf144a5ad75c">cmp_var</a>, <a href="mpn_core.hpp.html#f-e845dacf002635a3">sub</a>, <a href="gcd_base.hpp.html#f-4fe73babc59c6046">__lshift_bits</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-86a47797feda420c"><h3><code>micron::math::mpn::__rshift_bits(limb_t *p, usize n, usize z) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L33">line 33</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+__rshift_bits(limb_t *p, usize n, usize z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *p</code></li><li><code>usize n</code></li><li><code>usize z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+__rshift_bits(limb_t *p, usize n, usize z) noexcept
+{
+  const usize w = z / limb_bits;
+  const usize b = z % limb_bits;
+  if ( w &gt;= n ) return 0;
+  if ( w != 0 ) {
+    copyi(p, p + w, n - w);      // ascending
+    n -= w;
+  }
+  if ( b != 0 ) (void)rshift(p, p, n, b);
+  return normalize(p, n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L37">line 37</a></td></tr><tr class="t-dsc"><td><code>normalize(p, n)</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L43">line 43</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-02a58341b2dd4fe8">rshift</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>.</p></section><section class="function-entry" id="f-4fe73babc59c6046"><h3><code>micron::math::mpn::__lshift_bits(limb_t *rp, const limb_t *ap, usize n, usize z) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L48">line 48</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+__lshift_bits(limb_t *rp, const limb_t *ap, usize n, usize z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize n</code></li><li><code>usize z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+__lshift_bits(limb_t *rp, const limb_t *ap, usize n, usize z) noexcept
+{
+  if ( n == 0 ) return 0;
+  const usize w = z / limb_bits;
+  const usize b = z % limb_bits;
+  usize len = n + w;
+  if ( b != 0 ) {
+    const limb_t hi = lshift(rp + w, ap, n, b);
+    if ( hi != 0 ) {
+      rp[len] = hi;
+      ++len;
+    }
+  } else {
+    copyd(rp + w, ap, n);      // descending
+  }
+  if ( w != 0 ) zero(rp, w);
+  return normalize(rp, len);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L50">line 50</a></td></tr><tr class="t-dsc"><td><code>normalize(rp, len)</code></td><td><a href="../../../source/math/arbint/gcd_base.hpp.html#L64">line 64</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-81cf2db0ef2efc0e">lshift</a>, <a href="mpn_core.hpp.html#f-e7664b83bbca8f36">copyd</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>.</p></section><section class="function-entry" id="f-5a01f3f1d77e193f"><h3><code>micron::math::mpn::__rsh2(limb_t &amp;h, limb_t &amp;l, usize c) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_base.hpp</code>, <a href="../../../source/math/arbint/gcd_base.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline constexpr void
+__rsh2(limb_t &amp;h, limb_t &amp;l, usize c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t &amp;h</code></li><li><code>limb_t &amp;l</code></li><li><code>usize c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline constexpr void
+__rsh2(limb_t &amp;h, limb_t &amp;l, usize c) noexcept
+{
+  l = static_cast&lt;limb_t&gt;((l &gt;&gt; c) | (h &lt;&lt; (limb_bits - c)));
+  h = static_cast&lt;limb_t&gt;(h &gt;&gt; c);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

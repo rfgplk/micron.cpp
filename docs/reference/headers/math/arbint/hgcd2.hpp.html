@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/hgcd2.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/hgcd2.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/hgcd2.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/hgcd2.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-54334754663c5b81">micron::math::mpn::mat1</code></td><td>struct; line 36</td></tr><tr class="t-dsc"><td><code id="s-57369ea3a3edbdc6">micron::math::mpn::mat1::u00</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-ce3ac7325b0b3109">micron::math::mpn::mat1::u01</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-526955ea61d1df10">micron::math::mpn::mat1::u10</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-662a65b1ee851f99">micron::math::mpn::mat1::u11</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><a href="#f-2744f19fe70c5608">micron::math::mpn::mat1_identity() noexcept</a></td><td>function; line 41</td></tr><tr class="t-dsc"><td><a href="#f-9bb504295dd5c3cb">micron::math::mpn::hgcd2(mat1 &amp;m, limb_t A, limb_t B) noexcept</a></td><td>function; line 48</td></tr><tr class="t-dsc"><td><a href="#f-92e327f936926b61">micron::math::mpn::hgcd2_w2(mat1 &amp;m, limb_t ah, limb_t al, limb_t bh, limb_t bl) noexcept</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-fe02b444cad2b131">micron::math::mpn::hgcd2_sel(mat1 &amp;m, limb_t ah, limb_t al, limb_t bh, limb_t bl) noexcept</a></td><td>function; line 212</td></tr><tr class="t-dsc"><td><a href="#f-64aa1ddcdc8d8c96">micron::math::mpn::hgcd2_ext(mat1 &amp;m, mat1 &amp;nm, limb_t A, limb_t B) noexcept</a></td><td>function; line 224</td></tr><tr class="t-dsc"><td><a href="#f-602eb43c8ee2227b">micron::math::mpn::mat1_mul_vector(const mat1 &amp;nm, limb_t *rp, limb_t *sp, const limb_t *ap, const limb_t *bp, usize n) noexcept</a></td><td>function; line 270</td></tr><tr class="t-dsc"><td><a href="#f-aaf9bbe45c7c7e76">micron::math::mpn::mat1_mul_inverse_vector(const mat1 &amp;m, limb_t *rp, limb_t *sp, const limb_t *ap, const limb_t *bp, usize n, usize &amp;rn) noexcept</a></td><td>function; line 289</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-2744f19fe70c5608"><h3><code>micron::math::mpn::mat1_identity() noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L41">line 41</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr mat1
+mat1_identity() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>mat1{ 1, 0, 0, 1 }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr mat1
+mat1_identity() noexcept
+{
+  return mat1{ 1, 0, 0, 1 };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mat1{ 1, 0, 0, 1 }</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L43">line 43</a></td></tr></tbody></table></section><section class="function-entry" id="f-9bb504295dd5c3cb"><h3><code>micron::math::mpn::hgcd2(mat1 &amp;m, limb_t A, limb_t B) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr bool
+hgcd2(mat1 &amp;m, limb_t A, limb_t B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat1 &amp;m</code></li><li><code>limb_t A</code></li><li><code>limb_t B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr bool
+hgcd2(mat1 &amp;m, limb_t A, limb_t B) noexcept
+{
+  m = mat1_identity();
+  if ( B == 0 ) return false;
+
+  usize steps = 0;
+  for ( ;; ) {
+    // reduce A by B
+    // (b&#x27;s lower bound must be strictly positive or nothing can be divided by it)
+    if ( B &lt;= m.u10 ) break;
+
+    // WARNING: UPPER BOUNDS CAN CARRY OUT OF A LIMB; SIGFPE
+    const limb_t bhi = static_cast&lt;limb_t&gt;(B + m.u00);
+    if ( bhi &lt; B ) break;
+    const limb_t q1 = static_cast&lt;limb_t&gt;((A - m.u01) / bhi);
+    if ( q1 == 0 ) break;
+    const limb_t ahi = static_cast&lt;limb_t&gt;(A + m.u11);
+    if ( ahi &lt; A ) break;
+    if ( q1 != static_cast&lt;limb_t&gt;(ahi / (B - m.u10)) ) break;
+    m.u01 = static_cast&lt;limb_t&gt;(m.u01 + q1 * m.u00);
+    m.u11 = static_cast&lt;limb_t&gt;(m.u11 + q1 * m.u10);
+    A = static_cast&lt;limb_t&gt;(A - q1 * B);
+    ++steps;
+
+    // and now reduce B by A, with the roles of the two bound pairs exchanged
+    if ( A &lt;= m.u01 ) break;
+    const limb_t ahi2 = static_cast&lt;limb_t&gt;(A + m.u11);
+    if ( ahi2 &lt; A ) break;
+    const limb_t q2 = static_cast&lt;limb_t&gt;((B - m.u10) / ahi2);
+    if ( q2 == 0 ) break;
+    const limb_t bhi2 = static_cast&lt;limb_t&gt;(B + m.u00);
+    if ( bhi2 &lt; B ) break;
+    if ( q2 != static_cast&lt;limb_t&gt;(bhi2 / (A - m.u01)) ) break;
+    m.u00 = static_cast&lt;limb_t&gt;(m.u00 + q2 * m.u01);
+    m.u10 = static_cast&lt;limb_t&gt;(m.u10 + q2 * m.u11);
+    B = static_cast&lt;limb_t&gt;(B - q2 * A);
+    ++steps;
+  }
+  return steps != 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L51">line 51</a></td></tr><tr class="t-dsc"><td><code>steps != 0</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L86">line 86</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd2.hpp.html#f-2744f19fe70c5608">mat1_identity</a>.</p></section><section class="function-entry" id="f-92e327f936926b61"><h3><code>micron::math::mpn::hgcd2_w2(mat1 &amp;m, limb_t ah, limb_t al, limb_t bh, limb_t bl) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr bool
+hgcd2_w2(mat1 &amp;m, limb_t ah, limb_t al, limb_t bh, limb_t bl) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat1 &amp;m</code></li><li><code>limb_t ah</code></li><li><code>limb_t al</code></li><li><code>limb_t bh</code></li><li><code>limb_t bl</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr bool
+hgcd2_w2(mat1 &amp;m, limb_t ah, limb_t al, limb_t bh, limb_t bl) noexcept
+{
+  m = mat1_identity();
+
+  usize steps = 0;
+  for ( ;; ) {
+    if ( bh == 0 ) break;
+    limb_t ra = ah, ra0 = al;
+    const limb_t q1 = __div2(ra, ra0, bh, bl);
+    if ( q1 == 0 ) break;
+
+    limb_t u01n = 0, u11n = 0;
+    if ( !__mat_step(u01n, m.u01, q1, m.u00) ) break;
+    if ( !__mat_step(u11n, m.u11, q1, m.u10) ) break;
+    if ( !__w2_valid(bh, bl, ra, ra0, u01n, m.u10, u11n) ) break;
+
+    m.u01 = u01n;
+    m.u11 = u11n;
+    ah = ra;
+    al = ra0;
+    ++steps;
+
+    if ( ah == 0 ) break;
+    limb_t rb = bh, rb0 = bl;
+    const limb_t q2 = __div2(rb, rb0, ah, al);
+    if ( q2 == 0 ) break;
+
+    limb_t u00n = 0, u10n = 0;
+    if ( !__mat_step(u00n, m.u00, q2, m.u01) ) break;
+    if ( !__mat_step(u10n, m.u10, q2, m.u11) ) break;
+    if ( !__w2_valid(ah, al, rb, rb0, u10n, u00n, m.u01) ) break;
+
+    m.u00 = u00n;
+    m.u10 = u10n;
+    bh = rb;
+    bl = rb0;
+    ++steps;
+  }
+  return steps != 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>steps != 0</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L195">line 195</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd2.hpp.html#f-2744f19fe70c5608">mat1_identity</a>, <a href="hgcd2.hpp.html#f-e4ffa360f568d907">__div2</a>, <a href="hgcd2.hpp.html#f-89839b9552dfdd61">__mat_step</a>, <a href="hgcd2.hpp.html#f-014b15db80d7126d">__w2_valid</a>.</p></section><section class="function-entry" id="f-fe02b444cad2b131"><h3><code>micron::math::mpn::hgcd2_sel(mat1 &amp;m, limb_t ah, limb_t al, limb_t bh, limb_t bl) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L212">line 212</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr bool
+hgcd2_sel(mat1 &amp;m, limb_t ah, limb_t al, limb_t bh, limb_t bl) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat1 &amp;m</code></li><li><code>limb_t ah</code></li><li><code>limb_t al</code></li><li><code>limb_t bh</code></li><li><code>limb_t bl</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr bool
+hgcd2_sel(mat1 &amp;m, limb_t ah, limb_t al, limb_t bh, limb_t bl) noexcept
+{
+  if constexpr ( threshold::hgcd2_window == 2u ) {
+    return hgcd2_w2(m, ah, al, bh, bl);
+  } else {
+    (void)al;
+    (void)bl;
+    return hgcd2(m, ah, bh);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>hgcd2_w2(m, ah, al, bh, bl)</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L215">line 215</a></td></tr><tr class="t-dsc"><td><code>hgcd2(m, ah, bh)</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L219">line 219</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd2.hpp.html#f-92e327f936926b61">hgcd2_w2</a>, <a href="hgcd2.hpp.html#f-9bb504295dd5c3cb">hgcd2</a>.</p></section><section class="function-entry" id="f-64aa1ddcdc8d8c96"><h3><code>micron::math::mpn::hgcd2_ext(mat1 &amp;m, mat1 &amp;nm, limb_t A, limb_t B) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L224">line 224</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+hgcd2_ext(mat1 &amp;m, mat1 &amp;nm, limb_t A, limb_t B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat1 &amp;m</code></li><li><code>mat1 &amp;nm</code></li><li><code>limb_t A</code></li><li><code>limb_t B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+hgcd2_ext(mat1 &amp;m, mat1 &amp;nm, limb_t A, limb_t B) noexcept
+{
+  m = mat1_identity();
+  nm = mat1_identity();
+  if ( B == 0 ) return 0;
+
+  usize steps = 0;
+  for ( ;; ) {
+    if ( B &lt;= m.u10 ) break;
+    const limb_t bhi = static_cast&lt;limb_t&gt;(B + m.u00);
+    if ( bhi &lt; B ) break;
+    const limb_t q1 = static_cast&lt;limb_t&gt;((A - m.u01) / bhi);
+    if ( q1 == 0 ) break;
+    const limb_t ahi = static_cast&lt;limb_t&gt;(A + m.u11);
+    if ( ahi &lt; A ) break;
+    if ( q1 != static_cast&lt;limb_t&gt;(ahi / (B - m.u10)) ) break;
+    m.u01 = static_cast&lt;limb_t&gt;(m.u01 + q1 * m.u00);
+    m.u11 = static_cast&lt;limb_t&gt;(m.u11 + q1 * m.u10);
+    nm.u00 = static_cast&lt;limb_t&gt;(nm.u00 + q1 * nm.u10);
+    nm.u01 = static_cast&lt;limb_t&gt;(nm.u01 + q1 * nm.u11);
+    A = static_cast&lt;limb_t&gt;(A - q1 * B);
+    ++steps;
+
+    if ( A &lt;= m.u01 ) break;
+    const limb_t ahi2 = static_cast&lt;limb_t&gt;(A + m.u11);
+    if ( ahi2 &lt; A ) break;
+    const limb_t q2 = static_cast&lt;limb_t&gt;((B - m.u10) / ahi2);
+    if ( q2 == 0 ) break;
+    const limb_t bhi2 = static_cast&lt;limb_t&gt;(B + m.u00);
+    if ( bhi2 &lt; B ) break;
+    if ( q2 != static_cast&lt;limb_t&gt;(bhi2 / (A - m.u01)) ) break;
+    m.u00 = static_cast&lt;limb_t&gt;(m.u00 + q2 * m.u01);
+    m.u10 = static_cast&lt;limb_t&gt;(m.u10 + q2 * m.u11);
+    nm.u10 = static_cast&lt;limb_t&gt;(nm.u10 + q2 * nm.u00);
+    nm.u11 = static_cast&lt;limb_t&gt;(nm.u11 + q2 * nm.u01);
+    B = static_cast&lt;limb_t&gt;(B - q2 * A);
+    ++steps;
+  }
+  return steps;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L228">line 228</a></td></tr><tr class="t-dsc"><td><code>steps</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L262">line 262</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd2.hpp.html#f-2744f19fe70c5608">mat1_identity</a>.</p></section><section class="function-entry" id="f-602eb43c8ee2227b"><h3><code>micron::math::mpn::mat1_mul_vector(const mat1 &amp;nm, limb_t *rp, limb_t *sp, const limb_t *ap, const limb_t *bp, usize n) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L270">line 270</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+mat1_mul_vector(const mat1 &amp;nm, limb_t *rp, limb_t *sp, const limb_t *ap, const limb_t *bp, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat1 &amp;nm</code></li><li><code>limb_t *rp</code></li><li><code>limb_t *sp</code></li><li><code>const limb_t *ap</code></li><li><code>const limb_t *bp</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+mat1_mul_vector(const mat1 &amp;nm, limb_t *rp, limb_t *sp, const limb_t *ap, const limb_t *bp, usize n) noexcept
+{
+  const limb_t h0 = mul_1(rp, ap, n, nm.u00);
+  const limb_t c0 = addmul_1(rp, bp, n, nm.u01);
+  rp[n] = static_cast&lt;limb_t&gt;(h0 + c0);
+  rp[n + 1u] = static_cast&lt;limb_t&gt;(rp[n] &lt; h0 ? 1u : 0u);
+
+  const limb_t h1 = mul_1(sp, ap, n, nm.u10);
+  const limb_t c1 = addmul_1(sp, bp, n, nm.u11);
+  sp[n] = static_cast&lt;limb_t&gt;(h1 + c1);
+  sp[n + 1u] = static_cast&lt;limb_t&gt;(sp[n] &lt; h1 ? 1u : 0u);
+
+  const usize rn = normalize(rp, n + 2u);
+  const usize sn = normalize(sp, n + 2u);
+  return rn &gt; sn ? rn : sn;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rn &gt; sn ? rn : sn</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L284">line 284</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-3b73931b0fe4109c">mul_1</a>, <a href="mpn_core.hpp.html#f-ddec5e76e035aa9a">addmul_1</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>.</p></section><section class="function-entry" id="f-aaf9bbe45c7c7e76"><h3><code>micron::math::mpn::mat1_mul_inverse_vector(const mat1 &amp;m, limb_t *rp, limb_t *sp, const limb_t *ap, const limb_t *bp, usize n, usize &amp;rn) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L289">line 289</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr bool
+mat1_mul_inverse_vector(const mat1 &amp;m, limb_t *rp, limb_t *sp, const limb_t *ap, const limb_t *bp, usize n, usize &amp;rn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat1 &amp;m</code></li><li><code>limb_t *rp</code></li><li><code>limb_t *sp</code></li><li><code>const limb_t *ap</code></li><li><code>const limb_t *bp</code></li><li><code>usize n</code></li><li><code>usize &amp;rn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr bool
+mat1_mul_inverse_vector(const mat1 &amp;m, limb_t *rp, limb_t *sp, const limb_t *ap, const limb_t *bp, usize n, usize &amp;rn) noexcept
+{
+  const limb_t c0 = mul_1(rp, ap, n, m.u11);
+  const limb_t b0 = submul_1(rp, bp, n, m.u01);
+  const limb_t c1 = mul_1(sp, bp, n, m.u00);
+  const limb_t b1 = submul_1(sp, ap, n, m.u10);
+  if ( c0 != b0 || c1 != b1 ) return false;
+
+  const usize an = normalize(rp, n);
+  const usize bn = normalize(sp, n);
+  rn = an &gt; bn ? an : bn;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L295">line 295</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L300">line 300</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-3b73931b0fe4109c">mul_1</a>, <a href="mpn_core.hpp.html#f-e9689f31238477ab">submul_1</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e4ffa360f568d907"><h3><code>micron::math::mpn::__div2(limb_t &amp;ah, limb_t &amp;al, limb_t bh, limb_t bl) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L100">line 100</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr limb_t
+__div2(limb_t &amp;ah, limb_t &amp;al, limb_t bh, limb_t bl) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t &amp;ah</code></li><li><code>limb_t &amp;al</code></li><li><code>limb_t bh</code></li><li><code>limb_t bl</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr limb_t
+__div2(limb_t &amp;ah, limb_t &amp;al, limb_t bh, limb_t bl) noexcept
+{
+  const usize ca = limb_clz(ah);
+  const usize cb = limb_clz(bh);
+  if ( cb &lt; ca ) return 0;
+  const usize d = cb - ca;
+
+  limb_t sh = bh, sl = bl;
+  if ( d != 0 ) {
+    sh = static_cast&lt;limb_t&gt;((bh &lt;&lt; d) | (bl &gt;&gt; (limb_bits - d)));
+    sl = static_cast&lt;limb_t&gt;(bl &lt;&lt; d);
+  }
+
+  limb_t q = 0;
+  for ( usize i = d;; --i ) {
+    limb_t lo = 0, hi = 0;
+    const limb_t bw = subb(ah, sh, subb(al, sl, 0, lo), hi);
+    const limb_t mask = static_cast&lt;limb_t&gt;(bw - 1u);      // all ones when A &gt;= S, zero when below
+
+    ah = static_cast&lt;limb_t&gt;((hi &amp; mask) | (ah &amp; ~mask));
+    al = static_cast&lt;limb_t&gt;((lo &amp; mask) | (al &amp; ~mask));
+    q = static_cast&lt;limb_t&gt;(q | (mask &amp; (static_cast&lt;limb_t&gt;(1) &lt;&lt; i)));
+
+    if ( i == 0 ) break;
+    sl = static_cast&lt;limb_t&gt;((sl &gt;&gt; 1) | (sh &lt;&lt; (limb_bits - 1u)));
+    sh = static_cast&lt;limb_t&gt;(sh &gt;&gt; 1);
+  }
+  return q;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>q</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L127">line 127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="limb.hpp.html#f-58e660595c930a67">limb_clz</a>, <a href="bits/carry.hpp.html#f-38772e6c44bff808">subb</a>.</p></section><section class="function-entry" id="f-89839b9552dfdd61"><h3><code>micron::math::mpn::__mat_step(limb_t &amp;out, limb_t cur, limb_t q, limb_t mult) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L131">line 131</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr bool
+__mat_step(limb_t &amp;out, limb_t cur, limb_t q, limb_t mult) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t &amp;out</code></li><li><code>limb_t cur</code></li><li><code>limb_t q</code></li><li><code>limb_t mult</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr bool
+__mat_step(limb_t &amp;out, limb_t cur, limb_t q, limb_t mult) noexcept
+{
+  limb_t hi = 0, lo = 0;
+  mul_wide(q, mult, lo, hi);
+  if ( hi != 0 ) return false;
+  const limb_t s = static_cast&lt;limb_t&gt;(cur + lo);
+  if ( s &lt; cur ) return false;
+  out = s;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L137">line 137</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L139">line 139</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/carry.hpp.html#f-aefe45390216bc36">mul_wide</a>.</p></section><section class="function-entry" id="f-014b15db80d7126d"><h3><code>micron::math::mpn::__w2_valid(limb_t x1, limb_t x0, limb_t y1, limb_t y0, limb_t bound, limb_t e0, limb_t e1) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L144">line 144</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr bool
+__w2_valid(limb_t x1, limb_t x0, limb_t y1, limb_t y0, limb_t bound, limb_t e0, limb_t e1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t x1</code></li><li><code>limb_t x0</code></li><li><code>limb_t y1</code></li><li><code>limb_t y0</code></li><li><code>limb_t bound</code></li><li><code>limb_t e0</code></li><li><code>limb_t e1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr bool
+__w2_valid(limb_t x1, limb_t x0, limb_t y1, limb_t y0, limb_t bound, limb_t e0, limb_t e1) noexcept
+{
+  if ( y1 == 0 &amp;&amp; y0 &lt; bound ) return false;
+
+  limb_t d1 = 0, d0 = 0;
+  sub2(d1, d0, x1, x0, y1, y0);
+
+  const limb_t s0 = static_cast&lt;limb_t&gt;(e0 + e1);
+  const limb_t s1 = static_cast&lt;limb_t&gt;(s0 &lt; e0 ? 1u : 0u);
+  return d1 &gt; s1 || (d1 == s1 &amp;&amp; d0 &gt;= s0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L146">line 146</a></td></tr><tr class="t-dsc"><td><code>d1 &gt; s1 || (d1 == s1 &amp;&amp; d0 &gt;= s0)</code></td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L153">line 153</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="div.hpp.html#f-f2a0eaa939da78c4">sub2</a>.</p></section><section class="function-entry" id="f-3bbe0cb6bbe6981b"><h3><code>micron::math::mpn::__window2(limb_t &amp;hi, limb_t &amp;lo, const limb_t *p, usize n, usize sh) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd2.hpp</code>, <a href="../../../source/math/arbint/hgcd2.hpp.html#L199">line 199</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline constexpr void
+__window2(limb_t &amp;hi, limb_t &amp;lo, const limb_t *p, usize n, usize sh) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t &amp;hi</code></li><li><code>limb_t &amp;lo</code></li><li><code>const limb_t *p</code></li><li><code>usize n</code></li><li><code>usize sh</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline constexpr void
+__window2(limb_t &amp;hi, limb_t &amp;lo, const limb_t *p, usize n, usize sh) noexcept
+{
+  if ( sh == 0 ) {
+    hi = p[n - 1u];
+    lo = p[n - 2u];
+    return;
+  }
+  const usize r = limb_bits - sh;
+  hi = static_cast&lt;limb_t&gt;((p[n - 1u] &lt;&lt; sh) | (p[n - 2u] &gt;&gt; r));
+  lo = static_cast&lt;limb_t&gt;((p[n - 2u] &lt;&lt; sh) | (n &gt;= 3u ? (p[n - 3u] &gt;&gt; r) : 0u));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/hgcd2.hpp.html#L204">line 204</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

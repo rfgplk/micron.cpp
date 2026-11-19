@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/bits/__container.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/bits/__container.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/bits/__container.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/bits/__container.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-33a604c0e5e6c0a5"><h3><code>micron::__impl::grow(usize cap) noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L23">line 23</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+grow(usize cap) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize cap</code></li></ul><h4>Effects</h4><p>Returns <code>cap == 0 ? 8 : cap * 2</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+grow(usize cap) noexcept
+{
+  return cap == 0 ? 8 : cap * 2;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cap == 0 ? 8 : cap * 2</code></td><td><a href="../../source/bits/__container.hpp.html#L25">line 25</a></td></tr></tbody></table></section><section class="function-entry" id="f-90e07c0202d0c57f"><h3><code>micron::__container_checks::__self(void) const noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L36">line 36</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline const Derived *
+  __self(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>static_cast&lt;const Derived *&gt;(this)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline const Derived *
+  __self(void) const noexcept
+  {
+    return static_cast&lt;const Derived *&gt;(this);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;const Derived *&gt;(this)</code></td><td><a href="../../source/bits/__container.hpp.html#L38">line 38</a></td></tr></tbody></table></section><section class="function-entry" id="f-4b2f7871e85a116d"><h3><code>micron::__container_checks::__fail(const char *msg)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename E&gt;
+  [[gnu::noinline, gnu::cold, noreturn]] static void
+  __fail(const char *msg)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *msg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename E&gt;
+  [[gnu::noinline, gnu::cold, noreturn]] static void
+  __fail(const char *msg)
+  {
+    exc&lt;E&gt;(msg);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;E&gt;(msg)</code></td><td><a href="../../source/bits/__container.hpp.html#L46">line 46</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;E&gt;</a>.</p></section><section class="function-entry" id="f-aac6d5d0f0804d9d"><h3><code>micron::__container_checks::__empty_check(void) const</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L50">line 50</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  __empty_check(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__self()-&gt;__c_len() == 0 || __self()-&gt;__c_data() == nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  __empty_check(void) const
+  {
+    return __self()-&gt;__c_len() == 0 || __self()-&gt;__c_data() == nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__self()-&gt;__c_len() == 0 || __self()-&gt;__c_data() == nullptr</code></td><td><a href="../../source/bits/__container.hpp.html#L52">line 52</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-90e07c0202d0c57f">__self</a>.</p></section><section class="function-entry" id="f-90d470aaf41f4808"><h3><code>micron::__container_checks::__index_check(usize n) const</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L56">line 56</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  __index_check(usize n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>n &gt;= __self()-&gt;__c_len()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  __index_check(usize n) const
+  {
+    return n &gt;= __self()-&gt;__c_len();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n &gt;= __self()-&gt;__c_len()</code></td><td><a href="../../source/bits/__container.hpp.html#L58">line 58</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-90e07c0202d0c57f">__self</a>.</p></section><section class="function-entry" id="f-2b660aa1f6a2dbf0"><h3><code>micron::__container_checks::__capacity_check(usize n) const</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  __capacity_check(usize n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>n &gt;= __self()-&gt;__c_cap()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  __capacity_check(usize n) const
+  {
+    return n &gt;= __self()-&gt;__c_cap();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n &gt;= __self()-&gt;__c_cap()</code></td><td><a href="../../source/bits/__container.hpp.html#L64">line 64</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-90e07c0202d0c57f">__self</a>.</p></section><section class="function-entry" id="f-b7f32a6ca115d1cf"><h3><code>micron::__container_checks::__get_check(usize n) const</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  __get_check(usize n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>n &gt;= __self()-&gt;__c_len()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  __get_check(usize n) const
+  {
+    return n &gt;= __self()-&gt;__c_len();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n &gt;= __self()-&gt;__c_len()</code></td><td><a href="../../source/bits/__container.hpp.html#L71">line 71</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-90e07c0202d0c57f">__self</a>.</p></section><section class="function-entry" id="f-92910c65d9eede21"><h3><code>micron::__container_checks::__iterator_check(const T *it) const</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  __iterator_check(const T *it) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *it</code></li></ul><h4>Effects</h4><p>Returns <code>it &lt; __self()-&gt;__c_data() || it &gt; __self()-&gt;__c_data() + __self()-&gt;__c_len()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  __iterator_check(const T *it) const
+  {
+    return it &lt; __self()-&gt;__c_data() || it &gt; __self()-&gt;__c_data() + __self()-&gt;__c_len();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>it &lt; __self()-&gt;__c_data() || it &gt; __self()-&gt;__c_data() + __self()-&gt;__c_len()</code></td><td><a href="../../source/bits/__container.hpp.html#L77">line 77</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-90e07c0202d0c57f">__self</a>.</p></section><section class="function-entry" id="f-8d3b2f7faf02fa5d"><h3><code>micron::__container_checks::__range_check(usize from, usize to) const</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  __range_check(usize from, usize to) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize from</code></li><li><code>usize to</code></li></ul><h4>Effects</h4><p>Returns <code>from &gt;= to || to &gt; __self()-&gt;__c_len()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  __range_check(usize from, usize to) const
+  {
+    return from &gt;= to || to &gt; __self()-&gt;__c_len();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from &gt;= to || to &gt; __self()-&gt;__c_len()</code></td><td><a href="../../source/bits/__container.hpp.html#L83">line 83</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-90e07c0202d0c57f">__self</a>.</p></section><section class="function-entry" id="f-6b4009a994b7bbd2"><h3><code>micron::__container_checks::__cap_range_check(usize from, usize to) const</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L88">line 88</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  __cap_range_check(usize from, usize to) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize from</code></li><li><code>usize to</code></li></ul><h4>Effects</h4><p>Returns <code>from &gt;= to || to &gt; __self()-&gt;__c_cap()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  __cap_range_check(usize from, usize to) const
+  {
+    return from &gt;= to || to &gt; __self()-&gt;__c_cap();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from &gt;= to || to &gt; __self()-&gt;__c_cap()</code></td><td><a href="../../source/bits/__container.hpp.html#L90">line 90</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-90e07c0202d0c57f">__self</a>.</p></section><section class="function-entry" id="f-726cad0e05ff17a1"><h3><code>micron::__vector_core::__vself(void) noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L102">line 102</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline Derived *
+  __vself(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>static_cast&lt;Derived *&gt;(this)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline Derived *
+  __vself(void) noexcept
+  {
+    return static_cast&lt;Derived *&gt;(this);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;Derived *&gt;(this)</code></td><td><a href="../../source/bits/__container.hpp.html#L104">line 104</a></td></tr></tbody></table></section><section class="function-entry" id="f-b2364db325468cd4"><h3><code>micron::__vector_core::__vself(void) const noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L108">line 108</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline const Derived *
+  __vself(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>static_cast&lt;const Derived *&gt;(this)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline const Derived *
+  __vself(void) const noexcept
+  {
+    return static_cast&lt;const Derived *&gt;(this);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;const Derived *&gt;(this)</code></td><td><a href="../../source/bits/__container.hpp.html#L110">line 110</a></td></tr></tbody></table></section><section class="function-entry" id="f-8fa404f8dfe7a7af"><h3><code>micron::__vector_core::__grow_one(void)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L115">line 115</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::noinline, gnu::cold]] void
+  __grow_one(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::noinline, gnu::cold]] void
+  __grow_one(void)
+  {
+    Derived *s = __vself();
+    if ( s-&gt;capacity == static_cast&lt;usize&gt;(-1) ) exc&lt;except::length_error&gt;(&quot;container: capacity overflow&quot;);
+    s-&gt;__core_reserve(s-&gt;recommended_capacity(s-&gt;capacity, s-&gt;capacity + 1));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::length_error&gt;(&quot;container: capacity overflow&quot;)</code></td><td><a href="../../source/bits/__container.hpp.html#L118">line 118</a><br>Within <code>( s-&gt;capacity == static_cast&lt;usize&gt;(-1) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-726cad0e05ff17a1">__vself</a>, <a href="__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::length_error&gt;</a>.</p></section><section class="function-entry" id="f-2089d7e3775b84a5"><h3><code>micron::__vector_core::__grow_for(usize extra)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L123">line 123</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::noinline, gnu::cold]] void
+  __grow_for(usize extra)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize extra</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::noinline, gnu::cold]] void
+  __grow_for(usize extra)
+  {
+    Derived *s = __vself();
+    if ( extra &gt; static_cast&lt;usize&gt;(-1) - s-&gt;length ) exc&lt;except::length_error&gt;(&quot;container: size overflow&quot;);
+    const usize minimum = s-&gt;length + extra;
+    s-&gt;__core_reserve(s-&gt;recommended_capacity(s-&gt;capacity, minimum));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::length_error&gt;(&quot;container: size overflow&quot;)</code></td><td><a href="../../source/bits/__container.hpp.html#L126">line 126</a><br>Within <code>( extra &gt; static_cast&lt;usize&gt;(-1) - s-&gt;length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-726cad0e05ff17a1">__vself</a>, <a href="__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::length_error&gt;</a>.</p></section><section class="function-entry" id="f-be7953074d67d880"><h3><code>micron::__vector_core::__emplace_at(usize i, U &amp;&amp;v)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L133">line 133</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U&gt;
+  [[gnu::always_inline]] inline void
+  __emplace_at(usize i, U &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize i</code></li><li><code>U &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U&gt;
+  [[gnu::always_inline]] inline void
+  __emplace_at(usize i, U &amp;&amp;v)
+  {
+    Derived *s = __vself();
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_copyable_v&lt;T&gt; )
+      new (addr(s-&gt;memory[i])) T(micron::forward&lt;U&gt;(v));
+    else
+      s-&gt;memory[i] = micron::forward&lt;U&gt;(v);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-726cad0e05ff17a1">__vself</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;U&gt;</a>.</p></section><section class="function-entry" id="f-f444096543391e9e"><h3><code>micron::__vector_core::push_back(const T &amp;v)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L144">line 144</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+  push_back(const T &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+  push_back(const T &amp;v)
+  {
+    Derived *s = __vself();
+    if ( s-&gt;length &lt; s-&gt;capacity ) [[likely]] {
+      __emplace_at(s-&gt;length++, v);
+      return;
+    }
+    __grow_one();
+    __emplace_at(s-&gt;length++, v);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L149">line 149</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-726cad0e05ff17a1">__vself</a>, <a href="__container.hpp.html#f-be7953074d67d880">__emplace_at</a>, <a href="__container.hpp.html#f-8fa404f8dfe7a7af">__grow_one</a>.</p></section><section class="function-entry" id="f-dbbd5f0b3d58bf92"><h3><code>micron::__vector_core::push_back(T &amp;&amp;v)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L156">line 156</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+  push_back(T &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+  push_back(T &amp;&amp;v)
+  {
+    Derived *s = __vself();
+    if ( s-&gt;length &lt; s-&gt;capacity ) [[likely]] {
+      __emplace_at(s-&gt;length++, micron::move(v));
+      return;
+    }
+    __grow_one();
+    __emplace_at(s-&gt;length++, micron::move(v));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L161">line 161</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-726cad0e05ff17a1">__vself</a>, <a href="__container.hpp.html#f-be7953074d67d880">__emplace_at</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="__container.hpp.html#f-8fa404f8dfe7a7af">__grow_one</a>.</p></section><section class="function-entry" id="f-348429efb7e30cbc"><h3><code>micron::__vector_core::emplace_back(Args &amp;&amp;...v)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L169">line 169</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  [[gnu::always_inline]] inline void
+  emplace_back(Args &amp;&amp;...v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  [[gnu::always_inline]] inline void
+  emplace_back(Args &amp;&amp;...v)
+  {
+    Derived *s = __vself();
+    if ( s-&gt;length &lt; s-&gt;capacity ) [[likely]] {
+      new (addr(s-&gt;memory[s-&gt;length++])) T(micron::forward&lt;Args&gt;(v)...);
+      return;
+    }
+    __grow_one();
+    new (addr(s-&gt;memory[s-&gt;length++])) T(micron::forward&lt;Args&gt;(v)...);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L174">line 174</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-726cad0e05ff17a1">__vself</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="__container.hpp.html#f-8fa404f8dfe7a7af">__grow_one</a>.</p></section><section class="function-entry" id="f-e3d37caa0146c5c8"><h3><code>micron::__impl_container::shallow_copy(T *__restrict dest, const T *__restrict src, usize cnt) noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L186">line 186</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+shallow_copy(T *__restrict dest, const T *__restrict src, usize cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+shallow_copy(T *__restrict dest, const T *__restrict src, usize cnt) noexcept
+{
+  // avoid zero count UB
+  if ( cnt == 0 ) [[unlikely]]
+    return;
+  micron::memcpy(reinterpret_cast&lt;byte *&gt;(dest), reinterpret_cast&lt;const byte *&gt;(src),
+                 cnt * (sizeof(T)));      // always is page aligned, 256 is
+                                          // fine, just realign back to bytes
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L190">line 190</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-9bc4d8f567526695"><h3><code>micron::__impl_container::shallow_copy(T *__restrict dest, T *__restrict src, usize cnt) noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L198">line 198</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+shallow_copy(T *__restrict dest, T *__restrict src, usize cnt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+shallow_copy(T *__restrict dest, T *__restrict src, usize cnt) noexcept
+{
+  // avoid zero count UB
+  if ( cnt == 0 ) [[unlikely]]
+    return;
+  micron::memcpy(reinterpret_cast&lt;byte *&gt;(dest), reinterpret_cast&lt;byte *&gt;(src),
+                 cnt * (sizeof(T)));      // always is page aligned, 256 is
+                                          // fine, just realign back to bytes
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L202">line 202</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-48a129c6214b610f"><h3><code>micron::__impl_container::deep_copy(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L212">line 212</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+deep_copy(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+deep_copy(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  // guard against copying into uninit memory
+  if constexpr ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) ) {
+    for ( usize i = 0; i &lt; cnt; ++i ) new (addr(dest[i])) T(src[i]);
+  } else {
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( ; i &lt; cnt; ++i ) new (addr(dest[i])) T(src[i]);
+    } catch ( ... ) {
+      for ( usize j = 0; j &lt; i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i &lt; cnt; ++i ) new (addr(dest[i])) T(src[i]);
+#endif
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L224">line 224</a><br>Within <code>else of ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>.</p></section><section class="function-entry" id="f-9c08795b0ac38051"><h3><code>micron::__impl_container::deep_copy(T *__restrict dest, const T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L234">line 234</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+deep_copy(T *__restrict dest, const T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+deep_copy(T *__restrict dest, const T *__restrict src, usize cnt)
+{
+  if constexpr ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) ) {
+    for ( usize i = 0; i &lt; cnt; ++i ) new (addr(dest[i])) T(src[i]);
+  } else {
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( ; i &lt; cnt; ++i ) new (addr(dest[i])) T(src[i]);
+    } catch ( ... ) {
+      for ( usize j = 0; j &lt; i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i &lt; cnt; ++i ) new (addr(dest[i])) T(src[i]);
+#endif
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L245">line 245</a><br>Within <code>else of ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>.</p></section><section class="function-entry" id="f-29b7b6ad25a6b7d0"><h3><code>micron::__impl_container::deep_copy_assign(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L255">line 255</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+deep_copy_assign(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+deep_copy_assign(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  // guard against copying into uninit memory
+  for ( usize i = 0; i &lt; cnt; ++i ) dest[i] = src[i];
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-0c305290956131de"><h3><code>micron::__impl_container::deep_copy_assign(T *__restrict dest, const T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L263">line 263</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+deep_copy_assign(T *__restrict dest, const T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+deep_copy_assign(T *__restrict dest, const T *__restrict src, usize cnt)
+{
+  for ( usize i = 0; i &lt; cnt; ++i ) dest[i] = src[i];
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7d1a8df759311b80"><h3><code>micron::__impl_container::shallow_move(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L270">line 270</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+shallow_move(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+shallow_move(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  // avoid zero count UB
+  if ( cnt == 0 ) [[unlikely]]
+    return;
+  micron::memcpy(dest, src, cnt);
+  // micron::byteset(reinterpret_cast&lt;byte *&gt;(src), 0x0, cnt * sizeof(T));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L274">line 274</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-bd96b879fd7a1f1c"><h3><code>micron::__impl_container::deep_move(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L281">line 281</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+deep_move(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+deep_move(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  if constexpr ( noexcept(T(micron::move(micron::declval&lt;T &amp;&gt;()))) ) {
+    for ( usize i = 0; i &lt; cnt; ++i ) {
+      new (addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+      // WARNING: P1144
+    }
+  } else {
+    // WARNING: if move ctor throws at i,/ already-constructed dest[0..i-1] are destroyed; rethrow exception
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( ; i &lt; cnt; ++i ) {
+        new (addr(dest[i])) T(micron::move(src[i]));
+        src[i].~T();
+      }
+    } catch ( ... ) {
+      for ( usize j = 0; j &lt; i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i &lt; cnt; ++i ) {
+      new (addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+    }
+#endif
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L300">line 300</a><br>Within <code>else of ( noexcept(T(micron::move(micron::declval&lt;T &amp;&gt;()))) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>.</p></section><section class="function-entry" id="f-8dd9019c85ebdbb1"><h3><code>micron::__impl_container::deep_move_assign(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L313">line 313</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+deep_move_assign(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+deep_move_assign(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  for ( usize i = 0; i &lt; cnt; ++i ) dest[i] = micron::move(src[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-eec3b366c4d1b84c"><h3><code>micron::__impl_container::deep_copy(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L320">line 320</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+deep_copy(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+deep_copy(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) ) {
+    for ( usize i = 0; i &lt; N; ++i ) new (addr(dest[i])) T(src[i]);
+  } else {
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( ; i &lt; N; ++i ) new (addr(dest[i])) T(src[i]);
+    } catch ( ... ) {
+      for ( usize j = 0; j &lt; i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i &lt; N; ++i ) new (addr(dest[i])) T(src[i]);
+#endif
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L331">line 331</a><br>Within <code>else of ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>.</p></section><section class="function-entry" id="f-705d31f13ffd8ff8"><h3><code>micron::__impl_container::deep_copy(T *__restrict dest, const T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L341">line 341</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+deep_copy(T *__restrict dest, const T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+deep_copy(T *__restrict dest, const T *__restrict src)
+{
+  if constexpr ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) ) {
+    for ( usize i = 0; i &lt; N; ++i ) new (addr(dest[i])) T(src[i]);
+  } else {
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( ; i &lt; N; ++i ) new (addr(dest[i])) T(src[i]);
+    } catch ( ... ) {
+      for ( usize j = 0; j &lt; i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i &lt; N; ++i ) new (addr(dest[i])) T(src[i]);
+#endif
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L352">line 352</a><br>Within <code>else of ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>.</p></section><section class="function-entry" id="f-a909d9f84a11edf9"><h3><code>micron::__impl_container::deep_copy_assign(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L362">line 362</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+deep_copy_assign(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+deep_copy_assign(T *__restrict dest, T *__restrict src)
+{
+  for ( usize i = 0; i &lt; N; ++i ) dest[i] = src[i];
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b6d87188fde60698"><h3><code>micron::__impl_container::deep_copy_assign(T *__restrict dest, const T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L369">line 369</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+deep_copy_assign(T *__restrict dest, const T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+deep_copy_assign(T *__restrict dest, const T *__restrict src)
+{
+  for ( usize i = 0; i &lt; N; ++i ) dest[i] = src[i];
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-479dafe5f4e9905c"><h3><code>micron::__impl_container::shallow_move(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L376">line 376</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+shallow_move(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+shallow_move(T *__restrict dest, T *__restrict src)
+{
+  // avoid zero count UB
+  if constexpr ( N == 0 ) return;
+  micron::cmemcpy&lt;N, T, T&gt;(dest, src);
+  // micron::cbyteset&lt;N * sizeof(T)&gt;(reinterpret_cast&lt;byte *&gt;(src), 0x0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L379">line 379</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-1184d0b445404eda">micron::cmemcpy&lt;N, T, T&gt;</a>.</p></section><section class="function-entry" id="f-81ca68f71054c3d7"><h3><code>micron::__impl_container::deep_move(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L386">line 386</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+deep_move(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+deep_move(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( noexcept(T(micron::move(micron::declval&lt;T &amp;&gt;()))) ) {
+    for ( usize i = 0; i &lt; N; ++i ) {
+      new (addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+      // WARNING: P1144
+    }
+  } else {
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( ; i &lt; N; ++i ) {
+        new (addr(dest[i])) T(micron::move(src[i]));
+        src[i].~T();
+      }
+    } catch ( ... ) {
+      for ( usize j = 0; j &lt; i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i &lt; N; ++i ) {
+      new (addr(dest[i])) T(micron::move(src[i]));
+      src[i].~T();
+    }
+#endif
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L404">line 404</a><br>Within <code>else of ( noexcept(T(micron::move(micron::declval&lt;T &amp;&gt;()))) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>.</p></section><section class="function-entry" id="f-132da94363dc5b91"><h3><code>micron::__impl_container::deep_move_init(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L418">line 418</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+deep_move_init(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+deep_move_init(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( noexcept(T(micron::move(micron::declval&lt;T &amp;&gt;()))) ) {
+    for ( usize i = 0; i &lt; N; ++i ) new (addr(dest[i])) T(micron::move(src[i]));
+  } else {
+    usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( ; i &lt; N; ++i ) new (addr(dest[i])) T(micron::move(src[i]));
+    } catch ( ... ) {
+      for ( usize j = 0; j &lt; i; ++j ) dest[j].~T();
+      throw;
+    }
+#else
+    for ( ; i &lt; N; ++i ) new (addr(dest[i])) T(micron::move(src[i]));
+#endif
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L429">line 429</a><br>Within <code>else of ( noexcept(T(micron::move(micron::declval&lt;T &amp;&gt;()))) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>.</p></section><section class="function-entry" id="f-28e8a36d8612f29f"><h3><code>micron::__impl_container::deep_move_assign(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L439">line 439</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+deep_move_assign(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+deep_move_assign(T *__restrict dest, T *__restrict src)
+{
+  for ( usize i = 0; i &lt; N; ++i ) dest[i] = micron::move(src[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-72b41b652dc30662"><h3><code>micron::__impl_container::shallow_copy(T *__restrict dest, const T *__restrict src) noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L446">line 446</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+shallow_copy(T *__restrict dest, const T *__restrict src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+shallow_copy(T *__restrict dest, const T *__restrict src) noexcept
+{
+  // avoid zero count UB
+  if constexpr ( N == 0 ) return;
+  micron::cmemcpy&lt;N * sizeof(T)&gt;(reinterpret_cast&lt;byte *&gt;(dest),
+                                 reinterpret_cast&lt;const byte *&gt;(src));      // always is page aligned, 256 is
+                                                                            // fine, just realign back to bytes
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L449">line 449</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-1184d0b445404eda">micron::cmemcpy&lt;N * sizeof(T)&gt;</a>.</p></section><section class="function-entry" id="f-f1cd2b63cddf240f"><h3><code>micron::__impl_container::shallow_copy(T *__restrict dest, T *__restrict src) noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L457">line 457</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+shallow_copy(T *__restrict dest, T *__restrict src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+shallow_copy(T *__restrict dest, T *__restrict src) noexcept
+{
+  // avoid zero count UB
+  if constexpr ( N == 0 ) return;
+  micron::cmemcpy&lt;N * sizeof(T)&gt;(reinterpret_cast&lt;byte *&gt;(dest),
+                                 reinterpret_cast&lt;const byte *&gt;(src));      // always is page aligned, 256 is
+                                                                            // fine, just realign back to bytes
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L460">line 460</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-1184d0b445404eda">micron::cmemcpy&lt;N * sizeof(T)&gt;</a>.</p></section><section class="function-entry" id="f-0d88c97bdfcabe99"><h3><code>micron::__impl_container::copy(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L468">line 468</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+copy(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+copy(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_copy(dest, src, cnt);
+  } else {
+    shallow_copy(dest, src, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-48a129c6214b610f">deep_copy</a>, <a href="__container.hpp.html#f-e3d37caa0146c5c8">shallow_copy</a>.</p></section><section class="function-entry" id="f-0807ef1f74f58fb4"><h3><code>micron::__impl_container::copy(T *__restrict dest, const T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L479">line 479</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+copy(T *__restrict dest, const T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+copy(T *__restrict dest, const T *__restrict src, usize cnt)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_copy(dest, src, cnt);
+  } else {
+    shallow_copy(dest, src, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-48a129c6214b610f">deep_copy</a>, <a href="__container.hpp.html#f-e3d37caa0146c5c8">shallow_copy</a>.</p></section><section class="function-entry" id="f-a67715ad572ebda3"><h3><code>micron::__impl_container::copy_assign(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L490">line 490</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+copy_assign(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+copy_assign(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_copy_assign(dest, src, cnt);
+  } else {
+    shallow_copy(dest, src, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-29b7b6ad25a6b7d0">deep_copy_assign</a>, <a href="__container.hpp.html#f-e3d37caa0146c5c8">shallow_copy</a>.</p></section><section class="function-entry" id="f-8f70c10e735f0931"><h3><code>micron::__impl_container::copy_assign(T *__restrict dest, const T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L501">line 501</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+copy_assign(T *__restrict dest, const T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+copy_assign(T *__restrict dest, const T *__restrict src, usize cnt)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_copy_assign(dest, src, cnt);
+  } else {
+    shallow_copy(dest, src, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-29b7b6ad25a6b7d0">deep_copy_assign</a>, <a href="__container.hpp.html#f-e3d37caa0146c5c8">shallow_copy</a>.</p></section><section class="function-entry" id="f-3ad2cd6f2384a45a"><h3><code>micron::__impl_container::move_assign(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L512">line 512</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+move_assign(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+move_assign(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  if constexpr ( !micron::is_trivially_move_assignable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_move_assign(dest, src, cnt);
+  } else {
+    shallow_move(dest, src, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-8dd9019c85ebdbb1">deep_move_assign</a>, <a href="__container.hpp.html#f-7d1a8df759311b80">shallow_move</a>.</p></section><section class="function-entry" id="f-465cb1cfe8bcc2e4"><h3><code>micron::__impl_container::move(T *__restrict dest, T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L523">line 523</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+move(T *__restrict dest, T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+move(T *__restrict dest, T *__restrict src, usize cnt)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_move(dest, src, cnt);
+  } else {
+    shallow_move(dest, src, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-bd96b879fd7a1f1c">deep_move</a>, <a href="__container.hpp.html#f-7d1a8df759311b80">shallow_move</a>.</p></section><section class="function-entry" id="f-a42ab11f375d2aff"><h3><code>micron::__impl_container::copy(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L534">line 534</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+copy(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+copy(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_copy&lt;N, T&gt;(dest, src);
+  } else {
+    shallow_copy&lt;N, T&gt;(dest, src);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-48a129c6214b610f">deep_copy&lt;N, T&gt;</a>, <a href="__container.hpp.html#f-e3d37caa0146c5c8">shallow_copy&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-4cc21c97198e677b"><h3><code>micron::__impl_container::copy(T *__restrict dest, const T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L545">line 545</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+copy(T *__restrict dest, const T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+copy(T *__restrict dest, const T *__restrict src)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_copy&lt;N, T&gt;(dest, src);
+  } else {
+    shallow_copy&lt;N, T&gt;(dest, src);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-48a129c6214b610f">deep_copy&lt;N, T&gt;</a>, <a href="__container.hpp.html#f-e3d37caa0146c5c8">shallow_copy&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-6878488c8d1331df"><h3><code>micron::__impl_container::copy_assign(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L556">line 556</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+copy_assign(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+copy_assign(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_copy_assign&lt;N, T&gt;(dest, src);
+  } else {
+    shallow_copy&lt;N, T&gt;(dest, src);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-29b7b6ad25a6b7d0">deep_copy_assign&lt;N, T&gt;</a>, <a href="__container.hpp.html#f-e3d37caa0146c5c8">shallow_copy&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-5849ea126a6603c7"><h3><code>micron::__impl_container::copy_assign(T *__restrict dest, const T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L567">line 567</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+copy_assign(T *__restrict dest, const T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>const T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+copy_assign(T *__restrict dest, const T *__restrict src)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_copy_assign&lt;N, T&gt;(dest, src);
+  } else {
+    shallow_copy&lt;N, T&gt;(dest, src);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-29b7b6ad25a6b7d0">deep_copy_assign&lt;N, T&gt;</a>, <a href="__container.hpp.html#f-e3d37caa0146c5c8">shallow_copy&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-a9439915422a8cca"><h3><code>micron::__impl_container::move_assign(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L578">line 578</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+move_assign(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+move_assign(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( !micron::is_trivially_move_assignable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_move_assign&lt;N, T&gt;(dest, src);
+  } else {
+    shallow_move&lt;N, T&gt;(dest, src);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-8dd9019c85ebdbb1">deep_move_assign&lt;N, T&gt;</a>, <a href="__container.hpp.html#f-7d1a8df759311b80">shallow_move&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-9f595974b764f49e"><h3><code>micron::__impl_container::move(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L589">line 589</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+move(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+move(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_move&lt;N, T&gt;(dest, src);
+  } else {
+    shallow_move&lt;N, T&gt;(dest, src);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-bd96b879fd7a1f1c">deep_move&lt;N, T&gt;</a>, <a href="__container.hpp.html#f-7d1a8df759311b80">shallow_move&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-9319f5530a150527"><h3><code>micron::__impl_container::move_init(T *__restrict dest, T *__restrict src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L601">line 601</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+move_init(T *__restrict dest, T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict dest</code></li><li><code>T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+move_init(T *__restrict dest, T *__restrict src)
+{
+  if constexpr ( !micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    deep_move_init&lt;N, T&gt;(dest, src);
+  } else {
+    shallow_move&lt;N, T&gt;(dest, src);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__container.hpp.html#f-132da94363dc5b91">deep_move_init&lt;N, T&gt;</a>, <a href="__container.hpp.html#f-7d1a8df759311b80">shallow_move&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-0c26e31357167999"><h3><code>micron::__impl_container::find_index(const T *p, usize len, const T &amp;v) noexcept</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L614">line 614</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::always_inline]] inline usize
+find_index(const T *p, usize len, const T &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *p</code></li><li><code>usize len</code></li><li><code>const T &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::always_inline]] inline usize
+find_index(const T *p, usize len, const T &amp;v) noexcept
+{
+  using U = micron::remove_cv_t&lt;T&gt;;
+  if constexpr ( (micron::is_integral_v&lt;U&gt; or micron::is_enum_v&lt;U&gt; or micron::is_pointer_v&lt;U&gt;)
+                 and (sizeof(U) == 1 or sizeof(U) == 2 or sizeof(U) == 4 or sizeof(U) == 8) ) {
+    return micron::simd::find_first_elem(p, len, v);
+  } else {
+    for ( usize i = 0; i &lt; len; ++i )
+      if ( p[i] == v ) return i;
+    return len;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::simd::find_first_elem(p, len, v)</code></td><td><a href="../../source/bits/__container.hpp.html#L619">line 619</a></td></tr><tr class="t-dsc"><td><code>i</code></td><td><a href="../../source/bits/__container.hpp.html#L622">line 622</a></td></tr><tr class="t-dsc"><td><code>len</code></td><td><a href="../../source/bits/__container.hpp.html#L623">line 623</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../simd/strings.hpp.html#f-c9eb5026ef643de8">micron::simd::find_first_elem</a>.</p></section><section class="function-entry" id="f-00b07339141d0340"><h3><code>micron::__impl_container::open_gap(T *base, usize len, usize p, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L629">line 629</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+open_gap(T *base, usize len, usize p, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *base</code></li><li><code>usize len</code></li><li><code>usize p</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+open_gap(T *base, usize len, usize p, usize cnt)
+{
+  if ( cnt == 0 ) return;
+  if constexpr ( micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    micron::memmove(base + p + cnt, base + p, len - p);
+  } else {
+    const usize n = len - p;
+    for ( usize i = n; i-- &gt; 0; ) {
+      if ( p + cnt + i &gt;= len )
+        new (addr(base[p + cnt + i])) T(micron::move(base[p + i]));
+      else
+        base[p + cnt + i] = micron::move(base[p + i]);
+    }
+    const usize raw = (cnt &lt; n) ? cnt : n;
+    for ( usize i = 0; i &lt; raw; ++i ) base[p + i].~T();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L631">line 631</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memmove.hpp.html#f-8a8a4e3789dd039d">micron::memmove</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-2aa39aa0e26a0739"><h3><code>micron::__impl_container::fill_gap(T *base, usize length, usize p, usize cnt, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L650">line 650</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Fn&gt;
+inline void
+fill_gap(T *base, usize length, usize p, usize cnt, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *base</code></li><li><code>usize length</code></li><li><code>usize p</code></li><li><code>usize cnt</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Fn&gt;
+inline void
+fill_gap(T *base, usize length, usize p, usize cnt, Fn &amp;&amp;fn)
+{
+  if ( cnt == 0 ) return;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+  usize k = 0;
+  try {
+    for ( ; k &lt; cnt; ++k ) fn(p + k);
+  } catch ( ... ) {
+    for ( usize j = 0; j &lt; k; ++j ) base[p + j].~T();
+    const usize tail = length - p;
+    for ( usize j = 0; j &lt; tail; ++j ) {
+      new (addr(base[p + j])) T(micron::move(base[p + cnt + j]));
+      base[p + cnt + j].~T();
+    }
+    throw;
+  }
+#else
+  // surpress may be unused
+  (void)base;
+  (void)length;
+  for ( usize k = 0; k &lt; cnt; ++k ) fn(p + k);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L652">line 652</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L664">line 664</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-86fe654dc4310283"><h3><code>micron::__impl_container::fill_gap_copy(T *base, usize length, usize p, usize cnt, const T &amp;val)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L676">line 676</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+fill_gap_copy(T *base, usize length, usize p, usize cnt, const T &amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *base</code></li><li><code>usize length</code></li><li><code>usize p</code></li><li><code>usize cnt</code></li><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+fill_gap_copy(T *base, usize length, usize p, usize cnt, const T &amp;val)
+{
+  if constexpr ( micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; and micron::is_trivially_constructible_v&lt;T, const T &amp;&gt; ) {
+    if ( cnt == 0 ) return;
+    micron::typeset(base + p, val, cnt);
+    return;
+  } else {
+    fill_gap(base, length, p, cnt, [&amp;](usize i) { new (addr(base[i])) T(val); });
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L679">line 679</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L681">line 681</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-5f3abd2b78acd611">micron::typeset</a>, <a href="__container.hpp.html#f-2aa39aa0e26a0739">fill_gap</a>.</p></section><section class="function-entry" id="f-376bdc3559c321fb"><h3><code>micron::__impl_container::close_gap(T *base, usize len, usize p, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L689">line 689</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+close_gap(T *base, usize len, usize p, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *base</code></li><li><code>usize len</code></li><li><code>usize p</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+close_gap(T *base, usize len, usize p, usize cnt)
+{
+  if ( cnt == 0 ) return;
+  if constexpr ( micron::is_trivially_copyable_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    micron::memmove(base + p, base + p + cnt, len - p - cnt);
+  } else {
+    const usize tail = len - p - cnt;
+    for ( usize i = 0; i &lt; tail; ++i ) base[p + i] = micron::move(base[p + cnt + i]);
+    for ( usize i = len - cnt; i &lt; len; ++i ) base[i].~T();
+    micron::byteset(reinterpret_cast&lt;byte *&gt;(base + (len - cnt)), 0x0, cnt * sizeof(T));
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L691">line 691</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memmove.hpp.html#f-8a8a4e3789dd039d">micron::memmove</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../memory/cmemory/memset.hpp.html#f-4619d7efcc8954e2">micron::byteset</a>.</p></section><section class="function-entry" id="f-779c0db971bd6e11"><h3><code>micron::__impl_container::destroy(T *src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L704">line 704</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+destroy(T *src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+destroy(T *src)
+{
+  // avoid zero count UB
+  if constexpr ( N == 0 ) return;
+  if constexpr ( !micron::is_trivially_destructible_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    if constexpr ( N % 4 == 0 ) {
+      for ( usize i = 0; i &lt; N; i += 4 ) {
+        src[i].~T();
+        src[i + 1].~T();
+        src[i + 2].~T();
+        src[i + 3].~T();
+      }
+    } else {
+      for ( usize i = 0; i &lt; N; ++i ) src[i].~T();
+    }
+    // WARNING:after calling destructors, manually zero it out, wasteful but necessary for edge case correctness
+    // in case you&#x27;re wondering why, there seem to be edge cases when applying aggressive optimization options where the compiler opts NOT
+    // to init certain memory (if allocing large ptr lists) causing the memory to be left in a garbled state. for OUR classes ~T() WILL
+    // destroy the objects BUT wont if they are in a garbled state (nothing to destroy). meaning destruction was technically valid, even
+    // though nothing was destroyed. ergo best to manually zero the memory afterwards
+    micron::cbyteset&lt;N * sizeof(T)&gt;(src, 0x0);
+  } else {
+    micron::cbyteset&lt;N * sizeof(T)&gt;(src, 0x0);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L707">line 707</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-a688265c7ff7b976">micron::cbyteset&lt;N * sizeof(T)&gt;</a>.</p></section><section class="function-entry" id="f-6c6b44aef2402f86"><h3><code>micron::__impl_container::destroy(T *__restrict src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L732">line 732</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+destroy(T *__restrict src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+destroy(T *__restrict src, usize cnt)
+{
+  if ( cnt == 0 ) return;
+  if constexpr ( !micron::is_trivially_destructible_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    for ( usize i = 0; i &lt; cnt; ++i ) src[i].~T();
+    // WARNING: after calling destructors, manually zero it out, wasteful but necessary for edge case correctness
+    micron::byteset(src, 0x0, cnt * sizeof(T));
+  } else {
+    micron::byteset(src, 0x0, cnt * sizeof(T));
+  }
+  // NOTE: the zeroing here is part of destroy()&#x27;s semantics, ie micron::array::clear() calls destroy and then skips reconstructing a
+  // trivially-constructible T; if you want the fast and cheap variant call destroy_fast()
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L734">line 734</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-4619d7efcc8954e2">micron::byteset</a>.</p></section><section class="function-entry" id="f-51f290f83369ae65"><h3><code>micron::__impl_container::destroy_fast(T *src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L748">line 748</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+inline void
+destroy_fast(T *src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+inline void
+destroy_fast(T *src)
+{
+  if constexpr ( !micron::is_trivially_destructible_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    if constexpr ( N % 4 == 0 ) {
+      for ( usize i = 0; i &lt; N; i += 4 ) {
+        src[i].~T();
+        src[i + 1].~T();
+        src[i + 2].~T();
+        src[i + 3].~T();
+      }
+    } else {
+      for ( usize i = 0; i &lt; N; ++i ) src[i].~T();
+    }
+  } else {
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-173b8c274c19f0a6"><h3><code>micron::__impl_container::destroy_fast(T *src, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L767">line 767</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+destroy_fast(T *src, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *src</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+destroy_fast(T *src, usize cnt)
+{
+  if constexpr ( !micron::is_trivially_destructible_v&lt;micron::remove_cv_t&lt;T&gt;&gt; ) {
+    for ( usize i = 0; i &lt; cnt; ++i ) src[i].~T();
+  } else {
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9d2fb46f895f0809"><h3><code>micron::__impl_container::zero(T *src)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L777">line 777</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+void
+zero(T *src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+void
+zero(T *src)
+{
+  if constexpr ( N == 0 ) return;
+  micron::cbyteset&lt;N * sizeof(T)&gt;(src, 0x0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L779">line 779</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-a688265c7ff7b976">micron::cbyteset&lt;N * sizeof(T)&gt;</a>.</p></section><section class="function-entry" id="f-e5b99894ceec59b9"><h3><code>micron::__impl_container::set(T *__restrict src, const T &amp;val)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L785">line 785</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+void
+set(T *__restrict src, const T &amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+void
+set(T *__restrict src, const T &amp;val)
+{
+  if constexpr ( N == 0 ) return;
+  if constexpr ( !micron::is_trivially_assignable_v&lt;T &amp;, const T &amp;&gt; ) {
+    if constexpr ( N % 4 == 0 ) {
+      for ( usize i = 0; i &lt; N; i += 4 ) {
+        src[i] = val;
+        src[i + 1] = val;
+        src[i + 2] = val;
+        src[i + 3] = val;
+      }
+    } else {
+      for ( usize i = 0; i &lt; N; ++i ) src[i] = val;
+    }
+  } else {
+    micron::ctypeset&lt;N&gt;(src, val);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L787">line 787</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-94d8dd241201ce9e">micron::ctypeset&lt;N&gt;</a>.</p></section><section class="function-entry" id="f-8dcd8fd59edbae4e"><h3><code>micron::__impl_container::set(T *__restrict src, const T &amp;val, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L806">line 806</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+set(T *__restrict src, const T &amp;val, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const T &amp;val</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+set(T *__restrict src, const T &amp;val, usize cnt)
+{
+  // WARNING: micron::typeset is __attribute__((nonnull(1))); passing nullptr, 0 to it is UB
+  if ( cnt == 0 ) return;
+  if constexpr ( !micron::is_trivially_assignable_v&lt;T &amp;, const T &amp;&gt; ) {
+
+    for ( usize i = 0; i &lt; cnt; ++i ) src[i] = val;
+  } else {
+    micron::typeset(src, val, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L809">line 809</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-5f3abd2b78acd611">micron::typeset</a>.</p></section><section class="function-entry" id="f-7b27242390af4c2b"><h3><code>micron::__impl_container::construct(T *__restrict src, const T &amp;val)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L820">line 820</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+void
+construct(T *__restrict src, const T &amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+void
+construct(T *__restrict src, const T &amp;val)
+{
+  if constexpr ( N == 0 ) return;
+  if constexpr ( !micron::is_trivially_constructible_v&lt;T, const T &amp;&gt; ) {
+    if constexpr ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) ) {
+      if constexpr ( N % 4 == 0 ) {
+        for ( usize i = 0; i &lt; N; i += 4 ) {
+          new (addr(src[i])) T(val);
+          new (addr(src[i + 1])) T(val);
+          new (addr(src[i + 2])) T(val);
+          new (addr(src[i + 3])) T(val);
+        }
+      } else {
+        for ( usize i = 0; i &lt; N; ++i ) new (addr(src[i])) T(val);
+      }
+    } else {
+      // throwing element ctor: unwind the already-built prefix on throw
+      usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+        for ( ; i &lt; N; ++i ) new (addr(src[i])) T(val);
+      } catch ( ... ) {
+        for ( usize j = 0; j &lt; i; ++j ) src[j].~T();
+        throw;
+      }
+#else
+      for ( ; i &lt; N; ++i ) new (addr(src[i])) T(val);
+#endif
+    }
+  } else {
+    micron::ctypeset&lt;N&gt;(src, val);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L822">line 822</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L843">line 843</a><br>Within <code>( !micron::is_trivially_constructible_v&lt;T, const T &amp;&gt; )</code>, <code>else of ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>, <a href="../memory/cmemory/memset.hpp.html#f-94d8dd241201ce9e">micron::ctypeset&lt;N&gt;</a>.</p></section><section class="function-entry" id="f-48aa287cdf64b49b"><h3><code>micron::__impl_container::construct(T *__restrict src, const T &amp;val, usize cnt)</code></h3><p>Defined in <code>bits/__container.hpp</code>, <a href="../../source/bits/__container.hpp.html#L856">line 856</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+construct(T *__restrict src, const T &amp;val, usize cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict src</code></li><li><code>const T &amp;val</code></li><li><code>usize cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+construct(T *__restrict src, const T &amp;val, usize cnt)
+{
+  // avoid zero count UB
+  if ( cnt == 0 ) return;
+  if constexpr ( !micron::is_trivially_constructible_v&lt;T, const T &amp;&gt; ) {
+    if constexpr ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) ) {
+      for ( usize i = 0; i &lt; cnt; ++i ) new (addr(src[i])) T(val);
+    } else {
+      // throwing element ctor: unwind the already-built prefix on throw
+      usize i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+        for ( ; i &lt; cnt; ++i ) new (addr(src[i])) T(val);
+      } catch ( ... ) {
+        for ( usize j = 0; j &lt; i; ++j ) src[j].~T();
+        throw;
+      }
+#else
+      for ( ; i &lt; cnt; ++i ) new (addr(src[i])) T(val);
+#endif
+    }
+  } else {
+    micron::typeset(src, val, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/bits/__container.hpp.html#L859">line 859</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/bits/__container.hpp.html#L871">line 871</a><br>Within <code>( !micron::is_trivially_constructible_v&lt;T, const T &amp;&gt; )</code>, <code>else of ( noexcept(T(micron::declval&lt;const T &amp;&gt;())) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const T &amp;&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">addr</a>, <a href="../memory/cmemory/memset.hpp.html#f-5f3abd2b78acd611">micron::typeset</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

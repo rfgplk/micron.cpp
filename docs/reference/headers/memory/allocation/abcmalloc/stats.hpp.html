@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/allocation/abcmalloc/stats.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/allocation/abcmalloc/stats.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/allocation.html">Allocation</a></div><p>Defined in header <code>&lt;micron/memory/allocation/abcmalloc/stats.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-80b352e90cb126ea">abc::stats_t</code></td><td>struct; line 31</td></tr><tr class="t-dsc"><td><code id="s-856b9ea4377dcc8a">abc::stats_t::enabled</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-c37d12fa4412f205">abc::stats_t::alloc_requests</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-f75716ce3edf26ac">abc::stats_t::dealloc_requests</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-e8f8654c44e506e7">abc::stats_t::total_memory_req</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-23a88d9930f56ae6">abc::stats_t::total_memory_throughput</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-9935ddb27025fe39">abc::stats_t::total_memory_freed</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-e2216361c3fe1c5f">abc::stats_t::current_memory_usage</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-4cf42bfcdce558b6">abc::stats_t::current_page_usage</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-bbf5b02c283f8f33">abc::stat_type</code></td><td>enum; line 42</td></tr><tr class="t-dsc"><td><code id="s-c34e95cc04256a8f">abc::stat_type::alloc</code></td><td>enumerator; line 43</td></tr><tr class="t-dsc"><td><code id="s-e53d4c7feaf6db99">abc::stat_type::dealloc</code></td><td>enumerator; line 44</td></tr><tr class="t-dsc"><td><code id="s-a962a54ded3c24ff">abc::stat_type::total_memory_req</code></td><td>enumerator; line 45</td></tr><tr class="t-dsc"><td><code id="s-cae19962bfe83dda">abc::stat_type::total_memory_throughput</code></td><td>enumerator; line 46</td></tr><tr class="t-dsc"><td><code id="s-adc783250227f3a3">abc::stat_type::total_memory_freed</code></td><td>enumerator; line 47</td></tr><tr class="t-dsc"><td><code id="s-5732dc80a93f9e7b">abc::stat_type::current_memory_usage</code></td><td>enumerator; line 48</td></tr><tr class="t-dsc"><td><code id="s-04da71d681653f27">abc::stat_type::current_page_usage</code></td><td>enumerator; line 49</td></tr><tr class="t-dsc"><td><a href="#f-42fa5ad42e2bc187">abc::collect_stats(usize n = 0)</a></td><td>function; line 80</td></tr><tr class="t-dsc"><td><a href="#f-e659b46fbefd10fd">abc::get_stats(void)</a></td><td>function; line 102</td></tr><tr class="t-dsc"><td><a href="#f-add60ff22c2f7adf">abc::stats(void)</a></td><td>function; line 119</td></tr><tr class="t-dsc"><td><a href="#f-e4995604e5bc760b">abc::reset_stats(void) noexcept</a></td><td>function; line 125</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-42fa5ad42e2bc187"><h3><code>abc::collect_stats(usize n = 0)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/stats.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L80">line 80</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;stat_type S&gt;
+inline __attribute__((always_inline)) void
+collect_stats(usize n = 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;stat_type S&gt;
+inline __attribute__((always_inline)) void
+collect_stats(usize n = 0)
+{
+#if defined(MICRON_ABC_STATS)
+  if constexpr ( S == stat_type::alloc ) {
+    __stats.alloc_requests.fetch_add(1, micron::memory_order_relaxed);
+  } else if constexpr ( S == stat_type::dealloc ) {
+    __stats.dealloc_requests.fetch_add(1, micron::memory_order_relaxed);
+  } else if constexpr ( S == stat_type::total_memory_req ) {
+    __stats.total_memory_req.fetch_add(n, micron::memory_order_relaxed);
+  } else if constexpr ( S == stat_type::total_memory_throughput ) {
+    __stats.total_memory_throughput.fetch_add(n, micron::memory_order_relaxed);
+    __stats.current_memory_usage.fetch_add(n, micron::memory_order_relaxed);
+  } else if constexpr ( S == stat_type::total_memory_freed ) {
+    __stats.total_memory_freed.fetch_add(n, micron::memory_order_relaxed);
+    __subtract_current_memory(n);
+  }
+#else
+  (void)n;
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="stats.hpp.html#f-83db5b80914b65fe">__subtract_current_memory</a>.</p></section><section class="function-entry" id="f-e659b46fbefd10fd"><h3><code>abc::get_stats(void)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/stats.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L102">line 102</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline stats_t
+get_stats(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline stats_t
+get_stats(void)
+{
+#if defined(MICRON_ABC_STATS)
+  return { true,
+           __stats.alloc_requests.get(micron::memory_order_relaxed),
+           __stats.dealloc_requests.get(micron::memory_order_relaxed),
+           __stats.total_memory_req.get(micron::memory_order_relaxed),
+           __stats.total_memory_throughput.get(micron::memory_order_relaxed),
+           __stats.total_memory_freed.get(micron::memory_order_relaxed),
+           __stats.current_memory_usage.get(micron::memory_order_relaxed),
+           __stats.current_page_usage.get(micron::memory_order_relaxed) };
+#else
+  return { false, 0, 0, 0, 0, 0, 0, 0 };
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ true,
+           __stats.alloc_requests.get(micron::memory_order_relaxed),
+           __stats.dealloc_requests.get(micron::memory_order_relaxed),
+           __stats.total_memory_req.get(micron::memory_order_relaxed),
+           __stats.total_memory_throughput.get(micron::memory_order_relaxed),
+           __stats.total_memory_freed.get(micron::memory_order_relaxed),
+           __stats.current_memory_usage.get(micron::memory_order_relaxed),
+           __stats.current_page_usage.get(micron::memory_order_relaxed) }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L105">line 105</a></td></tr><tr class="t-dsc"><td><code>{ false, 0, 0, 0, 0, 0, 0, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L114">line 114</a></td></tr></tbody></table></section><section class="function-entry" id="f-add60ff22c2f7adf"><h3><code>abc::stats(void)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/stats.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L119">line 119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline stats_t
+stats(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>get_stats()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline stats_t
+stats(void)
+{
+  return get_stats();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>get_stats()</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L121">line 121</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="stats.hpp.html#f-e659b46fbefd10fd">get_stats</a>.</p></section><section class="function-entry" id="f-e4995604e5bc760b"><h3><code>abc::reset_stats(void) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/stats.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L125">line 125</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+reset_stats(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+reset_stats(void) noexcept
+{
+#if defined(MICRON_ABC_STATS)
+  __stats.alloc_requests.store(0, micron::memory_order_relaxed);
+  __stats.dealloc_requests.store(0, micron::memory_order_relaxed);
+  __stats.total_memory_req.store(0, micron::memory_order_relaxed);
+  __stats.total_memory_throughput.store(0, micron::memory_order_relaxed);
+  __stats.total_memory_freed.store(0, micron::memory_order_relaxed);
+  __stats.current_memory_usage.store(0, micron::memory_order_relaxed);
+  __stats.current_page_usage.store(0, micron::memory_order_relaxed);
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-83db5b80914b65fe"><h3><code>abc::__subtract_current_memory(usize n) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/stats.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__subtract_current_memory(usize n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ABC_STATS)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__subtract_current_memory(usize n) noexcept
+{
+  usize observed = __stats.current_memory_usage.get(micron::memory_order_relaxed);
+  for ( ;; ) {
+    const usize next = n &gt; observed ? 0 : observed - n;
+    if ( __stats.current_memory_usage.compare_exchange_weak(observed, next, micron::memory_order_relaxed, micron::memory_order_relaxed) )
+      return;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/stats.hpp.html#L73">line 73</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

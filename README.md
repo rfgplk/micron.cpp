@@ -204,7 +204,7 @@ The micron library has an extensive testing suite located at `tests/`. As of 1.9
 *micron* currently provides numerous containers and functions which have existing implementations in the C++ Standard Library. Although *most* of these functions do generallyhave the same interfaces and functionality, there are minute core differences (in certain cases, significant ones) which you must be aware of. Do not assume all containers are functionally identical to the STL, because they are not.
 
 > [!IMPORTANT]
-> Documentation for the *micron* library does not currently exist, although the source is intended to be structured in a legible and understandable enough way to serve as documentation for the time being. *micron* is specifically designed for Linux; see the Architecture Support tier list above for per-architecture CPU status. Other operating systems and kernels are unsupported.
+> The [micron reference](docs/reference/index.html) provides offline documentation for the library's modules and function overloads, with source-backed effects, examples, and header and symbol indexes. Open the page directly in a browser; no documentation server is required.
 
  
 ##### Libraries

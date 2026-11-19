@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/allocation/abcmalloc/free_list.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/allocation/abcmalloc/free_list.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/allocation.html">Allocation</a></div><p>Defined in header <code>&lt;micron/memory/allocation/abcmalloc/free_list.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-68cda03a35c9cac0"><h3><code>abc::__buddy_list::__free_block_at(void *addr) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L54">line 54</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline free_block *
+  __free_block_at(void *addr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *addr</code></li></ul><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;free_block *&gt;(__builtin_assume_aligned(addr, alignof(free_block)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline free_block *
+  __free_block_at(void *addr) noexcept
+  {
+    return reinterpret_cast&lt;free_block *&gt;(__builtin_assume_aligned(addr, alignof(free_block)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;free_block *&gt;(__builtin_assume_aligned(addr, alignof(free_block)))</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L56">line 56</a></td></tr></tbody></table></section><section class="function-entry" id="f-97f44c3fddbcf2fe"><h3><code>abc::__buddy_list::ceil_log2_u64(u64 v) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L100">line 100</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline int
+  ceil_log2_u64(u64 v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 v</code></li></ul><h4>Effects</h4><p>Returns <code>64 - __builtin_clzll(v - 1)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline int
+  ceil_log2_u64(u64 v) noexcept
+  {
+    return 64 - __builtin_clzll(v - 1);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>64 - __builtin_clzll(v - 1)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L102">line 102</a></td></tr></tbody></table></section><section class="function-entry" id="f-d332d4953c8d37c7"><h3><code>abc::__buddy_list::order_for_size(usize n) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L106">line 106</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline int
+  order_for_size(usize n) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline int
+  order_for_size(usize n) const noexcept
+  {
+    usize units = ((n - 1) &gt;&gt; __log2_min) + 1;
+    if ( units &lt;= 1 ) return 0;
+    return ceil_log2_u64(units);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L109">line 109</a></td></tr><tr class="t-dsc"><td><code>ceil_log2_u64(units)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L110">line 110</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-97f44c3fddbcf2fe">ceil_log2_u64</a>.</p></section><section class="function-entry" id="f-caa80535aa151f75"><h3><code>abc::__buddy_list::order_size(i32 o) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L114">line 114</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline usize
+  order_size(i32 o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;usize&gt;(Min) &lt;&lt; o</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline usize
+  order_size(i32 o) const noexcept
+  {
+    return static_cast&lt;usize&gt;(Min) &lt;&lt; o;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(Min) &lt;&lt; o</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L116">line 116</a></td></tr></tbody></table></section><section class="function-entry" id="f-986d5e83f7cee017"><h3><code>abc::__buddy_list::tag_index_of(usize off) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L120">line 120</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline usize
+  tag_index_of(usize off) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize off</code></li></ul><h4>Effects</h4><p>Returns <code>off &gt;&gt; __log2_min</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline usize
+  tag_index_of(usize off) const noexcept
+  {
+    return off &gt;&gt; __log2_min;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>off &gt;&gt; __log2_min</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L122">line 122</a></td></tr></tbody></table></section><section class="function-entry" id="f-55278f1b008e3e98"><h3><code>abc::__buddy_list::tag_index(byte *addr) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L126">line 126</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline usize
+  tag_index(byte *addr) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *addr</code></li></ul><h4>Effects</h4><p>Returns <code>tag_index_of((usize)(addr - base))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline usize
+  tag_index(byte *addr) const noexcept
+  {
+    return tag_index_of((usize)(addr - base));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tag_index_of((usize)(addr - base))</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L128">line 128</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-986d5e83f7cee017">tag_index_of</a>.</p></section><section class="function-entry" id="f-c84fa05f4b916ab8"><h3><code>abc::__buddy_list::tag_set_free(byte *addr, i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L132">line 132</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline void
+  tag_set_free(byte *addr, i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *addr</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline void
+  tag_set_free(byte *addr, i32 o) noexcept
+  {
+    block_tags[tag_index(addr)] = (u8)(o | __tag_free);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-55278f1b008e3e98">tag_index</a>.</p></section><section class="function-entry" id="f-5855c91258fe2e7d"><h3><code>abc::__buddy_list::tag_set_free_at(usize tidx, i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L138">line 138</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline void
+  tag_set_free_at(usize tidx, i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize tidx</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline void
+  tag_set_free_at(usize tidx, i32 o) noexcept
+  {
+    block_tags[tidx] = (u8)(o | __tag_free);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b2c0b0d540eed1f1"><h3><code>abc::__buddy_list::tag_set_alloc(byte *addr, i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L144">line 144</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline void
+  tag_set_alloc(byte *addr, i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *addr</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline void
+  tag_set_alloc(byte *addr, i32 o) noexcept
+  {
+    block_tags[tag_index(addr)] = (u8)(o);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-55278f1b008e3e98">tag_index</a>.</p></section><section class="function-entry" id="f-d59e506af4d1d0eb"><h3><code>abc::__buddy_list::tag_is_free_at_off(usize off, i32 o) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L150">line 150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  tag_is_free_at_off(usize off, i32 o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize off</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  tag_is_free_at_off(usize off, i32 o) const noexcept
+  {
+    u8 expected = (u8)(o | __tag_free);
+    return block_tags[off &gt;&gt; __log2_min] == expected;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>block_tags[off &gt;&gt; __log2_min] == expected</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L153">line 153</a></td></tr></tbody></table></section><section class="function-entry" id="f-5b1f61b31f9c74d6"><h3><code>abc::__buddy_list::tag_is_free_at(byte *addr, i32 o) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L157">line 157</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  tag_is_free_at(byte *addr, i32 o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *addr</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Returns <code>tag_is_free_at_off((usize)(addr - base), o)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  tag_is_free_at(byte *addr, i32 o) const noexcept
+  {
+    return tag_is_free_at_off((usize)(addr - base), o);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tag_is_free_at_off((usize)(addr - base), o)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L159">line 159</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-d59e506af4d1d0eb">tag_is_free_at_off</a>.</p></section><section class="function-entry" id="f-adc75facff5515a7"><h3><code>abc::__buddy_list::mask_set(i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L163">line 163</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline void
+  mask_set(i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline void
+  mask_set(i32 o) noexcept
+  {
+    free_mask |= (u64(1) &lt;&lt; o);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-4f69c0d5a8d2cd17"><h3><code>abc::__buddy_list::mask_clear_if_empty(i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L169">line 169</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline void
+  mask_clear_if_empty(i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline void
+  mask_clear_if_empty(i32 o) noexcept
+  {
+    if ( free_lists[o] == nullptr ) free_mask &amp;= ~(u64(1) &lt;&lt; o);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-ce79e0632fb4ac10"><h3><code>abc::__buddy_list::find_free_order(i32 o) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L175">line 175</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline i32
+  find_free_order(i32 o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline i32
+  find_free_order(i32 o) const noexcept
+  {
+    u64 m = free_mask &gt;&gt; o;
+    if ( m == 0 ) return max_order;
+    return o + __builtin_ctzll(m);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>max_order</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L178">line 178</a></td></tr><tr class="t-dsc"><td><code>o + __builtin_ctzll(m)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L179">line 179</a></td></tr></tbody></table></section><section class="function-entry" id="f-0635ae30ee761a27"><h3><code>abc::__buddy_list::hdr_of(byte *block_start, i32 o) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L183">line 183</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline block_header *
+  hdr_of(byte *block_start, i32 o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *block_start</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Returns <code>micron::ptr_cast&lt;block_header *&gt;(block_start + order_size(o) - __hdr_offset)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline block_header *
+  hdr_of(byte *block_start, i32 o) const noexcept
+  {
+    return micron::ptr_cast&lt;block_header *&gt;(block_start + order_size(o) - __hdr_offset);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::ptr_cast&lt;block_header *&gt;(block_start + order_size(o) - __hdr_offset)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L185">line 185</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;block_header *&gt;</a>, <a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>.</p></section><section class="function-entry" id="f-67d362a97931c2c1"><h3><code>abc::__buddy_list::hdr_of(const byte *block_start, i32 o) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L189">line 189</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline const block_header *
+  hdr_of(const byte *block_start, i32 o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *block_start</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;const block_header *&gt;(block_start + order_size(o) - __hdr_offset)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline const block_header *
+  hdr_of(const byte *block_start, i32 o) const noexcept
+  {
+    return reinterpret_cast&lt;const block_header *&gt;(block_start + order_size(o) - __hdr_offset);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;const block_header *&gt;(block_start + order_size(o) - __hdr_offset)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L191">line 191</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>.</p></section><section class="function-entry" id="f-1ba16982e702c8ab"><h3><code>abc::__buddy_list::hdr_of_tagged(byte *block_start) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L195">line 195</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline block_header *
+  hdr_of_tagged(byte *block_start) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *block_start</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline block_header *
+  hdr_of_tagged(byte *block_start) const noexcept
+  {
+    u8 tag = block_tags[tag_index(block_start)];
+    i32 o = static_cast&lt;i32&gt;(tag &amp; ~__tag_free);
+    return hdr_of(block_start, o);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>hdr_of(block_start, o)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L199">line 199</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-55278f1b008e3e98">tag_index</a>, <a href="free_list.hpp.html#f-0635ae30ee761a27">hdr_of</a>.</p></section><section class="function-entry" id="f-19045af9c6194bcd"><h3><code>abc::__buddy_list::__link_valid(const free_block *n) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L204">line 204</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  __link_valid(const free_block *n) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const free_block *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  __link_valid(const free_block *n) const noexcept
+  {
+    if ( n == nullptr ) return true;
+    const byte *b = reinterpret_cast&lt;const byte *&gt;(n);
+    if ( b &lt; base || b &gt;= base + total ) return false;
+    return ((usize)(b - base) &amp; (Min - 1)) == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L206">line 206</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L208">line 208</a></td></tr><tr class="t-dsc"><td><code>((usize)(b - base) &amp; (Min - 1)) == 0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L209">line 209</a></td></tr></tbody></table></section><section class="function-entry" id="f-1a74d78923735444"><h3><code>abc::__buddy_list::__freelist_remove_slow(byte *buddy, i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L213">line 213</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold, gnu::noinline]] bool
+  __freelist_remove_slow(byte *buddy, i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *buddy</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold, gnu::noinline]] bool
+  __freelist_remove_slow(byte *buddy, i32 o) noexcept
+  {
+    free_block *prev = nullptr;
+    free_block *cur = free_lists[o];
+    usize guard = 0;
+    while ( cur &amp;&amp; guard++ &lt;= tag_count ) {
+      free_block *nx = cur-&gt;next;
+      if ( !__link_valid(nx) ) nx = nullptr;
+      if ( (byte *)cur == buddy ) {
+        if ( prev )
+          prev-&gt;next = nx;
+        else
+          free_lists[o] = nx;
+        if ( prev &amp;&amp; nx ) nx-&gt;prev = prev;
+        mask_clear_if_empty(o);
+        return true;
+      }
+      prev = cur;
+      cur = nx;
+    }
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L228">line 228</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L233">line 233</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-19045af9c6194bcd">__link_valid</a>, <a href="free_list.hpp.html#f-4f69c0d5a8d2cd17">mask_clear_if_empty</a>.</p></section><section class="function-entry" id="f-0017db144cc1fda7"><h3><code>abc::__buddy_list::freelist_remove(byte *buddy, i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L237">line 237</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  freelist_remove(byte *buddy, i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *buddy</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  freelist_remove(byte *buddy, i32 o) noexcept
+  {
+    free_block *node = __free_block_at(buddy);
+    free_block *next = node-&gt;next;
+    free_block *head = free_lists[o];
+
+    if ( head == node ) {
+      if ( !__link_valid(next) ) [[unlikely]]
+        return __freelist_remove_slow(buddy, o);
+      free_lists[o] = next;
+      if ( next == nullptr ) free_mask &amp;= ~(u64(1) &lt;&lt; o);
+      return true;
+    }
+
+    free_block *prev = node-&gt;prev;
+    if ( !__link_valid(next) ) [[unlikely]]
+      return __freelist_remove_slow(buddy, o);
+    if ( !__link_valid(prev) || prev == nullptr || prev-&gt;next != node || (next &amp;&amp; next-&gt;prev != node) ) [[unlikely]]
+      return __freelist_remove_slow(buddy, o);
+
+    prev-&gt;next = next;
+    if ( next ) next-&gt;prev = prev;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__freelist_remove_slow(buddy, o)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L245">line 245</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L248">line 248</a></td></tr><tr class="t-dsc"><td><code>__freelist_remove_slow(buddy, o)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L253">line 253</a></td></tr><tr class="t-dsc"><td><code>__freelist_remove_slow(buddy, o)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L255">line 255</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L259">line 259</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-68cda03a35c9cac0">__free_block_at</a>, <a href="free_list.hpp.html#f-19045af9c6194bcd">__link_valid</a>, <a href="free_list.hpp.html#f-1a74d78923735444">__freelist_remove_slow</a>, <a href="../../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-47a789b20d95c26f"><h3><code>abc::__buddy_list::freelist_push_off(byte *addr, i32 o, usize off) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L263">line 263</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline void
+  freelist_push_off(byte *addr, i32 o, usize off) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *addr</code></li><li><code>i32 o</code></li><li><code>usize off</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline void
+  freelist_push_off(byte *addr, i32 o, usize off) noexcept
+  {
+    free_block *nb = __free_block_at(addr);
+    free_block *head = free_lists[o];
+    nb-&gt;next = head;
+    if ( head )
+      head-&gt;prev = nb;
+    else
+      mask_set(o);
+    free_lists[o] = nb;
+    tag_set_free_at(off &gt;&gt; __log2_min, o);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-68cda03a35c9cac0">__free_block_at</a>, <a href="free_list.hpp.html#f-adc75facff5515a7">mask_set</a>, <a href="free_list.hpp.html#f-5855c91258fe2e7d">tag_set_free_at</a>.</p></section><section class="function-entry" id="f-c7d60723dbd72185"><h3><code>abc::__buddy_list::__take_and_split(i32 from, i32 target) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L277">line 277</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline free_block *
+  __take_and_split(i32 from, i32 target) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 from</code></li><li><code>i32 target</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline free_block *
+  __take_and_split(i32 from, i32 target) noexcept
+  {
+    free_block *blk = free_lists[from];
+    free_block *next = blk-&gt;next;
+    u64 mask = free_mask;
+    const u64 old_mask = mask;
+
+    if ( !__link_valid(next) ) [[unlikely]]
+      next = nullptr;      // hard drop a corrupted tail
+    free_lists[from] = next;
+    if ( next == nullptr ) mask &amp;= ~(u64(1) &lt;&lt; from);
+
+    usize split_size = order_size(from);
+    while ( from &gt; target ) {
+      --from;
+      split_size &gt;&gt;= 1;
+      byte *right = reinterpret_cast&lt;byte *&gt;(blk) + split_size;
+      free_block *node = __free_block_at(right);
+      free_block *head = free_lists[from];
+      node-&gt;next = head;
+      if ( head )
+        head-&gt;prev = node;
+      else
+        mask |= (u64(1) &lt;&lt; from);
+      free_lists[from] = node;
+      block_tags[tag_index(right)] = static_cast&lt;u8&gt;(from | __tag_free);
+    }
+
+    if ( mask != old_mask ) free_mask = mask;
+    return blk;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>blk</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L306">line 306</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-19045af9c6194bcd">__link_valid</a>, <a href="../../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>, <a href="free_list.hpp.html#f-68cda03a35c9cac0">__free_block_at</a>, <a href="free_list.hpp.html#f-55278f1b008e3e98">tag_index</a>.</p></section><section class="function-entry" id="f-3624521f43ab96c6"><h3><code>abc::__buddy_list::tcache_pop(i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L310">line 310</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline free_block *
+  tcache_pop(i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline free_block *
+  tcache_pop(i32 o) noexcept
+  {
+    if ( tcache_count[o] &lt;= 0 ) return nullptr;
+    free_block *blk = tcache[o];
+    free_block *__nx = blk-&gt;next;
+    if ( __link_valid(__nx) ) {
+      tcache[o] = __nx;
+      --tcache_count[o];
+    } else {
+      tcache[o] = nullptr;
+      tcache_count[o] = 0;
+    }      // hard drop corrupted cache tail
+    return blk;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L312">line 312</a></td></tr><tr class="t-dsc"><td><code>blk</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L322">line 322</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-19045af9c6194bcd">__link_valid</a>.</p></section><section class="function-entry" id="f-a77105a774bcd21e"><h3><code>abc::__buddy_list::tcache_push(free_block *blk, i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L326">line 326</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  tcache_push(free_block *blk, i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>free_block *blk</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  tcache_push(free_block *blk, i32 o) noexcept
+  {
+    if ( tcache_count[o] &gt;= __cache_cap ) return false;
+    blk-&gt;next = tcache[o];
+    tcache[o] = blk;
+    ++tcache_count[o];
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L328">line 328</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L332">line 332</a></td></tr></tbody></table></section><section class="function-entry" id="f-ed7432405f84781e"><h3><code>abc::__buddy_list::tcache_flush(i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L336">line 336</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  tcache_flush(i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  tcache_flush(i32 o) noexcept
+  {
+    while ( tcache[o] ) {
+      free_block *blk = tcache[o];
+      tcache[o] = blk-&gt;next;
+      --tcache_count[o];
+
+      byte *addr = (byte *)blk;
+      __merge_and_free(addr, o);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-ef375f01de9ae2d1">__merge_and_free</a>.</p></section><section class="function-entry" id="f-62de3d1cf0d379fb"><h3><code>abc::__buddy_list::tcache_flush_all() noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L349">line 349</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  tcache_flush_all() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  tcache_flush_all() noexcept
+  {
+    for ( i32 i = 0; i &lt; max_order; ++i ) tcache_flush(i);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-ed7432405f84781e">tcache_flush</a>.</p></section><section class="function-entry" id="f-31ab9ef1812f8fc9"><h3><code>abc::__buddy_list::cold_pop(i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L355">line 355</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline free_block *
+  cold_pop(i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline free_block *
+  cold_pop(i32 o) noexcept
+  {
+    if ( cold_count[o] &lt;= 0 ) return nullptr;
+    free_block *blk = cold_cache[o];
+    free_block *__nx = blk-&gt;next;
+    if ( __link_valid(__nx) ) {
+      cold_cache[o] = __nx;
+      --cold_count[o];
+    } else {
+      cold_cache[o] = nullptr;
+      cold_count[o] = 0;
+    }      // hard drop corrupted cache tail
+    return blk;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L357">line 357</a></td></tr><tr class="t-dsc"><td><code>blk</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L367">line 367</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-19045af9c6194bcd">__link_valid</a>.</p></section><section class="function-entry" id="f-402bc53994bbf83b"><h3><code>abc::__buddy_list::cold_push(free_block *blk, i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L371">line 371</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  cold_push(free_block *blk, i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>free_block *blk</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  cold_push(free_block *blk, i32 o) noexcept
+  {
+    if ( cold_count[o] &gt;= __cold_cap ) return false;
+    blk-&gt;next = cold_cache[o];
+    cold_cache[o] = blk;
+    ++cold_count[o];
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L373">line 373</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L377">line 377</a></td></tr></tbody></table></section><section class="function-entry" id="f-9e4176e19eae9927"><h3><code>abc::__buddy_list::cold_drain_merge(i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L381">line 381</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  cold_drain_merge(i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  cold_drain_merge(i32 o) noexcept
+  {
+    while ( cold_cache[o] ) {
+      free_block *blk = cold_cache[o];
+      cold_cache[o] = blk-&gt;next;
+      --cold_count[o];
+
+      byte *addr = (byte *)blk;
+      __merge_and_free(addr, o);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-ef375f01de9ae2d1">__merge_and_free</a>.</p></section><section class="function-entry" id="f-44b48d49a9c275cb"><h3><code>abc::__buddy_list::cold_flush_all() noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L394">line 394</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  cold_flush_all() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  cold_flush_all() noexcept
+  {
+    for ( i32 i = 0; i &lt; max_order; ++i ) cold_drain_merge(i);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-9e4176e19eae9927">cold_drain_merge</a>.</p></section><section class="function-entry" id="f-ef375f01de9ae2d1"><h3><code>abc::__buddy_list::__merge_and_free(byte *addr, i32 o) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L400">line 400</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __merge_and_free(byte *addr, i32 o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *addr</code></li><li><code>i32 o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __merge_and_free(byte *addr, i32 o) noexcept
+  {
+    usize off = (usize)(addr - base);
+
+    while ( o &lt; max_order - 1 ) {
+      usize blk_sz = order_size(o);
+      usize buddy_off = off ^ blk_sz;
+
+      if ( !tag_is_free_at_off(buddy_off, o) ) break;
+
+      if ( !freelist_remove(base + buddy_off, o) ) [[unlikely]]
+        break;
+      const usize interior_off = (buddy_off &gt; off) ? buddy_off : off;
+      block_tags[interior_off &gt;&gt; __log2_min] = __tag_none;
+
+      off = (buddy_off &lt; off) ? buddy_off : off;
+      ++o;
+    }
+
+    freelist_push_off(base + off, o, off);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>, <a href="free_list.hpp.html#f-d59e506af4d1d0eb">tag_is_free_at_off</a>, <a href="free_list.hpp.html#f-0017db144cc1fda7">freelist_remove</a>, <a href="free_list.hpp.html#f-47a789b20d95c26f">freelist_push_off</a>.</p></section><section class="function-entry" id="f-942d614916415393"><h3><code>abc::__buddy_list::__impl_zero_arrays() noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L423">line 423</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __impl_zero_arrays() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __impl_zero_arrays() noexcept
+  {
+    free_mask = 0;
+    for ( i32 i = 0; i &lt; Mx; ++i ) {
+      free_lists[i] = nullptr;
+      for ( i32 r = 0; r &lt; __active_ring; ++r ) active[i][r] = nullptr;
+      active_rotor[i] = 0;
+      tcache[i] = nullptr;
+      tcache_count[i] = 0;
+      cold_cache[i] = nullptr;
+      cold_count[i] = 0;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-eb8cf7a5a32da7e4"><h3><code>abc::__buddy_list::__impl_init_memory(byte *_ptr, usize _len, u8 *ext_tags = nullptr)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L438">line 438</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __impl_init_memory(byte *_ptr, usize _len, u8 *ext_tags = nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *_ptr</code></li><li><code>usize _len</code></li><li><code>u8 *ext_tags = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __impl_init_memory(byte *_ptr, usize _len, u8 *ext_tags = nullptr)
+  {
+    uintptr_t ptr = (uintptr_t)_ptr;
+    uintptr_t a = alignof(void *);
+    uintptr_t r = (ptr + (a - 1)) &amp; ~(a - 1);
+    usize adjust = r - ptr;
+    if ( _len &lt;= adjust ) {
+      base = nullptr;
+      total = 0;
+      max_order = 0;
+      tag_count = 0;
+      block_tags = nullptr;
+      tags_external = false;
+      return;
+    }
+
+    byte *aligned = (byte *)r;
+    usize usable = _len - adjust;
+
+    if ( ext_tags ) {
+
+      tags_external = true;
+      block_tags = ext_tags;
+      base = aligned;
+      usize data_usable = (usable / Min) * Min;
+      if ( data_usable &lt; Min ) {
+        base = nullptr;
+        total = 0;
+        max_order = 0;
+        tag_count = 0;
+        block_tags = nullptr;
+        tags_external = false;
+        return;
+      }
+      total = data_usable;
+    } else {
+
+      tags_external = false;
+      constexpr usize min_sz = static_cast&lt;usize&gt;(Min);
+      usize approx_tags = (usable + min_sz) / (min_sz + 1);
+      usize tag_area = (approx_tags + min_sz - 1) &amp; ~(min_sz - 1);
+      if ( tag_area &gt;= usable ) {
+        base = nullptr;
+        total = 0;
+        max_order = 0;
+        tag_count = 0;
+        block_tags = nullptr;
+        return;
+      }
+      block_tags = aligned;
+      base = aligned + tag_area;
+      usize data_usable = usable - tag_area;
+      data_usable = (data_usable / Min) * Min;
+      if ( data_usable &lt; Min ) {
+        base = nullptr;
+        total = 0;
+        max_order = 0;
+        tag_count = 0;
+        block_tags = nullptr;
+        return;
+      }
+      total = data_usable;
+    }
+
+    tag_count = total &gt;&gt; __log2_min;
+
+    const usize units = total &gt;&gt; __log2_min;
+    max_order = static_cast&lt;i32&gt;(63 - __builtin_clzll(units)) + 1;
+    if ( max_order &gt; Mx ) max_order = Mx;
+
+    __impl_zero_arrays();
+
+    micron::memset(block_tags, __tag_none, tag_count);
+
+    free_lists[max_order - 1] = __free_block_at(base);
+    free_lists[max_order - 1]-&gt;next = nullptr;
+    mask_set(max_order - 1);
+    tag_set_free(base, max_order - 1);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L451">line 451</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L470">line 470</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L485">line 485</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L497">line 497</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-942d614916415393">__impl_zero_arrays</a>, <a href="../../cmemory/memset.hpp.html#f-8464e1a1f787e9d0">micron::memset</a>, <a href="free_list.hpp.html#f-68cda03a35c9cac0">__free_block_at</a>, <a href="free_list.hpp.html#f-adc75facff5515a7">mask_set</a>, <a href="free_list.hpp.html#f-c84fa05f4b916ab8">tag_set_free</a>.</p></section><section class="function-entry" id="f-4887f407c2ef74ef"><h3><code>abc::__buddy_list::~__buddy_list() noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L518">line 518</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~__buddy_list() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~__buddy_list() noexcept { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-be11dd8a47756beb"><h3><code>abc::__buddy_list::__buddy_list(void)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L520">line 520</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__buddy_list(void) = delete;</pre></td></tr></tbody></table><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-b3c3f5661a5e9a64"><h3><code>abc::__buddy_list::__buddy_list(const T &amp;mem) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L522">line 522</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__buddy_list(const T &amp;mem) noexcept
+      : base(nullptr), total(0), max_order(0), allocated_bytes(0), tombstoned_bytes(0), free_mask(0), block_tags(nullptr), tag_count(0),
+        tags_external(false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;mem</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__buddy_list(const T &amp;mem) noexcept
+      : base(nullptr), total(0), max_order(0), allocated_bytes(0), tombstoned_bytes(0), free_mask(0), block_tags(nullptr), tag_count(0),
+        tags_external(false)
+  {
+    __impl_zero_arrays();
+    if ( mem.zero() or mem.len &lt; Min ) micron::abort();
+    __impl_init_memory(mem.ptr, mem.len);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::abort()</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L527">line 527</a><br>Within <code>( mem.zero() or mem.len &lt; Min )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-942d614916415393">__impl_zero_arrays</a>, <a href="../../../exit.hpp.html#f-6980559c7644f805">micron::abort</a>, <a href="free_list.hpp.html#f-eb8cf7a5a32da7e4">__impl_init_memory</a>.</p></section><section class="function-entry" id="f-dc63c53fd8475aec"><h3><code>abc::__buddy_list::__buddy_list(const T &amp;mem, u8 *tag_buf) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L531">line 531</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__buddy_list(const T &amp;mem, u8 *tag_buf) noexcept
+      : base(nullptr), total(0), max_order(0), allocated_bytes(0), tombstoned_bytes(0), free_mask(0), block_tags(nullptr), tag_count(0),
+        tags_external(true)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;mem</code></li><li><code>u8 *tag_buf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__buddy_list(const T &amp;mem, u8 *tag_buf) noexcept
+      : base(nullptr), total(0), max_order(0), allocated_bytes(0), tombstoned_bytes(0), free_mask(0), block_tags(nullptr), tag_count(0),
+        tags_external(true)
+  {
+    __impl_zero_arrays();
+    if ( mem.zero() or mem.len &lt; Min ) micron::abort();
+    __impl_init_memory(mem.ptr, mem.len, tag_buf);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::abort()</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L536">line 536</a><br>Within <code>( mem.zero() or mem.len &lt; Min )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-942d614916415393">__impl_zero_arrays</a>, <a href="../../../exit.hpp.html#f-6980559c7644f805">micron::abort</a>, <a href="free_list.hpp.html#f-eb8cf7a5a32da7e4">__impl_init_memory</a>.</p></section><section class="function-entry" id="f-880d0d35cec1ac49"><h3><code>abc::__buddy_list::__buddy_list(const __buddy_list &amp;)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L540">line 540</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__buddy_list(const __buddy_list &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __buddy_list &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-d9635579d1baa237"><h3><code>abc::__buddy_list::__buddy_list(__buddy_list &amp;&amp;o)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L542">line 542</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__buddy_list(__buddy_list &amp;&amp;o)
+      : base(o.base), total(o.total), max_order(o.max_order), allocated_bytes(o.allocated_bytes), tombstoned_bytes(o.tombstoned_bytes),
+        free_mask(o.free_mask), block_tags(o.block_tags), tag_count(o.tag_count), tags_external(o.tags_external)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__buddy_list &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__buddy_list(__buddy_list &amp;&amp;o)
+      : base(o.base), total(o.total), max_order(o.max_order), allocated_bytes(o.allocated_bytes), tombstoned_bytes(o.tombstoned_bytes),
+        free_mask(o.free_mask), block_tags(o.block_tags), tag_count(o.tag_count), tags_external(o.tags_external)
+  {
+    o.base = nullptr;
+    o.total = 0;
+    o.max_order = 0;
+    o.allocated_bytes = 0;
+    o.tombstoned_bytes = 0;
+    o.free_mask = 0;
+    o.block_tags = nullptr;
+    o.tag_count = 0;
+    o.tags_external = false;
+
+    for ( i32 i = 0; i &lt; Mx; ++i ) {
+      free_lists[i] = o.free_lists[i];
+      tcache[i] = o.tcache[i];
+      tcache_count[i] = o.tcache_count[i];
+      cold_cache[i] = o.cold_cache[i];
+      cold_count[i] = o.cold_count[i];
+      o.free_lists[i] = nullptr;
+      o.tcache[i] = nullptr;
+      o.tcache_count[i] = 0;
+      o.cold_cache[i] = nullptr;
+      o.cold_count[i] = 0;
+      for ( i32 r = 0; r &lt; __active_ring; ++r ) {
+        active[i][r] = o.active[i][r];
+        o.active[i][r] = nullptr;
+      }
+      active_rotor[i] = o.active_rotor[i];
+      o.active_rotor[i] = 0;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7b5708433c260e16"><h3><code>abc::__buddy_list::operator=(const __buddy_list &amp;)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L576">line 576</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__buddy_list &amp;operator=(const __buddy_list &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __buddy_list &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-1398f79ee2992f02"><h3><code>abc::__buddy_list::operator=(__buddy_list &amp;&amp;o)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L579">line 579</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__buddy_list &amp;
+  operator=(__buddy_list &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__buddy_list &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__buddy_list &amp;
+  operator=(__buddy_list &amp;&amp;o)
+  {
+
+    tcache_flush_all();
+    cold_flush_all();
+
+    base = o.base;
+    total = o.total;
+    max_order = o.max_order;
+    allocated_bytes = o.allocated_bytes;
+    tombstoned_bytes = o.tombstoned_bytes;
+    free_mask = o.free_mask;
+    block_tags = o.block_tags;
+    tag_count = o.tag_count;
+    tags_external = o.tags_external;
+
+    o.base = nullptr;
+    o.total = 0;
+    o.max_order = 0;
+    o.allocated_bytes = 0;
+    o.tombstoned_bytes = 0;
+    o.free_mask = 0;
+    o.block_tags = nullptr;
+    o.tag_count = 0;
+    o.tags_external = false;
+
+    for ( i32 i = 0; i &lt; Mx; ++i ) {
+      free_lists[i] = o.free_lists[i];
+      tcache[i] = o.tcache[i];
+      tcache_count[i] = o.tcache_count[i];
+      cold_cache[i] = o.cold_cache[i];
+      cold_count[i] = o.cold_count[i];
+      o.free_lists[i] = nullptr;
+      o.tcache[i] = nullptr;
+      o.tcache_count[i] = 0;
+      o.cold_cache[i] = nullptr;
+      o.cold_count[i] = 0;
+      for ( i32 r = 0; r &lt; __active_ring; ++r ) {
+        active[i][r] = o.active[i][r];
+        o.active[i][r] = nullptr;
+      }
+      active_rotor[i] = o.active_rotor[i];
+      o.active_rotor[i] = 0;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L623">line 623</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-62de3d1cf0d379fb">tcache_flush_all</a>, <a href="free_list.hpp.html#f-44b48d49a9c275cb">cold_flush_all</a>.</p></section><section class="function-entry" id="f-5096770f6187e7cd"><h3><code>abc::__buddy_list::allocate(usize n) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L627">line 627</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  allocate(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  allocate(usize n) noexcept
+  {
+    if ( n &gt; micron::numeric_limits&lt;usize&gt;::max() - __hdr_offset ) return { nullptr, 0 };
+    n += __hdr_offset;
+    if ( !base ) return { nullptr, 0 };
+    i32 o = order_for_size(n);
+    if ( o &gt;= max_order ) return { nullptr, 0 };
+    const usize target_size = order_size(o);
+
+    if constexpr ( __cold_cap &gt; 0 ) {
+      if ( free_block *cold = cold_pop(o) ) {
+        block_header *hdr = hdr_of((byte *)cold, o);
+        hdr-&gt;order = static_cast&lt;i32&gt;(o);
+        hdr-&gt;flags = __block_alloc;
+        tag_set_alloc((byte *)cold, o);
+        allocated_bytes += target_size;
+        return { (byte *)cold, target_size - __hdr_offset };
+      }
+    }
+
+    i32 i = find_free_order(o);
+    if ( i &gt;= max_order ) {
+      if constexpr ( __cold_cap &gt; 0 ) {
+        cold_flush_all();
+        i = find_free_order(o);
+      }
+      if ( i &gt;= max_order ) return { nullptr, 0 };
+    }
+
+    free_block *blk = __take_and_split(i, o);
+
+    // write header at the tail of the block
+    block_header *hdr = hdr_of((byte *)blk, o);
+    hdr-&gt;order = static_cast&lt;i32&gt;(o);
+    hdr-&gt;flags = __block_alloc;
+    tag_set_alloc((byte *)blk, o);
+    allocated_bytes += target_size;
+
+    return { (byte *)blk, target_size - __hdr_offset };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L629">line 629</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L631">line 631</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L633">line 633</a></td></tr><tr class="t-dsc"><td><code>{ (byte *)cold, target_size - __hdr_offset }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L643">line 643</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L653">line 653</a></td></tr><tr class="t-dsc"><td><code>{ (byte *)blk, target_size - __hdr_offset }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L665">line 665</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;usize&gt;::max</a>, <a href="free_list.hpp.html#f-d332d4953c8d37c7">order_for_size</a>, <a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>, <a href="free_list.hpp.html#f-31ab9ef1812f8fc9">cold_pop</a>, <a href="free_list.hpp.html#f-0635ae30ee761a27">hdr_of</a>, <a href="free_list.hpp.html#f-b2c0b0d540eed1f1">tag_set_alloc</a>, <a href="free_list.hpp.html#f-ce79e0632fb4ac10">find_free_order</a>, <a href="free_list.hpp.html#f-44b48d49a9c275cb">cold_flush_all</a>, <a href="free_list.hpp.html#f-c7d60723dbd72185">__take_and_split</a>.</p></section><section class="function-entry" id="f-142691d1e92c2d84"><h3><code>abc::__buddy_list::temporal_allocate(usize n) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L669">line 669</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  temporal_allocate(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  temporal_allocate(usize n) noexcept
+  {
+    if ( n &gt; micron::numeric_limits&lt;usize&gt;::max() - __hdr_offset ) return { nullptr, 0 };
+    n += __hdr_offset;
+    if ( !base ) return { nullptr, 0 };
+
+    i32 o = order_for_size(n);
+    if ( o &gt;= max_order ) return { nullptr, 0 };
+
+    usize target_size = order_size(o);
+
+    u8 r0 = active_rotor[o] &amp; (__active_ring - 1);
+    free_block *active_block = active[o][r0];
+    if ( !active_block ) {
+      r0 ^= 1u;
+      active_block = active[o][r0];
+    }
+    if ( active_block ) {
+      active_rotor[o] = r0 ^ 1u;
+      return { reinterpret_cast&lt;byte *&gt;(active_block), target_size - __hdr_offset };
+    }
+
+    free_block *cached = tcache_pop(o);
+    if ( cached ) {
+      block_header *hdr = hdr_of((byte *)cached, o);
+      hdr-&gt;order = static_cast&lt;i32&gt;(o);
+      hdr-&gt;flags = __block_alloc | __block_temporal;
+      tag_set_alloc((byte *)cached, o);
+      allocated_bytes += target_size;
+      active[o][r0] = cached;
+      active_rotor[o] = r0 ^ 1u;
+      return { (byte *)cached, target_size - __hdr_offset };
+    }
+
+    i32 i = find_free_order(o);
+    if ( i &gt;= max_order ) return { nullptr, 0 };
+
+    free_block *blk = __take_and_split(i, o);
+
+    block_header *hdr = hdr_of((byte *)blk, o);
+    hdr-&gt;order = static_cast&lt;i32&gt;(o);
+    hdr-&gt;flags = __block_alloc | __block_temporal;
+    tag_set_alloc((byte *)blk, o);
+    allocated_bytes += target_size;
+
+    active[o][r0] = blk;
+    active_rotor[o] = r0 ^ 1u;
+
+    return { (byte *)blk, target_size - __hdr_offset };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L671">line 671</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L673">line 673</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L676">line 676</a></td></tr><tr class="t-dsc"><td><code>{ reinterpret_cast&lt;byte *&gt;(active_block), target_size - __hdr_offset }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L688">line 688</a></td></tr><tr class="t-dsc"><td><code>{ (byte *)cached, target_size - __hdr_offset }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L700">line 700</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L704">line 704</a></td></tr><tr class="t-dsc"><td><code>{ (byte *)blk, target_size - __hdr_offset }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L717">line 717</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;usize&gt;::max</a>, <a href="free_list.hpp.html#f-d332d4953c8d37c7">order_for_size</a>, <a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>, <a href="free_list.hpp.html#f-3624521f43ab96c6">tcache_pop</a>, <a href="free_list.hpp.html#f-0635ae30ee761a27">hdr_of</a>, <a href="free_list.hpp.html#f-b2c0b0d540eed1f1">tag_set_alloc</a>, <a href="free_list.hpp.html#f-ce79e0632fb4ac10">find_free_order</a>, <a href="free_list.hpp.html#f-c7d60723dbd72185">__take_and_split</a>.</p></section><section class="function-entry" id="f-0c22770eed94fcfe"><h3><code>abc::__buddy_list::allocate_exact(usize n) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L721">line 721</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  allocate_exact(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  allocate_exact(usize n) noexcept
+  {
+    if ( !base ) return { nullptr, 0 };
+    if ( n &lt; Min ) return { nullptr, 0 };
+    if ( (n &amp; (n - 1)) != 0 ) return { nullptr, 0 };
+    i32 o = order_for_size(n);
+    if ( o &gt;= max_order ) return { nullptr, 0 };
+    if ( !free_lists[o] ) return { nullptr, 0 };
+
+    free_block *blk = __take_and_split(o, o);
+    const usize target_size = order_size(o);
+
+    block_header *hdr = hdr_of((byte *)blk, o);
+    hdr-&gt;order = static_cast&lt;i32&gt;(o);
+    hdr-&gt;flags = __block_alloc;
+    tag_set_alloc((byte *)blk, o);
+    allocated_bytes += target_size;
+
+    return { (byte *)blk, target_size - __hdr_offset };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L723">line 723</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L724">line 724</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L725">line 725</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L727">line 727</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L728">line 728</a></td></tr><tr class="t-dsc"><td><code>{ (byte *)blk, target_size - __hdr_offset }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L739">line 739</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-d332d4953c8d37c7">order_for_size</a>, <a href="free_list.hpp.html#f-c7d60723dbd72185">__take_and_split</a>, <a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>, <a href="free_list.hpp.html#f-0635ae30ee761a27">hdr_of</a>, <a href="free_list.hpp.html#f-b2c0b0d540eed1f1">tag_set_alloc</a>.</p></section><section class="function-entry" id="f-320dc50aa20f99c6"><h3><code>abc::__buddy_list::tombstone(byte *ptr) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L743">line 743</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>ret_flag
+  tombstone(byte *ptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">ret_flag
+  tombstone(byte *ptr) noexcept
+  {
+    if ( !is_allocated(ptr) ) return { __flag_invalid };
+    block_header *hdr = hdr_of_tagged(ptr);
+    i32 o = hdr-&gt;order;
+    if ( o &lt; 0 || o &gt;= max_order ) return { __flag_invalid };
+    if ( !(hdr-&gt;flags &amp; __block_alloc) ) return { __flag_invalid };
+
+    hdr-&gt;flags = __block_tombstone;
+    const usize target_size = order_size(o);
+    allocated_bytes -= target_size;
+    tombstoned_bytes += target_size;
+
+    return __flag_tombstoned;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ __flag_invalid }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L745">line 745</a></td></tr><tr class="t-dsc"><td><code>{ __flag_invalid }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L748">line 748</a></td></tr><tr class="t-dsc"><td><code>{ __flag_invalid }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L749">line 749</a></td></tr><tr class="t-dsc"><td><code>__flag_tombstoned</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L756">line 756</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-6da77fdcf637fff9">is_allocated</a>, <a href="free_list.hpp.html#f-1ba16982e702c8ab">hdr_of_tagged</a>, <a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>.</p></section><section class="function-entry" id="f-72d5524615b9c78a"><h3><code>abc::__buddy_list::tombstone(T &amp;node) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L760">line 760</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>ret_flag
+  tombstone(T &amp;node) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;node</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">ret_flag
+  tombstone(T &amp;node) noexcept
+  {
+    if ( !node.ptr or node.len == 0 ) return __flag_invalid;
+    return tombstone(node.ptr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__flag_invalid</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L762">line 762</a></td></tr><tr class="t-dsc"><td><code>tombstone(node.ptr)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L763">line 763</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-320dc50aa20f99c6">tombstone</a>.</p></section><section class="function-entry" id="f-d86ccc3247d64afa"><h3><code>abc::__buddy_list::is_tombstoned(byte *ptr) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L767">line 767</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  is_tombstoned(byte *ptr) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  is_tombstoned(byte *ptr) const noexcept
+  {
+    block_header *hdr = hdr_of_tagged(ptr);
+    return (hdr-&gt;flags &amp; __block_tombstone) != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(hdr-&gt;flags &amp; __block_tombstone) != 0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L770">line 770</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-1ba16982e702c8ab">hdr_of_tagged</a>.</p></section><section class="function-entry" id="f-d62befc24beae964"><h3><code>abc::__buddy_list::is_temporal(byte *ptr) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L774">line 774</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  is_temporal(byte *ptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  is_temporal(byte *ptr) noexcept
+  {
+    block_header *hdr = hdr_of_tagged(ptr);
+    return (hdr-&gt;flags &amp; __block_temporal) != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(hdr-&gt;flags &amp; __block_temporal) != 0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L777">line 777</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-1ba16982e702c8ab">hdr_of_tagged</a>.</p></section><section class="function-entry" id="f-ba0e3d6a62beb12d"><h3><code>abc::__buddy_list::deallocate(byte *ptr) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L781">line 781</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>ret_flag
+  deallocate(byte *ptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">ret_flag
+  deallocate(byte *ptr) noexcept
+  {
+    // WARNING: validate a min-block-aligned, authoritatively-allocated block START before any header access
+    // protects against forged/out-of-range ptrs
+    if ( !is_allocated(ptr) ) return { __flag_invalid };
+    byte *addr = ptr;
+    block_header *hdr = hdr_of_tagged(addr);
+    const i32 original_o = hdr-&gt;order;
+    if ( original_o &lt; 0 || original_o &gt;= max_order ) return { __flag_invalid };
+    if ( !base || !addr ) return __flag_failure;
+    const i32 flags = hdr-&gt;flags;
+    if ( flags == __block_free ) return { __flag_invalid };
+
+    const usize target_size = order_size(original_o);
+    allocated_bytes -= target_size;
+    if ( flags &amp; __block_tombstone ) tombstoned_bytes -= target_size;
+
+    bool was_temporal = (flags &amp; __block_temporal) != 0;
+    if ( was_temporal ) {
+      free_block *free_addr = __free_block_at(addr);
+      for ( i32 r = 0; r &lt; __active_ring; ++r ) {
+        if ( active[original_o][r] == free_addr ) {
+          active[original_o][r] = nullptr;
+          break;
+        }
+      }
+      if ( tcache_push(free_addr, original_o) ) {
+        block_tags[tag_index(addr)] = __tag_none;
+        return { __flag_ok };
+      }
+    }
+
+    if constexpr ( __cold_cap &gt; 0 ) {
+      if ( !was_temporal &amp;&amp; cold_push(__free_block_at(addr), original_o) ) {
+        block_tags[tag_index(addr)] = __tag_none;
+        return { __flag_ok };
+      }
+    }
+
+    __merge_and_free(addr, original_o);
+    return { __flag_ok };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ __flag_invalid }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L785">line 785</a></td></tr><tr class="t-dsc"><td><code>{ __flag_invalid }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L789">line 789</a></td></tr><tr class="t-dsc"><td><code>__flag_failure</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L790">line 790</a></td></tr><tr class="t-dsc"><td><code>{ __flag_invalid }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L792">line 792</a></td></tr><tr class="t-dsc"><td><code>{ __flag_ok }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L809">line 809</a></td></tr><tr class="t-dsc"><td><code>{ __flag_ok }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L816">line 816</a></td></tr><tr class="t-dsc"><td><code>{ __flag_ok }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L821">line 821</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-6da77fdcf637fff9">is_allocated</a>, <a href="free_list.hpp.html#f-1ba16982e702c8ab">hdr_of_tagged</a>, <a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>, <a href="free_list.hpp.html#f-68cda03a35c9cac0">__free_block_at</a>, <a href="free_list.hpp.html#f-a77105a774bcd21e">tcache_push</a>, <a href="free_list.hpp.html#f-55278f1b008e3e98">tag_index</a>, <a href="free_list.hpp.html#f-402bc53994bbf83b">cold_push</a>, <a href="free_list.hpp.html#f-ef375f01de9ae2d1">__merge_and_free</a>.</p></section><section class="function-entry" id="f-2d583b326882edff"><h3><code>abc::__buddy_list::deallocate(T &amp;node) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L825">line 825</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>ret_flag
+  deallocate(T &amp;node) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;node</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">ret_flag
+  deallocate(T &amp;node) noexcept
+  {
+    if ( !node.ptr or node.len == 0 ) return __flag_invalid;
+    return deallocate(node.ptr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__flag_invalid</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L827">line 827</a></td></tr><tr class="t-dsc"><td><code>deallocate(node.ptr)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L828">line 828</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-ba0e3d6a62beb12d">deallocate</a>.</p></section><section class="function-entry" id="f-6ec9ad714f30f904"><h3><code>abc::__buddy_list::reallocate(T node, usize new_size) noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L832">line 832</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  reallocate(T node, usize new_size) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T node</code></li><li><code>usize new_size</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  reallocate(T node, usize new_size) noexcept
+  {
+    if ( !base ) return { nullptr, 0 };
+    if ( !node.ptr ) return allocate(new_size);
+    if ( new_size == 0 ) {
+      deallocate(node);
+      return { nullptr, 0 };
+    }
+
+    if ( node.len &gt;= new_size &amp;&amp; new_size &gt; (node.len &gt;&gt; 1) ) return node;
+
+    T nnode = allocate(new_size);
+    if ( !nnode.ptr ) return { nullptr, 0 };
+
+    usize to_copy = (node.len &lt; nnode.len) ? node.len : nnode.len;
+    micron::memcpy(nnode.ptr, node.ptr, to_copy);
+    deallocate(node);
+    return nnode;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L834">line 834</a></td></tr><tr class="t-dsc"><td><code>allocate(new_size)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L835">line 835</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L838">line 838</a></td></tr><tr class="t-dsc"><td><code>node</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L841">line 841</a></td></tr><tr class="t-dsc"><td><code>{ nullptr, 0 }</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L844">line 844</a></td></tr><tr class="t-dsc"><td><code>nnode</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L849">line 849</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-5096770f6187e7cd">allocate</a>, <a href="free_list.hpp.html#f-ba0e3d6a62beb12d">deallocate</a>, <a href="../../cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-d77b2de63280645f"><h3><code>abc::__buddy_list::available() const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L853">line 853</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  available() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  available() const noexcept
+  {
+    if ( !base ) return 0;
+    return total - allocated_bytes;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L855">line 855</a></td></tr><tr class="t-dsc"><td><code>total - allocated_bytes</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L856">line 856</a></td></tr></tbody></table></section><section class="function-entry" id="f-f101f5298b6b8538"><h3><code>abc::__buddy_list::__total() const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L860">line 860</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  __total() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>total</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  __total() const noexcept
+  {
+    return total;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L862">line 862</a></td></tr></tbody></table></section><section class="function-entry" id="f-2ca663ed582e11c4"><h3><code>abc::__buddy_list::tombstoned() const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L866">line 866</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  tombstoned() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>tombstoned_bytes</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  tombstoned() const noexcept
+  {
+    return tombstoned_bytes;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tombstoned_bytes</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L868">line 868</a></td></tr></tbody></table></section><section class="function-entry" id="f-b29de98cbe2f5a7a"><h3><code>abc::__buddy_list::used() const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L872">line 872</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  used() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>allocated_bytes</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  used() const noexcept
+  {
+    return allocated_bytes;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>allocated_bytes</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L874">line 874</a></td></tr></tbody></table></section><section class="function-entry" id="f-15f91378b65fb74c"><h3><code>abc::__buddy_list::block_size(byte *ptr) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L878">line 878</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  block_size(byte *ptr) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  block_size(byte *ptr) const noexcept
+  {
+    if ( !base || !ptr ) return 0;
+    if ( ptr &lt; base || ptr &gt;= base + total ) return 0;
+    if ( ((usize)(ptr - base) &amp; (Min - 1)) != 0 ) return 0;
+    u8 tag = block_tags[tag_index(ptr)];
+    i32 o = static_cast&lt;i32&gt;(tag &amp; ~__tag_free);
+    if ( (u64)o &gt;= (u64)max_order ) return 0;
+    return order_size(o);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L880">line 880</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L881">line 881</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L882">line 882</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L885">line 885</a></td></tr><tr class="t-dsc"><td><code>order_size(o)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L886">line 886</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-55278f1b008e3e98">tag_index</a>, <a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>.</p></section><section class="function-entry" id="f-6da77fdcf637fff9"><h3><code>abc::__buddy_list::is_allocated(byte *ptr) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L890">line 890</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  is_allocated(byte *ptr) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  is_allocated(byte *ptr) const noexcept
+  {
+    if ( !ptr || !base || ptr &lt; base || ptr &gt;= base + total ) return false;
+    if ( ((usize)(ptr - base) &amp; (Min - 1)) != 0 ) return false;
+    u8 tag = block_tags[tag_index(ptr)];
+    return (tag &amp; __tag_free) == 0 &amp;&amp; tag &lt; (u8)max_order;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L892">line 892</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L893">line 893</a></td></tr><tr class="t-dsc"><td><code>(tag &amp; __tag_free) == 0 &amp;&amp; tag &lt; (u8)max_order</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L895">line 895</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-55278f1b008e3e98">tag_index</a>.</p></section><section class="function-entry" id="f-34ae9d25f9267d86"><h3><code>abc::__buddy_list::allocated_size(byte *ptr) const noexcept</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L899">line 899</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  allocated_size(byte *ptr) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  allocated_size(byte *ptr) const noexcept
+  {
+    if ( !is_allocated(ptr) ) return 0;
+    return block_size(ptr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L901">line 901</a></td></tr><tr class="t-dsc"><td><code>block_size(ptr)</code></td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L902">line 902</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-6da77fdcf637fff9">is_allocated</a>, <a href="free_list.hpp.html#f-15f91378b65fb74c">block_size</a>.</p></section><section class="function-entry" id="f-aa187ef0707d543a"><h3><code>abc::__buddy_list::__doctor_walk(V &amp;v)</code></h3><p>Defined in <code>memory/allocation/abcmalloc/free_list.hpp</code>, <a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L909">line 909</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class V&gt;
+  void
+  __doctor_walk(V &amp;v)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(ABCMALLOC_DOCTOR_HELP)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class V&gt;
+  void
+  __doctor_walk(V &amp;v)
+  {
+    if ( !base || !block_tags ) return;
+
+    usize idx = 0;
+    usize guard = 0;
+    const usize maxg = tag_count + 4;
+    while ( idx &lt; tag_count &amp;&amp; guard++ &lt; maxg ) {
+      u8 tag = block_tags[idx];
+      if ( tag == __tag_none ) {      // interior/padding at a boundary; skip one min-block
+        ++idx;
+        continue;
+      }
+      i32 o = static_cast&lt;i32&gt;(tag &amp; ~__tag_free);
+      byte *blk = base + (idx &lt;&lt; __log2_min);
+      ++v.blocks;
+      if ( o &lt; 0 || o &gt;= max_order ) {
+        v.note(&quot;buddy: block tag order out of range&quot;, blk);
+        ++idx;
+        continue;
+      }
+      usize osz = order_size(o);
+      if ( (usize)(blk - base) + osz &gt; total ) {
+        v.note(&quot;buddy: block extends past sheet bounds&quot;, blk);
+        break;
+      }
+      if ( ((usize)(blk - base) &amp; (osz - 1)) != 0 ) v.note(&quot;buddy: block not aligned to its order size&quot;, blk);
+
+      const bool tag_free = (tag &amp; __tag_free) != 0;
+      // the tail block_header is a maintained redundant copy
+      // only for allocated blocks
+      if ( !tag_free ) {
+        block_header *h = hdr_of(blk, o);
+        if ( h-&gt;order != static_cast&lt;i32&gt;(o) ) {
+          v.note(&quot;buddy: allocated block tail header order != block_tags order&quot;, blk);
+          if ( v.repair ) {
+            h-&gt;order = static_cast&lt;i32&gt;(o);
+            v.did_repair(&quot;buddy: rewrote tail header order from tag&quot;, blk);
+          }
+        }
+        const bool flags_alloc
+            = (h-&gt;flags == __block_alloc || h-&gt;flags == (__block_alloc | __block_temporal) || h-&gt;flags == __block_tombstone);
+        if ( !flags_alloc ) {
+          v.note(&quot;buddy: allocated block tail header flags not allocated&quot;, blk);
+          if ( v.repair ) {
+            h-&gt;flags = __block_alloc | (h-&gt;flags &amp; __block_temporal);
+            v.did_repair(&quot;buddy: reset tail header flags to allocated form&quot;, blk);
+          }
+        }
+      }
+      idx += (osz &gt;&gt; __log2_min);
+    }
+    if ( guard &gt;= maxg ) v.note(&quot;buddy: tiling walk overran (corrupt tag stream)&quot;, base);
+
+    // per order free lists
+    for ( i32 o = 0; o &lt; max_order; ++o ) {
+      const bool has = (free_lists[o] != nullptr);
+      const bool bit = ((free_mask &gt;&gt; o) &amp; 1u) != 0;
+      if ( has != bit ) {
+        v.note(&quot;buddy: free_mask bit disagrees with free_lists[o]&quot;, base);
+        if ( v.repair ) {
+          if ( has )
+            free_mask |= (u64(1) &lt;&lt; o);
+          else
+            free_mask &amp;= ~(u64(1) &lt;&lt; o);
+          v.did_repair(&quot;buddy: fixed free_mask bit&quot;, base);
+        }
+      }
+      free_block *n = free_lists[o];
+      free_block *prev = nullptr;
+      usize gc = 0;
+      while ( n &amp;&amp; gc++ &lt; tag_count + 4 ) {
+        ++v.freelist_nodes;
+        if ( !__link_valid(n) ) {
+          v.note(&quot;buddy: free-list node out of bounds / misaligned&quot;, n);
+          if ( v.repair ) {
+            if ( prev )
+              prev-&gt;next = nullptr;
+            else
+              free_lists[o] = nullptr;
+            mask_clear_if_empty(o);
+            v.did_repair(&quot;buddy: truncated free-list at bad node&quot;, n);
+          }
+          break;
+        }
+        if ( !tag_is_free_at(reinterpret_cast&lt;byte *&gt;(n), o) ) v.note(&quot;buddy: free-list node not tagged free at its order&quot;, n);
+        if ( prev &amp;&amp; n-&gt;prev != prev ) {
+          v.note(&quot;buddy: free-list prev back-link mismatch&quot;, n);
+          if ( v.repair ) {
+            n-&gt;prev = prev;
+            v.did_repair(&quot;buddy: fixed free-list prev back-link&quot;, n);
+          }
+        }
+        if ( n-&gt;next &amp;&amp; !__link_valid(n-&gt;next) ) {
+          v.note(&quot;buddy: forged free-list next link&quot;, n);
+          if ( v.repair ) {
+            n-&gt;next = nullptr;
+            v.did_repair(&quot;buddy: nulled forged free-list link&quot;, n);
+          }
+          break;
+        }
+        prev = n;
+        n = n-&gt;next;
+      }
+      if ( gc &gt;= tag_count + 4 ) v.note(&quot;buddy: free-list cycle / overrun at order&quot;, base);
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/memory/allocation/abcmalloc/free_list.hpp.html#L911">line 911</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="free_list.hpp.html#f-caa80535aa151f75">order_size</a>, <a href="free_list.hpp.html#f-0635ae30ee761a27">hdr_of</a>, <a href="../../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="free_list.hpp.html#f-19045af9c6194bcd">__link_valid</a>, <a href="free_list.hpp.html#f-4f69c0d5a8d2cd17">mask_clear_if_empty</a>, <a href="free_list.hpp.html#f-5b1f61b31f9c74d6">tag_is_free_at</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

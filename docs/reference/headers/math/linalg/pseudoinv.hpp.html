@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/linalg/pseudoinv.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/linalg/pseudoinv.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/matrix.html">Matrices and linear algebra</a></div><p>Defined in header <code>&lt;micron/math/linalg/pseudoinv.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/linalg/pseudoinv.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-64791cac159d8ee9">micron::math::linalg::pseudoinv::svd_result_dyn</code></td><td>struct; line 35</td></tr><tr class="t-dsc"><td><code id="s-296392dfd87a91ae">micron::math::linalg::pseudoinv::svd_result_dyn::U</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-6350fe65ffb8f4d9">micron::math::linalg::pseudoinv::svd_result_dyn::S</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-8c995a0a0f881007">micron::math::linalg::pseudoinv::svd_result_dyn::V</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-6187091a4642e960">micron::math::linalg::pseudoinv::svd_result_dyn::converged</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><a href="#f-0ca7922c06288e05">micron::math::linalg::pseudoinv::svd(const dynmat&lt;F&gt; &amp;A) noexcept</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-7aeb1bd5ed5ae738">micron::math::linalg::pseudoinv::pinv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 160</td></tr><tr class="t-dsc"><td><a href="#f-30811421bd717dd8">micron::math::linalg::pseudoinv::pinv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 187</td></tr><tr class="t-dsc"><td><a href="#f-03000600e05d504a">micron::math::linalg::pseudoinv::rank(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 235</td></tr><tr class="t-dsc"><td><a href="#f-05788f9171613c7b">micron::math::linalg::pseudoinv::rank(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 251</td></tr><tr class="t-dsc"><td><a href="#f-be22ddd5548497a9">micron::math::linalg::pseudoinv::orth(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 273</td></tr><tr class="t-dsc"><td><a href="#f-8f873eab7d98f188">micron::math::linalg::pseudoinv::null(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 309</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-0ca7922c06288e05"><h3><code>micron::math::linalg::pseudoinv::svd(const dynmat&lt;F&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/pseudoinv.hpp</code>, <a href="../../../source/math/linalg/pseudoinv.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd_result_dyn&lt;F&gt;
+svd(const dynmat&lt;F&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd_result_dyn&lt;F&gt;
+svd(const dynmat&lt;F&gt; &amp;A) noexcept
+{
+  const usize R = A.rows;
+  const usize C = A.cols;
+  svd_result_dyn&lt;F&gt; r{ dynmat&lt;F&gt;::zero(R, R), dynvec&lt;F&gt;(C), dynmat&lt;F&gt;::identity(C), false };
+
+  dynmat&lt;F&gt; W = A;
+  constexpr int max_sweeps = 30;
+  F *__restrict__ Wp = W.data();
+  F *__restrict__ Vp = r.V.data();
+  const usize ld_W = W.ld;
+  const usize ld_V = r.V.ld;
+
+  for ( int sweep = 0; sweep &lt; max_sweeps; ++sweep ) {
+    usize rotations = 0;
+    for ( usize p = 0; p + 1 &lt; C; ++p ) {
+      for ( usize q = p + 1; q &lt; C; ++q ) {
+        F *__restrict__ col_p = Wp + p;
+        F *__restrict__ col_q = Wp + q;
+        F a = F(0), b = F(0), c = F(0);
+        for ( usize i = 0; i &lt; R; ++i ) {
+          const F wp = col_p[i * ld_W];
+          const F wq = col_q[i * ld_W];
+          a = math::fma&lt;F&gt;(wp, wp, a);
+          b = math::fma&lt;F&gt;(wq, wq, b);
+          c = math::fma&lt;F&gt;(wp, wq, c);
+        }
+        // scale-free skip
+        const F dd = math::fsqrt(a) * math::fsqrt(b) * F(R);
+        if ( math::fabs(c) + dd == dd ) continue;
+        ++rotations;
+        const F theta = (b - a) / (F(2) * c);
+        const F t
+            = (theta &gt;= F(0)) ? F(1) / (theta + math::fsqrt(F(1) + theta * theta)) : F(1) / (theta - math::fsqrt(F(1) + theta * theta));
+        const F cs = F(1) / math::fsqrt(F(1) + t * t);
+        const F sn = t * cs;
+        for ( usize i = 0; i &lt; R; ++i ) {
+          F *__restrict__ wp_p = col_p + i * ld_W;
+          F *__restrict__ wp_q = col_q + i * ld_W;
+          const F wp = *wp_p;
+          const F wq = *wp_q;
+          *wp_p = cs * wp - sn * wq;
+          *wp_q = sn * wp + cs * wq;
+        }
+        F *__restrict__ vcol_p = Vp + p;
+        F *__restrict__ vcol_q = Vp + q;
+        for ( usize i = 0; i &lt; C; ++i ) {
+          F *__restrict__ vp_p = vcol_p + i * ld_V;
+          F *__restrict__ vp_q = vcol_q + i * ld_V;
+          const F vp = *vp_p;
+          const F vq = *vp_q;
+          *vp_p = cs * vp - sn * vq;
+          *vp_q = sn * vp + cs * vq;
+        }
+      }
+    }
+    if ( rotations == 0 ) {
+      r.converged = true;
+      break;
+    }
+  }
+
+  F *__restrict__ Up = r.U.data();
+  const usize ld_U = r.U.ld;
+  for ( usize j = 0; j &lt; C; ++j ) {
+    const F *__restrict__ wcol = Wp + j;
+    F s = F(0);
+    for ( usize i = 0; i &lt; R; ++i ) {
+      const F wij = wcol[i * ld_W];
+      s = math::fma&lt;F&gt;(wij, wij, s);
+    }
+    s = math::fsqrt(s);
+    r.S[j] = s;
+    F *__restrict__ ucol = Up + j;
+    if ( s &gt; F(0) ) {
+      const F inv = F(1) / s;
+      for ( usize i = 0; i &lt; R; ++i ) ucol[i * ld_U] = wcol[i * ld_W] * inv;
+    } else {
+      for ( usize i = 0; i &lt; R; ++i ) ucol[i * ld_U] = F(0);
+    }
+  }
+
+  for ( usize i = 0; i + 1 &lt; C; ++i ) {
+    usize maxj = i;
+    for ( usize j = i + 1; j &lt; C; ++j )
+      if ( r.S[j] &gt; r.S[maxj] ) maxj = j;
+    if ( maxj != i ) {
+      F tmp = r.S[i];
+      r.S[i] = r.S[maxj];
+      r.S[maxj] = tmp;
+      F *__restrict__ ucol_i = Up + i;
+      F *__restrict__ ucol_j = Up + maxj;
+      for ( usize rr = 0; rr &lt; R; ++rr ) {
+        F *p_i = ucol_i + rr * ld_U;
+        F *p_j = ucol_j + rr * ld_U;
+        F t2 = *p_i;
+        *p_i = *p_j;
+        *p_j = t2;
+      }
+      F *__restrict__ vcol_i = Vp + i;
+      F *__restrict__ vcol_j = Vp + maxj;
+      for ( usize rr = 0; rr &lt; C; ++rr ) {
+        F *p_i = vcol_i + rr * ld_V;
+        F *p_j = vcol_j + rr * ld_V;
+        F t2 = *p_i;
+        *p_i = *p_j;
+        *p_j = t2;
+      }
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L154">line 154</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/dynmat.hpp.html#f-f2be77990fd00b81">dynmat&lt;F&gt;::zero</a>, <a href="types.hpp.html#s-cfcae647c74796da">dynvec&lt;F&gt;</a>, <a href="../matrix/dynmat.hpp.html#f-060fa63dd0fb5917">dynmat&lt;F&gt;::identity</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>.</p></section><section class="function-entry" id="f-7aeb1bd5ed5ae738"><h3><code>micron::math::linalg::pseudoinv::pinv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/pseudoinv.hpp</code>, <a href="../../../source/math/linalg/pseudoinv.hpp.html#L160">line 160</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+  requires(R_ &gt;= C_)
+[[nodiscard]] inline mat&lt;F, C_, R_&gt;
+pinv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, R_, C_&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+  requires(R_ &gt;= C_)
+[[nodiscard]] inline mat&lt;F, C_, R_&gt;
+pinv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept
+{
+  auto s = decomp::svd&lt;F, R_, C_&gt;(A);
+  // determine effective tolerance
+  F smax = F(0);
+  constexpr usize K = (R_ &lt; C_) ? R_ : C_;
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S.data[i] &gt; smax ) smax = s.S.data[i];
+  F use_tol = (tol &gt; F(0)) ? tol : F((R_ &gt; C_) ? R_ : C_) * smax * default_eps&lt;F&gt;();
+
+  // inverse singular values
+  F sinv[K];
+  for ( usize i = 0; i &lt; K; ++i ) sinv[i] = (s.S.data[i] &gt; use_tol) ? F(1) / s.S.data[i] : F(0);
+
+  mat&lt;F, C_, R_&gt; P{};
+  for ( usize i = 0; i &lt; C_; ++i ) {
+    for ( usize j = 0; j &lt; R_; ++j ) {
+      F acc = F(0);
+      for ( usize k = 0; k &lt; K; ++k ) acc = math::fma&lt;F&gt;(s.V.data[i * C_ + k] * sinv[k], s.U.data[j * R_ + k], acc);
+      P.data[i * R_ + j] = acc;
+    }
+  }
+  return P;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>P</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L182">line 182</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp_ext.hpp.html#f-bbe0cb7f2a0addb2">decomp::svd&lt;F, R_, C_&gt;</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-30811421bd717dd8"><h3><code>micron::math::linalg::pseudoinv::pinv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/pseudoinv.hpp</code>, <a href="../../../source/math/linalg/pseudoinv.hpp.html#L187">line 187</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynmat&lt;F&gt;
+pinv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynmat&lt;F&gt;
+pinv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept
+{
+  if ( A.rows &lt; A.cols ) {
+    dynmat&lt;F&gt; At(A.cols, A.rows);
+    for ( usize i = 0; i &lt; A.rows; ++i )
+      for ( usize j = 0; j &lt; A.cols; ++j ) At.at(j, i) = A.at(i, j);
+    auto Pt = pinv&lt;F&gt;(At, tol);
+    dynmat&lt;F&gt; P(A.cols, A.rows);
+    for ( usize i = 0; i &lt; Pt.rows; ++i )
+      for ( usize j = 0; j &lt; Pt.cols; ++j ) P.at(j, i) = Pt.at(i, j);
+    return P;
+  }
+  auto s = svd&lt;F&gt;(A);
+  const usize R = A.rows;
+  const usize C = A.cols;
+  const usize K = (R &lt; C) ? R : C;
+  F smax = F(0);
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S[i] &gt; smax ) smax = s.S[i];
+  F use_tol = (tol &gt; F(0)) ? tol : F((R &gt; C) ? R : C) * smax * default_eps&lt;F&gt;();
+
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; sinv(K);
+  F *__restrict__ sinv_p = sinv.data();
+  for ( usize i = 0; i &lt; K; ++i ) sinv_p[i] = (s.S[i] &gt; use_tol) ? F(1) / s.S[i] : F(0);
+
+  dynmat&lt;F&gt; P(C, R, F(0));
+  F *__restrict__ Pp = P.data();
+  const usize ld_P = P.ld;
+  const F *__restrict__ Vd = s.V.data();
+  const F *__restrict__ Ud = s.U.data();
+  const usize ld_V = s.V.ld;
+  const usize ld_U = s.U.ld;
+  for ( usize i = 0; i &lt; C; ++i ) {
+    const F *__restrict__ vrow = Vd + i * ld_V;
+    F *__restrict__ prow = Pp + i * ld_P;
+    for ( usize j = 0; j &lt; R; ++j ) {
+      const F *__restrict__ urow = Ud + j * ld_U;
+      F acc = F(0);
+      for ( usize k = 0; k &lt; K; ++k ) acc = math::fma&lt;F&gt;(vrow[k] * sinv_p[k], urow[k], acc);
+      prow[j] = acc;
+    }
+  }
+  return P;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>P</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>P</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L229">line 229</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pseudoinv.hpp.html#f-7aeb1bd5ed5ae738">pinv&lt;F&gt;</a>, <a href="pseudoinv.hpp.html#f-0ca7922c06288e05">svd&lt;F&gt;</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-03000600e05d504a"><h3><code>micron::math::linalg::pseudoinv::rank(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/pseudoinv.hpp</code>, <a href="../../../source/math/linalg/pseudoinv.hpp.html#L235">line 235</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+  requires(R_ &gt;= C_)
+[[nodiscard]] inline usize
+rank(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, R_, C_&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+  requires(R_ &gt;= C_)
+[[nodiscard]] inline usize
+rank(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept
+{
+  auto s = decomp::svd&lt;F, R_, C_&gt;(A);
+  constexpr usize K = (R_ &lt; C_) ? R_ : C_;
+  F smax = F(0);
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S.data[i] &gt; smax ) smax = s.S.data[i];
+  F use_tol = (tol &gt; F(0)) ? tol : F((R_ &gt; C_) ? R_ : C_) * smax * default_eps&lt;F&gt;();
+  usize rk = 0;
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S.data[i] &gt; use_tol ) ++rk;
+  return rk;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rk</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L246">line 246</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp_ext.hpp.html#f-bbe0cb7f2a0addb2">decomp::svd&lt;F, R_, C_&gt;</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-05788f9171613c7b"><h3><code>micron::math::linalg::pseudoinv::rank(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/pseudoinv.hpp</code>, <a href="../../../source/math/linalg/pseudoinv.hpp.html#L251">line 251</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline usize
+rank(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline usize
+rank(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept
+{
+  if ( A.rows &lt; A.cols ) {
+    dynmat&lt;F&gt; At(A.cols, A.rows);
+    for ( usize i = 0; i &lt; A.rows; ++i )
+      for ( usize j = 0; j &lt; A.cols; ++j ) At.at(j, i) = A.at(i, j);
+    return rank&lt;F&gt;(At, tol);
+  }
+  auto s = svd&lt;F&gt;(A);
+  const usize K = (A.rows &lt; A.cols) ? A.rows : A.cols;
+  F smax = F(0);
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S[i] &gt; smax ) smax = s.S[i];
+  F use_tol = (tol &gt; F(0)) ? tol : F((A.rows &gt; A.cols) ? A.rows : A.cols) * smax * default_eps&lt;F&gt;();
+  usize rk = 0;
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S[i] &gt; use_tol ) ++rk;
+  return rk;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rank&lt;F&gt;(At, tol)</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L257">line 257</a></td></tr><tr class="t-dsc"><td><code>rk</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L268">line 268</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pseudoinv.hpp.html#f-03000600e05d504a">rank&lt;F&gt;</a>, <a href="pseudoinv.hpp.html#f-0ca7922c06288e05">svd&lt;F&gt;</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-be22ddd5548497a9"><h3><code>micron::math::linalg::pseudoinv::orth(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/pseudoinv.hpp</code>, <a href="../../../source/math/linalg/pseudoinv.hpp.html#L273">line 273</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynmat&lt;F&gt;
+orth(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynmat&lt;F&gt;
+orth(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept
+{
+  if ( A.rows &lt; A.cols ) {
+    dynmat&lt;F&gt; At(A.cols, A.rows);
+    for ( usize i = 0; i &lt; A.rows; ++i )
+      for ( usize j = 0; j &lt; A.cols; ++j ) At.at(j, i) = A.at(i, j);
+    auto s = svd&lt;F&gt;(At);
+    F smax = F(0);
+    for ( usize i = 0; i &lt; s.S.size(); ++i )
+      if ( s.S[i] &gt; smax ) smax = s.S[i];
+    F use_tol = (tol &gt; F(0)) ? tol : F((A.rows &gt; A.cols) ? A.rows : A.cols) * smax * default_eps&lt;F&gt;();
+    usize rk = 0;
+    for ( usize i = 0; i &lt; s.S.size(); ++i )
+      if ( s.S[i] &gt; use_tol ) ++rk;
+    dynmat&lt;F&gt; O(A.rows, rk);
+    for ( usize i = 0; i &lt; A.rows; ++i )
+      for ( usize j = 0; j &lt; rk; ++j ) O.at(i, j) = s.V.at(i, j);
+    return O;
+  }
+  auto s = svd&lt;F&gt;(A);
+  const usize K = (A.rows &lt; A.cols) ? A.rows : A.cols;
+  F smax = F(0);
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S[i] &gt; smax ) smax = s.S[i];
+  F use_tol = (tol &gt; F(0)) ? tol : F((A.rows &gt; A.cols) ? A.rows : A.cols) * smax * default_eps&lt;F&gt;();
+  usize rk = 0;
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S[i] &gt; use_tol ) ++rk;
+  dynmat&lt;F&gt; O(A.rows, rk);
+  for ( usize i = 0; i &lt; A.rows; ++i )
+    for ( usize j = 0; j &lt; rk; ++j ) O.at(i, j) = s.U.at(i, j);
+  return O;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>O</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L290">line 290</a></td></tr><tr class="t-dsc"><td><code>O</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L304">line 304</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pseudoinv.hpp.html#f-0ca7922c06288e05">svd&lt;F&gt;</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-8f873eab7d98f188"><h3><code>micron::math::linalg::pseudoinv::null(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/pseudoinv.hpp</code>, <a href="../../../source/math/linalg/pseudoinv.hpp.html#L309">line 309</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynmat&lt;F&gt;
+null(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynmat&lt;F&gt;
+null(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept
+{
+  if ( A.rows &lt; A.cols ) {
+    dynmat&lt;F&gt; Ap(A.cols, A.cols, F(0));
+    for ( usize i = 0; i &lt; A.rows; ++i )
+      for ( usize j = 0; j &lt; A.cols; ++j ) Ap.at(i, j) = A.at(i, j);
+    return null&lt;F&gt;(Ap, tol);
+  }
+  auto s = svd&lt;F&gt;(A);
+  const usize K = (A.rows &lt; A.cols) ? A.rows : A.cols;
+  F smax = F(0);
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S[i] &gt; smax ) smax = s.S[i];
+  F use_tol = (tol &gt; F(0)) ? tol : F((A.rows &gt; A.cols) ? A.rows : A.cols) * smax * default_eps&lt;F&gt;();
+  usize rk = 0;
+  for ( usize i = 0; i &lt; K; ++i )
+    if ( s.S[i] &gt; use_tol ) ++rk;
+  const usize ns = A.cols - rk;
+  dynmat&lt;F&gt; N(A.cols, ns);
+  for ( usize i = 0; i &lt; A.cols; ++i )
+    for ( usize j = 0; j &lt; ns; ++j ) N.at(i, j) = s.V.at(i, rk + j);
+  return N;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>null&lt;F&gt;(Ap, tol)</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L315">line 315</a></td></tr><tr class="t-dsc"><td><code>N</code></td><td><a href="../../../source/math/linalg/pseudoinv.hpp.html#L330">line 330</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pseudoinv.hpp.html#f-0ca7922c06288e05">svd&lt;F&gt;</a>, <a href="../constants.hpp.html#f-0f81c1f55e949515">default_eps&lt;F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

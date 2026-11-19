@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/simd/atrig.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/simd/atrig.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/packed_math.html">Packed mathematical functions</a></div><p>Defined in header <code>&lt;micron/math/simd/atrig.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/simd/atrig.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-12c34962ff7dbf92">micron::math::mk::have_atan2_packed</code></td><td>variable; line 166<br><small><code>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6efbb1d9f210faa7">micron::math::mk::have_atan2_packed</code></td><td>variable; line 266<br><small><code>#else of #if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-48681174f3545e5d">micron::math::mk::atan_bl(f64 x) noexcept</a></td><td>function; line 89</td></tr><tr class="t-dsc"><td><a href="#f-fe8d431ead0a78db">micron::math::mk::atan2_pos(f64 y, f64 x) noexcept</a></td><td>function; line 102</td></tr><tr class="t-dsc"><td><a href="#f-b31a0dd85ae0bbd8">micron::math::mk::atan2_bl(f64 y, f64 x) noexcept</a></td><td>function; line 118</td></tr><tr class="t-dsc"><td><a href="#f-11a8ac12a40828d0">micron::math::mk::atan2_bl_x4(const f64 *y, const f64 *x, f64 *r) noexcept</a></td><td>function; line 240<br><small><code>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-f81c5bfd9091c3c3">micron::math::mk::atan2_bl_x4(const f64 *y, const f64 *x, f64 *r) noexcept</a></td><td>function; line 269<br><small><code>#else of #if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-48681174f3545e5d"><h3><code>micron::math::mk::atan_bl(f64 x) noexcept</code></h3><p>Defined in <code>math/simd/atrig.hpp</code>, <a href="../../../source/math/simd/atrig.hpp.html#L89">line 89</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr f64
+  atan_bl(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr f64
+  atan_bl(f64 x) noexcept
+  {
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    const f64 ax = mkbits::manip::fabs(x);
+    if ( ax &gt;= 0x1.0p+61 ) [[unlikely]]
+      return mkbits::manip::copysign&lt;f64&gt;(__atrig::pio2, x);
+    if ( ax &lt; 0x1.0p-29 ) [[unlikely]]
+      return x;
+    return mkbits::manip::copysign&lt;f64&gt;(__atrig::atan_core(ax), x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L92">line 92</a></td></tr><tr class="t-dsc"><td><code>mkbits::manip::copysign&lt;f64&gt;(__atrig::pio2, x)</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L95">line 95</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L97">line 97</a></td></tr><tr class="t-dsc"><td><code>mkbits::manip::copysign&lt;f64&gt;(__atrig::atan_core(ax), x)</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../bits/manip.hpp.html#f-da39f5f12006f2e7">mkbits::manip::fabs</a>, <a href="../bits/manip.hpp.html#f-47b3620eaf3f8d75">mkbits::manip::copysign&lt;f64&gt;</a>, <a href="atrig.hpp.html#f-38cb3fff468d4d97">__atrig::atan_core</a>.</p></section><section class="function-entry" id="f-fe8d431ead0a78db"><h3><code>micron::math::mk::atan2_pos(f64 y, f64 x) noexcept</code></h3><p>Defined in <code>math/simd/atrig.hpp</code>, <a href="../../../source/math/simd/atrig.hpp.html#L102">line 102</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr f64
+  atan2_pos(f64 y, f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 y</code></li><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr f64
+  atan2_pos(f64 y, f64 x) noexcept
+  {
+    if ( y == 0.0 ) [[unlikely]]
+      return 0.0;
+    if ( x == 0.0 ) [[unlikely]]
+      return __atrig::pio2;
+    const f64 q = y / x;
+    if ( q &gt;= 0x1.0p+61 ) [[unlikely]]
+      return __atrig::pio2;
+    if ( q &lt; 0x1.0p-29 ) [[unlikely]]
+      return q;
+    return __atrig::atan_core(q);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0.0</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L105">line 105</a></td></tr><tr class="t-dsc"><td><code>__atrig::pio2</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L107">line 107</a></td></tr><tr class="t-dsc"><td><code>__atrig::pio2</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L110">line 110</a></td></tr><tr class="t-dsc"><td><code>q</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L112">line 112</a></td></tr><tr class="t-dsc"><td><code>__atrig::atan_core(q)</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L113">line 113</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="atrig.hpp.html#f-38cb3fff468d4d97">__atrig::atan_core</a>.</p></section><section class="function-entry" id="f-b31a0dd85ae0bbd8"><h3><code>micron::math::mk::atan2_bl(f64 y, f64 x) noexcept</code></h3><p>Defined in <code>math/simd/atrig.hpp</code>, <a href="../../../source/math/simd/atrig.hpp.html#L118">line 118</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr f64
+  atan2_bl(f64 y, f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 y</code></li><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr f64
+  atan2_bl(f64 y, f64 x) noexcept
+  {
+    if ( ieee::is_nan(x) || ieee::is_nan(y) ) [[unlikely]]
+      return ieee::qnan_v&lt;f64&gt;();
+
+    constexpr f64 pi = 0x1.921fb54442d18p+1;
+    constexpr f64 pi_quarter = 0x1.921fb54442d18p-1;
+    constexpr f64 three_pi_q = 0x1.2d97c7f3321d2p+1;
+
+    const bool y_neg = mkbits::manip::signbit(y);
+    const bool x_neg = mkbits::manip::signbit(x);
+
+    if ( y == 0 ) [[unlikely]] {
+      if ( !x_neg ) return mkbits::manip::copysign&lt;f64&gt;(0.0, y);
+      return y_neg ? -pi : pi;
+    }
+    if ( x == 0 ) [[unlikely]]
+      return y_neg ? -__atrig::pio2 : __atrig::pio2;
+    if ( ieee::is_inf(x) ) [[unlikely]] {
+      if ( ieee::is_inf(y) ) {
+        if ( !x_neg ) return y_neg ? -pi_quarter : pi_quarter;
+        return y_neg ? -three_pi_q : three_pi_q;
+      }
+      if ( !x_neg ) return mkbits::manip::copysign&lt;f64&gt;(0.0, y);
+      return y_neg ? -pi : pi;
+    }
+    if ( ieee::is_inf(y) ) [[unlikely]]
+      return y_neg ? -__atrig::pio2 : __atrig::pio2;
+
+    const f64 z = atan_bl(y / x);
+    const f64 adj = x_neg ? mkbits::manip::copysign&lt;f64&gt;(pi, y) : f64(0.0);
+    return x_neg ? f64(z + adj) : z;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f64&gt;()</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L121">line 121</a></td></tr><tr class="t-dsc"><td><code>mkbits::manip::copysign&lt;f64&gt;(0.0, y)</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>y_neg ? -pi : pi</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L132">line 132</a></td></tr><tr class="t-dsc"><td><code>y_neg ? -__atrig::pio2 : __atrig::pio2</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>y_neg ? -pi_quarter : pi_quarter</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L138">line 138</a></td></tr><tr class="t-dsc"><td><code>y_neg ? -three_pi_q : three_pi_q</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>mkbits::manip::copysign&lt;f64&gt;(0.0, y)</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>y_neg ? -pi : pi</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L142">line 142</a></td></tr><tr class="t-dsc"><td><code>y_neg ? -__atrig::pio2 : __atrig::pio2</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>x_neg ? f64(z + adj) : z</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L149">line 149</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f64&gt;</a>, <a href="../bits/manip.hpp.html#f-f7c805a2af0629e6">mkbits::manip::signbit</a>, <a href="../bits/manip.hpp.html#f-47b3620eaf3f8d75">mkbits::manip::copysign&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="atrig.hpp.html#f-48681174f3545e5d">atan_bl</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-11a8ac12a40828d0"><h3><code>micron::math::mk::atan2_bl_x4(const f64 *y, const f64 *x, f64 *r) noexcept</code></h3><p>Defined in <code>math/simd/atrig.hpp</code>, <a href="../../../source/math/simd/atrig.hpp.html#L240">line 240</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline void
+  atan2_bl_x4(const f64 *y, const f64 *x, f64 *r) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f64 *y</code></li><li><code>const f64 *x</code></li><li><code>f64 *r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline void
+  atan2_bl_x4(const f64 *y, const f64 *x, f64 *r) noexcept
+  {
+    namespace avx = micron::simd::avx;
+    // f64 is _Float64 on amd64 gcc
+    const simd::d256 vy = avx::loadu_f64(reinterpret_cast&lt;const double *&gt;(y));
+    const simd::d256 vx = avx::loadu_f64(reinterpret_cast&lt;const double *&gt;(x));
+    const simd::d256 sgn = avx::splat_f64(__atrig::sign_mask_f64);
+
+    const simd::d256 q = avx::div_f64(vy, vx);
+    const simd::d256 aq = avx::andnot_f64(sgn, q);      // |q|
+
+    const simd::d256 ok
+        = avx::and_f64(avx::cmp_f64&lt;_CMP_GE_OQ&gt;(aq, avx::splat_f64(0x1.0p-29)), avx::cmp_f64&lt;_CMP_LT_OQ&gt;(aq, avx::splat_f64(0x1.0p+61)));
+    if ( avx::movemask_f64(ok) != 0xF ) [[unlikely]] {
+      __atan2_bl_x4_scalar(y, x, r);
+      return;
+    }
+
+    const simd::d256 z = avx::or_f64(__atrig::atan_core_p(aq), avx::and_f64(q, sgn));      // copysign(core, q)
+    const simd::d256 xneg = avx::cmp_f64&lt;_CMP_LT_OQ&gt;(vx, avx::splat_f64(0.0));
+    const simd::d256 adj = avx::and_f64(avx::or_f64(avx::splat_f64(0x1.921fb54442d18p+1), avx::and_f64(vy, sgn)), xneg);
+    avx::storeu_f64(reinterpret_cast&lt;double *&gt;(r), avx::add_f64(z, adj));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/simd/atrig.hpp.html#L255">line 255</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="atrig.hpp.html#f-707e1c4148b10908">__atan2_bl_x4_scalar</a>, <a href="atrig.hpp.html#f-76945b21fc4cc6db">__atrig::atan_core_p</a>.</p></section><section class="function-entry" id="f-f81c5bfd9091c3c3"><h3><code>micron::math::mk::atan2_bl_x4(const f64 *y, const f64 *x, f64 *r) noexcept</code></h3><p>Defined in <code>math/simd/atrig.hpp</code>, <a href="../../../source/math/simd/atrig.hpp.html#L269">line 269</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline void
+  atan2_bl_x4(const f64 *y, const f64 *x, f64 *r) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f64 *y</code></li><li><code>const f64 *x</code></li><li><code>f64 *r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline void
+  atan2_bl_x4(const f64 *y, const f64 *x, f64 *r) noexcept
+  {
+    __atan2_bl_x4_scalar(y, x, r);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="atrig.hpp.html#f-707e1c4148b10908">__atan2_bl_x4_scalar</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-38cb3fff468d4d97"><h3><code>micron::math::mk::__atrig::atan_core(f64 ax) noexcept</code></h3><p>Defined in <code>math/simd/atrig.hpp</code>, <a href="../../../source/math/simd/atrig.hpp.html#L58">line 58</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f64
+  atan_core(f64 ax) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 ax</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f64
+  atan_core(f64 ax) noexcept
+  {
+    using namespace mkbits::coeff::atan_f64_data;
+    const u32 idx
+        = static_cast&lt;u32&gt;(ax &gt;= bnd0) + static_cast&lt;u32&gt;(ax &gt;= bnd1) + static_cast&lt;u32&gt;(ax &gt;= bnd2) + static_cast&lt;u32&gt;(ax &gt;= bnd3);
+
+    const f64 t = hw::fmadd_sd(c_na[idx], ax, c_nb[idx]) / hw::fmadd_sd(c_da[idx], ax, c_db[idx]);
+    const f64 z = t * t;
+    const f64 w = z * z;
+
+    f64 s1 = hw::fmadd_sd(aT[10], w, aT[8]);
+    s1 = hw::fmadd_sd(s1, w, aT[6]);
+    s1 = hw::fmadd_sd(s1, w, aT[4]);
+    s1 = hw::fmadd_sd(s1, w, aT[2]);
+    s1 = hw::fmadd_sd(s1, w, aT[0]);
+
+    f64 s2 = hw::fmadd_sd(aT[9], w, aT[7]);
+    s2 = hw::fmadd_sd(s2, w, aT[5]);
+    s2 = hw::fmadd_sd(s2, w, aT[3]);
+    s2 = hw::fmadd_sd(s2, w, aT[1]);
+
+    const f64 P = hw::fmadd_sd(z, s2, s1);
+    const f64 tz = t * z;
+    const f64 at = hw::fmadd_sd(-tz, P, t);      // t - t*z*P
+    // atan_lo[0] is +0.0 and `at` is strictly positive here, so the idx == 0 case needs no branch
+    return f64(atan_lo[idx] + at);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(atan_lo[idx] + at)</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L83">line 83</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__asm/hw.hpp.html#f-c2d5a2e0427c549b">hw::fmadd_sd</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-707e1c4148b10908"><h3><code>micron::math::mk::__atan2_bl_x4_scalar(const f64 *y, const f64 *x, f64 *r) noexcept</code></h3><p>Defined in <code>math/simd/atrig.hpp</code>, <a href="../../../source/math/simd/atrig.hpp.html#L156">line 156</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline constexpr void
+  __atan2_bl_x4_scalar(const f64 *y, const f64 *x, f64 *r) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f64 *y</code></li><li><code>const f64 *x</code></li><li><code>f64 *r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline constexpr void
+  __atan2_bl_x4_scalar(const f64 *y, const f64 *x, f64 *r) noexcept
+  {
+    r[0] = atan2_bl(y[0], x[0]);
+    r[1] = atan2_bl(y[1], x[1]);
+    r[2] = atan2_bl(y[2], x[2]);
+    r[3] = atan2_bl(y[3], x[3]);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="atrig.hpp.html#f-b31a0dd85ae0bbd8">atan2_bl</a>.</p></section><section class="function-entry" id="f-76945b21fc4cc6db"><h3><code>micron::math::mk::__atrig::atan_core_p(simd::d256 ax) noexcept</code></h3><p>Defined in <code>math/simd/atrig.hpp</code>, <a href="../../../source/math/simd/atrig.hpp.html#L174">line 174</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline, gnu::target(&quot;avx2,fma&quot;)]] inline simd::d256
+  atan_core_p(simd::d256 ax) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>simd::d256 ax</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline, gnu::target(&quot;avx2,fma&quot;)]] inline simd::d256
+  atan_core_p(simd::d256 ax) noexcept
+  {
+    namespace avx = micron::simd::avx;
+    namespace vfma = micron::simd::fma;
+    using namespace mkbits::coeff::atan_f64_data;
+
+    const simd::d256 m0 = avx::cmp_f64&lt;_CMP_GE_OQ&gt;(ax, avx::splat_f64(bnd0));
+    const simd::d256 m1 = avx::cmp_f64&lt;_CMP_GE_OQ&gt;(ax, avx::splat_f64(bnd1));
+    const simd::d256 m2 = avx::cmp_f64&lt;_CMP_GE_OQ&gt;(ax, avx::splat_f64(bnd2));
+    const simd::d256 m3 = avx::cmp_f64&lt;_CMP_GE_OQ&gt;(ax, avx::splat_f64(bnd3));
+
+    simd::d256 na = avx::splat_f64(c_na[0]);
+    na = avx::blendv_f64(na, avx::splat_f64(c_na[1]), m0);
+    na = avx::blendv_f64(na, avx::splat_f64(c_na[2]), m1);
+    na = avx::blendv_f64(na, avx::splat_f64(c_na[3]), m2);
+    na = avx::blendv_f64(na, avx::splat_f64(c_na[4]), m3);
+
+    simd::d256 nb = avx::splat_f64(c_nb[0]);
+    nb = avx::blendv_f64(nb, avx::splat_f64(c_nb[1]), m0);
+    nb = avx::blendv_f64(nb, avx::splat_f64(c_nb[2]), m1);
+    nb = avx::blendv_f64(nb, avx::splat_f64(c_nb[3]), m2);
+    nb = avx::blendv_f64(nb, avx::splat_f64(c_nb[4]), m3);
+
+    simd::d256 da = avx::splat_f64(c_da[0]);
+    da = avx::blendv_f64(da, avx::splat_f64(c_da[1]), m0);
+    da = avx::blendv_f64(da, avx::splat_f64(c_da[2]), m1);
+    da = avx::blendv_f64(da, avx::splat_f64(c_da[3]), m2);
+    da = avx::blendv_f64(da, avx::splat_f64(c_da[4]), m3);
+
+    simd::d256 db = avx::splat_f64(c_db[0]);
+    db = avx::blendv_f64(db, avx::splat_f64(c_db[1]), m0);
+    db = avx::blendv_f64(db, avx::splat_f64(c_db[2]), m1);
+    db = avx::blendv_f64(db, avx::splat_f64(c_db[3]), m2);
+    db = avx::blendv_f64(db, avx::splat_f64(c_db[4]), m3);
+
+    const simd::d256 t = avx::div_f64(vfma::fma_f64(na, ax, nb), vfma::fma_f64(da, ax, db));
+    const simd::d256 z = avx::mul_f64(t, t);
+    const simd::d256 w = avx::mul_f64(z, z);
+
+    simd::d256 s1 = vfma::fma_f64(avx::splat_f64(aT[10]), w, avx::splat_f64(aT[8]));
+    s1 = vfma::fma_f64(s1, w, avx::splat_f64(aT[6]));
+    s1 = vfma::fma_f64(s1, w, avx::splat_f64(aT[4]));
+    s1 = vfma::fma_f64(s1, w, avx::splat_f64(aT[2]));
+    s1 = vfma::fma_f64(s1, w, avx::splat_f64(aT[0]));
+
+    simd::d256 s2 = vfma::fma_f64(avx::splat_f64(aT[9]), w, avx::splat_f64(aT[7]));
+    s2 = vfma::fma_f64(s2, w, avx::splat_f64(aT[5]));
+    s2 = vfma::fma_f64(s2, w, avx::splat_f64(aT[3]));
+    s2 = vfma::fma_f64(s2, w, avx::splat_f64(aT[1]));
+
+    const simd::d256 P = vfma::fma_f64(z, s2, s1);
+    const simd::d256 tz = avx::mul_f64(t, z);
+    // t - t*z*P, as fma(-(t*z), P, t) so it matches the scalar core&#x27;s fused form exactly
+    const simd::d256 at = vfma::fma_f64(avx::xor_f64(tz, avx::splat_f64(sign_mask_f64)), P, t);
+
+    simd::d256 lo = avx::splat_f64(atan_lo[0]);
+    lo = avx::blendv_f64(lo, avx::splat_f64(atan_lo[1]), m0);
+    lo = avx::blendv_f64(lo, avx::splat_f64(atan_lo[2]), m1);
+    lo = avx::blendv_f64(lo, avx::splat_f64(atan_lo[3]), m2);
+    lo = avx::blendv_f64(lo, avx::splat_f64(atan_lo[4]), m3);
+    return avx::add_f64(lo, at);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>avx::add_f64(lo, at)</code></td><td><a href="../../../source/math/simd/atrig.hpp.html#L234">line 234</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

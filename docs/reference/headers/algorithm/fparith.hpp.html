@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/fparith.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/fparith.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/functional.html">Functional algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/fparith.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/algorithm/fparith.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-515f7b7d4f015373">micron::fp::add_c(const Y y) noexcept</a></td><td>function; line 27</td></tr><tr class="t-dsc"><td><a href="#f-504e02aa48cca207">micron::fp::subtract_c(const Y y) noexcept</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-42f7f1791565a92d">micron::fp::multiply_c(const Y y) noexcept</a></td><td>function; line 57</td></tr><tr class="t-dsc"><td><a href="#f-58bf492cd25d2a3d">micron::fp::divide_c(const Y y) noexcept</a></td><td>function; line 72</td></tr><tr class="t-dsc"><td><a href="#f-de3abd32595ed5b9">micron::fp::pow_c(const Y y) noexcept</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-127d0d0fb19a160d">micron::fp::safe_divide(C cont, const Y y) noexcept</a></td><td>function; line 99</td></tr><tr class="t-dsc"><td><a href="#f-2f484308243cab3a">micron::fp::safe_divide_c(const Y y) noexcept</a></td><td>function; line 113</td></tr><tr class="t-dsc"><td><a href="#f-db44ddcaa7babae6">micron::fp::add(micron::option&lt;C, E&gt; opt, const Y y) noexcept</a></td><td>function; line 123</td></tr><tr class="t-dsc"><td><a href="#f-4861abc456c10dfc">micron::fp::subtract(micron::option&lt;C, E&gt; opt, const Y y) noexcept</a></td><td>function; line 138</td></tr><tr class="t-dsc"><td><a href="#f-a71b234e560e9d12">micron::fp::multiply(micron::option&lt;C, E&gt; opt, const Y y) noexcept</a></td><td>function; line 153</td></tr><tr class="t-dsc"><td><a href="#f-8506077ab8774d88">micron::fp::divide(micron::option&lt;C, E&gt; opt, const Y y) noexcept</a></td><td>function; line 168</td></tr><tr class="t-dsc"><td><a href="#f-3c20a55c796fb950">micron::fp::pow(micron::option&lt;C, E&gt; opt, const Y y) noexcept</a></td><td>function; line 183</td></tr><tr class="t-dsc"><td><a href="#f-0ecb86849a1ed252">micron::fp::add_zip(C a, const C &amp;b) noexcept</a></td><td>function; line 195</td></tr><tr class="t-dsc"><td><a href="#f-4c8277f3f83673c1">micron::fp::subtract_zip(C a, const C &amp;b) noexcept</a></td><td>function; line 210</td></tr><tr class="t-dsc"><td><a href="#f-81ad638bf661beda">micron::fp::multiply_zip(C a, const C &amp;b) noexcept</a></td><td>function; line 225</td></tr><tr class="t-dsc"><td><a href="#f-36dc46d2d786431e">micron::fp::divide_zip(C a, const C &amp;b) noexcept</a></td><td>function; line 240</td></tr><tr class="t-dsc"><td><a href="#f-6ffd26863563f425">micron::fp::inner_product(const C &amp;a, const C &amp;b, R init = R{}) noexcept</a></td><td>function; line 256</td></tr><tr class="t-dsc"><td><a href="#f-9ff0c3ace0d58eee">micron::fp::inner_product(const C &amp;a, const C &amp;b, R init, AddFn add_fn, MulFn mul_fn) noexcept</a></td><td>function; line 272</td></tr><tr class="t-dsc"><td><a href="#f-647535a15195f007">micron::fp::inner_product(const C &amp;a, const C &amp;b, R init, AddFn add_fn, MulFn mul_fn) noexcept</a></td><td>function; line 285</td></tr><tr class="t-dsc"><td><a href="#f-e95d6bc8d854fae7">micron::fp::inner_product(const C &amp;a, const C &amp;b, R init, micron::function&lt;R(R, R)&gt; add_fn,
+              micron::function&lt;typename C::value_type(typename C::value_type, typename C::value_type)&gt; mul_fn) noexcept</a></td><td>function; line 296</td></tr><tr class="t-dsc"><td><a href="#f-45b88357e6d88cb7">micron::fp::negate(C cont) noexcept</a></td><td>function; line 310</td></tr><tr class="t-dsc"><td><a href="#f-50320010a64881cf">micron::fp::negate(micron::option&lt;C, E&gt; opt) noexcept</a></td><td>function; line 324</td></tr><tr class="t-dsc"><td><a href="#f-2e44f73fb0ac7ac9">micron::fp::abs(C cont) noexcept</a></td><td>function; line 335</td></tr><tr class="t-dsc"><td><a href="#f-ce44f35421e1ad7a">micron::fp::abs(micron::option&lt;C, E&gt; opt) noexcept</a></td><td>function; line 346</td></tr><tr class="t-dsc"><td><a href="#f-67cdbc638c42efbb">micron::fp::safe_inner_product(const C &amp;a, const C &amp;b, R init = R{}) noexcept</a></td><td>function; line 356</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-515f7b7d4f015373"><h3><code>micron::fp::add_c(const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L27">line 27</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+add_c(const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Returns <code>[y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_add(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::add(cont, y);
+    }
+    return cont;
+  }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+add_c(const Y y) noexcept
+{
+  return [y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_add(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::add(cont, y);
+    }
+    return cont;
+  };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>[y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_add(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::add(cont, y);
+    }
+    return cont;
+  }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L29">line 29</a></td></tr></tbody></table></section><section class="function-entry" id="f-504e02aa48cca207"><h3><code>micron::fp::subtract_c(const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+subtract_c(const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Returns <code>[y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_subtract(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::subtract(cont, y);
+    }
+    return cont;
+  }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+subtract_c(const Y y) noexcept
+{
+  return [y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_subtract(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::subtract(cont, y);
+    }
+    return cont;
+  };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>[y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_subtract(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::subtract(cont, y);
+    }
+    return cont;
+  }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L44">line 44</a></td></tr></tbody></table></section><section class="function-entry" id="f-42f7f1791565a92d"><h3><code>micron::fp::multiply_c(const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L57">line 57</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+multiply_c(const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Returns <code>[y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_multiply(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::multiply(cont, y);
+    }
+    return cont;
+  }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+multiply_c(const Y y) noexcept
+{
+  return [y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_multiply(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::multiply(cont, y);
+    }
+    return cont;
+  };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>[y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_multiply(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::multiply(cont, y);
+    }
+    return cont;
+  }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L59">line 59</a></td></tr></tbody></table></section><section class="function-entry" id="f-58bf492cd25d2a3d"><h3><code>micron::fp::divide_c(const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+divide_c(const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Returns <code>[y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_divide(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::divide(cont, y);
+    }
+    return cont;
+  }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+divide_c(const Y y) noexcept
+{
+  return [y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_divide(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::divide(cont, y);
+    }
+    return cont;
+  };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>[y](auto cont) noexcept {
+    if constexpr ( micron::unrollable&lt;decltype(cont)&gt; ) {
+      micron::__impl::__unroll_divide(cont.begin(), y, make_index_sequence&lt;decltype(cont)::static_size&gt;{});
+    } else {
+      micron::divide(cont, y);
+    }
+    return cont;
+  }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L74">line 74</a></td></tr></tbody></table></section><section class="function-entry" id="f-de3abd32595ed5b9"><h3><code>micron::fp::pow_c(const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Y&gt;
+auto
+pow_c(const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Returns <code>[y](auto cont) noexcept {
+    micron::pow(cont, y);
+    return cont;
+  }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Y&gt;
+auto
+pow_c(const Y y) noexcept
+{
+  return [y](auto cont) noexcept {
+    micron::pow(cont, y);
+    return cont;
+  };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>[y](auto cont) noexcept {
+    micron::pow(cont, y);
+    return cont;
+  }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L88">line 88</a></td></tr></tbody></table></section><section class="function-entry" id="f-127d0d0fb19a160d"><h3><code>micron::fp::safe_divide(C cont, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L99">line 99</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, division_by_zero_error&gt;
+safe_divide(C cont, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C cont</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, division_by_zero_error&gt;
+safe_divide(C cont, const Y y) noexcept
+{
+  if ( y == Y{} ) return micron::option&lt;C, division_by_zero_error&gt;{ division_by_zero_error{} };
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_divide(cont.begin(), y, make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    micron::divide(cont, y);
+  }
+  return micron::option&lt;C, division_by_zero_error&gt;{ micron::move(cont) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;C, division_by_zero_error&gt;{ division_by_zero_error{} }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, division_by_zero_error&gt;{ micron::move(cont) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L107">line 107</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-1d9141db7fd083e9">micron::__impl::__unroll_divide</a>, <a href="arith.hpp.html#f-79467cb31c7c82d9">micron::divide</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-2f484308243cab3a"><h3><code>micron::fp::safe_divide_c(const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+safe_divide_c(const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Returns <code>[y](auto cont) noexcept { return safe_divide(micron::move(cont), y); }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+auto
+safe_divide_c(const Y y) noexcept
+{
+  return [y](auto cont) noexcept { return safe_divide(micron::move(cont), y); };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>[y](auto cont) noexcept { return safe_divide(micron::move(cont), y); }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L115">line 115</a></td></tr></tbody></table></section><section class="function-entry" id="f-db44ddcaa7babae6"><h3><code>micron::fp::add(micron::option&lt;C, E&gt; opt, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L123">line 123</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename E, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, E&gt;
+add(micron::option&lt;C, E&gt; opt, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::option&lt;C, E&gt; opt</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename E, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, E&gt;
+add(micron::option&lt;C, E&gt; opt, const Y y) noexcept
+{
+  if ( !opt.is_first() ) return opt;
+  auto cont = opt.template cast&lt;C&gt;();
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_add(cont.begin(), y, make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    micron::add(cont, y);
+  }
+  return micron::option&lt;C, E&gt;{ micron::move(cont) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>opt</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, E&gt;{ micron::move(cont) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L132">line 132</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-9de56503477857fa">micron::__impl::__unroll_add</a>, <a href="arith.hpp.html#f-1b0dc9a24d13a388">micron::add</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-4861abc456c10dfc"><h3><code>micron::fp::subtract(micron::option&lt;C, E&gt; opt, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L138">line 138</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename E, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, E&gt;
+subtract(micron::option&lt;C, E&gt; opt, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::option&lt;C, E&gt; opt</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename E, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, E&gt;
+subtract(micron::option&lt;C, E&gt; opt, const Y y) noexcept
+{
+  if ( !opt.is_first() ) return opt;
+  auto cont = opt.template cast&lt;C&gt;();
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_subtract(cont.begin(), y, make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    micron::subtract(cont, y);
+  }
+  return micron::option&lt;C, E&gt;{ micron::move(cont) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>opt</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L140">line 140</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, E&gt;{ micron::move(cont) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L147">line 147</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-d7b1cc974c36cd78">micron::__impl::__unroll_subtract</a>, <a href="arith.hpp.html#f-38fa8bacff039aba">micron::subtract</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-a71b234e560e9d12"><h3><code>micron::fp::multiply(micron::option&lt;C, E&gt; opt, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L153">line 153</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename E, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, E&gt;
+multiply(micron::option&lt;C, E&gt; opt, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::option&lt;C, E&gt; opt</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename E, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, E&gt;
+multiply(micron::option&lt;C, E&gt; opt, const Y y) noexcept
+{
+  if ( !opt.is_first() ) return opt;
+  auto cont = opt.template cast&lt;C&gt;();
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_multiply(cont.begin(), y, make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    micron::multiply(cont, y);
+  }
+  return micron::option&lt;C, E&gt;{ micron::move(cont) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>opt</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L155">line 155</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, E&gt;{ micron::move(cont) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L162">line 162</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-6bd7e7cb162ccf23">micron::__impl::__unroll_multiply</a>, <a href="arith.hpp.html#f-c43aace35b2d35ce">micron::multiply</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-8506077ab8774d88"><h3><code>micron::fp::divide(micron::option&lt;C, E&gt; opt, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L168">line 168</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename E, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, division_by_zero_error&gt;
+divide(micron::option&lt;C, E&gt; opt, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::option&lt;C, E&gt; opt</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename E, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+micron::option&lt;C, division_by_zero_error&gt;
+divide(micron::option&lt;C, E&gt; opt, const Y y) noexcept
+{
+  if ( !opt.is_first() ) return micron::option&lt;C, division_by_zero_error&gt;{ division_by_zero_error{} };
+  if ( y == Y{} ) return micron::option&lt;C, division_by_zero_error&gt;{ division_by_zero_error{} };
+  auto cont = opt.template cast&lt;C&gt;();
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_divide(cont.begin(), y, make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    micron::divide(cont, y);
+  }
+  return micron::option&lt;C, division_by_zero_error&gt;{ micron::move(cont) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;C, division_by_zero_error&gt;{ division_by_zero_error{} }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L170">line 170</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, division_by_zero_error&gt;{ division_by_zero_error{} }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L171">line 171</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, division_by_zero_error&gt;{ micron::move(cont) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L178">line 178</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-1d9141db7fd083e9">micron::__impl::__unroll_divide</a>, <a href="arith.hpp.html#f-79467cb31c7c82d9">micron::divide</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-3c20a55c796fb950"><h3><code>micron::fp::pow(micron::option&lt;C, E&gt; opt, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L183">line 183</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename E, typename Y&gt;
+micron::option&lt;C, E&gt;
+pow(micron::option&lt;C, E&gt; opt, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::option&lt;C, E&gt; opt</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename E, typename Y&gt;
+micron::option&lt;C, E&gt;
+pow(micron::option&lt;C, E&gt; opt, const Y y) noexcept
+{
+  if ( !opt.is_first() ) return opt;
+  auto cont = opt.template cast&lt;C&gt;();
+  micron::pow(cont, y);
+  return micron::option&lt;C, E&gt;{ micron::move(cont) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>opt</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L185">line 185</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, E&gt;{ micron::move(cont) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="arith.hpp.html#f-9bd481da48f3bda3">micron::pow</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-0ecb86849a1ed252"><h3><code>micron::fp::add_zip(C a, const C &amp;b) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+C
+add_zip(C a, const C &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C a</code></li><li><code>const C &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+C
+add_zip(C a, const C &amp;b) noexcept
+{
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_zip_add(a.begin(), b.begin(), make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    const usize __n = a.size() &lt; b.size() ? a.size() : b.size();
+    auto *fa = a.begin();
+    const auto *fb = b.begin();
+    for ( usize __i = 0; __i &lt; __n; ++__i, ++fa, ++fb ) *fa = *fa + *fb;
+  }
+  return a;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L205">line 205</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-7c688b965aa512c8">micron::__impl::__unroll_zip_add</a>.</p></section><section class="function-entry" id="f-4c8277f3f83673c1"><h3><code>micron::fp::subtract_zip(C a, const C &amp;b) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L210">line 210</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+C
+subtract_zip(C a, const C &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C a</code></li><li><code>const C &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+C
+subtract_zip(C a, const C &amp;b) noexcept
+{
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_zip_subtract(a.begin(), b.begin(), make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    const usize __n = a.size() &lt; b.size() ? a.size() : b.size();
+    auto *fa = a.begin();
+    const auto *fb = b.begin();
+    for ( usize __i = 0; __i &lt; __n; ++__i, ++fa, ++fb ) *fa = *fa - *fb;
+  }
+  return a;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L220">line 220</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-6fcf30357d2ac9ac">micron::__impl::__unroll_zip_subtract</a>.</p></section><section class="function-entry" id="f-81ad638bf661beda"><h3><code>micron::fp::multiply_zip(C a, const C &amp;b) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L225">line 225</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+C
+multiply_zip(C a, const C &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C a</code></li><li><code>const C &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+C
+multiply_zip(C a, const C &amp;b) noexcept
+{
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_zip_multiply(a.begin(), b.begin(), make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    const usize __n = a.size() &lt; b.size() ? a.size() : b.size();
+    auto *fa = a.begin();
+    const auto *fb = b.begin();
+    for ( usize __i = 0; __i &lt; __n; ++__i, ++fa, ++fb ) *fa = *fa * *fb;
+  }
+  return a;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L235">line 235</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-f8ef3fffd9a9337d">micron::__impl::__unroll_zip_multiply</a>.</p></section><section class="function-entry" id="f-36dc46d2d786431e"><h3><code>micron::fp::divide_zip(C a, const C &amp;b) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L240">line 240</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+micron::option&lt;C, division_by_zero_error&gt;
+divide_zip(C a, const C &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C a</code></li><li><code>const C &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+micron::option&lt;C, division_by_zero_error&gt;
+divide_zip(C a, const C &amp;b) noexcept
+{
+  const usize __n = a.size() &lt; b.size() ? a.size() : b.size();
+  auto *fa = a.begin();
+  const auto *fb = b.begin();
+  for ( usize __i = 0; __i &lt; __n; ++__i, ++fa, ++fb ) {
+    if ( *fb == typename C::value_type{} ) return micron::option&lt;C, division_by_zero_error&gt;{ division_by_zero_error{} };
+    *fa = *fa / *fb;
+  }
+  return micron::option&lt;C, division_by_zero_error&gt;{ micron::move(a) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;C, division_by_zero_error&gt;{ division_by_zero_error{} }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L246">line 246</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, division_by_zero_error&gt;{ micron::move(a) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L249">line 249</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-6ffd26863563f425"><h3><code>micron::fp::inner_product(const C &amp;a, const C &amp;b, R init = R{}) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L256">line 256</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename R = typename C::value_type&gt;
+R
+inner_product(const C &amp;a, const C &amp;b, R init = R{}) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;a</code></li><li><code>const C &amp;b</code></li><li><code>R init = R{}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename R = typename C::value_type&gt;
+R
+inner_product(const C &amp;a, const C &amp;b, R init = R{}) noexcept
+{
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    return micron::__impl::__unroll_inner_product(a.begin(), b.begin(), init, make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    const auto *fa = a.begin();
+    const auto *ea = a.end();
+    const auto *fb = b.begin();
+    for ( ; fa != ea; ++fa, ++fb ) init = init + (*fa * *fb);
+    return init;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__impl::__unroll_inner_product(a.begin(), b.begin(), init, make_index_sequence&lt;C::static_size&gt;{})</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L259">line 259</a></td></tr><tr class="t-dsc"><td><code>init</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L265">line 265</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-30a9650287e8cdef">micron::__impl::__unroll_inner_product</a>.</p></section><section class="function-entry" id="f-9ff0c3ace0d58eee"><h3><code>micron::fp::inner_product(const C &amp;a, const C &amp;b, R init, AddFn add_fn, MulFn mul_fn) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L272">line 272</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename R, typename AddFn, typename MulFn&gt;
+  requires fn_fold&lt;AddFn, R, R&gt; &amp;&amp; fn_binary_codomain&lt;MulFn, typename C::value_type&gt;
+R
+inner_product(const C &amp;a, const C &amp;b, R init, AddFn add_fn, MulFn mul_fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;a</code></li><li><code>const C &amp;b</code></li><li><code>R init</code></li><li><code>AddFn add_fn</code></li><li><code>MulFn mul_fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename R, typename AddFn, typename MulFn&gt;
+  requires fn_fold&lt;AddFn, R, R&gt; &amp;&amp; fn_binary_codomain&lt;MulFn, typename C::value_type&gt;
+R
+inner_product(const C &amp;a, const C &amp;b, R init, AddFn add_fn, MulFn mul_fn) noexcept
+{
+  const auto *fa = a.begin();
+  const auto *ea = a.end();
+  const auto *fb = b.begin();
+  for ( ; fa != ea; ++fa, ++fb ) init = add_fn(micron::move(init), mul_fn(*fa, *fb));
+  return init;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>init</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L278">line 278</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-647535a15195f007"><h3><code>micron::fp::inner_product(const C &amp;a, const C &amp;b, R init, AddFn add_fn, MulFn mul_fn) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L285">line 285</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename R, typename AddFn, typename MulFn&gt;
+  requires fn_fold&lt;AddFn, R, R&gt; &amp;&amp; micron::is_invocable_v&lt;MulFn, const typename C::value_type *, const typename C::value_type *&gt;
+           &amp;&amp; (!fn_binary_codomain&lt;MulFn, typename C::value_type&gt;)
+R
+inner_product(const C &amp;a, const C &amp;b, R init, AddFn add_fn, MulFn mul_fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;a</code></li><li><code>const C &amp;b</code></li><li><code>R init</code></li><li><code>AddFn add_fn</code></li><li><code>MulFn mul_fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename R, typename AddFn, typename MulFn&gt;
+  requires fn_fold&lt;AddFn, R, R&gt; &amp;&amp; micron::is_invocable_v&lt;MulFn, const typename C::value_type *, const typename C::value_type *&gt;
+           &amp;&amp; (!fn_binary_codomain&lt;MulFn, typename C::value_type&gt;)
+R
+inner_product(const C &amp;a, const C &amp;b, R init, AddFn add_fn, MulFn mul_fn) noexcept
+{
+  const auto *fa = a.begin();
+  const auto *ea = a.end();
+  const auto *fb = b.begin();
+  for ( ; fa != ea; ++fa, ++fb ) init = add_fn(micron::move(init), mul_fn(fa, fb));
+  return init;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>init</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L291">line 291</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-e95d6bc8d854fae7"><h3><code>micron::fp::inner_product(const C &amp;a, const C &amp;b, R init, micron::function&lt;R(R, R)&gt; add_fn,
+              micron::function&lt;typename C::value_type(typename C::value_type, typename C::value_type)&gt; mul_fn) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L296">line 296</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename R&gt;
+R
+inner_product(const C &amp;a, const C &amp;b, R init, micron::function&lt;R(R, R)&gt; add_fn,
+              micron::function&lt;typename C::value_type(typename C::value_type, typename C::value_type)&gt; mul_fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;a</code></li><li><code>const C &amp;b</code></li><li><code>R init</code></li><li><code>micron::function&lt;R(R, R)&gt; add_fn</code></li><li><code>micron::function&lt;typename C::value_type(typename C::value_type, typename C::value_type)&gt; mul_fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename R&gt;
+R
+inner_product(const C &amp;a, const C &amp;b, R init, micron::function&lt;R(R, R)&gt; add_fn,
+              micron::function&lt;typename C::value_type(typename C::value_type, typename C::value_type)&gt; mul_fn) noexcept
+{
+  const auto *fa = a.begin();
+  const auto *ea = a.end();
+  const auto *fb = b.begin();
+  for ( ; fa != ea; ++fa, ++fb ) init = add_fn(micron::move(init), mul_fn(*fa, *fb));
+  return init;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>init</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L303">line 303</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-45b88357e6d88cb7"><h3><code>micron::fp::negate(C cont) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L310">line 310</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+C
+negate(C cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+C
+negate(C cont) noexcept
+{
+  if constexpr ( micron::unrollable&lt;C&gt; ) {
+    micron::__impl::__unroll_negate(cont.begin(), make_index_sequence&lt;C::static_size&gt;{});
+  } else {
+    auto *first = cont.begin();
+    const auto *end = cont.end();
+    for ( ; first != end; ++first ) *first = -(*first);
+  }
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L319">line 319</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unroll.hpp.html#f-791358e7e6668207">micron::__impl::__unroll_negate</a>.</p></section><section class="function-entry" id="f-50320010a64881cf"><h3><code>micron::fp::negate(micron::option&lt;C, E&gt; opt) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L324">line 324</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename E&gt;
+micron::option&lt;C, E&gt;
+negate(micron::option&lt;C, E&gt; opt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::option&lt;C, E&gt; opt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename E&gt;
+micron::option&lt;C, E&gt;
+negate(micron::option&lt;C, E&gt; opt) noexcept
+{
+  if ( !opt.is_first() ) return opt;
+  return micron::option&lt;C, E&gt;{ fp::negate(opt.template cast&lt;C&gt;()) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>opt</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L326">line 326</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, E&gt;{ fp::negate(opt.template cast&lt;C&gt;()) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L327">line 327</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fparith.hpp.html#f-45b88357e6d88cb7">fp::negate</a>.</p></section><section class="function-entry" id="f-2e44f73fb0ac7ac9"><h3><code>micron::fp::abs(C cont) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L335">line 335</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+  requires micron::is_signed_v&lt;typename C::value_type&gt;
+C
+abs(C cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+  requires micron::is_signed_v&lt;typename C::value_type&gt;
+C
+abs(C cont) noexcept
+{
+  auto *first = cont.begin();
+  const auto *end = cont.end();
+  for ( ; first != end; ++first ) *first = (*first &lt; typename C::value_type{}) ? -(*first) : *first;
+  return cont;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cont</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L340">line 340</a></td></tr></tbody></table></section><section class="function-entry" id="f-ce44f35421e1ad7a"><h3><code>micron::fp::abs(micron::option&lt;C, E&gt; opt) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L346">line 346</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename E&gt;
+  requires micron::is_signed_v&lt;typename C::value_type&gt;
+micron::option&lt;C, E&gt;
+abs(micron::option&lt;C, E&gt; opt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::option&lt;C, E&gt; opt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename E&gt;
+  requires micron::is_signed_v&lt;typename C::value_type&gt;
+micron::option&lt;C, E&gt;
+abs(micron::option&lt;C, E&gt; opt) noexcept
+{
+  if ( !opt.is_first() ) return opt;
+  return micron::option&lt;C, E&gt;{ fp::abs(opt.template cast&lt;C&gt;()) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>opt</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L348">line 348</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;C, E&gt;{ fp::abs(opt.template cast&lt;C&gt;()) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L349">line 349</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fparith.hpp.html#f-2e44f73fb0ac7ac9">fp::abs</a>.</p></section><section class="function-entry" id="f-67cdbc638c42efbb"><h3><code>micron::fp::safe_inner_product(const C &amp;a, const C &amp;b, R init = R{}) noexcept</code></h3><p>Defined in <code>algorithm/fparith.hpp</code>, <a href="../../source/algorithm/fparith.hpp.html#L356">line 356</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename R = typename C::value_type&gt;
+micron::option&lt;R, bad_zip_error&gt;
+safe_inner_product(const C &amp;a, const C &amp;b, R init = R{}) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;a</code></li><li><code>const C &amp;b</code></li><li><code>R init = R{}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename R = typename C::value_type&gt;
+micron::option&lt;R, bad_zip_error&gt;
+safe_inner_product(const C &amp;a, const C &amp;b, R init = R{}) noexcept
+{
+  if ( a.size() != b.size() ) return micron::option&lt;R, bad_zip_error&gt;{ bad_zip_error{} };
+  return micron::option&lt;R, bad_zip_error&gt;{ fp::inner_product(a, b, init) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;R, bad_zip_error&gt;{ bad_zip_error{} }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L358">line 358</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;R, bad_zip_error&gt;{ fp::inner_product(a, b, init) }</code></td><td><a href="../../source/algorithm/fparith.hpp.html#L359">line 359</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fparith.hpp.html#f-6ffd26863563f425">fp::inner_product</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

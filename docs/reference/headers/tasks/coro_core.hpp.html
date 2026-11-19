@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/coro_core.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/coro_core.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/coro_core.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/tasks/coro_core.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-d20e094d79d75534">MICRON_CORO_DEQUE_CAP</code></td><td>macro; line 36<br><small><code>#if !defined(MICRON_CORO_DEQUE_CAP)</code></small></td></tr><tr class="t-dsc"><td><code id="s-c328356e83795fd4">micron::coro::worker</code></td><td>struct; line 40</td></tr><tr class="t-dsc"><td><code id="s-78b917e052e5cca6">micron::coro::worker::deque</code></td><td>member; line 43<br><small><code>#if defined(MICRON_CORO_FIXED_DEQUE)</code></small></td></tr><tr class="t-dsc"><td><code id="s-4b294a0dd26f7684">micron::coro::worker::ovf</code></td><td>member; line 47</td></tr><tr class="t-dsc"><td><code id="s-e7356f091c75780a">micron::coro::worker::active</code></td><td>member; line 48</td></tr><tr class="t-dsc"><td><code id="s-1b48a8491d8ab815">micron::coro::worker::hot</code></td><td>member; line 49</td></tr><tr class="t-dsc"><td><code id="s-59a1eefc10563648">micron::coro::worker::id</code></td><td>member; line 50</td></tr><tr class="t-dsc"><td><code id="s-74b7e5ad61ec8108">micron::coro::worker::tick</code></td><td>member; line 51</td></tr><tr class="t-dsc"><td><a href="#f-9498d62c9a1e8e2c">micron::coro::current_worker() noexcept</a></td><td>function; line 57</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-9498d62c9a1e8e2c"><h3><code>micron::coro::current_worker() noexcept</code></h3><p>Defined in <code>tasks/coro_core.hpp</code>, <a href="../../source/tasks/coro_core.hpp.html#L57">line 57</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline worker *
+current_worker() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__cur_worker</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline worker *
+current_worker() noexcept
+{
+  return __cur_worker;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__cur_worker</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L59">line 59</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ead298c1fa1ce624"><h3><code>micron::coro::__notify_work() noexcept</code></h3><p>Defined in <code>tasks/coro_core.hpp</code>, <a href="../../source/tasks/coro_core.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__notify_work() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_GLOBAL_SIGNAL)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__notify_work() noexcept
+{
+  if ( __cl_sleepers.get(micron::memory_order_relaxed) != 0 ) {
+    __cl_signal.fetch_add(1, micron::memory_order_release);
+    micron::wake_futex(__cl_signal.ptr(), 1);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sync/futex.hpp.html#f-d0c4f067a82c7179">micron::wake_futex</a>.</p></section><section class="function-entry" id="f-e9fe9449c00b3144"><h3><code>micron::coro::__cl_wake_one() noexcept</code></h3><p>Defined in <code>tasks/coro_core.hpp</code>, <a href="../../source/tasks/coro_core.hpp.html#L89">line 89</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Strong&gt;
+[[gnu::always_inline]] inline void
+__cl_wake_one() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_CORO_GLOBAL_SIGNAL)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Strong&gt;
+[[gnu::always_inline]] inline void
+__cl_wake_one() noexcept
+{
+  u32 __m;
+  if constexpr ( Strong )
+    __m = __cl_sleeper_mask.fetch_or(0, micron::memory_order_seq_cst);
+  else
+    __m = __cl_sleeper_mask.get(micron::memory_order_relaxed);
+  while ( __m != 0 ) {
+    const u32 __i = static_cast&lt;u32&gt;(__builtin_ctz(__m));
+    const u32 __bit = 1u &lt;&lt; __i;
+    const u32 __old = __cl_sleeper_mask.fetch_and(~__bit, micron::memory_order_acq_rel);
+    if ( __old &amp; __bit ) {      // claimed an actual sleeper
+      __cl_park[__i].epoch.fetch_add(1, micron::memory_order_release);
+      micron::wake_futex(__cl_park[__i].epoch.ptr(), 1);
+      return;
+    }
+    __m = __old &amp; ~__bit;      // raced the sleepers own clear
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/tasks/coro_core.hpp.html#L103">line 103</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sync/futex.hpp.html#f-d0c4f067a82c7179">micron::wake_futex</a>.</p></section><section class="function-entry" id="f-713a9f522918f2f4"><h3><code>micron::coro::__notify_work() noexcept</code></h3><p>Defined in <code>tasks/coro_core.hpp</code>, <a href="../../source/tasks/coro_core.hpp.html#L110">line 110</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__notify_work() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_CORO_GLOBAL_SIGNAL)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__notify_work() noexcept
+{
+  if ( __cl_sleeper_mask.get(micron::memory_order_relaxed) != 0 ) __cl_wake_one&lt;false&gt;();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="coro_core.hpp.html#f-e9fe9449c00b3144">__cl_wake_one&lt;false&gt;</a>.</p></section><section class="function-entry" id="f-bc973c559a84c5b6"><h3><code>micron::coro::__count_take(__frame_base *fb) noexcept</code></h3><p>Defined in <code>tasks/coro_core.hpp</code>, <a href="../../source/tasks/coro_core.hpp.html#L117">line 117</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__count_take(__frame_base *fb) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__frame_base *fb</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__count_take(__frame_base *fb) noexcept
+{
+  if ( fb-&gt;__pushed_kind ) fb-&gt;__steals.fetch_add(1, micron::memory_order_acq_rel);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c4ec0a173cebf549"><h3><code>micron::coro::__child_complete(__frame_base *child) noexcept</code></h3><p>Defined in <code>tasks/coro_core.hpp</code>, <a href="../../source/tasks/coro_core.hpp.html#L123">line 123</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline std::coroutine_handle&lt;&gt;
+__child_complete(__frame_base *child) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__frame_base *child</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline std::coroutine_handle&lt;&gt;
+__child_complete(__frame_base *child) noexcept
+{
+  __frame_base *parent = child-&gt;__parent;
+  worker *w = __cur_worker;
+  __frame_base *cont = (w != nullptr) ? w-&gt;deque.pop_bottom() : nullptr;
+  // balanced pop
+  if ( cont == parent &amp;&amp; cont != nullptr &amp;&amp; cont-&gt;__pushed_kind == __frame_base::__kind_fork ) return parent-&gt;__self;
+  // detached
+  const u32 r = parent-&gt;__joins.add_fetch(1, micron::memory_order_acq_rel);
+  const bool ready = (r &amp; __frame_base::__joiner_bit)
+                     &amp;&amp; (r &amp; __frame_base::__credit_mask) == ((r &gt;&gt; __frame_base::__expected_shift) &amp; __frame_base::__expected_mask);
+  if ( cont != nullptr ) {
+    if ( cont == parent ) return parent-&gt;__self;
+    __count_take(cont);
+    if ( ready ) {
+      cont-&gt;__pushed_kind = __frame_base::__kind_plain;
+      if ( w-&gt;deque.push_bottom(cont) ) [[likely]] {
+        __notify_work();
+      } else {
+        // deque full
+        // WARNING: __NEVER__ spin here; this thread is the only valid popper, so yielding cannot make room
+        cont-&gt;__ovf_next = w-&gt;ovf;
+        w-&gt;ovf = cont;
+      }
+      return parent-&gt;__self;
+    }
+    return cont-&gt;__self;
+  }
+  return ready ? parent-&gt;__self : std::noop_coroutine();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>parent-&gt;__self</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L129">line 129</a></td></tr><tr class="t-dsc"><td><code>parent-&gt;__self</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>parent-&gt;__self</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L147">line 147</a></td></tr><tr class="t-dsc"><td><code>cont-&gt;__self</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L149">line 149</a></td></tr><tr class="t-dsc"><td><code>ready ? parent-&gt;__self : std::noop_coroutine()</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L151">line 151</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="coro_core.hpp.html#f-bc973c559a84c5b6">__count_take</a>, <a href="coro_core.hpp.html#f-ead298c1fa1ce624">__notify_work</a>, <a href="../__special/coroutine.html#f-2466e06af9a2f6f0">std::noop_coroutine</a>.</p></section><section class="function-entry" id="f-152e18b208f7ae8b"><h3><code>micron::coro::__join_suspend(__frame_base *self) noexcept</code></h3><p>Defined in <code>tasks/coro_core.hpp</code>, <a href="../../source/tasks/coro_core.hpp.html#L155">line 155</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline std::coroutine_handle&lt;&gt;
+__join_suspend(__frame_base *self) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__frame_base *self</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline std::coroutine_handle&lt;&gt;
+__join_suspend(__frame_base *self) noexcept
+{
+  const u32 s = self-&gt;__steals.get(micron::memory_order_acquire);
+  if ( s == 0 ) return self-&gt;__self;
+  if ( s &gt; __frame_base::__expected_mask ) [[unlikely]]
+    __builtin_trap();      // &gt; 32767 outstanding steals in one join epoch exceeds the packed word
+  // TODO: error out properly
+  const u32 r = self-&gt;__joins.add_fetch(__frame_base::__joiner_bit | (s &lt;&lt; __frame_base::__expected_shift), micron::memory_order_acq_rel);
+  if ( (r &amp; __frame_base::__credit_mask) == s ) {
+    self-&gt;__joins.store(0, micron::memory_order_relaxed);
+    self-&gt;__steals.store(0, micron::memory_order_relaxed);
+    return self-&gt;__self;
+  }
+  return std::noop_coroutine();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>self-&gt;__self</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L158">line 158</a></td></tr><tr class="t-dsc"><td><code>self-&gt;__self</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L166">line 166</a></td></tr><tr class="t-dsc"><td><code>std::noop_coroutine()</code></td><td><a href="../../source/tasks/coro_core.hpp.html#L168">line 168</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__special/coroutine.html#f-2466e06af9a2f6f0">std::noop_coroutine</a>.</p></section><section class="function-entry" id="f-55c4769cb7d1f11b"><h3><code>micron::coro::__join_resume(__frame_base *self) noexcept</code></h3><p>Defined in <code>tasks/coro_core.hpp</code>, <a href="../../source/tasks/coro_core.hpp.html#L172">line 172</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__join_resume(__frame_base *self) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__frame_base *self</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__join_resume(__frame_base *self) noexcept
+{
+  self-&gt;__joins.store(0, micron::memory_order_relaxed);
+  self-&gt;__steals.store(0, micron::memory_order_relaxed);
+  __frame_base *__c = self-&gt;__child_head;
+  self-&gt;__child_head = nullptr;
+  while ( __c != nullptr ) {
+    __frame_base *__next = __c-&gt;__sibling;
+    if ( __c-&gt;__self ) __c-&gt;__self.destroy();
+    __c = __next;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

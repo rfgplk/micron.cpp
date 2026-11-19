@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/pecho.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/pecho.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/io.html">Input and output</a></div><p>Defined in header <code>&lt;micron/io/pecho.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/io/pecho.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-426b2d5bea15001b">micron::io::locked_stdout_sink</code></td><td>struct; line 44</td></tr><tr class="t-dsc"><td><code id="s-3e7f21f05e67ecad">micron::pecho</code></td><td>name; line 264</td></tr><tr class="t-dsc"><td><code id="s-f612e379acf72230">micron::pechof</code></td><td>name; line 265</td></tr><tr class="t-dsc"><td><code id="s-8cbdec6be3054556">micron::pechofn</code></td><td>name; line 266</td></tr><tr class="t-dsc"><td><code id="s-e16158086a40ee2d">micron::pechon</code></td><td>name; line 267</td></tr><tr class="t-dsc"><td><code id="s-a1670185f9588eb5">micron::pprint</code></td><td>name; line 268</td></tr><tr class="t-dsc"><td><code id="s-b560efffcffee3aa">micron::pprintln</code></td><td>name; line 269</td></tr><tr class="t-dsc"><td><code id="s-8ead15890c67ced0">micron::pprintn</code></td><td>name; line 270</td></tr><tr class="t-dsc"><td><a href="#f-ad7079c714074833">micron::io::locked_stdout_sink::put(const char *p, usize n)</a></td><td>function; line 46</td></tr><tr class="t-dsc"><td><a href="#f-4fc3f33712d12acf">micron::io::locked_stdout_sink::put(char c)</a></td><td>function; line 59</td></tr><tr class="t-dsc"><td><a href="#f-a9f070bc86782a14">micron::io::locked_stdout_sink::flush(void)</a></td><td>function; line 67</td></tr><tr class="t-dsc"><td><a href="#f-846b6bfbc4b0936f">micron::io::pecho(const First &amp;first, const Rest &amp;...rest)</a></td><td>function; line 77</td></tr><tr class="t-dsc"><td><a href="#f-00b229ab9f918490">micron::io::pecho(void)</a></td><td>function; line 88</td></tr><tr class="t-dsc"><td><a href="#f-ecb6c47c41bfd570">micron::io::pechon(const First &amp;first, const Rest &amp;...rest)</a></td><td>function; line 101</td></tr><tr class="t-dsc"><td><a href="#f-4e9c6480d3187415">micron::io::pechof(const char *fmt, const Args &amp;...args)</a></td><td>function; line 114</td></tr><tr class="t-dsc"><td><a href="#f-606935a5608b84c9">micron::io::pechofn(const char *fmt, const Args &amp;...args)</a></td><td>function; line 128</td></tr><tr class="t-dsc"><td><a href="#f-176d0ac04ba200c1">micron::io::pprint(const T &amp;...str)</a></td><td>function; line 141</td></tr><tr class="t-dsc"><td><a href="#f-62ca5fa53f6568ee">micron::io::pprintln(const T &amp;...str)</a></td><td>function; line 155</td></tr><tr class="t-dsc"><td><a href="#f-c8c922bbaf169d58">micron::io::pprintn(const T &amp;...str)</a></td><td>function; line 170</td></tr><tr class="t-dsc"><td><a href="#f-60f19614c8c1fcab">micron::io::pecho(First &amp;&amp;first, Rest &amp;&amp;...rest)</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-d51d680f305ec0d2">micron::io::pechon(First &amp;&amp;first, Rest &amp;&amp;...rest)</a></td><td>function; line 206</td></tr><tr class="t-dsc"><td><a href="#f-700a4b80af336d70">micron::io::pechof(const char *fmt, Args &amp;&amp;...args)</a></td><td>function; line 223</td></tr><tr class="t-dsc"><td><a href="#f-c3f7a0ab82a36eaa">micron::io::pechofn(const char *fmt, Args &amp;&amp;...args)</a></td><td>function; line 232</td></tr><tr class="t-dsc"><td><a href="#f-d818423516075768">micron::io::pprint(T &amp;&amp;...str)</a></td><td>function; line 241</td></tr><tr class="t-dsc"><td><a href="#f-2094ced39a17ba77">micron::io::pprintln(T &amp;&amp;...str)</a></td><td>function; line 249</td></tr><tr class="t-dsc"><td><a href="#f-12c49d9c247dda37">micron::io::pprintn(T &amp;&amp;...str)</a></td><td>function; line 257</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-ad7079c714074833"><h3><code>micron::io::locked_stdout_sink::put(const char *p, usize n)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L46">line 46</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static max_t
+  put(const char *p, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *p</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static max_t
+  put(const char *p, usize n)
+  {
+    if ( __p_buffer_stdout-&gt;full(n) ) {
+      // WARNING: calling operator&gt;&gt; explicitly, if function.hpp is included before io, it&#x27;s unconstrained operator&gt;&gt; overload wins over
+      // this
+      (*__p_buffer_stdout).operator&gt;&gt;(io::stdout);
+      if ( n &gt;= static_cast&lt;usize&gt;(__global_buffer_size) ) return posix::write_all(io::stdout, reinterpret_cast&lt;const byte *&gt;(p), n);
+    }
+    __p_buffer_stdout-&gt;append(reinterpret_cast&lt;const byte *&gt;(p), n);
+    return static_cast&lt;max_t&gt;(n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>posix::write_all(io::stdout, reinterpret_cast&lt;const byte *&gt;(p), n)</code></td><td><a href="../../source/io/pecho.hpp.html#L52">line 52</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(n)</code></td><td><a href="../../source/io/pecho.hpp.html#L55">line 55</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/ext.hpp.html#f-3223062673662af8">posix::write_all</a>.</p></section><section class="function-entry" id="f-4fc3f33712d12acf"><h3><code>micron::io::locked_stdout_sink::put(char c)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L59">line 59</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static max_t
+  put(char c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static max_t
+  put(char c)
+  {
+    if ( __p_buffer_stdout-&gt;full(1) ) (*__p_buffer_stdout).operator&gt;&gt;(io::stdout);
+    __p_buffer_stdout-&gt;append(reinterpret_cast&lt;const byte *&gt;(&amp;c), 1);
+    return 1;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>1</code></td><td><a href="../../source/io/pecho.hpp.html#L63">line 63</a></td></tr></tbody></table></section><section class="function-entry" id="f-a9f070bc86782a14"><h3><code>micron::io::locked_stdout_sink::flush(void)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L67">line 67</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static max_t
+  flush(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static max_t
+  flush(void)
+  {
+    (*__p_buffer_stdout).operator&gt;&gt;(io::stdout);
+    return 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/pecho.hpp.html#L70">line 70</a></td></tr></tbody></table></section><section class="function-entry" id="f-846b6bfbc4b0936f"><h3><code>micron::io::pecho(const First &amp;first, const Rest &amp;...rest)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L77">line 77</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename First, typename... Rest&gt;
+  requires(!echo_target&lt;First&gt; &amp;&amp; !micron::any_settling&lt;First, Rest...&gt;)
+inline max_t
+pecho(const First &amp;first, const Rest &amp;...rest)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const First &amp;first</code></li><li><code>const Rest &amp;...rest</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename First, typename... Rest&gt;
+  requires(!echo_target&lt;First&gt; &amp;&amp; !micron::any_settling&lt;First, Rest...&gt;)
+inline max_t
+pecho(const First &amp;first, const Rest &amp;...rest)
+{
+  __pecho_impl::__plock g;
+  __pecho_impl::__ensure_stdout();
+  locked_stdout_sink s;
+  max_t r = __echo_impl::run(s, true, first, rest...);
+  s.flush();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/pecho.hpp.html#L84">line 84</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pecho.hpp.html#f-e5e788869a15c8b2">__pecho_impl::__ensure_stdout</a>, <a href="echo.hpp.html#f-cbb443492cb5a484">__echo_impl::run</a>.</p></section><section class="function-entry" id="f-00b229ab9f918490"><h3><code>micron::io::pecho(void)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L88">line 88</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline max_t
+pecho(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline max_t
+pecho(void)
+{
+  __pecho_impl::__plock g;
+  __pecho_impl::__ensure_stdout();
+  locked_stdout_sink s;
+  max_t r = s.put(&#x27;\n&#x27;);
+  s.flush();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/pecho.hpp.html#L95">line 95</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pecho.hpp.html#f-e5e788869a15c8b2">__pecho_impl::__ensure_stdout</a>.</p></section><section class="function-entry" id="f-ecb6c47c41bfd570"><h3><code>micron::io::pechon(const First &amp;first, const Rest &amp;...rest)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L101">line 101</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename First, typename... Rest&gt;
+  requires(!echo_target&lt;First&gt; &amp;&amp; !micron::any_settling&lt;First, Rest...&gt;)
+inline max_t
+pechon(const First &amp;first, const Rest &amp;...rest)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const First &amp;first</code></li><li><code>const Rest &amp;...rest</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename First, typename... Rest&gt;
+  requires(!echo_target&lt;First&gt; &amp;&amp; !micron::any_settling&lt;First, Rest...&gt;)
+inline max_t
+pechon(const First &amp;first, const Rest &amp;...rest)
+{
+  __pecho_impl::__plock g;
+  __pecho_impl::__ensure_stdout();
+  locked_stdout_sink s;
+  max_t r = __echo_impl::run(s, false, first, rest...);
+  s.flush();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/pecho.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pecho.hpp.html#f-e5e788869a15c8b2">__pecho_impl::__ensure_stdout</a>, <a href="echo.hpp.html#f-cbb443492cb5a484">__echo_impl::run</a>.</p></section><section class="function-entry" id="f-4e9c6480d3187415"><h3><code>micron::io::pechof(const char *fmt, const Args &amp;...args)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L114">line 114</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  requires(!micron::any_settling&lt;Args...&gt;)
+inline max_t
+pechof(const char *fmt, const Args &amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *fmt</code></li><li><code>const Args &amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  requires(!micron::any_settling&lt;Args...&gt;)
+inline max_t
+pechof(const char *fmt, const Args &amp;...args)
+{
+  __pecho_impl::__plock g;
+  __pecho_impl::__ensure_stdout();
+  locked_stdout_sink s;
+  max_t r = __echo_impl::format_to_sink(s, fmt, args...);
+  r += s.put(&#x27;\n&#x27;);
+  s.flush();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/pecho.hpp.html#L122">line 122</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pecho.hpp.html#f-e5e788869a15c8b2">__pecho_impl::__ensure_stdout</a>, <a href="echo.hpp.html#f-098a74d27f901647">__echo_impl::format_to_sink</a>.</p></section><section class="function-entry" id="f-606935a5608b84c9"><h3><code>micron::io::pechofn(const char *fmt, const Args &amp;...args)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  requires(!micron::any_settling&lt;Args...&gt;)
+inline max_t
+pechofn(const char *fmt, const Args &amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *fmt</code></li><li><code>const Args &amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  requires(!micron::any_settling&lt;Args...&gt;)
+inline max_t
+pechofn(const char *fmt, const Args &amp;...args)
+{
+  __pecho_impl::__plock g;
+  __pecho_impl::__ensure_stdout();
+  locked_stdout_sink s;
+  max_t r = __echo_impl::format_to_sink(s, fmt, args...);
+  s.flush();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/pecho.hpp.html#L135">line 135</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pecho.hpp.html#f-e5e788869a15c8b2">__pecho_impl::__ensure_stdout</a>, <a href="echo.hpp.html#f-098a74d27f901647">__echo_impl::format_to_sink</a>.</p></section><section class="function-entry" id="f-176d0ac04ba200c1"><h3><code>micron::io::pprint(const T &amp;...str)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L141">line 141</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+  requires(!micron::any_settling&lt;T...&gt;)
+inline max_t
+pprint(const T &amp;...str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+  requires(!micron::any_settling&lt;T...&gt;)
+inline max_t
+pprint(const T &amp;...str)
+{
+  __pecho_impl::__plock g;
+  __pecho_impl::__ensure_stdout();
+  locked_stdout_sink s;
+  max_t r = 0;
+  ((r += printk(s, str)), ...);
+  s.flush();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/pecho.hpp.html#L149">line 149</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pecho.hpp.html#f-e5e788869a15c8b2">__pecho_impl::__ensure_stdout</a>, <a href="echo.hpp.html#f-8af7297769057e65">printk</a>.</p></section><section class="function-entry" id="f-62ca5fa53f6568ee"><h3><code>micron::io::pprintln(const T &amp;...str)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L155">line 155</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+  requires(!micron::any_settling&lt;T...&gt;)
+inline max_t
+pprintln(const T &amp;...str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+  requires(!micron::any_settling&lt;T...&gt;)
+inline max_t
+pprintln(const T &amp;...str)
+{
+  __pecho_impl::__plock g;
+  __pecho_impl::__ensure_stdout();
+  locked_stdout_sink s;
+  max_t r = 0;
+  ((r += printk(s, str)), ...);
+  r += s.put(&#x27;\n&#x27;);
+  s.flush();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/pecho.hpp.html#L164">line 164</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pecho.hpp.html#f-e5e788869a15c8b2">__pecho_impl::__ensure_stdout</a>, <a href="echo.hpp.html#f-8af7297769057e65">printk</a>.</p></section><section class="function-entry" id="f-c8c922bbaf169d58"><h3><code>micron::io::pprintn(const T &amp;...str)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L170">line 170</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+  requires(!micron::any_settling&lt;T...&gt;)
+inline max_t
+pprintn(const T &amp;...str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+  requires(!micron::any_settling&lt;T...&gt;)
+inline max_t
+pprintn(const T &amp;...str)
+{
+  __pecho_impl::__plock g;
+  __pecho_impl::__ensure_stdout();
+  locked_stdout_sink s;
+  max_t r = 0;
+  ((r += printkn(s, str)), ...);
+  s.flush();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/pecho.hpp.html#L178">line 178</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pecho.hpp.html#f-e5e788869a15c8b2">__pecho_impl::__ensure_stdout</a>, <a href="echo.hpp.html#f-e9d1336ab8e90bc4">printkn</a>.</p></section><section class="function-entry" id="f-60f19614c8c1fcab"><h3><code>micron::io::pecho(First &amp;&amp;first, Rest &amp;&amp;...rest)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename First, typename... Rest&gt;
+  requires(!echo_target&lt;First&gt; &amp;&amp; micron::any_settling&lt;First, Rest...&gt;)
+inline max_t
+pecho(First &amp;&amp;first, Rest &amp;&amp;...rest)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>First &amp;&amp;first</code></li><li><code>Rest &amp;&amp;...rest</code></li></ul><h4>Effects</h4><p>Returns <code>micron::__settle_impl::__then(
+      [](const auto &amp;...v) -&gt; max_t {
+        __pecho_impl::__plock g;
+        __pecho_impl::__ensure_stdout();
+        locked_stdout_sink s;
+        max_t r = __echo_impl::run(s, true, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward&lt;First&gt;(first), micron::forward&lt;Rest&gt;(rest)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename First, typename... Rest&gt;
+  requires(!echo_target&lt;First&gt; &amp;&amp; micron::any_settling&lt;First, Rest...&gt;)
+inline max_t
+pecho(First &amp;&amp;first, Rest &amp;&amp;...rest)
+{
+  return micron::__settle_impl::__then(
+      [](const auto &amp;...v) -&gt; max_t {
+        __pecho_impl::__plock g;
+        __pecho_impl::__ensure_stdout();
+        locked_stdout_sink s;
+        max_t r = __echo_impl::run(s, true, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward&lt;First&gt;(first), micron::forward&lt;Rest&gt;(rest)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__settle_impl::__then(
+      [](const auto &amp;...v) -&gt; max_t {
+        __pecho_impl::__plock g;
+        __pecho_impl::__ensure_stdout();
+        locked_stdout_sink s;
+        max_t r = __echo_impl::run(s, true, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward&lt;First&gt;(first), micron::forward&lt;Rest&gt;(rest)...)</code></td><td><a href="../../source/io/pecho.hpp.html#L191">line 191</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../settle_fwd.hpp.html#f-ce9da9b1e385a46a">micron::__settle_impl::__then</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;First&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rest&gt;</a>.</p></section><section class="function-entry" id="f-d51d680f305ec0d2"><h3><code>micron::io::pechon(First &amp;&amp;first, Rest &amp;&amp;...rest)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L206">line 206</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename First, typename... Rest&gt;
+  requires(!echo_target&lt;First&gt; &amp;&amp; micron::any_settling&lt;First, Rest...&gt;)
+inline max_t
+pechon(First &amp;&amp;first, Rest &amp;&amp;...rest)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>First &amp;&amp;first</code></li><li><code>Rest &amp;&amp;...rest</code></li></ul><h4>Effects</h4><p>Returns <code>micron::__settle_impl::__then(
+      [](const auto &amp;...v) -&gt; max_t {
+        __pecho_impl::__plock g;
+        __pecho_impl::__ensure_stdout();
+        locked_stdout_sink s;
+        max_t r = __echo_impl::run(s, false, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward&lt;First&gt;(first), micron::forward&lt;Rest&gt;(rest)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename First, typename... Rest&gt;
+  requires(!echo_target&lt;First&gt; &amp;&amp; micron::any_settling&lt;First, Rest...&gt;)
+inline max_t
+pechon(First &amp;&amp;first, Rest &amp;&amp;...rest)
+{
+  return micron::__settle_impl::__then(
+      [](const auto &amp;...v) -&gt; max_t {
+        __pecho_impl::__plock g;
+        __pecho_impl::__ensure_stdout();
+        locked_stdout_sink s;
+        max_t r = __echo_impl::run(s, false, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward&lt;First&gt;(first), micron::forward&lt;Rest&gt;(rest)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__settle_impl::__then(
+      [](const auto &amp;...v) -&gt; max_t {
+        __pecho_impl::__plock g;
+        __pecho_impl::__ensure_stdout();
+        locked_stdout_sink s;
+        max_t r = __echo_impl::run(s, false, v...);
+        s.flush();
+        return r;
+      },
+      micron::forward&lt;First&gt;(first), micron::forward&lt;Rest&gt;(rest)...)</code></td><td><a href="../../source/io/pecho.hpp.html#L208">line 208</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../settle_fwd.hpp.html#f-ce9da9b1e385a46a">micron::__settle_impl::__then</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;First&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rest&gt;</a>.</p></section><section class="function-entry" id="f-700a4b80af336d70"><h3><code>micron::io::pechof(const char *fmt, Args &amp;&amp;...args)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L223">line 223</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  requires(micron::any_settling&lt;Args...&gt;)
+inline max_t
+pechof(const char *fmt, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *fmt</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Returns <code>micron::__settle_impl::__then([&amp;](const auto &amp;...v) -&gt; max_t { return micron::io::pechof(fmt, v...); },
+                                       micron::forward&lt;Args&gt;(args)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  requires(micron::any_settling&lt;Args...&gt;)
+inline max_t
+pechof(const char *fmt, Args &amp;&amp;...args)
+{
+  return micron::__settle_impl::__then([&amp;](const auto &amp;...v) -&gt; max_t { return micron::io::pechof(fmt, v...); },
+                                       micron::forward&lt;Args&gt;(args)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__settle_impl::__then([&amp;](const auto &amp;...v) -&gt; max_t { return micron::io::pechof(fmt, v...); },
+                                       micron::forward&lt;Args&gt;(args)...)</code></td><td><a href="../../source/io/pecho.hpp.html#L225">line 225</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../settle_fwd.hpp.html#f-ce9da9b1e385a46a">micron::__settle_impl::__then</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-c3f7a0ab82a36eaa"><h3><code>micron::io::pechofn(const char *fmt, Args &amp;&amp;...args)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L232">line 232</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  requires(micron::any_settling&lt;Args...&gt;)
+inline max_t
+pechofn(const char *fmt, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *fmt</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Returns <code>micron::__settle_impl::__then([&amp;](const auto &amp;...v) -&gt; max_t { return micron::io::pechofn(fmt, v...); },
+                                       micron::forward&lt;Args&gt;(args)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  requires(micron::any_settling&lt;Args...&gt;)
+inline max_t
+pechofn(const char *fmt, Args &amp;&amp;...args)
+{
+  return micron::__settle_impl::__then([&amp;](const auto &amp;...v) -&gt; max_t { return micron::io::pechofn(fmt, v...); },
+                                       micron::forward&lt;Args&gt;(args)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__settle_impl::__then([&amp;](const auto &amp;...v) -&gt; max_t { return micron::io::pechofn(fmt, v...); },
+                                       micron::forward&lt;Args&gt;(args)...)</code></td><td><a href="../../source/io/pecho.hpp.html#L234">line 234</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../settle_fwd.hpp.html#f-ce9da9b1e385a46a">micron::__settle_impl::__then</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-d818423516075768"><h3><code>micron::io::pprint(T &amp;&amp;...str)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L241">line 241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+  requires(micron::any_settling&lt;T...&gt;)
+inline max_t
+pprint(T &amp;&amp;...str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;...str</code></li></ul><h4>Effects</h4><p>Returns <code>micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprint(v...); }, micron::forward&lt;T&gt;(str)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+  requires(micron::any_settling&lt;T...&gt;)
+inline max_t
+pprint(T &amp;&amp;...str)
+{
+  return micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprint(v...); }, micron::forward&lt;T&gt;(str)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprint(v...); }, micron::forward&lt;T&gt;(str)...)</code></td><td><a href="../../source/io/pecho.hpp.html#L243">line 243</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../settle_fwd.hpp.html#f-ce9da9b1e385a46a">micron::__settle_impl::__then</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-2094ced39a17ba77"><h3><code>micron::io::pprintln(T &amp;&amp;...str)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L249">line 249</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+  requires(micron::any_settling&lt;T...&gt;)
+inline max_t
+pprintln(T &amp;&amp;...str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;...str</code></li></ul><h4>Effects</h4><p>Returns <code>micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprintln(v...); }, micron::forward&lt;T&gt;(str)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+  requires(micron::any_settling&lt;T...&gt;)
+inline max_t
+pprintln(T &amp;&amp;...str)
+{
+  return micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprintln(v...); }, micron::forward&lt;T&gt;(str)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprintln(v...); }, micron::forward&lt;T&gt;(str)...)</code></td><td><a href="../../source/io/pecho.hpp.html#L251">line 251</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../settle_fwd.hpp.html#f-ce9da9b1e385a46a">micron::__settle_impl::__then</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-12c49d9c247dda37"><h3><code>micron::io::pprintn(T &amp;&amp;...str)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L257">line 257</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+  requires(micron::any_settling&lt;T...&gt;)
+inline max_t
+pprintn(T &amp;&amp;...str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;...str</code></li></ul><h4>Effects</h4><p>Returns <code>micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprintn(v...); }, micron::forward&lt;T&gt;(str)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+  requires(micron::any_settling&lt;T...&gt;)
+inline max_t
+pprintn(T &amp;&amp;...str)
+{
+  return micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprintn(v...); }, micron::forward&lt;T&gt;(str)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__settle_impl::__then([](const auto &amp;...v) -&gt; max_t { return micron::io::pprintn(v...); }, micron::forward&lt;T&gt;(str)...)</code></td><td><a href="../../source/io/pecho.hpp.html#L259">line 259</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../settle_fwd.hpp.html#f-ce9da9b1e385a46a">micron::__settle_impl::__then</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-7d27f2170b22a8f8"><h3><code>micron::io::__pecho_impl::__plock::__plock()</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L28">line 28</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__plock()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__plock() { __p_print_lock.lock(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-1b7d5f05aa397393"><h3><code>micron::io::__pecho_impl::__plock::~__plock()</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L30">line 30</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~__plock()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~__plock() { __p_print_lock.unlock(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-edec76d0e01876c1"><h3><code>micron::io::__pecho_impl::__plock::__plock(const __plock &amp;)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L32">line 32</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__plock(const __plock &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __plock &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-4615e0fe1dfa5289"><h3><code>micron::io::__pecho_impl::__plock::operator=(const __plock &amp;)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L33">line 33</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__plock &amp;operator=(const __plock &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __plock &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-e5e788869a15c8b2"><h3><code>micron::io::__pecho_impl::__ensure_stdout(void)</code></h3><p>Defined in <code>io/pecho.hpp</code>, <a href="../../source/io/pecho.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__ensure_stdout(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__ensure_stdout(void)
+{
+  if ( !__p_buffer_stdout ) __p_buffer_stdout = micron::make_global&lt;micron::io::stream&lt;__global_buffer_size, __global_buffer_chunk&gt;&gt;();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

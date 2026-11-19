@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/lazy/reduce.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/lazy/reduce.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/lazy.html">Lazy algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/lazy/reduce.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/algorithm/lazy/reduce.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-0a70d78dc37fc8f0">micron::lz::indexable_exact</code></td><td>concept; line 24</td></tr><tr class="t-dsc"><td><a href="#f-e7156d8362f1dc62">micron::lz::fold_into(V &amp;&amp;__v, A __init, const F &amp;__f)</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-c27a8a22f3c6bdc7">micron::lz::fold(A __init, F &amp;&amp;__f)</a></td><td>function; line 67</td></tr><tr class="t-dsc"><td><a href="#f-36796eff434670ed">micron::lz::foldl(A __init, F &amp;&amp;__f)</a></td><td>function; line 74</td></tr><tr class="t-dsc"><td><a href="#f-e9833c7806d01863">micron::lz::foldr_into(V &amp;&amp;__v, const F &amp;__f, A __init)</a></td><td>function; line 81</td></tr><tr class="t-dsc"><td><a href="#f-3e27c8e22b36e310">micron::lz::foldr(F &amp;&amp;__f, A __init)</a></td><td>function; line 118</td></tr><tr class="t-dsc"><td><a href="#f-9183fac0c68105a7">micron::lz::for_each(F &amp;&amp;__f)</a></td><td>function; line 140</td></tr><tr class="t-dsc"><td><a href="#f-7e5b02d04f26a9b1">micron::lz::count_into(V &amp;&amp;__v)</a></td><td>function; line 147</td></tr><tr class="t-dsc"><td><a href="#f-f6b15bcb151ef1f6">micron::lz::count() noexcept</a></td><td>function; line 174</td></tr><tr class="t-dsc"><td><a href="#f-d70d7f186c464781">micron::lz::count_if(P &amp;&amp;__p)</a></td><td>function; line 199</td></tr><tr class="t-dsc"><td><a href="#f-d2c751ddc918d1e7">micron::lz::count_of(T __val)</a></td><td>function; line 231</td></tr><tr class="t-dsc"><td><a href="#f-510b86664aa13978">micron::lz::sum_fp_into(V &amp;&amp;__v) noexcept</a></td><td>function; line 276</td></tr><tr class="t-dsc"><td><a href="#f-63399964564a7b64">micron::lz::sum_int_into(V &amp;&amp;__v) noexcept</a></td><td>function; line 319</td></tr><tr class="t-dsc"><td><a href="#f-f5c1fd3640f03f9b">micron::lz::sum() noexcept</a></td><td>function; line 350</td></tr><tr class="t-dsc"><td><a href="#f-3230d96391f5d17b">micron::lz::safe_sum() noexcept</a></td><td>function; line 378</td></tr><tr class="t-dsc"><td><a href="#f-3ca1cc7ef82ff334">micron::lz::min() noexcept</a></td><td>function; line 456</td></tr><tr class="t-dsc"><td><a href="#f-d7b13acc15f648ed">micron::lz::max() noexcept</a></td><td>function; line 462</td></tr><tr class="t-dsc"><td><a href="#f-03f08e7c054800f4">micron::lz::safe_min() noexcept</a></td><td>function; line 468</td></tr><tr class="t-dsc"><td><a href="#f-838e3de640cc8a22">micron::lz::safe_max() noexcept</a></td><td>function; line 474</td></tr><tr class="t-dsc"><td><a href="#f-fadcc08af1c61628">micron::lz::mean_into(V &amp;&amp;__v)</a></td><td>function; line 481</td></tr><tr class="t-dsc"><td><a href="#f-a3ed8167ab0841d9">micron::lz::mean() noexcept</a></td><td>function; line 527</td></tr><tr class="t-dsc"><td><a href="#f-527b01164c02602f">micron::lz::safe_mean() noexcept</a></td><td>function; line 534</td></tr><tr class="t-dsc"><td><a href="#f-3c98c7639e90dfaa">micron::lz::geomean_into(V &amp;&amp;__v)</a></td><td>function; line 541</td></tr><tr class="t-dsc"><td><a href="#f-e9e00269075fbf04">micron::lz::harmonicmean_into(V &amp;&amp;__v)</a></td><td>function; line 556</td></tr><tr class="t-dsc"><td><a href="#f-984c8e0de2217145">micron::lz::geomean() noexcept</a></td><td>function; line 613</td></tr><tr class="t-dsc"><td><a href="#f-da4e14740059fdcc">micron::lz::harmonicmean() noexcept</a></td><td>function; line 620</td></tr><tr class="t-dsc"><td><a href="#f-6d7d7c684691844c">micron::lz::safe_geomean() noexcept</a></td><td>function; line 627</td></tr><tr class="t-dsc"><td><a href="#f-71ce343bfea97f81">micron::lz::safe_harmonicmean() noexcept</a></td><td>function; line 634</td></tr><tr class="t-dsc"><td><a href="#f-0fd7932f54ad1532">micron::lz::inner_product_into(const V &amp;__v, const W &amp;__w, R __init)</a></td><td>function; line 641</td></tr><tr class="t-dsc"><td><a href="#f-192aacc4ca5ea758">micron::lz::inner_product(Other &amp;&amp;__o, R __init = R{})</a></td><td>function; line 700</td></tr><tr class="t-dsc"><td><a href="#f-55dda96209c3f88d">micron::lz::safe_inner_product(Other &amp;&amp;__o, R __init = R{})</a></td><td>function; line 708</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-e7156d8362f1dc62"><h3><code>micron::lz::fold_into(V &amp;&amp;__v, A __init, const F &amp;__f)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A, typename V, typename F&gt;
+constexpr A
+fold_into(V &amp;&amp;__v, A __init, const F &amp;__f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li><li><code>A __init</code></li><li><code>const F &amp;__f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A, typename V, typename F&gt;
+constexpr A
+fold_into(V &amp;&amp;__v, A __init, const F &amp;__f)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless,
+                &quot;micron::lz::fold: this pipeline never terminates -- put a take(n) or take_while(p) before it&quot;);
+  __impl::__each(__v, [&amp;](auto &amp;&amp;__x) { __init = __f(micron::move(__init), micron::forward&lt;decltype(__x)&gt;(__x)); });
+  return __init;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__init</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L50">line 50</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless,
+                &quot;micron::lz::fold: this pipeline never terminates -- put a take(n) or take_while(p) before it&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L47">line 47</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>.</p></section><section class="function-entry" id="f-c27a8a22f3c6bdc7"><h3><code>micron::lz::fold(A __init, F &amp;&amp;__f)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L67">line 67</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A, typename F&gt;
+[[nodiscard]] constexpr auto
+fold(A __init, F &amp;&amp;__f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A __init</code></li><li><code>F &amp;&amp;__f</code></li></ul><h4>Effects</h4><p>Returns <code>__fold_fn&lt;A, micron::decay_t&lt;F&gt;&gt;{ micron::move(__init), micron::forward&lt;F&gt;(__f) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A, typename F&gt;
+[[nodiscard]] constexpr auto
+fold(A __init, F &amp;&amp;__f)
+{
+  return __fold_fn&lt;A, micron::decay_t&lt;F&gt;&gt;{ micron::move(__init), micron::forward&lt;F&gt;(__f) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fold_fn&lt;A, micron::decay_t&lt;F&gt;&gt;{ micron::move(__init), micron::forward&lt;F&gt;(__f) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L69">line 69</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-36796eff434670ed"><h3><code>micron::lz::foldl(A __init, F &amp;&amp;__f)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L74">line 74</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A, typename F&gt;
+[[nodiscard]] constexpr auto
+foldl(A __init, F &amp;&amp;__f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A __init</code></li><li><code>F &amp;&amp;__f</code></li></ul><h4>Effects</h4><p>Returns <code>fold(micron::move(__init), micron::forward&lt;F&gt;(__f))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A, typename F&gt;
+[[nodiscard]] constexpr auto
+foldl(A __init, F &amp;&amp;__f)
+{
+  return fold(micron::move(__init), micron::forward&lt;F&gt;(__f));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fold(micron::move(__init), micron::forward&lt;F&gt;(__f))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L76">line 76</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-c27a8a22f3c6bdc7">fold</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-e9833c7806d01863"><h3><code>micron::lz::foldr_into(V &amp;&amp;__v, const F &amp;__f, A __init)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L81">line 81</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A, typename V, typename F&gt;
+constexpr A
+foldr_into(V &amp;&amp;__v, const F &amp;__f, A __init)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li><li><code>const F &amp;__f</code></li><li><code>A __init</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A, typename V, typename F&gt;
+constexpr A
+foldr_into(V &amp;&amp;__v, const F &amp;__f, A __init)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::foldr: this pipeline never terminates, and foldr starts at the END&quot;);
+
+  if constexpr ( reversible&lt;B&gt; ) {
+    auto __b = micron::ranges::begin(__v);
+    auto __i = micron::ranges::end(__v);
+    while ( !(__i == __b) ) {
+      --__i;
+      __init = __f(*__i, micron::move(__init));
+    }
+    return __init;
+  } else {
+    micron::fvector&lt;micron::ranges::range_value_t&lt;B&gt;&gt; __buf;
+    const usize __hint = static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v));
+    if ( __hint ) __buf.reserve(__hint);
+    __impl::__each(__v, [&amp;](auto &amp;&amp;__x) { __buf.push_back(micron::forward&lt;decltype(__x)&gt;(__x)); });
+    for ( usize __k = __buf.size(); __k-- &gt; 0; ) __init = __f(__buf[__k], micron::move(__init));
+    return __init;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__init</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L93">line 93</a></td></tr><tr class="t-dsc"><td><code>__init</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L100">line 100</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::foldr: this pipeline never terminates, and foldr starts at the END&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L84">line 84</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../../range.hpp.html#s-86b48cc370469477">micron::ranges::reserve_hint</a>, <a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>.</p></section><section class="function-entry" id="f-3e27c8e22b36e310"><h3><code>micron::lz::foldr(F &amp;&amp;__f, A __init)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L118">line 118</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename A&gt;
+[[nodiscard]] constexpr auto
+foldr(F &amp;&amp;__f, A __init)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;&amp;__f</code></li><li><code>A __init</code></li></ul><h4>Effects</h4><p>Returns <code>__foldr_fn&lt;A, micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f), micron::move(__init) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename A&gt;
+[[nodiscard]] constexpr auto
+foldr(F &amp;&amp;__f, A __init)
+{
+  return __foldr_fn&lt;A, micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f), micron::move(__init) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__foldr_fn&lt;A, micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f), micron::move(__init) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L120">line 120</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;F&gt;</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-9183fac0c68105a7"><h3><code>micron::lz::for_each(F &amp;&amp;__f)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L140">line 140</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+constexpr auto
+for_each(F &amp;&amp;__f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;&amp;__f</code></li></ul><h4>Effects</h4><p>Returns <code>__for_each_fn&lt;micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+constexpr auto
+for_each(F &amp;&amp;__f)
+{
+  return __for_each_fn&lt;micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__for_each_fn&lt;micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-7e5b02d04f26a9b1"><h3><code>micron::lz::count_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L147">line 147</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V&gt;
+constexpr usize
+count_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V&gt;
+constexpr usize
+count_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::count: this pipeline never terminates&quot;);
+
+  if constexpr ( kind_of&lt;B&gt; == size_kind::exact &amp;&amp; requires(const B &amp;__b) { __b.__size_exact(); } ) {
+    return static_cast&lt;usize&gt;(__v.__size_exact());
+  } else {
+
+    usize __n = 0;
+    auto __i = micron::ranges::begin(__v);
+    const auto __e = micron::ranges::end(__v);
+    for ( ; !(__i == __e); ++__i ) ++__n;
+    return __n;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(__v.__size_exact())</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L153">line 153</a></td></tr><tr class="t-dsc"><td><code>__n</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L160">line 160</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::count: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L150">line 150</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><section class="function-entry" id="f-f6b15bcb151ef1f6"><h3><code>micron::lz::count() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L174">line 174</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr auto
+count() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__count_fn{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr auto
+count() noexcept
+{
+  return __count_fn{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__count_fn{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L176">line 176</a></td></tr></tbody></table></section><section class="function-entry" id="f-d70d7f186c464781"><h3><code>micron::lz::count_if(P &amp;&amp;__p)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L199">line 199</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P&gt;
+[[nodiscard]] constexpr auto
+count_if(P &amp;&amp;__p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P &amp;&amp;__p</code></li></ul><h4>Effects</h4><p>Returns <code>__count_if_fn&lt;micron::decay_t&lt;P&gt;&gt;{ micron::forward&lt;P&gt;(__p) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P&gt;
+[[nodiscard]] constexpr auto
+count_if(P &amp;&amp;__p)
+{
+  return __count_if_fn&lt;micron::decay_t&lt;P&gt;&gt;{ micron::forward&lt;P&gt;(__p) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__count_if_fn&lt;micron::decay_t&lt;P&gt;&gt;{ micron::forward&lt;P&gt;(__p) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L201">line 201</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;P&gt;</a>.</p></section><section class="function-entry" id="f-d2c751ddc918d1e7"><h3><code>micron::lz::count_of(T __val)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L231">line 231</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard]] constexpr auto
+count_of(T __val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T __val</code></li></ul><h4>Effects</h4><p>Returns <code>__count_of_fn&lt;T&gt;{ __val }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard]] constexpr auto
+count_of(T __val)
+{
+  return __count_of_fn&lt;T&gt;{ __val };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__count_of_fn&lt;T&gt;{ __val }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L233">line 233</a></td></tr></tbody></table></section><section class="function-entry" id="f-510b86664aa13978"><h3><code>micron::lz::sum_fp_into(V &amp;&amp;__v) noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L276">line 276</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V&gt;
+constexpr f128
+sum_fp_into(V &amp;&amp;__v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V&gt;
+constexpr f128
+sum_fp_into(V &amp;&amp;__v) noexcept
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+
+  if constexpr ( flat_exact&lt;B&gt; ) {
+    return micron::__impl::__sum_fp(micron::ranges::begin(__v), static_cast&lt;usize&gt;(__v.__size_exact()));
+  } else if constexpr ( indexable_exact&lt;B&gt; ) {
+
+    return micron::__impl::__sum_fp(__impl::__idx_adapter&lt;micron::ranges::iterator_t&lt;B&gt;&gt;{ micron::ranges::begin(__v) },
+                                    static_cast&lt;usize&gt;(__v.__size_exact()));
+  } else {
+    const f64 __fast = __impl::__sum_lanes_stream(__v);
+    if ( micron::__impl::__f64_finite(__fast) ) return static_cast&lt;f128&gt;(__fast);
+    return __impl::__sum_wide_stream(__v);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__impl::__sum_fp(micron::ranges::begin(__v), static_cast&lt;usize&gt;(__v.__size_exact()))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L281">line 281</a></td></tr><tr class="t-dsc"><td><code>micron::__impl::__sum_fp(__impl::__idx_adapter&lt;micron::ranges::iterator_t&lt;B&gt;&gt;{ micron::ranges::begin(__v) },
+                                    static_cast&lt;usize&gt;(__v.__size_exact()))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L284">line 284</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;f128&gt;(__fast)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L288">line 288</a></td></tr><tr class="t-dsc"><td><code>__impl::__sum_wide_stream(__v)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../algorithm.hpp.html#f-ff75dd66210c1714">micron::__impl::__sum_fp</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../algorithm.hpp.html#f-78addbc82beb1b14">micron::__impl::__f64_finite</a>.</p></section><section class="function-entry" id="f-63399964564a7b64"><h3><code>micron::lz::sum_int_into(V &amp;&amp;__v) noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L319">line 319</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V&gt;
+constexpr umax_t
+sum_int_into(V &amp;&amp;__v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V&gt;
+constexpr umax_t
+sum_int_into(V &amp;&amp;__v) noexcept
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  if constexpr ( flat_exact&lt;B&gt; )
+    return micron::__impl::__sum_int(micron::ranges::begin(__v), static_cast&lt;usize&gt;(__v.__size_exact()));
+  else if constexpr ( indexable_exact&lt;B&gt; )
+    return micron::__impl::__sum_int(__impl::__idx_adapter&lt;micron::ranges::iterator_t&lt;B&gt;&gt;{ micron::ranges::begin(__v) },
+                                     static_cast&lt;usize&gt;(__v.__size_exact()));
+  else
+    return __impl::__sum_int_stream(__v);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__impl::__sum_int(micron::ranges::begin(__v), static_cast&lt;usize&gt;(__v.__size_exact()))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L323">line 323</a></td></tr><tr class="t-dsc"><td><code>micron::__impl::__sum_int(__impl::__idx_adapter&lt;micron::ranges::iterator_t&lt;B&gt;&gt;{ micron::ranges::begin(__v) },
+                                     static_cast&lt;usize&gt;(__v.__size_exact()))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L325">line 325</a></td></tr><tr class="t-dsc"><td><code>__impl::__sum_int_stream(__v)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L328">line 328</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../algorithm.hpp.html#f-671ab4fadb021c7a">micron::__impl::__sum_int</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="reduce.hpp.html#f-9e73e8c992785d20">__impl::__sum_int_stream</a>.</p></section><section class="function-entry" id="f-f5c1fd3640f03f9b"><h3><code>micron::lz::sum() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L350">line 350</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr auto
+sum() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__sum_fn{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr auto
+sum() noexcept
+{
+  return __sum_fn{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sum_fn{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L352">line 352</a></td></tr></tbody></table></section><section class="function-entry" id="f-3230d96391f5d17b"><h3><code>micron::lz::safe_sum() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L378">line 378</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr auto
+safe_sum() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__safe_sum_fn{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr auto
+safe_sum() noexcept
+{
+  return __safe_sum_fn{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_sum_fn{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L380">line 380</a></td></tr></tbody></table></section><section class="function-entry" id="f-3ca1cc7ef82ff334"><h3><code>micron::lz::min() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L456">line 456</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr auto
+min() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__min_fn{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr auto
+min() noexcept
+{
+  return __min_fn{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__min_fn{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L458">line 458</a></td></tr></tbody></table></section><section class="function-entry" id="f-d7b13acc15f648ed"><h3><code>micron::lz::max() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L462">line 462</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr auto
+max() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__max_fn{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr auto
+max() noexcept
+{
+  return __max_fn{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__max_fn{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L464">line 464</a></td></tr></tbody></table></section><section class="function-entry" id="f-03f08e7c054800f4"><h3><code>micron::lz::safe_min() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L468">line 468</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr auto
+safe_min() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__safe_min_fn{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr auto
+safe_min() noexcept
+{
+  return __safe_min_fn{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_min_fn{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L470">line 470</a></td></tr></tbody></table></section><section class="function-entry" id="f-838e3de640cc8a22"><h3><code>micron::lz::safe_max() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L474">line 474</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr auto
+safe_max() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__safe_max_fn{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr auto
+safe_max() noexcept
+{
+  return __safe_max_fn{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_max_fn{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L476">line 476</a></td></tr></tbody></table></section><section class="function-entry" id="f-fadcc08af1c61628"><h3><code>micron::lz::mean_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L481">line 481</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R, typename V&gt;
+constexpr R
+mean_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R, typename V&gt;
+constexpr R
+mean_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  using E = micron::ranges::range_value_t&lt;B&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::mean: this pipeline never terminates&quot;);
+
+  if constexpr ( kind_of&lt;B&gt; == size_kind::exact &amp;&amp; requires(const B &amp;__b) { __b.__size_exact(); } ) {
+    const usize __n = static_cast&lt;usize&gt;(__v.__size_exact());
+    if constexpr ( micron::is_floating_point_v&lt;E&gt; )
+      return static_cast&lt;R&gt;(sum_fp_into(__v)) / static_cast&lt;R&gt;(__n);
+    else
+      return static_cast&lt;R&gt;(sum_int_into(__v)) / static_cast&lt;R&gt;(__n);
+  } else {
+    R __acc = R{};
+    usize __n = 0;
+    __impl::__each(__v, [&amp;](auto &amp;&amp;__x) {
+      __acc += static_cast&lt;R&gt;(__x);
+      ++__n;
+    });
+    return __acc / static_cast&lt;R&gt;(__n);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;R&gt;(sum_fp_into(__v)) / static_cast&lt;R&gt;(__n)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L490">line 490</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;R&gt;(sum_int_into(__v)) / static_cast&lt;R&gt;(__n)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L492">line 492</a></td></tr><tr class="t-dsc"><td><code>__acc / static_cast&lt;R&gt;(__n)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L500">line 500</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::mean: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L485">line 485</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-510b86664aa13978">sum_fp_into</a>, <a href="reduce.hpp.html#f-63399964564a7b64">sum_int_into</a>, <a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>.</p></section><section class="function-entry" id="f-a3ed8167ab0841d9"><h3><code>micron::lz::mean() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L527">line 527</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = f64&gt;
+[[nodiscard]] constexpr auto
+mean() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mean_fn&lt;R&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = f64&gt;
+[[nodiscard]] constexpr auto
+mean() noexcept
+{
+  return __mean_fn&lt;R&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mean_fn&lt;R&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L529">line 529</a></td></tr></tbody></table></section><section class="function-entry" id="f-527b01164c02602f"><h3><code>micron::lz::safe_mean() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L534">line 534</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = f64&gt;
+[[nodiscard]] constexpr auto
+safe_mean() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__safe_mean_fn&lt;R&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = f64&gt;
+[[nodiscard]] constexpr auto
+safe_mean() noexcept
+{
+  return __safe_mean_fn&lt;R&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_mean_fn&lt;R&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L536">line 536</a></td></tr></tbody></table></section><section class="function-entry" id="f-3c98c7639e90dfaa"><h3><code>micron::lz::geomean_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L541">line 541</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R, typename V&gt;
+constexpr R
+geomean_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R, typename V&gt;
+constexpr R
+geomean_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::geomean: this pipeline never terminates&quot;);
+  R __prod = R(1);
+  usize __n = 0;
+  __impl::__each(__v, [&amp;](auto &amp;&amp;__x) {
+    __prod *= static_cast&lt;R&gt;(__x);
+    ++__n;
+  });
+  return static_cast&lt;R&gt;(math::powerflong(__prod, static_cast&lt;R&gt;(R(1) / static_cast&lt;R&gt;(__n))));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;R&gt;(math::powerflong(__prod, static_cast&lt;R&gt;(R(1) / static_cast&lt;R&gt;(__n))))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L551">line 551</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::geomean: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L544">line 544</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>, <a href="../../math/generic.hpp.html#f-fd22f43b60873c05">math::powerflong</a>.</p></section><section class="function-entry" id="f-e9e00269075fbf04"><h3><code>micron::lz::harmonicmean_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L556">line 556</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R, typename V&gt;
+constexpr R
+harmonicmean_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R, typename V&gt;
+constexpr R
+harmonicmean_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::harmonicmean: this pipeline never terminates&quot;);
+  R __rec = R{};
+  usize __n = 0;
+  __impl::__each(__v, [&amp;](auto &amp;&amp;__x) {
+    __rec += (R(1) / static_cast&lt;R&gt;(__x));
+    ++__n;
+  });
+  return static_cast&lt;R&gt;(__n) / __rec;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;R&gt;(__n) / __rec</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L566">line 566</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::harmonicmean: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L559">line 559</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>.</p></section><section class="function-entry" id="f-984c8e0de2217145"><h3><code>micron::lz::geomean() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L613">line 613</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = flong&gt;
+[[nodiscard]] constexpr auto
+geomean() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__geomean_fn&lt;R&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = flong&gt;
+[[nodiscard]] constexpr auto
+geomean() noexcept
+{
+  return __geomean_fn&lt;R&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__geomean_fn&lt;R&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L615">line 615</a></td></tr></tbody></table></section><section class="function-entry" id="f-da4e14740059fdcc"><h3><code>micron::lz::harmonicmean() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L620">line 620</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = flong&gt;
+[[nodiscard]] constexpr auto
+harmonicmean() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__harmonicmean_fn&lt;R&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = flong&gt;
+[[nodiscard]] constexpr auto
+harmonicmean() noexcept
+{
+  return __harmonicmean_fn&lt;R&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__harmonicmean_fn&lt;R&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L622">line 622</a></td></tr></tbody></table></section><section class="function-entry" id="f-6d7d7c684691844c"><h3><code>micron::lz::safe_geomean() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L627">line 627</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = flong&gt;
+[[nodiscard]] constexpr auto
+safe_geomean() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__safe_geomean_fn&lt;R&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = flong&gt;
+[[nodiscard]] constexpr auto
+safe_geomean() noexcept
+{
+  return __safe_geomean_fn&lt;R&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_geomean_fn&lt;R&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L629">line 629</a></td></tr></tbody></table></section><section class="function-entry" id="f-71ce343bfea97f81"><h3><code>micron::lz::safe_harmonicmean() noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L634">line 634</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = flong&gt;
+[[nodiscard]] constexpr auto
+safe_harmonicmean() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__safe_harmonicmean_fn&lt;R&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = flong&gt;
+[[nodiscard]] constexpr auto
+safe_harmonicmean() noexcept
+{
+  return __safe_harmonicmean_fn&lt;R&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_harmonicmean_fn&lt;R&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L636">line 636</a></td></tr></tbody></table></section><section class="function-entry" id="f-0fd7932f54ad1532"><h3><code>micron::lz::inner_product_into(const V &amp;__v, const W &amp;__w, R __init)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L641">line 641</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R, typename V, typename W&gt;
+constexpr R
+inner_product_into(const V &amp;__v, const W &amp;__w, R __init)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const V &amp;__v</code></li><li><code>const W &amp;__w</code></li><li><code>R __init</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R, typename V, typename W&gt;
+constexpr R
+inner_product_into(const V &amp;__v, const W &amp;__w, R __init)
+{
+  static_assert(kind_of&lt;micron::remove_cvref_t&lt;V&gt;&gt; != size_kind::endless || kind_of&lt;micron::remove_cvref_t&lt;W&gt;&gt; != size_kind::endless,
+                &quot;micron::lz::inner_product: both operands are endless&quot;);
+
+  if constexpr ( flat_exact&lt;micron::remove_cvref_t&lt;V&gt;&gt; &amp;&amp; flat_exact&lt;micron::remove_cvref_t&lt;W&gt;&gt; ) {
+    const auto *__restrict __pa = micron::ranges::begin(__v);
+    const auto *__restrict __pb = micron::ranges::begin(__w);
+    const usize __na = static_cast&lt;usize&gt;(__v.__size_exact());
+    const usize __nb = static_cast&lt;usize&gt;(__w.__size_exact());
+    const usize __n = __na &lt; __nb ? __na : __nb;
+    R __acc = __init;
+    for ( usize __i = 0; __i &lt; __n; ++__i ) __acc = __acc + static_cast&lt;R&gt;(__pa[__i]) * static_cast&lt;R&gt;(__pb[__i]);
+    return __acc;
+  } else {
+    auto __a = micron::ranges::begin(__v);
+    const auto __ea = micron::ranges::end(__v);
+    auto __b = micron::ranges::begin(__w);
+    const auto __eb = micron::ranges::end(__w);
+    for ( ; !(__a == __ea) &amp;&amp; !(__b == __eb); ++__a, ++__b ) __init = __init + static_cast&lt;R&gt;(*__a) * static_cast&lt;R&gt;(*__b);
+    return __init;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__acc</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L654">line 654</a></td></tr><tr class="t-dsc"><td><code>__init</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L661">line 661</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;micron::remove_cvref_t&lt;V&gt;&gt; != size_kind::endless || kind_of&lt;micron::remove_cvref_t&lt;W&gt;&gt; != size_kind::endless,
+                &quot;micron::lz::inner_product: both operands are endless&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L643">line 643</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><section class="function-entry" id="f-192aacc4ca5ea758"><h3><code>micron::lz::inner_product(Other &amp;&amp;__o, R __init = R{})</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L700">line 700</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = f64, typename Other&gt;
+[[nodiscard]] constexpr auto
+inner_product(Other &amp;&amp;__o, R __init = R{})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Other &amp;&amp;__o</code></li><li><code>R __init = R{}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = f64, typename Other&gt;
+[[nodiscard]] constexpr auto
+inner_product(Other &amp;&amp;__o, R __init = R{})
+{
+  auto __w = __as_view(micron::forward&lt;Other&gt;(__o));
+  return __inner_product_fn&lt;R, decltype(__w)&gt;{ micron::move(__w), __init };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__inner_product_fn&lt;R, decltype(__w)&gt;{ micron::move(__w), __init }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L703">line 703</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Other&gt;</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-55dda96209c3f88d"><h3><code>micron::lz::safe_inner_product(Other &amp;&amp;__o, R __init = R{})</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L708">line 708</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = f64, typename Other&gt;
+[[nodiscard]] constexpr auto
+safe_inner_product(Other &amp;&amp;__o, R __init = R{})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Other &amp;&amp;__o</code></li><li><code>R __init = R{}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = f64, typename Other&gt;
+[[nodiscard]] constexpr auto
+safe_inner_product(Other &amp;&amp;__o, R __init = R{})
+{
+  auto __w = __as_view(micron::forward&lt;Other&gt;(__o));
+  return __safe_inner_product_fn&lt;R, decltype(__w)&gt;{ micron::move(__w), __init };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_inner_product_fn&lt;R, decltype(__w)&gt;{ micron::move(__w), __init }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L711">line 711</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Other&gt;</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-26d7cfabede87713"><h3><code>micron::lz::__impl::__idx_adapter::operator[](usize __i) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L34">line 34</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] constexpr decltype(auto)
+  operator[](usize __i) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize __i</code></li></ul><h4>Effects</h4><p>Returns <code>__b[static_cast&lt;micron::iter_diff_t&lt;It&gt;&gt;(__i)]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] constexpr decltype(auto)
+  operator[](usize __i) const
+  {
+    return __b[static_cast&lt;micron::iter_diff_t&lt;It&gt;&gt;(__i)];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__b[static_cast&lt;micron::iter_diff_t&lt;It&gt;&gt;(__i)]</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L36">line 36</a></td></tr></tbody></table></section><section class="function-entry" id="f-c5641ba738e90029"><h3><code>micron::lz::__fold_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L59">line 59</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr A
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>fold_into&lt;A&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __init, __f)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr A
+  operator()(R &amp;&amp;__r) const
+  {
+    return fold_into&lt;A&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __init, __f);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fold_into&lt;A&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __init, __f)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-e7156d8362f1dc62">fold_into&lt;A&gt;</a>, <a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-7e2e052a8bc0679a"><h3><code>micron::lz::__foldr_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L110">line 110</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr A
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>foldr_into&lt;A&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __f, __init)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr A
+  operator()(R &amp;&amp;__r) const
+  {
+    return foldr_into&lt;A&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __f, __init);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>foldr_into&lt;A&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __f, __init)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-e9833c7806d01863">foldr_into&lt;A&gt;</a>, <a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-98dc0c0496caa7f7"><h3><code>micron::lz::__for_each_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L128">line 128</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr void
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr void
+  operator()(R &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;R&gt;(__r));
+    using B = micron::remove_cvref_t&lt;decltype(__v)&gt;;
+    static_assert(kind_of&lt;B&gt; != size_kind::endless,
+                  &quot;micron::lz::for_each: this pipeline never terminates -- put a take(n) or take_while(p) before it&quot;);
+    __impl::__each(__v, [&amp;](auto &amp;&amp;__x) { __f(micron::forward&lt;decltype(__x)&gt;(__x)); });
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless,
+                  &quot;micron::lz::for_each: this pipeline never terminates -- put a take(n) or take_while(p) before it&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L132">line 132</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>, <a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>.</p></section><section class="function-entry" id="f-f39b3acb4236a2e9"><h3><code>micron::lz::__count_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L167">line 167</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr usize
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>count_into(__as_view(micron::forward&lt;R&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr usize
+  operator()(R &amp;&amp;__r) const
+  {
+    return count_into(__as_view(micron::forward&lt;R&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>count_into(__as_view(micron::forward&lt;R&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L169">line 169</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reduce.hpp.html#f-7e5b02d04f26a9b1">count_into</a>, <a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-83543a426d3a8370"><h3><code>micron::lz::__count_if_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L184">line 184</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr usize
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr usize
+  operator()(R &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;R&gt;(__r));
+    using B = micron::remove_cvref_t&lt;decltype(__v)&gt;;
+    static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::count_if: this pipeline never terminates&quot;);
+    usize __n = 0;
+    __impl::__each(__v, [&amp;](auto &amp;&amp;__x) {
+      if ( __p(micron::forward&lt;decltype(__x)&gt;(__x)) ) ++__n;
+    });
+    return __n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__n</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L193">line 193</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::count_if: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>, <a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>.</p></section><section class="function-entry" id="f-cc92149b2efda179"><h3><code>micron::lz::__count_of_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L209">line 209</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr usize
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr usize
+  operator()(R &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;R&gt;(__r));
+    using B = micron::remove_cvref_t&lt;decltype(__v)&gt;;
+    using E = micron::ranges::range_value_t&lt;B&gt;;
+    static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::count_of: this pipeline never terminates&quot;);
+
+    if constexpr ( flat_exact&lt;B&gt; &amp;&amp; micron::__impl::lane_scannable&lt;E&gt; &amp;&amp; micron::is_convertible_v&lt;T, E&gt; ) {
+      return static_cast&lt;usize&gt;(
+          micron::__impl::scan_count(micron::ranges::begin(__v), static_cast&lt;usize&gt;(__v.__size_exact()), static_cast&lt;E&gt;(__val)));
+    } else {
+      usize __n = 0;
+      __impl::__each(__v, [&amp;](auto &amp;&amp;__x) {
+        if ( __x == __val ) ++__n;
+      });
+      return __n;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(
+          micron::__impl::scan_count(micron::ranges::begin(__v), static_cast&lt;usize&gt;(__v.__size_exact()), static_cast&lt;E&gt;(__val)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L217">line 217</a></td></tr><tr class="t-dsc"><td><code>__n</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L224">line 224</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::count_of: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L214">line 214</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>, <a href="../__scan.hpp.html#f-cfcf794ee860cc36">micron::__impl::scan_count</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>.</p></section><section class="function-entry" id="f-0f96e22768b0b725"><h3><code>micron::lz::__sum_lanes_stream(const V &amp;__v) noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L238">line 238</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V&gt; constexpr f64 __sum_lanes_stream(const V &amp;__v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const V &amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V&gt; constexpr f64 __sum_lanes_stream(const V &amp;__v) noexcept { f64 __s[4] = { 0, 0, 0, 0 };
+f64 __c[4] = { 0, 0, 0, 0 };
+f64 __stage[4];
+usize __have = 0;
+
+__each(__v, [&amp;](auto &amp;&amp;__x) {
+  __stage[__have++] = static_cast&lt;f64&gt;(__x);
+  if ( __have == 4 ) {
+    micron::__impl::__neumaier_add(__s[0], __c[0], __stage[0]);
+    micron::__impl::__neumaier_add(__s[1], __c[1], __stage[1]);
+    micron::__impl::__neumaier_add(__s[2], __c[2], __stage[2]);
+    micron::__impl::__neumaier_add(__s[3], __c[3], __stage[3]);
+    __have = 0;
+  }
+});
+for ( usize __k = 0; __k &lt; __have; ++__k ) micron::__impl::__neumaier_add(__s[0], __c[0], __stage[__k]);
+
+f64 __acc = 0, __comp = 0;
+for ( usize __k = 0; __k &lt; 4; ++__k ) {
+  micron::__impl::__neumaier_add(__acc, __comp, __s[__k]);
+  __comp += __c[__k];
+}
+return __acc + __comp;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__acc + __comp</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L260">line 260</a></td></tr></tbody></table></section><section class="function-entry" id="f-88cd14588123007f"><h3><code>micron::__sum_wide_stream(const V &amp;__v) noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L265">line 265</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V&gt;
+constexpr f128
+__sum_wide_stream(const V &amp;__v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const V &amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V&gt;
+constexpr f128
+__sum_wide_stream(const V &amp;__v) noexcept
+{
+  f128 __sm = 0;
+  __each(__v, [&amp;](auto &amp;&amp;__x) { __sm += static_cast&lt;f128&gt;(__x); });
+  return __sm;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sm</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L269">line 269</a></td></tr></tbody></table></section><section class="function-entry" id="f-9e73e8c992785d20"><h3><code>micron::lz::__impl::__sum_int_stream(const V &amp;__v) noexcept</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L295">line 295</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V&gt; constexpr umax_t __sum_int_stream(const V &amp;__v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const V &amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V&gt; constexpr umax_t __sum_int_stream(const V &amp;__v) noexcept { umax_t __w = 0, __x = 0, __y = 0, __z = 0;
+auto __i = micron::ranges::begin(__v);
+const auto __e = micron::ranges::end(__v);
+for ( ;; ) {
+  if ( __i == __e ) break;
+  __w += static_cast&lt;umax_t&gt;(*__i);
+  ++__i;
+  if ( __i == __e ) break;
+  __x += static_cast&lt;umax_t&gt;(*__i);
+  ++__i;
+  if ( __i == __e ) break;
+  __y += static_cast&lt;umax_t&gt;(*__i);
+  ++__i;
+  if ( __i == __e ) break;
+  __z += static_cast&lt;umax_t&gt;(*__i);
+  ++__i;
+}
+return (__w + __x) + (__y + __z);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__w + __x) + (__y + __z)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L312">line 312</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><section class="function-entry" id="f-f00628b8fd3d9a50"><h3><code>__sum_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L334">line 334</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;R&gt;(__r));
+    using B = micron::remove_cvref_t&lt;decltype(__v)&gt;;
+    using E = micron::ranges::range_value_t&lt;B&gt;;
+    static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::sum: this pipeline never terminates&quot;);
+    static_assert(micron::is_floating_point_v&lt;E&gt; || micron::is_integral_v&lt;E&gt;,
+                  &quot;micron::lz::sum: the element type is neither integral nor floating point -- use fold()&quot;);
+    if constexpr ( micron::is_floating_point_v&lt;E&gt; )
+      return sum_fp_into(__v);
+    else
+      return sum_int_into(__v);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sum_fp_into(__v)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>sum_int_into(__v)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L345">line 345</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::sum: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L339">line 339</a></td></tr><tr class="t-dsc"><td><code>static_assert(micron::is_floating_point_v&lt;E&gt; || micron::is_integral_v&lt;E&gt;,
+                  &quot;micron::lz::sum: the element type is neither integral nor floating point -- use fold()&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L340">line 340</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-2232a81305a411c0"><h3><code>__safe_sum_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L360">line 360</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;R&gt;(__r));
+    using B = micron::remove_cvref_t&lt;decltype(__v)&gt;;
+    using E = micron::ranges::range_value_t&lt;B&gt;;
+    using S = __sum_result_t&lt;E&gt;;
+    static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::safe_sum: this pipeline never terminates&quot;);
+
+    if ( micron::ranges::begin(__v) == micron::ranges::end(__v) )
+      return micron::option&lt;S, fp::empty_container_error&gt;{ fp::empty_container_error{} };
+    if constexpr ( micron::is_floating_point_v&lt;E&gt; )
+      return micron::option&lt;S, fp::empty_container_error&gt;{ sum_fp_into(__v) };
+    else
+      return micron::option&lt;S, fp::empty_container_error&gt;{ sum_int_into(__v) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;S, fp::empty_container_error&gt;{ fp::empty_container_error{} }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L369">line 369</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;S, fp::empty_container_error&gt;{ sum_fp_into(__v) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L371">line 371</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;S, fp::empty_container_error&gt;{ sum_int_into(__v) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L373">line 373</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::safe_sum: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L366">line 366</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><section class="function-entry" id="f-77e5361e77b2fbee"><h3><code>micron::lz::__extreme_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L385">line 385</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Max, typename V&gt;
+constexpr auto
+__extreme_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Max, typename V&gt;
+constexpr auto
+__extreme_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  using E = micron::ranges::range_value_t&lt;B&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::min/max: this pipeline never terminates&quot;);
+
+  auto __i = micron::ranges::begin(__v);
+  const auto __e = micron::ranges::end(__v);
+  E __best = *__i;
+  ++__i;
+  for ( ; !(__i == __e); ++__i ) {
+    auto &amp;&amp;__x = *__i;
+    if constexpr ( Max ) {
+      if ( __best &lt; __x ) __best = static_cast&lt;E&gt;(__x);
+    } else {
+      if ( __x &lt; __best ) __best = static_cast&lt;E&gt;(__x);
+    }
+  }
+  return __best;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__best</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L403">line 403</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::min/max: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L389">line 389</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><section class="function-entry" id="f-b04d628b7c2ba873"><h3><code>micron::lz::__safe_extreme_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L408">line 408</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Max, typename V&gt;
+constexpr auto
+__safe_extreme_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Max, typename V&gt;
+constexpr auto
+__safe_extreme_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  using E = micron::ranges::range_value_t&lt;B&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::safe_min/safe_max: this pipeline never terminates&quot;);
+
+  if ( micron::ranges::begin(__v) == micron::ranges::end(__v) )
+    return micron::option&lt;E, fp::empty_container_error&gt;{ fp::empty_container_error{} };
+  return micron::option&lt;E, fp::empty_container_error&gt;{ __extreme_into&lt;Max&gt;(__v) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;E, fp::empty_container_error&gt;{ fp::empty_container_error{} }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L415">line 415</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;E, fp::empty_container_error&gt;{ __extreme_into&lt;Max&gt;(__v) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L416">line 416</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::safe_min/safe_max: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L412">line 412</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>, <a href="reduce.hpp.html#f-77e5361e77b2fbee">__extreme_into&lt;Max&gt;</a>.</p></section><section class="function-entry" id="f-fb6a98b8f510ad51"><h3><code>__min_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L422">line 422</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>__extreme_into&lt;false&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    return __extreme_into&lt;false&gt;(__as_view(micron::forward&lt;R&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__extreme_into&lt;false&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L424">line 424</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-66072de3aa202e20"><h3><code>__max_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L431">line 431</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>__extreme_into&lt;true&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    return __extreme_into&lt;true&gt;(__as_view(micron::forward&lt;R&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__extreme_into&lt;true&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L433">line 433</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-6875b7c24ebf64a8"><h3><code>__safe_min_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L440">line 440</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>__safe_extreme_into&lt;false&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    return __safe_extreme_into&lt;false&gt;(__as_view(micron::forward&lt;R&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_extreme_into&lt;false&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L442">line 442</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-23b7c9b49de100a2"><h3><code>__safe_max_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L449">line 449</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>__safe_extreme_into&lt;true&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    return __safe_extreme_into&lt;true&gt;(__as_view(micron::forward&lt;R&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__safe_extreme_into&lt;true&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L451">line 451</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-7fab811fbc717642"><h3><code>__mean_fn::operator()(Rn &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L507">line 507</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rn&gt;
+  constexpr R
+  operator()(Rn &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rn &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>mean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rn&gt;
+  constexpr R
+  operator()(Rn &amp;&amp;__r) const
+  {
+    return mean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L509">line 509</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rn&gt;</a>.</p></section><section class="function-entry" id="f-952f67541ade313b"><h3><code>__safe_mean_fn::operator()(Rn &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L516">line 516</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rn&gt;
+  constexpr micron::option&lt;R, fp::empty_container_error&gt;
+  operator()(Rn &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rn &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rn&gt;
+  constexpr micron::option&lt;R, fp::empty_container_error&gt;
+  operator()(Rn &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;Rn&gt;(__r));
+    if ( micron::ranges::begin(__v) == micron::ranges::end(__v) )
+      return micron::option&lt;R, fp::empty_container_error&gt;{ fp::empty_container_error{} };
+    return micron::option&lt;R, fp::empty_container_error&gt;{ mean_into&lt;R&gt;(__v) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;R, fp::empty_container_error&gt;{ fp::empty_container_error{} }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L520">line 520</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;R, fp::empty_container_error&gt;{ mean_into&lt;R&gt;(__v) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L521">line 521</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rn&gt;</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><section class="function-entry" id="f-de6d84e4d166194b"><h3><code>__geomean_fn::operator()(Rn &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L572">line 572</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rn&gt;
+  constexpr R
+  operator()(Rn &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rn &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>geomean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rn&gt;
+  constexpr R
+  operator()(Rn &amp;&amp;__r) const
+  {
+    return geomean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>geomean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L574">line 574</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rn&gt;</a>.</p></section><section class="function-entry" id="f-f333fa4f45aa2742"><h3><code>__harmonicmean_fn::operator()(Rn &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L581">line 581</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rn&gt;
+  constexpr R
+  operator()(Rn &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rn &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>harmonicmean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rn&gt;
+  constexpr R
+  operator()(Rn &amp;&amp;__r) const
+  {
+    return harmonicmean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>harmonicmean_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L583">line 583</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rn&gt;</a>.</p></section><section class="function-entry" id="f-484f06f531e86c4f"><h3><code>__safe_geomean_fn::operator()(Rn &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L590">line 590</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rn&gt;
+  constexpr micron::option&lt;R, fp::empty_container_error&gt;
+  operator()(Rn &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rn &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rn&gt;
+  constexpr micron::option&lt;R, fp::empty_container_error&gt;
+  operator()(Rn &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;Rn&gt;(__r));
+    if ( micron::ranges::begin(__v) == micron::ranges::end(__v) )
+      return micron::option&lt;R, fp::empty_container_error&gt;{ fp::empty_container_error{} };
+    return micron::option&lt;R, fp::empty_container_error&gt;{ geomean_into&lt;R&gt;(__v) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;R, fp::empty_container_error&gt;{ fp::empty_container_error{} }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L594">line 594</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;R, fp::empty_container_error&gt;{ geomean_into&lt;R&gt;(__v) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L595">line 595</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rn&gt;</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><section class="function-entry" id="f-e6ddc08740f80f91"><h3><code>__safe_harmonicmean_fn::operator()(Rn &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L602">line 602</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rn&gt;
+  constexpr micron::option&lt;R, fp::empty_container_error&gt;
+  operator()(Rn &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rn &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rn&gt;
+  constexpr micron::option&lt;R, fp::empty_container_error&gt;
+  operator()(Rn &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;Rn&gt;(__r));
+    if ( micron::ranges::begin(__v) == micron::ranges::end(__v) )
+      return micron::option&lt;R, fp::empty_container_error&gt;{ fp::empty_container_error{} };
+    return micron::option&lt;R, fp::empty_container_error&gt;{ harmonicmean_into&lt;R&gt;(__v) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;R, fp::empty_container_error&gt;{ fp::empty_container_error{} }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L606">line 606</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;R, fp::empty_container_error&gt;{ harmonicmean_into&lt;R&gt;(__v) }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L607">line 607</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rn&gt;</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><section class="function-entry" id="f-be350b19f33ba1c1"><h3><code>__inner_product_fn::operator()(Rn &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L671">line 671</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rn&gt;
+  constexpr R
+  operator()(Rn &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rn &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>inner_product_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)), __w, __init)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rn&gt;
+  constexpr R
+  operator()(Rn &amp;&amp;__r) const
+  {
+    return inner_product_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)), __w, __init);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>inner_product_into&lt;R&gt;(__as_view(micron::forward&lt;Rn&gt;(__r)), __w, __init)</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L673">line 673</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rn&gt;</a>.</p></section><section class="function-entry" id="f-98a7eb369e641a0b"><h3><code>__safe_inner_product_fn::operator()(Rn &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/reduce.hpp</code>, <a href="../../../source/algorithm/lazy/reduce.hpp.html#L683">line 683</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Rn&gt;
+  constexpr micron::option&lt;R, fp::bad_zip_error&gt;
+  operator()(Rn &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rn &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Rn&gt;
+  constexpr micron::option&lt;R, fp::bad_zip_error&gt;
+  operator()(Rn &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;Rn&gt;(__r));
+    auto __a = micron::ranges::begin(__v);
+    const auto __ea = micron::ranges::end(__v);
+    auto __b = micron::ranges::begin(__w);
+    const auto __eb = micron::ranges::end(__w);
+    R __acc = __init;
+    for ( ; !(__a == __ea) &amp;&amp; !(__b == __eb); ++__a, ++__b ) __acc = __acc + static_cast&lt;R&gt;(*__a) * static_cast&lt;R&gt;(*__b);
+
+    if ( !(__a == __ea) || !(__b == __eb) ) return micron::option&lt;R, fp::bad_zip_error&gt;{ fp::bad_zip_error{} };
+    return micron::option&lt;R, fp::bad_zip_error&gt;{ __acc };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;R, fp::bad_zip_error&gt;{ fp::bad_zip_error{} }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L693">line 693</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;R, fp::bad_zip_error&gt;{ __acc }</code></td><td><a href="../../../source/algorithm/lazy/reduce.hpp.html#L694">line 694</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Rn&gt;</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

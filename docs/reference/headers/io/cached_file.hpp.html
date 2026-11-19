@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/cached_file.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/cached_file.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/filesystem.html">Files and filesystem</a></div><p>Defined in header <code>&lt;micron/io/cached_file.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/io/cached_file.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-69f96f6de8599766">micron::io::cached_file</code></td><td>class; line 24</td></tr><tr class="t-dsc"><td><code id="s-88ab6ef8089883e9">micron::io::cached_file::read</code></td><td>name; line 261</td></tr><tr class="t-dsc"><td><code id="s-05ce996769ef7089">micron::io::cached_file::write</code></td><td>name; line 262</td></tr><tr class="t-dsc"><td><a href="#f-957cb59c3c5b8147">micron::io::cached_file::~cached_file()</a></td><td>function; line 30</td></tr><tr class="t-dsc"><td><a href="#f-3edc270ac979e26f">micron::io::cached_file::cached_file()</a></td><td>function; line 32</td></tr><tr class="t-dsc"><td><a href="#f-7e2c3cb54e9d2e1b">micron::io::cached_file::cached_file(const T &amp;name, const io::modes mode)</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-d33aa6472a53c04f">micron::io::cached_file::cached_file(const char *name, const io::modes mode)</a></td><td>function; line 39</td></tr><tr class="t-dsc"><td><a href="#f-77761fc459b41833">micron::io::cached_file::cached_file(const char (&amp;name)[M], const io::modes mode)</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-6221b28a59ae36a5">micron::io::cached_file::cached_file(const T &amp;name, const io::modes mode, const usize)</a></td><td>function; line 51</td></tr><tr class="t-dsc"><td><a href="#f-0c94359fdb50cebb">micron::io::cached_file::cached_file(const char *name, const io::modes mode, const usize)</a></td><td>function; line 53</td></tr><tr class="t-dsc"><td><a href="#f-c3eb297f0525aa8a">micron::io::cached_file::cached_file(const char (&amp;name)[M], const io::modes mode, const usize)</a></td><td>function; line 55</td></tr><tr class="t-dsc"><td><a href="#f-f04b49784e92fc95">micron::io::cached_file::cached_file(const T &amp;name)</a></td><td>function; line 57</td></tr><tr class="t-dsc"><td><a href="#f-c58a51c969098d65">micron::io::cached_file::cached_file(const char *name)</a></td><td>function; line 59</td></tr><tr class="t-dsc"><td><a href="#f-045c2c37962a32cd">micron::io::cached_file::cached_file(const char (&amp;name)[M])</a></td><td>function; line 61</td></tr><tr class="t-dsc"><td><a href="#f-6b76abc65ea01e1e">micron::io::cached_file::cached_file(const cached_file &amp;o)</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-7542a598364a90ee">micron::io::cached_file::cached_file(cached_file &amp;&amp;o)</a></td><td>function; line 65</td></tr><tr class="t-dsc"><td><a href="#f-a72aac67686e98fc">micron::io::cached_file::operator=(const cached_file &amp;o)</a></td><td>function; line 68</td></tr><tr class="t-dsc"><td><a href="#f-23c72c114fdb2bfb">micron::io::cached_file::operator=(cached_file &amp;&amp;o)</a></td><td>function; line 77</td></tr><tr class="t-dsc"><td><a href="#f-7141c60c33e5f9be">micron::io::cached_file::operator==(const cached_file &amp;o)</a></td><td>function; line 87</td></tr><tr class="t-dsc"><td><a href="#f-ab1d38b7cd55ea4a">micron::io::cached_file::reopen(const T &amp;name, const io::modes mode)</a></td><td>function; line 93</td></tr><tr class="t-dsc"><td><a href="#f-42f5a33e101fe670">micron::io::cached_file::reopen(const char *name, const io::modes mode)</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-a6853b3b7dbf2345">micron::io::cached_file::reopen(const T &amp;name)</a></td><td>function; line 113</td></tr><tr class="t-dsc"><td><a href="#f-f8b30043b40dd35e">micron::io::cached_file::reopen(const char *name)</a></td><td>function; line 119</td></tr><tr class="t-dsc"><td><a href="#f-9ca3e2b8cf4a661b">micron::io::cached_file::reopen(const T &amp;name, const io::modes mode, const usize)</a></td><td>function; line 126</td></tr><tr class="t-dsc"><td><a href="#f-2028bd16f994969a">micron::io::cached_file::reopen(const char *name, const io::modes mode, const usize)</a></td><td>function; line 132</td></tr><tr class="t-dsc"><td><a href="#f-e520ad208e4ab65e">micron::io::cached_file::clear(void)</a></td><td>function; line 140</td></tr><tr class="t-dsc"><td><a href="#f-f309e23b4aaf53f3">micron::io::cached_file::swap(cached_file &amp;o)</a></td><td>function; line 147</td></tr><tr class="t-dsc"><td><a href="#f-2888a95119e386d5">micron::io::cached_file::load(void)</a></td><td>function; line 158</td></tr><tr class="t-dsc"><td><a href="#f-32aaaec7c3e54c4a">micron::io::cached_file::load_kernel(void)</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-4ecc88d0648a14f2">micron::io::cached_file::read_bytes(usize sz)</a></td><td>function; line 212</td></tr><tr class="t-dsc"><td><a href="#f-19176d5ad665d0bf">micron::io::cached_file::write(void)</a></td><td>function; line 236</td></tr><tr class="t-dsc"><td><a href="#f-fb6df3c2ad5f0c91">micron::io::cached_file::flush(void)</a></td><td>function; line 266</td></tr><tr class="t-dsc"><td><a href="#f-423683d3d48b6c0f">micron::io::cached_file::count(void) const</a></td><td>function; line 276</td></tr><tr class="t-dsc"><td><a href="#f-225f3773168c6519">micron::io::cached_file::push_copy(const T &amp;str)</a></td><td>function; line 282</td></tr><tr class="t-dsc"><td><a href="#f-99773d8f0a4cc4de">micron::io::cached_file::push(T &amp;&amp;str)</a></td><td>function; line 288</td></tr><tr class="t-dsc"><td><a href="#f-05bc3f1883736641">micron::io::cached_file::pull(void)</a></td><td>function; line 294</td></tr><tr class="t-dsc"><td><a href="#f-d9bdd55c03ac4df7">micron::io::cached_file::get(void) const</a></td><td>function; line 302</td></tr><tr class="t-dsc"><td><a href="#f-b3e23e62f600f0b0">micron::io::cached_file::modify(Fn &amp;&amp;fn)</a></td><td>function; line 311</td></tr><tr class="t-dsc"><td><a href="#f-c0e36ac3930206b7">micron::io::cached_file::modify(Fn &amp;&amp;fn)</a></td><td>function; line 321</td></tr><tr class="t-dsc"><td><a href="#f-1213f4f9c1fdcede">micron::io::cached_file::get_fd(void) const</a></td><td>function; line 328</td></tr><tr class="t-dsc"><td><a href="#f-4ff3de52bb4e660a">micron::io::cached_file::load_and_pull(void)</a></td><td>function; line 334</td></tr><tr class="t-dsc"><td><a href="#f-3b1bccdf0de610db">micron::io::cached_file::set(const usize s)</a></td><td>function; line 348</td></tr><tr class="t-dsc"><td><a href="#f-b5b492a707133302">micron::io::cached_file::set_start(void)</a></td><td>function; line 355</td></tr><tr class="t-dsc"><td><a href="#f-45048a5913da6a44">micron::io::cached_file::set_end(void)</a></td><td>function; line 362</td></tr><tr class="t-dsc"><td><a href="#f-ba193cd16abed62f">micron::io::cached_file::seek_pos(void) const</a></td><td>function; line 369</td></tr><tr class="t-dsc"><td><a href="#f-091c1a517d1121fb">micron::io::cached_file::operator&gt;&gt;(T &amp;str)</a></td><td>function; line 377</td></tr><tr class="t-dsc"><td><a href="#f-88f146d4a92b9ef6">micron::io::cached_file::operator&lt;&lt;(T &amp;&amp;str)</a></td><td>function; line 384</td></tr><tr class="t-dsc"><td><a href="#f-067d7cbdbec5282e">micron::io::cached_file::operator&lt;&lt;(const T &amp;str)</a></td><td>function; line 392</td></tr><tr class="t-dsc"><td><a href="#f-007a96d18605dcdd">micron::io::cached_file::operator=(T &amp;&amp;str)</a></td><td>function; line 400</td></tr><tr class="t-dsc"><td><a href="#f-6cc8c5419c4076ae">micron::io::cached_file::operator=(const T &amp;str)</a></td><td>function; line 408</td></tr><tr class="t-dsc"><td><a href="#f-5539de7c2a5b2006">micron::io::cached_file::append_raw(const byte *ptr, usize len)</a></td><td>function; line 418</td></tr><tr class="t-dsc"><td><a href="#f-ca9a6784085c0568">micron::io::cached_file::append_raw(const Tp &amp;str)</a></td><td>function; line 442</td></tr><tr class="t-dsc"><td><a href="#f-7badcf1957524101">micron::io::cached_file::append(const Tp &amp;str)</a></td><td>function; line 449</td></tr><tr class="t-dsc"><td><a href="#f-924829338dfc96eb">micron::io::cached_file::append_file(const cached_file&lt;U&gt; &amp;other, usize chunk_sz = 65536u)</a></td><td>function; line 457</td></tr><tr class="t-dsc"><td><a href="#f-51abb692a331b65d">micron::io::cached_file::copy_to(const char *dest_path, usize chunk_sz = 65536u) const</a></td><td>function; line 505</td></tr><tr class="t-dsc"><td><a href="#f-4887d0edf69c46f7">micron::io::cached_file::copy_to(const Tp &amp;dest_path, usize chunk_sz = 65536u) const</a></td><td>function; line 549</td></tr><tr class="t-dsc"><td><a href="#f-38ced66f578bdf60">micron::io::cached_file::compare_to(const cached_file&lt;U&gt; &amp;other, usize chunk_sz = 65536u) const</a></td><td>function; line 557</td></tr><tr class="t-dsc"><td><a href="#f-481151ccae3e5286">micron::io::cached_file::load_intercepted(Fn &amp;&amp;fn, usize chunk_sz = 65536u)</a></td><td>function; line 602</td></tr><tr class="t-dsc"><td><a href="#f-4acae391c4683f9f">micron::io::cached_file::flush_to_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s) const</a></td><td>function; line 630</td></tr><tr class="t-dsc"><td><a href="#f-0de1953a70862e04">micron::io::cached_file::truncate(usize new_size)</a></td><td>function; line 640</td></tr><tr class="t-dsc"><td><a href="#f-9eb399597687a086">micron::io::cached_file::empty(void)</a></td><td>function; line 655</td></tr><tr class="t-dsc"><td><a href="#f-e5bf446a1995a0ce">micron::io::cached_file::permissions_mode(void)</a></td><td>function; line 661</td></tr><tr class="t-dsc"><td><a href="#f-c5a4c5816c7d24ca">micron::io::cached_file::perms(void)</a></td><td>function; line 667</td></tr><tr class="t-dsc"><td><a href="#f-8d7faf4ab2fe6e33">micron::io::cached_file::owner(void)</a></td><td>function; line 673</td></tr><tr class="t-dsc"><td><a href="#f-9d52e534cec488ce">micron::io::cached_file::group(void)</a></td><td>function; line 679</td></tr><tr class="t-dsc"><td><a href="#f-294e2ab08d813dd1">micron::io::cached_file::inode_number(void)</a></td><td>function; line 685</td></tr><tr class="t-dsc"><td><a href="#f-933186a52097cd6c">micron::io::cached_file::hard_links(void)</a></td><td>function; line 691</td></tr><tr class="t-dsc"><td><a href="#f-9d840073034b540f">micron::io::cached_file::modified_time(void)</a></td><td>function; line 697</td></tr><tr class="t-dsc"><td><a href="#f-80bd2f32b67840bc">micron::io::cached_file::accessed_time(void)</a></td><td>function; line 703</td></tr><tr class="t-dsc"><td><a href="#f-f592599ccd56fb6b">micron::io::cached_file::changed_time(void)</a></td><td>function; line 709</td></tr><tr class="t-dsc"><td><a href="#f-4c88c294180e3096">micron::io::cached_file::owned_by_me(void) const</a></td><td>function; line 715</td></tr><tr class="t-dsc"><td><a href="#f-dc4dec5c4bf3d97d">micron::io::cached_file::sync(void) const</a></td><td>function; line 721</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-957cb59c3c5b8147"><h3><code>micron::io::cached_file::~cached_file()</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L30">line 30</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~cached_file() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-3edc270ac979e26f"><h3><code>micron::io::cached_file::cached_file()</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L32">line 32</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file() : file(), data(), __cursor(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file() : file(), data(), __cursor(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7e2c3cb54e9d2e1b"><h3><code>micron::io::cached_file::cached_file(const T &amp;name, const io::modes mode)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file(const T &amp;name, const io::modes mode)
+      : file(name, mode), data(), __cursor(mode == io::modes::append || mode == io::modes::appendread ? size() : 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;name</code></li><li><code>const io::modes mode</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file(const T &amp;name, const io::modes mode)
+      : file(name, mode), data(), __cursor(mode == io::modes::append || mode == io::modes::appendread ? size() : 0)
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d33aa6472a53c04f"><h3><code>micron::io::cached_file::cached_file(const char *name, const io::modes mode)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L39">line 39</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file(const char *name, const io::modes mode)
+      : file(name, mode), data(), __cursor(mode == io::modes::append || mode == io::modes::appendread ? static_cast&lt;usize&gt;(size()) : 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li><li><code>const io::modes mode</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file(const char *name, const io::modes mode)
+      : file(name, mode), data(), __cursor(mode == io::modes::append || mode == io::modes::appendread ? static_cast&lt;usize&gt;(size()) : 0)
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-77761fc459b41833"><h3><code>micron::io::cached_file::cached_file(const char (&amp;name)[M], const io::modes mode)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt;
+  cached_file(const char (&amp;name)[M], const io::modes mode)
+      : file(name, mode), data(), __cursor(mode == io::modes::append || mode == io::modes::appendread ? size() : 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char (&amp;name)[M]</code></li><li><code>const io::modes mode</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt;
+  cached_file(const char (&amp;name)[M], const io::modes mode)
+      : file(name, mode), data(), __cursor(mode == io::modes::append || mode == io::modes::appendread ? size() : 0)
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6221b28a59ae36a5"><h3><code>micron::io::cached_file::cached_file(const T &amp;name, const io::modes mode, const usize)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L51">line 51</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file(const T &amp;name, const io::modes mode, const usize) : cached_file(name, mode)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;name</code></li><li><code>const io::modes mode</code></li><li><code>const usize</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file(const T &amp;name, const io::modes mode, const usize) : cached_file(name, mode) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-0c94359fdb50cebb"><h3><code>micron::io::cached_file::cached_file(const char *name, const io::modes mode, const usize)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file(const char *name, const io::modes mode, const usize) : cached_file(name, mode)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li><li><code>const io::modes mode</code></li><li><code>const usize</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file(const char *name, const io::modes mode, const usize) : cached_file(name, mode) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c3eb297f0525aa8a"><h3><code>micron::io::cached_file::cached_file(const char (&amp;name)[M], const io::modes mode, const usize)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt; cached_file(const char (&amp;name)[M], const io::modes mode, const usize) : cached_file(name, mode)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char (&amp;name)[M]</code></li><li><code>const io::modes mode</code></li><li><code>const usize</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt; cached_file(const char (&amp;name)[M], const io::modes mode, const usize) : cached_file(name, mode) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f04b49784e92fc95"><h3><code>micron::io::cached_file::cached_file(const T &amp;name)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L57">line 57</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file(const T &amp;name) : file(name, io::modes::read), data(), __cursor(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;name</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file(const T &amp;name) : file(name, io::modes::read), data(), __cursor(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c58a51c969098d65"><h3><code>micron::io::cached_file::cached_file(const char *name)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L59">line 59</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file(const char *name) : file(name, io::modes::read), data(), __cursor(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file(const char *name) : file(name, io::modes::read), data(), __cursor(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-045c2c37962a32cd"><h3><code>micron::io::cached_file::cached_file(const char (&amp;name)[M])</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L61">line 61</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt; cached_file(const char (&amp;name)[M]) : file(name, io::modes::read), data(), __cursor(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char (&amp;name)[M]</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt; cached_file(const char (&amp;name)[M]) : file(name, io::modes::read), data(), __cursor(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6b76abc65ea01e1e"><h3><code>micron::io::cached_file::cached_file(const cached_file &amp;o)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file(const cached_file &amp;o) : file(o), data(o.data), __cursor(o.__cursor)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cached_file &amp;o</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file(const cached_file &amp;o) : file(o), data(o.data), __cursor(o.__cursor) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7542a598364a90ee"><h3><code>micron::io::cached_file::cached_file(cached_file &amp;&amp;o)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L65">line 65</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file(cached_file &amp;&amp;o) : file(micron::move(o)), data(micron::move(o.data)), __cursor(o.__cursor)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>cached_file &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file(cached_file &amp;&amp;o) : file(micron::move(o)), data(micron::move(o.data)), __cursor(o.__cursor) { o.__cursor = 0; }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a72aac67686e98fc"><h3><code>micron::io::cached_file::operator=(const cached_file &amp;o)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  operator=(const cached_file &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cached_file &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  operator=(const cached_file &amp;o)
+  {
+    file::operator=(o);
+    data = o.data;
+    __cursor = o.__cursor;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-ba5de2f2de6ddd80">file::operator=</a>.</p></section><section class="function-entry" id="f-23c72c114fdb2bfb"><h3><code>micron::io::cached_file::operator=(cached_file &amp;&amp;o)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L77">line 77</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  operator=(cached_file &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>cached_file &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  operator=(cached_file &amp;&amp;o)
+  {
+    file::operator=(micron::move(o));
+    data = micron::move(o.data);
+    __cursor = o.__cursor;
+    o.__cursor = 0;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L83">line 83</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="file.hpp.html#f-ba5de2f2de6ddd80">file::operator=</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-7141c60c33e5f9be"><h3><code>micron::io::cached_file::operator==(const cached_file &amp;o)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L87">line 87</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  operator==(const cached_file &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cached_file &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__handle.fd == o.__handle.fd</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  operator==(const cached_file &amp;o)
+  {
+    return __handle.fd == o.__handle.fd;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__handle.fd == o.__handle.fd</code></td><td><a href="../../source/io/cached_file.hpp.html#L89">line 89</a></td></tr></tbody></table></section><section class="function-entry" id="f-ab1d38b7cd55ea4a"><h3><code>micron::io::cached_file::reopen(const T &amp;name, const io::modes mode)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L93">line 93</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reopen(const T &amp;name, const io::modes mode)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;name</code></li><li><code>const io::modes mode</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reopen(const T &amp;name, const io::modes mode)
+  {
+    sync();
+    close();
+    data.clear();
+    file::operator=(micron::move(file(name, mode)));
+    __cursor = (mode == io::modes::append || mode == io::modes::appendread ? size() : 0);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-dc4dec5c4bf3d97d">sync</a>, <a href="../linux/io.hpp.html#s-dead85e01b48c90d">close</a>, <a href="file.hpp.html#f-ba5de2f2de6ddd80">file::operator=</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="file.hpp.html#s-9298ef15f34d07ac">file</a>.</p></section><section class="function-entry" id="f-42f5a33e101fe670"><h3><code>micron::io::cached_file::reopen(const char *name, const io::modes mode)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reopen(const char *name, const io::modes mode)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li><li><code>const io::modes mode</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reopen(const char *name, const io::modes mode)
+  {
+    sync();
+    close();
+    data.clear();
+    file::operator=(micron::move(file(name, mode)));
+    __cursor = (mode == io::modes::append || mode == io::modes::appendread ? size() : 0);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-dc4dec5c4bf3d97d">sync</a>, <a href="../linux/io.hpp.html#s-dead85e01b48c90d">close</a>, <a href="file.hpp.html#f-ba5de2f2de6ddd80">file::operator=</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="file.hpp.html#s-9298ef15f34d07ac">file</a>.</p></section><section class="function-entry" id="f-a6853b3b7dbf2345"><h3><code>micron::io::cached_file::reopen(const T &amp;name)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reopen(const T &amp;name)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reopen(const T &amp;name)
+  {
+    reopen(name, io::modes::read);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-ab1d38b7cd55ea4a">reopen</a>.</p></section><section class="function-entry" id="f-f8b30043b40dd35e"><h3><code>micron::io::cached_file::reopen(const char *name)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L119">line 119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reopen(const char *name)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reopen(const char *name)
+  {
+    reopen(name, io::modes::read);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-ab1d38b7cd55ea4a">reopen</a>.</p></section><section class="function-entry" id="f-9ca3e2b8cf4a661b"><h3><code>micron::io::cached_file::reopen(const T &amp;name, const io::modes mode, const usize)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L126">line 126</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reopen(const T &amp;name, const io::modes mode, const usize)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;name</code></li><li><code>const io::modes mode</code></li><li><code>const usize</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reopen(const T &amp;name, const io::modes mode, const usize)
+  {
+    reopen(name, mode);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-ab1d38b7cd55ea4a">reopen</a>.</p></section><section class="function-entry" id="f-2028bd16f994969a"><h3><code>micron::io::cached_file::reopen(const char *name, const io::modes mode, const usize)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L132">line 132</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reopen(const char *name, const io::modes mode, const usize)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li><li><code>const io::modes mode</code></li><li><code>const usize</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reopen(const char *name, const io::modes mode, const usize)
+  {
+    reopen(name, mode);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-ab1d38b7cd55ea4a">reopen</a>.</p></section><section class="function-entry" id="f-e520ad208e4ab65e"><h3><code>micron::io::cached_file::clear(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L140">line 140</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear(void)
+  {
+    data.clear();
+    data._buf_set_length(0);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f309e23b4aaf53f3"><h3><code>micron::io::cached_file::swap(cached_file &amp;o)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L147">line 147</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  swap(cached_file &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>cached_file &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  swap(cached_file &amp;o)
+  {
+    micron::swap(data, o.data);
+    micron::swap(__cursor, o.__cursor);
+    micron::swap(fname, o.fname);
+    micron::swap(__handle, o.__handle);
+    micron::swap(sd, o.sd);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-2888a95119e386d5"><h3><code>micron::io::cached_file::load(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L158">line 158</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  load(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  load(void)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( i32 e = stat&lt;STAT_OVERRIDE&gt;(); e != 0 ) [[unlikely]]
+      return e;
+    const usize need = static_cast&lt;usize&gt;(sd.st_size);
+    if ( need == 0 ) {
+      data._buf_set_length(0);
+      return 0;
+    }
+    constexpr usize esz = sizeof(typename T::value_type);
+    data.reserve(need / esz + 1);
+    byte *p = reinterpret_cast&lt;byte *&gt;(data.data());
+    usize got = 0;
+    while ( got &lt; need ) {
+      max_t r = posix::pread(__handle.fd, p + got, need - got, static_cast&lt;posix::off64_t&gt;(got));
+      if ( r &lt; 0 ) [[unlikely]] {
+        if ( -r == error::interrupted ) continue;
+        data._buf_set_length(got / esz);
+        return r;
+      }
+      if ( r == 0 ) break;
+      got += static_cast&lt;usize&gt;(r);
+    }
+    data._buf_set_length(got / esz);
+    return static_cast&lt;max_t&gt;(got);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L161">line 161</a></td></tr><tr class="t-dsc"><td><code>e</code></td><td><a href="../../source/io/cached_file.hpp.html#L163">line 163</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/cached_file.hpp.html#L167">line 167</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/cached_file.hpp.html#L178">line 178</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(got)</code></td><td><a href="../../source/io/cached_file.hpp.html#L184">line 184</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io.hpp.html#s-780e9756070bd055">stat&lt;STAT_OVERRIDE&gt;</a>, <a href="../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>.</p></section><section class="function-entry" id="f-32aaaec7c3e54c4a"><h3><code>micron::io::cached_file::load_kernel(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  load_kernel(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  load_kernel(void)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    data.clear();
+    byte chunk[4096];
+    usize total = 0;
+    posix::off64_t off = 0;
+    for ( ;; ) {
+      max_t r = posix::pread(__handle.fd, chunk, sizeof(chunk), off);
+      if ( r &lt; 0 ) [[unlikely]] {
+        if ( -r == error::interrupted ) continue;
+        return r;
+      }
+      if ( r == 0 ) break;
+      for ( max_t i = 0; i &lt; r; ++i ) data.push_back(static_cast&lt;typename T::value_type&gt;(chunk[i]));
+      total += static_cast&lt;usize&gt;(r);
+      off += r;
+    }
+    return static_cast&lt;max_t&gt;(total);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L192">line 192</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/cached_file.hpp.html#L201">line 201</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(total)</code></td><td><a href="../../source/io/cached_file.hpp.html#L208">line 208</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>.</p></section><section class="function-entry" id="f-4ecc88d0648a14f2"><h3><code>micron::io::cached_file::read_bytes(usize sz)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L212">line 212</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  read_bytes(usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  read_bytes(usize sz)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    data.reserve(data.size() + sz + 1);
+    byte chunk[4096];
+    usize total = 0;
+    while ( total &lt; sz ) {
+      const usize want = (sz - total) &lt; sizeof(chunk) ? (sz - total) : sizeof(chunk);
+      max_t r = posix::pread(__handle.fd, chunk, want, static_cast&lt;posix::off64_t&gt;(__cursor));
+      if ( r &lt; 0 ) [[unlikely]] {
+        if ( -r == error::interrupted ) continue;
+        return total ? static_cast&lt;max_t&gt;(total) : r;
+      }
+      if ( r == 0 ) break;
+      for ( max_t i = 0; i &lt; r; ++i ) data.push_back(static_cast&lt;typename T::value_type&gt;(chunk[i]));
+      __cursor += static_cast&lt;usize&gt;(r);
+      total += static_cast&lt;usize&gt;(r);
+    }
+    return static_cast&lt;max_t&gt;(total);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L215">line 215</a></td></tr><tr class="t-dsc"><td><code>total ? static_cast&lt;max_t&gt;(total) : r</code></td><td><a href="../../source/io/cached_file.hpp.html#L224">line 224</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(total)</code></td><td><a href="../../source/io/cached_file.hpp.html#L231">line 231</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>.</p></section><section class="function-entry" id="f-19176d5ad665d0bf"><h3><code>micron::io::cached_file::write(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L236">line 236</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  write(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  write(void)
+  {
+    if ( !data ) return 0;
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    const byte *p = reinterpret_cast&lt;const byte *&gt;(data.data());
+    const usize len = data.size() * sizeof(typename T::value_type);
+    usize done = 0;
+    while ( done &lt; len ) {
+      max_t w = posix::pwrite(__handle.fd, p + done, len - done, static_cast&lt;posix::off64_t&gt;(__cursor + done));
+      if ( w &lt; 0 ) [[unlikely]] {
+        if ( -w == error::interrupted ) continue;
+        __cursor += done;
+        micron::zero(&amp;sd);
+        return w;
+      }
+      if ( w == 0 ) break;
+      done += static_cast&lt;usize&gt;(w);
+    }
+    __cursor += done;
+    micron::zero(&amp;sd);
+    return static_cast&lt;max_t&gt;(done);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/cached_file.hpp.html#L238">line 238</a></td></tr><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L240">line 240</a></td></tr><tr class="t-dsc"><td><code>w</code></td><td><a href="../../source/io/cached_file.hpp.html#L250">line 250</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(done)</code></td><td><a href="../../source/io/cached_file.hpp.html#L257">line 257</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-3833cd6069383c9b">posix::pwrite</a>, <a href="../algorithm/memory.hpp.html#f-43fbf1bfc5b0907d">micron::zero</a>.</p></section><section class="function-entry" id="f-fb6df3c2ad5f0c91"><h3><code>micron::io::cached_file::flush(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L266">line 266</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  flush(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  flush(void)
+  {
+    max_t n = write();
+    if ( n &gt;= 0 ) clear();
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/cached_file.hpp.html#L270">line 270</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-19176d5ad665d0bf">write</a>, <a href="cached_file.hpp.html#f-e520ad208e4ab65e">clear</a>.</p></section><section class="function-entry" id="f-423683d3d48b6c0f"><h3><code>micron::io::cached_file::count(void) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L276">line 276</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  count(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>data.size()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  count(void) const
+  {
+    return data.size();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>data.size()</code></td><td><a href="../../source/io/cached_file.hpp.html#L278">line 278</a></td></tr></tbody></table></section><section class="function-entry" id="f-225f3773168c6519"><h3><code>micron::io::cached_file::push_copy(const T &amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L282">line 282</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  push_copy(const T &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  push_copy(const T &amp;str)
+  {
+    data = str;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-99773d8f0a4cc4de"><h3><code>micron::io::cached_file::push(T &amp;&amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L288">line 288</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  push(T &amp;&amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  push(T &amp;&amp;str)
+  {
+    data = micron::move(str);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-05bc3f1883736641"><h3><code>micron::io::cached_file::pull(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L294">line 294</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  pull(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  pull(void)
+  {
+    auto t = micron::move(data);
+    data = T();
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/io/cached_file.hpp.html#L298">line 298</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-d9bdd55c03ac4df7"><h3><code>micron::io::cached_file::get(void) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L302">line 302</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const auto &amp;
+  get(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>data</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const auto &amp;
+  get(void) const
+  {
+    return data;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>data</code></td><td><a href="../../source/io/cached_file.hpp.html#L304">line 304</a></td></tr></tbody></table></section><section class="function-entry" id="f-b3e23e62f600f0b0"><h3><code>micron::io::cached_file::modify(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L311">line 311</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(micron::invocable&lt;Fn, T &amp;&gt; &amp;&amp; micron::is_void_v&lt;micron::invoke_result_t&lt;Fn, T &amp;&gt;&gt;)
+  cached_file &amp;
+  modify(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(micron::invocable&lt;Fn, T &amp;&gt; &amp;&amp; micron::is_void_v&lt;micron::invoke_result_t&lt;Fn, T &amp;&gt;&gt;)
+  cached_file &amp;
+  modify(Fn &amp;&amp;fn)
+  {
+    micron::forward&lt;Fn&gt;(fn)(data);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L314">line 314</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-c0e36ac3930206b7"><h3><code>micron::io::cached_file::modify(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L321">line 321</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires fn_codomain&lt;Fn, T&gt;
+  cached_file &amp;
+  modify(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires fn_codomain&lt;Fn, T&gt;
+  cached_file &amp;
+  modify(Fn &amp;&amp;fn)
+  {
+    data = micron::forward&lt;Fn&gt;(fn)(micron::move(data));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L324">line 324</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-1213f4f9c1fdcede"><h3><code>micron::io::cached_file::get_fd(void) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L328">line 328</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  get_fd(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__handle.fd</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  get_fd(void) const
+  {
+    return __handle.fd;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__handle.fd</code></td><td><a href="../../source/io/cached_file.hpp.html#L330">line 330</a></td></tr></tbody></table></section><section class="function-entry" id="f-4ff3de52bb4e660a"><h3><code>micron::io::cached_file::load_and_pull(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L334">line 334</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  load_and_pull(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  load_and_pull(void)
+  {
+    if ( is_system_virtual() )
+      load_kernel();
+    else
+      load();
+    auto tmp = micron::move(data);
+    data = T();
+    return tmp;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tmp</code></td><td><a href="../../source/io/cached_file.hpp.html#L342">line 342</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-32aaaec7c3e54c4a">load_kernel</a>, <a href="cached_file.hpp.html#f-2888a95119e386d5">load</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-3b1bccdf0de610db"><h3><code>micron::io::cached_file::set(const usize s)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L348">line 348</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  set(const usize s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const usize s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  set(const usize s)
+  {
+    __cursor = s;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L351">line 351</a></td></tr></tbody></table></section><section class="function-entry" id="f-b5b492a707133302"><h3><code>micron::io::cached_file::set_start(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L355">line 355</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  set_start(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  set_start(void)
+  {
+    __cursor = 0;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L358">line 358</a></td></tr></tbody></table></section><section class="function-entry" id="f-45048a5913da6a44"><h3><code>micron::io::cached_file::set_end(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L362">line 362</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  set_end(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  set_end(void)
+  {
+    __cursor = size();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L365">line 365</a></td></tr></tbody></table></section><section class="function-entry" id="f-ba193cd16abed62f"><h3><code>micron::io::cached_file::seek_pos(void) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L369">line 369</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  seek_pos(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__cursor</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  seek_pos(void) const
+  {
+    return __cursor;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__cursor</code></td><td><a href="../../source/io/cached_file.hpp.html#L371">line 371</a></td></tr></tbody></table></section><section class="function-entry" id="f-091c1a517d1121fb"><h3><code>micron::io::cached_file::operator&gt;&gt;(T &amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L377">line 377</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  operator&gt;&gt;(T &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  operator&gt;&gt;(T &amp;str)
+  {
+    str = load_and_pull();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L380">line 380</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-4ff3de52bb4e660a">load_and_pull</a>.</p></section><section class="function-entry" id="f-88f146d4a92b9ef6"><h3><code>micron::io::cached_file::operator&lt;&lt;(T &amp;&amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L384">line 384</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  operator&lt;&lt;(T &amp;&amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  operator&lt;&lt;(T &amp;&amp;str)
+  {
+    push(micron::move(str));
+    write();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L388">line 388</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-99773d8f0a4cc4de">push</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="cached_file.hpp.html#f-19176d5ad665d0bf">write</a>.</p></section><section class="function-entry" id="f-067d7cbdbec5282e"><h3><code>micron::io::cached_file::operator&lt;&lt;(const T &amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L392">line 392</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  operator&lt;&lt;(const T &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  operator&lt;&lt;(const T &amp;str)
+  {
+    push_copy(str);
+    write();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L396">line 396</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-225f3773168c6519">push_copy</a>, <a href="cached_file.hpp.html#f-19176d5ad665d0bf">write</a>.</p></section><section class="function-entry" id="f-007a96d18605dcdd"><h3><code>micron::io::cached_file::operator=(T &amp;&amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L400">line 400</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  operator=(T &amp;&amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  operator=(T &amp;&amp;str)
+  {
+    push(micron::move(str));
+    write();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L404">line 404</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-99773d8f0a4cc4de">push</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="cached_file.hpp.html#f-19176d5ad665d0bf">write</a>.</p></section><section class="function-entry" id="f-6cc8c5419c4076ae"><h3><code>micron::io::cached_file::operator=(const T &amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L408">line 408</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>cached_file &amp;
+  operator=(const T &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">cached_file &amp;
+  operator=(const T &amp;str)
+  {
+    push_copy(str);
+    write();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/io/cached_file.hpp.html#L412">line 412</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-225f3773168c6519">push_copy</a>, <a href="cached_file.hpp.html#f-19176d5ad665d0bf">write</a>.</p></section><section class="function-entry" id="f-5539de7c2a5b2006"><h3><code>micron::io::cached_file::append_raw(const byte *ptr, usize len)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L418">line 418</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  append_raw(const byte *ptr, usize len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *ptr</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  append_raw(const byte *ptr, usize len)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( i32 e = stat&lt;STAT_OVERRIDE&gt;(); e != 0 ) [[unlikely]]
+      return e;
+    posix::off64_t dst_off = sd.st_size;
+    usize done = 0;
+    while ( done &lt; len ) {
+      max_t w = posix::pwrite(__handle.fd, ptr + done, len - done, dst_off + static_cast&lt;posix::off64_t&gt;(done));
+      if ( w &lt; 0 ) [[unlikely]] {
+        if ( -w == error::interrupted ) continue;
+        micron::zero(&amp;sd);
+        return w;
+      }
+      if ( w == 0 ) break;
+      done += static_cast&lt;usize&gt;(w);
+    }
+    micron::zero(&amp;sd);
+    return static_cast&lt;max_t&gt;(done);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L421">line 421</a></td></tr><tr class="t-dsc"><td><code>e</code></td><td><a href="../../source/io/cached_file.hpp.html#L423">line 423</a></td></tr><tr class="t-dsc"><td><code>w</code></td><td><a href="../../source/io/cached_file.hpp.html#L431">line 431</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(done)</code></td><td><a href="../../source/io/cached_file.hpp.html#L437">line 437</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io.hpp.html#s-780e9756070bd055">stat&lt;STAT_OVERRIDE&gt;</a>, <a href="../linux/io/sys.hpp.html#f-3833cd6069383c9b">posix::pwrite</a>, <a href="../algorithm/memory.hpp.html#f-43fbf1bfc5b0907d">micron::zero</a>.</p></section><section class="function-entry" id="f-ca9a6784085c0568"><h3><code>micron::io::cached_file::append_raw(const Tp &amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L442">line 442</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string Tp&gt;
+  max_t
+  append_raw(const Tp &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tp &amp;str</code></li></ul><h4>Effects</h4><p>Returns <code>append_raw(reinterpret_cast&lt;const byte *&gt;(str.c_str()), str.size() * sizeof(typename Tp::value_type))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string Tp&gt;
+  max_t
+  append_raw(const Tp &amp;str)
+  {
+    return append_raw(reinterpret_cast&lt;const byte *&gt;(str.c_str()), str.size() * sizeof(typename Tp::value_type));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>append_raw(reinterpret_cast&lt;const byte *&gt;(str.c_str()), str.size() * sizeof(typename Tp::value_type))</code></td><td><a href="../../source/io/cached_file.hpp.html#L444">line 444</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-5539de7c2a5b2006">append_raw</a>.</p></section><section class="function-entry" id="f-7badcf1957524101"><h3><code>micron::io::cached_file::append(const Tp &amp;str)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L449">line 449</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string Tp&gt;
+  max_t
+  append(const Tp &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tp &amp;str</code></li></ul><h4>Effects</h4><p>Returns <code>append_raw(str)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string Tp&gt;
+  max_t
+  append(const Tp &amp;str)
+  {
+    return append_raw(str);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>append_raw(str)</code></td><td><a href="../../source/io/cached_file.hpp.html#L451">line 451</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-5539de7c2a5b2006">append_raw</a>.</p></section><section class="function-entry" id="f-924829338dfc96eb"><h3><code>micron::io::cached_file::append_file(const cached_file&lt;U&gt; &amp;other, usize chunk_sz = 65536u)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L457">line 457</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string U&gt;
+  max_t
+  append_file(const cached_file&lt;U&gt; &amp;other, usize chunk_sz = 65536u)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cached_file&lt;U&gt; &amp;other</code></li><li><code>usize chunk_sz = 65536u</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string U&gt;
+  max_t
+  append_file(const cached_file&lt;U&gt; &amp;other, usize chunk_sz = 65536u)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( other.get_fd() &lt; 0 ) [[unlikely]]
+      return -error::bad_fd;
+
+    posix::off64_t src_off = 0;
+    usize src_sz = static_cast&lt;usize&gt;(const_cast&lt;cached_file&lt;U&gt; &amp;&gt;(other).size());
+    if ( i32 e = stat&lt;STAT_OVERRIDE&gt;(); e != 0 ) [[unlikely]]
+      return e;
+    posix::off64_t dst_off = sd.st_size;
+
+    micron::buffer win(chunk_sz);
+    max_t total = 0;
+    while ( static_cast&lt;usize&gt;(src_off) &lt; src_sz ) {
+      max_t n = posix::pread(other.get_fd(), win.begin(), chunk_sz, src_off);
+      if ( n &lt; 0 ) [[unlikely]] {
+        if ( -n == error::interrupted ) continue;
+        micron::zero(&amp;sd);
+        return n;      // propagate source read error
+      }
+      if ( n == 0 ) break;
+      // write the n read bytes in full at the advancing destination offset
+      usize wdone = 0;
+      while ( wdone &lt; static_cast&lt;usize&gt;(n) ) {
+        max_t w
+            = posix::pwrite(__handle.fd, win.begin() + wdone, static_cast&lt;usize&gt;(n) - wdone, dst_off + static_cast&lt;posix::off64_t&gt;(wdone));
+        if ( w &lt; 0 ) [[unlikely]] {
+          if ( -w == error::interrupted ) continue;
+          micron::zero(&amp;sd);
+          return w;      // propagate -errno
+        }
+        if ( w == 0 ) break;
+        wdone += static_cast&lt;usize&gt;(w);
+      }
+      src_off += static_cast&lt;posix::off64_t&gt;(wdone);
+      dst_off += static_cast&lt;posix::off64_t&gt;(wdone);
+      total += static_cast&lt;max_t&gt;(wdone);
+      if ( wdone &lt; static_cast&lt;usize&gt;(n) ) break;      // short write (pwrite == 0): stop
+    }
+    micron::zero(&amp;sd);
+    return total;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L460">line 460</a></td></tr><tr class="t-dsc"><td><code>-error::bad_fd</code></td><td><a href="../../source/io/cached_file.hpp.html#L462">line 462</a></td></tr><tr class="t-dsc"><td><code>e</code></td><td><a href="../../source/io/cached_file.hpp.html#L467">line 467</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/cached_file.hpp.html#L477">line 477</a></td></tr><tr class="t-dsc"><td><code>w</code></td><td><a href="../../source/io/cached_file.hpp.html#L488">line 488</a></td></tr><tr class="t-dsc"><td><code>total</code></td><td><a href="../../source/io/cached_file.hpp.html#L499">line 499</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io.hpp.html#s-780e9756070bd055">stat&lt;STAT_OVERRIDE&gt;</a>, <a href="../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>, <a href="../algorithm/memory.hpp.html#f-43fbf1bfc5b0907d">micron::zero</a>, <a href="../linux/io/sys.hpp.html#f-3833cd6069383c9b">posix::pwrite</a>.</p></section><section class="function-entry" id="f-51abb692a331b65d"><h3><code>micron::io::cached_file::copy_to(const char *dest_path, usize chunk_sz = 65536u) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L505">line 505</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  copy_to(const char *dest_path, usize chunk_sz = 65536u) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *dest_path</code></li><li><code>usize chunk_sz = 65536u</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  copy_to(const char *dest_path, usize chunk_sz = 65536u) const
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    posix::fd_t out{ static_cast&lt;i32&gt;(posix::openat(
+        posix::at_fdcwd, dest_path, posix::o_wronly | posix::o_create | posix::o_trunc | posix::o_cloexec, posix::mode_file)) };
+    if ( !out ) [[unlikely]]
+      return out.fd;
+
+    usize src_sz = static_cast&lt;usize&gt;(const_cast&lt;cached_file *&gt;(this)-&gt;size());
+    posix::off64_t src_off = 0;
+    micron::buffer win(chunk_sz);
+    max_t total = 0;
+
+    while ( static_cast&lt;usize&gt;(src_off) &lt; src_sz ) {
+      max_t n = posix::pread(__handle.fd, win.begin(), chunk_sz, src_off);
+      if ( n &lt; 0 ) {
+        if ( -n == error::interrupted ) continue;
+        posix::close(out.fd);
+        return n;      // propagate a source read error; never report a truncated copy as success
+      }
+      if ( n == 0 ) break;      // EOF
+      // write all n read bytes to the destination
+      usize wdone = 0;
+      while ( wdone &lt; static_cast&lt;usize&gt;(n) ) {
+        max_t w = posix::write(out.fd, win.begin() + wdone, static_cast&lt;usize&gt;(n) - wdone);
+        if ( w &lt; 0 ) [[unlikely]] {
+          if ( -w == error::interrupted ) continue;
+          posix::close(out.fd);
+          return w;      // never report source size as success
+        }
+        if ( w == 0 ) break;
+        wdone += static_cast&lt;usize&gt;(w);
+      }
+      src_off += static_cast&lt;posix::off64_t&gt;(wdone);
+      total += static_cast&lt;max_t&gt;(wdone);
+      if ( wdone &lt; static_cast&lt;usize&gt;(n) ) break;      // short write (write == 0): stop
+    }
+    posix::close(out.fd);
+    return total;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L508">line 508</a></td></tr><tr class="t-dsc"><td><code>out.fd</code></td><td><a href="../../source/io/cached_file.hpp.html#L512">line 512</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/cached_file.hpp.html#L524">line 524</a></td></tr><tr class="t-dsc"><td><code>w</code></td><td><a href="../../source/io/cached_file.hpp.html#L534">line 534</a></td></tr><tr class="t-dsc"><td><code>total</code></td><td><a href="../../source/io/cached_file.hpp.html#L544">line 544</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-127e383155e1e536">posix::openat</a>, <a href="../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>, <a href="../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../linux/io/sys.hpp.html#f-3125062f09a2bad4">posix::write</a>.</p></section><section class="function-entry" id="f-4887d0edf69c46f7"><h3><code>micron::io::cached_file::copy_to(const Tp &amp;dest_path, usize chunk_sz = 65536u) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L549">line 549</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string Tp&gt;
+  max_t
+  copy_to(const Tp &amp;dest_path, usize chunk_sz = 65536u) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Tp &amp;dest_path</code></li><li><code>usize chunk_sz = 65536u</code></li></ul><h4>Effects</h4><p>Returns <code>copy_to(dest_path.c_str(), chunk_sz)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string Tp&gt;
+  max_t
+  copy_to(const Tp &amp;dest_path, usize chunk_sz = 65536u) const
+  {
+    return copy_to(dest_path.c_str(), chunk_sz);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>copy_to(dest_path.c_str(), chunk_sz)</code></td><td><a href="../../source/io/cached_file.hpp.html#L551">line 551</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cached_file.hpp.html#f-51abb692a331b65d">copy_to</a>.</p></section><section class="function-entry" id="f-38ced66f578bdf60"><h3><code>micron::io::cached_file::compare_to(const cached_file&lt;U&gt; &amp;other, usize chunk_sz = 65536u) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L557">line 557</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string U&gt;
+  i32
+  compare_to(const cached_file&lt;U&gt; &amp;other, usize chunk_sz = 65536u) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cached_file&lt;U&gt; &amp;other</code></li><li><code>usize chunk_sz = 65536u</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string U&gt;
+  i32
+  compare_to(const cached_file&lt;U&gt; &amp;other, usize chunk_sz = 65536u) const
+  {
+    if ( __check() != 0 || other.get_fd() &lt; 0 ) [[unlikely]]
+      return -error::bad_fd;
+
+    usize a_sz = static_cast&lt;usize&gt;(const_cast&lt;cached_file *&gt;(this)-&gt;size());
+    usize b_sz = static_cast&lt;usize&gt;(const_cast&lt;cached_file&lt;U&gt; &amp;&gt;(other).size());
+    usize scan = 0;
+    micron::buffer wa(chunk_sz), wb(chunk_sz);
+
+    while ( scan &lt; a_sz &amp;&amp; scan &lt; b_sz ) {
+      usize take = chunk_sz &lt; (a_sz - scan) ? chunk_sz : (a_sz - scan);
+      take = take &lt; (b_sz - scan) ? take : (b_sz - scan);
+
+      max_t na = posix::pread(__handle.fd, wa.begin(), take, static_cast&lt;posix::off64_t&gt;(scan));
+      if ( na &lt; 0 ) {
+        if ( -na == error::interrupted ) continue;
+        i32 e = static_cast&lt;i32&gt;(na);
+        return e &lt; -1 ? e : -error::io_error;      // real error -&gt; errno (&lt;-1), never a bogus verdict
+      }
+      max_t nb = posix::pread(other.get_fd(), wb.begin(), take, static_cast&lt;posix::off64_t&gt;(scan));
+      if ( nb &lt; 0 ) {
+        if ( -nb == error::interrupted ) continue;
+        i32 e = static_cast&lt;i32&gt;(nb);
+        return e &lt; -1 ? e : -error::io_error;
+      }
+      if ( na == 0 || nb == 0 ) break;      // EOF on one side (not an error)
+
+      usize cmp_n = static_cast&lt;usize&gt;(na) &lt; static_cast&lt;usize&gt;(nb) ? static_cast&lt;usize&gt;(na) : static_cast&lt;usize&gt;(nb);
+
+      for ( usize i = 0; i &lt; cmp_n; ++i ) {
+        if ( wa[i] &lt; wb[i] ) return -1;
+        if ( wa[i] &gt; wb[i] ) return 1;
+      }
+      scan += cmp_n;
+    }
+
+    if ( a_sz &lt; b_sz ) return -1;
+    if ( a_sz &gt; b_sz ) return 1;
+    return 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-error::bad_fd</code></td><td><a href="../../source/io/cached_file.hpp.html#L560">line 560</a></td></tr><tr class="t-dsc"><td><code>e &lt; -1 ? e : -error::io_error</code></td><td><a href="../../source/io/cached_file.hpp.html#L575">line 575</a></td></tr><tr class="t-dsc"><td><code>e &lt; -1 ? e : -error::io_error</code></td><td><a href="../../source/io/cached_file.hpp.html#L581">line 581</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/io/cached_file.hpp.html#L588">line 588</a></td></tr><tr class="t-dsc"><td><code>1</code></td><td><a href="../../source/io/cached_file.hpp.html#L589">line 589</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/io/cached_file.hpp.html#L594">line 594</a></td></tr><tr class="t-dsc"><td><code>1</code></td><td><a href="../../source/io/cached_file.hpp.html#L595">line 595</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/cached_file.hpp.html#L596">line 596</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>.</p></section><section class="function-entry" id="f-481151ccae3e5286"><h3><code>micron::io::cached_file::load_intercepted(Fn &amp;&amp;fn, usize chunk_sz = 65536u)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L602">line 602</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;io::intercept_fn Fn&gt;
+  max_t
+  load_intercepted(Fn &amp;&amp;fn, usize chunk_sz = 65536u)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li><li><code>usize chunk_sz = 65536u</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;io::intercept_fn Fn&gt;
+  max_t
+  load_intercepted(Fn &amp;&amp;fn, usize chunk_sz = 65536u)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    if ( i32 e = stat&lt;STAT_OVERRIDE&gt;(); e != 0 ) [[unlikely]]
+      return e;
+    usize file_sz = static_cast&lt;usize&gt;(sd.st_size);
+    constexpr usize esz = sizeof(typename T::value_type);
+    data.reserve(file_sz / esz + 1);
+
+    micron::buffer win(chunk_sz);
+    posix::off64_t off = 0;
+    max_t total = 0;
+
+    while ( static_cast&lt;usize&gt;(off) &lt; file_sz ) {
+      max_t n = posix::pread(__handle.fd, win.begin(), chunk_sz, off);
+      if ( n &lt; 0 &amp;&amp; -n == error::interrupted ) continue;
+      if ( n &lt;= 0 ) break;
+      fn(win.begin(), static_cast&lt;usize&gt;(n));
+      data.append(reinterpret_cast&lt;const typename T::value_type *&gt;(win.begin()), static_cast&lt;usize&gt;(n) / esz);
+      off += n;
+      total += n;
+    }
+    return total;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L605">line 605</a></td></tr><tr class="t-dsc"><td><code>e</code></td><td><a href="../../source/io/cached_file.hpp.html#L607">line 607</a></td></tr><tr class="t-dsc"><td><code>total</code></td><td><a href="../../source/io/cached_file.hpp.html#L625">line 625</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io.hpp.html#s-780e9756070bd055">stat&lt;STAT_OVERRIDE&gt;</a>, <a href="../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>.</p></section><section class="function-entry" id="f-4acae391c4683f9f"><h3><code>micron::io::cached_file::flush_to_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L630">line 630</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int SZ, int CK, bool IS&gt;
+  max_t
+  flush_to_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>io::stream&lt;SZ, CK, IS&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int SZ, int CK, bool IS&gt;
+  max_t
+  flush_to_stream(io::stream&lt;SZ, CK, IS&gt; &amp;s) const
+  {
+    if ( !data ) return 0;
+    s &lt;&lt; data;
+    return static_cast&lt;max_t&gt;(data.size());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/cached_file.hpp.html#L632">line 632</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;max_t&gt;(data.size())</code></td><td><a href="../../source/io/cached_file.hpp.html#L634">line 634</a></td></tr></tbody></table></section><section class="function-entry" id="f-0de1953a70862e04"><h3><code>micron::io::cached_file::truncate(usize new_size)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L640">line 640</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  truncate(usize new_size)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize new_size</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  truncate(usize new_size)
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    i32 r = static_cast&lt;i32&gt;(posix::ftruncate(__handle.fd, static_cast&lt;posix::off64_t&gt;(new_size)));
+    if ( r != 0 ) [[unlikely]]
+      return r;
+    micron::zero(&amp;sd);
+    if ( __cursor &gt; new_size ) __cursor = new_size;
+    return 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L643">line 643</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/io/cached_file.hpp.html#L646">line 646</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/io/cached_file.hpp.html#L649">line 649</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-8397d5481b7cbfb3">posix::ftruncate</a>, <a href="../algorithm/memory.hpp.html#f-43fbf1bfc5b0907d">micron::zero</a>.</p></section><section class="function-entry" id="f-9eb399597687a086"><h3><code>micron::io::cached_file::empty(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L655">line 655</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>size() == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty(void)
+  {
+    return size() == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>size() == 0</code></td><td><a href="../../source/io/cached_file.hpp.html#L657">line 657</a></td></tr></tbody></table></section><section class="function-entry" id="f-e5bf446a1995a0ce"><h3><code>micron::io::cached_file::permissions_mode(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L661">line 661</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>posix::mode_t
+  permissions_mode(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>mode()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">posix::mode_t
+  permissions_mode(void)
+  {
+    return mode();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mode()</code></td><td><a href="../../source/io/cached_file.hpp.html#L663">line 663</a></td></tr></tbody></table></section><section class="function-entry" id="f-c5a4c5816c7d24ca"><h3><code>micron::io::cached_file::perms(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L667">line 667</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>io::linux_permissions
+  perms(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>permissions()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">io::linux_permissions
+  perms(void)
+  {
+    return permissions();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>permissions()</code></td><td><a href="../../source/io/cached_file.hpp.html#L669">line 669</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="format.hpp.html#f-dcb9fe13313ca301">permissions</a>.</p></section><section class="function-entry" id="f-8d7faf4ab2fe6e33"><h3><code>micron::io::cached_file::owner(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L673">line 673</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>posix::uid_t
+  owner(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>uid()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">posix::uid_t
+  owner(void)
+  {
+    return uid();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>uid()</code></td><td><a href="../../source/io/cached_file.hpp.html#L675">line 675</a></td></tr></tbody></table></section><section class="function-entry" id="f-9d52e534cec488ce"><h3><code>micron::io::cached_file::group(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L679">line 679</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>posix::gid_t
+  group(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>gid()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">posix::gid_t
+  group(void)
+  {
+    return gid();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>gid()</code></td><td><a href="../../source/io/cached_file.hpp.html#L681">line 681</a></td></tr></tbody></table></section><section class="function-entry" id="f-294e2ab08d813dd1"><h3><code>micron::io::cached_file::inode_number(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L685">line 685</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>posix::ino64_t
+  inode_number(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>inode()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">posix::ino64_t
+  inode_number(void)
+  {
+    return inode();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>inode()</code></td><td><a href="../../source/io/cached_file.hpp.html#L687">line 687</a></td></tr></tbody></table></section><section class="function-entry" id="f-933186a52097cd6c"><h3><code>micron::io::cached_file::hard_links(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L691">line 691</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>posix::nlink_t
+  hard_links(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>link_count()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">posix::nlink_t
+  hard_links(void)
+  {
+    return link_count();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>link_count()</code></td><td><a href="../../source/io/cached_file.hpp.html#L693">line 693</a></td></tr></tbody></table></section><section class="function-entry" id="f-9d840073034b540f"><h3><code>micron::io::cached_file::modified_time(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L697">line 697</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>time64_t
+  modified_time(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>mtime()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">time64_t
+  modified_time(void)
+  {
+    return mtime();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mtime()</code></td><td><a href="../../source/io/cached_file.hpp.html#L699">line 699</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fsys.hpp.html#f-d07cee135aa64ae0">mtime</a>.</p></section><section class="function-entry" id="f-80bd2f32b67840bc"><h3><code>micron::io::cached_file::accessed_time(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L703">line 703</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>time64_t
+  accessed_time(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>atime()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">time64_t
+  accessed_time(void)
+  {
+    return atime();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>atime()</code></td><td><a href="../../source/io/cached_file.hpp.html#L705">line 705</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fsys.hpp.html#f-cfdffa8ae9c3be40">atime</a>.</p></section><section class="function-entry" id="f-f592599ccd56fb6b"><h3><code>micron::io::cached_file::changed_time(void)</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L709">line 709</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>time64_t
+  changed_time(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>ctime()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">time64_t
+  changed_time(void)
+  {
+    return ctime();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ctime()</code></td><td><a href="../../source/io/cached_file.hpp.html#L711">line 711</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fsys.hpp.html#f-cbf21acf6f532012">ctime</a>.</p></section><section class="function-entry" id="f-4c88c294180e3096"><h3><code>micron::io::cached_file::owned_by_me(void) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L715">line 715</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  owned_by_me(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>posix::is_owned_by(__handle, posix::getuid())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  owned_by_me(void) const
+  {
+    return posix::is_owned_by(__handle, posix::getuid());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>posix::is_owned_by(__handle, posix::getuid())</code></td><td><a href="../../source/io/cached_file.hpp.html#L717">line 717</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/inode.hpp.html#f-3967818c2f13affb">posix::is_owned_by</a>, <a href="../linux/sys/system.hpp.html#f-bbe286bc2fb50331">posix::getuid</a>.</p></section><section class="function-entry" id="f-dc4dec5c4bf3d97d"><h3><code>micron::io::cached_file::sync(void) const</code></h3><p>Defined in <code>io/cached_file.hpp</code>, <a href="../../source/io/cached_file.hpp.html#L721">line 721</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  sync(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  sync(void) const
+  {
+    if ( i32 __e = __check() ) [[unlikely]]
+      return __e;
+    posix::fsync(__handle.fd);
+    return posix::syncfs(__handle.fd);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__e</code></td><td><a href="../../source/io/cached_file.hpp.html#L724">line 724</a></td></tr><tr class="t-dsc"><td><code>posix::syncfs(__handle.fd)</code></td><td><a href="../../source/io/cached_file.hpp.html#L726">line 726</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-17bc0d012e9e5c67">posix::fsync</a>, <a href="../linux/io/sys.hpp.html#f-b1da0694b5b87896">posix::syncfs</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

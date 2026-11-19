@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/filter.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/filter.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/algorithms.html">Algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/filter.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/algorithm/filter.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-1e069533cba49ac9">micron::filter(const T *first, const T *end, Fn fn, T *out)</a></td><td>function; line 40</td></tr><tr class="t-dsc"><td><a href="#f-7739ca1fa29963c3">micron::filter(const T *first, const T *end, Fn fn, T *out, usize limit)</a></td><td>function; line 50</td></tr><tr class="t-dsc"><td><a href="#f-1f69086850029c04">micron::filter(const T *first, const T *end, Fn fn, T *out, T *out_end)</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-70ba24994aa4df20">micron::prune(const T *first, const T *end, Fn fn, T *out, usize limit)</a></td><td>function; line 75</td></tr><tr class="t-dsc"><td><a href="#f-fffab708a843b704">micron::prune(const T *first, const T *end, Fn fn, T *out, T *out_end)</a></td><td>function; line 88</td></tr><tr class="t-dsc"><td><a href="#f-99cda6b2e617d5c7">micron::filter(const C &amp;c, Fn fn)</a></td><td>function; line 100</td></tr><tr class="t-dsc"><td><a href="#f-59148e64ec2e17a4">micron::filter_inplace(C &amp;c, F fn)</a></td><td>function; line 112</td></tr><tr class="t-dsc"><td><a href="#f-649da78a709133ce">micron::filter(const C &amp;c, Fn fn, usize limit)</a></td><td>function; line 126</td></tr><tr class="t-dsc"><td><a href="#f-3c6f8e7108090985">micron::filter(const C &amp;c_in, Fn fn, O &amp;c_out)</a></td><td>function; line 139</td></tr><tr class="t-dsc"><td><a href="#f-287d70db5c0be5ce">micron::filter(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</a></td><td>function; line 148</td></tr><tr class="t-dsc"><td><a href="#f-552e48d46e446364">micron::prune(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-8e2c128dcaef463f">micron::prune(const C &amp;c_in, Fn fn, O &amp;c_out)</a></td><td>function; line 166</td></tr><tr class="t-dsc"><td><a href="#f-fdaed8f699d88ac9">micron::filter(const T *first, const T *end, Fn fn, T *out)</a></td><td>function; line 174</td></tr><tr class="t-dsc"><td><a href="#f-ccbc83e773a96f90">micron::filter(const T *first, const T *end, Fn fn, T *out, usize limit)</a></td><td>function; line 182</td></tr><tr class="t-dsc"><td><a href="#f-a3a73c196a8737b5">micron::filter(const T *first, const T *end, Fn fn, T *out, T *out_end)</a></td><td>function; line 190</td></tr><tr class="t-dsc"><td><a href="#f-39b75beffebf54fc">micron::prune(const T *first, const T *end, Fn fn, T *out, usize limit)</a></td><td>function; line 198</td></tr><tr class="t-dsc"><td><a href="#f-3b2251e34ef4ac25">micron::prune(const T *first, const T *end, Fn fn, T *out, T *out_end)</a></td><td>function; line 206</td></tr><tr class="t-dsc"><td><a href="#f-1b2a0a76d43c3916">micron::filter(const C &amp;c, Fn fn)</a></td><td>function; line 214</td></tr><tr class="t-dsc"><td><a href="#f-c645297d319886ab">micron::filter_inplace(C &amp;c, F fn)</a></td><td>function; line 222</td></tr><tr class="t-dsc"><td><a href="#f-97a9c96b185a991b">micron::filter(const C &amp;c, Fn fn, usize limit)</a></td><td>function; line 230</td></tr><tr class="t-dsc"><td><a href="#f-fe5062536227f055">micron::filter(const C &amp;c_in, Fn fn, O &amp;c_out)</a></td><td>function; line 238</td></tr><tr class="t-dsc"><td><a href="#f-f3fbcadc0d1a2076">micron::filter(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</a></td><td>function; line 246</td></tr><tr class="t-dsc"><td><a href="#f-68d852073d69f312">micron::prune(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</a></td><td>function; line 254</td></tr><tr class="t-dsc"><td><a href="#f-cedb873bcdced442">micron::prune(const C &amp;c_in, Fn fn, O &amp;c_out)</a></td><td>function; line 262</td></tr><tr class="t-dsc"><td><a href="#f-4f8f87a4d90a70d2">micron::filter(const T *first, const T *end, T *out) noexcept</a></td><td>function; line 270</td></tr><tr class="t-dsc"><td><a href="#f-de8e4fcc517fe819">micron::filter(const T *first, const T *end, T *out, usize limit) noexcept</a></td><td>function; line 279</td></tr><tr class="t-dsc"><td><a href="#f-a61073485a236563">micron::filter(const C &amp;c)</a></td><td>function; line 291</td></tr><tr class="t-dsc"><td><a href="#f-9350b970aca7837a">micron::filter(const C &amp;c, usize limit)</a></td><td>function; line 302</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-1e069533cba49ac9"><h3><code>micron::filter(const T *first, const T *end, Fn fn, T *out)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L40">line 40</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out)
+{
+  for ( ; first != end; ++first )
+    if ( fn(first) ) *out++ = *first;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L44">line 44</a></td></tr></tbody></table></section><section class="function-entry" id="f-7739ca1fa29963c3"><h3><code>micron::filter(const T *first, const T *end, Fn fn, T *out, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L50">line 50</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out, usize limit)
+{
+  for ( u64 i = 0; first != end and i &lt; limit; ++first )
+    if ( fn(first) ) {
+      *out++ = *first;
+      ++i;
+    }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L57">line 57</a></td></tr></tbody></table></section><section class="function-entry" id="f-1f69086850029c04"><h3><code>micron::filter(const T *first, const T *end, Fn fn, T *out, T *out_end)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out, T *out_end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li><li><code>T *out_end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
+{
+  for ( ; first != end and out != out_end; ++first )
+    if ( fn(first) ) {
+      *out++ = *first;
+    }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L69">line 69</a></td></tr></tbody></table></section><section class="function-entry" id="f-70ba24994aa4df20"><h3><code>micron::prune(const T *first, const T *end, Fn fn, T *out, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L75">line 75</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, usize limit)
+{
+  for ( u64 i = 0; first != end and i &lt; limit; ++first )
+    if ( fn(first) ) {
+      *out++ = *first;
+      ++i;
+    }
+  return first;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>first</code></td><td><a href="../../source/algorithm/filter.hpp.html#L82">line 82</a></td></tr></tbody></table></section><section class="function-entry" id="f-fffab708a843b704"><h3><code>micron::prune(const T *first, const T *end, Fn fn, T *out, T *out_end)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L88">line 88</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, T *out_end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li><li><code>T *out_end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, T&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const T *&gt;
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, T *out_end)
+{
+  for ( ; first != end and out != out_end; ++first )
+    if ( fn(first) ) {
+      *out++ = *first;
+    }
+  return first;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>first</code></td><td><a href="../../source/algorithm/filter.hpp.html#L94">line 94</a></td></tr></tbody></table></section><section class="function-entry" id="f-99cda6b2e617d5c7"><h3><code>micron::filter(const C &amp;c, Fn fn)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L100">line 100</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt;
+C
+filter(const C &amp;c, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt;
+C
+filter(const C &amp;c, Fn fn)
+{
+  C out;
+  out.resize(c.size());
+  auto *ptr = filter(c.begin(), c.end(), fn, out.begin());
+  out.resize(ptr - out.begin());
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L106">line 106</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>.</p></section><section class="function-entry" id="f-59148e64ec2e17a4"><h3><code>micron::filter_inplace(C &amp;c, F fn)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L112">line 112</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename F&gt;
+  requires(!micron::fn_predicate&lt;F, typename C::value_type&gt;) &amp;&amp; micron::is_invocable_v&lt;F, const typename C::value_type *&gt;
+C &amp;
+filter_inplace(C &amp;c, F fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>F fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename F&gt;
+  requires(!micron::fn_predicate&lt;F, typename C::value_type&gt;) &amp;&amp; micron::is_invocable_v&lt;F, const typename C::value_type *&gt;
+C &amp;
+filter_inplace(C &amp;c, F fn)
+{
+  auto *first = c.begin();
+  auto *last = c.end();
+  auto *out = first;
+  for ( ; first != last; ++first )
+    if ( fn(first) ) *out++ = *first;
+  c.resize(static_cast&lt;typename C::size_type&gt;(out - c.begin()));
+  return c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../source/algorithm/filter.hpp.html#L120">line 120</a></td></tr></tbody></table></section><section class="function-entry" id="f-649da78a709133ce"><h3><code>micron::filter(const C &amp;c, Fn fn, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L126">line 126</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt;
+C
+filter(const C &amp;c, Fn fn, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Fn fn</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;) &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt;
+C
+filter(const C &amp;c, Fn fn, usize limit)
+{
+  C out;
+  out.resize(micron::min(c.size(), limit));
+  auto *ptr = filter(c.begin(), c.end(), fn, out.begin(), limit);
+  out.resize(ptr - out.begin());
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L132">line 132</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-4d14a8deebaf67db">micron::min</a>, <a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>.</p></section><section class="function-entry" id="f-3c6f8e7108090985"><h3><code>micron::filter(const C &amp;c_in, Fn fn, O &amp;c_out)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L139">line 139</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;)
+          &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+typename O::value_type *
+filter(const C &amp;c_in, Fn fn, O &amp;c_out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c_in</code></li><li><code>Fn fn</code></li><li><code>O &amp;c_out</code></li></ul><h4>Effects</h4><p>Returns <code>filter(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;)
+          &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+typename O::value_type *
+filter(const C &amp;c_in, Fn fn, O &amp;c_out)
+{
+  return filter(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end())</code></td><td><a href="../../source/algorithm/filter.hpp.html#L141">line 141</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>.</p></section><section class="function-entry" id="f-287d70db5c0be5ce"><h3><code>micron::filter(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L148">line 148</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;)
+          &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+typename O::value_type *
+filter(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c_in</code></li><li><code>Fn fn</code></li><li><code>O &amp;c_out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Returns <code>filter(c_in.begin(), c_in.end(), fn, c_out.begin(), limit)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;)
+          &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+typename O::value_type *
+filter(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)
+{
+  return filter(c_in.begin(), c_in.end(), fn, c_out.begin(), limit);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(c_in.begin(), c_in.end(), fn, c_out.begin(), limit)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L150">line 150</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>.</p></section><section class="function-entry" id="f-552e48d46e446364"><h3><code>micron::prune(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;)
+          &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+const typename C::value_type *
+prune(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c_in</code></li><li><code>Fn fn</code></li><li><code>O &amp;c_out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Returns <code>prune(c_in.begin(), c_in.end(), fn, c_out.begin(), limit)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;)
+          &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+const typename C::value_type *
+prune(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)
+{
+  return prune(c_in.begin(), c_in.end(), fn, c_out.begin(), limit);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>prune(c_in.begin(), c_in.end(), fn, c_out.begin(), limit)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L159">line 159</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-70ba24994aa4df20">prune</a>.</p></section><section class="function-entry" id="f-8e2c128dcaef463f"><h3><code>micron::prune(const C &amp;c_in, Fn fn, O &amp;c_out)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L166">line 166</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;)
+          &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+const typename C::value_type *
+prune(const C &amp;c_in, Fn fn, O &amp;c_out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c_in</code></li><li><code>Fn fn</code></li><li><code>O &amp;c_out</code></li></ul><h4>Effects</h4><p>Returns <code>prune(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires(!micron::fn_predicate&lt;Fn, typename C::value_type&gt;)
+          &amp;&amp; micron::is_invocable_v&lt;Fn, const typename C::value_type *&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+const typename C::value_type *
+prune(const C &amp;c_in, Fn fn, O &amp;c_out)
+{
+  return prune(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>prune(c_in.begin(), c_in.end(), fn, c_out.begin(), c_out.end())</code></td><td><a href="../../source/algorithm/filter.hpp.html#L168">line 168</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-70ba24994aa4df20">prune</a>.</p></section><section class="function-entry" id="f-fdaed8f699d88ac9"><h3><code>micron::filter(const T *first, const T *end, Fn fn, T *out)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L174">line 174</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li></ul><h4>Effects</h4><p>Returns <code>filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out)
+{
+  return filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L176">line 176</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-ccbc83e773a96f90"><h3><code>micron::filter(const T *first, const T *end, Fn fn, T *out, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L182">line 182</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Returns <code>filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, limit)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out, usize limit)
+{
+  return filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, limit);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, limit)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L184">line 184</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-a3a73c196a8737b5"><h3><code>micron::filter(const T *first, const T *end, Fn fn, T *out, T *out_end)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L190">line 190</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out, T *out_end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li><li><code>T *out_end</code></li></ul><h4>Effects</h4><p>Returns <code>filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, out_end)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+T *
+filter(const T *first, const T *end, Fn fn, T *out, T *out_end)
+{
+  return filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, out_end);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, out_end)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L192">line 192</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-39b75beffebf54fc"><h3><code>micron::prune(const T *first, const T *end, Fn fn, T *out, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L198">line 198</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Returns <code>prune(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, limit)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, usize limit)
+{
+  return prune(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, limit);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>prune(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, limit)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L200">line 200</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-70ba24994aa4df20">prune</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-3b2251e34ef4ac25"><h3><code>micron::prune(const T *first, const T *end, Fn fn, T *out, T *out_end)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L206">line 206</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, T *out_end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>Fn fn</code></li><li><code>T *out</code></li><li><code>T *out_end</code></li></ul><h4>Effects</h4><p>Returns <code>prune(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, out_end)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, T&gt;
+const T *
+prune(const T *first, const T *end, Fn fn, T *out, T *out_end)
+{
+  return prune(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, out_end);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>prune(first, end, __impl::__deref_pred&lt;Fn, T&gt;{ micron::move(fn) }, out, out_end)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L208">line 208</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-70ba24994aa4df20">prune</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-1b2a0a76d43c3916"><h3><code>micron::filter(const C &amp;c, Fn fn)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L214">line 214</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt;
+C
+filter(const C &amp;c, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Returns <code>filter(c, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt;
+C
+filter(const C &amp;c, Fn fn)
+{
+  return filter(c, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(c, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) })</code></td><td><a href="../../source/algorithm/filter.hpp.html#L216">line 216</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-c645297d319886ab"><h3><code>micron::filter_inplace(C &amp;c, F fn)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L222">line 222</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename F&gt;
+  requires micron::fn_predicate&lt;F, typename C::value_type&gt;
+C &amp;
+filter_inplace(C &amp;c, F fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>F fn</code></li></ul><h4>Effects</h4><p>Returns <code>filter_inplace(c, __impl::__deref_pred&lt;F, typename C::value_type&gt;{ micron::move(fn) })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename F&gt;
+  requires micron::fn_predicate&lt;F, typename C::value_type&gt;
+C &amp;
+filter_inplace(C &amp;c, F fn)
+{
+  return filter_inplace(c, __impl::__deref_pred&lt;F, typename C::value_type&gt;{ micron::move(fn) });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter_inplace(c, __impl::__deref_pred&lt;F, typename C::value_type&gt;{ micron::move(fn) })</code></td><td><a href="../../source/algorithm/filter.hpp.html#L224">line 224</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-59148e64ec2e17a4">filter_inplace</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-97a9c96b185a991b"><h3><code>micron::filter(const C &amp;c, Fn fn, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L230">line 230</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt;
+C
+filter(const C &amp;c, Fn fn, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Fn fn</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Returns <code>filter(c, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, limit)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt;
+C
+filter(const C &amp;c, Fn fn, usize limit)
+{
+  return filter(c, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, limit);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(c, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, limit)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L232">line 232</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-fe5062536227f055"><h3><code>micron::filter(const C &amp;c_in, Fn fn, O &amp;c_out)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L238">line 238</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+typename O::value_type *
+filter(const C &amp;c_in, Fn fn, O &amp;c_out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c_in</code></li><li><code>Fn fn</code></li><li><code>O &amp;c_out</code></li></ul><h4>Effects</h4><p>Returns <code>filter(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+typename O::value_type *
+filter(const C &amp;c_in, Fn fn, O &amp;c_out)
+{
+  return filter(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L240">line 240</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-f3fbcadc0d1a2076"><h3><code>micron::filter(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L246">line 246</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+typename O::value_type *
+filter(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c_in</code></li><li><code>Fn fn</code></li><li><code>O &amp;c_out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Returns <code>filter(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out, limit)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+typename O::value_type *
+filter(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)
+{
+  return filter(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out, limit);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>filter(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out, limit)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L248">line 248</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-68d852073d69f312"><h3><code>micron::prune(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L254">line 254</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+const typename C::value_type *
+prune(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c_in</code></li><li><code>Fn fn</code></li><li><code>O &amp;c_out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Returns <code>prune(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out, limit)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+const typename C::value_type *
+prune(const C &amp;c_in, Fn fn, O &amp;c_out, usize limit)
+{
+  return prune(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out, limit);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>prune(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out, limit)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L256">line 256</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-70ba24994aa4df20">prune</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-cedb873bcdced442"><h3><code>micron::prune(const C &amp;c_in, Fn fn, O &amp;c_out)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L262">line 262</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+const typename C::value_type *
+prune(const C &amp;c_in, Fn fn, O &amp;c_out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c_in</code></li><li><code>Fn fn</code></li><li><code>O &amp;c_out</code></li></ul><h4>Effects</h4><p>Returns <code>prune(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, is_iterable_container O, typename Fn&gt;
+  requires micron::fn_predicate&lt;Fn, typename C::value_type&gt; &amp;&amp; micron::is_same_v&lt;typename C::value_type, typename O::value_type&gt;
+const typename C::value_type *
+prune(const C &amp;c_in, Fn fn, O &amp;c_out)
+{
+  return prune(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>prune(c_in, __impl::__deref_pred&lt;Fn, typename C::value_type&gt;{ micron::move(fn) }, c_out)</code></td><td><a href="../../source/algorithm/filter.hpp.html#L264">line 264</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-70ba24994aa4df20">prune</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-4f8f87a4d90a70d2"><h3><code>micron::filter(const T *first, const T *end, T *out) noexcept</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L270">line 270</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, typename T&gt;
+constexpr T *
+filter(const T *first, const T *end, T *out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>T *out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, typename T&gt;
+constexpr T *
+filter(const T *first, const T *end, T *out) noexcept
+{
+  for ( ; first != end; ++first )
+    if ( Fn(first) ) *out++ = *first;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L274">line 274</a></td></tr></tbody></table></section><section class="function-entry" id="f-de8e4fcc517fe819"><h3><code>micron::filter(const T *first, const T *end, T *out, usize limit) noexcept</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L279">line 279</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, typename T&gt;
+constexpr T *
+filter(const T *first, const T *end, T *out, usize limit) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *end</code></li><li><code>T *out</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, typename T&gt;
+constexpr T *
+filter(const T *first, const T *end, T *out, usize limit) noexcept
+{
+  for ( u64 i = 0; first != end &amp;&amp; i &lt; limit; ++first )
+    if ( Fn(first) ) {
+      *out++ = *first;
+      ++i;
+    }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L286">line 286</a></td></tr></tbody></table></section><section class="function-entry" id="f-a61073485a236563"><h3><code>micron::filter(const C &amp;c)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L291">line 291</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, is_iterable_container C&gt;
+C
+filter(const C &amp;c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, is_iterable_container C&gt;
+C
+filter(const C &amp;c)
+{
+  C out;
+  out.resize(c.size());
+  auto *last = filter&lt;Fn&gt;(c.begin(), c.end(), out.begin());
+  out.resize(last - out.begin());
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L297">line 297</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="filter.hpp.html#f-1e069533cba49ac9">filter&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-9350b970aca7837a"><h3><code>micron::filter(const C &amp;c, usize limit)</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L302">line 302</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, is_iterable_container C&gt;
+C
+filter(const C &amp;c, usize limit)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>usize limit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, is_iterable_container C&gt;
+C
+filter(const C &amp;c, usize limit)
+{
+  C out;
+  out.resize(micron::min(c.size(), limit));
+  auto *last = filter&lt;Fn&gt;(c.begin(), c.end(), out.begin(), limit);
+  out.resize(last - out.begin());
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/filter.hpp.html#L308">line 308</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-4d14a8deebaf67db">micron::min</a>, <a href="filter.hpp.html#f-1e069533cba49ac9">filter&lt;Fn&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e3c81267a60ceb89"><h3><code>micron::__impl::__deref_pred::operator()(const T *__p) const</code></h3><p>Defined in <code>algorithm/filter.hpp</code>, <a href="../../source/algorithm/filter.hpp.html#L29">line 29</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] constexpr bool
+  operator()(const T *__p) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__p</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;bool&gt;(__fn(*__p))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] constexpr bool
+  operator()(const T *__p) const
+  {
+    return static_cast&lt;bool&gt;(__fn(*__p));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;bool&gt;(__fn(*__p))</code></td><td><a href="../../source/algorithm/filter.hpp.html#L31">line 31</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

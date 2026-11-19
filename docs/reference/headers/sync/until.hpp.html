@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sync/until.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sync/until.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/synchronization.html">Synchronization</a></div><p>Defined in header <code>&lt;micron/sync/until.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sync/until.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-2ac6a62509ea1934">micron::until(const T &amp;cond, F f, Args &amp;&amp;...args)</a></td><td>function; line 23</td></tr><tr class="t-dsc"><td><a href="#f-6100c5e3c64e02fb">micron::until(const T &amp;cond, const T &amp;var)</a></td><td>function; line 35</td></tr><tr class="t-dsc"><td><a href="#f-1d9c7e896e177ea9">micron::until(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var)</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-c00afe7808f0ec09">micron::until(const T &amp;cond, const T &amp;var, Compare comp)</a></td><td>function; line 53</td></tr><tr class="t-dsc"><td><a href="#f-4c4af27e992cf651">micron::until(P pred)</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-b1cc010b8d8de92d">micron::until_true(P pred, Args &amp;&amp;...args)</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-309a34e829e82cd6">micron::until_timeout(auto cond, fduration_t timeout, F f, Args &amp;&amp;...args)</a></td><td>function; line 82</td></tr><tr class="t-dsc"><td><a href="#f-f52fd4b6df760474">micron::until_timeout(fduration_t timeout, P pred)</a></td><td>function; line 99</td></tr><tr class="t-dsc"><td><a href="#f-91975767ce2798cc">micron::until_max_iter(auto cond, usize max_iters, F f, Args &amp;&amp;...args)</a></td><td>function; line 112</td></tr><tr class="t-dsc"><td><a href="#f-3c6d78a6ebc57724">micron::until_ready(F &amp;fut)</a></td><td>function; line 126</td></tr><tr class="t-dsc"><td><a href="#f-756c5f7921e58c32">micron::until_ready_timeout(F &amp;fut, fduration_t timeout)</a></td><td>function; line 136</td></tr><tr class="t-dsc"><td><a href="#f-07cd66b15c53d193">micron::until_with_wait(const T &amp;cond, Fn wait, F f, Args &amp;&amp;...args)</a></td><td>function; line 149</td></tr><tr class="t-dsc"><td><a href="#f-766f519031067113">micron::until_with_callback(const T &amp;cond, Cb cb, F f, Args &amp;&amp;...args)</a></td><td>function; line 162</td></tr><tr class="t-dsc"><td><a href="#f-22753c4e712f70ed">micron::until_any(F f, C &amp;&amp;...conds)</a></td><td>function; line 176</td></tr><tr class="t-dsc"><td><a href="#f-1e3d1afdf1032bae">micron::until_any(Args &amp;&amp;...args, bool value)</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-bb614477b4db4240">micron::until_any_true(Args &amp;&amp;...args)</a></td><td>function; line 198</td></tr><tr class="t-dsc"><td><a href="#f-0866e357adbcef0a">micron::until_all_true(Args &amp;&amp;...args)</a></td><td>function; line 207</td></tr><tr class="t-dsc"><td><a href="#f-cad2ab54e25d22e6">micron::until_any_false(Args &amp;&amp;...args)</a></td><td>function; line 216</td></tr><tr class="t-dsc"><td><a href="#f-0745d926b3184aa8">micron::until_all_false(Args &amp;&amp;...args)</a></td><td>function; line 225</td></tr><tr class="t-dsc"><td><a href="#f-cd115177d014ed1b">micron::until_backoff(auto cond, F f, Args &amp;&amp;...args)</a></td><td>function; line 234</td></tr><tr class="t-dsc"><td><a href="#f-f4c1b53293eceb43">micron::until_in_range(const T &amp;min, const T &amp;max, F f, Args &amp;&amp;...args)</a></td><td>function; line 254</td></tr><tr class="t-dsc"><td><a href="#f-eb1d127f5b3131ac">micron::until_not(auto cond, F f, Args &amp;&amp;...args)</a></td><td>function; line 267</td></tr><tr class="t-dsc"><td><a href="#f-89a87721c44baeb7">micron::until_or_future(const T &amp;cond, Fut &amp;fut, F f, Args &amp;&amp;...args)</a></td><td>function; line 280</td></tr><tr class="t-dsc"><td><a href="#f-c6b6ee5447ac3053">micron::until_or_future(const T &amp;cond, const T &amp;var, Fut &amp;fut)</a></td><td>function; line 296</td></tr><tr class="t-dsc"><td><a href="#f-d770544f3861a19a">micron::until_or_future(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, Fut &amp;fut)</a></td><td>function; line 306</td></tr><tr class="t-dsc"><td><a href="#f-c628dd659ab32aeb">micron::until_or_future(P pred, Fut &amp;fut)</a></td><td>function; line 317</td></tr><tr class="t-dsc"><td><a href="#f-0d5dedb06e2e4fa1">micron::until_true_or_future(P pred, Fut &amp;fut, Args &amp;&amp;...args)</a></td><td>function; line 328</td></tr><tr class="t-dsc"><td><a href="#f-3d4b47e8046c41b3">micron::until_timeout_or_future(auto cond, fduration_t timeout, Fut &amp;fut, F f, Args &amp;&amp;...args)</a></td><td>function; line 338</td></tr><tr class="t-dsc"><td><a href="#f-ee2df2ca3f938c56">micron::until_timeout_or_future(fduration_t timeout, Fut &amp;fut, P pred)</a></td><td>function; line 357</td></tr><tr class="t-dsc"><td><a href="#f-575876c25f98d34c">micron::until_with_wait_or_future(const T &amp;cond, Fut &amp;fut, Fn wait, F f, Args &amp;&amp;...args)</a></td><td>function; line 373</td></tr><tr class="t-dsc"><td><a href="#f-e44e9157fe59842f">micron::until_backoff_or_future(auto cond, Fut &amp;fut, F f, Args &amp;&amp;...args)</a></td><td>function; line 389</td></tr><tr class="t-dsc"><td><a href="#f-f7d3f6124855a388">micron::until_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 411</td></tr><tr class="t-dsc"><td><a href="#f-1ce051df57c8abb8">micron::until_or_flag(const T &amp;cond, const T &amp;var, const micron::atomic&lt;bool&gt; &amp;flag)</a></td><td>function; line 427</td></tr><tr class="t-dsc"><td><a href="#f-3a17f623e7de9a54">micron::until_or_flag(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, const micron::atomic&lt;bool&gt; &amp;flag)</a></td><td>function; line 437</td></tr><tr class="t-dsc"><td><a href="#f-633686c85b9b42e9">micron::until_or_flag(P pred, const micron::atomic&lt;bool&gt; &amp;flag)</a></td><td>function; line 448</td></tr><tr class="t-dsc"><td><a href="#f-ab08d7f796b34391">micron::until_true_or_flag(P pred, const micron::atomic&lt;bool&gt; &amp;flag, Args &amp;&amp;...args)</a></td><td>function; line 459</td></tr><tr class="t-dsc"><td><a href="#f-2adb321cf907831e">micron::until_timeout_or_flag(auto cond, fduration_t timeout, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 469</td></tr><tr class="t-dsc"><td><a href="#f-7cfa42603baf26fa">micron::until_timeout_or_flag(fduration_t timeout, const micron::atomic&lt;bool&gt; &amp;flag, P pred)</a></td><td>function; line 488</td></tr><tr class="t-dsc"><td><a href="#f-b11f6c4d7b3a51fa">micron::until_max_iter_or_flag(auto cond, usize max_iters, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 504</td></tr><tr class="t-dsc"><td><a href="#f-d67b480ba54da11e">micron::until_with_wait_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, Fn wait, F f, Args &amp;&amp;...args)</a></td><td>function; line 521</td></tr><tr class="t-dsc"><td><a href="#f-b4a94306cd53961f">micron::until_with_callback_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, Cb cb, F f, Args &amp;&amp;...args)</a></td><td>function; line 537</td></tr><tr class="t-dsc"><td><a href="#f-a6e8b935bec4034d">micron::until_backoff_or_flag(auto cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 554</td></tr><tr class="t-dsc"><td><a href="#f-9f2017d61800a965">micron::until_in_range_or_flag(const T &amp;min, const T &amp;max, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 576</td></tr><tr class="t-dsc"><td><a href="#f-4aafe85230c62689">micron::until_not_or_flag(auto cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 592</td></tr><tr class="t-dsc"><td><a href="#f-bae56cd865d4b872">micron::until_any_or_flag(const micron::atomic&lt;bool&gt; &amp;flag, F f, C &amp;&amp;...conds)</a></td><td>function; line 608</td></tr><tr class="t-dsc"><td><a href="#f-2f1a248743ea1b5d">micron::until_or_future_or_flag(const T &amp;cond, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 624</td></tr><tr class="t-dsc"><td><a href="#f-1d18e1e188742dd8">micron::until_or_future_or_flag(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag)</a></td><td>function; line 642</td></tr><tr class="t-dsc"><td><a href="#f-e22557c152ec9a20">micron::until_or_future_or_flag(P pred, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag)</a></td><td>function; line 656</td></tr><tr class="t-dsc"><td><a href="#f-07cc99df025ef819">micron::until_timeout_or_future_or_flag(auto cond, fduration_t timeout, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 669</td></tr><tr class="t-dsc"><td><a href="#f-480eb0eca2daf581">micron::until_backoff_or_future_or_flag(auto cond, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</a></td><td>function; line 690</td></tr><tr class="t-dsc"><td><a href="#f-2452c9fe2b55aa02">micron::until_flag_set(const A &amp;flag)</a></td><td>function; line 714</td></tr><tr class="t-dsc"><td><a href="#f-a17e644ebe3e3f71">micron::until_flag_clear(const A &amp;flag)</a></td><td>function; line 723</td></tr><tr class="t-dsc"><td><a href="#f-d5a50015564b2816">micron::until_flag_set_timeout(const A &amp;flag, fduration_t timeout)</a></td><td>function; line 732</td></tr><tr class="t-dsc"><td><a href="#f-875003d05eb0ec4f">micron::until_flag_clear_timeout(const A &amp;flag, fduration_t timeout)</a></td><td>function; line 745</td></tr><tr class="t-dsc"><td><a href="#f-fb8d48517a1eb965">micron::until_flag_set_with_wait(const A &amp;flag, Fn wait)</a></td><td>function; line 758</td></tr><tr class="t-dsc"><td><a href="#f-1ceec3ddacd8b0ce">micron::until_flag_set_backoff(const A &amp;flag)</a></td><td>function; line 767</td></tr><tr class="t-dsc"><td><a href="#f-490d21c1c53831bc">micron::until_any_flag_set(const F &amp;...flags)</a></td><td>function; line 783</td></tr><tr class="t-dsc"><td><a href="#f-7103969f93ee57c2">micron::until_all_flags_set(const F &amp;...flags)</a></td><td>function; line 792</td></tr><tr class="t-dsc"><td><a href="#f-11b051ac9e9b79be">micron::until_any_flag_clear(const F &amp;...flags)</a></td><td>function; line 801</td></tr><tr class="t-dsc"><td><a href="#f-88b189472c2f4067">micron::until_all_flags_clear(const F &amp;...flags)</a></td><td>function; line 810</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-2ac6a62509ea1934"><h3><code>micron::until(const T &amp;cond, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L23">line 23</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename... Args&gt;
+void
+until(const T &amp;cond, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename... Args&gt;
+void
+until(const T &amp;cond, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  for ( ;; ) {
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-6100c5e3c64e02fb"><h3><code>micron::until(const T &amp;cond, const T &amp;var)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L35">line 35</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+until(const T &amp;cond, const T &amp;var)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const T &amp;var</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+until(const T &amp;cond, const T &amp;var)
+{
+  while ( var != cond ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-1d9c7e896e177ea9"><h3><code>micron::until(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+until(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const micron::atomic&lt;T&gt; &amp;var</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+until(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var)
+{
+  while ( var.__get(micron::memory_order_acquire) != cond ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-c00afe7808f0ec09"><h3><code>micron::until(const T &amp;cond, const T &amp;var, Compare comp)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Compare&gt;
+void
+until(const T &amp;cond, const T &amp;var, Compare comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const T &amp;var</code></li><li><code>Compare comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Compare&gt;
+void
+until(const T &amp;cond, const T &amp;var, Compare comp)
+{
+  while ( !comp(var, cond) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-4c4af27e992cf651"><h3><code>micron::until(P pred)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P&gt;
+  requires micron::is_invocable_r_v&lt;bool, P&gt;
+void
+until(P pred)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P pred</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P&gt;
+  requires micron::is_invocable_r_v&lt;bool, P&gt;
+void
+until(P pred)
+{
+  while ( !pred() ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-b1cc010b8d8de92d"><h3><code>micron::until_true(P pred, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P, typename... Args&gt;
+  requires micron::is_invocable_r_v&lt;bool, P, Args...&gt;
+void
+until_true(P pred, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P pred</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P, typename... Args&gt;
+  requires micron::is_invocable_r_v&lt;bool, P, Args...&gt;
+void
+until_true(P pred, Args &amp;&amp;...args)
+{
+  while ( !micron::invoke(pred, micron::forward&lt;Args&gt;(args)...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-309a34e829e82cd6"><h3><code>micron::until_timeout(auto cond, fduration_t timeout, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L82">line 82</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+bool
+until_timeout(auto cond, fduration_t timeout, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>fduration_t timeout</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+bool
+until_timeout(auto cond, fduration_t timeout, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  auto start = micron::steady_clock::now();
+
+  for ( ;; ) {
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) return true;
+
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L91">line 91</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-f52fd4b6df760474"><h3><code>micron::until_timeout(fduration_t timeout, P pred)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L99">line 99</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P&gt;
+bool
+until_timeout(fduration_t timeout, P pred)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fduration_t timeout</code></li><li><code>P pred</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P&gt;
+bool
+until_timeout(fduration_t timeout, P pred)
+{
+  auto start = micron::steady_clock::now();
+
+  while ( !pred() ) {
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+    __cpu_pause();
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L107">line 107</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-91975767ce2798cc"><h3><code>micron::until_max_iter(auto cond, usize max_iters, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L112">line 112</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+bool
+until_max_iter(auto cond, usize max_iters, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>usize max_iters</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+bool
+until_max_iter(auto cond, usize max_iters, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( usize i = 0; i &lt; max_iters; ++i ) {
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) return true;
+    __cpu_pause();
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L118">line 118</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L121">line 121</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-3c6d78a6ebc57724"><h3><code>micron::until_ready(F &amp;fut)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L126">line 126</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+auto
+until_ready(F &amp;fut)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;fut</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+auto
+until_ready(F &amp;fut)
+{
+  while ( fut.wait_for(fduration_t(0)) != micron::future_status::ready ) {
+    __cpu_pause();
+  }
+  return fut.get();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fut.get()</code></td><td><a href="../../source/sync/until.hpp.html#L131">line 131</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-756c5f7921e58c32"><h3><code>micron::until_ready_timeout(F &amp;fut, fduration_t timeout)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L136">line 136</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+bool
+until_ready_timeout(F &amp;fut, fduration_t timeout)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;fut</code></li><li><code>fduration_t timeout</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+bool
+until_ready_timeout(F &amp;fut, fduration_t timeout)
+{
+  auto start = micron::steady_clock::now();
+
+  while ( fut.wait_for(fduration_t(0)) != micron::future_status::ready ) {
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+    __cpu_pause();
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L144">line 144</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-07cd66b15c53d193"><h3><code>micron::until_with_wait(const T &amp;cond, Fn wait, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L149">line 149</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename Fn, typename... Args&gt;
+void
+until_with_wait(const T &amp;cond, Fn wait, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>Fn wait</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename Fn, typename... Args&gt;
+void
+until_with_wait(const T &amp;cond, Fn wait, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+    wait();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../linux/process/wait.hpp.html#f-829d993c994fdb37">wait</a>.</p></section><section class="function-entry" id="f-766f519031067113"><h3><code>micron::until_with_callback(const T &amp;cond, Cb cb, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L162">line 162</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename Cb, typename... Args&gt;
+void
+until_with_callback(const T &amp;cond, Cb cb, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>Cb cb</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename Cb, typename... Args&gt;
+void
+until_with_callback(const T &amp;cond, Cb cb, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    cb(res);
+    if ( res == cond ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-22753c4e712f70ed"><h3><code>micron::until_any(F f, C &amp;&amp;...conds)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L176">line 176</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... C&gt;
+void
+until_any(F f, C &amp;&amp;...conds)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F f</code></li><li><code>C &amp;&amp;...conds</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... C&gt;
+void
+until_any(F f, C &amp;&amp;...conds)
+{
+  using ret_t = micron::invoke_result_t&lt;F&gt;;
+
+  for ( ;; ) {
+    ret_t res = f();
+    if ( ((res == conds) || ...) ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-1e3d1afdf1032bae"><h3><code>micron::until_any(Args &amp;&amp;...args, bool value)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+void
+until_any(Args &amp;&amp;...args, bool value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li><li><code>bool value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+void
+until_any(Args &amp;&amp;...args, bool value)
+{
+  while ( (args() || ...) != value ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/process/child.hpp.html#f-6e3bba9050ae69ba">args</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-bb614477b4db4240"><h3><code>micron::until_any_true(Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L198">line 198</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+void
+until_any_true(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+void
+until_any_true(Args &amp;&amp;...args)
+{
+  while ( !(args() || ...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/process/child.hpp.html#f-6e3bba9050ae69ba">args</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-0866e357adbcef0a"><h3><code>micron::until_all_true(Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L207">line 207</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+void
+until_all_true(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+void
+until_all_true(Args &amp;&amp;...args)
+{
+  while ( !(args() &amp;&amp; ...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/process/child.hpp.html#f-6e3bba9050ae69ba">args</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-cad2ab54e25d22e6"><h3><code>micron::until_any_false(Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L216">line 216</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+void
+until_any_false(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+void
+until_any_false(Args &amp;&amp;...args)
+{
+  while ( (args() || ...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/process/child.hpp.html#f-6e3bba9050ae69ba">args</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-0745d926b3184aa8"><h3><code>micron::until_all_false(Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L225">line 225</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+void
+until_all_false(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+void
+until_all_false(Args &amp;&amp;...args)
+{
+  while ( (args() &amp;&amp; ...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/process/child.hpp.html#f-6e3bba9050ae69ba">args</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-cd115177d014ed1b"><h3><code>micron::until_backoff(auto cond, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L234">line 234</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+void
+until_backoff(auto cond, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+void
+until_backoff(auto cond, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
+
+  for ( ;; ) {
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    for ( usize i = 0; i &lt; backoff; ++i ) {
+      __cpu_pause();
+    }
+
+    if ( backoff &lt; max_backoff ) backoff *= 2;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-f4c1b53293eceb43"><h3><code>micron::until_in_range(const T &amp;min, const T &amp;max, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L254">line 254</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename... Args&gt;
+void
+until_in_range(const T &amp;min, const T &amp;max, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;min</code></li><li><code>const T &amp;max</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename... Args&gt;
+void
+until_in_range(const T &amp;min, const T &amp;max, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res &gt;= min &amp;&amp; res &lt;= max ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-eb1d127f5b3131ac"><h3><code>micron::until_not(auto cond, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L267">line 267</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+void
+until_not(auto cond, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+void
+until_not(auto cond, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res != cond ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-89a87721c44baeb7"><h3><code>micron::until_or_future(const T &amp;cond, Fut &amp;fut, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L280">line 280</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename Fut, typename... Args&gt;
+void
+until_or_future(const T &amp;cond, Fut &amp;fut, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>Fut &amp;fut</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename Fut, typename... Args&gt;
+void
+until_or_future(const T &amp;cond, Fut &amp;fut, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-c6b6ee5447ac3053"><h3><code>micron::until_or_future(const T &amp;cond, const T &amp;var, Fut &amp;fut)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L296">line 296</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Fut&gt;
+void
+until_or_future(const T &amp;cond, const T &amp;var, Fut &amp;fut)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const T &amp;var</code></li><li><code>Fut &amp;fut</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Fut&gt;
+void
+until_or_future(const T &amp;cond, const T &amp;var, Fut &amp;fut)
+{
+  while ( var != cond ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-d770544f3861a19a"><h3><code>micron::until_or_future(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, Fut &amp;fut)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L306">line 306</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Fut&gt;
+void
+until_or_future(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, Fut &amp;fut)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const micron::atomic&lt;T&gt; &amp;var</code></li><li><code>Fut &amp;fut</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Fut&gt;
+void
+until_or_future(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, Fut &amp;fut)
+{
+  while ( var.__get(micron::memory_order_acquire) != cond ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-c628dd659ab32aeb"><h3><code>micron::until_or_future(P pred, Fut &amp;fut)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L317">line 317</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P, typename Fut&gt;
+  requires micron::is_invocable_r_v&lt;bool, P&gt;
+void
+until_or_future(P pred, Fut &amp;fut)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P pred</code></li><li><code>Fut &amp;fut</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P, typename Fut&gt;
+  requires micron::is_invocable_r_v&lt;bool, P&gt;
+void
+until_or_future(P pred, Fut &amp;fut)
+{
+  while ( !pred() ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-0d5dedb06e2e4fa1"><h3><code>micron::until_true_or_future(P pred, Fut &amp;fut, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L328">line 328</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P, typename Fut, typename... Args&gt;
+  requires micron::is_invocable_r_v&lt;bool, P, Args...&gt;
+void
+until_true_or_future(P pred, Fut &amp;fut, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P pred</code></li><li><code>Fut &amp;fut</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P, typename Fut, typename... Args&gt;
+  requires micron::is_invocable_r_v&lt;bool, P, Args...&gt;
+void
+until_true_or_future(P pred, Fut &amp;fut, Args &amp;&amp;...args)
+{
+  while ( !micron::invoke(pred, micron::forward&lt;Args&gt;(args)...) ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-3d4b47e8046c41b3"><h3><code>micron::until_timeout_or_future(auto cond, fduration_t timeout, Fut &amp;fut, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L338">line 338</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename Fut, typename... Args&gt;
+bool
+until_timeout_or_future(auto cond, fduration_t timeout, Fut &amp;fut, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>fduration_t timeout</code></li><li><code>Fut &amp;fut</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename Fut, typename... Args&gt;
+bool
+until_timeout_or_future(auto cond, fduration_t timeout, Fut &amp;fut, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  auto start = micron::steady_clock::now();
+
+  for ( ;; ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) return false;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) return true;
+
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L344">line 344</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L347">line 347</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L349">line 349</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-ee2df2ca3f938c56"><h3><code>micron::until_timeout_or_future(fduration_t timeout, Fut &amp;fut, P pred)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L357">line 357</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P, typename Fut&gt;
+bool
+until_timeout_or_future(fduration_t timeout, Fut &amp;fut, P pred)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fduration_t timeout</code></li><li><code>Fut &amp;fut</code></li><li><code>P pred</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P, typename Fut&gt;
+bool
+until_timeout_or_future(fduration_t timeout, Fut &amp;fut, P pred)
+{
+  auto start = micron::steady_clock::now();
+
+  while ( !pred() ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) return false;
+
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+
+    __cpu_pause();
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L362">line 362</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L368">line 368</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-575876c25f98d34c"><h3><code>micron::until_with_wait_or_future(const T &amp;cond, Fut &amp;fut, Fn wait, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L373">line 373</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename Fut, typename Fn, typename... Args&gt;
+void
+until_with_wait_or_future(const T &amp;cond, Fut &amp;fut, Fn wait, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>Fut &amp;fut</code></li><li><code>Fn wait</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename Fut, typename Fn, typename... Args&gt;
+void
+until_with_wait_or_future(const T &amp;cond, Fut &amp;fut, Fn wait, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    wait();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../linux/process/wait.hpp.html#f-829d993c994fdb37">wait</a>.</p></section><section class="function-entry" id="f-e44e9157fe59842f"><h3><code>micron::until_backoff_or_future(auto cond, Fut &amp;fut, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L389">line 389</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename Fut, typename... Args&gt;
+void
+until_backoff_or_future(auto cond, Fut &amp;fut, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>Fut &amp;fut</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename Fut, typename... Args&gt;
+void
+until_backoff_or_future(auto cond, Fut &amp;fut, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
+
+  for ( ;; ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    for ( usize i = 0; i &lt; backoff; ++i ) {
+      __cpu_pause();
+    }
+
+    if ( backoff &lt; max_backoff ) backoff *= 2;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-f7d3f6124855a388"><h3><code>micron::until_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L411">line 411</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename... Args&gt;
+void
+until_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename... Args&gt;
+void
+until_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-1ce051df57c8abb8"><h3><code>micron::until_or_flag(const T &amp;cond, const T &amp;var, const micron::atomic&lt;bool&gt; &amp;flag)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L427">line 427</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+until_or_flag(const T &amp;cond, const T &amp;var, const micron::atomic&lt;bool&gt; &amp;flag)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const T &amp;var</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+until_or_flag(const T &amp;cond, const T &amp;var, const micron::atomic&lt;bool&gt; &amp;flag)
+{
+  while ( var != cond ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-3a17f623e7de9a54"><h3><code>micron::until_or_flag(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, const micron::atomic&lt;bool&gt; &amp;flag)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L437">line 437</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+until_or_flag(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, const micron::atomic&lt;bool&gt; &amp;flag)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const micron::atomic&lt;T&gt; &amp;var</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+until_or_flag(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, const micron::atomic&lt;bool&gt; &amp;flag)
+{
+  while ( var.__get(micron::memory_order_acquire) != cond ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-633686c85b9b42e9"><h3><code>micron::until_or_flag(P pred, const micron::atomic&lt;bool&gt; &amp;flag)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L448">line 448</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P&gt;
+  requires micron::is_invocable_r_v&lt;bool, P&gt;
+void
+until_or_flag(P pred, const micron::atomic&lt;bool&gt; &amp;flag)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P pred</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P&gt;
+  requires micron::is_invocable_r_v&lt;bool, P&gt;
+void
+until_or_flag(P pred, const micron::atomic&lt;bool&gt; &amp;flag)
+{
+  while ( !pred() ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-ab08d7f796b34391"><h3><code>micron::until_true_or_flag(P pred, const micron::atomic&lt;bool&gt; &amp;flag, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L459">line 459</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P, typename... Args&gt;
+  requires micron::is_invocable_r_v&lt;bool, P, Args...&gt;
+void
+until_true_or_flag(P pred, const micron::atomic&lt;bool&gt; &amp;flag, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P pred</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P, typename... Args&gt;
+  requires micron::is_invocable_r_v&lt;bool, P, Args...&gt;
+void
+until_true_or_flag(P pred, const micron::atomic&lt;bool&gt; &amp;flag, Args &amp;&amp;...args)
+{
+  while ( !micron::invoke(pred, micron::forward&lt;Args&gt;(args)...) ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-2adb321cf907831e"><h3><code>micron::until_timeout_or_flag(auto cond, fduration_t timeout, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L469">line 469</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+bool
+until_timeout_or_flag(auto cond, fduration_t timeout, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>fduration_t timeout</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+bool
+until_timeout_or_flag(auto cond, fduration_t timeout, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  auto start = micron::steady_clock::now();
+
+  for ( ;; ) {
+    if ( flag.__get(micron::memory_order_acquire) ) return false;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) return true;
+
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L475">line 475</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L478">line 478</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L480">line 480</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-7cfa42603baf26fa"><h3><code>micron::until_timeout_or_flag(fduration_t timeout, const micron::atomic&lt;bool&gt; &amp;flag, P pred)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L488">line 488</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P&gt;
+bool
+until_timeout_or_flag(fduration_t timeout, const micron::atomic&lt;bool&gt; &amp;flag, P pred)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fduration_t timeout</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>P pred</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P&gt;
+bool
+until_timeout_or_flag(fduration_t timeout, const micron::atomic&lt;bool&gt; &amp;flag, P pred)
+{
+  auto start = micron::steady_clock::now();
+
+  while ( !pred() ) {
+    if ( flag.__get(micron::memory_order_acquire) ) return false;
+
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+
+    __cpu_pause();
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L493">line 493</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L495">line 495</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L499">line 499</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-b11f6c4d7b3a51fa"><h3><code>micron::until_max_iter_or_flag(auto cond, usize max_iters, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L504">line 504</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+bool
+until_max_iter_or_flag(auto cond, usize max_iters, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>usize max_iters</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+bool
+until_max_iter_or_flag(auto cond, usize max_iters, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( usize i = 0; i &lt; max_iters; ++i ) {
+    if ( flag.__get(micron::memory_order_acquire) ) return false;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) return true;
+
+    __cpu_pause();
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L509">line 509</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L512">line 512</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L516">line 516</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-d67b480ba54da11e"><h3><code>micron::until_with_wait_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, Fn wait, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L521">line 521</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename Fn, typename... Args&gt;
+void
+until_with_wait_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, Fn wait, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>Fn wait</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename Fn, typename... Args&gt;
+void
+until_with_wait_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, Fn wait, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    wait();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../linux/process/wait.hpp.html#f-829d993c994fdb37">wait</a>.</p></section><section class="function-entry" id="f-b4a94306cd53961f"><h3><code>micron::until_with_callback_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, Cb cb, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L537">line 537</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename Cb, typename... Args&gt;
+void
+until_with_callback_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, Cb cb, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>Cb cb</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename Cb, typename... Args&gt;
+void
+until_with_callback_or_flag(const T &amp;cond, const micron::atomic&lt;bool&gt; &amp;flag, Cb cb, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    cb(res);
+    if ( res == cond ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-a6e8b935bec4034d"><h3><code>micron::until_backoff_or_flag(auto cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L554">line 554</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+void
+until_backoff_or_flag(auto cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+void
+until_backoff_or_flag(auto cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
+
+  for ( ;; ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    for ( usize i = 0; i &lt; backoff; ++i ) {
+      __cpu_pause();
+    }
+
+    if ( backoff &lt; max_backoff ) backoff *= 2;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-9f2017d61800a965"><h3><code>micron::until_in_range_or_flag(const T &amp;min, const T &amp;max, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L576">line 576</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename... Args&gt;
+void
+until_in_range_or_flag(const T &amp;min, const T &amp;max, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;min</code></li><li><code>const T &amp;max</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename... Args&gt;
+void
+until_in_range_or_flag(const T &amp;min, const T &amp;max, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res &gt;= min &amp;&amp; res &lt;= max ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-4aafe85230c62689"><h3><code>micron::until_not_or_flag(auto cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L592">line 592</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+void
+until_not_or_flag(auto cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+void
+until_not_or_flag(auto cond, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res != cond ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-bae56cd865d4b872"><h3><code>micron::until_any_or_flag(const micron::atomic&lt;bool&gt; &amp;flag, F f, C &amp;&amp;...conds)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L608">line 608</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... C&gt;
+void
+until_any_or_flag(const micron::atomic&lt;bool&gt; &amp;flag, F f, C &amp;&amp;...conds)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>C &amp;&amp;...conds</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... C&gt;
+void
+until_any_or_flag(const micron::atomic&lt;bool&gt; &amp;flag, F f, C &amp;&amp;...conds)
+{
+  using ret_t = micron::invoke_result_t&lt;F&gt;;
+
+  for ( ;; ) {
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = f();
+    if ( ((res == conds) || ...) ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-2f1a248743ea1b5d"><h3><code>micron::until_or_future_or_flag(const T &amp;cond, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L624">line 624</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F, typename Fut, typename... Args&gt;
+void
+until_or_future_or_flag(const T &amp;cond, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>Fut &amp;fut</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F, typename Fut, typename... Args&gt;
+void
+until_or_future_or_flag(const T &amp;cond, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+
+  for ( ;; ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-1d18e1e188742dd8"><h3><code>micron::until_or_future_or_flag(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L642">line 642</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Fut&gt;
+void
+until_or_future_or_flag(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;cond</code></li><li><code>const micron::atomic&lt;T&gt; &amp;var</code></li><li><code>Fut &amp;fut</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Fut&gt;
+void
+until_or_future_or_flag(const T &amp;cond, const micron::atomic&lt;T&gt; &amp;var, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag)
+{
+  while ( var.__get(micron::memory_order_acquire) != cond ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-e22557c152ec9a20"><h3><code>micron::until_or_future_or_flag(P pred, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L656">line 656</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename P, typename Fut&gt;
+  requires micron::is_invocable_r_v&lt;bool, P&gt;
+void
+until_or_future_or_flag(P pred, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P pred</code></li><li><code>Fut &amp;fut</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename P, typename Fut&gt;
+  requires micron::is_invocable_r_v&lt;bool, P&gt;
+void
+until_or_future_or_flag(P pred, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag)
+{
+  while ( !pred() ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-07cc99df025ef819"><h3><code>micron::until_timeout_or_future_or_flag(auto cond, fduration_t timeout, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L669">line 669</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename Fut, typename... Args&gt;
+bool
+until_timeout_or_future_or_flag(auto cond, fduration_t timeout, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>fduration_t timeout</code></li><li><code>Fut &amp;fut</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename Fut, typename... Args&gt;
+bool
+until_timeout_or_future_or_flag(auto cond, fduration_t timeout, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  auto start = micron::steady_clock::now();
+
+  for ( ;; ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) return false;
+
+    if ( flag.__get(micron::memory_order_acquire) ) return false;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) return true;
+
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L675">line 675</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L677">line 677</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L680">line 680</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L682">line 682</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-480eb0eca2daf581"><h3><code>micron::until_backoff_or_future_or_flag(auto cond, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L690">line 690</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename Fut, typename... Args&gt;
+void
+until_backoff_or_future_or_flag(auto cond, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>auto cond</code></li><li><code>Fut &amp;fut</code></li><li><code>const micron::atomic&lt;bool&gt; &amp;flag</code></li><li><code>F f</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename Fut, typename... Args&gt;
+void
+until_backoff_or_future_or_flag(auto cond, Fut &amp;fut, const micron::atomic&lt;bool&gt; &amp;flag, F f, Args &amp;&amp;...args)
+{
+  using ret_t = micron::invoke_result_t&lt;F, Args...&gt;;
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
+
+  for ( ;; ) {
+    if ( fut.wait_for(fduration_t(0)) == micron::future_status::ready ) break;
+
+    if ( flag.__get(micron::memory_order_acquire) ) break;
+
+    ret_t res = micron::invoke(f, micron::forward&lt;Args&gt;(args)...);
+    if ( res == cond ) break;
+
+    for ( usize i = 0; i &lt; backoff; ++i ) {
+      __cpu_pause();
+    }
+
+    if ( backoff &lt; max_backoff ) backoff *= 2;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../chrono/units.hpp.html#s-590d20d4d5215619">fduration_t</a>, <a href="invoke.hpp.html#f-40e9ed74c5c41377">micron::invoke</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-2452c9fe2b55aa02"><h3><code>micron::until_flag_set(const A &amp;flag)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L714">line 714</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+void
+until_flag_set(const A &amp;flag)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+void
+until_flag_set(const A &amp;flag)
+{
+  while ( !flag.__get(micron::memory_order_acquire) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-a17e644ebe3e3f71"><h3><code>micron::until_flag_clear(const A &amp;flag)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L723">line 723</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+void
+until_flag_clear(const A &amp;flag)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+void
+until_flag_clear(const A &amp;flag)
+{
+  while ( flag.__get(micron::memory_order_acquire) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-d5a50015564b2816"><h3><code>micron::until_flag_set_timeout(const A &amp;flag, fduration_t timeout)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L732">line 732</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+bool
+until_flag_set_timeout(const A &amp;flag, fduration_t timeout)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;flag</code></li><li><code>fduration_t timeout</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+bool
+until_flag_set_timeout(const A &amp;flag, fduration_t timeout)
+{
+  auto start = micron::steady_clock::now();
+
+  while ( !flag.__get(micron::memory_order_acquire) ) {
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+    __cpu_pause();
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L737">line 737</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L740">line 740</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-875003d05eb0ec4f"><h3><code>micron::until_flag_clear_timeout(const A &amp;flag, fduration_t timeout)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L745">line 745</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+bool
+until_flag_clear_timeout(const A &amp;flag, fduration_t timeout)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;flag</code></li><li><code>fduration_t timeout</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+bool
+until_flag_clear_timeout(const A &amp;flag, fduration_t timeout)
+{
+  auto start = micron::steady_clock::now();
+
+  while ( flag.__get(micron::memory_order_acquire) ) {
+    if ( micron::steady_clock::now() - start &gt;= timeout ) return false;
+    __cpu_pause();
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/until.hpp.html#L750">line 750</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/until.hpp.html#L753">line 753</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-fb8d48517a1eb965"><h3><code>micron::until_flag_set_with_wait(const A &amp;flag, Fn wait)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L758">line 758</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A, typename Fn&gt;
+void
+until_flag_set_with_wait(const A &amp;flag, Fn wait)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;flag</code></li><li><code>Fn wait</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A, typename Fn&gt;
+void
+until_flag_set_with_wait(const A &amp;flag, Fn wait)
+{
+  while ( !flag.__get(micron::memory_order_acquire) ) {
+    wait();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/process/wait.hpp.html#f-829d993c994fdb37">wait</a>.</p></section><section class="function-entry" id="f-1ceec3ddacd8b0ce"><h3><code>micron::until_flag_set_backoff(const A &amp;flag)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L767">line 767</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+void
+until_flag_set_backoff(const A &amp;flag)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+void
+until_flag_set_backoff(const A &amp;flag)
+{
+  usize backoff = 1;
+  constexpr usize max_backoff = 1024;
+
+  while ( !flag.__get(micron::memory_order_acquire) ) {
+    for ( usize i = 0; i &lt; backoff; ++i ) {
+      __cpu_pause();
+    }
+
+    if ( backoff &lt; max_backoff ) backoff *= 2;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-490d21c1c53831bc"><h3><code>micron::until_any_flag_set(const F &amp;...flags)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L783">line 783</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... F&gt;
+void
+until_any_flag_set(const F &amp;...flags)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F &amp;...flags</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... F&gt;
+void
+until_any_flag_set(const F &amp;...flags)
+{
+  while ( !(flags.__get(micron::memory_order_acquire) || ...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-7103969f93ee57c2"><h3><code>micron::until_all_flags_set(const F &amp;...flags)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L792">line 792</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... F&gt;
+void
+until_all_flags_set(const F &amp;...flags)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F &amp;...flags</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... F&gt;
+void
+until_all_flags_set(const F &amp;...flags)
+{
+  while ( !(flags.__get(micron::memory_order_acquire) &amp;&amp; ...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-11b051ac9e9b79be"><h3><code>micron::until_any_flag_clear(const F &amp;...flags)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L801">line 801</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... F&gt;
+void
+until_any_flag_clear(const F &amp;...flags)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F &amp;...flags</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... F&gt;
+void
+until_any_flag_clear(const F &amp;...flags)
+{
+  while ( (flags.__get(micron::memory_order_acquire) &amp;&amp; ...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-88b189472c2f4067"><h3><code>micron::until_all_flags_clear(const F &amp;...flags)</code></h3><p>Defined in <code>sync/until.hpp</code>, <a href="../../source/sync/until.hpp.html#L810">line 810</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... F&gt;
+void
+until_all_flags_clear(const F &amp;...flags)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F &amp;...flags</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... F&gt;
+void
+until_all_flags_clear(const F &amp;...flags)
+{
+  while ( (flags.__get(micron::memory_order_acquire) || ...) ) {
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

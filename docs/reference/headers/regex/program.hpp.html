@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/regex/program.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/regex/program.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/regex.html">Regular expressions</a></div><p>Defined in header <code>&lt;micron/regex/program.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/regex/program.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-ffa328df6dcec349">micron::rgx::op</code></td><td>enum; line 28</td></tr><tr class="t-dsc"><td><code id="s-5a6ea951de3f82d2">micron::rgx::op::Any</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-571203326187b208">micron::rgx::op::Bol</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-616d35d9a3754ce5">micron::rgx::op::Char</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-0437ccf612d721d6">micron::rgx::op::Class</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-4ccfe128bcaccf59">micron::rgx::op::Eol</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-e9387b6d9c8f3fde">micron::rgx::op::Jmp</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-ed81d954f0c6f93a">micron::rgx::op::Match</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-056ddaca5f54c31c">micron::rgx::op::Save</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-71c55b51f4992771">micron::rgx::op::Split</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-2811e3fdbf0e3ee4">micron::rgx::inst</code></td><td>struct; line 30</td></tr><tr class="t-dsc"><td><code id="s-e1debf065faf0399">micron::rgx::inst::code</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-54f0a6f2da6d8daf">micron::rgx::inst::x</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-2d8371a93fbda1da">micron::rgx::inst::y</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-094b821459423051">micron::rgx::prog_view</code></td><td>struct; line 36</td></tr><tr class="t-dsc"><td><code id="s-675ec5ca4fe2077e">micron::rgx::prog_view::code</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-569585557fe2a7c5">micron::rgx::prog_view::ncode</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-8548a85dc5dd8667">micron::rgx::prog_view::cls</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-781ccbc7daacc31a">micron::rgx::prog_view::ncls</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-6109644e70a8fd10">micron::rgx::prog_view::ngroups</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-11f3a263c062fc71">micron::rgx::emitter</code></td><td>struct; line 44</td></tr><tr class="t-dsc"><td><code id="s-ac0c744028a32e5e">micron::rgx::emitter::nodes</code></td><td>member; line 45</td></tr><tr class="t-dsc"><td><code id="s-52dc9f7ee79dde62">micron::rgx::emitter::code</code></td><td>member; line 46</td></tr><tr class="t-dsc"><td><code id="s-b17d837d000cda76">micron::rgx::emitter::maxi</code></td><td>member; line 47</td></tr><tr class="t-dsc"><td><code id="s-3dd36b867342d286">micron::rgx::emitter::ni</code></td><td>member; line 48</td></tr><tr class="t-dsc"><td><code id="s-c12c649ad0c112be">micron::rgx::emitter::ok</code></td><td>member; line 49</td></tr><tr class="t-dsc"><td><a href="#f-4d63103a4210a4c2">micron::rgx::emitter::emit(op c, u32 x = 0, u32 y = 0) noexcept</a></td><td>function; line 52</td></tr><tr class="t-dsc"><td><a href="#f-843bdf655235361b">micron::rgx::emitter::emit_node(u32 idx) noexcept</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-1e2099471c3fb95b">micron::rgx::compile_regex(const char *pat, usize len, node *nodes, usize maxn, charreach *cls, usize maxc, inst *code, usize maxi, usize &amp;out_ncode,
+              usize &amp;out_ncls, u32 &amp;out_ngroups) noexcept</a></td><td>function; line 157</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-4d63103a4210a4c2"><h3><code>micron::rgx::emitter::emit(op c, u32 x = 0, u32 y = 0) noexcept</code></h3><p>Defined in <code>regex/program.hpp</code>, <a href="../../source/regex/program.hpp.html#L52">line 52</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u32
+  emit(op c, u32 x = 0, u32 y = 0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>op c</code></li><li><code>u32 x = 0</code></li><li><code>u32 y = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u32
+  emit(op c, u32 x = 0, u32 y = 0) noexcept
+  {
+    if ( ni &gt;= maxi ) {
+      ok = false;
+      return maxi ? (u32)(maxi - 1) : 0;
+    }
+    code[ni] = inst{ c, x, y };
+    return (u32)ni++;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>maxi ? (u32)(maxi - 1) : 0</code></td><td><a href="../../source/regex/program.hpp.html#L56">line 56</a></td></tr><tr class="t-dsc"><td><code>(u32)ni++</code></td><td><a href="../../source/regex/program.hpp.html#L59">line 59</a></td></tr></tbody></table></section><section class="function-entry" id="f-843bdf655235361b"><h3><code>micron::rgx::emitter::emit_node(u32 idx) noexcept</code></h3><p>Defined in <code>regex/program.hpp</code>, <a href="../../source/regex/program.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  emit_node(u32 idx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  emit_node(u32 idx) noexcept
+  {
+    if ( !ok ) return;
+    const node &amp;n = nodes[idx];
+    switch ( n.kind ) {
+    case nk::Empty:
+      break;
+    case nk::Char:
+      emit(op::Char, n.a);
+      break;
+    case nk::Class:
+      emit(op::Class, n.a);
+      break;
+    case nk::Any:
+      emit(op::Any);
+      break;
+    case nk::Bol:
+      emit(op::Bol);
+      break;
+    case nk::Eol:
+      emit(op::Eol);
+      break;
+    case nk::Concat:
+      emit_node(n.a);
+      emit_node(n.b);
+      break;
+    case nk::Alt: {
+      u32 sp = emit(op::Split);
+      emit_node(n.a);
+      u32 jm = emit(op::Jmp);
+      u32 l2 = (u32)ni;
+      emit_node(n.b);
+      code[sp].x = sp + 1;
+      code[sp].y = l2;
+      code[jm].x = (u32)ni;
+      break;
+    }
+    case nk::Star: {
+      u32 l1 = emit(op::Split);
+      u32 bs = (u32)ni;
+      emit_node(n.a);
+      emit(op::Jmp, l1);
+      code[l1].x = bs;
+      code[l1].y = (u32)ni;
+      break;
+    }
+    case nk::Plus: {      // body ; split body,out
+      u32 bs = (u32)ni;
+      emit_node(n.a);
+      u32 sp = emit(op::Split);
+      code[sp].x = bs;
+      code[sp].y = (u32)ni;
+      break;
+    }
+    case nk::Quest: {      // split body,out ; body
+      u32 sp = emit(op::Split);
+      emit_node(n.a);
+      code[sp].x = sp + 1;
+      code[sp].y = (u32)ni;
+      break;
+    }
+    case nk::Group: {      // save 2g ; body ; save 2g+1
+      u32 g = n.b;
+      emit(op::Save, 2 * g);
+      emit_node(n.a);
+      emit(op::Save, 2 * g + 1);
+      break;
+    }
+    case nk::Repeat: {
+      u32 lo = n.b, hi = n.c, child = n.a;
+      for ( u32 i = 0; i &lt; lo &amp;&amp; ok; ++i ) emit_node(child);
+      if ( hi == kInf ) {      // a{m,} == a{m} a*
+        u32 l1 = emit(op::Split);
+        u32 bs = (u32)ni;
+        emit_node(child);
+        emit(op::Jmp, l1);
+        code[l1].x = bs;
+        code[l1].y = (u32)ni;
+      } else {      // a{m,n} == a{m} (a?){n-m}
+        for ( u32 i = lo; i &lt; hi &amp;&amp; ok; ++i ) {
+          u32 sp = emit(op::Split);
+          u32 bs = (u32)ni;
+          emit_node(child);
+          code[sp].x = bs;
+          code[sp].y = (u32)ni;
+        }
+      }
+      break;
+    }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/regex/program.hpp.html#L65">line 65</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="program.hpp.html#f-4d63103a4210a4c2">emit</a>.</p></section><section class="function-entry" id="f-1e2099471c3fb95b"><h3><code>micron::rgx::compile_regex(const char *pat, usize len, node *nodes, usize maxn, charreach *cls, usize maxc, inst *code, usize maxi, usize &amp;out_ncode,
+              usize &amp;out_ncls, u32 &amp;out_ngroups) noexcept</code></h3><p>Defined in <code>regex/program.hpp</code>, <a href="../../source/regex/program.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+compile_regex(const char *pat, usize len, node *nodes, usize maxn, charreach *cls, usize maxc, inst *code, usize maxi, usize &amp;out_ncode,
+              usize &amp;out_ncls, u32 &amp;out_ngroups) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *pat</code></li><li><code>usize len</code></li><li><code>node *nodes</code></li><li><code>usize maxn</code></li><li><code>charreach *cls</code></li><li><code>usize maxc</code></li><li><code>inst *code</code></li><li><code>usize maxi</code></li><li><code>usize &amp;out_ncode</code></li><li><code>usize &amp;out_ncls</code></li><li><code>u32 &amp;out_ngroups</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+compile_regex(const char *pat, usize len, node *nodes, usize maxn, charreach *cls, usize maxc, inst *code, usize maxi, usize &amp;out_ncode,
+              usize &amp;out_ncls, u32 &amp;out_ngroups) noexcept
+{
+  parser p;
+  p.pat = pat;
+  p.len = len;
+  p.nodes = nodes;
+  p.maxn = maxn;
+  p.cls = cls;
+  p.maxc = maxc;
+  u32 root = p.parse();
+  if ( !p.ok ) return false;
+
+  emitter e;
+  e.nodes = nodes;
+  e.code = code;
+  e.maxi = maxi;
+  e.emit(op::Save, 0);
+  e.emit_node(root);
+  e.emit(op::Save, 1);
+  e.emit(op::Match);
+  if ( !e.ok ) return false;
+
+  out_ncode = e.ni;
+  out_ncls = p.ncls;
+  out_ngroups = p.ngroups;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/regex/program.hpp.html#L168">line 168</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/regex/program.hpp.html#L178">line 178</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/regex/program.hpp.html#L183">line 183</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

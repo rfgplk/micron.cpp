@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/process/callbacks.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/process/callbacks.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/process/callbacks.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/process/callbacks.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-a684c607b71c2afd">micron::add_callback(void (*f)(void))</a></td><td>function; line 30</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a684c607b71c2afd"><h3><code>micron::add_callback(void (*f)(void))</code></h3><p>Defined in <code>linux/process/callbacks.hpp</code>, <a href="../../../source/linux/process/callbacks.hpp.html#L30">line 30</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+add_callback(void (*f)(void))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void (*f)(void)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+add_callback(void (*f)(void))
+{
+  lock_guard l(__global_callback_mtx);
+  __global_callback_ptrs[__global_callback_size++] = f;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-51446e8be0560d07"><h3><code>micron::__default_callback(void)</code></h3><p>Defined in <code>linux/process/callbacks.hpp</code>, <a href="../../../source/linux/process/callbacks.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+__default_callback(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+__default_callback(void)
+{
+  lock_guard l(__global_callback_mtx);
+  if ( !__global_callback_size ) return -1;
+  __global_callback_ptrs.at(--__global_callback_size)();
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/linux/process/callbacks.hpp.html#L40">line 40</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/linux/process/callbacks.hpp.html#L42">line 42</a></td></tr></tbody></table></section><section class="function-entry" id="f-77c383e415bea7ae"><h3><code>micron::__default_daemon_callback(void)</code></h3><p>Defined in <code>linux/process/callbacks.hpp</code>, <a href="../../../source/linux/process/callbacks.hpp.html#L46">line 46</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+__default_daemon_callback(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+__default_daemon_callback(void)
+{
+  if ( posix::setsid() &lt; 0 ) exc&lt;except::runtime_error&gt;(&quot;micron process daemon failed to create new session&quot;);
+  // don&#x27;t change dir
+  posix::umask(0);
+  posix::close(stdin_fileno);
+  posix::close(stdout_fileno);
+  posix::close(stderr_fileno);
+
+  micron::open(&quot;/dev/null&quot;, posix::o_rdwr);
+  micron::dup(0);
+  micron::dup(0);
+  if ( !__global_callback_size ) return -1;
+  __global_callback_ptrs.at(__global_callback_size--)();
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/linux/process/callbacks.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/linux/process/callbacks.hpp.html#L60">line 60</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron process daemon failed to create new session&quot;)</code></td><td><a href="../../../source/linux/process/callbacks.hpp.html#L48">line 48</a><br>Within <code>( posix::setsid() &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/system.hpp.html#f-885ad9cb05d7263f">posix::setsid</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="../io/sys.hpp.html#f-8bf523237e56c129">posix::umask</a>, <a href="../io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../io.hpp.html#s-fe2bb40bc06037d0">micron::open</a>, <a href="../io.hpp.html#s-d5d13e3945110bb7">micron::dup</a>.</p></section><section class="function-entry" id="f-4a1559506e802517"><h3><code>micron::__default_stop_callback(void)</code></h3><p>Defined in <code>linux/process/callbacks.hpp</code>, <a href="../../../source/linux/process/callbacks.hpp.html#L64">line 64</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) int
+__default_stop_callback(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) int
+__default_stop_callback(void)
+{
+  micron::syscall(SYS_exit_group, 1);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-74abe3dc02d0f611"><h3><code>micron::__default_sleep_callback(void)</code></h3><p>Defined in <code>linux/process/callbacks.hpp</code>, <a href="../../../source/linux/process/callbacks.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+__default_sleep_callback(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+__default_sleep_callback(void)
+{
+  posix::pause();      // block until a signal (was a CPU-spin via micron::pause)
+  lock_guard l(__global_callback_mtx);
+  if ( !__global_callback_size ) return -1;
+  __global_callback_ptrs.at(__global_callback_size--)();
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/linux/process/callbacks.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/linux/process/callbacks.hpp.html#L77">line 77</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/system.hpp.html#f-75c09ba95536fe7e">posix::pause</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

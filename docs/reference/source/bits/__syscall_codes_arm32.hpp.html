@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bits/__syscall_codes_arm32.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">bits/__syscall_codes_arm32.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/bits/__syscall_codes_arm32.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // arm32 (ARMv7-a) Linux syscall numbers</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> using __nr_t = int;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> </span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> // set base to 0x900000 if OABI needed</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> template&lt;__nr_t __nr_Base = 0&gt; struct arm32_syscalls {</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a>   struct nr {</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a>     static constexpr __nr_t syscall_base = __nr_Base;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a>     static constexpr __nr_t restart_syscall = __nr_Base + 0;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a>     static constexpr __nr_t exit = __nr_Base + 1;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a>     static constexpr __nr_t fork = __nr_Base + 2;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a>     static constexpr __nr_t read = __nr_Base + 3;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a>     static constexpr __nr_t write = __nr_Base + 4;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a>     static constexpr __nr_t open = __nr_Base + 5;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a>     static constexpr __nr_t close = __nr_Base + 6;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a>     // __nr_Base +   7:sys_waitpid (removed)</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a>     static constexpr __nr_t creat = __nr_Base + 8;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a>     static constexpr __nr_t link = __nr_Base + 9;</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a>     static constexpr __nr_t unlink = __nr_Base + 10;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a>     static constexpr __nr_t execve = __nr_Base + 11;</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a>     static constexpr __nr_t chdir = __nr_Base + 12;</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>     // __nr_Base +  13: sys_time (OABI only)</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>     static constexpr __nr_t mknod = __nr_Base + 14;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>     static constexpr __nr_t chmod = __nr_Base + 15;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a>     static constexpr __nr_t lchown = __nr_Base + 16;</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>     // __nr_Base +  17: sys_break (removed)</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>     // __nr_Base +  18: sys_stat  (removed)</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>     static constexpr __nr_t lseek = __nr_Base + 19;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>     static constexpr __nr_t getpid = __nr_Base + 20;</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>     static constexpr __nr_t mount = __nr_Base + 21;</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>     // __nr_Base +  22: sys_umount (OABI only)</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>     static constexpr __nr_t setuid = __nr_Base + 23;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>     static constexpr __nr_t getuid = __nr_Base + 24;</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>     // __nr_Base +  25: sys_stime (OABI only)</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>     static constexpr __nr_t ptrace = __nr_Base + 26;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>     // __nr_Base +  27: sys_alarm (OABI only)</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>     // __nr_Base +  28: sys_fstat (removed)</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>     static constexpr __nr_t pause = __nr_Base + 29;</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>     // __nr_Base +  30: sys_utime (OABI only)</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>     // __nr_Base +  31: sys_stty  (removed)</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>     // __nr_Base +  32: sys_gtty  (removed)</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>     static constexpr __nr_t access = __nr_Base + 33;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>     static constexpr __nr_t nice = __nr_Base + 34;</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>     // __nr_Base +  35: sys_ftime (removed)</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>     static constexpr __nr_t sync = __nr_Base + 36;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>     static constexpr __nr_t kill = __nr_Base + 37;</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>     static constexpr __nr_t rename = __nr_Base + 38;</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>     static constexpr __nr_t mkdir = __nr_Base + 39;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>     static constexpr __nr_t rmdir = __nr_Base + 40;</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>     static constexpr __nr_t dup = __nr_Base + 41;</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>     static constexpr __nr_t pipe = __nr_Base + 42;</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>     static constexpr __nr_t times = __nr_Base + 43;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>     // __nr_Base +  44: sys_prof (removed)</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>     static constexpr __nr_t brk = __nr_Base + 45;</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>     static constexpr __nr_t setgid = __nr_Base + 46;</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>     static constexpr __nr_t getgid = __nr_Base + 47;</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>     // __nr_Base +  48: sys_signal (removed)</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>     static constexpr __nr_t geteuid = __nr_Base + 49;</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>     static constexpr __nr_t getegid = __nr_Base + 50;</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>     static constexpr __nr_t acct = __nr_Base + 51;</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>     static constexpr __nr_t umount2 = __nr_Base + 52;</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>     // __nr_Base +  53: sys_lock (removed)</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>     static constexpr __nr_t ioctl = __nr_Base + 54;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>     static constexpr __nr_t fcntl = __nr_Base + 55;</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     // __nr_Base +  56: sys_mpx (removed)</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>     static constexpr __nr_t setpgid = __nr_Base + 57;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>     // __nr_Base +  58: sys_ulimit   (removed)</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>     // __nr_Base +  59: sys_olduname (removed)</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>     static constexpr __nr_t umask = __nr_Base + 60;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>     static constexpr __nr_t chroot = __nr_Base + 61;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     static constexpr __nr_t ustat = __nr_Base + 62;</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>     static constexpr __nr_t dup2 = __nr_Base + 63;</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>     static constexpr __nr_t getppid = __nr_Base + 64;</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>     static constexpr __nr_t getpgrp = __nr_Base + 65;</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>     static constexpr __nr_t setsid = __nr_Base + 66;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     static constexpr __nr_t sigaction = __nr_Base + 67;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>     // __nr_Base +  68: sys_sgetmask (removed)</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>     // __nr_Base +  69: sys_ssetmask (removed)</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>     static constexpr __nr_t setreuid = __nr_Base + 70;</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>     static constexpr __nr_t setregid = __nr_Base + 71;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>     static constexpr __nr_t sigsuspend = __nr_Base + 72;</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>     static constexpr __nr_t sigpending = __nr_Base + 73;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>     static constexpr __nr_t sethostname = __nr_Base + 74;</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>     static constexpr __nr_t setrlimit = __nr_Base + 75;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>     // __nr_Base +  76: sys_getrlimit (OABI only; use ugetrlimit at +191)</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>     static constexpr __nr_t getrusage = __nr_Base + 77;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>     static constexpr __nr_t gettimeofday = __nr_Base + 78;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>     static constexpr __nr_t settimeofday = __nr_Base + 79;</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>     static constexpr __nr_t getgroups = __nr_Base + 80;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>     static constexpr __nr_t setgroups = __nr_Base + 81;</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>     // __nr_Base +  82: sys_select (OABI only; use _newselect at +142)</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>     static constexpr __nr_t symlink = __nr_Base + 83;</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>     // __nr_Base +  84: sys_lstat (removed)</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>     static constexpr __nr_t readlink = __nr_Base + 85;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>     static constexpr __nr_t uselib = __nr_Base + 86;</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>     static constexpr __nr_t swapon = __nr_Base + 87;</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>     static constexpr __nr_t reboot = __nr_Base + 88;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>     // __nr_Base +  89: sys_readdir (OABI only)</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>     // __nr_Base +  90: sys_mmap    (OABI only; use mmap2 at +192)</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>     static constexpr __nr_t munmap = __nr_Base + 91;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>     static constexpr __nr_t truncate = __nr_Base + 92;</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>     static constexpr __nr_t ftruncate = __nr_Base + 93;</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>     static constexpr __nr_t fchmod = __nr_Base + 94;</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>     static constexpr __nr_t fchown = __nr_Base + 95;</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>     static constexpr __nr_t getpriority = __nr_Base + 96;</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>     static constexpr __nr_t setpriority = __nr_Base + 97;</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     // __nr_Base +  98: sys_profil (removed)</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>     static constexpr __nr_t statfs = __nr_Base + 99;</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>     static constexpr __nr_t fstatfs = __nr_Base + 100;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>     // __nr_Base + 101: sys_ioperm (removed)</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>     // __nr_Base + 102: sys_socketcall (OABI only; individual sockets at +281)</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>     static constexpr __nr_t syslog = __nr_Base + 103;</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>     static constexpr __nr_t setitimer = __nr_Base + 104;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>     static constexpr __nr_t getitimer = __nr_Base + 105;</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>     static constexpr __nr_t stat = __nr_Base + 106;</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>     static constexpr __nr_t lstat = __nr_Base + 107;</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     static constexpr __nr_t fstat = __nr_Base + 108;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     // __nr_Base + 109: sys_uname  (removed)</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     // __nr_Base + 110: sys_iopl   (removed)</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>     static constexpr __nr_t vhangup = __nr_Base + 111;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>     // __nr_Base + 112: sys_idle   (removed)</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>     // __nr_Base + 113: sys_syscall (OABI only)</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>     static constexpr __nr_t wait4 = __nr_Base + 114;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>     static constexpr __nr_t swapoff = __nr_Base + 115;</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>     static constexpr __nr_t sysinfo = __nr_Base + 116;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>     // __nr_Base + 117: sys_ipc (OABI only; individual IPC at +298)</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     static constexpr __nr_t fsync = __nr_Base + 118;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>     static constexpr __nr_t sigreturn = __nr_Base + 119;</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     static constexpr __nr_t clone = __nr_Base + 120;</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     static constexpr __nr_t setdomainname = __nr_Base + 121;</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>     static constexpr __nr_t uname = __nr_Base + 122;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>     // __nr_Base + 123: sys_modify_ldt (removed)</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     static constexpr __nr_t adjtimex = __nr_Base + 124;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>     static constexpr __nr_t mprotect = __nr_Base + 125;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>     static constexpr __nr_t sigprocmask = __nr_Base + 126;</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>     // __nr_Base + 127: sys_create_module (removed)</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>     static constexpr __nr_t init_module = __nr_Base + 128;</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     static constexpr __nr_t delete_module = __nr_Base + 129;</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>     // __nr_Base + 130: sys_get_kernel_syms (removed)</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>     static constexpr __nr_t quotactl = __nr_Base + 131;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>     static constexpr __nr_t getpgid = __nr_Base + 132;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     static constexpr __nr_t fchdir = __nr_Base + 133;</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>     static constexpr __nr_t bdflush = __nr_Base + 134;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>     static constexpr __nr_t sysfs = __nr_Base + 135;</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>     static constexpr __nr_t personality = __nr_Base + 136;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>     // __nr_Base + 137: sys_afs_syscall (removed)</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     static constexpr __nr_t setfsuid = __nr_Base + 138;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     static constexpr __nr_t setfsgid = __nr_Base + 139;</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     static constexpr __nr_t _llseek = __nr_Base + 140;</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>     static constexpr __nr_t getdents = __nr_Base + 141;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>     static constexpr __nr_t _newselect = __nr_Base + 142;</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>     static constexpr __nr_t flock = __nr_Base + 143;</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     static constexpr __nr_t msync = __nr_Base + 144;</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>     static constexpr __nr_t readv = __nr_Base + 145;</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     static constexpr __nr_t writev = __nr_Base + 146;</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>     static constexpr __nr_t getsid = __nr_Base + 147;</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     static constexpr __nr_t fdatasync = __nr_Base + 148;</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     static constexpr __nr_t _sysctl = __nr_Base + 149;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>     static constexpr __nr_t mlock = __nr_Base + 150;</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>     static constexpr __nr_t munlock = __nr_Base + 151;</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>     static constexpr __nr_t mlockall = __nr_Base + 152;</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     static constexpr __nr_t munlockall = __nr_Base + 153;</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>     static constexpr __nr_t sched_setparam = __nr_Base + 154;</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>     static constexpr __nr_t sched_getparam = __nr_Base + 155;</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>     static constexpr __nr_t sched_setscheduler = __nr_Base + 156;</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>     static constexpr __nr_t sched_getscheduler = __nr_Base + 157;</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>     static constexpr __nr_t sched_yield = __nr_Base + 158;</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     static constexpr __nr_t sched_get_priority_max = __nr_Base + 159;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>     static constexpr __nr_t sched_get_priority_min = __nr_Base + 160;</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>     static constexpr __nr_t sched_rr_get_interval = __nr_Base + 161;</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>     static constexpr __nr_t nanosleep = __nr_Base + 162;</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>     static constexpr __nr_t mremap = __nr_Base + 163;</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>     static constexpr __nr_t setresuid = __nr_Base + 164;</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>     static constexpr __nr_t getresuid = __nr_Base + 165;</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>     // __nr_Base + 166: sys_vm86         (removed)</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>     // __nr_Base + 167: sys_query_module (removed)</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>     static constexpr __nr_t poll = __nr_Base + 168;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>     static constexpr __nr_t nfsservctl = __nr_Base + 169;</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>     static constexpr __nr_t setresgid = __nr_Base + 170;</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>     static constexpr __nr_t getresgid = __nr_Base + 171;</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>     static constexpr __nr_t prctl = __nr_Base + 172;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>     static constexpr __nr_t rt_sigreturn = __nr_Base + 173;</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>     static constexpr __nr_t rt_sigaction = __nr_Base + 174;</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>     static constexpr __nr_t rt_sigprocmask = __nr_Base + 175;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>     static constexpr __nr_t rt_sigpending = __nr_Base + 176;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>     static constexpr __nr_t rt_sigtimedwait = __nr_Base + 177;</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>     static constexpr __nr_t rt_sigqueueinfo = __nr_Base + 178;</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>     static constexpr __nr_t rt_sigsuspend = __nr_Base + 179;</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>     static constexpr __nr_t pread64 = __nr_Base + 180;</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>     static constexpr __nr_t pwrite64 = __nr_Base + 181;</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>     static constexpr __nr_t chown = __nr_Base + 182;</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>     static constexpr __nr_t getcwd = __nr_Base + 183;</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>     static constexpr __nr_t capget = __nr_Base + 184;</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>     static constexpr __nr_t capset = __nr_Base + 185;</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>     static constexpr __nr_t sigaltstack = __nr_Base + 186;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>     static constexpr __nr_t sendfile = __nr_Base + 187;</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>     // __nr_Base + 188: reserved</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>     // __nr_Base + 189: reserved</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>     static constexpr __nr_t vfork = __nr_Base + 190;</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>     static constexpr __nr_t ugetrlimit = __nr_Base + 191;</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>     static constexpr __nr_t mmap2 = __nr_Base + 192;</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>     static constexpr __nr_t truncate64 = __nr_Base + 193;</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>     static constexpr __nr_t ftruncate64 = __nr_Base + 194;</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>     static constexpr __nr_t stat64 = __nr_Base + 195;</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>     static constexpr __nr_t lstat64 = __nr_Base + 196;</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>     static constexpr __nr_t fstat64 = __nr_Base + 197;</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>     static constexpr __nr_t lchown32 = __nr_Base + 198;</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>     static constexpr __nr_t getuid32 = __nr_Base + 199;</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>     static constexpr __nr_t getgid32 = __nr_Base + 200;</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>     static constexpr __nr_t geteuid32 = __nr_Base + 201;</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>     static constexpr __nr_t getegid32 = __nr_Base + 202;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>     static constexpr __nr_t setreuid32 = __nr_Base + 203;</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>     static constexpr __nr_t setregid32 = __nr_Base + 204;</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>     static constexpr __nr_t getgroups32 = __nr_Base + 205;</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>     static constexpr __nr_t setgroups32 = __nr_Base + 206;</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>     static constexpr __nr_t fchown32 = __nr_Base + 207;</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>     static constexpr __nr_t setresuid32 = __nr_Base + 208;</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>     static constexpr __nr_t getresuid32 = __nr_Base + 209;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>     static constexpr __nr_t setresgid32 = __nr_Base + 210;</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>     static constexpr __nr_t getresgid32 = __nr_Base + 211;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>     static constexpr __nr_t chown32 = __nr_Base + 212;</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>     static constexpr __nr_t setuid32 = __nr_Base + 213;</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>     static constexpr __nr_t setgid32 = __nr_Base + 214;</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>     static constexpr __nr_t setfsuid32 = __nr_Base + 215;</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>     static constexpr __nr_t setfsgid32 = __nr_Base + 216;</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>     static constexpr __nr_t getdents64 = __nr_Base + 217;</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>     static constexpr __nr_t pivot_root = __nr_Base + 218;</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>     static constexpr __nr_t mincore = __nr_Base + 219;</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>     static constexpr __nr_t madvise = __nr_Base + 220;</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>     static constexpr __nr_t fcntl64 = __nr_Base + 221;</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>     // __nr_Base + 222: tux (never merged)</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>     // __nr_Base + 223: unused</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>     static constexpr __nr_t gettid = __nr_Base + 224;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>     static constexpr __nr_t readahead = __nr_Base + 225;</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>     static constexpr __nr_t setxattr = __nr_Base + 226;</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>     static constexpr __nr_t lsetxattr = __nr_Base + 227;</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>     static constexpr __nr_t fsetxattr = __nr_Base + 228;</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>     static constexpr __nr_t getxattr = __nr_Base + 229;</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>     static constexpr __nr_t lgetxattr = __nr_Base + 230;</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>     static constexpr __nr_t fgetxattr = __nr_Base + 231;</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>     static constexpr __nr_t listxattr = __nr_Base + 232;</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>     static constexpr __nr_t llistxattr = __nr_Base + 233;</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>     static constexpr __nr_t flistxattr = __nr_Base + 234;</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     static constexpr __nr_t removexattr = __nr_Base + 235;</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>     static constexpr __nr_t lremovexattr = __nr_Base + 236;</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>     static constexpr __nr_t fremovexattr = __nr_Base + 237;</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>     static constexpr __nr_t tkill = __nr_Base + 238;</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>     static constexpr __nr_t sendfile64 = __nr_Base + 239;</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>     static constexpr __nr_t futex = __nr_Base + 240;</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>     static constexpr __nr_t sched_setaffinity = __nr_Base + 241;</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>     static constexpr __nr_t sched_getaffinity = __nr_Base + 242;</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>     static constexpr __nr_t io_setup = __nr_Base + 243;</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>     static constexpr __nr_t io_destroy = __nr_Base + 244;</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>     static constexpr __nr_t io_getevents = __nr_Base + 245;</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>     static constexpr __nr_t io_submit = __nr_Base + 246;</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>     static constexpr __nr_t io_cancel = __nr_Base + 247;</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>     static constexpr __nr_t exit_group = __nr_Base + 248;</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>     static constexpr __nr_t lookup_dcookie = __nr_Base + 249;</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>     static constexpr __nr_t epoll_create = __nr_Base + 250;</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>     static constexpr __nr_t epoll_ctl = __nr_Base + 251;</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>     static constexpr __nr_t epoll_wait = __nr_Base + 252;</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>     static constexpr __nr_t remap_file_pages = __nr_Base + 253;</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a>     // __nr_Base + 254: set_thread_area (x86 only)</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>     // __nr_Base + 255: get_thread_area (x86 only)</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>     static constexpr __nr_t set_tid_address = __nr_Base + 256;</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>     static constexpr __nr_t timer_create = __nr_Base + 257;</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>     static constexpr __nr_t timer_settime = __nr_Base + 258;</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>     static constexpr __nr_t timer_gettime = __nr_Base + 259;</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>     static constexpr __nr_t timer_getoverrun = __nr_Base + 260;</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>     static constexpr __nr_t timer_delete = __nr_Base + 261;</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>     static constexpr __nr_t clock_settime = __nr_Base + 262;</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>     static constexpr __nr_t clock_gettime = __nr_Base + 263;</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>     static constexpr __nr_t clock_getres = __nr_Base + 264;</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>     static constexpr __nr_t clock_nanosleep = __nr_Base + 265;</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a>     static constexpr __nr_t statfs64 = __nr_Base + 266;</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>     static constexpr __nr_t fstatfs64 = __nr_Base + 267;</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>     static constexpr __nr_t tgkill = __nr_Base + 268;</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>     static constexpr __nr_t utimes = __nr_Base + 269;</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>     static constexpr __nr_t arm_fadvise64_64 = __nr_Base + 270;</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>     static constexpr __nr_t pciconfig_iobase = __nr_Base + 271;</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a>     static constexpr __nr_t pciconfig_read = __nr_Base + 272;</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>     static constexpr __nr_t pciconfig_write = __nr_Base + 273;</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>     static constexpr __nr_t mq_open = __nr_Base + 274;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>     static constexpr __nr_t mq_unlink = __nr_Base + 275;</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>     static constexpr __nr_t mq_timedsend = __nr_Base + 276;</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a>     static constexpr __nr_t mq_timedreceive = __nr_Base + 277;</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>     static constexpr __nr_t mq_notify = __nr_Base + 278;</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>     static constexpr __nr_t mq_getsetattr = __nr_Base + 279;</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>     static constexpr __nr_t waitid = __nr_Base + 280;</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>     static constexpr __nr_t socket = __nr_Base + 281;</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>     static constexpr __nr_t bind = __nr_Base + 282;</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>     static constexpr __nr_t connect = __nr_Base + 283;</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>     static constexpr __nr_t listen = __nr_Base + 284;</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a>     static constexpr __nr_t accept = __nr_Base + 285;</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>     static constexpr __nr_t getsockname = __nr_Base + 286;</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>     static constexpr __nr_t getpeername = __nr_Base + 287;</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>     static constexpr __nr_t socketpair = __nr_Base + 288;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a>     static constexpr __nr_t send = __nr_Base + 289;</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a>     static constexpr __nr_t sendto = __nr_Base + 290;</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a>     static constexpr __nr_t recv = __nr_Base + 291;</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a>     static constexpr __nr_t recvfrom = __nr_Base + 292;</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a>     static constexpr __nr_t shutdown = __nr_Base + 293;</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a>     static constexpr __nr_t setsockopt = __nr_Base + 294;</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a>     static constexpr __nr_t getsockopt = __nr_Base + 295;</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a>     static constexpr __nr_t sendmsg = __nr_Base + 296;</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a>     static constexpr __nr_t recvmsg = __nr_Base + 297;</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a>     static constexpr __nr_t semop = __nr_Base + 298;</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>     static constexpr __nr_t semget = __nr_Base + 299;</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>     static constexpr __nr_t semctl = __nr_Base + 300;</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>     static constexpr __nr_t msgsnd = __nr_Base + 301;</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>     static constexpr __nr_t msgrcv = __nr_Base + 302;</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>     static constexpr __nr_t msgget = __nr_Base + 303;</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>     static constexpr __nr_t msgctl = __nr_Base + 304;</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>     static constexpr __nr_t shmat = __nr_Base + 305;</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>     static constexpr __nr_t shmdt = __nr_Base + 306;</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>     static constexpr __nr_t shmget = __nr_Base + 307;</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a>     static constexpr __nr_t shmctl = __nr_Base + 308;</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>     static constexpr __nr_t add_key = __nr_Base + 309;</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a>     static constexpr __nr_t request_key = __nr_Base + 310;</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>     static constexpr __nr_t keyctl = __nr_Base + 311;</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>     static constexpr __nr_t semtimedop = __nr_Base + 312;</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>     static constexpr __nr_t vserver = __nr_Base + 313;</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>     static constexpr __nr_t ioprio_set = __nr_Base + 314;</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>     static constexpr __nr_t ioprio_get = __nr_Base + 315;</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>     static constexpr __nr_t inotify_init = __nr_Base + 316;</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>     static constexpr __nr_t inotify_add_watch = __nr_Base + 317;</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>     static constexpr __nr_t inotify_rm_watch = __nr_Base + 318;</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>     static constexpr __nr_t mbind = __nr_Base + 319;</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>     static constexpr __nr_t get_mempolicy = __nr_Base + 320;</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>     static constexpr __nr_t set_mempolicy = __nr_Base + 321;</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>     static constexpr __nr_t openat = __nr_Base + 322;</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>     static constexpr __nr_t mkdirat = __nr_Base + 323;</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>     static constexpr __nr_t mknodat = __nr_Base + 324;</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>     static constexpr __nr_t fchownat = __nr_Base + 325;</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>     static constexpr __nr_t futimesat = __nr_Base + 326;</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>     static constexpr __nr_t fstatat64 = __nr_Base + 327;</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>     static constexpr __nr_t unlinkat = __nr_Base + 328;</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a>     static constexpr __nr_t renameat = __nr_Base + 329;</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a>     static constexpr __nr_t linkat = __nr_Base + 330;</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>     static constexpr __nr_t symlinkat = __nr_Base + 331;</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>     static constexpr __nr_t readlinkat = __nr_Base + 332;</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>     static constexpr __nr_t fchmodat = __nr_Base + 333;</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>     static constexpr __nr_t faccessat = __nr_Base + 334;</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a>     static constexpr __nr_t pselect6 = __nr_Base + 335;</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>     static constexpr __nr_t ppoll = __nr_Base + 336;</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a>     static constexpr __nr_t unshare = __nr_Base + 337;</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>     static constexpr __nr_t set_robust_list = __nr_Base + 338;</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>     static constexpr __nr_t get_robust_list = __nr_Base + 339;</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>     static constexpr __nr_t splice = __nr_Base + 340;</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>     static constexpr __nr_t arm_sync_file_range = __nr_Base + 341;</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>     static constexpr __nr_t sync_file_range2 = arm_sync_file_range;</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a>     static constexpr __nr_t tee = __nr_Base + 342;</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>     static constexpr __nr_t vmsplice = __nr_Base + 343;</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a>     static constexpr __nr_t move_pages = __nr_Base + 344;</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>     static constexpr __nr_t getcpu = __nr_Base + 345;</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a>     static constexpr __nr_t epoll_pwait = __nr_Base + 346;</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>     static constexpr __nr_t kexec_load = __nr_Base + 347;</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a>     static constexpr __nr_t utimensat = __nr_Base + 348;</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>     static constexpr __nr_t signalfd = __nr_Base + 349;</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a>     static constexpr __nr_t timerfd_create = __nr_Base + 350;</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>     static constexpr __nr_t eventfd = __nr_Base + 351;</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>     static constexpr __nr_t fallocate = __nr_Base + 352;</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>     static constexpr __nr_t timerfd_settime = __nr_Base + 353;</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a>     static constexpr __nr_t timerfd_gettime = __nr_Base + 354;</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a>     static constexpr __nr_t signalfd4 = __nr_Base + 355;</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a>     static constexpr __nr_t eventfd2 = __nr_Base + 356;</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a>     static constexpr __nr_t epoll_create1 = __nr_Base + 357;</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>     static constexpr __nr_t dup3 = __nr_Base + 358;</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>     static constexpr __nr_t pipe2 = __nr_Base + 359;</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>     static constexpr __nr_t inotify_init1 = __nr_Base + 360;</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a>     static constexpr __nr_t preadv = __nr_Base + 361;</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>     static constexpr __nr_t pwritev = __nr_Base + 362;</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>     static constexpr __nr_t rt_tgsigqueueinfo = __nr_Base + 363;</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>     static constexpr __nr_t perf_event_open = __nr_Base + 364;</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a>     static constexpr __nr_t recvmmsg = __nr_Base + 365;</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>     static constexpr __nr_t accept4 = __nr_Base + 366;</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>     static constexpr __nr_t fanotify_init = __nr_Base + 367;</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>     static constexpr __nr_t fanotify_mark = __nr_Base + 368;</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>     static constexpr __nr_t prlimit64 = __nr_Base + 369;</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a>     static constexpr __nr_t name_to_handle_at = __nr_Base + 370;</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>     static constexpr __nr_t open_by_handle_at = __nr_Base + 371;</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>     static constexpr __nr_t clock_adjtime = __nr_Base + 372;</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>     static constexpr __nr_t syncfs = __nr_Base + 373;</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>     static constexpr __nr_t sendmmsg = __nr_Base + 374;</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>     static constexpr __nr_t setns = __nr_Base + 375;</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a>     static constexpr __nr_t process_vm_readv = __nr_Base + 376;</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>     static constexpr __nr_t process_vm_writev = __nr_Base + 377;</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a>     static constexpr __nr_t kcmp = __nr_Base + 378;</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a>     static constexpr __nr_t finit_module = __nr_Base + 379;</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>     static constexpr __nr_t sched_setattr = __nr_Base + 380;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a>     static constexpr __nr_t sched_getattr = __nr_Base + 381;</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a>     static constexpr __nr_t renameat2 = __nr_Base + 382;</span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a>     static constexpr __nr_t seccomp = __nr_Base + 383;</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>     static constexpr __nr_t getrandom = __nr_Base + 384;</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>     static constexpr __nr_t memfd_create = __nr_Base + 385;</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>     static constexpr __nr_t bpf = __nr_Base + 386;</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>     static constexpr __nr_t execveat = __nr_Base + 387;</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a>     static constexpr __nr_t userfaultfd = __nr_Base + 388;</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>     static constexpr __nr_t membarrier = __nr_Base + 389;</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a>     static constexpr __nr_t mlock2 = __nr_Base + 390;</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a>     static constexpr __nr_t copy_file_range = __nr_Base + 391;</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>     static constexpr __nr_t preadv2 = __nr_Base + 392;</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>     static constexpr __nr_t pwritev2 = __nr_Base + 393;</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a>     static constexpr __nr_t pkey_mprotect = __nr_Base + 394;</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>     static constexpr __nr_t pkey_alloc = __nr_Base + 395;</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>     static constexpr __nr_t pkey_free = __nr_Base + 396;</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>     static constexpr __nr_t statx = __nr_Base + 397;</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>     static constexpr __nr_t rseq = __nr_Base + 398;</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>     static constexpr __nr_t io_pgetevents = __nr_Base + 399;</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>     static constexpr __nr_t migrate_pages = __nr_Base + 400;</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a>     static constexpr __nr_t kexec_file_load = __nr_Base + 401;</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a>     // __nr_Base + 402: unused</span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a>     static constexpr __nr_t clock_gettime64 = __nr_Base + 403;</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>     static constexpr __nr_t clock_settime64 = __nr_Base + 404;</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>     static constexpr __nr_t clock_adjtime64 = __nr_Base + 405;</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>     static constexpr __nr_t clock_getres_time64 = __nr_Base + 406;</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>     static constexpr __nr_t clock_nanosleep_time64 = __nr_Base + 407;</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>     static constexpr __nr_t timer_gettime64 = __nr_Base + 408;</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>     static constexpr __nr_t timer_settime64 = __nr_Base + 409;</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>     static constexpr __nr_t timerfd_gettime64 = __nr_Base + 410;</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>     static constexpr __nr_t timerfd_settime64 = __nr_Base + 411;</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>     static constexpr __nr_t utimensat_time64 = __nr_Base + 412;</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>     static constexpr __nr_t pselect6_time64 = __nr_Base + 413;</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>     static constexpr __nr_t ppoll_time64 = __nr_Base + 414;</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>     // __nr_Base + 415: unused</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a>     static constexpr __nr_t io_pgetevents_time64 = __nr_Base + 416;</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a>     static constexpr __nr_t recvmmsg_time64 = __nr_Base + 417;</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>     static constexpr __nr_t mq_timedsend_time64 = __nr_Base + 418;</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>     static constexpr __nr_t mq_timedreceive_time64 = __nr_Base + 419;</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a>     static constexpr __nr_t semtimedop_time64 = __nr_Base + 420;</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a>     static constexpr __nr_t rt_sigtimedwait_time64 = __nr_Base + 421;</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a>     static constexpr __nr_t futex_time64 = __nr_Base + 422;</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a>     static constexpr __nr_t sched_rr_get_interval_time64 = __nr_Base + 423;</span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>     static constexpr __nr_t pidfd_send_signal = __nr_Base + 424;</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>     static constexpr __nr_t io_uring_setup = __nr_Base + 425;</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>     static constexpr __nr_t io_uring_enter = __nr_Base + 426;</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>     static constexpr __nr_t io_uring_register = __nr_Base + 427;</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>     static constexpr __nr_t open_tree = __nr_Base + 428;</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>     static constexpr __nr_t move_mount = __nr_Base + 429;</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>     static constexpr __nr_t fsopen = __nr_Base + 430;</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>     static constexpr __nr_t fsconfig = __nr_Base + 431;</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>     static constexpr __nr_t fsmount = __nr_Base + 432;</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>     static constexpr __nr_t fspick = __nr_Base + 433;</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a>     static constexpr __nr_t pidfd_open = __nr_Base + 434;</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>     static constexpr __nr_t clone3 = __nr_Base + 435;</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a>     static constexpr __nr_t close_range = __nr_Base + 436;</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>     static constexpr __nr_t openat2 = __nr_Base + 437;</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>     static constexpr __nr_t pidfd_getfd = __nr_Base + 438;</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>     static constexpr __nr_t faccessat2 = __nr_Base + 439;</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>     static constexpr __nr_t process_madvise = __nr_Base + 440;</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>     static constexpr __nr_t epoll_pwait2 = __nr_Base + 441;</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a>     static constexpr __nr_t mount_setattr = __nr_Base + 442;</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a>     static constexpr __nr_t quotactl_fd = __nr_Base + 443;</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>     static constexpr __nr_t landlock_create_ruleset = __nr_Base + 444;</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>     static constexpr __nr_t landlock_add_rule = __nr_Base + 445;</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>     static constexpr __nr_t landlock_restrict_self = __nr_Base + 446;</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>     // __nr_Base + 447: memfd_secret (not wired on ARM)</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>     static constexpr __nr_t process_mrelease = __nr_Base + 448;</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a>     static constexpr __nr_t futex_waitv = __nr_Base + 449;</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>     static constexpr __nr_t set_mempolicy_home_node = __nr_Base + 450;</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>     static constexpr __nr_t cachestat = __nr_Base + 451;</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>     static constexpr __nr_t fchmodat2 = __nr_Base + 452;</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>     // __nr_Base + 453: map_shadow_stack (x86 only)</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>     static constexpr __nr_t futex_wake = __nr_Base + 454;</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a>     static constexpr __nr_t futex_wait = __nr_Base + 455;</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a>     static constexpr __nr_t futex_requeue = __nr_Base + 456;</span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a>     static constexpr __nr_t statmount = __nr_Base + 457;</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>     static constexpr __nr_t listmount = __nr_Base + 458;</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>     static constexpr __nr_t lsm_get_self_attr = __nr_Base + 459;</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>     static constexpr __nr_t lsm_set_self_attr = __nr_Base + 460;</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a>     static constexpr __nr_t lsm_list_modules = __nr_Base + 461;</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a>     static constexpr __nr_t mseal = __nr_Base + 462;</span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>     static constexpr __nr_t setxattrat = __nr_Base + 463;</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a>     static constexpr __nr_t getxattrat = __nr_Base + 464;</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a>     static constexpr __nr_t listxattrat = __nr_Base + 465;</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>     static constexpr __nr_t removexattrat = __nr_Base + 466;</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>     static constexpr __nr_t open_tree_attr = __nr_Base + 467;</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>     static constexpr __nr_t file_getattr = __nr_Base + 468;</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>     static constexpr __nr_t file_setattr = __nr_Base + 469;</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a>     static constexpr __nr_t listns = __nr_Base + 470;</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a>     static constexpr __nr_t rseq_slice_yield = __nr_Base + 471;</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a> </span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a>     // private SWIs</span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a>     static constexpr __nr_t arm_private_base = __nr_Base + 0x0f0000;</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a>     static constexpr __nr_t arm_breakpoint = arm_private_base + 1;</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a>     static constexpr __nr_t arm_cacheflush = arm_private_base + 2;</span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a>     static constexpr __nr_t arm_usr26 = arm_private_base + 3;</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a>     static constexpr __nr_t arm_usr32 = arm_private_base + 4;</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a>     static constexpr __nr_t arm_set_tls = arm_private_base + 5;</span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a>     static constexpr __nr_t arm_get_tls = arm_private_base + 6;</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a>   };</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a> };</span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a> </span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a> using arm32_eabi = arm32_syscalls&lt;0&gt;;</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a> using arm32_oabi = arm32_syscalls&lt;0x900000&gt;;</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a> </span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a> // legacy backcom</span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a> inline constexpr __nr_t SYS_restart_syscall = arm32_eabi::nr::restart_syscall;</span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a> inline constexpr __nr_t SYS_exit = arm32_eabi::nr::exit;</span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a> inline constexpr __nr_t SYS_fork = arm32_eabi::nr::fork;</span>
+<span id="L508" class="source-line"><a class="line-number" href="#L508">508</a> inline constexpr __nr_t SYS_read = arm32_eabi::nr::read;</span>
+<span id="L509" class="source-line"><a class="line-number" href="#L509">509</a> inline constexpr __nr_t SYS_write = arm32_eabi::nr::write;</span>
+<span id="L510" class="source-line"><a class="line-number" href="#L510">510</a> inline constexpr __nr_t SYS_open = arm32_eabi::nr::open;</span>
+<span id="L511" class="source-line"><a class="line-number" href="#L511">511</a> inline constexpr __nr_t SYS_close = arm32_eabi::nr::close;</span>
+<span id="L512" class="source-line"><a class="line-number" href="#L512">512</a> inline constexpr __nr_t SYS_creat = arm32_eabi::nr::creat;</span>
+<span id="L513" class="source-line"><a class="line-number" href="#L513">513</a> inline constexpr __nr_t SYS_link = arm32_eabi::nr::link;</span>
+<span id="L514" class="source-line"><a class="line-number" href="#L514">514</a> inline constexpr __nr_t SYS_unlink = arm32_eabi::nr::unlink;</span>
+<span id="L515" class="source-line"><a class="line-number" href="#L515">515</a> inline constexpr __nr_t SYS_execve = arm32_eabi::nr::execve;</span>
+<span id="L516" class="source-line"><a class="line-number" href="#L516">516</a> inline constexpr __nr_t SYS_chdir = arm32_eabi::nr::chdir;</span>
+<span id="L517" class="source-line"><a class="line-number" href="#L517">517</a> inline constexpr __nr_t SYS_mknod = arm32_eabi::nr::mknod;</span>
+<span id="L518" class="source-line"><a class="line-number" href="#L518">518</a> inline constexpr __nr_t SYS_chmod = arm32_eabi::nr::chmod;</span>
+<span id="L519" class="source-line"><a class="line-number" href="#L519">519</a> inline constexpr __nr_t SYS_lchown = arm32_eabi::nr::lchown;</span>
+<span id="L520" class="source-line"><a class="line-number" href="#L520">520</a> inline constexpr __nr_t SYS_lseek = arm32_eabi::nr::lseek;</span>
+<span id="L521" class="source-line"><a class="line-number" href="#L521">521</a> inline constexpr __nr_t SYS_getpid = arm32_eabi::nr::getpid;</span>
+<span id="L522" class="source-line"><a class="line-number" href="#L522">522</a> inline constexpr __nr_t SYS_mount = arm32_eabi::nr::mount;</span>
+<span id="L523" class="source-line"><a class="line-number" href="#L523">523</a> inline constexpr __nr_t SYS_setuid = arm32_eabi::nr::setuid;</span>
+<span id="L524" class="source-line"><a class="line-number" href="#L524">524</a> inline constexpr __nr_t SYS_getuid = arm32_eabi::nr::getuid;</span>
+<span id="L525" class="source-line"><a class="line-number" href="#L525">525</a> inline constexpr __nr_t SYS_ptrace = arm32_eabi::nr::ptrace;</span>
+<span id="L526" class="source-line"><a class="line-number" href="#L526">526</a> inline constexpr __nr_t SYS_pause = arm32_eabi::nr::pause;</span>
+<span id="L527" class="source-line"><a class="line-number" href="#L527">527</a> inline constexpr __nr_t SYS_access = arm32_eabi::nr::access;</span>
+<span id="L528" class="source-line"><a class="line-number" href="#L528">528</a> inline constexpr __nr_t SYS_nice = arm32_eabi::nr::nice;</span>
+<span id="L529" class="source-line"><a class="line-number" href="#L529">529</a> inline constexpr __nr_t SYS_sync = arm32_eabi::nr::sync;</span>
+<span id="L530" class="source-line"><a class="line-number" href="#L530">530</a> inline constexpr __nr_t SYS_kill = arm32_eabi::nr::kill;</span>
+<span id="L531" class="source-line"><a class="line-number" href="#L531">531</a> inline constexpr __nr_t SYS_rename = arm32_eabi::nr::rename;</span>
+<span id="L532" class="source-line"><a class="line-number" href="#L532">532</a> inline constexpr __nr_t SYS_mkdir = arm32_eabi::nr::mkdir;</span>
+<span id="L533" class="source-line"><a class="line-number" href="#L533">533</a> inline constexpr __nr_t SYS_rmdir = arm32_eabi::nr::rmdir;</span>
+<span id="L534" class="source-line"><a class="line-number" href="#L534">534</a> inline constexpr __nr_t SYS_dup = arm32_eabi::nr::dup;</span>
+<span id="L535" class="source-line"><a class="line-number" href="#L535">535</a> inline constexpr __nr_t SYS_pipe = arm32_eabi::nr::pipe;</span>
+<span id="L536" class="source-line"><a class="line-number" href="#L536">536</a> inline constexpr __nr_t SYS_times = arm32_eabi::nr::times;</span>
+<span id="L537" class="source-line"><a class="line-number" href="#L537">537</a> inline constexpr __nr_t SYS_brk = arm32_eabi::nr::brk;</span>
+<span id="L538" class="source-line"><a class="line-number" href="#L538">538</a> inline constexpr __nr_t SYS_setgid = arm32_eabi::nr::setgid;</span>
+<span id="L539" class="source-line"><a class="line-number" href="#L539">539</a> inline constexpr __nr_t SYS_getgid = arm32_eabi::nr::getgid;</span>
+<span id="L540" class="source-line"><a class="line-number" href="#L540">540</a> inline constexpr __nr_t SYS_geteuid = arm32_eabi::nr::geteuid;</span>
+<span id="L541" class="source-line"><a class="line-number" href="#L541">541</a> inline constexpr __nr_t SYS_getegid = arm32_eabi::nr::getegid;</span>
+<span id="L542" class="source-line"><a class="line-number" href="#L542">542</a> inline constexpr __nr_t SYS_acct = arm32_eabi::nr::acct;</span>
+<span id="L543" class="source-line"><a class="line-number" href="#L543">543</a> inline constexpr __nr_t SYS_umount2 = arm32_eabi::nr::umount2;</span>
+<span id="L544" class="source-line"><a class="line-number" href="#L544">544</a> inline constexpr __nr_t SYS_ioctl = arm32_eabi::nr::ioctl;</span>
+<span id="L545" class="source-line"><a class="line-number" href="#L545">545</a> inline constexpr __nr_t SYS_fcntl = arm32_eabi::nr::fcntl;</span>
+<span id="L546" class="source-line"><a class="line-number" href="#L546">546</a> inline constexpr __nr_t SYS_setpgid = arm32_eabi::nr::setpgid;</span>
+<span id="L547" class="source-line"><a class="line-number" href="#L547">547</a> inline constexpr __nr_t SYS_umask = arm32_eabi::nr::umask;</span>
+<span id="L548" class="source-line"><a class="line-number" href="#L548">548</a> inline constexpr __nr_t SYS_chroot = arm32_eabi::nr::chroot;</span>
+<span id="L549" class="source-line"><a class="line-number" href="#L549">549</a> inline constexpr __nr_t SYS_ustat = arm32_eabi::nr::ustat;</span>
+<span id="L550" class="source-line"><a class="line-number" href="#L550">550</a> inline constexpr __nr_t SYS_dup2 = arm32_eabi::nr::dup2;</span>
+<span id="L551" class="source-line"><a class="line-number" href="#L551">551</a> inline constexpr __nr_t SYS_getppid = arm32_eabi::nr::getppid;</span>
+<span id="L552" class="source-line"><a class="line-number" href="#L552">552</a> inline constexpr __nr_t SYS_getpgrp = arm32_eabi::nr::getpgrp;</span>
+<span id="L553" class="source-line"><a class="line-number" href="#L553">553</a> inline constexpr __nr_t SYS_setsid = arm32_eabi::nr::setsid;</span>
+<span id="L554" class="source-line"><a class="line-number" href="#L554">554</a> inline constexpr __nr_t SYS_sigaction = arm32_eabi::nr::sigaction;</span>
+<span id="L555" class="source-line"><a class="line-number" href="#L555">555</a> inline constexpr __nr_t SYS_setreuid = arm32_eabi::nr::setreuid;</span>
+<span id="L556" class="source-line"><a class="line-number" href="#L556">556</a> inline constexpr __nr_t SYS_setregid = arm32_eabi::nr::setregid;</span>
+<span id="L557" class="source-line"><a class="line-number" href="#L557">557</a> inline constexpr __nr_t SYS_sigsuspend = arm32_eabi::nr::sigsuspend;</span>
+<span id="L558" class="source-line"><a class="line-number" href="#L558">558</a> inline constexpr __nr_t SYS_sigpending = arm32_eabi::nr::sigpending;</span>
+<span id="L559" class="source-line"><a class="line-number" href="#L559">559</a> inline constexpr __nr_t SYS_sethostname = arm32_eabi::nr::sethostname;</span>
+<span id="L560" class="source-line"><a class="line-number" href="#L560">560</a> inline constexpr __nr_t SYS_setrlimit = arm32_eabi::nr::setrlimit;</span>
+<span id="L561" class="source-line"><a class="line-number" href="#L561">561</a> inline constexpr __nr_t SYS_getrusage = arm32_eabi::nr::getrusage;</span>
+<span id="L562" class="source-line"><a class="line-number" href="#L562">562</a> inline constexpr __nr_t SYS_gettimeofday = arm32_eabi::nr::gettimeofday;</span>
+<span id="L563" class="source-line"><a class="line-number" href="#L563">563</a> inline constexpr __nr_t SYS_settimeofday = arm32_eabi::nr::settimeofday;</span>
+<span id="L564" class="source-line"><a class="line-number" href="#L564">564</a> inline constexpr __nr_t SYS_getgroups = arm32_eabi::nr::getgroups;</span>
+<span id="L565" class="source-line"><a class="line-number" href="#L565">565</a> inline constexpr __nr_t SYS_setgroups = arm32_eabi::nr::setgroups;</span>
+<span id="L566" class="source-line"><a class="line-number" href="#L566">566</a> inline constexpr __nr_t SYS_symlink = arm32_eabi::nr::symlink;</span>
+<span id="L567" class="source-line"><a class="line-number" href="#L567">567</a> inline constexpr __nr_t SYS_readlink = arm32_eabi::nr::readlink;</span>
+<span id="L568" class="source-line"><a class="line-number" href="#L568">568</a> inline constexpr __nr_t SYS_uselib = arm32_eabi::nr::uselib;</span>
+<span id="L569" class="source-line"><a class="line-number" href="#L569">569</a> inline constexpr __nr_t SYS_swapon = arm32_eabi::nr::swapon;</span>
+<span id="L570" class="source-line"><a class="line-number" href="#L570">570</a> inline constexpr __nr_t SYS_reboot = arm32_eabi::nr::reboot;</span>
+<span id="L571" class="source-line"><a class="line-number" href="#L571">571</a> inline constexpr __nr_t SYS_munmap = arm32_eabi::nr::munmap;</span>
+<span id="L572" class="source-line"><a class="line-number" href="#L572">572</a> inline constexpr __nr_t SYS_truncate = arm32_eabi::nr::truncate;</span>
+<span id="L573" class="source-line"><a class="line-number" href="#L573">573</a> inline constexpr __nr_t SYS_ftruncate = arm32_eabi::nr::ftruncate;</span>
+<span id="L574" class="source-line"><a class="line-number" href="#L574">574</a> inline constexpr __nr_t SYS_fchmod = arm32_eabi::nr::fchmod;</span>
+<span id="L575" class="source-line"><a class="line-number" href="#L575">575</a> inline constexpr __nr_t SYS_fchown = arm32_eabi::nr::fchown;</span>
+<span id="L576" class="source-line"><a class="line-number" href="#L576">576</a> inline constexpr __nr_t SYS_getpriority = arm32_eabi::nr::getpriority;</span>
+<span id="L577" class="source-line"><a class="line-number" href="#L577">577</a> inline constexpr __nr_t SYS_setpriority = arm32_eabi::nr::setpriority;</span>
+<span id="L578" class="source-line"><a class="line-number" href="#L578">578</a> inline constexpr __nr_t SYS_statfs = arm32_eabi::nr::statfs;</span>
+<span id="L579" class="source-line"><a class="line-number" href="#L579">579</a> inline constexpr __nr_t SYS_fstatfs = arm32_eabi::nr::fstatfs;</span>
+<span id="L580" class="source-line"><a class="line-number" href="#L580">580</a> inline constexpr __nr_t SYS_syslog = arm32_eabi::nr::syslog;</span>
+<span id="L581" class="source-line"><a class="line-number" href="#L581">581</a> inline constexpr __nr_t SYS_setitimer = arm32_eabi::nr::setitimer;</span>
+<span id="L582" class="source-line"><a class="line-number" href="#L582">582</a> inline constexpr __nr_t SYS_getitimer = arm32_eabi::nr::getitimer;</span>
+<span id="L583" class="source-line"><a class="line-number" href="#L583">583</a> inline constexpr __nr_t SYS_stat = arm32_eabi::nr::stat;</span>
+<span id="L584" class="source-line"><a class="line-number" href="#L584">584</a> inline constexpr __nr_t SYS_lstat = arm32_eabi::nr::lstat;</span>
+<span id="L585" class="source-line"><a class="line-number" href="#L585">585</a> inline constexpr __nr_t SYS_fstat = arm32_eabi::nr::fstat;</span>
+<span id="L586" class="source-line"><a class="line-number" href="#L586">586</a> inline constexpr __nr_t SYS_vhangup = arm32_eabi::nr::vhangup;</span>
+<span id="L587" class="source-line"><a class="line-number" href="#L587">587</a> inline constexpr __nr_t SYS_wait4 = arm32_eabi::nr::wait4;</span>
+<span id="L588" class="source-line"><a class="line-number" href="#L588">588</a> inline constexpr __nr_t SYS_swapoff = arm32_eabi::nr::swapoff;</span>
+<span id="L589" class="source-line"><a class="line-number" href="#L589">589</a> inline constexpr __nr_t SYS_sysinfo = arm32_eabi::nr::sysinfo;</span>
+<span id="L590" class="source-line"><a class="line-number" href="#L590">590</a> inline constexpr __nr_t SYS_fsync = arm32_eabi::nr::fsync;</span>
+<span id="L591" class="source-line"><a class="line-number" href="#L591">591</a> inline constexpr __nr_t SYS_sigreturn = arm32_eabi::nr::sigreturn;</span>
+<span id="L592" class="source-line"><a class="line-number" href="#L592">592</a> inline constexpr __nr_t SYS_clone = arm32_eabi::nr::clone;</span>
+<span id="L593" class="source-line"><a class="line-number" href="#L593">593</a> inline constexpr __nr_t SYS_setdomainname = arm32_eabi::nr::setdomainname;</span>
+<span id="L594" class="source-line"><a class="line-number" href="#L594">594</a> inline constexpr __nr_t SYS_uname = arm32_eabi::nr::uname;</span>
+<span id="L595" class="source-line"><a class="line-number" href="#L595">595</a> inline constexpr __nr_t SYS_adjtimex = arm32_eabi::nr::adjtimex;</span>
+<span id="L596" class="source-line"><a class="line-number" href="#L596">596</a> inline constexpr __nr_t SYS_mprotect = arm32_eabi::nr::mprotect;</span>
+<span id="L597" class="source-line"><a class="line-number" href="#L597">597</a> inline constexpr __nr_t SYS_sigprocmask = arm32_eabi::nr::sigprocmask;</span>
+<span id="L598" class="source-line"><a class="line-number" href="#L598">598</a> inline constexpr __nr_t SYS_init_module = arm32_eabi::nr::init_module;</span>
+<span id="L599" class="source-line"><a class="line-number" href="#L599">599</a> inline constexpr __nr_t SYS_delete_module = arm32_eabi::nr::delete_module;</span>
+<span id="L600" class="source-line"><a class="line-number" href="#L600">600</a> inline constexpr __nr_t SYS_quotactl = arm32_eabi::nr::quotactl;</span>
+<span id="L601" class="source-line"><a class="line-number" href="#L601">601</a> inline constexpr __nr_t SYS_getpgid = arm32_eabi::nr::getpgid;</span>
+<span id="L602" class="source-line"><a class="line-number" href="#L602">602</a> inline constexpr __nr_t SYS_fchdir = arm32_eabi::nr::fchdir;</span>
+<span id="L603" class="source-line"><a class="line-number" href="#L603">603</a> inline constexpr __nr_t SYS_bdflush = arm32_eabi::nr::bdflush;</span>
+<span id="L604" class="source-line"><a class="line-number" href="#L604">604</a> inline constexpr __nr_t SYS_sysfs = arm32_eabi::nr::sysfs;</span>
+<span id="L605" class="source-line"><a class="line-number" href="#L605">605</a> inline constexpr __nr_t SYS_personality = arm32_eabi::nr::personality;</span>
+<span id="L606" class="source-line"><a class="line-number" href="#L606">606</a> inline constexpr __nr_t SYS_setfsuid = arm32_eabi::nr::setfsuid;</span>
+<span id="L607" class="source-line"><a class="line-number" href="#L607">607</a> inline constexpr __nr_t SYS_setfsgid = arm32_eabi::nr::setfsgid;</span>
+<span id="L608" class="source-line"><a class="line-number" href="#L608">608</a> inline constexpr __nr_t SYS__llseek = arm32_eabi::nr::_llseek;</span>
+<span id="L609" class="source-line"><a class="line-number" href="#L609">609</a> inline constexpr __nr_t SYS_getdents = arm32_eabi::nr::getdents;</span>
+<span id="L610" class="source-line"><a class="line-number" href="#L610">610</a> inline constexpr __nr_t SYS__newselect = arm32_eabi::nr::_newselect;</span>
+<span id="L611" class="source-line"><a class="line-number" href="#L611">611</a> inline constexpr __nr_t SYS_flock = arm32_eabi::nr::flock;</span>
+<span id="L612" class="source-line"><a class="line-number" href="#L612">612</a> inline constexpr __nr_t SYS_msync = arm32_eabi::nr::msync;</span>
+<span id="L613" class="source-line"><a class="line-number" href="#L613">613</a> inline constexpr __nr_t SYS_readv = arm32_eabi::nr::readv;</span>
+<span id="L614" class="source-line"><a class="line-number" href="#L614">614</a> inline constexpr __nr_t SYS_writev = arm32_eabi::nr::writev;</span>
+<span id="L615" class="source-line"><a class="line-number" href="#L615">615</a> inline constexpr __nr_t SYS_getsid = arm32_eabi::nr::getsid;</span>
+<span id="L616" class="source-line"><a class="line-number" href="#L616">616</a> inline constexpr __nr_t SYS_fdatasync = arm32_eabi::nr::fdatasync;</span>
+<span id="L617" class="source-line"><a class="line-number" href="#L617">617</a> inline constexpr __nr_t SYS__sysctl = arm32_eabi::nr::_sysctl;</span>
+<span id="L618" class="source-line"><a class="line-number" href="#L618">618</a> inline constexpr __nr_t SYS_mlock = arm32_eabi::nr::mlock;</span>
+<span id="L619" class="source-line"><a class="line-number" href="#L619">619</a> inline constexpr __nr_t SYS_munlock = arm32_eabi::nr::munlock;</span>
+<span id="L620" class="source-line"><a class="line-number" href="#L620">620</a> inline constexpr __nr_t SYS_mlockall = arm32_eabi::nr::mlockall;</span>
+<span id="L621" class="source-line"><a class="line-number" href="#L621">621</a> inline constexpr __nr_t SYS_munlockall = arm32_eabi::nr::munlockall;</span>
+<span id="L622" class="source-line"><a class="line-number" href="#L622">622</a> inline constexpr __nr_t SYS_sched_setparam = arm32_eabi::nr::sched_setparam;</span>
+<span id="L623" class="source-line"><a class="line-number" href="#L623">623</a> inline constexpr __nr_t SYS_sched_getparam = arm32_eabi::nr::sched_getparam;</span>
+<span id="L624" class="source-line"><a class="line-number" href="#L624">624</a> inline constexpr __nr_t SYS_sched_setscheduler = arm32_eabi::nr::sched_setscheduler;</span>
+<span id="L625" class="source-line"><a class="line-number" href="#L625">625</a> inline constexpr __nr_t SYS_sched_getscheduler = arm32_eabi::nr::sched_getscheduler;</span>
+<span id="L626" class="source-line"><a class="line-number" href="#L626">626</a> inline constexpr __nr_t SYS_sched_yield = arm32_eabi::nr::sched_yield;</span>
+<span id="L627" class="source-line"><a class="line-number" href="#L627">627</a> inline constexpr __nr_t SYS_sched_get_priority_max = arm32_eabi::nr::sched_get_priority_max;</span>
+<span id="L628" class="source-line"><a class="line-number" href="#L628">628</a> inline constexpr __nr_t SYS_sched_get_priority_min = arm32_eabi::nr::sched_get_priority_min;</span>
+<span id="L629" class="source-line"><a class="line-number" href="#L629">629</a> inline constexpr __nr_t SYS_sched_rr_get_interval = arm32_eabi::nr::sched_rr_get_interval;</span>
+<span id="L630" class="source-line"><a class="line-number" href="#L630">630</a> inline constexpr __nr_t SYS_nanosleep = arm32_eabi::nr::nanosleep;</span>
+<span id="L631" class="source-line"><a class="line-number" href="#L631">631</a> inline constexpr __nr_t SYS_mremap = arm32_eabi::nr::mremap;</span>
+<span id="L632" class="source-line"><a class="line-number" href="#L632">632</a> inline constexpr __nr_t SYS_setresuid = arm32_eabi::nr::setresuid;</span>
+<span id="L633" class="source-line"><a class="line-number" href="#L633">633</a> inline constexpr __nr_t SYS_getresuid = arm32_eabi::nr::getresuid;</span>
+<span id="L634" class="source-line"><a class="line-number" href="#L634">634</a> inline constexpr __nr_t SYS_poll = arm32_eabi::nr::poll;</span>
+<span id="L635" class="source-line"><a class="line-number" href="#L635">635</a> inline constexpr __nr_t SYS_nfsservctl = arm32_eabi::nr::nfsservctl;</span>
+<span id="L636" class="source-line"><a class="line-number" href="#L636">636</a> inline constexpr __nr_t SYS_setresgid = arm32_eabi::nr::setresgid;</span>
+<span id="L637" class="source-line"><a class="line-number" href="#L637">637</a> inline constexpr __nr_t SYS_getresgid = arm32_eabi::nr::getresgid;</span>
+<span id="L638" class="source-line"><a class="line-number" href="#L638">638</a> inline constexpr __nr_t SYS_prctl = arm32_eabi::nr::prctl;</span>
+<span id="L639" class="source-line"><a class="line-number" href="#L639">639</a> inline constexpr __nr_t SYS_rt_sigreturn = arm32_eabi::nr::rt_sigreturn;</span>
+<span id="L640" class="source-line"><a class="line-number" href="#L640">640</a> inline constexpr __nr_t SYS_rt_sigaction = arm32_eabi::nr::rt_sigaction;</span>
+<span id="L641" class="source-line"><a class="line-number" href="#L641">641</a> inline constexpr __nr_t SYS_rt_sigprocmask = arm32_eabi::nr::rt_sigprocmask;</span>
+<span id="L642" class="source-line"><a class="line-number" href="#L642">642</a> inline constexpr __nr_t SYS_rt_sigpending = arm32_eabi::nr::rt_sigpending;</span>
+<span id="L643" class="source-line"><a class="line-number" href="#L643">643</a> inline constexpr __nr_t SYS_rt_sigtimedwait = arm32_eabi::nr::rt_sigtimedwait;</span>
+<span id="L644" class="source-line"><a class="line-number" href="#L644">644</a> inline constexpr __nr_t SYS_rt_sigqueueinfo = arm32_eabi::nr::rt_sigqueueinfo;</span>
+<span id="L645" class="source-line"><a class="line-number" href="#L645">645</a> inline constexpr __nr_t SYS_rt_sigsuspend = arm32_eabi::nr::rt_sigsuspend;</span>
+<span id="L646" class="source-line"><a class="line-number" href="#L646">646</a> inline constexpr __nr_t SYS_pread64 = arm32_eabi::nr::pread64;</span>
+<span id="L647" class="source-line"><a class="line-number" href="#L647">647</a> inline constexpr __nr_t SYS_pwrite64 = arm32_eabi::nr::pwrite64;</span>
+<span id="L648" class="source-line"><a class="line-number" href="#L648">648</a> inline constexpr __nr_t SYS_chown = arm32_eabi::nr::chown;</span>
+<span id="L649" class="source-line"><a class="line-number" href="#L649">649</a> inline constexpr __nr_t SYS_getcwd = arm32_eabi::nr::getcwd;</span>
+<span id="L650" class="source-line"><a class="line-number" href="#L650">650</a> inline constexpr __nr_t SYS_capget = arm32_eabi::nr::capget;</span>
+<span id="L651" class="source-line"><a class="line-number" href="#L651">651</a> inline constexpr __nr_t SYS_capset = arm32_eabi::nr::capset;</span>
+<span id="L652" class="source-line"><a class="line-number" href="#L652">652</a> inline constexpr __nr_t SYS_sigaltstack = arm32_eabi::nr::sigaltstack;</span>
+<span id="L653" class="source-line"><a class="line-number" href="#L653">653</a> inline constexpr __nr_t SYS_sendfile = arm32_eabi::nr::sendfile;</span>
+<span id="L654" class="source-line"><a class="line-number" href="#L654">654</a> inline constexpr __nr_t SYS_vfork = arm32_eabi::nr::vfork;</span>
+<span id="L655" class="source-line"><a class="line-number" href="#L655">655</a> inline constexpr __nr_t SYS_ugetrlimit = arm32_eabi::nr::ugetrlimit;</span>
+<span id="L656" class="source-line"><a class="line-number" href="#L656">656</a> inline constexpr __nr_t SYS_mmap2 = arm32_eabi::nr::mmap2;</span>
+<span id="L657" class="source-line"><a class="line-number" href="#L657">657</a> inline constexpr __nr_t SYS_truncate64 = arm32_eabi::nr::truncate64;</span>
+<span id="L658" class="source-line"><a class="line-number" href="#L658">658</a> inline constexpr __nr_t SYS_ftruncate64 = arm32_eabi::nr::ftruncate64;</span>
+<span id="L659" class="source-line"><a class="line-number" href="#L659">659</a> inline constexpr __nr_t SYS_stat64 = arm32_eabi::nr::stat64;</span>
+<span id="L660" class="source-line"><a class="line-number" href="#L660">660</a> inline constexpr __nr_t SYS_lstat64 = arm32_eabi::nr::lstat64;</span>
+<span id="L661" class="source-line"><a class="line-number" href="#L661">661</a> inline constexpr __nr_t SYS_fstat64 = arm32_eabi::nr::fstat64;</span>
+<span id="L662" class="source-line"><a class="line-number" href="#L662">662</a> inline constexpr __nr_t SYS_lchown32 = arm32_eabi::nr::lchown32;</span>
+<span id="L663" class="source-line"><a class="line-number" href="#L663">663</a> inline constexpr __nr_t SYS_getuid32 = arm32_eabi::nr::getuid32;</span>
+<span id="L664" class="source-line"><a class="line-number" href="#L664">664</a> inline constexpr __nr_t SYS_getgid32 = arm32_eabi::nr::getgid32;</span>
+<span id="L665" class="source-line"><a class="line-number" href="#L665">665</a> inline constexpr __nr_t SYS_geteuid32 = arm32_eabi::nr::geteuid32;</span>
+<span id="L666" class="source-line"><a class="line-number" href="#L666">666</a> inline constexpr __nr_t SYS_getegid32 = arm32_eabi::nr::getegid32;</span>
+<span id="L667" class="source-line"><a class="line-number" href="#L667">667</a> inline constexpr __nr_t SYS_setreuid32 = arm32_eabi::nr::setreuid32;</span>
+<span id="L668" class="source-line"><a class="line-number" href="#L668">668</a> inline constexpr __nr_t SYS_setregid32 = arm32_eabi::nr::setregid32;</span>
+<span id="L669" class="source-line"><a class="line-number" href="#L669">669</a> inline constexpr __nr_t SYS_getgroups32 = arm32_eabi::nr::getgroups32;</span>
+<span id="L670" class="source-line"><a class="line-number" href="#L670">670</a> inline constexpr __nr_t SYS_setgroups32 = arm32_eabi::nr::setgroups32;</span>
+<span id="L671" class="source-line"><a class="line-number" href="#L671">671</a> inline constexpr __nr_t SYS_fchown32 = arm32_eabi::nr::fchown32;</span>
+<span id="L672" class="source-line"><a class="line-number" href="#L672">672</a> inline constexpr __nr_t SYS_setresuid32 = arm32_eabi::nr::setresuid32;</span>
+<span id="L673" class="source-line"><a class="line-number" href="#L673">673</a> inline constexpr __nr_t SYS_getresuid32 = arm32_eabi::nr::getresuid32;</span>
+<span id="L674" class="source-line"><a class="line-number" href="#L674">674</a> inline constexpr __nr_t SYS_setresgid32 = arm32_eabi::nr::setresgid32;</span>
+<span id="L675" class="source-line"><a class="line-number" href="#L675">675</a> inline constexpr __nr_t SYS_getresgid32 = arm32_eabi::nr::getresgid32;</span>
+<span id="L676" class="source-line"><a class="line-number" href="#L676">676</a> inline constexpr __nr_t SYS_chown32 = arm32_eabi::nr::chown32;</span>
+<span id="L677" class="source-line"><a class="line-number" href="#L677">677</a> inline constexpr __nr_t SYS_setuid32 = arm32_eabi::nr::setuid32;</span>
+<span id="L678" class="source-line"><a class="line-number" href="#L678">678</a> inline constexpr __nr_t SYS_setgid32 = arm32_eabi::nr::setgid32;</span>
+<span id="L679" class="source-line"><a class="line-number" href="#L679">679</a> inline constexpr __nr_t SYS_setfsuid32 = arm32_eabi::nr::setfsuid32;</span>
+<span id="L680" class="source-line"><a class="line-number" href="#L680">680</a> inline constexpr __nr_t SYS_setfsgid32 = arm32_eabi::nr::setfsgid32;</span>
+<span id="L681" class="source-line"><a class="line-number" href="#L681">681</a> inline constexpr __nr_t SYS_getdents64 = arm32_eabi::nr::getdents64;</span>
+<span id="L682" class="source-line"><a class="line-number" href="#L682">682</a> inline constexpr __nr_t SYS_pivot_root = arm32_eabi::nr::pivot_root;</span>
+<span id="L683" class="source-line"><a class="line-number" href="#L683">683</a> inline constexpr __nr_t SYS_mincore = arm32_eabi::nr::mincore;</span>
+<span id="L684" class="source-line"><a class="line-number" href="#L684">684</a> inline constexpr __nr_t SYS_madvise = arm32_eabi::nr::madvise;</span>
+<span id="L685" class="source-line"><a class="line-number" href="#L685">685</a> inline constexpr __nr_t SYS_fcntl64 = arm32_eabi::nr::fcntl64;</span>
+<span id="L686" class="source-line"><a class="line-number" href="#L686">686</a> inline constexpr __nr_t SYS_gettid = arm32_eabi::nr::gettid;</span>
+<span id="L687" class="source-line"><a class="line-number" href="#L687">687</a> inline constexpr __nr_t SYS_readahead = arm32_eabi::nr::readahead;</span>
+<span id="L688" class="source-line"><a class="line-number" href="#L688">688</a> inline constexpr __nr_t SYS_setxattr = arm32_eabi::nr::setxattr;</span>
+<span id="L689" class="source-line"><a class="line-number" href="#L689">689</a> inline constexpr __nr_t SYS_lsetxattr = arm32_eabi::nr::lsetxattr;</span>
+<span id="L690" class="source-line"><a class="line-number" href="#L690">690</a> inline constexpr __nr_t SYS_fsetxattr = arm32_eabi::nr::fsetxattr;</span>
+<span id="L691" class="source-line"><a class="line-number" href="#L691">691</a> inline constexpr __nr_t SYS_getxattr = arm32_eabi::nr::getxattr;</span>
+<span id="L692" class="source-line"><a class="line-number" href="#L692">692</a> inline constexpr __nr_t SYS_lgetxattr = arm32_eabi::nr::lgetxattr;</span>
+<span id="L693" class="source-line"><a class="line-number" href="#L693">693</a> inline constexpr __nr_t SYS_fgetxattr = arm32_eabi::nr::fgetxattr;</span>
+<span id="L694" class="source-line"><a class="line-number" href="#L694">694</a> inline constexpr __nr_t SYS_listxattr = arm32_eabi::nr::listxattr;</span>
+<span id="L695" class="source-line"><a class="line-number" href="#L695">695</a> inline constexpr __nr_t SYS_llistxattr = arm32_eabi::nr::llistxattr;</span>
+<span id="L696" class="source-line"><a class="line-number" href="#L696">696</a> inline constexpr __nr_t SYS_flistxattr = arm32_eabi::nr::flistxattr;</span>
+<span id="L697" class="source-line"><a class="line-number" href="#L697">697</a> inline constexpr __nr_t SYS_removexattr = arm32_eabi::nr::removexattr;</span>
+<span id="L698" class="source-line"><a class="line-number" href="#L698">698</a> inline constexpr __nr_t SYS_lremovexattr = arm32_eabi::nr::lremovexattr;</span>
+<span id="L699" class="source-line"><a class="line-number" href="#L699">699</a> inline constexpr __nr_t SYS_fremovexattr = arm32_eabi::nr::fremovexattr;</span>
+<span id="L700" class="source-line"><a class="line-number" href="#L700">700</a> inline constexpr __nr_t SYS_tkill = arm32_eabi::nr::tkill;</span>
+<span id="L701" class="source-line"><a class="line-number" href="#L701">701</a> inline constexpr __nr_t SYS_sendfile64 = arm32_eabi::nr::sendfile64;</span>
+<span id="L702" class="source-line"><a class="line-number" href="#L702">702</a> inline constexpr __nr_t SYS_futex = arm32_eabi::nr::futex;</span>
+<span id="L703" class="source-line"><a class="line-number" href="#L703">703</a> inline constexpr __nr_t SYS_sched_setaffinity = arm32_eabi::nr::sched_setaffinity;</span>
+<span id="L704" class="source-line"><a class="line-number" href="#L704">704</a> inline constexpr __nr_t SYS_sched_getaffinity = arm32_eabi::nr::sched_getaffinity;</span>
+<span id="L705" class="source-line"><a class="line-number" href="#L705">705</a> inline constexpr __nr_t SYS_io_setup = arm32_eabi::nr::io_setup;</span>
+<span id="L706" class="source-line"><a class="line-number" href="#L706">706</a> inline constexpr __nr_t SYS_io_destroy = arm32_eabi::nr::io_destroy;</span>
+<span id="L707" class="source-line"><a class="line-number" href="#L707">707</a> inline constexpr __nr_t SYS_io_getevents = arm32_eabi::nr::io_getevents;</span>
+<span id="L708" class="source-line"><a class="line-number" href="#L708">708</a> inline constexpr __nr_t SYS_io_submit = arm32_eabi::nr::io_submit;</span>
+<span id="L709" class="source-line"><a class="line-number" href="#L709">709</a> inline constexpr __nr_t SYS_io_cancel = arm32_eabi::nr::io_cancel;</span>
+<span id="L710" class="source-line"><a class="line-number" href="#L710">710</a> inline constexpr __nr_t SYS_exit_group = arm32_eabi::nr::exit_group;</span>
+<span id="L711" class="source-line"><a class="line-number" href="#L711">711</a> inline constexpr __nr_t SYS_lookup_dcookie = arm32_eabi::nr::lookup_dcookie;</span>
+<span id="L712" class="source-line"><a class="line-number" href="#L712">712</a> inline constexpr __nr_t SYS_epoll_create = arm32_eabi::nr::epoll_create;</span>
+<span id="L713" class="source-line"><a class="line-number" href="#L713">713</a> inline constexpr __nr_t SYS_epoll_ctl = arm32_eabi::nr::epoll_ctl;</span>
+<span id="L714" class="source-line"><a class="line-number" href="#L714">714</a> inline constexpr __nr_t SYS_epoll_wait = arm32_eabi::nr::epoll_wait;</span>
+<span id="L715" class="source-line"><a class="line-number" href="#L715">715</a> inline constexpr __nr_t SYS_remap_file_pages = arm32_eabi::nr::remap_file_pages;</span>
+<span id="L716" class="source-line"><a class="line-number" href="#L716">716</a> inline constexpr __nr_t SYS_set_tid_address = arm32_eabi::nr::set_tid_address;</span>
+<span id="L717" class="source-line"><a class="line-number" href="#L717">717</a> inline constexpr __nr_t SYS_timer_create = arm32_eabi::nr::timer_create;</span>
+<span id="L718" class="source-line"><a class="line-number" href="#L718">718</a> inline constexpr __nr_t SYS_timer_settime = arm32_eabi::nr::timer_settime;</span>
+<span id="L719" class="source-line"><a class="line-number" href="#L719">719</a> inline constexpr __nr_t SYS_timer_gettime = arm32_eabi::nr::timer_gettime;</span>
+<span id="L720" class="source-line"><a class="line-number" href="#L720">720</a> inline constexpr __nr_t SYS_timer_getoverrun = arm32_eabi::nr::timer_getoverrun;</span>
+<span id="L721" class="source-line"><a class="line-number" href="#L721">721</a> inline constexpr __nr_t SYS_timer_delete = arm32_eabi::nr::timer_delete;</span>
+<span id="L722" class="source-line"><a class="line-number" href="#L722">722</a> inline constexpr __nr_t SYS_clock_settime = arm32_eabi::nr::clock_settime;</span>
+<span id="L723" class="source-line"><a class="line-number" href="#L723">723</a> inline constexpr __nr_t SYS_clock_gettime = arm32_eabi::nr::clock_gettime;</span>
+<span id="L724" class="source-line"><a class="line-number" href="#L724">724</a> inline constexpr __nr_t SYS_clock_getres = arm32_eabi::nr::clock_getres;</span>
+<span id="L725" class="source-line"><a class="line-number" href="#L725">725</a> inline constexpr __nr_t SYS_clock_nanosleep = arm32_eabi::nr::clock_nanosleep;</span>
+<span id="L726" class="source-line"><a class="line-number" href="#L726">726</a> inline constexpr __nr_t SYS_statfs64 = arm32_eabi::nr::statfs64;</span>
+<span id="L727" class="source-line"><a class="line-number" href="#L727">727</a> inline constexpr __nr_t SYS_fstatfs64 = arm32_eabi::nr::fstatfs64;</span>
+<span id="L728" class="source-line"><a class="line-number" href="#L728">728</a> inline constexpr __nr_t SYS_tgkill = arm32_eabi::nr::tgkill;</span>
+<span id="L729" class="source-line"><a class="line-number" href="#L729">729</a> inline constexpr __nr_t SYS_utimes = arm32_eabi::nr::utimes;</span>
+<span id="L730" class="source-line"><a class="line-number" href="#L730">730</a> inline constexpr __nr_t SYS_arm_fadvise64_64 = arm32_eabi::nr::arm_fadvise64_64;</span>
+<span id="L731" class="source-line"><a class="line-number" href="#L731">731</a> inline constexpr __nr_t SYS_pciconfig_iobase = arm32_eabi::nr::pciconfig_iobase;</span>
+<span id="L732" class="source-line"><a class="line-number" href="#L732">732</a> inline constexpr __nr_t SYS_pciconfig_read = arm32_eabi::nr::pciconfig_read;</span>
+<span id="L733" class="source-line"><a class="line-number" href="#L733">733</a> inline constexpr __nr_t SYS_pciconfig_write = arm32_eabi::nr::pciconfig_write;</span>
+<span id="L734" class="source-line"><a class="line-number" href="#L734">734</a> inline constexpr __nr_t SYS_mq_open = arm32_eabi::nr::mq_open;</span>
+<span id="L735" class="source-line"><a class="line-number" href="#L735">735</a> inline constexpr __nr_t SYS_mq_unlink = arm32_eabi::nr::mq_unlink;</span>
+<span id="L736" class="source-line"><a class="line-number" href="#L736">736</a> inline constexpr __nr_t SYS_mq_timedsend = arm32_eabi::nr::mq_timedsend;</span>
+<span id="L737" class="source-line"><a class="line-number" href="#L737">737</a> inline constexpr __nr_t SYS_mq_timedreceive = arm32_eabi::nr::mq_timedreceive;</span>
+<span id="L738" class="source-line"><a class="line-number" href="#L738">738</a> inline constexpr __nr_t SYS_mq_notify = arm32_eabi::nr::mq_notify;</span>
+<span id="L739" class="source-line"><a class="line-number" href="#L739">739</a> inline constexpr __nr_t SYS_mq_getsetattr = arm32_eabi::nr::mq_getsetattr;</span>
+<span id="L740" class="source-line"><a class="line-number" href="#L740">740</a> inline constexpr __nr_t SYS_waitid = arm32_eabi::nr::waitid;</span>
+<span id="L741" class="source-line"><a class="line-number" href="#L741">741</a> inline constexpr __nr_t SYS_socket = arm32_eabi::nr::socket;</span>
+<span id="L742" class="source-line"><a class="line-number" href="#L742">742</a> inline constexpr __nr_t SYS_bind = arm32_eabi::nr::bind;</span>
+<span id="L743" class="source-line"><a class="line-number" href="#L743">743</a> inline constexpr __nr_t SYS_connect = arm32_eabi::nr::connect;</span>
+<span id="L744" class="source-line"><a class="line-number" href="#L744">744</a> inline constexpr __nr_t SYS_listen = arm32_eabi::nr::listen;</span>
+<span id="L745" class="source-line"><a class="line-number" href="#L745">745</a> inline constexpr __nr_t SYS_accept = arm32_eabi::nr::accept;</span>
+<span id="L746" class="source-line"><a class="line-number" href="#L746">746</a> inline constexpr __nr_t SYS_getsockname = arm32_eabi::nr::getsockname;</span>
+<span id="L747" class="source-line"><a class="line-number" href="#L747">747</a> inline constexpr __nr_t SYS_getpeername = arm32_eabi::nr::getpeername;</span>
+<span id="L748" class="source-line"><a class="line-number" href="#L748">748</a> inline constexpr __nr_t SYS_socketpair = arm32_eabi::nr::socketpair;</span>
+<span id="L749" class="source-line"><a class="line-number" href="#L749">749</a> inline constexpr __nr_t SYS_send = arm32_eabi::nr::send;</span>
+<span id="L750" class="source-line"><a class="line-number" href="#L750">750</a> inline constexpr __nr_t SYS_sendto = arm32_eabi::nr::sendto;</span>
+<span id="L751" class="source-line"><a class="line-number" href="#L751">751</a> inline constexpr __nr_t SYS_recv = arm32_eabi::nr::recv;</span>
+<span id="L752" class="source-line"><a class="line-number" href="#L752">752</a> inline constexpr __nr_t SYS_recvfrom = arm32_eabi::nr::recvfrom;</span>
+<span id="L753" class="source-line"><a class="line-number" href="#L753">753</a> inline constexpr __nr_t SYS_shutdown = arm32_eabi::nr::shutdown;</span>
+<span id="L754" class="source-line"><a class="line-number" href="#L754">754</a> inline constexpr __nr_t SYS_setsockopt = arm32_eabi::nr::setsockopt;</span>
+<span id="L755" class="source-line"><a class="line-number" href="#L755">755</a> inline constexpr __nr_t SYS_getsockopt = arm32_eabi::nr::getsockopt;</span>
+<span id="L756" class="source-line"><a class="line-number" href="#L756">756</a> inline constexpr __nr_t SYS_sendmsg = arm32_eabi::nr::sendmsg;</span>
+<span id="L757" class="source-line"><a class="line-number" href="#L757">757</a> inline constexpr __nr_t SYS_recvmsg = arm32_eabi::nr::recvmsg;</span>
+<span id="L758" class="source-line"><a class="line-number" href="#L758">758</a> inline constexpr __nr_t SYS_semop = arm32_eabi::nr::semop;</span>
+<span id="L759" class="source-line"><a class="line-number" href="#L759">759</a> inline constexpr __nr_t SYS_semget = arm32_eabi::nr::semget;</span>
+<span id="L760" class="source-line"><a class="line-number" href="#L760">760</a> inline constexpr __nr_t SYS_semctl = arm32_eabi::nr::semctl;</span>
+<span id="L761" class="source-line"><a class="line-number" href="#L761">761</a> inline constexpr __nr_t SYS_msgsnd = arm32_eabi::nr::msgsnd;</span>
+<span id="L762" class="source-line"><a class="line-number" href="#L762">762</a> inline constexpr __nr_t SYS_msgrcv = arm32_eabi::nr::msgrcv;</span>
+<span id="L763" class="source-line"><a class="line-number" href="#L763">763</a> inline constexpr __nr_t SYS_msgget = arm32_eabi::nr::msgget;</span>
+<span id="L764" class="source-line"><a class="line-number" href="#L764">764</a> inline constexpr __nr_t SYS_msgctl = arm32_eabi::nr::msgctl;</span>
+<span id="L765" class="source-line"><a class="line-number" href="#L765">765</a> inline constexpr __nr_t SYS_shmat = arm32_eabi::nr::shmat;</span>
+<span id="L766" class="source-line"><a class="line-number" href="#L766">766</a> inline constexpr __nr_t SYS_shmdt = arm32_eabi::nr::shmdt;</span>
+<span id="L767" class="source-line"><a class="line-number" href="#L767">767</a> inline constexpr __nr_t SYS_shmget = arm32_eabi::nr::shmget;</span>
+<span id="L768" class="source-line"><a class="line-number" href="#L768">768</a> inline constexpr __nr_t SYS_shmctl = arm32_eabi::nr::shmctl;</span>
+<span id="L769" class="source-line"><a class="line-number" href="#L769">769</a> inline constexpr __nr_t SYS_add_key = arm32_eabi::nr::add_key;</span>
+<span id="L770" class="source-line"><a class="line-number" href="#L770">770</a> inline constexpr __nr_t SYS_request_key = arm32_eabi::nr::request_key;</span>
+<span id="L771" class="source-line"><a class="line-number" href="#L771">771</a> inline constexpr __nr_t SYS_keyctl = arm32_eabi::nr::keyctl;</span>
+<span id="L772" class="source-line"><a class="line-number" href="#L772">772</a> inline constexpr __nr_t SYS_semtimedop = arm32_eabi::nr::semtimedop;</span>
+<span id="L773" class="source-line"><a class="line-number" href="#L773">773</a> inline constexpr __nr_t SYS_vserver = arm32_eabi::nr::vserver;</span>
+<span id="L774" class="source-line"><a class="line-number" href="#L774">774</a> inline constexpr __nr_t SYS_ioprio_set = arm32_eabi::nr::ioprio_set;</span>
+<span id="L775" class="source-line"><a class="line-number" href="#L775">775</a> inline constexpr __nr_t SYS_ioprio_get = arm32_eabi::nr::ioprio_get;</span>
+<span id="L776" class="source-line"><a class="line-number" href="#L776">776</a> inline constexpr __nr_t SYS_inotify_init = arm32_eabi::nr::inotify_init;</span>
+<span id="L777" class="source-line"><a class="line-number" href="#L777">777</a> inline constexpr __nr_t SYS_inotify_add_watch = arm32_eabi::nr::inotify_add_watch;</span>
+<span id="L778" class="source-line"><a class="line-number" href="#L778">778</a> inline constexpr __nr_t SYS_inotify_rm_watch = arm32_eabi::nr::inotify_rm_watch;</span>
+<span id="L779" class="source-line"><a class="line-number" href="#L779">779</a> inline constexpr __nr_t SYS_mbind = arm32_eabi::nr::mbind;</span>
+<span id="L780" class="source-line"><a class="line-number" href="#L780">780</a> inline constexpr __nr_t SYS_get_mempolicy = arm32_eabi::nr::get_mempolicy;</span>
+<span id="L781" class="source-line"><a class="line-number" href="#L781">781</a> inline constexpr __nr_t SYS_set_mempolicy = arm32_eabi::nr::set_mempolicy;</span>
+<span id="L782" class="source-line"><a class="line-number" href="#L782">782</a> inline constexpr __nr_t SYS_openat = arm32_eabi::nr::openat;</span>
+<span id="L783" class="source-line"><a class="line-number" href="#L783">783</a> inline constexpr __nr_t SYS_mkdirat = arm32_eabi::nr::mkdirat;</span>
+<span id="L784" class="source-line"><a class="line-number" href="#L784">784</a> inline constexpr __nr_t SYS_mknodat = arm32_eabi::nr::mknodat;</span>
+<span id="L785" class="source-line"><a class="line-number" href="#L785">785</a> inline constexpr __nr_t SYS_fchownat = arm32_eabi::nr::fchownat;</span>
+<span id="L786" class="source-line"><a class="line-number" href="#L786">786</a> inline constexpr __nr_t SYS_futimesat = arm32_eabi::nr::futimesat;</span>
+<span id="L787" class="source-line"><a class="line-number" href="#L787">787</a> inline constexpr __nr_t SYS_fstatat64 = arm32_eabi::nr::fstatat64;</span>
+<span id="L788" class="source-line"><a class="line-number" href="#L788">788</a> inline constexpr __nr_t SYS_unlinkat = arm32_eabi::nr::unlinkat;</span>
+<span id="L789" class="source-line"><a class="line-number" href="#L789">789</a> inline constexpr __nr_t SYS_renameat = arm32_eabi::nr::renameat;</span>
+<span id="L790" class="source-line"><a class="line-number" href="#L790">790</a> inline constexpr __nr_t SYS_linkat = arm32_eabi::nr::linkat;</span>
+<span id="L791" class="source-line"><a class="line-number" href="#L791">791</a> inline constexpr __nr_t SYS_symlinkat = arm32_eabi::nr::symlinkat;</span>
+<span id="L792" class="source-line"><a class="line-number" href="#L792">792</a> inline constexpr __nr_t SYS_readlinkat = arm32_eabi::nr::readlinkat;</span>
+<span id="L793" class="source-line"><a class="line-number" href="#L793">793</a> inline constexpr __nr_t SYS_fchmodat = arm32_eabi::nr::fchmodat;</span>
+<span id="L794" class="source-line"><a class="line-number" href="#L794">794</a> inline constexpr __nr_t SYS_faccessat = arm32_eabi::nr::faccessat;</span>
+<span id="L795" class="source-line"><a class="line-number" href="#L795">795</a> inline constexpr __nr_t SYS_pselect6 = arm32_eabi::nr::pselect6;</span>
+<span id="L796" class="source-line"><a class="line-number" href="#L796">796</a> inline constexpr __nr_t SYS_ppoll = arm32_eabi::nr::ppoll;</span>
+<span id="L797" class="source-line"><a class="line-number" href="#L797">797</a> inline constexpr __nr_t SYS_unshare = arm32_eabi::nr::unshare;</span>
+<span id="L798" class="source-line"><a class="line-number" href="#L798">798</a> inline constexpr __nr_t SYS_set_robust_list = arm32_eabi::nr::set_robust_list;</span>
+<span id="L799" class="source-line"><a class="line-number" href="#L799">799</a> inline constexpr __nr_t SYS_get_robust_list = arm32_eabi::nr::get_robust_list;</span>
+<span id="L800" class="source-line"><a class="line-number" href="#L800">800</a> inline constexpr __nr_t SYS_splice = arm32_eabi::nr::splice;</span>
+<span id="L801" class="source-line"><a class="line-number" href="#L801">801</a> inline constexpr __nr_t SYS_arm_sync_file_range = arm32_eabi::nr::arm_sync_file_range;</span>
+<span id="L802" class="source-line"><a class="line-number" href="#L802">802</a> inline constexpr __nr_t SYS_sync_file_range2 = arm32_eabi::nr::sync_file_range2;</span>
+<span id="L803" class="source-line"><a class="line-number" href="#L803">803</a> inline constexpr __nr_t SYS_tee = arm32_eabi::nr::tee;</span>
+<span id="L804" class="source-line"><a class="line-number" href="#L804">804</a> inline constexpr __nr_t SYS_vmsplice = arm32_eabi::nr::vmsplice;</span>
+<span id="L805" class="source-line"><a class="line-number" href="#L805">805</a> inline constexpr __nr_t SYS_move_pages = arm32_eabi::nr::move_pages;</span>
+<span id="L806" class="source-line"><a class="line-number" href="#L806">806</a> inline constexpr __nr_t SYS_getcpu = arm32_eabi::nr::getcpu;</span>
+<span id="L807" class="source-line"><a class="line-number" href="#L807">807</a> inline constexpr __nr_t SYS_epoll_pwait = arm32_eabi::nr::epoll_pwait;</span>
+<span id="L808" class="source-line"><a class="line-number" href="#L808">808</a> inline constexpr __nr_t SYS_kexec_load = arm32_eabi::nr::kexec_load;</span>
+<span id="L809" class="source-line"><a class="line-number" href="#L809">809</a> inline constexpr __nr_t SYS_utimensat = arm32_eabi::nr::utimensat;</span>
+<span id="L810" class="source-line"><a class="line-number" href="#L810">810</a> inline constexpr __nr_t SYS_signalfd = arm32_eabi::nr::signalfd;</span>
+<span id="L811" class="source-line"><a class="line-number" href="#L811">811</a> inline constexpr __nr_t SYS_timerfd_create = arm32_eabi::nr::timerfd_create;</span>
+<span id="L812" class="source-line"><a class="line-number" href="#L812">812</a> inline constexpr __nr_t SYS_eventfd = arm32_eabi::nr::eventfd;</span>
+<span id="L813" class="source-line"><a class="line-number" href="#L813">813</a> inline constexpr __nr_t SYS_fallocate = arm32_eabi::nr::fallocate;</span>
+<span id="L814" class="source-line"><a class="line-number" href="#L814">814</a> inline constexpr __nr_t SYS_timerfd_settime = arm32_eabi::nr::timerfd_settime;</span>
+<span id="L815" class="source-line"><a class="line-number" href="#L815">815</a> inline constexpr __nr_t SYS_timerfd_gettime = arm32_eabi::nr::timerfd_gettime;</span>
+<span id="L816" class="source-line"><a class="line-number" href="#L816">816</a> inline constexpr __nr_t SYS_signalfd4 = arm32_eabi::nr::signalfd4;</span>
+<span id="L817" class="source-line"><a class="line-number" href="#L817">817</a> inline constexpr __nr_t SYS_eventfd2 = arm32_eabi::nr::eventfd2;</span>
+<span id="L818" class="source-line"><a class="line-number" href="#L818">818</a> inline constexpr __nr_t SYS_epoll_create1 = arm32_eabi::nr::epoll_create1;</span>
+<span id="L819" class="source-line"><a class="line-number" href="#L819">819</a> inline constexpr __nr_t SYS_dup3 = arm32_eabi::nr::dup3;</span>
+<span id="L820" class="source-line"><a class="line-number" href="#L820">820</a> inline constexpr __nr_t SYS_pipe2 = arm32_eabi::nr::pipe2;</span>
+<span id="L821" class="source-line"><a class="line-number" href="#L821">821</a> inline constexpr __nr_t SYS_inotify_init1 = arm32_eabi::nr::inotify_init1;</span>
+<span id="L822" class="source-line"><a class="line-number" href="#L822">822</a> inline constexpr __nr_t SYS_preadv = arm32_eabi::nr::preadv;</span>
+<span id="L823" class="source-line"><a class="line-number" href="#L823">823</a> inline constexpr __nr_t SYS_pwritev = arm32_eabi::nr::pwritev;</span>
+<span id="L824" class="source-line"><a class="line-number" href="#L824">824</a> inline constexpr __nr_t SYS_rt_tgsigqueueinfo = arm32_eabi::nr::rt_tgsigqueueinfo;</span>
+<span id="L825" class="source-line"><a class="line-number" href="#L825">825</a> inline constexpr __nr_t SYS_perf_event_open = arm32_eabi::nr::perf_event_open;</span>
+<span id="L826" class="source-line"><a class="line-number" href="#L826">826</a> inline constexpr __nr_t SYS_recvmmsg = arm32_eabi::nr::recvmmsg;</span>
+<span id="L827" class="source-line"><a class="line-number" href="#L827">827</a> inline constexpr __nr_t SYS_accept4 = arm32_eabi::nr::accept4;</span>
+<span id="L828" class="source-line"><a class="line-number" href="#L828">828</a> inline constexpr __nr_t SYS_fanotify_init = arm32_eabi::nr::fanotify_init;</span>
+<span id="L829" class="source-line"><a class="line-number" href="#L829">829</a> inline constexpr __nr_t SYS_fanotify_mark = arm32_eabi::nr::fanotify_mark;</span>
+<span id="L830" class="source-line"><a class="line-number" href="#L830">830</a> inline constexpr __nr_t SYS_prlimit64 = arm32_eabi::nr::prlimit64;</span>
+<span id="L831" class="source-line"><a class="line-number" href="#L831">831</a> inline constexpr __nr_t SYS_name_to_handle_at = arm32_eabi::nr::name_to_handle_at;</span>
+<span id="L832" class="source-line"><a class="line-number" href="#L832">832</a> inline constexpr __nr_t SYS_open_by_handle_at = arm32_eabi::nr::open_by_handle_at;</span>
+<span id="L833" class="source-line"><a class="line-number" href="#L833">833</a> inline constexpr __nr_t SYS_clock_adjtime = arm32_eabi::nr::clock_adjtime;</span>
+<span id="L834" class="source-line"><a class="line-number" href="#L834">834</a> inline constexpr __nr_t SYS_syncfs = arm32_eabi::nr::syncfs;</span>
+<span id="L835" class="source-line"><a class="line-number" href="#L835">835</a> inline constexpr __nr_t SYS_sendmmsg = arm32_eabi::nr::sendmmsg;</span>
+<span id="L836" class="source-line"><a class="line-number" href="#L836">836</a> inline constexpr __nr_t SYS_setns = arm32_eabi::nr::setns;</span>
+<span id="L837" class="source-line"><a class="line-number" href="#L837">837</a> inline constexpr __nr_t SYS_process_vm_readv = arm32_eabi::nr::process_vm_readv;</span>
+<span id="L838" class="source-line"><a class="line-number" href="#L838">838</a> inline constexpr __nr_t SYS_process_vm_writev = arm32_eabi::nr::process_vm_writev;</span>
+<span id="L839" class="source-line"><a class="line-number" href="#L839">839</a> inline constexpr __nr_t SYS_kcmp = arm32_eabi::nr::kcmp;</span>
+<span id="L840" class="source-line"><a class="line-number" href="#L840">840</a> inline constexpr __nr_t SYS_finit_module = arm32_eabi::nr::finit_module;</span>
+<span id="L841" class="source-line"><a class="line-number" href="#L841">841</a> inline constexpr __nr_t SYS_sched_setattr = arm32_eabi::nr::sched_setattr;</span>
+<span id="L842" class="source-line"><a class="line-number" href="#L842">842</a> inline constexpr __nr_t SYS_sched_getattr = arm32_eabi::nr::sched_getattr;</span>
+<span id="L843" class="source-line"><a class="line-number" href="#L843">843</a> inline constexpr __nr_t SYS_renameat2 = arm32_eabi::nr::renameat2;</span>
+<span id="L844" class="source-line"><a class="line-number" href="#L844">844</a> inline constexpr __nr_t SYS_seccomp = arm32_eabi::nr::seccomp;</span>
+<span id="L845" class="source-line"><a class="line-number" href="#L845">845</a> inline constexpr __nr_t SYS_getrandom = arm32_eabi::nr::getrandom;</span>
+<span id="L846" class="source-line"><a class="line-number" href="#L846">846</a> inline constexpr __nr_t SYS_memfd_create = arm32_eabi::nr::memfd_create;</span>
+<span id="L847" class="source-line"><a class="line-number" href="#L847">847</a> inline constexpr __nr_t SYS_bpf = arm32_eabi::nr::bpf;</span>
+<span id="L848" class="source-line"><a class="line-number" href="#L848">848</a> inline constexpr __nr_t SYS_execveat = arm32_eabi::nr::execveat;</span>
+<span id="L849" class="source-line"><a class="line-number" href="#L849">849</a> inline constexpr __nr_t SYS_userfaultfd = arm32_eabi::nr::userfaultfd;</span>
+<span id="L850" class="source-line"><a class="line-number" href="#L850">850</a> inline constexpr __nr_t SYS_membarrier = arm32_eabi::nr::membarrier;</span>
+<span id="L851" class="source-line"><a class="line-number" href="#L851">851</a> inline constexpr __nr_t SYS_mlock2 = arm32_eabi::nr::mlock2;</span>
+<span id="L852" class="source-line"><a class="line-number" href="#L852">852</a> inline constexpr __nr_t SYS_copy_file_range = arm32_eabi::nr::copy_file_range;</span>
+<span id="L853" class="source-line"><a class="line-number" href="#L853">853</a> inline constexpr __nr_t SYS_preadv2 = arm32_eabi::nr::preadv2;</span>
+<span id="L854" class="source-line"><a class="line-number" href="#L854">854</a> inline constexpr __nr_t SYS_pwritev2 = arm32_eabi::nr::pwritev2;</span>
+<span id="L855" class="source-line"><a class="line-number" href="#L855">855</a> inline constexpr __nr_t SYS_pkey_mprotect = arm32_eabi::nr::pkey_mprotect;</span>
+<span id="L856" class="source-line"><a class="line-number" href="#L856">856</a> inline constexpr __nr_t SYS_pkey_alloc = arm32_eabi::nr::pkey_alloc;</span>
+<span id="L857" class="source-line"><a class="line-number" href="#L857">857</a> inline constexpr __nr_t SYS_pkey_free = arm32_eabi::nr::pkey_free;</span>
+<span id="L858" class="source-line"><a class="line-number" href="#L858">858</a> inline constexpr __nr_t SYS_statx = arm32_eabi::nr::statx;</span>
+<span id="L859" class="source-line"><a class="line-number" href="#L859">859</a> inline constexpr __nr_t SYS_rseq = arm32_eabi::nr::rseq;</span>
+<span id="L860" class="source-line"><a class="line-number" href="#L860">860</a> inline constexpr __nr_t SYS_io_pgetevents = arm32_eabi::nr::io_pgetevents;</span>
+<span id="L861" class="source-line"><a class="line-number" href="#L861">861</a> inline constexpr __nr_t SYS_migrate_pages = arm32_eabi::nr::migrate_pages;</span>
+<span id="L862" class="source-line"><a class="line-number" href="#L862">862</a> inline constexpr __nr_t SYS_kexec_file_load = arm32_eabi::nr::kexec_file_load;</span>
+<span id="L863" class="source-line"><a class="line-number" href="#L863">863</a> inline constexpr __nr_t SYS_clock_gettime64 = arm32_eabi::nr::clock_gettime64;</span>
+<span id="L864" class="source-line"><a class="line-number" href="#L864">864</a> inline constexpr __nr_t SYS_clock_settime64 = arm32_eabi::nr::clock_settime64;</span>
+<span id="L865" class="source-line"><a class="line-number" href="#L865">865</a> inline constexpr __nr_t SYS_clock_adjtime64 = arm32_eabi::nr::clock_adjtime64;</span>
+<span id="L866" class="source-line"><a class="line-number" href="#L866">866</a> inline constexpr __nr_t SYS_clock_getres_time64 = arm32_eabi::nr::clock_getres_time64;</span>
+<span id="L867" class="source-line"><a class="line-number" href="#L867">867</a> inline constexpr __nr_t SYS_clock_nanosleep_time64 = arm32_eabi::nr::clock_nanosleep_time64;</span>
+<span id="L868" class="source-line"><a class="line-number" href="#L868">868</a> inline constexpr __nr_t SYS_timer_gettime64 = arm32_eabi::nr::timer_gettime64;</span>
+<span id="L869" class="source-line"><a class="line-number" href="#L869">869</a> inline constexpr __nr_t SYS_timer_settime64 = arm32_eabi::nr::timer_settime64;</span>
+<span id="L870" class="source-line"><a class="line-number" href="#L870">870</a> inline constexpr __nr_t SYS_timerfd_gettime64 = arm32_eabi::nr::timerfd_gettime64;</span>
+<span id="L871" class="source-line"><a class="line-number" href="#L871">871</a> inline constexpr __nr_t SYS_timerfd_settime64 = arm32_eabi::nr::timerfd_settime64;</span>
+<span id="L872" class="source-line"><a class="line-number" href="#L872">872</a> inline constexpr __nr_t SYS_utimensat_time64 = arm32_eabi::nr::utimensat_time64;</span>
+<span id="L873" class="source-line"><a class="line-number" href="#L873">873</a> inline constexpr __nr_t SYS_pselect6_time64 = arm32_eabi::nr::pselect6_time64;</span>
+<span id="L874" class="source-line"><a class="line-number" href="#L874">874</a> inline constexpr __nr_t SYS_ppoll_time64 = arm32_eabi::nr::ppoll_time64;</span>
+<span id="L875" class="source-line"><a class="line-number" href="#L875">875</a> inline constexpr __nr_t SYS_io_pgetevents_time64 = arm32_eabi::nr::io_pgetevents_time64;</span>
+<span id="L876" class="source-line"><a class="line-number" href="#L876">876</a> inline constexpr __nr_t SYS_recvmmsg_time64 = arm32_eabi::nr::recvmmsg_time64;</span>
+<span id="L877" class="source-line"><a class="line-number" href="#L877">877</a> inline constexpr __nr_t SYS_mq_timedsend_time64 = arm32_eabi::nr::mq_timedsend_time64;</span>
+<span id="L878" class="source-line"><a class="line-number" href="#L878">878</a> inline constexpr __nr_t SYS_mq_timedreceive_time64 = arm32_eabi::nr::mq_timedreceive_time64;</span>
+<span id="L879" class="source-line"><a class="line-number" href="#L879">879</a> inline constexpr __nr_t SYS_semtimedop_time64 = arm32_eabi::nr::semtimedop_time64;</span>
+<span id="L880" class="source-line"><a class="line-number" href="#L880">880</a> inline constexpr __nr_t SYS_rt_sigtimedwait_time64 = arm32_eabi::nr::rt_sigtimedwait_time64;</span>
+<span id="L881" class="source-line"><a class="line-number" href="#L881">881</a> inline constexpr __nr_t SYS_futex_time64 = arm32_eabi::nr::futex_time64;</span>
+<span id="L882" class="source-line"><a class="line-number" href="#L882">882</a> inline constexpr __nr_t SYS_sched_rr_get_interval_time64 = arm32_eabi::nr::sched_rr_get_interval_time64;</span>
+<span id="L883" class="source-line"><a class="line-number" href="#L883">883</a> inline constexpr __nr_t SYS_pidfd_send_signal = arm32_eabi::nr::pidfd_send_signal;</span>
+<span id="L884" class="source-line"><a class="line-number" href="#L884">884</a> inline constexpr __nr_t SYS_io_uring_setup = arm32_eabi::nr::io_uring_setup;</span>
+<span id="L885" class="source-line"><a class="line-number" href="#L885">885</a> inline constexpr __nr_t SYS_io_uring_enter = arm32_eabi::nr::io_uring_enter;</span>
+<span id="L886" class="source-line"><a class="line-number" href="#L886">886</a> inline constexpr __nr_t SYS_io_uring_register = arm32_eabi::nr::io_uring_register;</span>
+<span id="L887" class="source-line"><a class="line-number" href="#L887">887</a> inline constexpr __nr_t SYS_open_tree = arm32_eabi::nr::open_tree;</span>
+<span id="L888" class="source-line"><a class="line-number" href="#L888">888</a> inline constexpr __nr_t SYS_move_mount = arm32_eabi::nr::move_mount;</span>
+<span id="L889" class="source-line"><a class="line-number" href="#L889">889</a> inline constexpr __nr_t SYS_fsopen = arm32_eabi::nr::fsopen;</span>
+<span id="L890" class="source-line"><a class="line-number" href="#L890">890</a> inline constexpr __nr_t SYS_fsconfig = arm32_eabi::nr::fsconfig;</span>
+<span id="L891" class="source-line"><a class="line-number" href="#L891">891</a> inline constexpr __nr_t SYS_fsmount = arm32_eabi::nr::fsmount;</span>
+<span id="L892" class="source-line"><a class="line-number" href="#L892">892</a> inline constexpr __nr_t SYS_fspick = arm32_eabi::nr::fspick;</span>
+<span id="L893" class="source-line"><a class="line-number" href="#L893">893</a> inline constexpr __nr_t SYS_pidfd_open = arm32_eabi::nr::pidfd_open;</span>
+<span id="L894" class="source-line"><a class="line-number" href="#L894">894</a> inline constexpr __nr_t SYS_clone3 = arm32_eabi::nr::clone3;</span>
+<span id="L895" class="source-line"><a class="line-number" href="#L895">895</a> inline constexpr __nr_t SYS_close_range = arm32_eabi::nr::close_range;</span>
+<span id="L896" class="source-line"><a class="line-number" href="#L896">896</a> inline constexpr __nr_t SYS_openat2 = arm32_eabi::nr::openat2;</span>
+<span id="L897" class="source-line"><a class="line-number" href="#L897">897</a> inline constexpr __nr_t SYS_pidfd_getfd = arm32_eabi::nr::pidfd_getfd;</span>
+<span id="L898" class="source-line"><a class="line-number" href="#L898">898</a> inline constexpr __nr_t SYS_faccessat2 = arm32_eabi::nr::faccessat2;</span>
+<span id="L899" class="source-line"><a class="line-number" href="#L899">899</a> inline constexpr __nr_t SYS_process_madvise = arm32_eabi::nr::process_madvise;</span>
+<span id="L900" class="source-line"><a class="line-number" href="#L900">900</a> inline constexpr __nr_t SYS_epoll_pwait2 = arm32_eabi::nr::epoll_pwait2;</span>
+<span id="L901" class="source-line"><a class="line-number" href="#L901">901</a> inline constexpr __nr_t SYS_mount_setattr = arm32_eabi::nr::mount_setattr;</span>
+<span id="L902" class="source-line"><a class="line-number" href="#L902">902</a> inline constexpr __nr_t SYS_quotactl_fd = arm32_eabi::nr::quotactl_fd;</span>
+<span id="L903" class="source-line"><a class="line-number" href="#L903">903</a> inline constexpr __nr_t SYS_landlock_create_ruleset = arm32_eabi::nr::landlock_create_ruleset;</span>
+<span id="L904" class="source-line"><a class="line-number" href="#L904">904</a> inline constexpr __nr_t SYS_landlock_add_rule = arm32_eabi::nr::landlock_add_rule;</span>
+<span id="L905" class="source-line"><a class="line-number" href="#L905">905</a> inline constexpr __nr_t SYS_landlock_restrict_self = arm32_eabi::nr::landlock_restrict_self;</span>
+<span id="L906" class="source-line"><a class="line-number" href="#L906">906</a> inline constexpr __nr_t SYS_process_mrelease = arm32_eabi::nr::process_mrelease;</span>
+<span id="L907" class="source-line"><a class="line-number" href="#L907">907</a> inline constexpr __nr_t SYS_futex_waitv = arm32_eabi::nr::futex_waitv;</span>
+<span id="L908" class="source-line"><a class="line-number" href="#L908">908</a> inline constexpr __nr_t SYS_set_mempolicy_home_node = arm32_eabi::nr::set_mempolicy_home_node;</span>
+<span id="L909" class="source-line"><a class="line-number" href="#L909">909</a> inline constexpr __nr_t SYS_cachestat = arm32_eabi::nr::cachestat;</span>
+<span id="L910" class="source-line"><a class="line-number" href="#L910">910</a> inline constexpr __nr_t SYS_fchmodat2 = arm32_eabi::nr::fchmodat2;</span>
+<span id="L911" class="source-line"><a class="line-number" href="#L911">911</a> inline constexpr __nr_t SYS_futex_wake = arm32_eabi::nr::futex_wake;</span>
+<span id="L912" class="source-line"><a class="line-number" href="#L912">912</a> inline constexpr __nr_t SYS_futex_wait = arm32_eabi::nr::futex_wait;</span>
+<span id="L913" class="source-line"><a class="line-number" href="#L913">913</a> inline constexpr __nr_t SYS_futex_requeue = arm32_eabi::nr::futex_requeue;</span>
+<span id="L914" class="source-line"><a class="line-number" href="#L914">914</a> inline constexpr __nr_t SYS_statmount = arm32_eabi::nr::statmount;</span>
+<span id="L915" class="source-line"><a class="line-number" href="#L915">915</a> inline constexpr __nr_t SYS_listmount = arm32_eabi::nr::listmount;</span>
+<span id="L916" class="source-line"><a class="line-number" href="#L916">916</a> inline constexpr __nr_t SYS_lsm_get_self_attr = arm32_eabi::nr::lsm_get_self_attr;</span>
+<span id="L917" class="source-line"><a class="line-number" href="#L917">917</a> inline constexpr __nr_t SYS_lsm_set_self_attr = arm32_eabi::nr::lsm_set_self_attr;</span>
+<span id="L918" class="source-line"><a class="line-number" href="#L918">918</a> inline constexpr __nr_t SYS_lsm_list_modules = arm32_eabi::nr::lsm_list_modules;</span>
+<span id="L919" class="source-line"><a class="line-number" href="#L919">919</a> inline constexpr __nr_t SYS_mseal = arm32_eabi::nr::mseal;</span>
+<span id="L920" class="source-line"><a class="line-number" href="#L920">920</a> inline constexpr __nr_t SYS_setxattrat = arm32_eabi::nr::setxattrat;</span>
+<span id="L921" class="source-line"><a class="line-number" href="#L921">921</a> inline constexpr __nr_t SYS_getxattrat = arm32_eabi::nr::getxattrat;</span>
+<span id="L922" class="source-line"><a class="line-number" href="#L922">922</a> inline constexpr __nr_t SYS_listxattrat = arm32_eabi::nr::listxattrat;</span>
+<span id="L923" class="source-line"><a class="line-number" href="#L923">923</a> inline constexpr __nr_t SYS_removexattrat = arm32_eabi::nr::removexattrat;</span>
+<span id="L924" class="source-line"><a class="line-number" href="#L924">924</a> inline constexpr __nr_t SYS_open_tree_attr = arm32_eabi::nr::open_tree_attr;</span>
+<span id="L925" class="source-line"><a class="line-number" href="#L925">925</a> inline constexpr __nr_t SYS_file_getattr = arm32_eabi::nr::file_getattr;</span>
+<span id="L926" class="source-line"><a class="line-number" href="#L926">926</a> inline constexpr __nr_t SYS_file_setattr = arm32_eabi::nr::file_setattr;</span>
+<span id="L927" class="source-line"><a class="line-number" href="#L927">927</a> inline constexpr __nr_t SYS_listns = arm32_eabi::nr::listns;</span>
+<span id="L928" class="source-line"><a class="line-number" href="#L928">928</a> inline constexpr __nr_t SYS_rseq_slice_yield = arm32_eabi::nr::rseq_slice_yield;</span>
+<span id="L929" class="source-line"><a class="line-number" href="#L929">929</a> </span>
+<span id="L930" class="source-line"><a class="line-number" href="#L930">930</a> // arm private swis</span>
+<span id="L931" class="source-line"><a class="line-number" href="#L931">931</a> inline constexpr __nr_t SYS_arm_breakpoint = arm32_eabi::nr::arm_breakpoint;</span>
+<span id="L932" class="source-line"><a class="line-number" href="#L932">932</a> inline constexpr __nr_t SYS_arm_cacheflush = arm32_eabi::nr::arm_cacheflush;</span>
+<span id="L933" class="source-line"><a class="line-number" href="#L933">933</a> inline constexpr __nr_t SYS_arm_usr26 = arm32_eabi::nr::arm_usr26;</span>
+<span id="L934" class="source-line"><a class="line-number" href="#L934">934</a> inline constexpr __nr_t SYS_arm_usr32 = arm32_eabi::nr::arm_usr32;</span>
+<span id="L935" class="source-line"><a class="line-number" href="#L935">935</a> inline constexpr __nr_t SYS_arm_set_tls = arm32_eabi::nr::arm_set_tls;</span>
+<span id="L936" class="source-line"><a class="line-number" href="#L936">936</a> inline constexpr __nr_t SYS_arm_get_tls = arm32_eabi::nr::arm_get_tls;</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

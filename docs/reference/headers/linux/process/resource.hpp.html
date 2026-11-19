@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/process/resource.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/process/resource.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/process/resource.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/process/resource.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-050a23af0875e030">micron::rlim_t</code></td><td>typedef; line 20</td></tr><tr class="t-dsc"><td><code id="s-2c717d16795120d3">micron::proc_stat_t</code></td><td>struct; line 22</td></tr><tr class="t-dsc"><td><code id="s-cc86c09ba8f31584">micron::proc_stat_t::pid</code></td><td>member; line 23</td></tr><tr class="t-dsc"><td><code id="s-a8e6102ab42a0e0a">micron::proc_stat_t::comm</code></td><td>member; line 24</td></tr><tr class="t-dsc"><td><code id="s-1a31a5f64da18278">micron::proc_stat_t::state</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><code id="s-8bf878abfae8812b">micron::proc_stat_t::ppid</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-602a869a20d806c6">micron::proc_stat_t::pgrp</code></td><td>member; line 27</td></tr><tr class="t-dsc"><td><code id="s-2d77504044b1e17c">micron::proc_stat_t::session</code></td><td>member; line 28</td></tr><tr class="t-dsc"><td><code id="s-a07de1eaf87d92f1">micron::proc_stat_t::tty_nr</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-1d490e1341c261ec">micron::proc_stat_t::tpgid</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-61ea9f1d670e65ec">micron::proc_stat_t::flags</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-59de309afd9bb401">micron::proc_stat_t::cminflt</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-323ab9d269573783">micron::proc_stat_t::minflt</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-57a8259e9c2ca2aa">micron::proc_stat_t::cmajflt</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-1e8618585fe4d4f2">micron::proc_stat_t::majflt</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-98c1d317cae8b169">micron::proc_stat_t::stime</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-72fa45a58684d930">micron::proc_stat_t::utime</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-19dfbd2877452441">micron::proc_stat_t::cstime</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-47fb277dee5f4a07">micron::proc_stat_t::cutime</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-f32e93f1926e0216">micron::proc_stat_t::nice</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-93a4444f36f53c0a">micron::proc_stat_t::priority</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-a1c0124e8a680141">micron::proc_stat_t::num_threads</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-0ed5b62f419a38be">micron::proc_stat_t::starttime</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-2591dc0a89673516">micron::proc_stat_t::vsize</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-eb79569b94b99af8">micron::proc_stat_t::rss</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-16ddab30ec281a66">micron::proc_stat_t::rsslim</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-c2205856d28826b1">micron::proc_status_t</code></td><td>struct; line 45</td></tr><tr class="t-dsc"><td><code id="s-8e646b4a84eba4f5">micron::proc_status_t::name</code></td><td>member; line 46</td></tr><tr class="t-dsc"><td><code id="s-ba825544111fb42b">micron::proc_status_t::state</code></td><td>member; line 47</td></tr><tr class="t-dsc"><td><code id="s-398ebed712e36c49">micron::proc_status_t::pid</code></td><td>member; line 48</td></tr><tr class="t-dsc"><td><code id="s-6b2059e81056de14">micron::proc_status_t::ppid</code></td><td>member; line 48</td></tr><tr class="t-dsc"><td><code id="s-b54651df8b074264">micron::proc_status_t::tracerpid</code></td><td>member; line 48</td></tr><tr class="t-dsc"><td><code id="s-01a4c79358101dc8">micron::proc_status_t::uid</code></td><td>member; line 49</td></tr><tr class="t-dsc"><td><code id="s-f07eb30141c59a8b">micron::proc_status_t::gid</code></td><td>member; line 50</td></tr><tr class="t-dsc"><td><code id="s-ab18587540965a3f">micron::proc_status_t::fd_size</code></td><td>member; line 51</td></tr><tr class="t-dsc"><td><code id="s-a3b4e8d70e400314">micron::proc_status_t::vm_peak</code></td><td>member; line 52</td></tr><tr class="t-dsc"><td><code id="s-f0d773dbca42876a">micron::proc_status_t::vm_size</code></td><td>member; line 52</td></tr><tr class="t-dsc"><td><code id="s-31c09e1bcc768b8a">micron::proc_status_t::vm_lck</code></td><td>member; line 53</td></tr><tr class="t-dsc"><td><code id="s-aa292f55520f3ad5">micron::proc_status_t::vm_pin</code></td><td>member; line 53</td></tr><tr class="t-dsc"><td><code id="s-d94bc78ecbe69137">micron::proc_status_t::vm_hwm</code></td><td>member; line 54</td></tr><tr class="t-dsc"><td><code id="s-38370c34154979d6">micron::proc_status_t::vm_rss</code></td><td>member; line 54</td></tr><tr class="t-dsc"><td><code id="s-9739015a6cdf891a">micron::proc_status_t::vm_data</code></td><td>member; line 55</td></tr><tr class="t-dsc"><td><code id="s-820482513184acc4">micron::proc_status_t::vm_stk</code></td><td>member; line 55</td></tr><tr class="t-dsc"><td><code id="s-8ad8d5dc881e0fb3">micron::proc_status_t::vm_exe</code></td><td>member; line 56</td></tr><tr class="t-dsc"><td><code id="s-3f08bf4d049385d6">micron::proc_status_t::vm_lib</code></td><td>member; line 56</td></tr><tr class="t-dsc"><td><code id="s-95db0a7362354139">micron::proc_status_t::vm_pte</code></td><td>member; line 57</td></tr><tr class="t-dsc"><td><code id="s-ae6d29fd148319c3">micron::proc_status_t::vm_swap</code></td><td>member; line 57</td></tr><tr class="t-dsc"><td><code id="s-900456cd04bd8fc1">micron::proc_status_t::threads</code></td><td>member; line 58</td></tr><tr class="t-dsc"><td><code id="s-91abe153ec2d624c">micron::proc_status_t::shd_pnd</code></td><td>member; line 59</td></tr><tr class="t-dsc"><td><code id="s-3ec18666eaa8f02b">micron::proc_status_t::sig_pnd</code></td><td>member; line 59</td></tr><tr class="t-dsc"><td><code id="s-b3db97d6bd38fec3">micron::proc_status_t::sig_blk</code></td><td>member; line 60</td></tr><tr class="t-dsc"><td><code id="s-0e0982a41f576d36">micron::proc_status_t::sig_cgt</code></td><td>member; line 60</td></tr><tr class="t-dsc"><td><code id="s-4c70f73128b55e79">micron::proc_status_t::sig_ign</code></td><td>member; line 60</td></tr><tr class="t-dsc"><td><code id="s-d4b13bd7e857e70d">micron::proc_status_t::cap_amb</code></td><td>member; line 61</td></tr><tr class="t-dsc"><td><code id="s-cf5664ffeea0db4b">micron::proc_status_t::cap_bnd</code></td><td>member; line 61</td></tr><tr class="t-dsc"><td><code id="s-18a304cf7236cab1">micron::proc_status_t::cap_eff</code></td><td>member; line 61</td></tr><tr class="t-dsc"><td><code id="s-6779d40e94088751">micron::proc_status_t::cap_inh</code></td><td>member; line 61</td></tr><tr class="t-dsc"><td><code id="s-52fec96c0370db9b">micron::proc_status_t::cap_prm</code></td><td>member; line 61</td></tr><tr class="t-dsc"><td><code id="s-e517827f9dffd946">micron::proc_status_t::nonvoluntary_ctxt</code></td><td>member; line 62</td></tr><tr class="t-dsc"><td><code id="s-e240da924dd94458">micron::proc_status_t::voluntary_ctxt</code></td><td>member; line 62</td></tr><tr class="t-dsc"><td><code id="s-644b3b8634006209">micron::proc_resource_t</code></td><td>struct; line 66</td></tr><tr class="t-dsc"><td><code id="s-3a8318c93b7004b6">micron::proc_resource_t::stat</code></td><td>member; line 67</td></tr><tr class="t-dsc"><td><code id="s-e3a9eef8011e5bc2">micron::proc_resource_t::status</code></td><td>member; line 68</td></tr><tr class="t-dsc"><td><code id="s-d3fb5f58a4a5d5c0">micron::proc_resource_t::usage</code></td><td>member; line 69</td></tr><tr class="t-dsc"><td><code id="s-df769b58da91a5b8">micron::proc_resource_t::limits</code></td><td>member; line 70</td></tr><tr class="t-dsc"><td><code id="s-5b41f3c70fa7e4f8">micron::user_hz</code></td><td>variable; line 362</td></tr><tr class="t-dsc"><td><a href="#f-cf5959efb07eef26">micron::read_proc_stat(pid_t pid = 0)</a></td><td>function; line 236</td></tr><tr class="t-dsc"><td><a href="#f-3f26a01197fc556f">micron::read_proc_status(pid_t pid = 0)</a></td><td>function; line 296</td></tr><tr class="t-dsc"><td><a href="#f-544660dd57941989">micron::get_limit(pid_t pid = 0)</a></td><td>function; line 316</td></tr><tr class="t-dsc"><td><a href="#f-75e5d5ecc600ad90">micron::set_limit(pid_t pid, posix::rlimit64_t rl)</a></td><td>function; line 325</td></tr><tr class="t-dsc"><td><a href="#f-d1d18603d2dd9a06">micron::set_soft_limit(pid_t pid, rlim_t soft)</a></td><td>function; line 332</td></tr><tr class="t-dsc"><td><a href="#f-b1d187b5bb5d3dfd">micron::set_hard_limit(pid_t pid, rlim_t hard)</a></td><td>function; line 342</td></tr><tr class="t-dsc"><td><a href="#f-941a20ffa34f2f3e">micron::apply_limits(pid_t pid, const posix::limits_t &amp;lims)</a></td><td>function; line 351</td></tr><tr class="t-dsc"><td><a href="#f-d35b68ea7736cadf">micron::get_rusage_proc(pid_t pid)</a></td><td>function; line 365</td></tr><tr class="t-dsc"><td><a href="#f-da6a051f0777fd76">micron::get_process_resources(pid_t pid)</a></td><td>function; line 384</td></tr><tr class="t-dsc"><td><a href="#f-76c9161f48b791be">micron::this_process_resources()</a></td><td>function; line 398</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-cf5959efb07eef26"><h3><code>micron::read_proc_stat(pid_t pid = 0)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L236">line 236</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline proc_stat_t
+read_proc_stat(pid_t pid = 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline proc_stat_t
+read_proc_stat(pid_t pid = 0)
+{
+  proc_stat_t s{};
+  micron::string raw;
+  io::open_file(__impl::proc_path(pid, &quot;stat&quot;).c_str()) &gt;&gt; raw;
+  if ( raw.empty() ) return s;
+
+  const char *p = raw.cbegin();
+  const char *end = raw.cend();
+
+  s.pid = static_cast&lt;pid_t&gt;(__impl::parse_i64(p, end));
+
+  // comm is inside parentheses; find them from both ends to handle embedded &#x27;)&#x27;
+  while ( p &lt; end &amp;&amp; *p != &#x27;(&#x27; ) ++p;
+  const char *cn_s = ++p;
+  while ( p &lt; end &amp;&amp; *p != &#x27;)&#x27; ) ++p;      // last &#x27;)&#x27; found via reverse search is safer
+  // find the last &#x27;)&#x27; from end
+  {
+    const char *rp = end - 1;
+    while ( rp &gt; cn_s &amp;&amp; *rp != &#x27;)&#x27; ) --rp;
+    usize cn = static_cast&lt;usize&gt;(rp - cn_s);
+    if ( cn &gt;= 255 ) cn = 255;
+    micron::memcpy(s.comm, cn_s, cn);
+    s.comm[cn] = &#x27;\0&#x27;;
+    p = rp + 1;
+  }
+
+  // state
+  while ( p &lt; end &amp;&amp; *p == &#x27; &#x27; ) ++p;
+  if ( p &lt; end ) {
+    s.state = *p;
+    ++p;
+  }
+
+  s.ppid = static_cast&lt;pid_t&gt;(__impl::parse_i64(p, end));
+  s.pgrp = static_cast&lt;pid_t&gt;(__impl::parse_i64(p, end));
+  s.session = static_cast&lt;int&gt;(__impl::parse_i64(p, end));
+  s.tty_nr = static_cast&lt;int&gt;(__impl::parse_i64(p, end));
+  s.tpgid = static_cast&lt;pid_t&gt;(__impl::parse_i64(p, end));
+  s.flags = static_cast&lt;u32&gt;(__impl::parse_u64(p, end));
+  s.minflt = __impl::parse_u64(p, end);
+  s.cminflt = __impl::parse_u64(p, end);
+  s.majflt = __impl::parse_u64(p, end);
+  s.cmajflt = __impl::parse_u64(p, end);
+  s.utime = __impl::parse_u64(p, end);
+  s.stime = __impl::parse_u64(p, end);
+  s.cutime = __impl::parse_i64(p, end);
+  s.cstime = __impl::parse_i64(p, end);
+  s.priority = __impl::parse_i64(p, end);
+  s.nice = __impl::parse_i64(p, end);
+  s.num_threads = __impl::parse_i64(p, end);
+  __impl::parse_i64(p, end);      // itrealvalue — always 0, obsolete
+  s.starttime = __impl::parse_u64(p, end);
+  s.vsize = __impl::parse_u64(p, end);
+  s.rss = __impl::parse_i64(p, end);
+  s.rsslim = __impl::parse_u64(p, end);
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L241">line 241</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L292">line 292</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../io/fsys.hpp.html#f-6e15aa5f8a3a8eca">io::open_file</a>, <a href="resource.hpp.html#f-6988482c5c24d217">__impl::proc_path</a>, <a href="resource.hpp.html#f-36f9c77150596247">__impl::parse_i64</a>, <a href="../../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="resource.hpp.html#f-b3ea089dff98bfbc">__impl::parse_u64</a>.</p></section><section class="function-entry" id="f-3f26a01197fc556f"><h3><code>micron::read_proc_status(pid_t pid = 0)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L296">line 296</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline proc_status_t
+read_proc_status(pid_t pid = 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline proc_status_t
+read_proc_status(pid_t pid = 0)
+{
+  proc_status_t s{};
+  micron::string raw;
+  io::open_file(__impl::proc_path(pid, &quot;status&quot;).c_str()) &gt;&gt; raw;
+  if ( raw.empty() ) return s;
+
+  const char *p = raw.cbegin();
+  const char *end = raw.cend();
+  while ( p &lt; end ) {
+    const char *le = __impl::find_ch(p, end, &#x27;\n&#x27;);
+    if ( !le ) le = end;
+    __impl::parse_status_line(s, p, le);
+    p = le + 1;
+  }
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L301">line 301</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L311">line 311</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../io/fsys.hpp.html#f-6e15aa5f8a3a8eca">io::open_file</a>, <a href="resource.hpp.html#f-6988482c5c24d217">__impl::proc_path</a>, <a href="resource.hpp.html#f-2428acd7184e18f8">__impl::find_ch</a>, <a href="resource.hpp.html#f-ce605d3bdd5561e0">__impl::parse_status_line</a>.</p></section><section class="function-entry" id="f-544660dd57941989"><h3><code>micron::get_limit(pid_t pid = 0)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L316">line 316</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;posix::limits L&gt;
+inline posix::rlimit64_t
+get_limit(pid_t pid = 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;posix::limits L&gt;
+inline posix::rlimit64_t
+get_limit(pid_t pid = 0)
+{
+  posix::rlimit64_t rl{};
+  posix::get_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl);
+  return rl;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rl</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L320">line 320</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/limits.hpp.html#f-854c55130a1d5116">posix::get_process_limits</a>.</p></section><section class="function-entry" id="f-75e5d5ecc600ad90"><h3><code>micron::set_limit(pid_t pid, posix::rlimit64_t rl)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L325">line 325</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;posix::limits L&gt;
+inline int
+set_limit(pid_t pid, posix::rlimit64_t rl)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid</code></li><li><code>posix::rlimit64_t rl</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;int&gt;(posix::set_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;posix::limits L&gt;
+inline int
+set_limit(pid_t pid, posix::rlimit64_t rl)
+{
+  return static_cast&lt;int&gt;(posix::set_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(posix::set_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl))</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L327">line 327</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/limits.hpp.html#f-3492958cc7e59195">posix::set_process_limits</a>.</p></section><section class="function-entry" id="f-d1d18603d2dd9a06"><h3><code>micron::set_soft_limit(pid_t pid, rlim_t soft)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L332">line 332</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;posix::limits L&gt;
+inline int
+set_soft_limit(pid_t pid, rlim_t soft)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid</code></li><li><code>rlim_t soft</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;posix::limits L&gt;
+inline int
+set_soft_limit(pid_t pid, rlim_t soft)
+{
+  posix::rlimit64_t rl{};
+  posix::get_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl);
+  rl.rlim_cur = soft;
+  return static_cast&lt;int&gt;(posix::set_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(posix::set_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl))</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L337">line 337</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/limits.hpp.html#f-854c55130a1d5116">posix::get_process_limits</a>, <a href="../sys/limits.hpp.html#f-3492958cc7e59195">posix::set_process_limits</a>.</p></section><section class="function-entry" id="f-b1d187b5bb5d3dfd"><h3><code>micron::set_hard_limit(pid_t pid, rlim_t hard)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L342">line 342</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;posix::limits L&gt;
+inline int
+set_hard_limit(pid_t pid, rlim_t hard)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid</code></li><li><code>rlim_t hard</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;posix::limits L&gt;
+inline int
+set_hard_limit(pid_t pid, rlim_t hard)
+{
+  posix::rlimit64_t rl{};
+  posix::get_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl);
+  rl.rlim_max = hard;
+  return static_cast&lt;int&gt;(posix::set_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(posix::set_process_limits(pid, static_cast&lt;rlim_t&gt;(L), rl))</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L347">line 347</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/limits.hpp.html#f-854c55130a1d5116">posix::get_process_limits</a>, <a href="../sys/limits.hpp.html#f-3492958cc7e59195">posix::set_process_limits</a>.</p></section><section class="function-entry" id="f-941a20ffa34f2f3e"><h3><code>micron::apply_limits(pid_t pid, const posix::limits_t &amp;lims)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L351">line 351</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+apply_limits(pid_t pid, const posix::limits_t &amp;lims)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid</code></li><li><code>const posix::limits_t &amp;lims</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+apply_limits(pid_t pid, const posix::limits_t &amp;lims)
+{
+  int err = 0;
+  for ( rlim_t i = 0; i &lt; posix::rlimit_nlimits; ++i ) {
+    auto rl = lims.lim[i];
+    auto r = posix::set_process_limits(pid, i, rl);
+    if ( r &lt; 0 &amp;&amp; err == 0 ) err = static_cast&lt;int&gt;(r);
+  }
+  return err;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>err</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L359">line 359</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/limits.hpp.html#f-3492958cc7e59195">posix::set_process_limits</a>.</p></section><section class="function-entry" id="f-d35b68ea7736cadf"><h3><code>micron::get_rusage_proc(pid_t pid)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L365">line 365</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline posix::rusage_t
+get_rusage_proc(pid_t pid)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline posix::rusage_t
+get_rusage_proc(pid_t pid)
+{
+  posix::rusage_t r{};
+  proc_stat_t st = read_proc_stat(pid);
+  proc_status_t sts = read_proc_status(pid);
+
+  r.ru_utime.tv_sec = static_cast&lt;long&gt;(st.utime / user_hz);
+  r.ru_utime.tv_usec = static_cast&lt;long&gt;((st.utime % user_hz) * (1000000 / user_hz));
+  r.ru_stime.tv_sec = static_cast&lt;long&gt;(st.stime / user_hz);
+  r.ru_stime.tv_usec = static_cast&lt;long&gt;((st.stime % user_hz) * (1000000 / user_hz));
+  r.ru_maxrss = static_cast&lt;kernel_long_t&gt;(sts.vm_hwm);
+  r.ru_minflt = static_cast&lt;kernel_long_t&gt;(st.minflt);
+  r.ru_majflt = static_cast&lt;kernel_long_t&gt;(st.majflt);
+  r.ru_nvcsw = static_cast&lt;kernel_long_t&gt;(sts.voluntary_ctxt);
+  r.ru_nivcsw = static_cast&lt;kernel_long_t&gt;(sts.nonvoluntary_ctxt);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L380">line 380</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="resource.hpp.html#f-cf5959efb07eef26">read_proc_stat</a>, <a href="resource.hpp.html#f-3f26a01197fc556f">read_proc_status</a>.</p></section><section class="function-entry" id="f-da6a051f0777fd76"><h3><code>micron::get_process_resources(pid_t pid)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L384">line 384</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline proc_resource_t
+get_process_resources(pid_t pid)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline proc_resource_t
+get_process_resources(pid_t pid)
+{
+  proc_resource_t res;
+  res.stat = read_proc_stat(pid);
+  res.status = read_proc_status(pid);
+  res.limits = posix::limits_t(pid);
+  if ( pid == 0 || pid == posix::getpid() )
+    posix::getrusage(posix::rusage_self, res.usage);
+  else
+    res.usage = get_rusage_proc(pid);
+  return res;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>res</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L394">line 394</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="resource.hpp.html#f-cf5959efb07eef26">read_proc_stat</a>, <a href="resource.hpp.html#f-3f26a01197fc556f">read_proc_status</a>, <a href="../sys/limits.hpp.html#s-24f9fa6bc470c899">posix::limits_t</a>, <a href="../sys/system.hpp.html#f-02b340c9ce1eeab2">posix::getpid</a>, <a href="../sys/resource.hpp.html#f-819925132f4e8c9d">posix::getrusage</a>, <a href="resource.hpp.html#f-d35b68ea7736cadf">get_rusage_proc</a>.</p></section><section class="function-entry" id="f-76c9161f48b791be"><h3><code>micron::this_process_resources()</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L398">line 398</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline proc_resource_t
+this_process_resources()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>get_process_resources(0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline proc_resource_t
+this_process_resources()
+{
+  return get_process_resources(0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>get_process_resources(0)</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L400">line 400</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="resource.hpp.html#f-da6a051f0777fd76">get_process_resources</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-6988482c5c24d217"><h3><code>micron::__impl::proc_path(pid_t pid, const char *file)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L77">line 77</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N = 80&gt;
+micron::sstring&lt;N&gt;
+proc_path(pid_t pid, const char *file)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t pid</code></li><li><code>const char *file</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N = 80&gt;
+micron::sstring&lt;N&gt;
+proc_path(pid_t pid, const char *file)
+{
+  micron::sstring&lt;N&gt; p;
+  p += &quot;/proc/&quot;;
+  if ( pid &lt;= 0 ) {
+    p += &quot;self/&quot;;
+  } else {
+    char buf[24];
+    int n = 0;
+    pid_t t = pid;
+    do {
+      buf[n++] = char(&#x27;0&#x27; + t % 10);
+      t /= 10;
+    } while ( t );
+    for ( int i = n - 1; i &gt;= 0; --i ) p += buf[i];
+    p += &#x27;/&#x27;;
+  }
+  p += file;
+  return p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L95">line 95</a></td></tr></tbody></table></section><section class="function-entry" id="f-36f9c77150596247"><h3><code>micron::__impl::parse_i64(const char *&amp;itr, const char *end)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L99">line 99</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline i64
+parse_i64(const char *&amp;itr, const char *end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *&amp;itr</code></li><li><code>const char *end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline i64
+parse_i64(const char *&amp;itr, const char *end)
+{
+  while ( itr &lt; end &amp;&amp; (*itr == &#x27; &#x27; || *itr == &#x27;\t&#x27; || *itr == &#x27;\n&#x27;) ) ++itr;
+  bool neg = (itr &lt; end &amp;&amp; *itr == &#x27;-&#x27;);
+  if ( neg ) ++itr;
+  i64 v = 0;
+  while ( itr &lt; end &amp;&amp; *itr &gt;= &#x27;0&#x27; &amp;&amp; *itr &lt;= &#x27;9&#x27; ) v = v * 10 + (*itr++ - &#x27;0&#x27;);
+  return neg ? -v : v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>neg ? -v : v</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L106">line 106</a></td></tr></tbody></table></section><section class="function-entry" id="f-b3ea089dff98bfbc"><h3><code>micron::__impl::parse_u64(const char *&amp;itr, const char *end)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L110">line 110</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+parse_u64(const char *&amp;itr, const char *end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *&amp;itr</code></li><li><code>const char *end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+parse_u64(const char *&amp;itr, const char *end)
+{
+  while ( itr &lt; end &amp;&amp; (*itr == &#x27; &#x27; || *itr == &#x27;\t&#x27; || *itr == &#x27;\n&#x27;) ) ++itr;
+  u64 v = 0;
+  while ( itr &lt; end &amp;&amp; *itr &gt;= &#x27;0&#x27; &amp;&amp; *itr &lt;= &#x27;9&#x27; ) v = v * 10 + (*itr++ - &#x27;0&#x27;);
+  return v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L115">line 115</a></td></tr></tbody></table></section><section class="function-entry" id="f-a199ad4f45b621be"><h3><code>micron::__impl::parse_hex(const char *&amp;itr, const char *end)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L119">line 119</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+parse_hex(const char *&amp;itr, const char *end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *&amp;itr</code></li><li><code>const char *end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+parse_hex(const char *&amp;itr, const char *end)
+{
+  while ( itr &lt; end &amp;&amp; (*itr == &#x27; &#x27; || *itr == &#x27;\t&#x27; || *itr == &#x27;\n&#x27;) ) ++itr;
+  u64 v = 0;
+  while ( itr &lt; end ) {
+    char c = *itr;
+    if ( c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27; ) {
+      v = v * 16 + u64(c - &#x27;0&#x27;);
+      ++itr;
+    } else if ( c &gt;= &#x27;a&#x27; &amp;&amp; c &lt;= &#x27;f&#x27; ) {
+      v = v * 16 + u64(c - &#x27;a&#x27; + 10);
+      ++itr;
+    } else if ( c &gt;= &#x27;A&#x27; &amp;&amp; c &lt;= &#x27;F&#x27; ) {
+      v = v * 16 + u64(c - &#x27;A&#x27; + 10);
+      ++itr;
+    } else
+      break;
+  }
+  return v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L137">line 137</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-2428acd7184e18f8"><h3><code>micron::__impl::find_ch(const char *p, const char *end, char needle)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L141">line 141</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+find_ch(const char *p, const char *end, char needle)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *p</code></li><li><code>const char *end</code></li><li><code>char needle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+find_ch(const char *p, const char *end, char needle)
+{
+  for ( ; p &lt; end; ++p )
+    if ( *p == needle ) return p;
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/process/resource.hpp.html#L145">line 145</a></td></tr></tbody></table></section><section class="function-entry" id="f-ce605d3bdd5561e0"><h3><code>micron::__impl::parse_status_line(proc_status_t &amp;s, const char *ls, const char *le)</code></h3><p>Defined in <code>linux/process/resource.hpp</code>, <a href="../../../source/linux/process/resource.hpp.html#L149">line 149</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+parse_status_line(proc_status_t &amp;s, const char *ls, const char *le)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>proc_status_t &amp;s</code></li><li><code>const char *ls</code></li><li><code>const char *le</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+parse_status_line(proc_status_t &amp;s, const char *ls, const char *le)
+{
+  const char *colon = find_ch(ls, le, &#x27;:&#x27;);
+  if ( !colon ) return;
+  usize klen = static_cast&lt;usize&gt;(colon - ls);
+  const char *val = colon + 1;
+
+#define KIS(k) (klen == sizeof(k) - 1 &amp;&amp; micron::memcmp&lt;byte&gt;(ls, k, klen) == 0)
+
+  if ( KIS(&quot;Name&quot;) ) {
+    usize n = 0;
+    while ( val + n &lt; le &amp;&amp; val[n] != &#x27;\n&#x27; &amp;&amp; n &lt; 255 ) ++n;
+    micron::memcpy(s.name, val, n);
+    s.name[n] = &#x27;\0&#x27;;
+  } else if ( KIS(&quot;State&quot;) ) {
+    while ( val &lt; le &amp;&amp; *val == &#x27; &#x27; ) ++val;
+    if ( val &lt; le ) s.state = *val;
+  } else if ( KIS(&quot;Pid&quot;) ) {
+    s.pid = static_cast&lt;pid_t&gt;(parse_i64(val, le));
+  } else if ( KIS(&quot;PPid&quot;) ) {
+    s.ppid = static_cast&lt;pid_t&gt;(parse_i64(val, le));
+  } else if ( KIS(&quot;TracerPid&quot;) ) {
+    s.tracerpid = static_cast&lt;pid_t&gt;(parse_i64(val, le));
+  } else if ( KIS(&quot;Uid&quot;) ) {
+    for ( int i = 0; i &lt; 4; ++i ) s.uid[i] = static_cast&lt;uid_t&gt;(parse_u64(val, le));
+  } else if ( KIS(&quot;Gid&quot;) ) {
+    for ( int i = 0; i &lt; 4; ++i ) s.gid[i] = static_cast&lt;gid_t&gt;(parse_u64(val, le));
+  } else if ( KIS(&quot;FDSize&quot;) ) {
+    s.fd_size = static_cast&lt;i32&gt;(parse_i64(val, le));
+  } else if ( KIS(&quot;VmPeak&quot;) ) {
+    s.vm_peak = parse_u64(val, le);
+  } else if ( KIS(&quot;VmSize&quot;) ) {
+    s.vm_size = parse_u64(val, le);
+  } else if ( KIS(&quot;VmLck&quot;) ) {
+    s.vm_lck = parse_u64(val, le);
+  } else if ( KIS(&quot;VmPin&quot;) ) {
+    s.vm_pin = parse_u64(val, le);
+  } else if ( KIS(&quot;VmHWM&quot;) ) {
+    s.vm_hwm = parse_u64(val, le);
+  } else if ( KIS(&quot;VmRSS&quot;) ) {
+    s.vm_rss = parse_u64(val, le);
+  } else if ( KIS(&quot;VmData&quot;) ) {
+    s.vm_data = parse_u64(val, le);
+  } else if ( KIS(&quot;VmStk&quot;) ) {
+    s.vm_stk = parse_u64(val, le);
+  } else if ( KIS(&quot;VmExe&quot;) ) {
+    s.vm_exe = parse_u64(val, le);
+  } else if ( KIS(&quot;VmLib&quot;) ) {
+    s.vm_lib = parse_u64(val, le);
+  } else if ( KIS(&quot;VmPTE&quot;) ) {
+    s.vm_pte = parse_u64(val, le);
+  } else if ( KIS(&quot;VmSwap&quot;) ) {
+    s.vm_swap = parse_u64(val, le);
+  } else if ( KIS(&quot;Threads&quot;) ) {
+    s.threads = parse_i64(val, le);
+  } else if ( KIS(&quot;SigPnd&quot;) ) {
+    s.sig_pnd = parse_hex(val, le);
+  } else if ( KIS(&quot;ShdPnd&quot;) ) {
+    s.shd_pnd = parse_hex(val, le);
+  } else if ( KIS(&quot;SigBlk&quot;) ) {
+    s.sig_blk = parse_hex(val, le);
+  } else if ( KIS(&quot;SigIgn&quot;) ) {
+    s.sig_ign = parse_hex(val, le);
+  } else if ( KIS(&quot;SigCgt&quot;) ) {
+    s.sig_cgt = parse_hex(val, le);
+  } else if ( KIS(&quot;CapInh&quot;) ) {
+    s.cap_inh = parse_hex(val, le);
+  } else if ( KIS(&quot;CapPrm&quot;) ) {
+    s.cap_prm = parse_hex(val, le);
+  } else if ( KIS(&quot;CapEff&quot;) ) {
+    s.cap_eff = parse_hex(val, le);
+  } else if ( KIS(&quot;CapBnd&quot;) ) {
+    s.cap_bnd = parse_hex(val, le);
+  } else if ( KIS(&quot;CapAmb&quot;) ) {
+    s.cap_amb = parse_hex(val, le);
+  } else if ( KIS(&quot;voluntary_ctxt_switches&quot;) ) {
+    s.voluntary_ctxt = parse_u64(val, le);
+  } else if ( KIS(&quot;nonvoluntary_ctxt_switches&quot;) ) {
+    s.nonvoluntary_ctxt = parse_u64(val, le);
+  }
+
+#undef KIS
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/process/resource.hpp.html#L152">line 152</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="resource.hpp.html#f-2428acd7184e18f8">find_ch</a>, <a href="../../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="resource.hpp.html#f-36f9c77150596247">parse_i64</a>, <a href="resource.hpp.html#f-b3ea089dff98bfbc">parse_u64</a>, <a href="resource.hpp.html#f-a199ad4f45b621be">parse_hex</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

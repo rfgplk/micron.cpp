@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/fpmap.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/fpmap.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/functional.html">Functional algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/fpmap.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/algorithm/fpmap.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-02287880580dc716">micron::fp::keys(const M &amp;m)</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-3eb95d67c9ece112">micron::fp::values(const M &amp;m)</a></td><td>function; line 43</td></tr><tr class="t-dsc"><td><a href="#f-a1fc82e1757ec38b">micron::fp::unzip(const M &amp;m)</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-5a5c5a3b1accddef">micron::fp::elem(const M &amp;m, const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;x)</a></td><td>function; line 69</td></tr><tr class="t-dsc"><td><a href="#f-c7a395a826368009">micron::fp::find_first(const M &amp;m, Fn fn)</a></td><td>function; line 83</td></tr><tr class="t-dsc"><td><a href="#f-5c2fcae8ecd3e9a2">micron::fp::nub(const M &amp;m)</a></td><td>function; line 97</td></tr><tr class="t-dsc"><td><a href="#f-c30d2fa86237be34">micron::fp::flat_map(const M &amp;m, Fn fn)</a></td><td>function; line 114</td></tr><tr class="t-dsc"><td><a href="#f-e40fc0deec9f1728">micron::fp::safe_max(const M &amp;m)</a></td><td>function; line 132</td></tr><tr class="t-dsc"><td><a href="#f-d5f5bfbd47f3d50b">micron::fp::safe_min(const M &amp;m)</a></td><td>function; line 141</td></tr><tr class="t-dsc"><td><a href="#f-2dee9f8464ecbd04">micron::fp::safe_sum(const M &amp;m)</a></td><td>function; line 151</td></tr><tr class="t-dsc"><td><a href="#f-7e9244b0f43c1c75">micron::fp::safe_sum(const M &amp;m)</a></td><td>function; line 160</td></tr><tr class="t-dsc"><td><a href="#f-6556307e233fafcc">micron::fp::safe_mean(const M &amp;m)</a></td><td>function; line 168</td></tr><tr class="t-dsc"><td><a href="#f-dc8e552255effad2">micron::fp::concat(const M &amp;a, const M &amp;b)</a></td><td>function; line 177</td></tr><tr class="t-dsc"><td><a href="#f-c6d94a8fc4b3e5cd">micron::fp::traverse(const M &amp;m, Fn fn)</a></td><td>function; line 193</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-02287880580dc716"><h3><code>micron::fp::keys(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::key_type&gt;
+keys(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::key_type&gt;
+keys(const M &amp;m)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::key_type&gt; out;
+  micron::__impl::visit_kv(m, [&amp;](const auto &amp;k, const auto &amp;) { out.push_back(k); });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L38">line 38</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-3eb95d67c9ece112"><h3><code>micron::fp::values(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L43">line 43</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;
+values(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;
+values(const M &amp;m)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt; out;
+  micron::__impl::visit_kv(m, [&amp;](const auto &amp;, const auto &amp;v) { out.push_back(v); });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L47">line 47</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-a1fc82e1757ec38b"><h3><code>micron::fp::unzip(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+micron::pair&lt;micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::key_type&gt;,
+             micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;&gt;
+unzip(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+micron::pair&lt;micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::key_type&gt;,
+             micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;&gt;
+unzip(const M &amp;m)
+{
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::key_type&gt; ks;
+  micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt; vs;
+  micron::__impl::visit_kv(m, [&amp;](const auto &amp;k, const auto &amp;v) {
+    ks.push_back(k);
+    vs.push_back(v);
+  });
+  return micron::pair&lt;micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::key_type&gt;,
+                      micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;&gt;(micron::move(ks), micron::move(vs));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::pair&lt;micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::key_type&gt;,
+                      micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;&gt;(micron::move(ks), micron::move(vs))</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-5a5c5a3b1accddef"><h3><code>micron::fp::elem(const M &amp;m, const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;x)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+bool
+elem(const M &amp;m, const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li><li><code>const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+bool
+elem(const M &amp;m, const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;x)
+{
+  bool found = false;
+  micron::__impl::visit_kv(m, [&amp;](const auto &amp;, const auto &amp;v) {
+    if ( !found &amp;&amp; v == x ) found = true;
+  });
+  return found;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>found</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L75">line 75</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-c7a395a826368009"><h3><code>micron::fp::find_first(const M &amp;m, Fn fn)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;M&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type, empty_container_error&gt;
+find_first(const M &amp;m, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;M&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type, empty_container_error&gt;
+find_first(const M &amp;m, Fn fn)
+{
+  using V = typename micron::remove_cvref_t&lt;M&gt;::mapped_type;
+  const V *hit = nullptr;
+  micron::__impl::visit_kv(m, [&amp;](const auto &amp;k, const auto &amp;v) {
+    if ( !hit &amp;&amp; fn(k, v) ) hit = micron::addressof(v);
+  });
+  if ( hit ) return micron::option&lt;V, empty_container_error&gt;{ *hit };
+  return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ *hit }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L90">line 90</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L91">line 91</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-5c2fcae8ecd3e9a2"><h3><code>micron::fp::nub(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L97">line 97</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;
+nub(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+micron::fvector&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;
+nub(const M &amp;m)
+{
+  using V = typename micron::remove_cvref_t&lt;M&gt;::mapped_type;
+  micron::fvector&lt;V&gt; out;
+  micron::fp::__impl::seen_set&lt;V&gt; seen;
+  seen.reserve(m.size());
+  micron::__impl::visit_kv(m, [&amp;](const auto &amp;, const auto &amp;v) {
+    if ( seen.add(v) ) out.push_back(v);
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L106">line 106</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-c30d2fa86237be34"><h3><code>micron::fp::flat_map(const M &amp;m, Fn fn)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L114">line 114</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;M&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;&gt;
+auto
+flat_map(const M &amp;m, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;M&gt;::key_type &amp;,
+                                  const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;&gt;
+auto
+flat_map(const M &amp;m, Fn fn)
+{
+  using K = typename micron::remove_cvref_t&lt;M&gt;::key_type;
+  using V = typename micron::remove_cvref_t&lt;M&gt;::mapped_type;
+  using R = micron::remove_cvref_t&lt;decltype(fn(micron::declval&lt;const K &amp;&gt;(), micron::declval&lt;const V &amp;&gt;()))&gt;;
+  using E = typename R::value_type;
+  micron::fvector&lt;E&gt; out;
+  micron::__impl::visit_kv(m, [&amp;](const auto &amp;k, const auto &amp;v) {
+    auto sub = fn(k, v);
+    for ( const auto &amp;e : sub ) out.push_back(e);
+  });
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L125">line 125</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const K &amp;&gt;</a>, <a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const V &amp;&gt;</a>, <a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-e40fc0deec9f1728"><h3><code>micron::fp::safe_max(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L132">line 132</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type, empty_container_error&gt;
+safe_max(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type, empty_container_error&gt;
+safe_max(const M &amp;m)
+{
+  using V = typename micron::remove_cvref_t&lt;M&gt;::mapped_type;
+  if ( m.size() == 0 ) return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;V, empty_container_error&gt;{ micron::max(m) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ micron::max(m) }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L136">line 136</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-57d618bd335b1a43">micron::max</a>.</p></section><section class="function-entry" id="f-d5f5bfbd47f3d50b"><h3><code>micron::fp::safe_min(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L141">line 141</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type, empty_container_error&gt;
+safe_min(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+micron::option&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type, empty_container_error&gt;
+safe_min(const M &amp;m)
+{
+  using V = typename micron::remove_cvref_t&lt;M&gt;::mapped_type;
+  if ( m.size() == 0 ) return micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;V, empty_container_error&gt;{ micron::min(m) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;V, empty_container_error&gt;{ micron::min(m) }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L145">line 145</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-4d14a8deebaf67db">micron::min</a>.</p></section><section class="function-entry" id="f-2dee9f8464ecbd04"><h3><code>micron::fp::safe_sum(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L151">line 151</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+  requires micron::is_integral_v&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;
+micron::option&lt;umax_t, empty_container_error&gt;
+safe_sum(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+  requires micron::is_integral_v&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;
+micron::option&lt;umax_t, empty_container_error&gt;
+safe_sum(const M &amp;m)
+{
+  if ( m.size() == 0 ) return micron::option&lt;umax_t, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;umax_t, empty_container_error&gt;{ micron::sum(m) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;umax_t, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L153">line 153</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;umax_t, empty_container_error&gt;{ micron::sum(m) }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L154">line 154</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-61cdc8e0d93d233b">micron::sum</a>.</p></section><section class="function-entry" id="f-7e9244b0f43c1c75"><h3><code>micron::fp::safe_sum(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L160">line 160</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+  requires micron::is_floating_point_v&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;
+micron::option&lt;f128, empty_container_error&gt;
+safe_sum(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+  requires micron::is_floating_point_v&lt;typename micron::remove_cvref_t&lt;M&gt;::mapped_type&gt;
+micron::option&lt;f128, empty_container_error&gt;
+safe_sum(const M &amp;m)
+{
+  if ( m.size() == 0 ) return micron::option&lt;f128, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;f128, empty_container_error&gt;{ micron::sum(m) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;f128, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L162">line 162</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;f128, empty_container_error&gt;{ micron::sum(m) }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L163">line 163</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-61cdc8e0d93d233b">micron::sum</a>.</p></section><section class="function-entry" id="f-6556307e233fafcc"><h3><code>micron::fp::safe_mean(const M &amp;m)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L168">line 168</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R = f64, is_map_class M&gt;
+micron::option&lt;R, empty_container_error&gt;
+safe_mean(const M &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R = f64, is_map_class M&gt;
+micron::option&lt;R, empty_container_error&gt;
+safe_mean(const M &amp;m)
+{
+  if ( m.size() == 0 ) return micron::option&lt;R, empty_container_error&gt;{ empty_container_error{} };
+  return micron::option&lt;R, empty_container_error&gt;{ micron::mean&lt;R&gt;(m) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;R, empty_container_error&gt;{ empty_container_error{} }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L170">line 170</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;R, empty_container_error&gt;{ micron::mean&lt;R&gt;(m) }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L171">line 171</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="algorithm.hpp.html#f-2dea8b23fc8a2400">micron::mean&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-dc8e552255effad2"><h3><code>micron::fp::concat(const M &amp;a, const M &amp;b)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L177">line 177</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+micron::remove_cvref_t&lt;M&gt;
+concat(const M &amp;a, const M &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;a</code></li><li><code>const M &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+micron::remove_cvref_t&lt;M&gt;
+concat(const M &amp;a, const M &amp;b)
+{
+  using MM = micron::remove_cvref_t&lt;M&gt;;
+  MM out = micron::__impl::rebuild_map&lt;MM&gt;(a, [](const auto &amp;, const auto &amp;) { return true; }, micron::__impl::__kv_value);
+  if constexpr ( is_persistent_map&lt;MM&gt; ) {
+    micron::__impl::visit_kv(b, [&amp;](const auto &amp;k, const auto &amp;v) { out = out.insert(k, v); });
+  } else {
+    micron::__impl::visit_kv(b, [&amp;](const auto &amp;k, const auto &amp;v) { out.insert(k, v); });
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L186">line 186</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__map_build.hpp.html#f-cb2412cb1d181c4f">micron::__impl::rebuild_map&lt;MM&gt;</a>, <a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-c6d94a8fc4b3e5cd"><h3><code>micron::fp::traverse(const M &amp;m, Fn fn)</code></h3><p>Defined in <code>algorithm/fpmap.hpp</code>, <a href="../../source/algorithm/fpmap.hpp.html#L193">line 193</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;&gt;
+auto
+traverse(const M &amp;m, Fn fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M, typename Fn&gt;
+  requires micron::is_invocable_v&lt;Fn, const typename micron::remove_cvref_t&lt;M&gt;::mapped_type &amp;&gt;
+auto
+traverse(const M &amp;m, Fn fn)
+{
+  using MM = micron::remove_cvref_t&lt;M&gt;;
+  using V = typename MM::mapped_type;
+  using Opt = micron::remove_cvref_t&lt;decltype(fn(micron::declval&lt;const V &amp;&gt;()))&gt;;
+  using E = typename Opt::second_type;
+
+  bool ok = true;
+  E err{};
+  MM out = micron::__impl::make_empty_like&lt;MM&gt;(m.size());
+  if constexpr ( is_persistent_map&lt;MM&gt; ) out = MM{};
+
+  micron::__impl::visit_kv(m, [&amp;](const auto &amp;k, const auto &amp;v) {
+    if ( !ok ) return;
+    Opt r = fn(v);
+    if ( r.is_first() ) {
+      if constexpr ( is_persistent_map&lt;MM&gt; )
+        out = out.insert(k, r.template cast&lt;V&gt;());
+      else
+        out.insert(k, r.template cast&lt;V&gt;());
+    } else {
+      ok = false;
+      err = r.template cast&lt;E&gt;();
+    }
+  });
+
+  if ( ok ) return micron::option&lt;MM, E&gt;{ micron::move(out) };
+  return micron::option&lt;MM, E&gt;{ micron::move(err) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::option&lt;MM, E&gt;{ micron::move(out) }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L219">line 219</a></td></tr><tr class="t-dsc"><td><code>micron::option&lt;MM, E&gt;{ micron::move(err) }</code></td><td><a href="../../source/algorithm/fpmap.hpp.html#L220">line 220</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;const V &amp;&gt;</a>, <a href="../bits/__map_build.hpp.html#f-50126626187c0660">micron::__impl::make_empty_like&lt;MM&gt;</a>, <a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">micron::__impl::visit_kv</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

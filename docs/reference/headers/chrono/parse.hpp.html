@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/chrono/parse.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/chrono/parse.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/chrono.html">Date and time</a></div><p>Defined in header <code>&lt;micron/chrono/parse.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/chrono/parse.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-b3fc796d8041116d">micron::chrono::parse_err::empty</code></td><td>variable; line 26</td></tr><tr class="t-dsc"><td><code id="s-0b605e19e724c2ef">micron::chrono::parse_err::malformed</code></td><td>variable; line 27</td></tr><tr class="t-dsc"><td><code id="s-6328e9c6fad06806">micron::chrono::parse_err::bad_year</code></td><td>variable; line 28</td></tr><tr class="t-dsc"><td><code id="s-38b0e7805d7751df">micron::chrono::parse_err::bad_month</code></td><td>variable; line 29</td></tr><tr class="t-dsc"><td><code id="s-e1a07c1e69d4a20d">micron::chrono::parse_err::bad_day</code></td><td>variable; line 30</td></tr><tr class="t-dsc"><td><code id="s-063a3224956d94ad">micron::chrono::parse_err::bad_hour</code></td><td>variable; line 31</td></tr><tr class="t-dsc"><td><code id="s-1b07847f2a28223a">micron::chrono::parse_err::bad_minute</code></td><td>variable; line 32</td></tr><tr class="t-dsc"><td><code id="s-c72f480d6c23f9f0">micron::chrono::parse_err::bad_second</code></td><td>variable; line 33</td></tr><tr class="t-dsc"><td><code id="s-da3ad21ed180777a">micron::chrono::parse_err::bad_offset</code></td><td>variable; line 34</td></tr><tr class="t-dsc"><td><code id="s-8dd846ebbc48f19c">micron::chrono::parse_err::bad_weekday</code></td><td>variable; line 35</td></tr><tr class="t-dsc"><td><code id="s-f7d943b9d2322e9a">micron::chrono::parse_err::trailing</code></td><td>variable; line 36</td></tr><tr class="t-dsc"><td><code id="s-ffc5ed2aff92793a">micron::chrono::parse_err::overflow</code></td><td>variable; line 37</td></tr><tr class="t-dsc"><td><code id="s-4ab3e7ff31b653a2">micron::chrono::parse_err::no_offset</code></td><td>variable; line 38</td></tr><tr class="t-dsc"><td><code id="s-58c4eb5acdb4947c">micron::chrono::civil_result</code></td><td>struct; line 41</td></tr><tr class="t-dsc"><td><code id="s-caac2569d2de8980">micron::chrono::civil_result::c</code></td><td>member; line 42</td></tr><tr class="t-dsc"><td><code id="s-ae00a6858a183fce">micron::chrono::civil_result::err</code></td><td>member; line 43</td></tr><tr class="t-dsc"><td><code id="s-4bef2d122d27ec11">micron::chrono::civil_result::has_offset</code></td><td>member; line 44</td></tr><tr class="t-dsc"><td><code id="s-a006692b8cce0128">micron::chrono::dur_result</code></td><td>struct; line 53</td></tr><tr class="t-dsc"><td><code id="s-fedcf17a51eb453e">micron::chrono::dur_result::ns</code></td><td>member; line 54</td></tr><tr class="t-dsc"><td><code id="s-633e1ca8944f5b85">micron::chrono::dur_result::err</code></td><td>member; line 55</td></tr><tr class="t-dsc"><td><code id="s-376101b9c8eb47ab">micron::chrono::dur_result::forever</code></td><td>member; line 56</td></tr><tr class="t-dsc"><td><code id="s-4c0ca3b00e113d5d">micron::chrono::until_spec</code></td><td>struct; line 442</td></tr><tr class="t-dsc"><td><code id="s-2e9eb76e5192131d">micron::chrono::until_spec::c</code></td><td>member; line 443</td></tr><tr class="t-dsc"><td><code id="s-ec3b5aa9b24fab3d">micron::chrono::until_spec::secs</code></td><td>member; line 444</td></tr><tr class="t-dsc"><td><code id="s-4546be8878b4d5e4">micron::chrono::until_spec::err</code></td><td>member; line 445</td></tr><tr class="t-dsc"><td><code id="s-3a7144e5494061a2">micron::chrono::until_spec::utc</code></td><td>member; line 446</td></tr><tr class="t-dsc"><td><code id="s-69bac05969cdb71d">micron::chrono::until_spec::epoch</code></td><td>member; line 447</td></tr><tr class="t-dsc"><td><code id="s-b531f6e4e3a61ce7">micron::chrono::until_spec::time_only</code></td><td>member; line 448</td></tr><tr class="t-dsc"><td><a href="#f-63ca5f776f9daced">micron::chrono::civil_result::ok() const noexcept</a></td><td>function; line 47</td></tr><tr class="t-dsc"><td><a href="#f-6314e032bee228e6">micron::chrono::dur_result::ok() const noexcept</a></td><td>function; line 59</td></tr><tr class="t-dsc"><td><a href="#f-bfe3dffcf64eef00">micron::chrono::parse_iso8601(const char *s, usize n) noexcept</a></td><td>function; line 170</td></tr><tr class="t-dsc"><td><a href="#f-9c1c6caf7176ddad">micron::chrono::parse_rfc3339(const char *s, usize n) noexcept</a></td><td>function; line 293</td></tr><tr class="t-dsc"><td><a href="#f-788b355991218211">micron::chrono::to_unix(const civil_result &amp;r) noexcept</a></td><td>function; line 305</td></tr><tr class="t-dsc"><td><a href="#f-812b96fba41bced0">micron::chrono::parse_rfc2822(const char *s, usize n) noexcept</a></td><td>function; line 316</td></tr><tr class="t-dsc"><td><a href="#f-c00000ef5d780fb8">micron::chrono::until_spec::ok() const noexcept</a></td><td>function; line 451</td></tr><tr class="t-dsc"><td><a href="#f-329c88fd89e90ab2">micron::chrono::parse_until(const char *s, usize n) noexcept</a></td><td>function; line 458</td></tr><tr class="t-dsc"><td><a href="#f-a945b447dd43e1a8">micron::chrono::until_epoch(const until_spec &amp;u, i64 now, const tz_table &amp;t) noexcept</a></td><td>function; line 567</td></tr><tr class="t-dsc"><td><a href="#f-e36b76bb7f273ee3">micron::chrono::parse_duration_ns(const char *s, usize n) noexcept</a></td><td>function; line 666</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-63ca5f776f9daced"><h3><code>micron::chrono::civil_result::ok() const noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L47">line 47</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  ok() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>err == nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  ok() const noexcept
+  {
+    return err == nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>err == nullptr</code></td><td><a href="../../source/chrono/parse.hpp.html#L49">line 49</a></td></tr></tbody></table></section><section class="function-entry" id="f-6314e032bee228e6"><h3><code>micron::chrono::dur_result::ok() const noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L59">line 59</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  ok() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>err == nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  ok() const noexcept
+  {
+    return err == nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>err == nullptr</code></td><td><a href="../../source/chrono/parse.hpp.html#L61">line 61</a></td></tr></tbody></table></section><section class="function-entry" id="f-bfe3dffcf64eef00"><h3><code>micron::chrono::parse_iso8601(const char *s, usize n) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L170">line 170</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr civil_result
+parse_iso8601(const char *s, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr civil_result
+parse_iso8601(const char *s, usize n) noexcept
+{
+  civil_result r{};
+  if ( !s || n == 0 ) {
+    r.err = parse_err::empty;
+    return r;
+  }
+  usize i = 0;
+  i32 y = 0;
+  if ( !__impl::__year(s, n, i, y) ) {
+    r.err = parse_err::bad_year;
+    return r;
+  }
+  if ( i &gt;= n || s[i] != &#x27;-&#x27; ) {
+    r.err = parse_err::malformed;
+    return r;
+  }
+  ++i;
+  u32 mo = 0, d = 0;
+  if ( !__impl::__fixed_digits(s, n, i, 2, mo) ) {
+    r.err = parse_err::bad_month;
+    return r;
+  }
+  if ( i &gt;= n || s[i] != &#x27;-&#x27; ) {
+    r.err = parse_err::malformed;
+    return r;
+  }
+  ++i;
+  if ( !__impl::__fixed_digits(s, n, i, 2, d) ) {
+    r.err = parse_err::bad_day;
+    return r;
+  }
+  if ( mo &lt; 1 || mo &gt; 12 ) {
+    r.err = parse_err::bad_month;
+    return r;
+  }
+  if ( d &lt; 1 || d &gt; days_in_month(y, mo) ) {
+    r.err = parse_err::bad_day;
+    return r;
+  }
+
+  r.c.y = y;
+  r.c.mo = mo;
+  r.c.d = d;
+
+  if ( i == n ) return r;      // date only -&gt; midnight UTC
+
+  if ( s[i] != &#x27;T&#x27; &amp;&amp; s[i] != &#x27;t&#x27; &amp;&amp; s[i] != &#x27; &#x27; ) {
+    r.err = parse_err::malformed;
+    return r;
+  }
+  ++i;
+
+  u32 h = 0, mi = 0, sec = 0;
+  if ( !__impl::__fixed_digits(s, n, i, 2, h) ) {
+    r.err = parse_err::bad_hour;
+    return r;
+  }
+  if ( i &gt;= n || s[i] != &#x27;:&#x27; ) {
+    r.err = parse_err::malformed;
+    return r;
+  }
+  ++i;
+  if ( !__impl::__fixed_digits(s, n, i, 2, mi) ) {
+    r.err = parse_err::bad_minute;
+    return r;
+  }
+  if ( i &lt; n &amp;&amp; s[i] == &#x27;:&#x27; ) {
+    ++i;
+    if ( !__impl::__fixed_digits(s, n, i, 2, sec) ) {
+      r.err = parse_err::bad_second;
+      return r;
+    }
+  }
+  if ( h &gt; 23 ) {
+    r.err = parse_err::bad_hour;
+    return r;
+  }
+  if ( mi &gt; 59 ) {
+    r.err = parse_err::bad_minute;
+    return r;
+  }
+  // 60 is a leap second, which the calendar cannot represent but the grammar must accept
+  if ( sec &gt; 60 ) {
+    r.err = parse_err::bad_second;
+    return r;
+  }
+  r.c.h = h;
+  r.c.mi = mi;
+  r.c.s = sec;
+
+  if ( i &lt; n &amp;&amp; (s[i] == &#x27;.&#x27; || s[i] == &#x27;,&#x27;) ) {
+    ++i;
+    u64 frac = 0;
+    u32 taken = 0;
+    if ( !__impl::__some_digits(s, n, i, 9u, frac, taken) ) {
+      r.err = parse_err::malformed;
+      return r;
+    }
+    for ( u32 k = taken; k &lt; 9u; ++k ) frac *= 10ull;
+    r.c.ns = static_cast&lt;u32&gt;(frac);
+    // anything past nine digits is below the resolution we carry; consume and drop it
+    while ( i &lt; n &amp;&amp; __impl::__is_digit(s[i]) ) ++i;
+  }
+
+  if ( i &lt; n ) {
+    i32 off = 0;
+    if ( !__impl::__offset(s, n, i, off) ) {
+      r.err = parse_err::bad_offset;
+      return r;
+    }
+    r.c.off = off;
+    r.has_offset = true;
+  }
+
+  if ( i != n ) {
+    r.err = parse_err::trailing;
+    return r;
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L175">line 175</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L185">line 185</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L191">line 191</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L195">line 195</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L200">line 200</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L204">line 204</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L208">line 208</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L215">line 215</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L219">line 219</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L226">line 226</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L230">line 230</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L235">line 235</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L241">line 241</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L246">line 246</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L250">line 250</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L255">line 255</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L267">line 267</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L279">line 279</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L287">line 287</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-0ec94ae801f46e70">__impl::__year</a>, <a href="parse.hpp.html#f-d5a2992fd8a8c2f2">__impl::__fixed_digits</a>, <a href="calendar.hpp.html#f-08028d5abe90d932">days_in_month</a>, <a href="parse.hpp.html#f-0ea78b4f52439e6e">__impl::__some_digits</a>, <a href="parse.hpp.html#f-5fca7821d14bc21a">__impl::__is_digit</a>, <a href="parse.hpp.html#f-e851d4bf4de351a1">__impl::__offset</a>.</p></section><section class="function-entry" id="f-9c1c6caf7176ddad"><h3><code>micron::chrono::parse_rfc3339(const char *s, usize n) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L293">line 293</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr civil_result
+parse_rfc3339(const char *s, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr civil_result
+parse_rfc3339(const char *s, usize n) noexcept
+{
+  civil_result r = parse_iso8601(s, n);
+  if ( !r.ok() ) return r;
+  if ( !r.has_offset ) {
+    r.err = parse_err::no_offset;
+    return r;
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L296">line 296</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L299">line 299</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L301">line 301</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-bfe3dffcf64eef00">parse_iso8601</a>.</p></section><section class="function-entry" id="f-788b355991218211"><h3><code>micron::chrono::to_unix(const civil_result &amp;r) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L305">line 305</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i64
+to_unix(const civil_result &amp;r) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const civil_result &amp;r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i64
+to_unix(const civil_result &amp;r) noexcept
+{
+  civil c = r.c;
+  if ( c.s == 60 ) c.s = 59;
+  return civil_secs(c) - static_cast&lt;i64&gt;(c.off);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>civil_secs(c) - static_cast&lt;i64&gt;(c.off)</code></td><td><a href="../../source/chrono/parse.hpp.html#L309">line 309</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="civil.hpp.html#f-b442bc2875c91034">civil_secs</a>.</p></section><section class="function-entry" id="f-812b96fba41bced0"><h3><code>micron::chrono::parse_rfc2822(const char *s, usize n) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L316">line 316</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr civil_result
+parse_rfc2822(const char *s, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr civil_result
+parse_rfc2822(const char *s, usize n) noexcept
+{
+  civil_result r{};
+  if ( !s || n == 0 ) {
+    r.err = parse_err::empty;
+    return r;
+  }
+  usize i = 0;
+
+  if ( i + 4 &lt;= n &amp;&amp; !__impl::__is_digit(s[i]) ) {
+    bool found = false;
+    for ( u32 k = 0; k &lt; 7; ++k ) {
+      if ( __impl::__ieq(s, n, i, weekday_abbr[k], 3) ) {
+        found = true;
+        break;
+      }
+    }
+    if ( !found ) {
+      r.err = parse_err::bad_weekday;
+      return r;
+    }
+    i += 3;
+    if ( i &lt; n &amp;&amp; s[i] == &#x27;,&#x27; ) ++i;
+    while ( i &lt; n &amp;&amp; s[i] == &#x27; &#x27; ) ++i;
+  }
+
+  u64 dv = 0;
+  u32 taken = 0;
+  if ( !__impl::__some_digits(s, n, i, 2u, dv, taken) ) {
+    r.err = parse_err::bad_day;
+    return r;
+  }
+  while ( i &lt; n &amp;&amp; s[i] == &#x27; &#x27; ) ++i;
+
+  u32 mo = 0;
+  for ( u32 k = 1; k &lt;= 12; ++k ) {
+    if ( __impl::__ieq(s, n, i, month_abbr[k], 3) ) {
+      mo = k;
+      break;
+    }
+  }
+  if ( mo == 0 ) {
+    r.err = parse_err::bad_month;
+    return r;
+  }
+  i += 3;
+  while ( i &lt; n &amp;&amp; s[i] == &#x27; &#x27; ) ++i;
+
+  u64 yv = 0;
+  if ( !__impl::__some_digits(s, n, i, 4u, yv, taken) ) {
+    r.err = parse_err::bad_year;
+    return r;
+  }
+  if ( taken == 2 ) yv += (yv &lt; 50 ? 2000 : 1900);
+  while ( i &lt; n &amp;&amp; s[i] == &#x27; &#x27; ) ++i;
+
+  u32 h = 0, mi = 0, sec = 0;
+  if ( !__impl::__fixed_digits(s, n, i, 2, h) ) {
+    r.err = parse_err::bad_hour;
+    return r;
+  }
+  if ( i &gt;= n || s[i] != &#x27;:&#x27; ) {
+    r.err = parse_err::malformed;
+    return r;
+  }
+  ++i;
+  if ( !__impl::__fixed_digits(s, n, i, 2, mi) ) {
+    r.err = parse_err::bad_minute;
+    return r;
+  }
+  if ( i &lt; n &amp;&amp; s[i] == &#x27;:&#x27; ) {
+    ++i;
+    if ( !__impl::__fixed_digits(s, n, i, 2, sec) ) {
+      r.err = parse_err::bad_second;
+      return r;
+    }
+  }
+  while ( i &lt; n &amp;&amp; s[i] == &#x27; &#x27; ) ++i;
+
+  i32 off = 0;
+  if ( i &lt; n ) {
+    if ( __impl::__ieq(s, n, i, &quot;GMT&quot;, 3) || __impl::__ieq(s, n, i, &quot;UTC&quot;, 3) ) {
+      i += 3;
+    } else if ( __impl::__ieq(s, n, i, &quot;UT&quot;, 2) ) {
+      i += 2;
+    } else if ( !__impl::__offset(s, n, i, off) ) {
+      r.err = parse_err::bad_offset;
+      return r;
+    }
+    r.has_offset = true;
+  }
+  while ( i &lt; n &amp;&amp; (s[i] == &#x27; &#x27; || s[i] == &#x27;\r&#x27; || s[i] == &#x27;\n&#x27;) ) ++i;
+  if ( i != n ) {
+    r.err = parse_err::trailing;
+    return r;
+  }
+
+  const i32 y = static_cast&lt;i32&gt;(yv);
+  const u32 d = static_cast&lt;u32&gt;(dv);
+  if ( d &lt; 1 || d &gt; days_in_month(y, mo) ) {
+    r.err = parse_err::bad_day;
+    return r;
+  }
+  if ( h &gt; 23 ) {
+    r.err = parse_err::bad_hour;
+    return r;
+  }
+  if ( mi &gt; 59 ) {
+    r.err = parse_err::bad_minute;
+    return r;
+  }
+  if ( sec &gt; 60 ) {
+    r.err = parse_err::bad_second;
+    return r;
+  }
+
+  r.c.y = y;
+  r.c.mo = mo;
+  r.c.d = d;
+  r.c.h = h;
+  r.c.mi = mi;
+  r.c.s = sec;
+  r.c.off = off;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L321">line 321</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L335">line 335</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L346">line 346</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L359">line 359</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L367">line 367</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L375">line 375</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L379">line 379</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L384">line 384</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L390">line 390</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L403">line 403</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L410">line 410</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L417">line 417</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L421">line 421</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L425">line 425</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L429">line 429</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L439">line 439</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-5fca7821d14bc21a">__impl::__is_digit</a>, <a href="parse.hpp.html#f-f3770ea52636e05d">__impl::__ieq</a>, <a href="parse.hpp.html#f-0ea78b4f52439e6e">__impl::__some_digits</a>, <a href="parse.hpp.html#f-d5a2992fd8a8c2f2">__impl::__fixed_digits</a>, <a href="parse.hpp.html#f-e851d4bf4de351a1">__impl::__offset</a>, <a href="calendar.hpp.html#f-08028d5abe90d932">days_in_month</a>.</p></section><section class="function-entry" id="f-c00000ef5d780fb8"><h3><code>micron::chrono::until_spec::ok() const noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L451">line 451</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  ok() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>err == nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  ok() const noexcept
+  {
+    return err == nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>err == nullptr</code></td><td><a href="../../source/chrono/parse.hpp.html#L453">line 453</a></td></tr></tbody></table></section><section class="function-entry" id="f-329c88fd89e90ab2"><h3><code>micron::chrono::parse_until(const char *s, usize n) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L458">line 458</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr until_spec
+parse_until(const char *s, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr until_spec
+parse_until(const char *s, usize n) noexcept
+{
+  until_spec u{};
+  if ( !s || n == 0 ) {
+    u.err = parse_err::empty;
+    return u;
+  }
+  usize i = 0;
+
+  if ( s[0] == &#x27;@&#x27; ) {
+    i = 1;
+    bool neg = false;
+    if ( i &lt; n &amp;&amp; (s[i] == &#x27;-&#x27; || s[i] == &#x27;+&#x27;) ) {
+      neg = s[i] == &#x27;-&#x27;;
+      ++i;
+    }
+    u64 v = 0;
+    u32 taken = 0;
+    if ( !__impl::__some_digits(s, n, i, 19u, v, taken) ) {
+      u.err = parse_err::malformed;
+      return u;
+    }
+    if ( i != n ) {
+      u.err = parse_err::trailing;
+      return u;
+    }
+    if ( v &gt; 0x7FFF&#x27;FFFF&#x27;FFFF&#x27;FFFFull ) {
+      u.err = parse_err::overflow;
+      return u;
+    }
+    u.epoch = true;
+    u.secs = neg ? -static_cast&lt;i64&gt;(v) : static_cast&lt;i64&gt;(v);
+    return u;
+  }
+
+  usize len = n;
+  if ( len &gt; 0 &amp;&amp; (s[len - 1] == &#x27;Z&#x27; || s[len - 1] == &#x27;z&#x27;) ) {
+    u.utc = true;
+    --len;
+  }
+
+  // HH:MM[:SS]
+  bool has_dash = false;
+  for ( usize k = 0; k &lt; len; ++k ) {
+    if ( s[k] == &#x27;-&#x27; ) {
+      has_dash = true;
+      break;
+    }
+  }
+
+  if ( !has_dash ) {
+    u32 h = 0, mi = 0, sec = 0;
+    if ( !__impl::__fixed_digits(s, len, i, 2, h) ) {
+      u.err = parse_err::bad_hour;
+      return u;
+    }
+    if ( i &gt;= len || s[i] != &#x27;:&#x27; ) {
+      u.err = parse_err::malformed;
+      return u;
+    }
+    ++i;
+    if ( !__impl::__fixed_digits(s, len, i, 2, mi) ) {
+      u.err = parse_err::bad_minute;
+      return u;
+    }
+    if ( i &lt; len &amp;&amp; s[i] == &#x27;:&#x27; ) {
+      ++i;
+      if ( !__impl::__fixed_digits(s, len, i, 2, sec) ) {
+        u.err = parse_err::bad_second;
+        return u;
+      }
+    }
+    if ( i != len ) {
+      u.err = parse_err::trailing;
+      return u;
+    }
+    if ( h &gt; 23 ) {
+      u.err = parse_err::bad_hour;
+      return u;
+    }
+    if ( mi &gt; 59 ) {
+      u.err = parse_err::bad_minute;
+      return u;
+    }
+    if ( sec &gt; 59 ) {
+      u.err = parse_err::bad_second;
+      return u;
+    }
+    u.time_only = true;
+    u.c.h = h;
+    u.c.mi = mi;
+    u.c.s = sec;
+    return u;
+  }
+
+  const civil_result r = parse_iso8601(s, len);
+  if ( !r.ok() ) {
+    u.err = r.err;
+    return u;
+  }
+  if ( r.has_offset ) {
+    u.err = parse_err::trailing;
+    return u;
+  }
+  u.c = r.c;
+  return u;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L463">line 463</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L478">line 478</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L482">line 482</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L486">line 486</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L490">line 490</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L512">line 512</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L516">line 516</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L521">line 521</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L527">line 527</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L532">line 532</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L536">line 536</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L540">line 540</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L544">line 544</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L550">line 550</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L556">line 556</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L560">line 560</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../source/chrono/parse.hpp.html#L563">line 563</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-0ea78b4f52439e6e">__impl::__some_digits</a>, <a href="parse.hpp.html#f-d5a2992fd8a8c2f2">__impl::__fixed_digits</a>, <a href="parse.hpp.html#f-bfe3dffcf64eef00">parse_iso8601</a>.</p></section><section class="function-entry" id="f-a945b447dd43e1a8"><h3><code>micron::chrono::until_epoch(const until_spec &amp;u, i64 now, const tz_table &amp;t) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L567">line 567</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i64
+until_epoch(const until_spec &amp;u, i64 now, const tz_table &amp;t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const until_spec &amp;u</code></li><li><code>i64 now</code></li><li><code>const tz_table &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i64
+until_epoch(const until_spec &amp;u, i64 now, const tz_table &amp;t) noexcept
+{
+  if ( u.epoch ) return u.secs;
+  civil c = u.c;
+  if ( u.time_only ) {
+    const civil today = to_civil(now, u.utc ? 0 : offset_at(t, now));
+    c.y = today.y;
+    c.mo = today.mo;
+    c.d = today.d;
+  }
+  i64 e = u.utc ? civil_secs(c) : from_civil(c, t);
+  if ( u.time_only &amp;&amp; e &lt;= now ) {
+    civil mid = c;
+    mid.h = 0;
+    mid.mi = 0;
+    mid.s = 0;
+    const civil next = to_civil(civil_secs(mid) + 86400, 0);
+    c.y = next.y;
+    c.mo = next.mo;
+    c.d = next.d;
+    e = u.utc ? civil_secs(c) : from_civil(c, t);
+  }
+  return e;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>u.secs</code></td><td><a href="../../source/chrono/parse.hpp.html#L569">line 569</a></td></tr><tr class="t-dsc"><td><code>e</code></td><td><a href="../../source/chrono/parse.hpp.html#L589">line 589</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="civil.hpp.html#f-4ccda33458754967">to_civil</a>, <a href="civil.hpp.html#f-d52bd1bbe44d0b3a">offset_at</a>, <a href="civil.hpp.html#f-b442bc2875c91034">civil_secs</a>, <a href="civil.hpp.html#f-6c03ead02c7317c6">from_civil</a>.</p></section><section class="function-entry" id="f-e36b76bb7f273ee3"><h3><code>micron::chrono::parse_duration_ns(const char *s, usize n) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L666">line 666</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr dur_result
+parse_duration_ns(const char *s, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr dur_result
+parse_duration_ns(const char *s, usize n) noexcept
+{
+  dur_result r{};
+  if ( !s || n == 0 ) {
+    r.err = parse_err::empty;
+    return r;
+  }
+
+  if ( __impl::__ieq(s, n, 0, &quot;infinity&quot;, 8) &amp;&amp; n == 8 ) {
+    r.forever = true;
+    r.ns = ~0ull;
+    return r;
+  }
+  if ( __impl::__ieq(s, n, 0, &quot;inf&quot;, 3) &amp;&amp; n == 3 ) {
+    r.forever = true;
+    r.ns = ~0ull;
+    return r;
+  }
+
+  usize i = 0;
+  u64 total = 0;
+  bool any = false;
+
+  while ( i &lt; n ) {
+    u64 whole = 0;
+    u32 wtaken = 0;
+    if ( !__impl::__some_digits(s, n, i, 19u, whole, wtaken) ) {
+      r.err = parse_err::malformed;
+      return r;
+    }
+
+    u64 frac = 0;
+    u32 ftaken = 0;
+    if ( i &lt; n &amp;&amp; s[i] == &#x27;.&#x27; ) {
+      ++i;
+      // NOTE: nine digits is the whole resolution; more of them cannot change a nanosecond count
+      if ( !__impl::__some_digits(s, n, i, 9u, frac, ftaken) ) {
+        r.err = parse_err::malformed;
+        return r;
+      }
+      while ( i &lt; n &amp;&amp; __impl::__is_digit(s[i]) ) ++i;
+    }
+
+    u32 slen = 0;
+    const u64 scale = __impl::__dur_unit(s, n, i, slen);
+    i += slen;
+
+    u64 part = 0;
+    if ( !__impl::__dur_mul(whole, scale, part) ) {
+      r.err = parse_err::overflow;
+      return r;
+    }
+    if ( ftaken != 0 ) {
+      u64 num = 0;
+      if ( !__impl::__dur_mul(frac, scale, num) ) {
+        r.err = parse_err::overflow;
+        return r;
+      }
+      if ( !__impl::__dur_add(part, num / __impl::__dur_pow10(ftaken)) ) {
+        r.err = parse_err::overflow;
+        return r;
+      }
+    }
+    if ( !__impl::__dur_add(total, part) ) {
+      r.err = parse_err::overflow;
+      return r;
+    }
+    any = true;
+
+    if ( slen == 0 &amp;&amp; i != n ) {
+      r.err = parse_err::trailing;
+      return r;
+    }
+  }
+
+  if ( !any ) {
+    r.err = parse_err::malformed;
+    return r;
+  }
+  r.ns = total;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L671">line 671</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L677">line 677</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L682">line 682</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L694">line 694</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L704">line 704</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L716">line 716</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L722">line 722</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L726">line 726</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L731">line 731</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L737">line 737</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L743">line 743</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/parse.hpp.html#L746">line 746</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-f3770ea52636e05d">__impl::__ieq</a>, <a href="parse.hpp.html#f-0ea78b4f52439e6e">__impl::__some_digits</a>, <a href="parse.hpp.html#f-5fca7821d14bc21a">__impl::__is_digit</a>, <a href="parse.hpp.html#f-6eb9a9768cd59486">__impl::__dur_unit</a>, <a href="parse.hpp.html#f-1244c4e5fd123939">__impl::__dur_mul</a>, <a href="parse.hpp.html#f-5a5cc402f7e37feb">__impl::__dur_add</a>, <a href="parse.hpp.html#f-8be80014fb0d4ff3">__impl::__dur_pow10</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-5fca7821d14bc21a"><h3><code>micron::chrono::__impl::__is_digit(char c) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__is_digit(char c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char c</code></li></ul><h4>Effects</h4><p>Returns <code>c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__is_digit(char c) noexcept
+{
+  return c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27;</code></td><td><a href="../../source/chrono/parse.hpp.html#L71">line 71</a></td></tr></tbody></table></section><section class="function-entry" id="f-d5a2992fd8a8c2f2"><h3><code>micron::chrono::__impl::__fixed_digits(const char *s, usize n, usize &amp;i, u32 count, u32 &amp;out) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__fixed_digits(const char *s, usize n, usize &amp;i, u32 count, u32 &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li><li><code>usize &amp;i</code></li><li><code>u32 count</code></li><li><code>u32 &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__fixed_digits(const char *s, usize n, usize &amp;i, u32 count, u32 &amp;out) noexcept
+{
+  out = 0;
+  if ( i + count &gt; n ) return false;
+  for ( u32 k = 0; k &lt; count; ++k ) {
+    if ( !__is_digit(s[i]) ) return false;
+    out = out * 10u + static_cast&lt;u32&gt;(s[i] - &#x27;0&#x27;);
+    ++i;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L78">line 78</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/chrono/parse.hpp.html#L84">line 84</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-5fca7821d14bc21a">__is_digit</a>.</p></section><section class="function-entry" id="f-0ea78b4f52439e6e"><h3><code>micron::chrono::__impl::__some_digits(const char *s, usize n, usize &amp;i, u32 max, u64 &amp;out, u32 &amp;taken) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L89">line 89</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__some_digits(const char *s, usize n, usize &amp;i, u32 max, u64 &amp;out, u32 &amp;taken) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li><li><code>usize &amp;i</code></li><li><code>u32 max</code></li><li><code>u64 &amp;out</code></li><li><code>u32 &amp;taken</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__some_digits(const char *s, usize n, usize &amp;i, u32 max, u64 &amp;out, u32 &amp;taken) noexcept
+{
+  out = 0;
+  taken = 0;
+  while ( i &lt; n &amp;&amp; taken &lt; max &amp;&amp; __is_digit(s[i]) ) {
+    out = out * 10ull + static_cast&lt;u64&gt;(s[i] - &#x27;0&#x27;);
+    ++i;
+    ++taken;
+  }
+  return taken != 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>taken != 0</code></td><td><a href="../../source/chrono/parse.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-5fca7821d14bc21a">__is_digit</a>.</p></section><section class="function-entry" id="f-f3770ea52636e05d"><h3><code>micron::chrono::__impl::__ieq(const char *s, usize n, usize i, const char *lit, usize k) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L102">line 102</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__ieq(const char *s, usize n, usize i, const char *lit, usize k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li><li><code>usize i</code></li><li><code>const char *lit</code></li><li><code>usize k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__ieq(const char *s, usize n, usize i, const char *lit, usize k) noexcept
+{
+  if ( i + k &gt; n ) return false;
+  for ( usize j = 0; j &lt; k; ++j ) {
+    char a = s[i + j];
+    char b = lit[j];
+    if ( a &gt;= &#x27;A&#x27; &amp;&amp; a &lt;= &#x27;Z&#x27; ) a = static_cast&lt;char&gt;(a + 32);
+    if ( b &gt;= &#x27;A&#x27; &amp;&amp; b &lt;= &#x27;Z&#x27; ) b = static_cast&lt;char&gt;(b + 32);
+    if ( a != b ) return false;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L110">line 110</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/chrono/parse.hpp.html#L112">line 112</a></td></tr></tbody></table></section><section class="function-entry" id="f-0ec94ae801f46e70"><h3><code>micron::chrono::__impl::__year(const char *s, usize n, usize &amp;i, i32 &amp;out) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L117">line 117</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__year(const char *s, usize n, usize &amp;i, i32 &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li><li><code>usize &amp;i</code></li><li><code>i32 &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__year(const char *s, usize n, usize &amp;i, i32 &amp;out) noexcept
+{
+  bool neg = false;
+  bool expanded = false;
+  if ( i &lt; n &amp;&amp; (s[i] == &#x27;+&#x27; || s[i] == &#x27;-&#x27;) ) {
+    neg = s[i] == &#x27;-&#x27;;
+    expanded = true;
+    ++i;
+  }
+  u64 v = 0;
+  u32 taken = 0;
+  if ( !__some_digits(s, n, i, expanded ? 9u : 4u, v, taken) ) return false;
+  if ( !expanded &amp;&amp; taken != 4 ) return false;
+  if ( expanded &amp;&amp; taken &lt; 4 ) return false;
+  if ( v &gt; 2&#x27;000&#x27;000&#x27;000ull ) return false;
+  out = static_cast&lt;i32&gt;(neg ? -static_cast&lt;i64&gt;(v) : static_cast&lt;i64&gt;(v));
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L128">line 128</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L129">line 129</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L130">line 130</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/chrono/parse.hpp.html#L133">line 133</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-0ea78b4f52439e6e">__some_digits</a>.</p></section><section class="function-entry" id="f-e851d4bf4de351a1"><h3><code>micron::chrono::__impl::__offset(const char *s, usize n, usize &amp;i, i32 &amp;out) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L138">line 138</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__offset(const char *s, usize n, usize &amp;i, i32 &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li><li><code>usize &amp;i</code></li><li><code>i32 &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__offset(const char *s, usize n, usize &amp;i, i32 &amp;out) noexcept
+{
+  if ( i &gt;= n ) return false;
+  if ( s[i] == &#x27;Z&#x27; || s[i] == &#x27;z&#x27; ) {
+    out = 0;
+    ++i;
+    return true;
+  }
+  if ( s[i] != &#x27;+&#x27; &amp;&amp; s[i] != &#x27;-&#x27; ) return false;
+  const bool neg = s[i] == &#x27;-&#x27;;
+  ++i;
+  u32 hh = 0, mm = 0;
+  if ( !__fixed_digits(s, n, i, 2, hh) ) return false;
+  if ( i &lt; n &amp;&amp; s[i] == &#x27;:&#x27; ) {
+    ++i;
+    if ( !__fixed_digits(s, n, i, 2, mm) ) return false;
+  } else if ( i &lt; n &amp;&amp; __is_digit(s[i]) ) {
+    if ( !__fixed_digits(s, n, i, 2, mm) ) return false;
+  }
+  if ( hh &gt; 23 || mm &gt; 59 ) return false;
+  const i32 mag = static_cast&lt;i32&gt;(hh) * 3600 + static_cast&lt;i32&gt;(mm) * 60;
+  out = neg ? -mag : mag;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L140">line 140</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/chrono/parse.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L146">line 146</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L153">line 153</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L155">line 155</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L157">line 157</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/chrono/parse.hpp.html#L160">line 160</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-d5a2992fd8a8c2f2">__fixed_digits</a>, <a href="parse.hpp.html#f-5fca7821d14bc21a">__is_digit</a>.</p></section><section class="function-entry" id="f-8be80014fb0d4ff3"><h3><code>micron::chrono::__impl::__dur_pow10(u32 e) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L601">line 601</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u64
+__dur_pow10(u32 e) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 e</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u64
+__dur_pow10(u32 e) noexcept
+{
+  u64 v = 1;
+  for ( u32 i = 0; i &lt; e; ++i ) v *= 10ull;
+  return v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../source/chrono/parse.hpp.html#L605">line 605</a></td></tr></tbody></table></section><section class="function-entry" id="f-6eb9a9768cd59486"><h3><code>micron::chrono::__impl::__dur_unit(const char *s, usize n, usize i, u32 &amp;len) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L610">line 610</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u64
+__dur_unit(const char *s, usize n, usize i, u32 &amp;len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>usize n</code></li><li><code>usize i</code></li><li><code>u32 &amp;len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u64
+__dur_unit(const char *s, usize n, usize i, u32 &amp;len) noexcept
+{
+  if ( i + 1 &lt; n ) {
+    if ( s[i] == &#x27;n&#x27; &amp;&amp; s[i + 1] == &#x27;s&#x27; ) {
+      len = 2;
+      return 1ull;
+    }
+    if ( s[i] == &#x27;u&#x27; &amp;&amp; s[i + 1] == &#x27;s&#x27; ) {
+      len = 2;
+      return ns_per_us;
+    }
+    if ( s[i] == &#x27;m&#x27; &amp;&amp; s[i + 1] == &#x27;s&#x27; ) {
+      len = 2;
+      return ns_per_ms;
+    }
+  }
+  if ( i &lt; n ) {
+    len = 1;
+    switch ( s[i] ) {
+    case &#x27;s&#x27;:
+      return ns_per_s;
+    case &#x27;m&#x27;:
+      return ns_per_min;
+    case &#x27;h&#x27;:
+      return ns_per_hour;
+    case &#x27;d&#x27;:
+      return ns_per_day;
+    case &#x27;w&#x27;:
+      return ns_per_week;
+    default:
+      break;
+    }
+  }
+  len = 0;
+  return ns_per_s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>1ull</code></td><td><a href="../../source/chrono/parse.hpp.html#L615">line 615</a></td></tr><tr class="t-dsc"><td><code>ns_per_us</code></td><td><a href="../../source/chrono/parse.hpp.html#L619">line 619</a></td></tr><tr class="t-dsc"><td><code>ns_per_ms</code></td><td><a href="../../source/chrono/parse.hpp.html#L623">line 623</a></td></tr><tr class="t-dsc"><td><code>ns_per_s</code></td><td><a href="../../source/chrono/parse.hpp.html#L630">line 630</a></td></tr><tr class="t-dsc"><td><code>ns_per_min</code></td><td><a href="../../source/chrono/parse.hpp.html#L632">line 632</a></td></tr><tr class="t-dsc"><td><code>ns_per_hour</code></td><td><a href="../../source/chrono/parse.hpp.html#L634">line 634</a></td></tr><tr class="t-dsc"><td><code>ns_per_day</code></td><td><a href="../../source/chrono/parse.hpp.html#L636">line 636</a></td></tr><tr class="t-dsc"><td><code>ns_per_week</code></td><td><a href="../../source/chrono/parse.hpp.html#L638">line 638</a></td></tr><tr class="t-dsc"><td><code>ns_per_s</code></td><td><a href="../../source/chrono/parse.hpp.html#L644">line 644</a></td></tr></tbody></table></section><section class="function-entry" id="f-5a5cc402f7e37feb"><h3><code>micron::chrono::__impl::__dur_add(u64 &amp;acc, u64 v) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L648">line 648</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__dur_add(u64 &amp;acc, u64 v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 &amp;acc</code></li><li><code>u64 v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__dur_add(u64 &amp;acc, u64 v) noexcept
+{
+  if ( acc &gt; ~0ull - v ) return false;
+  acc += v;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L650">line 650</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/chrono/parse.hpp.html#L652">line 652</a></td></tr></tbody></table></section><section class="function-entry" id="f-1244c4e5fd123939"><h3><code>micron::chrono::__impl::__dur_mul(u64 a, u64 b, u64 &amp;out) noexcept</code></h3><p>Defined in <code>chrono/parse.hpp</code>, <a href="../../source/chrono/parse.hpp.html#L656">line 656</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__dur_mul(u64 a, u64 b, u64 &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 a</code></li><li><code>u64 b</code></li><li><code>u64 &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__dur_mul(u64 a, u64 b, u64 &amp;out) noexcept
+{
+  if ( a != 0 &amp;&amp; b &gt; ~0ull / a ) return false;
+  out = a * b;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/chrono/parse.hpp.html#L658">line 658</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/chrono/parse.hpp.html#L660">line 660</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

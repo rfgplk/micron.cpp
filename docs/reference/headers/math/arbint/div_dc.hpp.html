@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/div_dc.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/div_dc.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/div_dc.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/div_dc.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-14957d9c072f3de8">micron::math::mpn::dc_div_itch(usize dn) noexcept</a></td><td>function; line 27</td></tr><tr class="t-dsc"><td><a href="#f-72866893229484d2">micron::math::mpn::dc_div_qr_n(limb_t *qp, limb_t *np, const limb_t *dp, usize n, limb_t dinv, limb_t *tp, limb_t *mulsc) noexcept</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-68171aea936db736">micron::math::mpn::dc_div_qr(limb_t *qp, limb_t *np, usize nn, const limb_t *dp, usize dn, limb_t dinv, limb_t *scratch) noexcept</a></td><td>function; line 68</td></tr><tr class="t-dsc"><td><a href="#f-fc3af2b1bd84602e">micron::math::mpn::div_wants_dc(usize nn, usize dn) noexcept</a></td><td>function; line 89</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-14957d9c072f3de8"><h3><code>micron::math::mpn::dc_div_itch(usize dn) noexcept</code></h3><p>Defined in <code>math/arbint/div_dc.hpp</code>, <a href="../../../source/math/arbint/div_dc.hpp.html#L27">line 27</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+dc_div_itch(usize dn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize dn</code></li></ul><h4>Effects</h4><p>Returns <code>dn + mul_itch_forced(dn, dn)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+dc_div_itch(usize dn) noexcept
+{
+  return dn + mul_itch_forced(dn, dn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dn + mul_itch_forced(dn, dn)</code></td><td><a href="../../../source/math/arbint/div_dc.hpp.html#L29">line 29</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-3c8b9d403a996332">mul_itch_forced</a>.</p></section><section class="function-entry" id="f-72866893229484d2"><h3><code>micron::math::mpn::dc_div_qr_n(limb_t *qp, limb_t *np, const limb_t *dp, usize n, limb_t dinv, limb_t *tp, limb_t *mulsc) noexcept</code></h3><p>Defined in <code>math/arbint/div_dc.hpp</code>, <a href="../../../source/math/arbint/div_dc.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr limb_t
+dc_div_qr_n(limb_t *qp, limb_t *np, const limb_t *dp, usize n, limb_t dinv, limb_t *tp, limb_t *mulsc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *qp</code></li><li><code>limb_t *np</code></li><li><code>const limb_t *dp</code></li><li><code>usize n</code></li><li><code>limb_t dinv</code></li><li><code>limb_t *tp</code></li><li><code>limb_t *mulsc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr limb_t
+dc_div_qr_n(limb_t *qp, limb_t *np, const limb_t *dp, usize n, limb_t dinv, limb_t *tp, limb_t *mulsc) noexcept
+{
+  const usize lo = n &gt;&gt; 1;
+  const usize hi = n - lo;      // hi &gt;= lo, so every mul below already has an &gt;= bn
+
+  limb_t qh = (hi &lt; threshold::div_dc) ? sbpi1_div_qr(qp + lo, np + 2u * lo, 2u * hi, dp + lo, hi, dinv)
+                                       : dc_div_qr_n(qp + lo, np + 2u * lo, dp + lo, hi, dinv, tp, mulsc);
+
+  mul(tp, qp + lo, hi, dp, lo, mulsc);
+
+  limb_t cy = sub_n(np + lo, np + lo, tp, n);
+  if ( qh != 0 ) cy = static_cast&lt;limb_t&gt;(cy + sub_n(np + n, np + n, dp, lo));
+
+  while ( cy != 0 ) {
+    qh = static_cast&lt;limb_t&gt;(qh - sub_1(qp + lo, qp + lo, hi, 1));
+    cy = static_cast&lt;limb_t&gt;(cy - add_n(np + lo, np + lo, dp, n));
+  }
+
+  const limb_t ql = (lo &lt; threshold::div_dc) ? sbpi1_div_qr(qp, np + hi, 2u * lo, dp + hi, lo, dinv)
+                                             : dc_div_qr_n(qp, np + hi, dp + hi, lo, dinv, tp, mulsc);
+
+  mul(tp, dp, hi, qp, lo, mulsc);
+
+  cy = sub_n(np, np, tp, n);
+  if ( ql != 0 ) cy = static_cast&lt;limb_t&gt;(cy + sub_n(np + lo, np + lo, dp, hi));
+
+  while ( cy != 0 ) {
+    (void)sub_1(qp, qp, lo, 1);
+    cy = static_cast&lt;limb_t&gt;(cy - add_n(np, np, dp, n));
+  }
+  return qh;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>qh</code></td><td><a href="../../../source/math/arbint/div_dc.hpp.html#L64">line 64</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="div.hpp.html#f-db07ba9fccf35f32">sbpi1_div_qr</a>, <a href="mul.hpp.html#f-e7f7cb20e6b85f6a">mul</a>, <a href="mpn_core.hpp.html#f-e077a5c4963fab6b">sub_n</a>, <a href="mpn_core.hpp.html#f-519e120879f82163">sub_1</a>, <a href="mpn_core.hpp.html#f-5b9b8d30cd63fa29">add_n</a>.</p></section><section class="function-entry" id="f-68171aea936db736"><h3><code>micron::math::mpn::dc_div_qr(limb_t *qp, limb_t *np, usize nn, const limb_t *dp, usize dn, limb_t dinv, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/div_dc.hpp</code>, <a href="../../../source/math/arbint/div_dc.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr limb_t
+dc_div_qr(limb_t *qp, limb_t *np, usize nn, const limb_t *dp, usize dn, limb_t dinv, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *qp</code></li><li><code>limb_t *np</code></li><li><code>usize nn</code></li><li><code>const limb_t *dp</code></li><li><code>usize dn</code></li><li><code>limb_t dinv</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr limb_t
+dc_div_qr(limb_t *qp, limb_t *np, usize nn, const limb_t *dp, usize dn, limb_t dinv, limb_t *scratch) noexcept
+{
+  limb_t *const tp = scratch;
+  limb_t *const mulsc = tp + dn;
+
+  const usize qn = nn - dn;
+
+  const limb_t qh = static_cast&lt;limb_t&gt;(cmp(np + qn, dp, dn) &gt;= 0);
+  if ( qh != 0 ) (void)sub_n(np + qn, np + qn, dp, dn);
+
+  const usize r = qn % dn;
+  for ( usize j = qn - r; j &gt;= dn; ) {
+    j -= dn;
+    (void)dc_div_qr_n(qp + r + j, np + r + j, dp, dn, dinv, tp, mulsc);
+  }
+  if ( r != 0 ) (void)sbpi1_div_qr(qp, np, r + dn, dp, dn, dinv);
+
+  return qh;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>qh</code></td><td><a href="../../../source/math/arbint/div_dc.hpp.html#L85">line 85</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-f2b616d01668414d">cmp</a>, <a href="mpn_core.hpp.html#f-e077a5c4963fab6b">sub_n</a>, <a href="div_dc.hpp.html#f-72866893229484d2">dc_div_qr_n</a>, <a href="div.hpp.html#f-db07ba9fccf35f32">sbpi1_div_qr</a>.</p></section><section class="function-entry" id="f-fc3af2b1bd84602e"><h3><code>micron::math::mpn::div_wants_dc(usize nn, usize dn) noexcept</code></h3><p>Defined in <code>math/arbint/div_dc.hpp</code>, <a href="../../../source/math/arbint/div_dc.hpp.html#L89">line 89</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr bool
+div_wants_dc(usize nn, usize dn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize nn</code></li><li><code>usize dn</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;u8&gt;(clamp_to(pick_div(nn, dn), div_tier_cap)) &gt;= static_cast&lt;u8&gt;(divalgo::dc) &amp;&amp; dn &gt;= 6u &amp;&amp; nn &gt; dn</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr bool
+div_wants_dc(usize nn, usize dn) noexcept
+{
+  return static_cast&lt;u8&gt;(clamp_to(pick_div(nn, dn), div_tier_cap)) &gt;= static_cast&lt;u8&gt;(divalgo::dc) &amp;&amp; dn &gt;= 6u &amp;&amp; nn &gt; dn;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u8&gt;(clamp_to(pick_div(nn, dn), div_tier_cap)) &gt;= static_cast&lt;u8&gt;(divalgo::dc) &amp;&amp; dn &gt;= 6u &amp;&amp; nn &gt; dn</code></td><td><a href="../../../source/math/arbint/div_dc.hpp.html#L91">line 91</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tags.hpp.html#f-aa15fc56e92caa88">clamp_to</a>, <a href="thresholds.hpp.html#f-4b42b5996e9b7ff1">pick_div</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

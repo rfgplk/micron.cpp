@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/representations.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/representations.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/representations.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/representations.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-34c459cdb8f2f26a">micron::math::compact_adjacency_graph</code></td><td>typedef; line 20</td></tr><tr class="t-dsc"><td><code id="s-97fa1b7ac6cc9393">micron::math::csr_graph</code></td><td>typedef; line 25</td></tr><tr class="t-dsc"><td><code id="s-dd3da7ee2a75688a">micron::math::bidirectional_csr_graph</code></td><td>typedef; line 30</td></tr><tr class="t-dsc"><td><code id="s-a176d238a9751fb8">micron::math::graphs::representation_result</code></td><td>struct; line 36</td></tr><tr class="t-dsc"><td><code id="s-f7e1b1b3f6d409e0">micron::math::graphs::representation_result::value</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-bad34ae60e84e492">micron::math::graphs::representation_result::dense_to_vertex</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-9307e6f23971da60">micron::math::graphs::representation_result::vertex_remap</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-b5c0624ef9874fd4">micron::math::graphs::representation_result::edge_remap</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-fa16e18aee934585">micron::math::graphs::representation_result::status</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-46d3bc9af7610efe">micron::math::graphs::frozen_graph_t</code></td><td>typedef; line 81</td></tr><tr class="t-dsc"><td><code id="s-d3029975ad344390">micron::math::graphs::bidirectional_frozen_graph_t</code></td><td>typedef; line 86</td></tr><tr class="t-dsc"><td><code id="s-71a8d1e5403643cf">micron::math::graphs::thawed_graph_t</code></td><td>typedef; line 92</td></tr><tr class="t-dsc"><td><code id="s-4e7005ce54c9ecc5">micron::math::graphs::stable_thawed_graph_t</code></td><td>typedef; line 97</td></tr><tr class="t-dsc"><td><a href="#f-67b22ff275045fca">micron::math::graphs::representation_result::succeeded() const noexcept</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-0687f3c9fc7b1c64">micron::math::graphs::representation_result::operator bool() const noexcept</a></td><td>function; line 50</td></tr><tr class="t-dsc"><td><a href="#f-4a46c77bad770156">micron::math::graphs::representation_result::operator-&gt;() noexcept</a></td><td>function; line 56</td></tr><tr class="t-dsc"><td><a href="#f-57b74b3d2d7ff867">micron::math::graphs::representation_result::operator-&gt;() const noexcept</a></td><td>function; line 62</td></tr><tr class="t-dsc"><td><a href="#f-9ecb636f7d1d1c17">micron::math::graphs::representation_result::operator*() noexcept</a></td><td>function; line 68</td></tr><tr class="t-dsc"><td><a href="#f-cb8838bfa8509458">micron::math::graphs::representation_result::operator*() const noexcept</a></td><td>function; line 74</td></tr><tr class="t-dsc"><td><a href="#f-537b6b30062114a3">micron::math::graphs::freeze(const G &amp;source)</a></td><td>function; line 140</td></tr><tr class="t-dsc"><td><a href="#f-06a1b6a9c46d7da5">micron::math::graphs::freeze_bidirectional(const G &amp;source)</a></td><td>function; line 154</td></tr><tr class="t-dsc"><td><a href="#f-fb251641d733c63d">micron::math::graphs::thaw(const G &amp;source)</a></td><td>function; line 168</td></tr><tr class="t-dsc"><td><a href="#f-a0d527bcca6cd820">micron::math::graphs::thaw_stable(const G &amp;source)</a></td><td>function; line 175</td></tr><tr class="t-dsc"><td><a href="#f-3fe3f98424b22b49">micron::math::graphs::to_edge_list(const G &amp;source)</a></td><td>function; line 229</td></tr><tr class="t-dsc"><td><a href="#f-3e6561f1726ca4c7">micron::math::graphs::to_compact_adjacency(const G &amp;source)</a></td><td>function; line 291</td></tr><tr class="t-dsc"><td><a href="#f-4f44a0daa2a112ae">micron::math::graphs::to_stable_adjacency(const G &amp;source)</a></td><td>function; line 298</td></tr><tr class="t-dsc"><td><a href="#f-28f04661c831a20c">micron::math::graphs::to_dense_adjacency(const G &amp;source)</a></td><td>function; line 305</td></tr><tr class="t-dsc"><td><a href="#f-c0ed4370342de413">micron::math::graphs::to_bit_adjacency(const G &amp;source)</a></td><td>function; line 315</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-67b22ff275045fca"><h3><code>micron::math::graphs::representation_result::succeeded() const noexcept</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  succeeded() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>status == algorithm_status::ok</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  succeeded() const noexcept
+  {
+    return status == algorithm_status::ok;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>status == algorithm_status::ok</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L46">line 46</a></td></tr></tbody></table></section><section class="function-entry" id="f-0687f3c9fc7b1c64"><h3><code>micron::math::graphs::representation_result::operator bool() const noexcept</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L50">line 50</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] explicit
+  operator bool() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>succeeded()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] explicit
+  operator bool() const noexcept
+  {
+    return succeeded();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>succeeded()</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L52">line 52</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="representations.hpp.html#f-67b22ff275045fca">succeeded</a>.</p></section><section class="function-entry" id="f-4a46c77bad770156"><h3><code>micron::math::graphs::representation_result::operator-&gt;() noexcept</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L56">line 56</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] Out *
+  operator-&gt;() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addressof(value)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] Out *
+  operator-&gt;() noexcept
+  {
+    return micron::addressof(value);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addressof(value)</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L58">line 58</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-57b74b3d2d7ff867"><h3><code>micron::math::graphs::representation_result::operator-&gt;() const noexcept</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const Out *
+  operator-&gt;() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addressof(value)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const Out *
+  operator-&gt;() const noexcept
+  {
+    return micron::addressof(value);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addressof(value)</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L64">line 64</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-9ecb636f7d1d1c17"><h3><code>micron::math::graphs::representation_result::operator*() noexcept</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] Out &amp;
+  operator*() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>value</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] Out &amp;
+  operator*() noexcept
+  {
+    return value;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L70">line 70</a></td></tr></tbody></table></section><section class="function-entry" id="f-cb8838bfa8509458"><h3><code>micron::math::graphs::representation_result::operator*() const noexcept</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L74">line 74</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const Out &amp;
+  operator*() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>value</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const Out &amp;
+  operator*() const noexcept
+  {
+    return value;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L76">line 76</a></td></tr></tbody></table></section><section class="function-entry" id="f-537b6b30062114a3"><h3><code>micron::math::graphs::freeze(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L140">line 140</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+freeze(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+freeze(const G &amp;source)
+{
+  using I = typename G::index_type;
+  using Out = frozen_graph_t&lt;G&gt;;
+  micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; dense_to_vertex;
+  micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; vertex_remap;
+  micron::vector&lt;edge_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; edge_remap;
+  Out value(source, dense_to_vertex, vertex_remap, edge_remap);
+  return representation_result&lt;Out, I&gt;{ micron::move(value), micron::move(dense_to_vertex), micron::move(vertex_remap),
+                                        micron::move(edge_remap) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>representation_result&lt;Out, I&gt;{ micron::move(value), micron::move(dense_to_vertex), micron::move(vertex_remap),
+                                        micron::move(edge_remap) }</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L148">line 148</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-06a1b6a9c46d7da5"><h3><code>micron::math::graphs::freeze_bidirectional(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L154">line 154</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+freeze_bidirectional(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+freeze_bidirectional(const G &amp;source)
+{
+  using I = typename G::index_type;
+  using Out = bidirectional_frozen_graph_t&lt;G&gt;;
+  micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; dense_to_vertex;
+  micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; vertex_remap;
+  micron::vector&lt;edge_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; edge_remap;
+  Out value(source, dense_to_vertex, vertex_remap, edge_remap);
+  return representation_result&lt;Out, I&gt;{ micron::move(value), micron::move(dense_to_vertex), micron::move(vertex_remap),
+                                        micron::move(edge_remap) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>representation_result&lt;Out, I&gt;{ micron::move(value), micron::move(dense_to_vertex), micron::move(vertex_remap),
+                                        micron::move(edge_remap) }</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L162">line 162</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-fb251641d733c63d"><h3><code>micron::math::graphs::thaw(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L168">line 168</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+thaw(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Returns <code>__copy_representation(source)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+thaw(const G &amp;source)
+{
+  return __copy_representation(source);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__copy_representation(source)</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L170">line 170</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="representations.hpp.html#f-30b32d1e9473a7d8">__copy_representation</a>.</p></section><section class="function-entry" id="f-a0d527bcca6cd820"><h3><code>micron::math::graphs::thaw_stable(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L175">line 175</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+thaw_stable(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+thaw_stable(const G &amp;source)
+{
+  using I = typename G::index_type;
+  using Out = stable_thawed_graph_t&lt;G&gt;;
+  representation_result&lt;Out, I&gt; result{
+    Out(source.graph_property()),
+    {},
+    micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt;(source.vertex_slots(), vertex_id&lt;I&gt;::invalid()),
+    micron::vector&lt;edge_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt;(source.edge_slots(), edge_id&lt;I&gt;::invalid())
+  };
+  result.value.reserve_vertices(source.vertex_slots());
+  result.value.reserve_edges(source.edge_slots());
+  result.dense_to_vertex.reserve(source.vertices_count());
+  for ( usize slot = 0; slot &lt; source.vertex_slots(); ++slot ) {
+    const vertex_id&lt;I&gt; original(static_cast&lt;I&gt;(slot));
+    if ( source.has_vertex(original) ) {
+      const vertex_id&lt;I&gt; inserted = result.value.add_vertex(source.vertex_property_unchecked(original));
+      if ( !inserted.valid() ) {
+        result.status = algorithm_status::overflow;
+        return result;
+      }
+      result.vertex_remap.data()[slot] = inserted;
+      result.dense_to_vertex.push_back(original);
+    } else {
+      if ( !result.value.__import_dead_vertex_slot() ) {
+        result.status = algorithm_status::overflow;
+        return result;
+      }
+    }
+  }
+  for ( usize slot = 0; slot &lt; source.edge_slots(); ++slot ) {
+    const edge_id&lt;I&gt; original(static_cast&lt;I&gt;(slot));
+    if ( source.has_edge(original) ) {
+      const auto u = result.vertex_remap.data()[static_cast&lt;usize&gt;(source.source(original).value)];
+      const auto v = result.vertex_remap.data()[static_cast&lt;usize&gt;(source.target(original).value)];
+      auto inserted = result.value.add_edge(u, v, source.edge_property_unchecked(original));
+      if ( !inserted.inserted() ) {
+        result.status
+            = inserted.status == edge_insert_status::index_overflow ? algorithm_status::overflow : algorithm_status::invalid_graph;
+        return result;
+      }
+      result.edge_remap.data()[slot] = inserted.id;
+    } else {
+      if ( !result.value.__import_dead_edge_slot() ) {
+        result.status = algorithm_status::overflow;
+        return result;
+      }
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L194">line 194</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L201">line 201</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L214">line 214</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L220">line 220</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L224">line 224</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="descriptors.hpp.html#f-67b6ee49c7d91c89">vertex_id&lt;I&gt;::invalid</a>, <a href="descriptors.hpp.html#f-c53b29501dfdc86c">edge_id&lt;I&gt;::invalid</a>.</p></section><section class="function-entry" id="f-3fe3f98424b22b49"><h3><code>micron::math::graphs::to_edge_list(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L229">line 229</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+to_edge_list(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+to_edge_list(const G &amp;source)
+{
+  using I = typename G::index_type;
+  using Out = edge_list_graph&lt;typename G::vertex_property_type, typename G::edge_property_type, typename G::graph_property_type, I,
+                              typename G::direction_type, typename G::multiplicity_type, typename G::loop_type, typename G::allocator_type&gt;;
+  auto stable = __copy_representation(source);
+  representation_result&lt;Out, I&gt; result{ Out(stable.value.graph_property()), micron::move(stable.dense_to_vertex),
+                                        micron::move(stable.vertex_remap), micron::move(stable.edge_remap), stable.status };
+  if ( !stable ) return result;
+  result.value.reserve_vertices(stable.value.vertices_count());
+  result.value.reserve_edges(stable.value.edges_count());
+  for ( auto v : stable.value.vertices() )
+    if ( !result.value.add_vertex(stable.value.vertex_property_unchecked(v)).valid() ) {
+      result.status = algorithm_status::overflow;
+      return result;
+    }
+  for ( auto e : stable.value.edges() ) {
+    const auto inserted = result.value.add_edge(e.source, e.target, e.property);
+    if ( !inserted.inserted() ) {
+      result.status = inserted.status == edge_insert_status::index_overflow ? algorithm_status::overflow : algorithm_status::invalid_graph;
+      return result;
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L237">line 237</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L243">line 243</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L249">line 249</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L252">line 252</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="representations.hpp.html#f-30b32d1e9473a7d8">__copy_representation</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-3e6561f1726ca4c7"><h3><code>micron::math::graphs::to_compact_adjacency(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L291">line 291</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+to_compact_adjacency(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Returns <code>thaw(source)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+to_compact_adjacency(const G &amp;source)
+{
+  return thaw(source);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>thaw(source)</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L293">line 293</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="representations.hpp.html#f-fb251641d733c63d">thaw</a>.</p></section><section class="function-entry" id="f-4f44a0daa2a112ae"><h3><code>micron::math::graphs::to_stable_adjacency(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L298">line 298</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+to_stable_adjacency(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Returns <code>thaw_stable(source)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+to_stable_adjacency(const G &amp;source)
+{
+  return thaw_stable(source);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>thaw_stable(source)</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L300">line 300</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="representations.hpp.html#f-a0d527bcca6cd820">thaw_stable</a>.</p></section><section class="function-entry" id="f-28f04661c831a20c"><h3><code>micron::math::graphs::to_dense_adjacency(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L305">line 305</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+to_dense_adjacency(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+to_dense_adjacency(const G &amp;source)
+{
+  using Out = dense_adjacency_graph&lt;typename G::vertex_property_type, typename G::edge_property_type, typename G::graph_property_type,
+                                    typename G::index_type, typename G::direction_type, typename G::loop_type, typename G::allocator_type&gt;;
+  return __convert_packed_representation&lt;Out&gt;(source);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__convert_packed_representation&lt;Out&gt;(source)</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L309">line 309</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="representations.hpp.html#f-1cb8da04f3dbd9bc">__convert_packed_representation&lt;Out&gt;</a>.</p></section><section class="function-entry" id="f-c0ed4370342de413"><h3><code>micron::math::graphs::to_bit_adjacency(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L315">line 315</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+  requires micron::is_same_v&lt;typename G::edge_property_type, empty_property&gt;
+[[nodiscard]] auto
+to_bit_adjacency(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+  requires micron::is_same_v&lt;typename G::edge_property_type, empty_property&gt;
+[[nodiscard]] auto
+to_bit_adjacency(const G &amp;source)
+{
+  using Out = bit_adjacency_graph&lt;typename G::vertex_property_type, typename G::graph_property_type, typename G::index_type,
+                                  typename G::direction_type, typename G::loop_type, typename G::allocator_type&gt;;
+  return __convert_packed_representation&lt;Out&gt;(source);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__convert_packed_representation&lt;Out&gt;(source)</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L319">line 319</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="representations.hpp.html#f-1cb8da04f3dbd9bc">__convert_packed_representation&lt;Out&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-30b32d1e9473a7d8"><h3><code>micron::math::graphs::__copy_representation(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename G&gt;
+[[nodiscard]] auto
+__copy_representation(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename G&gt;
+[[nodiscard]] auto
+__copy_representation(const G &amp;source)
+{
+  using I = typename G::index_type;
+  using Out = thawed_graph_t&lt;G&gt;;
+  representation_result&lt;Out, I&gt; result{
+    Out(source.graph_property()),
+    {},
+    micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt;(source.vertex_slots(), vertex_id&lt;I&gt;::invalid()),
+    micron::vector&lt;edge_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt;(source.edge_slots(), edge_id&lt;I&gt;::invalid())
+  };
+  result.value.reserve_vertices(source.vertices_count());
+  result.value.reserve_edges(source.edges_count());
+  result.dense_to_vertex.reserve(source.vertices_count());
+  for ( auto vertex : source.vertices() ) {
+    const vertex_id&lt;I&gt; dense = result.value.add_vertex(source.vertex_property_unchecked(vertex));
+    if ( !dense.valid() ) {
+      result.status = algorithm_status::overflow;
+      return result;
+    }
+    result.vertex_remap.data()[static_cast&lt;usize&gt;(vertex.value)] = dense;
+    result.dense_to_vertex.push_back(vertex);
+  }
+  for ( auto edge : source.edges() ) {
+    const auto u = result.vertex_remap.data()[static_cast&lt;usize&gt;(edge.source.value)];
+    const auto v = result.vertex_remap.data()[static_cast&lt;usize&gt;(edge.target.value)];
+    auto inserted = result.value.add_edge(u, v, edge.property);
+    if ( !inserted.inserted() ) {
+      result.status = inserted.status == edge_insert_status::index_overflow ? algorithm_status::overflow : algorithm_status::invalid_graph;
+      return result;
+    }
+    result.edge_remap.data()[static_cast&lt;usize&gt;(edge.id.value)] = inserted.id;
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L135">line 135</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="descriptors.hpp.html#f-67b6ee49c7d91c89">vertex_id&lt;I&gt;::invalid</a>, <a href="descriptors.hpp.html#f-c53b29501dfdc86c">edge_id&lt;I&gt;::invalid</a>.</p></section><section class="function-entry" id="f-1cb8da04f3dbd9bc"><h3><code>micron::math::graphs::__convert_packed_representation(const G &amp;source)</code></h3><p>Defined in <code>math/graph/representations.hpp</code>, <a href="../../../source/math/graph/representations.hpp.html#L257">line 257</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Out, typename G&gt;
+[[nodiscard]] auto
+__convert_packed_representation(const G &amp;source)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;source</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Out, typename G&gt;
+[[nodiscard]] auto
+__convert_packed_representation(const G &amp;source)
+{
+  using I = typename G::index_type;
+  representation_result&lt;Out, I&gt; result{
+    Out(source.graph_property()),
+    {},
+    micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt;(source.vertex_slots(), vertex_id&lt;I&gt;::invalid()),
+    micron::vector&lt;edge_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt;(source.edge_slots(), edge_id&lt;I&gt;::invalid())
+  };
+  result.dense_to_vertex.reserve(source.vertices_count());
+  for ( auto vertex : source.vertices() ) {
+    const auto dense = result.value.add_vertex(source.vertex_property_unchecked(vertex));
+    if ( !dense.valid() ) {
+      result.status = algorithm_status::overflow;
+      return result;
+    }
+    result.vertex_remap.data()[static_cast&lt;usize&gt;(vertex.value)] = dense;
+    result.dense_to_vertex.push_back(vertex);
+  }
+  for ( auto edge : source.edges() ) {
+    const auto u = result.vertex_remap.data()[static_cast&lt;usize&gt;(edge.source.value)];
+    const auto v = result.vertex_remap.data()[static_cast&lt;usize&gt;(edge.target.value)];
+    auto inserted = result.value.add_edge(u, v, edge.property);
+    if ( !inserted.inserted() ) {
+      result.status = inserted.status == edge_insert_status::index_overflow ? algorithm_status::overflow : algorithm_status::invalid_graph;
+      return result;
+    }
+    result.edge_remap.data()[static_cast&lt;usize&gt;(edge.id.value)] = inserted.id;
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L271">line 271</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L282">line 282</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/representations.hpp.html#L286">line 286</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="descriptors.hpp.html#f-67b6ee49c7d91c89">vertex_id&lt;I&gt;::invalid</a>, <a href="descriptors.hpp.html#f-c53b29501dfdc86c">edge_id&lt;I&gt;::invalid</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/thread/thread_types/sig_callbacks.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/thread/thread_types/sig_callbacks.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/threads.html">Threads</a></div><p>Defined in header <code>&lt;micron/thread/thread_types/sig_callbacks.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/thread/thread_types/sig_callbacks.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-1a8eecc7dff7c8d4"><h3><code>micron::__thread_sigchld(int)</code></h3><p>Defined in <code>thread/thread_types/sig_callbacks.hpp</code>, <a href="../../../source/thread/thread_types/sig_callbacks.hpp.html#L25">line 25</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__thread_sigchld(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__thread_sigchld(int)
+{
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c0f00f2e22e73a9e"><h3><code>micron::__thread_yield(int)</code></h3><p>Defined in <code>thread/thread_types/sig_callbacks.hpp</code>, <a href="../../../source/thread/thread_types/sig_callbacks.hpp.html#L30">line 30</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__thread_yield(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__thread_yield(int)
+{
+  micron::yield();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../sync/yield.hpp.html#f-8d551fb247ff4b47">micron::yield</a>.</p></section><section class="function-entry" id="f-e22a47248c6543e0"><h3><code>micron::__thread_suspend_handler(int)</code></h3><p>Defined in <code>thread/thread_types/sig_callbacks.hpp</code>, <a href="../../../source/thread/thread_types/sig_callbacks.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__thread_suspend_handler(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__thread_suspend_handler(int)
+{
+  posix::sigset_t wait_mask = {};
+  micron::posix::sigfillset(wait_mask);
+  micron::posix::sigdelset(wait_mask, (int)signal::thread_resume);
+  micron::posix::sigdelset(wait_mask, (int)signal::terminate);
+  micron::posix::sigdelset(wait_mask, (int)signal::kill9);
+  micron::posix::sigdelset(wait_mask, (int)signal::segfault);
+  micron::posix::sigdelset(wait_mask, (int)signal::abort);
+  // sigsuspend is also a cancellation point
+  micron::posix::sigsuspend(wait_mask);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../linux/sys/signal.hpp.html#f-9bc6765c5492b614">micron::posix::sigfillset</a>, <a href="../../linux/sys/signal.hpp.html#f-2119e858819ca6ee">micron::posix::sigdelset</a>, <a href="../../linux/sys/signal.hpp.html#f-77c78c10296d2e93">micron::posix::sigsuspend</a>.</p></section><section class="function-entry" id="f-95ad6b9959c6b03f"><h3><code>micron::__thread_resume_handler(int)</code></h3><p>Defined in <code>thread/thread_types/sig_callbacks.hpp</code>, <a href="../../../source/thread/thread_types/sig_callbacks.hpp.html#L51">line 51</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__thread_resume_handler(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__thread_resume_handler(int)
+{
+  // its delivery alone wakes the suspend handler&#x27;s sigsuspend; nothing else to do
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-76308d9d2524a597"><h3><code>micron::__thread_handler()</code></h3><p>Defined in <code>thread/thread_types/sig_callbacks.hpp</code>, <a href="../../../source/thread/thread_types/sig_callbacks.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__thread_handler()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__thread_handler()
+{
+  static atomic_token&lt;bool&gt; __installed{ false };
+  bool expected = false;
+  if ( !__installed.compare_exchange_strong(expected, true, memory_order_acq_rel, memory_order_acquire) ) return;
+  // SIGALRM -&gt; cooperative yield: the only app-facing signal the core still installs
+  micron::create_handler(__thread_yield, signal::alarm);
+  // WARNING: NEVER install a handler for signal::terminate (SIGTERM)
+  // per thread termination is now controlled by the dying futex word
+  // NOTE: install with thread_resume blocked in its own mask so a resume racing the tiny window before sigsuspend stays pending (blocked)
+  // and is delivered the instant sigsuspend unblocks
+  {
+    micron::posix::sigaction_t ssa = {};
+    ssa.sigaction_handler.sa_handler = __thread_suspend_handler;
+    micron::posix::sigemptyset(ssa.sa_mask);
+    micron::posix::sigaddset(ssa.sa_mask, (int)signal::thread_resume);
+    ssa.sa_flags = micron::posix::sa_restart;
+    micron::posix::sigaction((int)signal::thread_suspend, ssa, nullptr);
+  }
+  micron::create_handler(__thread_resume_handler, signal::thread_resume);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/thread/thread_types/sig_callbacks.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/process/signals.hpp.html#f-a9850a243546d1f5">micron::create_handler</a>, <a href="../../linux/sys/signal.hpp.html#f-a3519d6915ce00cd">micron::posix::sigemptyset</a>, <a href="../../linux/sys/signal.hpp.html#f-f92e6cd4c4320ade">micron::posix::sigaddset</a>, <a href="../../linux/sys/signal.hpp.html#f-745412c513779c85">micron::posix::sigaction</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

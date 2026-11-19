@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/dynamic/versioning.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/dynamic/versioning.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/dynamic.html">Dynamic loading</a></div><p>Defined in header <code>&lt;micron/dynamic/versioning.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/dynamic/versioning.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-e34ca72c1a070c4a">micron::elf::dl::ver_chain_max</code></td><td>variable; line 19</td></tr><tr class="t-dsc"><td><a href="#f-33fe472b1f194ff8">micron::elf::dl::verneed_name(const dyn_info_t &amp;d, half vidx) noexcept</a></td><td>function; line 22</td></tr><tr class="t-dsc"><td><a href="#f-065fd7bca57328d9">micron::elf::dl::verdef_name(const dyn_info_t &amp;d, half vidx) noexcept</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-63859b6dd0dcb7fb">micron::elf::dl::version_matches(const dyn_info_t &amp;def, usize di, const char *want) noexcept</a></td><td>function; line 62</td></tr><tr class="t-dsc"><td><a href="#f-d7304abd8193577f">micron::elf::dl::wanted_version(const dyn_info_t &amp;ref, u32 si) noexcept</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-5861144f45e13b93">micron::elf::dl::gnu_lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</a></td><td>function; line 94</td></tr><tr class="t-dsc"><td><a href="#f-9065206229d0b462">micron::elf::dl::sysv_lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</a></td><td>function; line 135</td></tr><tr class="t-dsc"><td><a href="#f-df7e9bf61ab7f624">micron::elf::dl::lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</a></td><td>function; line 154</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-33fe472b1f194ff8"><h3><code>micron::elf::dl::verneed_name(const dyn_info_t &amp;d, half vidx) noexcept</code></h3><p>Defined in <code>dynamic/versioning.hpp</code>, <a href="../../source/dynamic/versioning.hpp.html#L22">line 22</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+verneed_name(const dyn_info_t &amp;d, half vidx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dyn_info_t &amp;d</code></li><li><code>half vidx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+verneed_name(const dyn_info_t &amp;d, half vidx) noexcept
+{
+  if ( vidx == ver_ndx_local || vidx == ver_ndx_global ) return nullptr;
+  if ( !d.verneed || !d.strtab ) return nullptr;
+
+  const u8 *vn = reinterpret_cast&lt;const u8 *&gt;(d.verneed);
+  for ( usize guard = 0; guard &lt; ver_chain_max; ++guard ) {
+    const verneed_t *n = micron::ptr_cast&lt;const verneed_t *&gt;(vn);
+    const u8 *va = vn + n-&gt;aux;
+    for ( half k = 0; k &lt; n-&gt;cnt &amp;&amp; k &lt; ver_chain_max; ++k ) {
+      const vernaux_t *a = micron::ptr_cast&lt;const vernaux_t *&gt;(va);
+      if ( elf_ver_ndx(a-&gt;other) == vidx ) return d.strtab + a-&gt;name;
+      if ( a-&gt;next == 0 ) break;
+      va += a-&gt;next;
+    }
+    if ( n-&gt;next == 0 ) break;
+    vn += n-&gt;next;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L24">line 24</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L25">line 25</a></td></tr><tr class="t-dsc"><td><code>d.strtab + a-&gt;name</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L33">line 33</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L40">line 40</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const verneed_t *&gt;</a>, <a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const vernaux_t *&gt;</a>, <a href="../linux/elf/consts.hpp.html#f-7c751cf9e6ba902d">elf_ver_ndx</a>.</p></section><section class="function-entry" id="f-065fd7bca57328d9"><h3><code>micron::elf::dl::verdef_name(const dyn_info_t &amp;d, half vidx) noexcept</code></h3><p>Defined in <code>dynamic/versioning.hpp</code>, <a href="../../source/dynamic/versioning.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+verdef_name(const dyn_info_t &amp;d, half vidx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dyn_info_t &amp;d</code></li><li><code>half vidx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+verdef_name(const dyn_info_t &amp;d, half vidx) noexcept
+{
+  if ( !d.verdef || !d.strtab ) return nullptr;
+
+  const u8 *vd = reinterpret_cast&lt;const u8 *&gt;(d.verdef);
+  for ( usize guard = 0; guard &lt; ver_chain_max; ++guard ) {
+    const verdef_t *v = micron::ptr_cast&lt;const verdef_t *&gt;(vd);
+    if ( elf_ver_ndx(v-&gt;ndx) == vidx &amp;&amp; v-&gt;cnt != 0 &amp;&amp; v-&gt;aux != 0 ) {
+      const verdaux_t *a = micron::ptr_cast&lt;const verdaux_t *&gt;(vd + v-&gt;aux);
+      return d.strtab + a-&gt;name;
+    }
+    if ( v-&gt;next == 0 ) break;
+    vd += v-&gt;next;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>d.strtab + a-&gt;name</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L58">line 58</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const verdef_t *&gt;</a>, <a href="../linux/elf/consts.hpp.html#f-7c751cf9e6ba902d">elf_ver_ndx</a>, <a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const verdaux_t *&gt;</a>.</p></section><section class="function-entry" id="f-63859b6dd0dcb7fb"><h3><code>micron::elf::dl::version_matches(const dyn_info_t &amp;def, usize di, const char *want) noexcept</code></h3><p>Defined in <code>dynamic/versioning.hpp</code>, <a href="../../source/dynamic/versioning.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+version_matches(const dyn_info_t &amp;def, usize di, const char *want) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dyn_info_t &amp;def</code></li><li><code>usize di</code></li><li><code>const char *want</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+version_matches(const dyn_info_t &amp;def, usize di, const char *want) noexcept
+{
+  if ( !def.versym ) return true;
+  if ( def.symcount &amp;&amp; di &gt;= def.symcount ) return false;
+
+  const half raw = def.versym[di];
+  const half vidx = elf_ver_ndx(raw);
+  const bool hidden = (raw &amp; ver_ndx_hidden) != 0;
+
+  if ( vidx == ver_ndx_local ) return false;
+
+  if ( !want ) return !hidden;
+
+  if ( vidx == ver_ndx_global ) {
+
+    return true;
+  }
+
+  const char *have = verdef_name(def, vidx);
+  if ( !have ) return false;
+  return micron::strcmp(have, want) == 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L64">line 64</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L65">line 65</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L71">line 71</a></td></tr><tr class="t-dsc"><td><code>!hidden</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L73">line 73</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L77">line 77</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L81">line 81</a></td></tr><tr class="t-dsc"><td><code>micron::strcmp(have, want) == 0</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L82">line 82</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/elf/consts.hpp.html#f-7c751cf9e6ba902d">elf_ver_ndx</a>, <a href="versioning.hpp.html#f-065fd7bca57328d9">verdef_name</a>, <a href="../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>.</p></section><section class="function-entry" id="f-d7304abd8193577f"><h3><code>micron::elf::dl::wanted_version(const dyn_info_t &amp;ref, u32 si) noexcept</code></h3><p>Defined in <code>dynamic/versioning.hpp</code>, <a href="../../source/dynamic/versioning.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+wanted_version(const dyn_info_t &amp;ref, u32 si) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dyn_info_t &amp;ref</code></li><li><code>u32 si</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+wanted_version(const dyn_info_t &amp;ref, u32 si) noexcept
+{
+  if ( !ref.versym || !ref.symtab ) return nullptr;
+  if ( ref.symcount &amp;&amp; si &gt;= ref.symcount ) return nullptr;
+  return verneed_name(ref, elf_ver_ndx(ref.versym[si]));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L88">line 88</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>verneed_name(ref, elf_ver_ndx(ref.versym[si]))</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L90">line 90</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="versioning.hpp.html#f-33fe472b1f194ff8">verneed_name</a>, <a href="../linux/elf/consts.hpp.html#f-7c751cf9e6ba902d">elf_ver_ndx</a>.</p></section><section class="function-entry" id="f-5861144f45e13b93"><h3><code>micron::elf::dl::gnu_lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</code></h3><p>Defined in <code>dynamic/versioning.hpp</code>, <a href="../../source/dynamic/versioning.hpp.html#L94">line 94</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const nsym_t *
+gnu_lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dyn_info_t &amp;d</code></li><li><code>const char *name</code></li><li><code>const char *want</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const nsym_t *
+gnu_lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept
+{
+  using tr = native_traits;
+  using bloom_t = tr::uword;
+  constexpr u32 bb = static_cast&lt;u32&gt;(tr::bloom_bits);
+
+  if ( !d.gnu_hash || !d.symtab || !d.strtab ) return nullptr;
+  const word *gh = d.gnu_hash;
+  const word nbuckets = gh[0];
+  const word symbias = gh[1];
+  const word bloom_size = gh[2];
+  const word bloom_shift = gh[3];
+  if ( !nbuckets || !bloom_size ) return nullptr;
+
+  const bloom_t *bloom = reinterpret_cast&lt;const bloom_t *&gt;(gh + 4);
+  const word *buckets = reinterpret_cast&lt;const word *&gt;(bloom + bloom_size);
+  const word *chain = buckets + nbuckets;
+
+  const u32 h = gnu_hash(name);
+  const bloom_t bw = bloom[(h / bb) % bloom_size];
+  const bloom_t bit_a = static_cast&lt;bloom_t&gt;(1) &lt;&lt; (h % bb);
+  // mask by the bloom word width, word size varies on arch spec
+  const bloom_t bit_b = static_cast&lt;bloom_t&gt;(1) &lt;&lt; ((static_cast&lt;bloom_t&gt;(h) &gt;&gt; (bloom_shift &amp; (bb - 1))) % bb);
+  if ( (bw &amp; (bit_a | bit_b)) != (bit_a | bit_b) ) return nullptr;
+
+  word idx = buckets[h % nbuckets];
+  if ( idx &lt; symbias ) return nullptr;
+
+  const word maxidx = d.symcount ? static_cast&lt;word&gt;(d.symcount) : (idx + (static_cast&lt;word&gt;(1) &lt;&lt; 24));
+  for ( ; idx &lt; maxidx; ++idx ) {
+    const word chain_h = chain[idx - symbias];
+    if ( ((chain_h ^ h) &gt;&gt; 1) == 0 ) {
+      const nsym_t &amp;s = d.symtab[idx];
+      if ( __streq(d.strtab + s.name, name) &amp;&amp; version_matches(d, idx, want) ) return &amp;s;
+    }
+    if ( chain_h &amp; 1 ) break;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L117">line 117</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>&amp;s</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L127">line 127</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L131">line 131</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/elf/hash.hpp.html#f-c16d11b1df7dc6fd">gnu_hash</a>, <a href="../linux/elf/hash.hpp.html#f-b416e5b21faa90d0">__streq</a>, <a href="versioning.hpp.html#f-63859b6dd0dcb7fb">version_matches</a>.</p></section><section class="function-entry" id="f-9065206229d0b462"><h3><code>micron::elf::dl::sysv_lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</code></h3><p>Defined in <code>dynamic/versioning.hpp</code>, <a href="../../source/dynamic/versioning.hpp.html#L135">line 135</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const nsym_t *
+sysv_lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dyn_info_t &amp;d</code></li><li><code>const char *name</code></li><li><code>const char *want</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const nsym_t *
+sysv_lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept
+{
+  if ( !d.hash || !d.symtab || !d.strtab ) return nullptr;
+  const word nbuckets = d.hash[0];
+  const word nchain = d.hash[1];
+  if ( !nbuckets ) return nullptr;
+  const word *buckets = d.hash + 2;
+  const word *chain = buckets + nbuckets;
+
+  const u32 h = sysv_hash(name);
+  word i = buckets[h % nbuckets];
+  for ( word steps = 0; i != 0 &amp;&amp; i &lt; nchain &amp;&amp; steps &lt; nchain; i = chain[i], ++steps ) {
+    const nsym_t &amp;s = d.symtab[i];
+    if ( __streq(d.strtab + s.name, name) &amp;&amp; version_matches(d, i, want) ) return &amp;s;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L137">line 137</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L140">line 140</a></td></tr><tr class="t-dsc"><td><code>&amp;s</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L148">line 148</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L150">line 150</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/elf/hash.hpp.html#f-3a1cdaec6f10fa69">sysv_hash</a>, <a href="../linux/elf/hash.hpp.html#f-b416e5b21faa90d0">__streq</a>, <a href="versioning.hpp.html#f-63859b6dd0dcb7fb">version_matches</a>.</p></section><section class="function-entry" id="f-df7e9bf61ab7f624"><h3><code>micron::elf::dl::lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</code></h3><p>Defined in <code>dynamic/versioning.hpp</code>, <a href="../../source/dynamic/versioning.hpp.html#L154">line 154</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const nsym_t *
+lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dyn_info_t &amp;d</code></li><li><code>const char *name</code></li><li><code>const char *want</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const nsym_t *
+lookup_versioned(const dyn_info_t &amp;d, const char *name, const char *want) noexcept
+{
+  if ( const nsym_t *s = gnu_lookup_versioned(d, name, want) ) return s;
+  return sysv_lookup_versioned(d, name, want);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L156">line 156</a></td></tr><tr class="t-dsc"><td><code>sysv_lookup_versioned(d, name, want)</code></td><td><a href="../../source/dynamic/versioning.hpp.html#L157">line 157</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="versioning.hpp.html#f-5861144f45e13b93">gnu_lookup_versioned</a>, <a href="versioning.hpp.html#f-9065206229d0b462">sysv_lookup_versioned</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

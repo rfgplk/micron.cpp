@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>errno.hpp source - micron reference</title>
+<link rel="stylesheet" href="../assets/cppreference2/screen.css"><link rel="stylesheet" href="../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../index.html">Reference</a> <a href="../headers/index.html">Headers</a> <a href="../functions/index.html">Functions</a> <a href="../symbols/index.html">Symbols</a> <a href="index.html">Source</a> <a href="../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">errno.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../headers/errno.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;types.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> // needs to be inline</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> inline thread_local i32 __micron_errno = 0;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> inline i32 *</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> __micron_errno_location(void)</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> {</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a>   return &amp;__micron_errno;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> }</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> </span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #ifndef errno</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #define errno (*__micron_errno_location())</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #endif</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> </span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> namespace micron</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> {</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> </span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> template&lt;int Val&gt;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> inline __attribute__((always_inline)) void</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> set_errno(void)</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> {</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>   errno = Val;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> }</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> </span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> inline __attribute__((always_inline)) void</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> set_errno(i32 val)</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> {</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   errno = val;</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> }</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> </span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> template&lt;typename T&gt;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   requires(micron::is_arithmetic_v&lt;T&gt; and micron::is_convertible_v&lt;T, i32&gt;)</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> inline __attribute__((always_inline)) void</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> set_errno(const T val)</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> {</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>   errno = static_cast&lt;i32&gt;(val);</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> }</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> </span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> namespace error</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> {</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> </span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> // NOTE: we&#x27;re doing it like this because it&#x27;s simpler</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> constexpr static const i32 permissions = 1;</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> constexpr static const i32 no_entry = 2;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> constexpr static const i32 no_process = 3;</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> constexpr static const i32 interrupted = 4;</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> constexpr static const i32 io_error = 5;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> constexpr static const i32 no_such_device = 6;</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> constexpr static const i32 arguments_too_big = 7;</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> constexpr static const i32 exec_error = 8;</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> constexpr static const i32 bad_file_number = 9;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> constexpr static const i32 no_child_process = 10;</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> constexpr static const i32 try_again = 11;</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> constexpr static const i32 would_block = 11;      // alias try_again</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> constexpr static const i32 out_of_memory = 12;</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> constexpr static const i32 permission_denied = 13;</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> constexpr static const i32 bad_address = 14;</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> constexpr static const i32 block_device_req = 15;</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> constexpr static const i32 device_busy = 16;</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> constexpr static const i32 busy = 16;      // alias</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> constexpr static const i32 file_exists = 17;</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> constexpr static const i32 cross_device_link = 18;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> constexpr static const i32 no_device = 19;</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> constexpr static const i32 not_a_dir = 20;</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> constexpr static const i32 is_a_dir = 21;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> constexpr static const i32 invalid_arg = 22;</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> constexpr static const i32 file_table_ovflw = 23;</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> constexpr static const i32 too_many_files = 24;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> constexpr static const i32 not_a_tty = 25;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> constexpr static const i32 text_busy = 26;</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> constexpr static const i32 file_too_big = 27;</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> constexpr static const i32 no_space = 28;</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> constexpr static const i32 illegal_seek = 29;</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> constexpr static const i32 read_only_fs = 30;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> constexpr static const i32 too_many_links = 31;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> constexpr static const i32 broken_pipe = 32;</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> constexpr static const i32 out_of_domain = 33;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> constexpr static const i32 not_representable = 34;</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> constexpr static const i32 deadlock = 35;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> constexpr static const i32 name_too_long = 36;</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> constexpr static const i32 no_record_locks = 37;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> constexpr static const i32 bad_syscall = 38;</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> constexpr static const i32 dir_not_empty = 39;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> constexpr static const i32 too_many_symlinks = 40;</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> constexpr static const i32 no_message = 42;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> constexpr static const i32 identifier_removed = 43;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> constexpr static const i32 channel_out_of_range = 44;</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> constexpr static const i32 level2_not_synced = 45;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> constexpr static const i32 level3_halted = 46;</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> constexpr static const i32 level3_reset = 47;</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> constexpr static const i32 link_num_out_of_range = 48;</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> constexpr static const i32 proto_driver_not_attached = 49;</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> constexpr static const i32 no_csi_structure = 50;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> constexpr static const i32 level2_halted = 51;</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> constexpr static const i32 invalid_exchange = 52;</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> constexpr static const i32 invalid_request_desc = 53;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> constexpr static const i32 exchange_full = 54;</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> constexpr static const i32 no_anode = 55;</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> constexpr static const i32 invalid_request_code = 56;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> constexpr static const i32 invalid_slot = 57;</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> constexpr static const i32 bad_font_file = 59;</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> constexpr static const i32 not_a_stream = 60;</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> constexpr static const i32 no_data_available = 61;</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> constexpr static const i32 timer_expired = 62;</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> constexpr static const i32 no_stream_resources = 63;</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> constexpr static const i32 not_on_network = 64;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> constexpr static const i32 package_not_installed = 65;</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> constexpr static const i32 object_is_remote = 66;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> constexpr static const i32 link_severed = 67;</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> constexpr static const i32 advertise_error = 68;</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> constexpr static const i32 srmount_error = 69;</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> constexpr static const i32 comm_error_on_send = 70;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> constexpr static const i32 proto_error = 71;</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> constexpr static const i32 multihop_attempted = 72;</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> constexpr static const i32 rfs_specific_error = 73;</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> constexpr static const i32 not_a_data_message = 74;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> constexpr static const i32 overflow = 75;</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> constexpr static const i32 name_not_unique = 76;</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> constexpr static const i32 bad_fd = 77;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> constexpr static const i32 remote_addr_changed = 78;</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> constexpr static const i32 shared_lib_inaccessible = 79;</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a> constexpr static const i32 shared_lib_corrupted = 80;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> constexpr static const i32 shared_lib_section_bad = 81;</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a> constexpr static const i32 too_many_shared_libs = 82;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> constexpr static const i32 cannot_exec_shared_lib = 83;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> constexpr static const i32 illegal_byte_sequence = 84;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> </span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> // for networking (libjkr)</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> constexpr static const i32 restarted = 85;</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> constexpr static const i32 streams_pipe_error = 86;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> constexpr static const i32 too_many_users = 87;</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> constexpr static const i32 not_a_socket = 88;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> constexpr static const i32 dest_addr_required = 89;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> constexpr static const i32 message_too_long = 90;</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> constexpr static const i32 wrong_protocol = 91;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> constexpr static const i32 proto_not_available = 92;</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> constexpr static const i32 proto_not_supported = 93;</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> constexpr static const i32 socket_not_supported = 94;</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a> constexpr static const i32 op_not_supported = 95;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a> constexpr static const i32 proto_family_not_supported = 96;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> constexpr static const i32 addr_family_not_supported = 97;</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> constexpr static const i32 addr_in_use = 98;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> constexpr static const i32 addr_not_available = 99;</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> constexpr static const i32 network_down = 100;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a> constexpr static const i32 network_unreachable = 101;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a> constexpr static const i32 network_reset = 102;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a> constexpr static const i32 connection_aborted = 103;</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a> constexpr static const i32 connection_reset = 104;</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> constexpr static const i32 no_buffer_space = 105;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a> constexpr static const i32 is_connected = 106;</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> constexpr static const i32 not_connected = 107;</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> constexpr static const i32 endpoint_shutdown = 108;</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a> constexpr static const i32 too_many_refs = 109;</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a> constexpr static const i32 timed_out = 110;</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a> constexpr static const i32 connection_refused = 111;</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a> constexpr static const i32 host_down = 112;</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a> constexpr static const i32 host_unreachable = 113;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a> constexpr static const i32 already_in_progress = 114;</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a> constexpr static const i32 in_progress = 115;</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a> constexpr static const i32 stale_file_handle = 116;</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a> constexpr static const i32 needs_cleaning = 117;</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a> constexpr static const i32 not_xenix_named = 118;</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> constexpr static const i32 no_xenix_semaphores = 119;</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a> constexpr static const i32 is_named_type = 120;</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> constexpr static const i32 remote_io_error = 121;</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a> constexpr static const i32 quota_exceeded = 122;</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a> constexpr static const i32 no_medium = 123;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a> constexpr static const i32 wrong_medium_type = 124;</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a> constexpr static const i32 operation_canceled = 125;</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> constexpr static const i32 key_not_available = 126;</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> constexpr static const i32 key_expired = 127;</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> constexpr static const i32 key_revoked = 128;</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> constexpr static const i32 key_rejected = 129;</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a> constexpr static const i32 owner_died = 130;</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> constexpr static const i32 state_not_recoverable = 131;</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a> constexpr static const i32 rf_kill = 132;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a> constexpr static const i32 hardware_memory_error = 133;</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a> </span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a> constexpr const char *permissions_msg = &quot;Operation not permitted *&quot;;</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a> constexpr const char *no_entry_msg = &quot;No such file or directory *&quot;;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a> constexpr const char *no_process_msg = &quot;No such process *&quot;;</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a> constexpr const char *interrupted_msg = &quot;Interrupted system call *&quot;;</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a> constexpr const char *io_error_msg = &quot;I/O error *&quot;;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a> constexpr const char *no_such_device_msg = &quot;No such device or address *&quot;;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a> constexpr const char *arguments_too_big_msg = &quot;Argument list too long *&quot;;</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a> constexpr const char *exec_error_msg = &quot;Exec format error *&quot;;</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a> constexpr const char *bad_file_number_msg = &quot;Bad file number *&quot;;</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> constexpr const char *no_child_process_msg = &quot;No child processes *&quot;;</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a> constexpr const char *try_again_msg = &quot;Try again *&quot;;</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a> constexpr const char *out_of_memory_msg = &quot;Out of memory *&quot;;</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a> constexpr const char *permission_denied_msg = &quot;Permission denied *&quot;;</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a> constexpr const char *bad_address_msg = &quot;Bad address *&quot;;</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a> constexpr const char *block_device_req_msg = &quot;Block device required *&quot;;</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> constexpr const char *device_busy_msg = &quot;Device or resource busy *&quot;;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> constexpr const char *file_exists_msg = &quot;File exists *&quot;;</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a> constexpr const char *cross_device_link_msg = &quot;Cross-device link *&quot;;</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a> constexpr const char *no_device_msg = &quot;No such device *&quot;;</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> constexpr const char *not_a_dir_msg = &quot;Not a directory *&quot;;</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> constexpr const char *is_a_dir_msg = &quot;Is a directory *&quot;;</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> constexpr const char *invalid_arg_msg = &quot;Invalid argument *&quot;;</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a> constexpr const char *file_table_ovflw_msg = &quot;File table overflow *&quot;;</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a> constexpr const char *too_many_files_msg = &quot;Too many open files *&quot;;</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a> constexpr const char *not_a_tty_msg = &quot;Not a typewriter *&quot;;</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a> constexpr const char *text_busy_msg = &quot;Text file busy *&quot;;</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a> constexpr const char *file_too_big_msg = &quot;File too large *&quot;;</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a> constexpr const char *no_space_msg = &quot;No space left on device *&quot;;</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a> constexpr const char *illegal_seek_msg = &quot;Illegal seek *&quot;;</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a> constexpr const char *read_only_fs_msg = &quot;Read-only file system *&quot;;</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a> constexpr const char *too_many_links_msg = &quot;Too many links *&quot;;</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a> constexpr const char *broken_pipe_msg = &quot;Broken pipe *&quot;;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a> constexpr const char *out_of_domain_msg = &quot;Math argument out of domain of func *&quot;;</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a> constexpr const char *not_representable_msg = &quot;Math result not representable *&quot;;</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a> constexpr const char *deadlock_msg = &quot;Resource deadlock would occur *&quot;;</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a> constexpr const char *name_too_long_msg = &quot;File name too long *&quot;;</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> constexpr const char *no_record_locks_msg = &quot;No record locks available *&quot;;</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a> constexpr const char *bad_syscall_msg = &quot;Invalid system call number *&quot;;</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a> constexpr const char *dir_not_empty_msg = &quot;Directory not empty *&quot;;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a> constexpr const char *too_many_symlinks_msg = &quot;Too many symbolic links encountered *&quot;;</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a> constexpr const char *no_message_msg = &quot;No message of desired type *&quot;;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a> constexpr const char *identifier_removed_msg = &quot;Identifier removed *&quot;;</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a> constexpr const char *channel_out_of_range_msg = &quot;Channel number out of range *&quot;;</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a> constexpr const char *level2_not_synced_msg = &quot;Level 2 not synchronized *&quot;;</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a> constexpr const char *level3_halted_msg = &quot;Level 3 halted *&quot;;</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a> constexpr const char *level3_reset_msg = &quot;Level 3 reset *&quot;;</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a> constexpr const char *link_num_out_of_range_msg = &quot;Link number out of range *&quot;;</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> constexpr const char *proto_driver_not_attached_msg = &quot;Protocol driver not attached *&quot;;</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> constexpr const char *no_csi_structure_msg = &quot;No CSI structure available *&quot;;</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> constexpr const char *level2_halted_msg = &quot;Level 2 halted *&quot;;</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a> constexpr const char *invalid_exchange_msg = &quot;Invalid exchange *&quot;;</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> constexpr const char *invalid_request_desc_msg = &quot;Invalid request descriptor *&quot;;</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> constexpr const char *exchange_full_msg = &quot;Exchange full *&quot;;</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> constexpr const char *no_anode_msg = &quot;No anode *&quot;;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a> constexpr const char *invalid_request_code_msg = &quot;Invalid request code *&quot;;</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a> constexpr const char *invalid_slot_msg = &quot;Invalid slot *&quot;;</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a> constexpr const char *bad_font_file_msg = &quot;Bad font file format *&quot;;</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a> constexpr const char *not_a_stream_msg = &quot;Device not a stream *&quot;;</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a> constexpr const char *no_data_available_msg = &quot;No data available *&quot;;</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a> constexpr const char *timer_expired_msg = &quot;Timer expired *&quot;;</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a> constexpr const char *no_stream_resources_msg = &quot;Out of streams resources *&quot;;</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a> constexpr const char *not_on_network_msg = &quot;Machine is not on the network *&quot;;</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a> constexpr const char *package_not_installed_msg = &quot;Package not installed *&quot;;</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a> constexpr const char *object_is_remote_msg = &quot;Object is remote *&quot;;</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a> constexpr const char *link_severed_msg = &quot;Link has been severed *&quot;;</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> constexpr const char *advertise_error_msg = &quot;Advertise error *&quot;;</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a> constexpr const char *srmount_error_msg = &quot;Srmount error *&quot;;</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a> constexpr const char *comm_error_on_send_msg = &quot;Communication error on send *&quot;;</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a> constexpr const char *proto_error_msg = &quot;Protocol error *&quot;;</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a> constexpr const char *multihop_attempted_msg = &quot;Multihop attempted *&quot;;</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a> constexpr const char *rfs_specific_error_msg = &quot;RFS specific error *&quot;;</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> constexpr const char *not_a_data_message_msg = &quot;Not a data message *&quot;;</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> constexpr const char *overflow_msg = &quot;Value too large for defined data type *&quot;;</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a> constexpr const char *name_not_unique_msg = &quot;Name not unique on network *&quot;;</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a> constexpr const char *bad_fd_msg = &quot;File descriptor in bad state *&quot;;</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a> constexpr const char *remote_addr_changed_msg = &quot;Remote address changed *&quot;;</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a> constexpr const char *shared_lib_inaccessible_msg = &quot;Cannot access a needed shared library *&quot;;</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a> constexpr const char *shared_lib_corrupted_msg = &quot;Accessing a corrupted shared library *&quot;;</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a> constexpr const char *shared_lib_section_bad_msg = &quot;.lib section in a.out corrupted *&quot;;</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a> constexpr const char *too_many_shared_libs_msg = &quot;Attempting to link in too many shared libraries *&quot;;</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> constexpr const char *cannot_exec_shared_lib_msg = &quot;Cannot exec a shared library directly *&quot;;</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a> constexpr const char *illegal_byte_sequence_msg = &quot;Illegal byte sequence *&quot;;</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> constexpr const char *restarted_msg = &quot;Interrupted system call should be restarted *&quot;;</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> constexpr const char *streams_pipe_error_msg = &quot;Streams pipe error *&quot;;</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a> constexpr const char *too_many_users_msg = &quot;Too many users *&quot;;</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> constexpr const char *not_a_socket_msg = &quot;Socket operation on non-socket *&quot;;</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> constexpr const char *dest_addr_required_msg = &quot;Destination address required *&quot;;</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> constexpr const char *message_too_long_msg = &quot;Message too long *&quot;;</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a> constexpr const char *wrong_protocol_msg = &quot;Protocol wrong type for socket *&quot;;</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> constexpr const char *proto_not_available_msg = &quot;Protocol not available *&quot;;</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a> constexpr const char *proto_not_supported_msg = &quot;Protocol not supported *&quot;;</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a> constexpr const char *socket_not_supported_msg = &quot;Socket type not supported *&quot;;</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a> constexpr const char *op_not_supported_msg = &quot;Operation not supported on transport endpoint *&quot;;</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a> constexpr const char *proto_family_not_supported_msg = &quot;Protocol family not supported *&quot;;</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a> constexpr const char *addr_family_not_supported_msg = &quot;Address family not supported by protocol *&quot;;</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> constexpr const char *addr_in_use_msg = &quot;Address already in use *&quot;;</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a> constexpr const char *addr_not_available_msg = &quot;Cannot assign requested address *&quot;;</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a> constexpr const char *network_down_msg = &quot;Network is down *&quot;;</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a> constexpr const char *network_unreachable_msg = &quot;Network is unreachable *&quot;;</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a> constexpr const char *network_reset_msg = &quot;Network dropped connection because of reset *&quot;;</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a> constexpr const char *connection_aborted_msg = &quot;Software caused connection abort *&quot;;</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> constexpr const char *connection_reset_msg = &quot;Connection reset by peer *&quot;;</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a> constexpr const char *no_buffer_space_msg = &quot;No buffer space available *&quot;;</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a> constexpr const char *is_connected_msg = &quot;Transport endpoint is already connected *&quot;;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a> constexpr const char *not_connected_msg = &quot;Transport endpoint is not connected *&quot;;</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a> constexpr const char *endpoint_shutdown_msg = &quot;Cannot send after transport endpoint shutdown *&quot;;</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> constexpr const char *too_many_refs_msg = &quot;Too many references: cannot splice *&quot;;</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a> constexpr const char *timed_out_msg = &quot;Connection timed out *&quot;;</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a> constexpr const char *connection_refused_msg = &quot;Connection refused *&quot;;</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a> constexpr const char *host_down_msg = &quot;Host is down *&quot;;</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a> constexpr const char *host_unreachable_msg = &quot;No route to host *&quot;;</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a> constexpr const char *already_in_progress_msg = &quot;Operation already in progress *&quot;;</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a> constexpr const char *in_progress_msg = &quot;Operation now in progress *&quot;;</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a> constexpr const char *stale_file_handle_msg = &quot;Stale file handle *&quot;;</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> constexpr const char *needs_cleaning_msg = &quot;Structure needs cleaning *&quot;;</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a> constexpr const char *not_xenix_named_msg = &quot;Not a XENIX named type file *&quot;;</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a> constexpr const char *no_xenix_semaphores_msg = &quot;No XENIX semaphores available *&quot;;</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a> constexpr const char *is_named_type_msg = &quot;Is a named type file *&quot;;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> constexpr const char *remote_io_error_msg = &quot;Remote I/O error *&quot;;</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> constexpr const char *quota_exceeded_msg = &quot;Quota exceeded *&quot;;</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a> constexpr const char *no_medium_msg = &quot;No medium found *&quot;;</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a> constexpr const char *wrong_medium_type_msg = &quot;Wrong medium type *&quot;;</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a> constexpr const char *operation_canceled_msg = &quot;Operation canceled *&quot;;</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a> constexpr const char *key_not_available_msg = &quot;Required key not available *&quot;;</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a> constexpr const char *key_expired_msg = &quot;Key has expired *&quot;;</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a> constexpr const char *key_revoked_msg = &quot;Key has been revoked *&quot;;</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a> constexpr const char *key_rejected_msg = &quot;Key was rejected by service *&quot;;</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a> constexpr const char *owner_died_msg = &quot;Owner died *&quot;;</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a> constexpr const char *state_not_recoverable_msg = &quot;State not recoverable *&quot;;</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a> constexpr const char *rf_kill_msg = &quot;Operation not possible due to RF-kill *&quot;;</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a> constexpr const char *hardware_memory_error_msg = &quot;Memory page has hardware error *&quot;;</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a> constexpr const char *no_msg = &quot;No errno *&quot;;</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a> </span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a> inline auto</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a> get_errno(const int e)</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a> {</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>   switch ( e ) {</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a>   case permissions:</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>     return permissions_msg;</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a>   case no_entry:</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>     return no_entry_msg;</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>   case no_process:</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>     return no_process_msg;</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>   case interrupted:</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>     return interrupted_msg;</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>   case io_error:</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>     return io_error_msg;</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>   case no_such_device:</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>     return no_such_device_msg;</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>   case arguments_too_big:</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>     return arguments_too_big_msg;</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>   case exec_error:</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>     return exec_error_msg;</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>   case bad_file_number:</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>     return bad_file_number_msg;</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>   case no_child_process:</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>     return no_child_process_msg;</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>   case try_again:      // also covers would_block</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a>     return try_again_msg;</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a>   case out_of_memory:</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>     return out_of_memory_msg;</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>   case permission_denied:</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>     return permission_denied_msg;</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>   case bad_address:</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a>     return bad_address_msg;</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>   case block_device_req:</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a>     return block_device_req_msg;</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>   case device_busy:      // also covers busy</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>     return device_busy_msg;</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>   case file_exists:</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>     return file_exists_msg;</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>   case cross_device_link:</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a>     return cross_device_link_msg;</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>   case no_device:</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a>     return no_device_msg;</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>   case not_a_dir:</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a>     return not_a_dir_msg;</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>   case is_a_dir:</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a>     return is_a_dir_msg;</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>   case invalid_arg:</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a>     return invalid_arg_msg;</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>   case file_table_ovflw:</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>     return file_table_ovflw_msg;</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>   case too_many_files:</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a>     return too_many_files_msg;</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a>   case not_a_tty:</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a>     return not_a_tty_msg;</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a>   case text_busy:</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>     return text_busy_msg;</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>   case file_too_big:</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>     return file_too_big_msg;</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a>   case no_space:</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>     return no_space_msg;</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>   case illegal_seek:</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>     return illegal_seek_msg;</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a>   case read_only_fs:</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>     return read_only_fs_msg;</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>   case too_many_links:</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>     return too_many_links_msg;</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>   case broken_pipe:</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a>     return broken_pipe_msg;</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>   case out_of_domain:</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>     return out_of_domain_msg;</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>   case not_representable:</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>     return not_representable_msg;</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>   case deadlock:</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a>     return deadlock_msg;</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>   case name_too_long:</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a>     return name_too_long_msg;</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a>   case no_record_locks:</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>     return no_record_locks_msg;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a>   case bad_syscall:</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a>     return bad_syscall_msg;</span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a>   case dir_not_empty:</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>     return dir_not_empty_msg;</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>   case too_many_symlinks:</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>     return too_many_symlinks_msg;</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>   case no_message:</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a>     return no_message_msg;</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>   case identifier_removed:</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a>     return identifier_removed_msg;</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a>   case channel_out_of_range:</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>     return channel_out_of_range_msg;</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>   case level2_not_synced:</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a>     return level2_not_synced_msg;</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>   case level3_halted:</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>     return level3_halted_msg;</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>   case level3_reset:</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>     return level3_reset_msg;</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>   case link_num_out_of_range:</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>     return link_num_out_of_range_msg;</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a>   case proto_driver_not_attached:</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a>     return proto_driver_not_attached_msg;</span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a>   case no_csi_structure:</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>     return no_csi_structure_msg;</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>   case level2_halted:</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>     return level2_halted_msg;</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>   case invalid_exchange:</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>     return invalid_exchange_msg;</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>   case invalid_request_desc:</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>     return invalid_request_desc_msg;</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>   case exchange_full:</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>     return exchange_full_msg;</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>   case no_anode:</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>     return no_anode_msg;</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>   case invalid_request_code:</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a>     return invalid_request_code_msg;</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a>   case invalid_slot:</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>     return invalid_slot_msg;</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>   case bad_font_file:</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a>     return bad_font_file_msg;</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a>   case not_a_stream:</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a>     return not_a_stream_msg;</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a>   case no_data_available:</span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>     return no_data_available_msg;</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>   case timer_expired:</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>     return timer_expired_msg;</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>   case no_stream_resources:</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>     return no_stream_resources_msg;</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>   case not_on_network:</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>     return not_on_network_msg;</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>   case package_not_installed:</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>     return package_not_installed_msg;</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>   case object_is_remote:</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a>     return object_is_remote_msg;</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>   case link_severed:</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a>     return link_severed_msg;</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>   case advertise_error:</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>     return advertise_error_msg;</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>   case srmount_error:</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>     return srmount_error_msg;</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>   case comm_error_on_send:</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a>     return comm_error_on_send_msg;</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a>   case proto_error:</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>     return proto_error_msg;</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>   case multihop_attempted:</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>     return multihop_attempted_msg;</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>   case rfs_specific_error:</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>     return rfs_specific_error_msg;</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a>   case not_a_data_message:</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>     return not_a_data_message_msg;</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>   case overflow:</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>     return overflow_msg;</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>   case name_not_unique:</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>     return name_not_unique_msg;</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a>   case bad_fd:</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a>     return bad_fd_msg;</span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a>   case remote_addr_changed:</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>     return remote_addr_changed_msg;</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>   case shared_lib_inaccessible:</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>     return shared_lib_inaccessible_msg;</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a>   case shared_lib_corrupted:</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a>     return shared_lib_corrupted_msg;</span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>   case shared_lib_section_bad:</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a>     return shared_lib_section_bad_msg;</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a>   case too_many_shared_libs:</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>     return too_many_shared_libs_msg;</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>   case cannot_exec_shared_lib:</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>     return cannot_exec_shared_lib_msg;</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>   case illegal_byte_sequence:</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a>     return illegal_byte_sequence_msg;</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a>   case restarted:</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a>     return restarted_msg;</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a>   case streams_pipe_error:</span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a>     return streams_pipe_error_msg;</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a>   case too_many_users:</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a>     return too_many_users_msg;</span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a>   case not_a_socket:</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a>     return not_a_socket_msg;</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a>   case dest_addr_required:</span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a>     return dest_addr_required_msg;</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a>   case message_too_long:</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a>     return message_too_long_msg;</span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a>   case wrong_protocol:</span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a>     return wrong_protocol_msg;</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a>   case proto_not_available:</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a>     return proto_not_available_msg;</span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a>   case proto_not_supported:</span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a>     return proto_not_supported_msg;</span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a>   case socket_not_supported:</span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a>     return socket_not_supported_msg;</span>
+<span id="L508" class="source-line"><a class="line-number" href="#L508">508</a>   case op_not_supported:</span>
+<span id="L509" class="source-line"><a class="line-number" href="#L509">509</a>     return op_not_supported_msg;</span>
+<span id="L510" class="source-line"><a class="line-number" href="#L510">510</a>   case proto_family_not_supported:</span>
+<span id="L511" class="source-line"><a class="line-number" href="#L511">511</a>     return proto_family_not_supported_msg;</span>
+<span id="L512" class="source-line"><a class="line-number" href="#L512">512</a>   case addr_family_not_supported:</span>
+<span id="L513" class="source-line"><a class="line-number" href="#L513">513</a>     return addr_family_not_supported_msg;</span>
+<span id="L514" class="source-line"><a class="line-number" href="#L514">514</a>   case addr_in_use:</span>
+<span id="L515" class="source-line"><a class="line-number" href="#L515">515</a>     return addr_in_use_msg;</span>
+<span id="L516" class="source-line"><a class="line-number" href="#L516">516</a>   case addr_not_available:</span>
+<span id="L517" class="source-line"><a class="line-number" href="#L517">517</a>     return addr_not_available_msg;</span>
+<span id="L518" class="source-line"><a class="line-number" href="#L518">518</a>   case network_down:</span>
+<span id="L519" class="source-line"><a class="line-number" href="#L519">519</a>     return network_down_msg;</span>
+<span id="L520" class="source-line"><a class="line-number" href="#L520">520</a>   case network_unreachable:</span>
+<span id="L521" class="source-line"><a class="line-number" href="#L521">521</a>     return network_unreachable_msg;</span>
+<span id="L522" class="source-line"><a class="line-number" href="#L522">522</a>   case network_reset:</span>
+<span id="L523" class="source-line"><a class="line-number" href="#L523">523</a>     return network_reset_msg;</span>
+<span id="L524" class="source-line"><a class="line-number" href="#L524">524</a>   case connection_aborted:</span>
+<span id="L525" class="source-line"><a class="line-number" href="#L525">525</a>     return connection_aborted_msg;</span>
+<span id="L526" class="source-line"><a class="line-number" href="#L526">526</a>   case connection_reset:</span>
+<span id="L527" class="source-line"><a class="line-number" href="#L527">527</a>     return connection_reset_msg;</span>
+<span id="L528" class="source-line"><a class="line-number" href="#L528">528</a>   case no_buffer_space:</span>
+<span id="L529" class="source-line"><a class="line-number" href="#L529">529</a>     return no_buffer_space_msg;</span>
+<span id="L530" class="source-line"><a class="line-number" href="#L530">530</a>   case is_connected:</span>
+<span id="L531" class="source-line"><a class="line-number" href="#L531">531</a>     return is_connected_msg;</span>
+<span id="L532" class="source-line"><a class="line-number" href="#L532">532</a>   case not_connected:</span>
+<span id="L533" class="source-line"><a class="line-number" href="#L533">533</a>     return not_connected_msg;</span>
+<span id="L534" class="source-line"><a class="line-number" href="#L534">534</a>   case endpoint_shutdown:</span>
+<span id="L535" class="source-line"><a class="line-number" href="#L535">535</a>     return endpoint_shutdown_msg;</span>
+<span id="L536" class="source-line"><a class="line-number" href="#L536">536</a>   case too_many_refs:</span>
+<span id="L537" class="source-line"><a class="line-number" href="#L537">537</a>     return too_many_refs_msg;</span>
+<span id="L538" class="source-line"><a class="line-number" href="#L538">538</a>   case timed_out:</span>
+<span id="L539" class="source-line"><a class="line-number" href="#L539">539</a>     return timed_out_msg;</span>
+<span id="L540" class="source-line"><a class="line-number" href="#L540">540</a>   case connection_refused:</span>
+<span id="L541" class="source-line"><a class="line-number" href="#L541">541</a>     return connection_refused_msg;</span>
+<span id="L542" class="source-line"><a class="line-number" href="#L542">542</a>   case host_down:</span>
+<span id="L543" class="source-line"><a class="line-number" href="#L543">543</a>     return host_down_msg;</span>
+<span id="L544" class="source-line"><a class="line-number" href="#L544">544</a>   case host_unreachable:</span>
+<span id="L545" class="source-line"><a class="line-number" href="#L545">545</a>     return host_unreachable_msg;</span>
+<span id="L546" class="source-line"><a class="line-number" href="#L546">546</a>   case already_in_progress:</span>
+<span id="L547" class="source-line"><a class="line-number" href="#L547">547</a>     return already_in_progress_msg;</span>
+<span id="L548" class="source-line"><a class="line-number" href="#L548">548</a>   case in_progress:</span>
+<span id="L549" class="source-line"><a class="line-number" href="#L549">549</a>     return in_progress_msg;</span>
+<span id="L550" class="source-line"><a class="line-number" href="#L550">550</a>   case stale_file_handle:</span>
+<span id="L551" class="source-line"><a class="line-number" href="#L551">551</a>     return stale_file_handle_msg;</span>
+<span id="L552" class="source-line"><a class="line-number" href="#L552">552</a>   case needs_cleaning:</span>
+<span id="L553" class="source-line"><a class="line-number" href="#L553">553</a>     return needs_cleaning_msg;</span>
+<span id="L554" class="source-line"><a class="line-number" href="#L554">554</a>   case not_xenix_named:</span>
+<span id="L555" class="source-line"><a class="line-number" href="#L555">555</a>     return not_xenix_named_msg;</span>
+<span id="L556" class="source-line"><a class="line-number" href="#L556">556</a>   case no_xenix_semaphores:</span>
+<span id="L557" class="source-line"><a class="line-number" href="#L557">557</a>     return no_xenix_semaphores_msg;</span>
+<span id="L558" class="source-line"><a class="line-number" href="#L558">558</a>   case is_named_type:</span>
+<span id="L559" class="source-line"><a class="line-number" href="#L559">559</a>     return is_named_type_msg;</span>
+<span id="L560" class="source-line"><a class="line-number" href="#L560">560</a>   case remote_io_error:</span>
+<span id="L561" class="source-line"><a class="line-number" href="#L561">561</a>     return remote_io_error_msg;</span>
+<span id="L562" class="source-line"><a class="line-number" href="#L562">562</a>   case quota_exceeded:</span>
+<span id="L563" class="source-line"><a class="line-number" href="#L563">563</a>     return quota_exceeded_msg;</span>
+<span id="L564" class="source-line"><a class="line-number" href="#L564">564</a>   case no_medium:</span>
+<span id="L565" class="source-line"><a class="line-number" href="#L565">565</a>     return no_medium_msg;</span>
+<span id="L566" class="source-line"><a class="line-number" href="#L566">566</a>   case wrong_medium_type:</span>
+<span id="L567" class="source-line"><a class="line-number" href="#L567">567</a>     return wrong_medium_type_msg;</span>
+<span id="L568" class="source-line"><a class="line-number" href="#L568">568</a>   case operation_canceled:</span>
+<span id="L569" class="source-line"><a class="line-number" href="#L569">569</a>     return operation_canceled_msg;</span>
+<span id="L570" class="source-line"><a class="line-number" href="#L570">570</a>   case key_not_available:</span>
+<span id="L571" class="source-line"><a class="line-number" href="#L571">571</a>     return key_not_available_msg;</span>
+<span id="L572" class="source-line"><a class="line-number" href="#L572">572</a>   case key_expired:</span>
+<span id="L573" class="source-line"><a class="line-number" href="#L573">573</a>     return key_expired_msg;</span>
+<span id="L574" class="source-line"><a class="line-number" href="#L574">574</a>   case key_revoked:</span>
+<span id="L575" class="source-line"><a class="line-number" href="#L575">575</a>     return key_revoked_msg;</span>
+<span id="L576" class="source-line"><a class="line-number" href="#L576">576</a>   case key_rejected:</span>
+<span id="L577" class="source-line"><a class="line-number" href="#L577">577</a>     return key_rejected_msg;</span>
+<span id="L578" class="source-line"><a class="line-number" href="#L578">578</a>   case owner_died:</span>
+<span id="L579" class="source-line"><a class="line-number" href="#L579">579</a>     return owner_died_msg;</span>
+<span id="L580" class="source-line"><a class="line-number" href="#L580">580</a>   case state_not_recoverable:</span>
+<span id="L581" class="source-line"><a class="line-number" href="#L581">581</a>     return state_not_recoverable_msg;</span>
+<span id="L582" class="source-line"><a class="line-number" href="#L582">582</a>   case rf_kill:</span>
+<span id="L583" class="source-line"><a class="line-number" href="#L583">583</a>     return rf_kill_msg;</span>
+<span id="L584" class="source-line"><a class="line-number" href="#L584">584</a>   case hardware_memory_error:</span>
+<span id="L585" class="source-line"><a class="line-number" href="#L585">585</a>     return hardware_memory_error_msg;</span>
+<span id="L586" class="source-line"><a class="line-number" href="#L586">586</a> </span>
+<span id="L587" class="source-line"><a class="line-number" href="#L587">587</a>   default:</span>
+<span id="L588" class="source-line"><a class="line-number" href="#L588">588</a>     return no_msg;</span>
+<span id="L589" class="source-line"><a class="line-number" href="#L589">589</a>   }</span>
+<span id="L590" class="source-line"><a class="line-number" href="#L590">590</a> }</span>
+<span id="L591" class="source-line"><a class="line-number" href="#L591">591</a> </span>
+<span id="L592" class="source-line"><a class="line-number" href="#L592">592</a> template&lt;int e&gt;</span>
+<span id="L593" class="source-line"><a class="line-number" href="#L593">593</a> inline constexpr auto</span>
+<span id="L594" class="source-line"><a class="line-number" href="#L594">594</a> const_get_errno()</span>
+<span id="L595" class="source-line"><a class="line-number" href="#L595">595</a> {</span>
+<span id="L596" class="source-line"><a class="line-number" href="#L596">596</a>   if constexpr ( e == permissions ) return permissions_msg;</span>
+<span id="L597" class="source-line"><a class="line-number" href="#L597">597</a>   if constexpr ( e == no_entry ) return no_entry_msg;</span>
+<span id="L598" class="source-line"><a class="line-number" href="#L598">598</a>   if constexpr ( e == no_process ) return no_process_msg;</span>
+<span id="L599" class="source-line"><a class="line-number" href="#L599">599</a>   if constexpr ( e == interrupted ) return interrupted_msg;</span>
+<span id="L600" class="source-line"><a class="line-number" href="#L600">600</a>   if constexpr ( e == io_error ) return io_error_msg;</span>
+<span id="L601" class="source-line"><a class="line-number" href="#L601">601</a>   if constexpr ( e == no_such_device ) return no_such_device_msg;</span>
+<span id="L602" class="source-line"><a class="line-number" href="#L602">602</a>   if constexpr ( e == arguments_too_big ) return arguments_too_big_msg;</span>
+<span id="L603" class="source-line"><a class="line-number" href="#L603">603</a>   if constexpr ( e == exec_error ) return exec_error_msg;</span>
+<span id="L604" class="source-line"><a class="line-number" href="#L604">604</a>   if constexpr ( e == bad_file_number ) return bad_file_number_msg;</span>
+<span id="L605" class="source-line"><a class="line-number" href="#L605">605</a>   if constexpr ( e == no_child_process ) return no_child_process_msg;</span>
+<span id="L606" class="source-line"><a class="line-number" href="#L606">606</a>   if constexpr ( e == try_again )      // also covers would_block</span>
+<span id="L607" class="source-line"><a class="line-number" href="#L607">607</a>     return try_again_msg;</span>
+<span id="L608" class="source-line"><a class="line-number" href="#L608">608</a>   if constexpr ( e == out_of_memory ) return out_of_memory_msg;</span>
+<span id="L609" class="source-line"><a class="line-number" href="#L609">609</a>   if constexpr ( e == permission_denied ) return permission_denied_msg;</span>
+<span id="L610" class="source-line"><a class="line-number" href="#L610">610</a>   if constexpr ( e == bad_address ) return bad_address_msg;</span>
+<span id="L611" class="source-line"><a class="line-number" href="#L611">611</a>   if constexpr ( e == block_device_req ) return block_device_req_msg;</span>
+<span id="L612" class="source-line"><a class="line-number" href="#L612">612</a>   if constexpr ( e == device_busy )      // also covers busy</span>
+<span id="L613" class="source-line"><a class="line-number" href="#L613">613</a>     return device_busy_msg;</span>
+<span id="L614" class="source-line"><a class="line-number" href="#L614">614</a>   if constexpr ( e == file_exists ) return file_exists_msg;</span>
+<span id="L615" class="source-line"><a class="line-number" href="#L615">615</a>   if constexpr ( e == cross_device_link ) return cross_device_link_msg;</span>
+<span id="L616" class="source-line"><a class="line-number" href="#L616">616</a>   if constexpr ( e == no_device ) return no_device_msg;</span>
+<span id="L617" class="source-line"><a class="line-number" href="#L617">617</a>   if constexpr ( e == not_a_dir ) return not_a_dir_msg;</span>
+<span id="L618" class="source-line"><a class="line-number" href="#L618">618</a>   if constexpr ( e == is_a_dir ) return is_a_dir_msg;</span>
+<span id="L619" class="source-line"><a class="line-number" href="#L619">619</a>   if constexpr ( e == invalid_arg ) return invalid_arg_msg;</span>
+<span id="L620" class="source-line"><a class="line-number" href="#L620">620</a>   if constexpr ( e == file_table_ovflw ) return file_table_ovflw_msg;</span>
+<span id="L621" class="source-line"><a class="line-number" href="#L621">621</a>   if constexpr ( e == too_many_files ) return too_many_files_msg;</span>
+<span id="L622" class="source-line"><a class="line-number" href="#L622">622</a>   if constexpr ( e == not_a_tty ) return not_a_tty_msg;</span>
+<span id="L623" class="source-line"><a class="line-number" href="#L623">623</a>   if constexpr ( e == text_busy ) return text_busy_msg;</span>
+<span id="L624" class="source-line"><a class="line-number" href="#L624">624</a>   if constexpr ( e == file_too_big ) return file_too_big_msg;</span>
+<span id="L625" class="source-line"><a class="line-number" href="#L625">625</a>   if constexpr ( e == no_space ) return no_space_msg;</span>
+<span id="L626" class="source-line"><a class="line-number" href="#L626">626</a>   if constexpr ( e == illegal_seek ) return illegal_seek_msg;</span>
+<span id="L627" class="source-line"><a class="line-number" href="#L627">627</a>   if constexpr ( e == read_only_fs ) return read_only_fs_msg;</span>
+<span id="L628" class="source-line"><a class="line-number" href="#L628">628</a>   if constexpr ( e == too_many_links ) return too_many_links_msg;</span>
+<span id="L629" class="source-line"><a class="line-number" href="#L629">629</a>   if constexpr ( e == broken_pipe ) return broken_pipe_msg;</span>
+<span id="L630" class="source-line"><a class="line-number" href="#L630">630</a>   if constexpr ( e == out_of_domain ) return out_of_domain_msg;</span>
+<span id="L631" class="source-line"><a class="line-number" href="#L631">631</a>   if constexpr ( e == not_representable ) return not_representable_msg;</span>
+<span id="L632" class="source-line"><a class="line-number" href="#L632">632</a>   if constexpr ( e == deadlock ) return deadlock_msg;</span>
+<span id="L633" class="source-line"><a class="line-number" href="#L633">633</a>   if constexpr ( e == name_too_long ) return name_too_long_msg;</span>
+<span id="L634" class="source-line"><a class="line-number" href="#L634">634</a>   if constexpr ( e == no_record_locks ) return no_record_locks_msg;</span>
+<span id="L635" class="source-line"><a class="line-number" href="#L635">635</a>   if constexpr ( e == bad_syscall ) return bad_syscall_msg;</span>
+<span id="L636" class="source-line"><a class="line-number" href="#L636">636</a>   if constexpr ( e == dir_not_empty ) return dir_not_empty_msg;</span>
+<span id="L637" class="source-line"><a class="line-number" href="#L637">637</a>   if constexpr ( e == too_many_symlinks ) return too_many_symlinks_msg;</span>
+<span id="L638" class="source-line"><a class="line-number" href="#L638">638</a>   if constexpr ( e == no_message ) return no_message_msg;</span>
+<span id="L639" class="source-line"><a class="line-number" href="#L639">639</a>   if constexpr ( e == identifier_removed ) return identifier_removed_msg;</span>
+<span id="L640" class="source-line"><a class="line-number" href="#L640">640</a>   if constexpr ( e == channel_out_of_range ) return channel_out_of_range_msg;</span>
+<span id="L641" class="source-line"><a class="line-number" href="#L641">641</a>   if constexpr ( e == level2_not_synced ) return level2_not_synced_msg;</span>
+<span id="L642" class="source-line"><a class="line-number" href="#L642">642</a>   if constexpr ( e == level3_halted ) return level3_halted_msg;</span>
+<span id="L643" class="source-line"><a class="line-number" href="#L643">643</a>   if constexpr ( e == level3_reset ) return level3_reset_msg;</span>
+<span id="L644" class="source-line"><a class="line-number" href="#L644">644</a>   if constexpr ( e == link_num_out_of_range ) return link_num_out_of_range_msg;</span>
+<span id="L645" class="source-line"><a class="line-number" href="#L645">645</a>   if constexpr ( e == proto_driver_not_attached ) return proto_driver_not_attached_msg;</span>
+<span id="L646" class="source-line"><a class="line-number" href="#L646">646</a>   if constexpr ( e == no_csi_structure ) return no_csi_structure_msg;</span>
+<span id="L647" class="source-line"><a class="line-number" href="#L647">647</a>   if constexpr ( e == level2_halted ) return level2_halted_msg;</span>
+<span id="L648" class="source-line"><a class="line-number" href="#L648">648</a>   if constexpr ( e == invalid_exchange ) return invalid_exchange_msg;</span>
+<span id="L649" class="source-line"><a class="line-number" href="#L649">649</a>   if constexpr ( e == invalid_request_desc ) return invalid_request_desc_msg;</span>
+<span id="L650" class="source-line"><a class="line-number" href="#L650">650</a>   if constexpr ( e == exchange_full ) return exchange_full_msg;</span>
+<span id="L651" class="source-line"><a class="line-number" href="#L651">651</a>   if constexpr ( e == no_anode ) return no_anode_msg;</span>
+<span id="L652" class="source-line"><a class="line-number" href="#L652">652</a>   if constexpr ( e == invalid_request_code ) return invalid_request_code_msg;</span>
+<span id="L653" class="source-line"><a class="line-number" href="#L653">653</a>   if constexpr ( e == invalid_slot ) return invalid_slot_msg;</span>
+<span id="L654" class="source-line"><a class="line-number" href="#L654">654</a>   if constexpr ( e == bad_font_file ) return bad_font_file_msg;</span>
+<span id="L655" class="source-line"><a class="line-number" href="#L655">655</a>   if constexpr ( e == not_a_stream ) return not_a_stream_msg;</span>
+<span id="L656" class="source-line"><a class="line-number" href="#L656">656</a>   if constexpr ( e == no_data_available ) return no_data_available_msg;</span>
+<span id="L657" class="source-line"><a class="line-number" href="#L657">657</a>   if constexpr ( e == timer_expired ) return timer_expired_msg;</span>
+<span id="L658" class="source-line"><a class="line-number" href="#L658">658</a>   if constexpr ( e == no_stream_resources ) return no_stream_resources_msg;</span>
+<span id="L659" class="source-line"><a class="line-number" href="#L659">659</a>   if constexpr ( e == not_on_network ) return not_on_network_msg;</span>
+<span id="L660" class="source-line"><a class="line-number" href="#L660">660</a>   if constexpr ( e == package_not_installed ) return package_not_installed_msg;</span>
+<span id="L661" class="source-line"><a class="line-number" href="#L661">661</a>   if constexpr ( e == object_is_remote ) return object_is_remote_msg;</span>
+<span id="L662" class="source-line"><a class="line-number" href="#L662">662</a>   if constexpr ( e == link_severed ) return link_severed_msg;</span>
+<span id="L663" class="source-line"><a class="line-number" href="#L663">663</a>   if constexpr ( e == advertise_error ) return advertise_error_msg;</span>
+<span id="L664" class="source-line"><a class="line-number" href="#L664">664</a>   if constexpr ( e == srmount_error ) return srmount_error_msg;</span>
+<span id="L665" class="source-line"><a class="line-number" href="#L665">665</a>   if constexpr ( e == comm_error_on_send ) return comm_error_on_send_msg;</span>
+<span id="L666" class="source-line"><a class="line-number" href="#L666">666</a>   if constexpr ( e == proto_error ) return proto_error_msg;</span>
+<span id="L667" class="source-line"><a class="line-number" href="#L667">667</a>   if constexpr ( e == multihop_attempted ) return multihop_attempted_msg;</span>
+<span id="L668" class="source-line"><a class="line-number" href="#L668">668</a>   if constexpr ( e == rfs_specific_error ) return rfs_specific_error_msg;</span>
+<span id="L669" class="source-line"><a class="line-number" href="#L669">669</a>   if constexpr ( e == not_a_data_message ) return not_a_data_message_msg;</span>
+<span id="L670" class="source-line"><a class="line-number" href="#L670">670</a>   if constexpr ( e == overflow ) return overflow_msg;</span>
+<span id="L671" class="source-line"><a class="line-number" href="#L671">671</a>   if constexpr ( e == name_not_unique ) return name_not_unique_msg;</span>
+<span id="L672" class="source-line"><a class="line-number" href="#L672">672</a>   if constexpr ( e == bad_fd ) return bad_fd_msg;</span>
+<span id="L673" class="source-line"><a class="line-number" href="#L673">673</a>   if constexpr ( e == remote_addr_changed ) return remote_addr_changed_msg;</span>
+<span id="L674" class="source-line"><a class="line-number" href="#L674">674</a>   if constexpr ( e == shared_lib_inaccessible ) return shared_lib_inaccessible_msg;</span>
+<span id="L675" class="source-line"><a class="line-number" href="#L675">675</a>   if constexpr ( e == shared_lib_corrupted ) return shared_lib_corrupted_msg;</span>
+<span id="L676" class="source-line"><a class="line-number" href="#L676">676</a>   if constexpr ( e == shared_lib_section_bad ) return shared_lib_section_bad_msg;</span>
+<span id="L677" class="source-line"><a class="line-number" href="#L677">677</a>   if constexpr ( e == too_many_shared_libs ) return too_many_shared_libs_msg;</span>
+<span id="L678" class="source-line"><a class="line-number" href="#L678">678</a>   if constexpr ( e == cannot_exec_shared_lib ) return cannot_exec_shared_lib_msg;</span>
+<span id="L679" class="source-line"><a class="line-number" href="#L679">679</a>   if constexpr ( e == illegal_byte_sequence ) return illegal_byte_sequence_msg;</span>
+<span id="L680" class="source-line"><a class="line-number" href="#L680">680</a>   if constexpr ( e == restarted ) return restarted_msg;</span>
+<span id="L681" class="source-line"><a class="line-number" href="#L681">681</a>   if constexpr ( e == streams_pipe_error ) return streams_pipe_error_msg;</span>
+<span id="L682" class="source-line"><a class="line-number" href="#L682">682</a>   if constexpr ( e == too_many_users ) return too_many_users_msg;</span>
+<span id="L683" class="source-line"><a class="line-number" href="#L683">683</a>   if constexpr ( e == not_a_socket ) return not_a_socket_msg;</span>
+<span id="L684" class="source-line"><a class="line-number" href="#L684">684</a>   if constexpr ( e == dest_addr_required ) return dest_addr_required_msg;</span>
+<span id="L685" class="source-line"><a class="line-number" href="#L685">685</a>   if constexpr ( e == message_too_long ) return message_too_long_msg;</span>
+<span id="L686" class="source-line"><a class="line-number" href="#L686">686</a>   if constexpr ( e == wrong_protocol ) return wrong_protocol_msg;</span>
+<span id="L687" class="source-line"><a class="line-number" href="#L687">687</a>   if constexpr ( e == proto_not_available ) return proto_not_available_msg;</span>
+<span id="L688" class="source-line"><a class="line-number" href="#L688">688</a>   if constexpr ( e == proto_not_supported ) return proto_not_supported_msg;</span>
+<span id="L689" class="source-line"><a class="line-number" href="#L689">689</a>   if constexpr ( e == socket_not_supported ) return socket_not_supported_msg;</span>
+<span id="L690" class="source-line"><a class="line-number" href="#L690">690</a>   if constexpr ( e == op_not_supported ) return op_not_supported_msg;</span>
+<span id="L691" class="source-line"><a class="line-number" href="#L691">691</a>   if constexpr ( e == proto_family_not_supported ) return proto_family_not_supported_msg;</span>
+<span id="L692" class="source-line"><a class="line-number" href="#L692">692</a>   if constexpr ( e == addr_family_not_supported ) return addr_family_not_supported_msg;</span>
+<span id="L693" class="source-line"><a class="line-number" href="#L693">693</a>   if constexpr ( e == addr_in_use ) return addr_in_use_msg;</span>
+<span id="L694" class="source-line"><a class="line-number" href="#L694">694</a>   if constexpr ( e == addr_not_available ) return addr_not_available_msg;</span>
+<span id="L695" class="source-line"><a class="line-number" href="#L695">695</a>   if constexpr ( e == network_down ) return network_down_msg;</span>
+<span id="L696" class="source-line"><a class="line-number" href="#L696">696</a>   if constexpr ( e == network_unreachable ) return network_unreachable_msg;</span>
+<span id="L697" class="source-line"><a class="line-number" href="#L697">697</a>   if constexpr ( e == network_reset ) return network_reset_msg;</span>
+<span id="L698" class="source-line"><a class="line-number" href="#L698">698</a>   if constexpr ( e == connection_aborted ) return connection_aborted_msg;</span>
+<span id="L699" class="source-line"><a class="line-number" href="#L699">699</a>   if constexpr ( e == connection_reset ) return connection_reset_msg;</span>
+<span id="L700" class="source-line"><a class="line-number" href="#L700">700</a>   if constexpr ( e == no_buffer_space ) return no_buffer_space_msg;</span>
+<span id="L701" class="source-line"><a class="line-number" href="#L701">701</a>   if constexpr ( e == is_connected ) return is_connected_msg;</span>
+<span id="L702" class="source-line"><a class="line-number" href="#L702">702</a>   if constexpr ( e == not_connected ) return not_connected_msg;</span>
+<span id="L703" class="source-line"><a class="line-number" href="#L703">703</a>   if constexpr ( e == endpoint_shutdown ) return endpoint_shutdown_msg;</span>
+<span id="L704" class="source-line"><a class="line-number" href="#L704">704</a>   if constexpr ( e == too_many_refs ) return too_many_refs_msg;</span>
+<span id="L705" class="source-line"><a class="line-number" href="#L705">705</a>   if constexpr ( e == timed_out ) return timed_out_msg;</span>
+<span id="L706" class="source-line"><a class="line-number" href="#L706">706</a>   if constexpr ( e == connection_refused ) return connection_refused_msg;</span>
+<span id="L707" class="source-line"><a class="line-number" href="#L707">707</a>   if constexpr ( e == host_down ) return host_down_msg;</span>
+<span id="L708" class="source-line"><a class="line-number" href="#L708">708</a>   if constexpr ( e == host_unreachable ) return host_unreachable_msg;</span>
+<span id="L709" class="source-line"><a class="line-number" href="#L709">709</a>   if constexpr ( e == already_in_progress ) return already_in_progress_msg;</span>
+<span id="L710" class="source-line"><a class="line-number" href="#L710">710</a>   if constexpr ( e == in_progress ) return in_progress_msg;</span>
+<span id="L711" class="source-line"><a class="line-number" href="#L711">711</a>   if constexpr ( e == stale_file_handle ) return stale_file_handle_msg;</span>
+<span id="L712" class="source-line"><a class="line-number" href="#L712">712</a>   if constexpr ( e == needs_cleaning ) return needs_cleaning_msg;</span>
+<span id="L713" class="source-line"><a class="line-number" href="#L713">713</a>   if constexpr ( e == not_xenix_named ) return not_xenix_named_msg;</span>
+<span id="L714" class="source-line"><a class="line-number" href="#L714">714</a>   if constexpr ( e == no_xenix_semaphores ) return no_xenix_semaphores_msg;</span>
+<span id="L715" class="source-line"><a class="line-number" href="#L715">715</a>   if constexpr ( e == is_named_type ) return is_named_type_msg;</span>
+<span id="L716" class="source-line"><a class="line-number" href="#L716">716</a>   if constexpr ( e == remote_io_error ) return remote_io_error_msg;</span>
+<span id="L717" class="source-line"><a class="line-number" href="#L717">717</a>   if constexpr ( e == quota_exceeded ) return quota_exceeded_msg;</span>
+<span id="L718" class="source-line"><a class="line-number" href="#L718">718</a>   if constexpr ( e == no_medium ) return no_medium_msg;</span>
+<span id="L719" class="source-line"><a class="line-number" href="#L719">719</a>   if constexpr ( e == wrong_medium_type ) return wrong_medium_type_msg;</span>
+<span id="L720" class="source-line"><a class="line-number" href="#L720">720</a>   if constexpr ( e == operation_canceled ) return operation_canceled_msg;</span>
+<span id="L721" class="source-line"><a class="line-number" href="#L721">721</a>   if constexpr ( e == key_not_available ) return key_not_available_msg;</span>
+<span id="L722" class="source-line"><a class="line-number" href="#L722">722</a>   if constexpr ( e == key_expired ) return key_expired_msg;</span>
+<span id="L723" class="source-line"><a class="line-number" href="#L723">723</a>   if constexpr ( e == key_revoked ) return key_revoked_msg;</span>
+<span id="L724" class="source-line"><a class="line-number" href="#L724">724</a>   if constexpr ( e == key_rejected ) return key_rejected_msg;</span>
+<span id="L725" class="source-line"><a class="line-number" href="#L725">725</a>   if constexpr ( e == owner_died ) return owner_died_msg;</span>
+<span id="L726" class="source-line"><a class="line-number" href="#L726">726</a>   if constexpr ( e == state_not_recoverable ) return state_not_recoverable_msg;</span>
+<span id="L727" class="source-line"><a class="line-number" href="#L727">727</a>   if constexpr ( e == rf_kill ) return rf_kill_msg;</span>
+<span id="L728" class="source-line"><a class="line-number" href="#L728">728</a>   if constexpr ( e == hardware_memory_error ) return hardware_memory_error_msg;</span>
+<span id="L729" class="source-line"><a class="line-number" href="#L729">729</a> </span>
+<span id="L730" class="source-line"><a class="line-number" href="#L730">730</a>   return no_msg;</span>
+<span id="L731" class="source-line"><a class="line-number" href="#L731">731</a> }</span>
+<span id="L732" class="source-line"><a class="line-number" href="#L732">732</a> </span>
+<span id="L733" class="source-line"><a class="line-number" href="#L733">733</a> inline auto</span>
+<span id="L734" class="source-line"><a class="line-number" href="#L734">734</a> what_errno()</span>
+<span id="L735" class="source-line"><a class="line-number" href="#L735">735</a> {</span>
+<span id="L736" class="source-line"><a class="line-number" href="#L736">736</a>   const int e = errno;</span>
+<span id="L737" class="source-line"><a class="line-number" href="#L737">737</a>   return get_errno(e);</span>
+<span id="L738" class="source-line"><a class="line-number" href="#L738">738</a> }</span>
+<span id="L739" class="source-line"><a class="line-number" href="#L739">739</a> </span>
+<span id="L740" class="source-line"><a class="line-number" href="#L740">740</a> // NOTE: for backwards compatibility, we&#x27;re keeping the raw list of defines</span>
+<span id="L741" class="source-line"><a class="line-number" href="#L741">741</a> </span>
+<span id="L742" class="source-line"><a class="line-number" href="#L742">742</a> #ifndef _ASM_GENERIC_ERRNO_H</span>
+<span id="L743" class="source-line"><a class="line-number" href="#L743">743</a> #define _ASM_GENERIC_ERRNO_H</span>
+<span id="L744" class="source-line"><a class="line-number" href="#L744">744</a> #define EPERM 1         /* Operation not permitted */</span>
+<span id="L745" class="source-line"><a class="line-number" href="#L745">745</a> #define ENOENT 2        /* No such file or directory */</span>
+<span id="L746" class="source-line"><a class="line-number" href="#L746">746</a> #define ESRCH 3         /* No such process */</span>
+<span id="L747" class="source-line"><a class="line-number" href="#L747">747</a> #define EINTR 4         /* Interrupted system call */</span>
+<span id="L748" class="source-line"><a class="line-number" href="#L748">748</a> #define EIO 5           /* I/O error */</span>
+<span id="L749" class="source-line"><a class="line-number" href="#L749">749</a> #define ENXIO 6         /* No such device or address */</span>
+<span id="L750" class="source-line"><a class="line-number" href="#L750">750</a> #define E2BIG 7         /* Argument list too long */</span>
+<span id="L751" class="source-line"><a class="line-number" href="#L751">751</a> #define ENOEXEC 8       /* Exec format error */</span>
+<span id="L752" class="source-line"><a class="line-number" href="#L752">752</a> #define EBADF 9         /* Bad file number */</span>
+<span id="L753" class="source-line"><a class="line-number" href="#L753">753</a> #define ECHILD 10       /* No child processes */</span>
+<span id="L754" class="source-line"><a class="line-number" href="#L754">754</a> #define EAGAIN 11       /* Try again */</span>
+<span id="L755" class="source-line"><a class="line-number" href="#L755">755</a> #define ENOMEM 12       /* Out of memory */</span>
+<span id="L756" class="source-line"><a class="line-number" href="#L756">756</a> #define EACCES 13       /* Permission denied */</span>
+<span id="L757" class="source-line"><a class="line-number" href="#L757">757</a> #define EFAULT 14       /* Bad address */</span>
+<span id="L758" class="source-line"><a class="line-number" href="#L758">758</a> #define ENOTBLK 15      /* Block device required */</span>
+<span id="L759" class="source-line"><a class="line-number" href="#L759">759</a> #define EBUSY 16        /* Device or resource busy */</span>
+<span id="L760" class="source-line"><a class="line-number" href="#L760">760</a> #define EEXIST 17       /* File exists */</span>
+<span id="L761" class="source-line"><a class="line-number" href="#L761">761</a> #define EXDEV 18        /* Cross-device link */</span>
+<span id="L762" class="source-line"><a class="line-number" href="#L762">762</a> #define ENODEV 19       /* No such device */</span>
+<span id="L763" class="source-line"><a class="line-number" href="#L763">763</a> #define ENOTDIR 20      /* Not a directory */</span>
+<span id="L764" class="source-line"><a class="line-number" href="#L764">764</a> #define EISDIR 21       /* Is a directory */</span>
+<span id="L765" class="source-line"><a class="line-number" href="#L765">765</a> #define EINVAL 22       /* Invalid argument */</span>
+<span id="L766" class="source-line"><a class="line-number" href="#L766">766</a> #define ENFILE 23       /* File table overflow */</span>
+<span id="L767" class="source-line"><a class="line-number" href="#L767">767</a> #define EMFILE 24       /* Too many open files */</span>
+<span id="L768" class="source-line"><a class="line-number" href="#L768">768</a> #define ENOTTY 25       /* Not a typewriter */</span>
+<span id="L769" class="source-line"><a class="line-number" href="#L769">769</a> #define ETXTBSY 26      /* Text file busy */</span>
+<span id="L770" class="source-line"><a class="line-number" href="#L770">770</a> #define EFBIG 27        /* File too large */</span>
+<span id="L771" class="source-line"><a class="line-number" href="#L771">771</a> #define ENOSPC 28       /* No space left on device */</span>
+<span id="L772" class="source-line"><a class="line-number" href="#L772">772</a> #define ESPIPE 29       /* Illegal seek */</span>
+<span id="L773" class="source-line"><a class="line-number" href="#L773">773</a> #define EROFS 30        /* Read-only file system */</span>
+<span id="L774" class="source-line"><a class="line-number" href="#L774">774</a> #define EMLINK 31       /* Too many links */</span>
+<span id="L775" class="source-line"><a class="line-number" href="#L775">775</a> #define EPIPE 32        /* Broken pipe */</span>
+<span id="L776" class="source-line"><a class="line-number" href="#L776">776</a> #define EDOM 33         /* Math argument out of domain of func */</span>
+<span id="L777" class="source-line"><a class="line-number" href="#L777">777</a> #define ERANGE 34       /* Math result not representable */</span>
+<span id="L778" class="source-line"><a class="line-number" href="#L778">778</a> #define EDEADLK 35      /* Resource deadlock would occur */</span>
+<span id="L779" class="source-line"><a class="line-number" href="#L779">779</a> #define ENAMETOOLONG 36 /* File name too long */</span>
+<span id="L780" class="source-line"><a class="line-number" href="#L780">780</a> #define ENOLCK 37       /* No record locks available */</span>
+<span id="L781" class="source-line"><a class="line-number" href="#L781">781</a> </span>
+<span id="L782" class="source-line"><a class="line-number" href="#L782">782</a> #define ENOSYS 38 /* Invalid system call number */</span>
+<span id="L783" class="source-line"><a class="line-number" href="#L783">783</a> </span>
+<span id="L784" class="source-line"><a class="line-number" href="#L784">784</a> #define ENOTEMPTY 39       /* Directory not empty */</span>
+<span id="L785" class="source-line"><a class="line-number" href="#L785">785</a> #define ELOOP 40           /* Too many symbolic links encountered */</span>
+<span id="L786" class="source-line"><a class="line-number" href="#L786">786</a> #define EWOULDBLOCK EAGAIN /* Operation would block */</span>
+<span id="L787" class="source-line"><a class="line-number" href="#L787">787</a> #define ENOMSG 42          /* No message of desired type */</span>
+<span id="L788" class="source-line"><a class="line-number" href="#L788">788</a> #define EIDRM 43           /* Identifier removed */</span>
+<span id="L789" class="source-line"><a class="line-number" href="#L789">789</a> #define ECHRNG 44          /* Channel number out of range */</span>
+<span id="L790" class="source-line"><a class="line-number" href="#L790">790</a> #define EL2NSYNC 45        /* Level 2 not synchronized */</span>
+<span id="L791" class="source-line"><a class="line-number" href="#L791">791</a> #define EL3HLT 46          /* Level 3 halted */</span>
+<span id="L792" class="source-line"><a class="line-number" href="#L792">792</a> #define EL3RST 47          /* Level 3 reset */</span>
+<span id="L793" class="source-line"><a class="line-number" href="#L793">793</a> #define ELNRNG 48          /* Link number out of range */</span>
+<span id="L794" class="source-line"><a class="line-number" href="#L794">794</a> #define EUNATCH 49         /* Protocol driver not attached */</span>
+<span id="L795" class="source-line"><a class="line-number" href="#L795">795</a> #define ENOCSI 50          /* No CSI structure available */</span>
+<span id="L796" class="source-line"><a class="line-number" href="#L796">796</a> #define EL2HLT 51          /* Level 2 halted */</span>
+<span id="L797" class="source-line"><a class="line-number" href="#L797">797</a> #define EBADE 52           /* Invalid exchange */</span>
+<span id="L798" class="source-line"><a class="line-number" href="#L798">798</a> #define EBADR 53           /* Invalid request descriptor */</span>
+<span id="L799" class="source-line"><a class="line-number" href="#L799">799</a> #define EXFULL 54          /* Exchange full */</span>
+<span id="L800" class="source-line"><a class="line-number" href="#L800">800</a> #define ENOANO 55          /* No anode */</span>
+<span id="L801" class="source-line"><a class="line-number" href="#L801">801</a> #define EBADRQC 56         /* Invalid request code */</span>
+<span id="L802" class="source-line"><a class="line-number" href="#L802">802</a> #define EBADSLT 57         /* Invalid slot */</span>
+<span id="L803" class="source-line"><a class="line-number" href="#L803">803</a> </span>
+<span id="L804" class="source-line"><a class="line-number" href="#L804">804</a> #define EDEADLOCK EDEADLK</span>
+<span id="L805" class="source-line"><a class="line-number" href="#L805">805</a> </span>
+<span id="L806" class="source-line"><a class="line-number" href="#L806">806</a> #define EBFONT 59          /* Bad font file format */</span>
+<span id="L807" class="source-line"><a class="line-number" href="#L807">807</a> #define ENOSTR 60          /* Device not a stream */</span>
+<span id="L808" class="source-line"><a class="line-number" href="#L808">808</a> #define ENODATA 61         /* No data available */</span>
+<span id="L809" class="source-line"><a class="line-number" href="#L809">809</a> #define ETIME 62           /* Timer expired */</span>
+<span id="L810" class="source-line"><a class="line-number" href="#L810">810</a> #define ENOSR 63           /* Out of streams resources */</span>
+<span id="L811" class="source-line"><a class="line-number" href="#L811">811</a> #define ENONET 64          /* Machine is not on the network */</span>
+<span id="L812" class="source-line"><a class="line-number" href="#L812">812</a> #define ENOPKG 65          /* Package not installed */</span>
+<span id="L813" class="source-line"><a class="line-number" href="#L813">813</a> #define EREMOTE 66         /* Object is remote */</span>
+<span id="L814" class="source-line"><a class="line-number" href="#L814">814</a> #define ENOLINK 67         /* Link has been severed */</span>
+<span id="L815" class="source-line"><a class="line-number" href="#L815">815</a> #define EADV 68            /* Advertise error */</span>
+<span id="L816" class="source-line"><a class="line-number" href="#L816">816</a> #define ESRMNT 69          /* Srmount error */</span>
+<span id="L817" class="source-line"><a class="line-number" href="#L817">817</a> #define ECOMM 70           /* Communication error on send */</span>
+<span id="L818" class="source-line"><a class="line-number" href="#L818">818</a> #define EPROTO 71          /* Protocol error */</span>
+<span id="L819" class="source-line"><a class="line-number" href="#L819">819</a> #define EMULTIHOP 72       /* Multihop attempted */</span>
+<span id="L820" class="source-line"><a class="line-number" href="#L820">820</a> #define EDOTDOT 73         /* RFS specific error */</span>
+<span id="L821" class="source-line"><a class="line-number" href="#L821">821</a> #define EBADMSG 74         /* Not a data message */</span>
+<span id="L822" class="source-line"><a class="line-number" href="#L822">822</a> #define EOVERFLOW 75       /* Value too large for defined data type */</span>
+<span id="L823" class="source-line"><a class="line-number" href="#L823">823</a> #define ENOTUNIQ 76        /* Name not unique on network */</span>
+<span id="L824" class="source-line"><a class="line-number" href="#L824">824</a> #define EBADFD 77          /* File descriptor in bad state */</span>
+<span id="L825" class="source-line"><a class="line-number" href="#L825">825</a> #define EREMCHG 78         /* Remote address changed */</span>
+<span id="L826" class="source-line"><a class="line-number" href="#L826">826</a> #define ELIBACC 79         /* Can not access a needed shared library */</span>
+<span id="L827" class="source-line"><a class="line-number" href="#L827">827</a> #define ELIBBAD 80         /* Accessing a corrupted shared library */</span>
+<span id="L828" class="source-line"><a class="line-number" href="#L828">828</a> #define ELIBSCN 81         /* .lib section in a.out corrupted */</span>
+<span id="L829" class="source-line"><a class="line-number" href="#L829">829</a> #define ELIBMAX 82         /* Attempting to link in too many shared libraries */</span>
+<span id="L830" class="source-line"><a class="line-number" href="#L830">830</a> #define ELIBEXEC 83        /* Cannot exec a shared library directly */</span>
+<span id="L831" class="source-line"><a class="line-number" href="#L831">831</a> #define EILSEQ 84          /* Illegal byte sequence */</span>
+<span id="L832" class="source-line"><a class="line-number" href="#L832">832</a> #define ERESTART 85        /* Interrupted system call should be restarted */</span>
+<span id="L833" class="source-line"><a class="line-number" href="#L833">833</a> #define ESTRPIPE 86        /* Streams pipe error */</span>
+<span id="L834" class="source-line"><a class="line-number" href="#L834">834</a> #define EUSERS 87          /* Too many users */</span>
+<span id="L835" class="source-line"><a class="line-number" href="#L835">835</a> #define ENOTSOCK 88        /* Socket operation on non-socket */</span>
+<span id="L836" class="source-line"><a class="line-number" href="#L836">836</a> #define EDESTADDRREQ 89    /* Destination address required */</span>
+<span id="L837" class="source-line"><a class="line-number" href="#L837">837</a> #define EMSGSIZE 90        /* Message too long */</span>
+<span id="L838" class="source-line"><a class="line-number" href="#L838">838</a> #define EPROTOTYPE 91      /* Protocol wrong type for socket */</span>
+<span id="L839" class="source-line"><a class="line-number" href="#L839">839</a> #define ENOPROTOOPT 92     /* Protocol not available */</span>
+<span id="L840" class="source-line"><a class="line-number" href="#L840">840</a> #define EPROTONOSUPPORT 93 /* Protocol not supported */</span>
+<span id="L841" class="source-line"><a class="line-number" href="#L841">841</a> #define ESOCKTNOSUPPORT 94 /* Socket type not supported */</span>
+<span id="L842" class="source-line"><a class="line-number" href="#L842">842</a> #define EOPNOTSUPP 95      /* Operation not supported on transport endpoint */</span>
+<span id="L843" class="source-line"><a class="line-number" href="#L843">843</a> #define EPFNOSUPPORT 96    /* Protocol family not supported */</span>
+<span id="L844" class="source-line"><a class="line-number" href="#L844">844</a> #define EAFNOSUPPORT 97    /* Address family not supported by protocol */</span>
+<span id="L845" class="source-line"><a class="line-number" href="#L845">845</a> #define EADDRINUSE 98      /* Address already in use */</span>
+<span id="L846" class="source-line"><a class="line-number" href="#L846">846</a> #define EADDRNOTAVAIL 99   /* Cannot assign requested address */</span>
+<span id="L847" class="source-line"><a class="line-number" href="#L847">847</a> #define ENETDOWN 100       /* Network is down */</span>
+<span id="L848" class="source-line"><a class="line-number" href="#L848">848</a> #define ENETUNREACH 101    /* Network is unreachable */</span>
+<span id="L849" class="source-line"><a class="line-number" href="#L849">849</a> #define ENETRESET 102      /* Network dropped connection because of reset */</span>
+<span id="L850" class="source-line"><a class="line-number" href="#L850">850</a> #define ECONNABORTED 103   /* Software caused connection abort */</span>
+<span id="L851" class="source-line"><a class="line-number" href="#L851">851</a> #define ECONNRESET 104     /* Connection reset by peer */</span>
+<span id="L852" class="source-line"><a class="line-number" href="#L852">852</a> #define ENOBUFS 105        /* No buffer space available */</span>
+<span id="L853" class="source-line"><a class="line-number" href="#L853">853</a> #define EISCONN 106        /* Transport endpoint is already connected */</span>
+<span id="L854" class="source-line"><a class="line-number" href="#L854">854</a> #define ENOTCONN 107       /* Transport endpoint is not connected */</span>
+<span id="L855" class="source-line"><a class="line-number" href="#L855">855</a> #define ESHUTDOWN 108      /* Cannot send after transport endpoint shutdown */</span>
+<span id="L856" class="source-line"><a class="line-number" href="#L856">856</a> #define ETOOMANYREFS 109   /* Too many references: cannot splice */</span>
+<span id="L857" class="source-line"><a class="line-number" href="#L857">857</a> #define ETIMEDOUT 110      /* Connection timed out */</span>
+<span id="L858" class="source-line"><a class="line-number" href="#L858">858</a> #define ECONNREFUSED 111   /* Connection refused */</span>
+<span id="L859" class="source-line"><a class="line-number" href="#L859">859</a> #define EHOSTDOWN 112      /* Host is down */</span>
+<span id="L860" class="source-line"><a class="line-number" href="#L860">860</a> #define EHOSTUNREACH 113   /* No route to host */</span>
+<span id="L861" class="source-line"><a class="line-number" href="#L861">861</a> #define EALREADY 114       /* Operation already in progress */</span>
+<span id="L862" class="source-line"><a class="line-number" href="#L862">862</a> #define EINPROGRESS 115    /* Operation now in progress */</span>
+<span id="L863" class="source-line"><a class="line-number" href="#L863">863</a> #define ESTALE 116         /* Stale file handle */</span>
+<span id="L864" class="source-line"><a class="line-number" href="#L864">864</a> #define EUCLEAN 117        /* Structure needs cleaning */</span>
+<span id="L865" class="source-line"><a class="line-number" href="#L865">865</a> #define ENOTNAM 118        /* Not a XENIX named type file */</span>
+<span id="L866" class="source-line"><a class="line-number" href="#L866">866</a> #define ENAVAIL 119        /* No XENIX semaphores available */</span>
+<span id="L867" class="source-line"><a class="line-number" href="#L867">867</a> #define EISNAM 120         /* Is a named type file */</span>
+<span id="L868" class="source-line"><a class="line-number" href="#L868">868</a> #define EREMOTEIO 121      /* Remote I/O error */</span>
+<span id="L869" class="source-line"><a class="line-number" href="#L869">869</a> #define EDQUOT 122         /* Quota exceeded */</span>
+<span id="L870" class="source-line"><a class="line-number" href="#L870">870</a> </span>
+<span id="L871" class="source-line"><a class="line-number" href="#L871">871</a> #define ENOMEDIUM 123    /* No medium found */</span>
+<span id="L872" class="source-line"><a class="line-number" href="#L872">872</a> #define EMEDIUMTYPE 124  /* Wrong medium type */</span>
+<span id="L873" class="source-line"><a class="line-number" href="#L873">873</a> #define ECANCELED 125    /* Operation Canceled */</span>
+<span id="L874" class="source-line"><a class="line-number" href="#L874">874</a> #define ENOKEY 126       /* Required key not available */</span>
+<span id="L875" class="source-line"><a class="line-number" href="#L875">875</a> #define EKEYEXPIRED 127  /* Key has expired */</span>
+<span id="L876" class="source-line"><a class="line-number" href="#L876">876</a> #define EKEYREVOKED 128  /* Key has been revoked */</span>
+<span id="L877" class="source-line"><a class="line-number" href="#L877">877</a> #define EKEYREJECTED 129 /* Key was rejected by service */</span>
+<span id="L878" class="source-line"><a class="line-number" href="#L878">878</a> </span>
+<span id="L879" class="source-line"><a class="line-number" href="#L879">879</a> /* for robust mutexes */</span>
+<span id="L880" class="source-line"><a class="line-number" href="#L880">880</a> #define EOWNERDEAD 130      /* Owner died */</span>
+<span id="L881" class="source-line"><a class="line-number" href="#L881">881</a> #define ENOTRECOVERABLE 131 /* State not recoverable */</span>
+<span id="L882" class="source-line"><a class="line-number" href="#L882">882</a> </span>
+<span id="L883" class="source-line"><a class="line-number" href="#L883">883</a> #define ERFKILL 132 /* Operation not possible due to RF-kill */</span>
+<span id="L884" class="source-line"><a class="line-number" href="#L884">884</a> </span>
+<span id="L885" class="source-line"><a class="line-number" href="#L885">885</a> #define EHWPOISON 133 /* Memory page has hardware error */</span>
+<span id="L886" class="source-line"><a class="line-number" href="#L886">886</a> </span>
+<span id="L887" class="source-line"><a class="line-number" href="#L887">887</a> #endif</span>
+<span id="L888" class="source-line"><a class="line-number" href="#L888">888</a> };      // namespace error</span>
+<span id="L889" class="source-line"><a class="line-number" href="#L889">889</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../about.html">Attribution and licenses</a> · <a href="../index.html">Contents</a></p></div></div>
+</body></html>

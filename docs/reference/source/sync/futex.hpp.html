@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sync/futex.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">sync/futex.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/sync/futex.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../types.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../errno.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #if defined(__micron_arch_wasm32)</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;../bits/wasm/futex.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;../bits/wasm/time.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #else</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../kernel.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../linux/sys/time.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../syscall.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #endif</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../type_traits.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> </span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;../atomic/atomic.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #include &quot;../atomic/intrin.hpp&quot;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #include &quot;../except.hpp&quot;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> </span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> namespace micron</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> {</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> </span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> constexpr static const u32 futex_wait = 0;</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> constexpr static const u32 futex_wake = 1;</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> constexpr static const u32 futex_fd = 2;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> constexpr static const u32 futex_requeue = 3;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> constexpr static const u32 futex_cmp_requeue = 4;</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> constexpr static const u32 futex_wake_op = 5;</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> constexpr static const u32 futex_lock_pi = 6;</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> constexpr static const u32 futex_unlock_pi = 7;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> constexpr static const u32 futex_trylock_pi = 8;</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> constexpr static const u32 futex_wait_bitset = 9;</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> constexpr static const u32 futex_wake_bitset = 10;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> constexpr static const u32 futex_wait_requeue_pi = 11;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> constexpr static const u32 futex_cmp_requeue_pi = 12;</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> constexpr static const u32 futex_futex_lock_pi2 = 13;      // &gt;=5.14</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> constexpr static const u32 futex_private_flag = 128;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> constexpr static const u32 futex_clock_realtime = 256;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> </span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> #if defined(__micron_arch_wasm32)</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> inline long</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> __futex(u32 *addr, int op, u32 val, timespec_t *timeout, u32 *addr2, u32 val2) noexcept</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> {</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   return wasm::futex(addr, op, val, timeout, addr2, val2);</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> }</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> #else</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> #if defined(__micron_arch_width_32)</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> struct __futex_old_ts {</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>   i32 tv_sec;</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   i32 tv_nsec;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> };</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> </span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> inline kernel::probe_gate __futex_time64_gate{};</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> #endif</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> </span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> inline auto</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> __futex(u32 *addr, int futex, u32 val, timespec_t *timeout, u32 *addr2, u32 val2)</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> {</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> #if defined(__micron_arch_width_32)</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   if ( timeout != nullptr ) {</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>     if ( __futex_time64_gate.open(kernel::feature::futex_time64) ) [[likely]] {</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>       const long r = micron::syscall(SYS_futex_time64, addr, futex, val, timeout, addr2, val2);</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>       // demote on ENOSYS only</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>       if ( r != -static_cast&lt;long&gt;(error::bad_syscall) ) return r;</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>       __futex_time64_gate.demote();</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>     }</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     // pre-5.1: narrow into the old layout rather than pass a struct the kernel will misread</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>     const __futex_old_ts __old{ static_cast&lt;i32&gt;(timeout-&gt;tv_sec &gt; 0x7FFF&#x27;FFFFll ? 0x7FFF&#x27;FFFFll : timeout-&gt;tv_sec),</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>                                 static_cast&lt;i32&gt;(timeout-&gt;tv_nsec) };</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>     return micron::syscall(SYS_futex, addr, futex, val, &amp;__old, addr2, val2);</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>   }</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> #endif</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   return micron::syscall(SYS_futex, addr, futex, val, timeout, addr2, val2);</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> }</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> </span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> #endif</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> </span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> // A single recoverable wait. Callers recheck their predicate after every</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> // return, including interruptions, value changes and spurious wakeups.</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> [[nodiscard]] inline int</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> try_wait_futex(u32 *ptr, u32 expected, timespec_t *timeout = nullptr) noexcept</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> {</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   if ( !ptr ) return -error::invalid_arg;</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>   if ( atom::load(ptr, static_cast&lt;int&gt;(memory_order_acquire)) != expected ) return 0;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>   return static_cast&lt;int&gt;(__futex(ptr, futex_wait | futex_private_flag, expected, timeout, nullptr, 0));</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> }</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> </span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> template&lt;typename T&gt;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>   requires(sizeof(T) == 4)</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> void</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> wait_futex(T *ptr, decay_t&lt;T&gt; expected)</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> {</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   while ( atom::load(ptr, (int)memory_order_relaxed) == expected ) {</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>     auto ret = __futex(reinterpret_cast&lt;u32 *&gt;(const_cast&lt;decay_t&lt;T&gt; *&gt;(ptr)), futex_wait | futex_private_flag, static_cast&lt;u32&gt;(expected),</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>                        nullptr, nullptr, 0);</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>     if ( ret &lt; 0 and ret != -11 and ret != -4 ) {</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>       micron::exc&lt;except::thread_error&gt;(&quot;futex wait failed&quot;);</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>     }</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   }</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> }</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> </span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> template&lt;typename T&gt;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>   requires(sizeof(T) == 4)</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> void</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> release_futex(T *ptr, decay_t&lt;T&gt; to_store, u32 cnt = 1)</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> {</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   atom::store(ptr, to_store, (int)memory_order_release);</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>   __futex(reinterpret_cast&lt;u32 *&gt;(ptr), futex_wake | futex_private_flag, cnt, nullptr, nullptr, 0);</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> }</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> </span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> template&lt;typename T&gt;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>   requires(sizeof(T) == 4)</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> void</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> wake_futex(T *ptr, int cnt = 1)</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> {</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>   __futex(reinterpret_cast&lt;u32 *&gt;(const_cast&lt;decay_t&lt;T&gt; *&gt;(ptr)), futex_wake | futex_private_flag, static_cast&lt;u32&gt;(cnt), nullptr, nullptr,</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>           0);</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> }</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> </span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> // __D is the unlocked value</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> // __L is the locked value</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> template&lt;typename T = u32, T __D = 0, T __L = 1&gt;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>   requires(micron::is_integral_v&lt;T&gt; &amp;&amp; __D != __L)</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> struct futex {</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   T __value;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>   ~futex() = default;</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   futex(void) : __value(__D) { };</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>   futex(const futex &amp;) = delete;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>   futex(futex &amp;&amp;) = delete;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>   futex &amp;operator=(const futex &amp;) = delete;</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>   futex &amp;operator=(futex &amp;&amp;) = delete;</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> </span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>   void</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>   wait()</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>   {</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>     for ( ;; ) {</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>       T expected = __D;</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>       if ( atom::cmp_exchange_weak(&amp;__value, &amp;expected, __L) ) return;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>       auto ret</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>           = __futex(reinterpret_cast&lt;u32 *&gt;(&amp;__value), futex_wait | futex_private_flag, static_cast&lt;u32&gt;(expected), nullptr, nullptr, 0);</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>       if ( ret &lt; 0 &amp;&amp; ret != -11 &amp;&amp; ret != -4 ) {</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>         micron::exc&lt;except::thread_error&gt;(&quot;futex wait failed&quot;);</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>       }</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     }</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>   }</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> </span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>   void</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   release()</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   {</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     atom::store(&amp;__value, __D, atomic_seq_cst);</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     __futex(reinterpret_cast&lt;u32 *&gt;(&amp;__value), futex_wake | futex_private_flag, 1, nullptr, nullptr, 0);</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>   }</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a> };</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> </span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

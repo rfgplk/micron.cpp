@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/splines/tensor.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/splines/tensor.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/splines.html">Splines and interpolation</a></div><p>Defined in header <code>&lt;micron/math/splines/tensor.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/splines/tensor.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-5cf43df0978bc89b">micron::math::splines::tensor_bspline</code></td><td>struct; line 29</td></tr><tr class="t-dsc"><td><code id="s-e1a11372b786f531">micron::math::splines::tensor_bspline::degree</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-f8cf1734e45c2358">micron::math::splines::tensor_bspline::knots</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-49e6bef1c4618784">micron::math::splines::tensor_bspline::shape</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-f2b115936386f8cf">micron::math::splines::tensor_bspline::ctrl</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-4ca7dc4bda06403f">micron::math::splines::tensor_bspline::last_hit</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-57e470fa0b32cf2a">micron::math::splines::tensor_bspline::mode</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-1320af9157837997">micron::math::splines::tensor_nurbs</code></td><td>struct; line 41</td></tr><tr class="t-dsc"><td><code id="s-e4086706c21fcd41">micron::math::splines::tensor_nurbs::degree</code></td><td>member; line 42</td></tr><tr class="t-dsc"><td><code id="s-19e28d5505892858">micron::math::splines::tensor_nurbs::knots</code></td><td>member; line 43</td></tr><tr class="t-dsc"><td><code id="s-ad4d8b5a7ea5d3ce">micron::math::splines::tensor_nurbs::shape</code></td><td>member; line 45</td></tr><tr class="t-dsc"><td><code id="s-7b0ce6ea8e4cc466">micron::math::splines::tensor_nurbs::ctrl</code></td><td>member; line 46</td></tr><tr class="t-dsc"><td><code id="s-de83538a342eb107">micron::math::splines::tensor_nurbs::weights</code></td><td>member; line 47</td></tr><tr class="t-dsc"><td><code id="s-0a52c044491743ac">micron::math::splines::tensor_nurbs::last_hit</code></td><td>member; line 48</td></tr><tr class="t-dsc"><td><code id="s-72898757f75c4ba7">micron::math::splines::tensor_nurbs::mode</code></td><td>member; line 49</td></tr><tr class="t-dsc"><td><a href="#f-edafebcd3a5ee5d3">micron::math::splines::rebuild_basis_cache(tensor_bspline&lt;F, V, P&gt; &amp;s) noexcept</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-94ceb161498b55bd">micron::math::splines::rebuild_basis_cache(tensor_nurbs&lt;F, V, P&gt; &amp;s) noexcept</a></td><td>function; line 62</td></tr><tr class="t-dsc"><td><a href="#f-6f381c10bc6184b9">micron::math::splines::invalidate_basis_cache(tensor_bspline&lt;F, V, P&gt; &amp;s) noexcept</a></td><td>function; line 70</td></tr><tr class="t-dsc"><td><a href="#f-ea8357c02a350c2a">micron::math::splines::invalidate_basis_cache(tensor_nurbs&lt;F, V, P&gt; &amp;s) noexcept</a></td><td>function; line 77</td></tr><tr class="t-dsc"><td><a href="#f-d8a76a5353ee9812">micron::math::splines::make_tensor_bspline(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], raw_slice&lt;const V&gt; ctrl,
+                    build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 261</td></tr><tr class="t-dsc"><td><a href="#f-4dfa2924d4d50d7d">micron::math::splines::make_tensor_nurbs(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], raw_slice&lt;const V&gt; ctrl,
+                  raw_slice&lt;const F&gt; weights, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 290</td></tr><tr class="t-dsc"><td><a href="#f-53d116d93b45829f">micron::math::splines::evaluate(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *coords) noexcept</a></td><td>function; line 328</td></tr><tr class="t-dsc"><td><a href="#f-6be7021ee1f535e9">micron::math::splines::evaluate(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *coords) noexcept</a></td><td>function; line 341</td></tr><tr class="t-dsc"><td><a href="#f-52826731023468a7">micron::math::splines::evaluate(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *__restrict__ coords, V *__restrict__ out, usize count) noexcept</a></td><td>function; line 357</td></tr><tr class="t-dsc"><td><a href="#f-e1336abee61973b7">micron::math::splines::evaluate(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *__restrict__ coords, V *__restrict__ out, usize count) noexcept</a></td><td>function; line 364</td></tr><tr class="t-dsc"><td><a href="#f-4b4b59fd407bb292">micron::math::splines::partial_derivative(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *coords, const u32 *orders) noexcept</a></td><td>function; line 371</td></tr><tr class="t-dsc"><td><a href="#f-d43f860852261e8c">micron::math::splines::partial_derivative(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *coords, usize axis) noexcept</a></td><td>function; line 384</td></tr><tr class="t-dsc"><td><a href="#f-bb3e0e194728acca">micron::math::splines::gradient(const tensor_bspline&lt;F, F, P&gt; &amp;s, const F *coords) noexcept</a></td><td>function; line 409</td></tr><tr class="t-dsc"><td><a href="#f-8e59cb9dc0bed95d">micron::math::splines::hessian(const tensor_bspline&lt;F, F, P&gt; &amp;s, const F *coords) noexcept</a></td><td>function; line 422</td></tr><tr class="t-dsc"><td><a href="#f-a5e6f67beb1dc8f9">micron::math::splines::surface_normal(const tensor_bspline&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s, const F *coords) noexcept</a></td><td>function; line 439</td></tr><tr class="t-dsc"><td><a href="#f-6eba4f7ad85ad21d">micron::math::splines::surface_normal(const tensor_nurbs&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s, const F *coords) noexcept</a></td><td>function; line 453</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-edafebcd3a5ee5d3"><h3><code>micron::math::splines::rebuild_basis_cache(tensor_bspline&lt;F, V, P&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+rebuild_basis_cache(tensor_bspline&lt;F, V, P&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>tensor_bspline&lt;F, V, P&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+rebuild_basis_cache(tensor_bspline&lt;F, V, P&gt; &amp;s) noexcept
+{
+  for ( usize axis = 0; axis &lt; P; ++axis )
+    __impl_bspline::prepare_basis_inverse&lt;F&gt;(s.knots[axis].data(), s.shape[axis], s.degree[axis], s.__basis_inverse[axis]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bspline.hpp.html#f-769316ab0bfaaadf">__impl_bspline::prepare_basis_inverse&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-94ceb161498b55bd"><h3><code>micron::math::splines::rebuild_basis_cache(tensor_nurbs&lt;F, V, P&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+rebuild_basis_cache(tensor_nurbs&lt;F, V, P&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>tensor_nurbs&lt;F, V, P&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+rebuild_basis_cache(tensor_nurbs&lt;F, V, P&gt; &amp;s) noexcept
+{
+  for ( usize axis = 0; axis &lt; P; ++axis )
+    __impl_bspline::prepare_basis_inverse&lt;F&gt;(s.knots[axis].data(), s.shape[axis], s.degree[axis], s.__basis_inverse[axis]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bspline.hpp.html#f-769316ab0bfaaadf">__impl_bspline::prepare_basis_inverse&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-6f381c10bc6184b9"><h3><code>micron::math::splines::invalidate_basis_cache(tensor_bspline&lt;F, V, P&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L70">line 70</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+invalidate_basis_cache(tensor_bspline&lt;F, V, P&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>tensor_bspline&lt;F, V, P&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+invalidate_basis_cache(tensor_bspline&lt;F, V, P&gt; &amp;s) noexcept
+{
+  for ( usize axis = 0; axis &lt; P; ++axis ) s.__basis_inverse[axis].set_size(0);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ea8357c02a350c2a"><h3><code>micron::math::splines::invalidate_basis_cache(tensor_nurbs&lt;F, V, P&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L77">line 77</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+invalidate_basis_cache(tensor_nurbs&lt;F, V, P&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>tensor_nurbs&lt;F, V, P&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+invalidate_basis_cache(tensor_nurbs&lt;F, V, P&gt; &amp;s) noexcept
+{
+  for ( usize axis = 0; axis &lt; P; ++axis ) s.__basis_inverse[axis].set_size(0);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d8a76a5353ee9812"><h3><code>micron::math::splines::make_tensor_bspline(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], raw_slice&lt;const V&gt; ctrl,
+                    build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L261">line 261</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard]] inline tensor_bspline&lt;F, V, P&gt;
+make_tensor_bspline(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], raw_slice&lt;const V&gt; ctrl,
+                    build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const raw_slice&lt;const F&gt; (&amp;knots)[P]</code></li><li><code>const usize (&amp;shape)[P]</code></li><li><code>const u32 (&amp;degree)[P]</code></li><li><code>raw_slice&lt;const V&gt; ctrl</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard]] inline tensor_bspline&lt;F, V, P&gt;
+make_tensor_bspline(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], raw_slice&lt;const V&gt; ctrl,
+                    build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  tensor_bspline&lt;F, V, P&gt; out{};
+  usize total = 0;
+  if ( !__impl_tensor_splines::validate_axes&lt;F, P&gt;(knots, shape, degree, total) ) {
+    if ( info ) info-&gt;status = build_status::invalid_argument;
+    return out;
+  }
+  if ( ctrl.size() != total ) {
+    if ( info ) info-&gt;status = build_status::size_mismatch;
+    return out;
+  }
+  for ( usize axis = 0; axis &lt; P; ++axis ) {
+    out.degree[axis] = degree[axis];
+    out.shape[axis] = shape[axis];
+    out.mode[axis] = extension_mode::clamp;
+    out.knots[axis].reserve(knots[axis].size());
+    for ( usize i = 0; i &lt; knots[axis].size(); ++i ) out.knots[axis].emplace_back(knots[axis][i]);
+    __impl_bspline::prepare_basis_inverse&lt;F&gt;(out.knots[axis].data(), shape[axis], degree[axis], out.__basis_inverse[axis]);
+  }
+  out.ctrl.reserve(total);
+  for ( usize i = 0; i &lt; total; ++i ) out.ctrl.emplace_back(ctrl[i]);
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L268">line 268</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L272">line 272</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L285">line 285</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-8b246f0c6c09341b">__impl_tensor_splines::validate_axes&lt;F, P&gt;</a>, <a href="bspline.hpp.html#f-769316ab0bfaaadf">__impl_bspline::prepare_basis_inverse&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-4dfa2924d4d50d7d"><h3><code>micron::math::splines::make_tensor_nurbs(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], raw_slice&lt;const V&gt; ctrl,
+                  raw_slice&lt;const F&gt; weights, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L290">line 290</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard]] inline tensor_nurbs&lt;F, V, P&gt;
+make_tensor_nurbs(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], raw_slice&lt;const V&gt; ctrl,
+                  raw_slice&lt;const F&gt; weights, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const raw_slice&lt;const F&gt; (&amp;knots)[P]</code></li><li><code>const usize (&amp;shape)[P]</code></li><li><code>const u32 (&amp;degree)[P]</code></li><li><code>raw_slice&lt;const V&gt; ctrl</code></li><li><code>raw_slice&lt;const F&gt; weights</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard]] inline tensor_nurbs&lt;F, V, P&gt;
+make_tensor_nurbs(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], raw_slice&lt;const V&gt; ctrl,
+                  raw_slice&lt;const F&gt; weights, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  tensor_nurbs&lt;F, V, P&gt; out{};
+  usize total = 0;
+  if ( !__impl_tensor_splines::validate_axes&lt;F, P&gt;(knots, shape, degree, total) ) {
+    if ( info ) info-&gt;status = build_status::invalid_argument;
+    return out;
+  }
+  if ( ctrl.size() != total || weights.size() != total ) {
+    if ( info ) info-&gt;status = build_status::size_mismatch;
+    return out;
+  }
+  for ( usize i = 0; i &lt; total; ++i )
+    if ( !(weights[i] &gt; F(0)) ) {
+      if ( info ) info-&gt;status = build_status::invalid_argument;
+      return out;
+    }
+  for ( usize axis = 0; axis &lt; P; ++axis ) {
+    out.degree[axis] = degree[axis];
+    out.shape[axis] = shape[axis];
+    out.mode[axis] = extension_mode::clamp;
+    out.knots[axis].reserve(knots[axis].size());
+    for ( usize i = 0; i &lt; knots[axis].size(); ++i ) out.knots[axis].emplace_back(knots[axis][i]);
+    __impl_bspline::prepare_basis_inverse&lt;F&gt;(out.knots[axis].data(), shape[axis], degree[axis], out.__basis_inverse[axis]);
+  }
+  out.ctrl.reserve(total);
+  out.weights.reserve(total);
+  for ( usize i = 0; i &lt; total; ++i ) {
+    out.ctrl.emplace_back(ctrl[i]);
+    out.weights.emplace_back(weights[i]);
+  }
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L297">line 297</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L301">line 301</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L306">line 306</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L323">line 323</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-8b246f0c6c09341b">__impl_tensor_splines::validate_axes&lt;F, P&gt;</a>, <a href="bspline.hpp.html#f-769316ab0bfaaadf">__impl_bspline::prepare_basis_inverse&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-53d116d93b45829f"><h3><code>micron::math::splines::evaluate(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *coords) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L328">line 328</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard, gnu::flatten]] inline V
+evaluate(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *coords) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_bspline&lt;F, V, P&gt; &amp;s</code></li><li><code>const F *coords</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard, gnu::flatten]] inline V
+evaluate(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *coords) noexcept
+{
+  if ( s.ctrl.size() == 0 || !coords ) return {};
+  usize span[P]{};
+  F values[P][bspline_max_degree + 1]{};
+  if ( !__impl_tensor_splines::prepare_value_basis&lt;F, P&gt;(s.degree, s.knots, s.shape, s.mode, s.__basis_inverse, s.last_hit, coords, span,
+                                                         values) )
+    return {};
+  return __impl_tensor_splines::contract&lt;V, F, P&gt;(s.degree, s.shape, span, values, s.ctrl.data(), nullptr);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L330">line 330</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L335">line 335</a></td></tr><tr class="t-dsc"><td><code>__impl_tensor_splines::contract&lt;V, F, P&gt;(s.degree, s.shape, span, values, s.ctrl.data(), nullptr)</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L336">line 336</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-3d70024f98ff0063">__impl_tensor_splines::prepare_value_basis&lt;F, P&gt;</a>, <a href="tensor.hpp.html#f-ab89ce4601673ad7">__impl_tensor_splines::contract&lt;V, F, P&gt;</a>.</p></section><section class="function-entry" id="f-6be7021ee1f535e9"><h3><code>micron::math::splines::evaluate(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *coords) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L341">line 341</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard, gnu::flatten]] inline V
+evaluate(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *coords) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_nurbs&lt;F, V, P&gt; &amp;s</code></li><li><code>const F *coords</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard, gnu::flatten]] inline V
+evaluate(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *coords) noexcept
+{
+  if ( s.ctrl.size() == 0 || !coords ) return {};
+  usize span[P]{};
+  F values[P][bspline_max_degree + 1]{};
+  if ( !__impl_tensor_splines::prepare_value_basis&lt;F, P&gt;(s.degree, s.knots, s.shape, s.mode, s.__basis_inverse, s.last_hit, coords, span,
+                                                         values) )
+    return {};
+  F denominator = F(0);
+  V out = __impl_tensor_splines::contract&lt;V, F, P&gt;(s.degree, s.shape, span, values, s.ctrl.data(), s.weights.data(), &amp;denominator);
+  if ( denominator != F(0) ) __impl_tensor_splines::scale_in_place&lt;V, F&gt;(out, F(1) / denominator);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L348">line 348</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L352">line 352</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-3d70024f98ff0063">__impl_tensor_splines::prepare_value_basis&lt;F, P&gt;</a>, <a href="tensor.hpp.html#f-ab89ce4601673ad7">__impl_tensor_splines::contract&lt;V, F, P&gt;</a>, <a href="tensor.hpp.html#f-b8541d4a26ac512c">__impl_tensor_splines::scale_in_place&lt;V, F&gt;</a>.</p></section><section class="function-entry" id="f-52826731023468a7"><h3><code>micron::math::splines::evaluate(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *__restrict__ coords, V *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L357">line 357</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+evaluate(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *__restrict__ coords, V *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_bspline&lt;F, V, P&gt; &amp;s</code></li><li><code>const F *__restrict__ coords</code></li><li><code>V *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+evaluate(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *__restrict__ coords, V *__restrict__ out, usize count) noexcept
+{
+  for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F, V, P&gt;(s, coords + i * P);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F, V, P&gt;</a>.</p></section><section class="function-entry" id="f-e1336abee61973b7"><h3><code>micron::math::splines::evaluate(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *__restrict__ coords, V *__restrict__ out, usize count) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L364">line 364</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+evaluate(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *__restrict__ coords, V *__restrict__ out, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_nurbs&lt;F, V, P&gt; &amp;s</code></li><li><code>const F *__restrict__ coords</code></li><li><code>V *__restrict__ out</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+inline void
+evaluate(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *__restrict__ coords, V *__restrict__ out, usize count) noexcept
+{
+  for ( usize i = 0; i &lt; count; ++i ) out[i] = evaluate&lt;F, V, P&gt;(s, coords + i * P);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F, V, P&gt;</a>.</p></section><section class="function-entry" id="f-4b4b59fd407bb292"><h3><code>micron::math::splines::partial_derivative(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *coords, const u32 *orders) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L371">line 371</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard]] inline V
+partial_derivative(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *coords, const u32 *orders) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_bspline&lt;F, V, P&gt; &amp;s</code></li><li><code>const F *coords</code></li><li><code>const u32 *orders</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard]] inline V
+partial_derivative(const tensor_bspline&lt;F, V, P&gt; &amp;s, const F *coords, const u32 *orders) noexcept
+{
+  if ( s.ctrl.size() == 0 || !coords || !orders ) return {};
+  usize span[P]{};
+  F values[P][bspline_max_degree + 1]{};
+  if ( !__impl_tensor_splines::prepare_basis&lt;F, P&gt;(s.degree, s.knots, s.shape, s.mode, s.__basis_inverse, s.last_hit, coords, orders, span,
+                                                   values) )
+    return {};
+  return __impl_tensor_splines::contract&lt;V, F, P&gt;(s.degree, s.shape, span, values, s.ctrl.data(), nullptr);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L373">line 373</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L378">line 378</a></td></tr><tr class="t-dsc"><td><code>__impl_tensor_splines::contract&lt;V, F, P&gt;(s.degree, s.shape, span, values, s.ctrl.data(), nullptr)</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L379">line 379</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-1e6b9e2c648169fb">__impl_tensor_splines::prepare_basis&lt;F, P&gt;</a>, <a href="tensor.hpp.html#f-ab89ce4601673ad7">__impl_tensor_splines::contract&lt;V, F, P&gt;</a>.</p></section><section class="function-entry" id="f-d43f860852261e8c"><h3><code>micron::math::splines::partial_derivative(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *coords, usize axis) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L384">line 384</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard]] inline V
+partial_derivative(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *coords, usize axis) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_nurbs&lt;F, V, P&gt; &amp;s</code></li><li><code>const F *coords</code></li><li><code>usize axis</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V, usize P&gt;
+[[nodiscard]] inline V
+partial_derivative(const tensor_nurbs&lt;F, V, P&gt; &amp;s, const F *coords, usize axis) noexcept
+{
+  if ( s.ctrl.size() == 0 || !coords || axis &gt;= P ) return {};
+  usize span[P]{};
+  F base[P][bspline_max_degree + 1]{};
+  F deriv[P][bspline_max_degree + 1]{};
+  u32 orders[P]{};
+  if ( !__impl_tensor_splines::prepare_basis&lt;F, P&gt;(s.degree, s.knots, s.shape, s.mode, s.__basis_inverse, s.last_hit, coords, nullptr, span,
+                                                   base) )
+    return {};
+  orders[axis] = 1;
+  if ( !__impl_tensor_splines::prepare_basis&lt;F, P&gt;(s.degree, s.knots, s.shape, s.mode, s.__basis_inverse, s.last_hit, coords, orders, span,
+                                                   deriv) )
+    return {};
+  F weight = F(0), weight_deriv = F(0);
+  V value = __impl_tensor_splines::contract&lt;V, F, P&gt;(s.degree, s.shape, span, base, s.ctrl.data(), s.weights.data(), &amp;weight);
+  V value_deriv = __impl_tensor_splines::contract&lt;V, F, P&gt;(s.degree, s.shape, span, deriv, s.ctrl.data(), s.weights.data(), &amp;weight_deriv);
+  if ( weight == F(0) ) return {};
+  __impl_tensor_splines::scale_in_place&lt;V, F&gt;(value_deriv, F(1) / weight);
+  __impl_tensor_splines::scaled_add&lt;V, F&gt;(value_deriv, value, -weight_deriv / (weight * weight));
+  return value_deriv;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L386">line 386</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L393">line 393</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L397">line 397</a></td></tr><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L401">line 401</a></td></tr><tr class="t-dsc"><td><code>value_deriv</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L404">line 404</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-1e6b9e2c648169fb">__impl_tensor_splines::prepare_basis&lt;F, P&gt;</a>, <a href="tensor.hpp.html#f-ab89ce4601673ad7">__impl_tensor_splines::contract&lt;V, F, P&gt;</a>, <a href="tensor.hpp.html#f-b8541d4a26ac512c">__impl_tensor_splines::scale_in_place&lt;V, F&gt;</a>, <a href="tensor.hpp.html#f-76e9f902f82ec572">__impl_tensor_splines::scaled_add&lt;V, F&gt;</a>.</p></section><section class="function-entry" id="f-bb3e0e194728acca"><h3><code>micron::math::splines::gradient(const tensor_bspline&lt;F, F, P&gt; &amp;s, const F *coords) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L409">line 409</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard]] inline vec&lt;F, P&gt;
+gradient(const tensor_bspline&lt;F, F, P&gt; &amp;s, const F *coords) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_bspline&lt;F, F, P&gt; &amp;s</code></li><li><code>const F *coords</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard]] inline vec&lt;F, P&gt;
+gradient(const tensor_bspline&lt;F, F, P&gt; &amp;s, const F *coords) noexcept
+{
+  vec&lt;F, P&gt; out{};
+  for ( usize axis = 0; axis &lt; P; ++axis ) {
+    u32 orders[P]{};
+    orders[axis] = 1;
+    out[axis] = partial_derivative&lt;F, F, P&gt;(s, coords, orders);
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L417">line 417</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-4b4b59fd407bb292">partial_derivative&lt;F, F, P&gt;</a>.</p></section><section class="function-entry" id="f-8e59cb9dc0bed95d"><h3><code>micron::math::splines::hessian(const tensor_bspline&lt;F, F, P&gt; &amp;s, const F *coords) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L422">line 422</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard]] inline mat&lt;F, P, P&gt;
+hessian(const tensor_bspline&lt;F, F, P&gt; &amp;s, const F *coords) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_bspline&lt;F, F, P&gt; &amp;s</code></li><li><code>const F *coords</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard]] inline mat&lt;F, P, P&gt;
+hessian(const tensor_bspline&lt;F, F, P&gt; &amp;s, const F *coords) noexcept
+{
+  mat&lt;F, P, P&gt; out{};
+  for ( usize row = 0; row &lt; P; ++row )
+    for ( usize col = row; col &lt; P; ++col ) {
+      u32 orders[P]{};
+      ++orders[row];
+      ++orders[col];
+      const F value = partial_derivative&lt;F, F, P&gt;(s, coords, orders);
+      out.at(row, col) = value;
+      out.at(col, row) = value;
+    }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L434">line 434</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-4b4b59fd407bb292">partial_derivative&lt;F, F, P&gt;</a>.</p></section><section class="function-entry" id="f-a5e6f67beb1dc8f9"><h3><code>micron::math::splines::surface_normal(const tensor_bspline&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s, const F *coords) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L439">line 439</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vec&lt;F, 3&gt;
+surface_normal(const tensor_bspline&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s, const F *coords) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_bspline&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s</code></li><li><code>const F *coords</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vec&lt;F, 3&gt;
+surface_normal(const tensor_bspline&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s, const F *coords) noexcept
+{
+  const u32 du[2] = { 1, 0 };
+  const u32 dv[2] = { 0, 1 };
+  const auto a = partial_derivative&lt;F, vec&lt;F, 3&gt;, 2&gt;(s, coords, du);
+  const auto b = partial_derivative&lt;F, vec&lt;F, 3&gt;, 2&gt;(s, coords, dv);
+  vec&lt;F, 3&gt; out{ a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0] };
+  const F squared = out[0] * out[0] + out[1] * out[1] + out[2] * out[2];
+  if ( squared &gt; F(0) ) out *= F(1) / F(math::fsqrt(squared));
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L448">line 448</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-6eba4f7ad85ad21d"><h3><code>micron::math::splines::surface_normal(const tensor_nurbs&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s, const F *coords) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L453">line 453</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vec&lt;F, 3&gt;
+surface_normal(const tensor_nurbs&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s, const F *coords) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tensor_nurbs&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s</code></li><li><code>const F *coords</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vec&lt;F, 3&gt;
+surface_normal(const tensor_nurbs&lt;F, vec&lt;F, 3&gt;, 2&gt; &amp;s, const F *coords) noexcept
+{
+  const auto a = partial_derivative&lt;F, vec&lt;F, 3&gt;, 2&gt;(s, coords, 0);
+  const auto b = partial_derivative&lt;F, vec&lt;F, 3&gt;, 2&gt;(s, coords, 1);
+  vec&lt;F, 3&gt; out{ a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0] };
+  const F squared = out[0] * out[0] + out[1] * out[1] + out[2] * out[2];
+  if ( squared &gt; F(0) ) out *= F(1) / F(math::fsqrt(squared));
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L460">line 460</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-76e9f902f82ec572"><h3><code>micron::math::splines::__impl_tensor_splines::scaled_add(V &amp;out, const V &amp;value, F scale) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L87">line 87</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V, ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+scaled_add(V &amp;out, const V &amp;value, F scale) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;out</code></li><li><code>const V &amp;value</code></li><li><code>F scale</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V, ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+scaled_add(V &amp;out, const V &amp;value, F scale) noexcept
+{
+  out += value * scale;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5db83f518f1119f1"><h3><code>micron::math::splines::__impl_tensor_splines::scaled_add(F &amp;out, F value, F scale) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L94">line 94</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+scaled_add(F &amp;out, F value, F scale) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;out</code></li><li><code>F value</code></li><li><code>F scale</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+scaled_add(F &amp;out, F value, F scale) noexcept
+{
+  out = math::fma&lt;F&gt;(value, scale, out);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-b8541d4a26ac512c"><h3><code>micron::math::splines::__impl_tensor_splines::scale_in_place(V &amp;out, F scale) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L101">line 101</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V, ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+scale_in_place(V &amp;out, F scale) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;out</code></li><li><code>F scale</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V, ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+scale_in_place(V &amp;out, F scale) noexcept
+{
+  out *= scale;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3fff02fff8d3f541"><h3><code>micron::math::splines::__impl_tensor_splines::scale_in_place(F &amp;out, F scale) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L108">line 108</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+scale_in_place(F &amp;out, F scale) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;out</code></li><li><code>F scale</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+scale_in_place(F &amp;out, F scale) noexcept
+{
+  out *= scale;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8b246f0c6c09341b"><h3><code>micron::math::splines::__impl_tensor_splines::validate_axes(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], usize &amp;total) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L115">line 115</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard]] inline bool
+validate_axes(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], usize &amp;total) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const raw_slice&lt;const F&gt; (&amp;knots)[P]</code></li><li><code>const usize (&amp;shape)[P]</code></li><li><code>const u32 (&amp;degree)[P]</code></li><li><code>usize &amp;total</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard]] inline bool
+validate_axes(const raw_slice&lt;const F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const u32 (&amp;degree)[P], usize &amp;total) noexcept
+{
+  total = 1;
+  for ( usize axis = 0; axis &lt; P; ++axis ) {
+    if ( !__impl_bspline_helpers::valid_knots&lt;F&gt;(knots[axis], shape[axis], degree[axis]) ) return false;
+    if ( shape[axis] != 0 &amp;&amp; total &gt; usize(-1) / shape[axis] ) return false;
+    total *= shape[axis];
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L123">line 123</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-9256e0bbbe77a96e">__impl_bspline_helpers::valid_knots&lt;F&gt;</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><section class="function-entry" id="f-1e6b9e2c648169fb"><h3><code>micron::math::splines::__impl_tensor_splines::prepare_basis(const u32 (&amp;degree)[P], const vector&lt;F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const extension_mode (&amp;mode)[P],
+              const vector&lt;F&gt; (&amp;inverse)[P], usize (&amp;last)[P], const F *coords, const u32 *orders, usize (&amp;span)[P],
+              F (&amp;values)[P][bspline_max_degree + 1]) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L128">line 128</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard]] inline bool
+prepare_basis(const u32 (&amp;degree)[P], const vector&lt;F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const extension_mode (&amp;mode)[P],
+              const vector&lt;F&gt; (&amp;inverse)[P], usize (&amp;last)[P], const F *coords, const u32 *orders, usize (&amp;span)[P],
+              F (&amp;values)[P][bspline_max_degree + 1]) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u32 (&amp;degree)[P]</code></li><li><code>const vector&lt;F&gt; (&amp;knots)[P]</code></li><li><code>const usize (&amp;shape)[P]</code></li><li><code>const extension_mode (&amp;mode)[P]</code></li><li><code>const vector&lt;F&gt; (&amp;inverse)[P]</code></li><li><code>usize (&amp;last)[P]</code></li><li><code>const F *coords</code></li><li><code>const u32 *orders</code></li><li><code>usize (&amp;span)[P]</code></li><li><code>F (&amp;values)[P][bspline_max_degree + 1]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard]] inline bool
+prepare_basis(const u32 (&amp;degree)[P], const vector&lt;F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const extension_mode (&amp;mode)[P],
+              const vector&lt;F&gt; (&amp;inverse)[P], usize (&amp;last)[P], const F *coords, const u32 *orders, usize (&amp;span)[P],
+              F (&amp;values)[P][bspline_max_degree + 1]) noexcept
+{
+  for ( usize axis = 0; axis &lt; P; ++axis ) {
+    const F original = coords[axis];
+    const F lo = knots[axis][degree[axis]];
+    const F hi = knots[axis][shape[axis]];
+    const bool outside = __impl_curve_extensions::outside_domain&lt;F&gt;(original, lo, hi);
+    const u32 requested_order = orders ? orders[axis] : 0;
+    if ( outside &amp;&amp; mode[axis] == extension_mode::zero ) return false;
+    if ( outside &amp;&amp; mode[axis] == extension_mode::clamp &amp;&amp; requested_order != 0 ) {
+      for ( u32 j = 0; j &lt;= degree[axis]; ++j ) values[axis][j] = F(0);
+      span[axis] = original &lt; lo ? degree[axis] : shape[axis] - 1;
+      continue;
+    }
+    const F x = outside ? __impl_curve_extensions::map_parameter&lt;F&gt;(original, lo, hi, mode[axis]) : original;
+    span[axis] = __impl_bspline::bspline_span&lt;F&gt;(knots[axis].data(), shape[axis], degree[axis], x, last[axis]);
+    if ( outside &amp;&amp; mode[axis] == extension_mode::linear ) {
+      if ( requested_order &gt; 1 ) {
+        for ( u32 j = 0; j &lt;= degree[axis]; ++j ) values[axis][j] = F(0);
+        continue;
+      }
+      F derivatives[bspline_max_degree + 1][bspline_max_degree + 1]{};
+      __impl_bspline_helpers::local_basis_derivatives&lt;F&gt;(knots[axis].data(), span[axis], degree[axis], x, 1, derivatives);
+      for ( u32 j = 0; j &lt;= degree[axis]; ++j )
+        values[axis][j] = requested_order == 1 ? derivatives[1][j] : math::fma&lt;F&gt;(original - x, derivatives[1][j], derivatives[0][j]);
+    } else if ( requested_order != 0 ) {
+      F derivatives[bspline_max_degree + 1][bspline_max_degree + 1]{};
+      const u32 order = requested_order &lt;= degree[axis] ? requested_order : degree[axis];
+      __impl_bspline_helpers::local_basis_derivatives&lt;F&gt;(knots[axis].data(), span[axis], degree[axis], x, order, derivatives);
+      const F sign = mode[axis] == extension_mode::reflect
+                         ? __impl_curve_extensions::reflection_derivative_sign&lt;F&gt;(original, lo, hi, requested_order)
+                         : F(1);
+      for ( u32 j = 0; j &lt;= degree[axis]; ++j )
+        values[axis][j] = requested_order &lt;= degree[axis] ? sign * derivatives[requested_order][j] : F(0);
+    } else {
+      __impl_bspline::bspline_basis_cached&lt;F&gt;(knots[axis].data(), shape[axis], span[axis], degree[axis], x, inverse[axis], values[axis]);
+    }
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L138">line 138</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L168">line 168</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="curve_extensions.hpp.html#f-f1f776c53742594c">__impl_curve_extensions::outside_domain&lt;F&gt;</a>, <a href="curve_extensions.hpp.html#f-3d24b16084183bf1">__impl_curve_extensions::map_parameter&lt;F&gt;</a>, <a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="bspline_helpers.hpp.html#f-50411f7445ffae11">__impl_bspline_helpers::local_basis_derivatives&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="curve_extensions.hpp.html#f-b6313f27644943e0">__impl_curve_extensions::reflection_derivative_sign&lt;F&gt;</a>, <a href="bspline.hpp.html#f-8828a50741e9cb08">__impl_bspline::bspline_basis_cached&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3d70024f98ff0063"><h3><code>micron::math::splines::__impl_tensor_splines::prepare_value_basis(const u32 (&amp;degree)[P], const vector&lt;F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const extension_mode (&amp;mode)[P],
+                    const vector&lt;F&gt; (&amp;inverse)[P], usize (&amp;last)[P], const F *coords, usize (&amp;span)[P],
+                    F (&amp;values)[P][bspline_max_degree + 1]) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L173">line 173</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard, gnu::always_inline]] inline bool
+prepare_value_basis(const u32 (&amp;degree)[P], const vector&lt;F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const extension_mode (&amp;mode)[P],
+                    const vector&lt;F&gt; (&amp;inverse)[P], usize (&amp;last)[P], const F *coords, usize (&amp;span)[P],
+                    F (&amp;values)[P][bspline_max_degree + 1]) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u32 (&amp;degree)[P]</code></li><li><code>const vector&lt;F&gt; (&amp;knots)[P]</code></li><li><code>const usize (&amp;shape)[P]</code></li><li><code>const extension_mode (&amp;mode)[P]</code></li><li><code>const vector&lt;F&gt; (&amp;inverse)[P]</code></li><li><code>usize (&amp;last)[P]</code></li><li><code>const F *coords</code></li><li><code>usize (&amp;span)[P]</code></li><li><code>F (&amp;values)[P][bspline_max_degree + 1]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize P&gt;
+[[nodiscard, gnu::always_inline]] inline bool
+prepare_value_basis(const u32 (&amp;degree)[P], const vector&lt;F&gt; (&amp;knots)[P], const usize (&amp;shape)[P], const extension_mode (&amp;mode)[P],
+                    const vector&lt;F&gt; (&amp;inverse)[P], usize (&amp;last)[P], const F *coords, usize (&amp;span)[P],
+                    F (&amp;values)[P][bspline_max_degree + 1]) noexcept
+{
+  for ( usize axis = 0; axis &lt; P; ++axis ) {
+    const F lo = knots[axis][degree[axis]];
+    const F hi = knots[axis][shape[axis]];
+    if ( coords[axis] &lt; lo || coords[axis] &gt; hi )
+      return prepare_basis&lt;F, P&gt;(degree, knots, shape, mode, inverse, last, coords, nullptr, span, values);
+  }
+  for ( usize axis = 0; axis &lt; P; ++axis ) {
+    const F x = coords[axis];
+    span[axis] = __impl_bspline::bspline_span&lt;F&gt;(knots[axis].data(), shape[axis], degree[axis], x, last[axis]);
+    __impl_bspline::bspline_basis_cached&lt;F&gt;(knots[axis].data(), shape[axis], span[axis], degree[axis], x, inverse[axis], values[axis]);
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>prepare_basis&lt;F, P&gt;(degree, knots, shape, mode, inverse, last, coords, nullptr, span, values)</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-1e6b9e2c648169fb">prepare_basis&lt;F, P&gt;</a>, <a href="bspline.hpp.html#f-707da555743b082f">__impl_bspline::bspline_span&lt;F&gt;</a>, <a href="bspline.hpp.html#f-8828a50741e9cb08">__impl_bspline::bspline_basis_cached&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ab89ce4601673ad7"><h3><code>micron::math::splines::__impl_tensor_splines::contract(const u32 (&amp;degree)[P], const usize (&amp;shape)[P], const usize (&amp;span)[P], const F (&amp;values)[P][bspline_max_degree + 1],
+         const V *ctrl, const F *weights, F *weight_sum = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/tensor.hpp</code>, <a href="../../../source/math/splines/tensor.hpp.html#L193">line 193</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V, ieee754_floating F, usize P&gt;
+[[nodiscard]] inline V
+contract(const u32 (&amp;degree)[P], const usize (&amp;shape)[P], const usize (&amp;span)[P], const F (&amp;values)[P][bspline_max_degree + 1],
+         const V *ctrl, const F *weights, F *weight_sum = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u32 (&amp;degree)[P]</code></li><li><code>const usize (&amp;shape)[P]</code></li><li><code>const usize (&amp;span)[P]</code></li><li><code>const F (&amp;values)[P][bspline_max_degree + 1]</code></li><li><code>const V *ctrl</code></li><li><code>const F *weights</code></li><li><code>F *weight_sum = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V, ieee754_floating F, usize P&gt;
+[[nodiscard]] inline V
+contract(const u32 (&amp;degree)[P], const usize (&amp;shape)[P], const usize (&amp;span)[P], const F (&amp;values)[P][bspline_max_degree + 1],
+         const V *ctrl, const F *weights, F *weight_sum = nullptr) noexcept
+{
+  V out{};
+  const usize base0 = span[0] - degree[0];
+  const usize base1 = span[1] - degree[1];
+  if constexpr ( P == 2 ) {
+    for ( u32 i = 0; i &lt;= degree[0]; ++i ) {
+      const F c0 = values[0][i];
+      const usize row = (base0 + i) * shape[1] + base1;
+      for ( u32 j = 0; j &lt;= degree[1]; ++j ) {
+        const usize index = row + j;
+        F coefficient = c0 * values[1][j];
+        if ( weights ) coefficient *= weights[index];
+        scaled_add&lt;V, F&gt;(out, ctrl[index], coefficient);
+        if ( weight_sum ) *weight_sum += coefficient;
+      }
+    }
+  } else if constexpr ( P == 3 ) {
+    const usize base2 = span[2] - degree[2];
+    const usize stride0 = shape[1] * shape[2];
+    for ( u32 i = 0; i &lt;= degree[0]; ++i ) {
+      const usize slab = (base0 + i) * stride0;
+      const F c0 = values[0][i];
+      for ( u32 j = 0; j &lt;= degree[1]; ++j ) {
+        const usize row = slab + (base1 + j) * shape[2] + base2;
+        const F c01 = c0 * values[1][j];
+        for ( u32 k = 0; k &lt;= degree[2]; ++k ) {
+          const usize index = row + k;
+          F coefficient = c01 * values[2][k];
+          if ( weights ) coefficient *= weights[index];
+          scaled_add&lt;V, F&gt;(out, ctrl[index], coefficient);
+          if ( weight_sum ) *weight_sum += coefficient;
+        }
+      }
+    }
+  } else {
+    const usize base2 = span[2] - degree[2];
+    const usize base3 = span[3] - degree[3];
+    const usize stride1 = shape[2] * shape[3];
+    const usize stride0 = shape[1] * stride1;
+    for ( u32 i = 0; i &lt;= degree[0]; ++i ) {
+      const usize block0 = (base0 + i) * stride0;
+      const F c0 = values[0][i];
+      for ( u32 j = 0; j &lt;= degree[1]; ++j ) {
+        const usize block1 = block0 + (base1 + j) * stride1;
+        const F c01 = c0 * values[1][j];
+        for ( u32 k = 0; k &lt;= degree[2]; ++k ) {
+          const usize row = block1 + (base2 + k) * shape[3] + base3;
+          const F c012 = c01 * values[2][k];
+          for ( u32 l = 0; l &lt;= degree[3]; ++l ) {
+            const usize index = row + l;
+            F coefficient = c012 * values[3][l];
+            if ( weights ) coefficient *= weights[index];
+            scaled_add&lt;V, F&gt;(out, ctrl[index], coefficient);
+            if ( weight_sum ) *weight_sum += coefficient;
+          }
+        }
+      }
+    }
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/tensor.hpp.html#L254">line 254</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tensor.hpp.html#f-76e9f902f82ec572">scaled_add&lt;V, F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

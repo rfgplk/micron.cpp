@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/parallel/sort.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/parallel/sort.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/parallel.html">Parallel algorithms</a></div><p>Defined in header <code>&lt;micron/parallel/sort.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/parallel/sort.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-cfddd53145cd6e1d">micron::parallel::sort::merge(It __first, It __last, Cmp __comp = Cmp{})</a></td><td>function; line 52</td></tr><tr class="t-dsc"><td><a href="#f-7a0b4ab2973c5c04">micron::parallel::sort::stable(It __first, It __last, Cmp __comp = Cmp{})</a></td><td>function; line 62</td></tr><tr class="t-dsc"><td><a href="#f-181b42a42a8086ac">micron::parallel::sort::quick(It __first, It __last, Cmp __comp = Cmp{})</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-d5373a195dbdc964">micron::parallel::sort::sort(It __first, It __last, Cmp __comp = Cmp{})</a></td><td>function; line 98</td></tr><tr class="t-dsc"><td><a href="#f-7041226540ad824a">micron::parallel::sort::radix(It __first, It __last)</a></td><td>function; line 183</td></tr><tr class="t-dsc"><td><a href="#f-0bd726a5e3f58666">micron::parallel::sort::radix(It __first, It __last, KeyFn __key)</a></td><td>function; line 202</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-cfddd53145cd6e1d"><h3><code>micron::parallel::sort::merge(It __first, It __last, Cmp __comp = Cmp{})</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L52">line 52</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Cmp = __pless&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+merge(It __first, It __last, Cmp __comp = Cmp{})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Cmp __comp = Cmp{}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Cmp = __pless&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+merge(It __first, It __last, Cmp __comp = Cmp{})
+{
+  using T = micron::remove_cvref_t&lt;decltype(*__first)&gt;;
+  const usize __n = static_cast&lt;usize&gt;(__last - __first);
+  if ( __n &lt; 2 ) co_return;
+  co_await __pmergesort&lt;T, Cmp&gt;(__first, 0, static_cast&lt;max_t&gt;(__n) - 1, __comp, __grain_for(__n));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-7186ab20f325bd37">__pmergesort&lt;T, Cmp&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-7a0b4ab2973c5c04"><h3><code>micron::parallel::sort::stable(It __first, It __last, Cmp __comp = Cmp{})</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Cmp = __pless&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+stable(It __first, It __last, Cmp __comp = Cmp{})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Cmp __comp = Cmp{}</code></li></ul><h4>Effects</h4><p>Returns <code>merge&lt;It, Cmp&gt;(__first, __last, __comp)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Cmp = __pless&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+stable(It __first, It __last, Cmp __comp = Cmp{})
+{
+  return merge&lt;It, Cmp&gt;(__first, __last, __comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>merge&lt;It, Cmp&gt;(__first, __last, __comp)</code></td><td><a href="../../source/parallel/sort.hpp.html#L64">line 64</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-cfddd53145cd6e1d">merge&lt;It, Cmp&gt;</a>.</p></section><section class="function-entry" id="f-181b42a42a8086ac"><h3><code>micron::parallel::sort::quick(It __first, It __last, Cmp __comp = Cmp{})</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Cmp = __pless&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+quick(It __first, It __last, Cmp __comp = Cmp{})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Cmp __comp = Cmp{}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Cmp = __pless&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+quick(It __first, It __last, Cmp __comp = Cmp{})
+{
+  using T = micron::remove_cvref_t&lt;decltype(*__first)&gt;;
+  const usize __n = static_cast&lt;usize&gt;(__last - __first);
+  if ( __n &lt; 2 ) co_return;
+  max_t __depth = 0;
+  for ( max_t __t = static_cast&lt;max_t&gt;(__n); __t &gt; 1; __t &gt;&gt;= 1 ) __depth += 2;      // 2 * floor(log2 n)
+  co_await __pquicksort&lt;T, Cmp&gt;(__first, 0, static_cast&lt;max_t&gt;(__n) - 1, __depth, __comp, __grain_for(__n));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-ef1c2bdaf1852bb0">__pquicksort&lt;T, Cmp&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-d5373a195dbdc964"><h3><code>micron::parallel::sort::sort(It __first, It __last, Cmp __comp = Cmp{})</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L98">line 98</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Cmp = __pless&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+sort(It __first, It __last, Cmp __comp = Cmp{})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Cmp __comp = Cmp{}</code></li></ul><h4>Effects</h4><p>Returns <code>quick&lt;It, Cmp&gt;(__first, __last, __comp)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Cmp = __pless&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+sort(It __first, It __last, Cmp __comp = Cmp{})
+{
+  return quick&lt;It, Cmp&gt;(__first, __last, __comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quick&lt;It, Cmp&gt;(__first, __last, __comp)</code></td><td><a href="../../source/parallel/sort.hpp.html#L100">line 100</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-181b42a42a8086ac">quick&lt;It, Cmp&gt;</a>.</p></section><section class="function-entry" id="f-7041226540ad824a"><h3><code>micron::parallel::sort::radix(It __first, It __last)</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L183">line 183</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+radix(It __first, It __last)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+radix(It __first, It __last)
+{
+  using T = micron::remove_cvref_t&lt;decltype(*__first)&gt;;
+  if constexpr ( micron::is_floating_point_v&lt;T&gt; ) {
+    static_assert(sizeof(T) == 4 || sizeof(T) == 8, &quot;parallel::sort::radix: only 32/64-bit IEEE-754 floats&quot;);
+    using U = micron::__conditional_t&lt;sizeof(T) == 4, u32, u64&gt;;
+    return __pradix&lt;It&gt;(__first, static_cast&lt;usize&gt;(__last - __first), [](T __e) -&gt; U {
+      constexpr int __top = static_cast&lt;int&gt;(sizeof(T)) * 8 - 1;
+      const U __signbit = static_cast&lt;U&gt;(1) &lt;&lt; __top;
+      const U __u = __builtin_bit_cast(U, __e);
+      return __u ^ ((static_cast&lt;U&gt;(0) - (__u &gt;&gt; __top)) | __signbit);      // order-preserving forward transform
+    });
+  } else {
+    return __pradix&lt;It&gt;(__first, static_cast&lt;usize&gt;(__last - __first), [](auto __e) { return __e; });
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pradix&lt;It&gt;(__first, static_cast&lt;usize&gt;(__last - __first), [](T __e) -&gt; U {
+      constexpr int __top = static_cast&lt;int&gt;(sizeof(T)) * 8 - 1;
+      const U __signbit = static_cast&lt;U&gt;(1) &lt;&lt; __top;
+      const U __u = __builtin_bit_cast(U, __e);
+      return __u ^ ((static_cast&lt;U&gt;(0) - (__u &gt;&gt; __top)) | __signbit);      // order-preserving forward transform
+    })</code></td><td><a href="../../source/parallel/sort.hpp.html#L189">line 189</a></td></tr><tr class="t-dsc"><td><code>__pradix&lt;It&gt;(__first, static_cast&lt;usize&gt;(__last - __first), [](auto __e) { return __e; })</code></td><td><a href="../../source/parallel/sort.hpp.html#L196">line 196</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(sizeof(T) == 4 || sizeof(T) == 8, &quot;parallel::sort::radix: only 32/64-bit IEEE-754 floats&quot;);</code></td><td><a href="../../source/parallel/sort.hpp.html#L187">line 187</a><br>Within <code>( micron::is_floating_point_v&lt;T&gt; )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-41afbd701628e2c3">__pradix&lt;It&gt;</a>.</p></section><section class="function-entry" id="f-0bd726a5e3f58666"><h3><code>micron::parallel::sort::radix(It __first, It __last, KeyFn __key)</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L202">line 202</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class KeyFn&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+radix(It __first, It __last, KeyFn __key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>KeyFn __key</code></li></ul><h4>Effects</h4><p>Returns <code>__pradix&lt;It, KeyFn&gt;(__first, static_cast&lt;usize&gt;(__last - __first), __key)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class KeyFn&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+radix(It __first, It __last, KeyFn __key)
+{
+  return __pradix&lt;It, KeyFn&gt;(__first, static_cast&lt;usize&gt;(__last - __first), __key);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pradix&lt;It, KeyFn&gt;(__first, static_cast&lt;usize&gt;(__last - __first), __key)</code></td><td><a href="../../source/parallel/sort.hpp.html#L204">line 204</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-41afbd701628e2c3">__pradix&lt;It, KeyFn&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-36a78de41f7d67b4"><h3><code>micron::parallel::sort::__pless::operator()(const A &amp;__a, const B &amp;__b) const</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L27">line 27</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class A, class B&gt;
+  bool
+  operator()(const A &amp;__a, const B &amp;__b) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;__a</code></li><li><code>const B &amp;__b</code></li></ul><h4>Effects</h4><p>Returns <code>__a &lt; __b</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class A, class B&gt;
+  bool
+  operator()(const A &amp;__a, const B &amp;__b) const
+  {
+    return __a &lt; __b;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__a &lt; __b</code></td><td><a href="../../source/parallel/sort.hpp.html#L29">line 29</a></td></tr></tbody></table></section><section class="function-entry" id="f-7186ab20f325bd37"><h3><code>micron::parallel::sort::__pmergesort(T *__arr, max_t __lo, max_t __hi, Cmp __comp, usize __grain)</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L35">line 35</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, class Cmp&gt;
+micron::task&lt;void&gt;
+__pmergesort(T *__arr, max_t __lo, max_t __hi, Cmp __comp, usize __grain)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__arr</code></li><li><code>max_t __lo</code></li><li><code>max_t __hi</code></li><li><code>Cmp __comp</code></li><li><code>usize __grain</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, class Cmp&gt;
+micron::task&lt;void&gt;
+__pmergesort(T *__arr, max_t __lo, max_t __hi, Cmp __comp, usize __grain)
+{
+  const usize __n = static_cast&lt;usize&gt;(__hi - __lo + 1);
+  if ( __n &lt;= __grain ) {
+    micron::sort::__merge_sort(__arr, __lo, __hi, __comp);      // serial stable leaf
+    co_return;
+  }
+  const max_t __mid = __lo + (__hi - __lo) / 2;
+  co_await micron::coro::fork(micron::coro::discard, __pmergesort&lt;T, Cmp&gt;)(__arr, __lo, __mid, __comp, __grain);
+  co_await micron::coro::call(__pmergesort&lt;T, Cmp&gt;, __arr, __mid + 1, __hi, __comp, __grain);
+  co_await micron::coro::join;
+  micron::sort::__merge(__arr, __lo, __mid, __hi, __comp);      // serial merge of the two sorted halves
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sort/merge.hpp.html#f-03276ffff0fa2943">micron::sort::__merge_sort</a>, <a href="../tasks/fork_join.hpp.html#s-2c042f791a5ca9ec">micron::coro::fork</a>, <a href="../tasks/fork_join.hpp.html#s-95561ee9c077f2bb">micron::coro::call</a>, <a href="../sort/merge.hpp.html#f-9873b336d1749264">micron::sort::__merge</a>.</p></section><section class="function-entry" id="f-ef1c2bdaf1852bb0"><h3><code>micron::parallel::sort::__pquicksort(T *__arr, max_t __lo, max_t __hi, max_t __depth, Cmp __comp, usize __grain)</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, class Cmp&gt;
+micron::task&lt;void&gt;
+__pquicksort(T *__arr, max_t __lo, max_t __hi, max_t __depth, Cmp __comp, usize __grain)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__arr</code></li><li><code>max_t __lo</code></li><li><code>max_t __hi</code></li><li><code>max_t __depth</code></li><li><code>Cmp __comp</code></li><li><code>usize __grain</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, class Cmp&gt;
+micron::task&lt;void&gt;
+__pquicksort(T *__arr, max_t __lo, max_t __hi, max_t __depth, Cmp __comp, usize __grain)
+{
+  if ( __lo &gt;= __hi ) co_return;      // 0 or 1 element
+  const usize __n = static_cast&lt;usize&gt;(__hi - __lo + 1);
+  if ( __n &lt;= __grain || __depth &lt;= 0 ) {
+    micron::sort::__merge_sort(__arr, __lo, __hi, __comp);      // serial leaf (complete + stable)
+    co_return;
+  }
+  micron::sort::__q_med3_to_high(__arr, __lo, __hi, __comp);      // median-of-three pivot -&gt; __arr[hi]
+  const max_t __p = micron::sort::__q_partition(__arr, __lo, __hi, __comp);
+  co_await micron::coro::fork(micron::coro::discard, __pquicksort&lt;T, Cmp&gt;)(__arr, __lo, __p - 1, __depth - 1, __comp, __grain);
+  co_await micron::coro::call(__pquicksort&lt;T, Cmp&gt;, __arr, __p + 1, __hi, __depth - 1, __comp, __grain);
+  co_await micron::coro::join;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sort/merge.hpp.html#f-03276ffff0fa2943">micron::sort::__merge_sort</a>, <a href="../sort/quick.hpp.html#f-f1ef3cb917240f7b">micron::sort::__q_med3_to_high</a>, <a href="../sort/quick.hpp.html#f-fe50ae5579ac39dc">micron::sort::__q_partition</a>, <a href="../tasks/fork_join.hpp.html#s-2c042f791a5ca9ec">micron::coro::fork</a>, <a href="../tasks/fork_join.hpp.html#s-95561ee9c077f2bb">micron::coro::call</a>.</p></section><section class="function-entry" id="f-41afbd701628e2c3"><h3><code>micron::parallel::sort::__pradix(It __arr, usize __n, KeyFn __key)</code></h3><p>Defined in <code>parallel/sort.hpp</code>, <a href="../../source/parallel/sort.hpp.html#L105">line 105</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class KeyFn&gt;
+micron::task&lt;void&gt;
+__pradix(It __arr, usize __n, KeyFn __key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __arr</code></li><li><code>usize __n</code></li><li><code>KeyFn __key</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class KeyFn&gt;
+micron::task&lt;void&gt;
+__pradix(It __arr, usize __n, KeyFn __key)
+{
+  using T = micron::remove_cvref_t&lt;decltype(*__arr)&gt;;
+  using K = micron::remove_cvref_t&lt;decltype(__key(*__arr))&gt;;
+  if ( __n &lt; 2 ) co_return;
+
+  K __kmin = __key(__arr[0]), __kmax = __key(__arr[0]);      // serial min/max (one pass)
+  for ( usize __i = 1; __i &lt; __n; ++__i ) {
+    K __k = __key(__arr[__i]);
+    if ( __k &lt; __kmin ) __kmin = __k;
+    if ( __kmax &lt; __k ) __kmax = __k;
+  }
+  const umax_t __bias = static_cast&lt;umax_t&gt;(__kmin);
+  const umax_t __span = static_cast&lt;umax_t&gt;(__kmax) - static_cast&lt;umax_t&gt;(__kmin);
+
+  const usize __B = __grain_for(__n);
+  const usize __nb = (__n + __B - 1u) / __B;
+  micron::vector&lt;usize&gt; __histv(__nb * 256u);
+  micron::vector&lt;usize&gt; __offv(__nb * 256u);
+  micron::vector&lt;T&gt; __scratchv(__n);
+  usize *__hist = &amp;__histv[0];
+  usize *__off = &amp;__offv[0];
+  T *__src = &amp;__arr[0];
+  T *__dst = &amp;__scratchv[0];
+
+  for ( i64 __shift = 0; __shift &lt; static_cast&lt;i64&gt;(sizeof(umax_t)) * 8; __shift += 8 ) {
+    if ( (__span &gt;&gt; __shift) == 0 ) break;      // no more significant bytes
+    // pass 1: per-block histograms (parallel)
+    {
+      auto __body = [__src, __n, __B, __hist, __shift, __bias, __key](usize __b) {
+        usize *__h = __hist + __b * 256u;
+        for ( int __i = 0; __i &lt; 256; ++__i ) __h[__i] = 0;
+        const usize __s = __b * __B;
+        const usize __e = (__s + __B &lt; __n) ? __s + __B : __n;
+        for ( usize __i = __s; __i &lt; __e; ++__i ) {
+          const umax_t __k = static_cast&lt;umax_t&gt;(__key(__src[__i])) - __bias;
+          ++__h[(__k &gt;&gt; __shift) &amp; 0xFFu];
+        }
+      };
+      co_await __pblocks&lt;decltype(__body)&gt;(0, __nb, __body, 1);
+    }
+    {
+      usize __running = 0;
+      for ( int __d = 0; __d &lt; 256; ++__d )
+        for ( usize __b = 0; __b &lt; __nb; ++__b ) {
+          __off[__b * 256u + (usize)__d] = __running;
+          __running += __hist[__b * 256u + (usize)__d];
+        }
+    }
+    {
+      auto __body = [__src, __dst, __n, __B, __off, __shift, __bias, __key](usize __b) {
+        usize *__o = __off + __b * 256u;
+        const usize __s = __b * __B;
+        const usize __e = (__s + __B &lt; __n) ? __s + __B : __n;
+        for ( usize __i = __s; __i &lt; __e; ++__i ) {
+          const umax_t __k = static_cast&lt;umax_t&gt;(__key(__src[__i])) - __bias;
+          __dst[__o[(__k &gt;&gt; __shift) &amp; 0xFFu]++] = __src[__i];
+        }
+      };
+      co_await __pblocks&lt;decltype(__body)&gt;(0, __nb, __body, 1);
+    }
+    T *__tmp = __src;
+    __src = __dst;
+    __dst = __tmp;
+  }
+
+  if ( __src != &amp;__arr[0] ) {      // odd number of passes: sorted data is in scratch -&gt; copy back (parallel)
+    T *__from = __src;
+    T *__to = &amp;__arr[0];
+    auto __copy = [__from, __to](T *__a, T *__b) {
+      for ( T *__p = __a; __p != __b; ++__p ) __to[__p - __from] = *__p;
+    };
+    co_await __pmap&lt;T *, decltype(__copy)&gt;(__from, __from + __n, __copy, __grain_for(__n));
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>, <a href="engine.hpp.html#f-2534c5757b748910">__pblocks&lt;decltype(__body)&gt;</a>, <a href="engine.hpp.html#f-f2bc3d1a503db8ef">__pmap&lt;T *, decltype(__copy)&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

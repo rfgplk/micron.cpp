@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/fft/helpers.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/fft/helpers.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/fft.html">Fourier transforms</a></div><p>Defined in header <code>&lt;micron/math/fft/helpers.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/fft/helpers.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-f8ed005b00bb7197">micron::math::fft::fftfreq(usize n, F spacing = F(1))</a></td><td>function; line 51</td></tr><tr class="t-dsc"><td><a href="#f-f44498a88ee4d3fb">micron::math::fft::rfftfreq(usize n, F spacing = F(1))</a></td><td>function; line 58</td></tr><tr class="t-dsc"><td><a href="#f-90762aea6c2f3146">micron::math::fft::fftshift(const T *input, T *output, usize n) noexcept</a></td><td>function; line 66</td></tr><tr class="t-dsc"><td><a href="#f-a01b330bff344f32">micron::math::fft::ifftshift(const T *input, T *output, usize n) noexcept</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-5a8e464708b0d310">micron::math::fft::shift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {}, bool inverse = false)</a></td><td>function; line 80</td></tr><tr class="t-dsc"><td><a href="#f-a0d91700ffbd279b">micron::math::fft::fftshift(T *data, usize n)</a></td><td>function; line 110</td></tr><tr class="t-dsc"><td><a href="#f-243e9bed40caa20c">micron::math::fft::ifftshift(T *data, usize n)</a></td><td>function; line 119</td></tr><tr class="t-dsc"><td><a href="#f-1a028ec614598d34">micron::math::fft::fftshift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {})</a></td><td>function; line 128</td></tr><tr class="t-dsc"><td><a href="#f-7a0ec9e4bc974fc9">micron::math::fft::ifftshift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {})</a></td><td>function; line 135</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f8ed005b00bb7197"><h3><code>micron::math::fft::fftfreq(usize n, F spacing = F(1))</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L51">line 51</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F = double&gt;
+buffer&lt;F&gt;
+fftfreq(usize n, F spacing = F(1))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>F spacing = F(1)</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__frequency_bins&lt;F, false&gt;(n, spacing)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F = double&gt;
+buffer&lt;F&gt;
+fftfreq(usize n, F spacing = F(1))
+{
+  return __impl::__frequency_bins&lt;F, false&gt;(n, spacing);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__frequency_bins&lt;F, false&gt;(n, spacing)</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L53">line 53</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="helpers.hpp.html#f-ff0b538095a6a223">__impl::__frequency_bins&lt;F, false&gt;</a>.</p></section><section class="function-entry" id="f-f44498a88ee4d3fb"><h3><code>micron::math::fft::rfftfreq(usize n, F spacing = F(1))</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L58">line 58</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F = double&gt;
+buffer&lt;F&gt;
+rfftfreq(usize n, F spacing = F(1))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>F spacing = F(1)</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__frequency_bins&lt;F, true&gt;(n, spacing)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F = double&gt;
+buffer&lt;F&gt;
+rfftfreq(usize n, F spacing = F(1))
+{
+  return __impl::__frequency_bins&lt;F, true&gt;(n, spacing);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__frequency_bins&lt;F, true&gt;(n, spacing)</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L60">line 60</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="helpers.hpp.html#f-ff0b538095a6a223">__impl::__frequency_bins&lt;F, true&gt;</a>.</p></section><section class="function-entry" id="f-90762aea6c2f3146"><h3><code>micron::math::fft::fftshift(const T *input, T *output, usize n) noexcept</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L66">line 66</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+fftshift(const T *input, T *output, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *input</code></li><li><code>T *output</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+fftshift(const T *input, T *output, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) output[i] = input[(i + (n + 1) / 2) % n];
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a01b330bff344f32"><h3><code>micron::math::fft::ifftshift(const T *input, T *output, usize n) noexcept</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+ifftshift(const T *input, T *output, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *input</code></li><li><code>T *output</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+ifftshift(const T *input, T *output, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) output[i] = input[(i + n / 2) % n];
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5a8e464708b0d310"><h3><code>micron::math::fft::shift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {}, bool inverse = false)</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L80">line 80</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+buffer&lt;T&gt;
+shift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {}, bool inverse = false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *input</code></li><li><code>const buffer&lt;usize&gt; &amp;shape</code></li><li><code>const buffer&lt;usize&gt; &amp;axes = {}</code></li><li><code>bool inverse = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+buffer&lt;T&gt;
+shift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {}, bool inverse = false)
+{
+  usize n = __impl::__product(shape);
+  if ( !input || shape.empty() ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid shift input&quot;);
+  buffer&lt;usize&gt; selected = axes;
+  if ( selected.empty() )
+    for ( usize i = 0; i &lt; shape.size(); ++i ) selected.push_back(i);
+  for ( usize i = 0; i &lt; selected.size(); ++i ) {
+    if ( selected[i] &gt;= shape.size() ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid shift axis&quot;);
+    for ( usize j = 0; j &lt; i; ++j )
+      if ( selected[i] == selected[j] ) exc&lt;except::invalid_argument&gt;(&quot;fft: duplicate shift axis&quot;);
+  }
+  buffer&lt;T&gt; out(n);
+  for ( usize i = 0; i &lt; n; ++i ) {
+    usize index = i, source = 0, step = 1;
+    for ( usize a = shape.size(); a-- &gt; 0; ) {
+      usize coordinate = index % shape[a];
+      index /= shape[a];
+      for ( usize axis : selected )
+        if ( axis == a ) coordinate = (coordinate + (inverse ? shape[a] / 2 : (shape[a] + 1) / 2)) % shape[a];
+      source += coordinate * step;
+      step *= shape[a];
+    }
+    out[i] = input[source];
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L105">line 105</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid shift input&quot;)</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L83">line 83</a><br>Within <code>( !input || shape.empty() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid shift axis&quot;)</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L88">line 88</a><br>Within <code>i &lt; selected.size()</code>, <code>( selected[i] &gt;= shape.size() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: duplicate shift axis&quot;)</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L90">line 90</a><br>Within <code>i &lt; selected.size()</code>, <code>j &lt; i</code>, <code>( selected[i] == selected[j] )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="common.hpp.html#f-2d3bc7c28d65a7ad">__impl::__product</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>.</p></section><section class="function-entry" id="f-a0d91700ffbd279b"><h3><code>micron::math::fft::fftshift(T *data, usize n)</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L110">line 110</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+fftshift(T *data, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *data</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+fftshift(T *data, usize n)
+{
+  if ( !n ) return;
+  auto out = shift(data, buffer&lt;usize&gt;{ n });
+  for ( usize i = 0; i &lt; n; ++i ) data[i] = out[i];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/fft/helpers.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="helpers.hpp.html#f-5a8e464708b0d310">shift</a>.</p></section><section class="function-entry" id="f-243e9bed40caa20c"><h3><code>micron::math::fft::ifftshift(T *data, usize n)</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L119">line 119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+ifftshift(T *data, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *data</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+ifftshift(T *data, usize n)
+{
+  if ( !n ) return;
+  auto out = shift(data, buffer&lt;usize&gt;{ n }, {}, true);
+  for ( usize i = 0; i &lt; n; ++i ) data[i] = out[i];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/fft/helpers.hpp.html#L121">line 121</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="helpers.hpp.html#f-5a8e464708b0d310">shift</a>.</p></section><section class="function-entry" id="f-1a028ec614598d34"><h3><code>micron::math::fft::fftshift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {})</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+buffer&lt;T&gt;
+fftshift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *input</code></li><li><code>const buffer&lt;usize&gt; &amp;shape</code></li><li><code>const buffer&lt;usize&gt; &amp;axes = {}</code></li></ul><h4>Effects</h4><p>Returns <code>shift(input, shape, axes, false)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+buffer&lt;T&gt;
+fftshift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {})
+{
+  return shift(input, shape, axes, false);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>shift(input, shape, axes, false)</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L130">line 130</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="helpers.hpp.html#f-5a8e464708b0d310">shift</a>.</p></section><section class="function-entry" id="f-7a0ec9e4bc974fc9"><h3><code>micron::math::fft::ifftshift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {})</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L135">line 135</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+buffer&lt;T&gt;
+ifftshift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *input</code></li><li><code>const buffer&lt;usize&gt; &amp;shape</code></li><li><code>const buffer&lt;usize&gt; &amp;axes = {}</code></li></ul><h4>Effects</h4><p>Returns <code>shift(input, shape, axes, true)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+buffer&lt;T&gt;
+ifftshift(const T *input, const buffer&lt;usize&gt; &amp;shape, const buffer&lt;usize&gt; &amp;axes = {})
+{
+  return shift(input, shape, axes, true);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>shift(input, shape, axes, true)</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L137">line 137</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="helpers.hpp.html#f-5a8e464708b0d310">shift</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ff0b538095a6a223"><h3><code>micron::math::fft::__impl::__frequency_bins(usize n, F spacing)</code></h3><p>Defined in <code>math/fft/helpers.hpp</code>, <a href="../../../source/math/fft/helpers.hpp.html#L17">line 17</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F, bool Packed&gt;
+buffer&lt;F&gt;
+__frequency_bins(usize n, F spacing)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>F spacing</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F, bool Packed&gt;
+buffer&lt;F&gt;
+__frequency_bins(usize n, F spacing)
+{
+  if ( !n || n &gt; __limit || !(spacing &gt; F(0)) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid sampling interval or length&quot;);
+  buffer&lt;F&gt; out(Packed ? n / 2 + 1 : n);
+  constexpr F minimum = [] {
+    if constexpr ( sizeof(F) == sizeof(float) )
+      return F(micron::numeric_limits&lt;float&gt;::min());
+    else if constexpr ( sizeof(F) == sizeof(double) )
+      return F(micron::numeric_limits&lt;double&gt;::min());
+    else
+      return F(micron::numeric_limits&lt;long double&gt;::min());
+  }();
+  constexpr F maximum = [] {
+    if constexpr ( sizeof(F) == sizeof(float) )
+      return F(micron::numeric_limits&lt;float&gt;::max());
+    else if constexpr ( sizeof(F) == sizeof(double) )
+      return F(micron::numeric_limits&lt;double&gt;::max());
+    else
+      return F(micron::numeric_limits&lt;long double&gt;::max());
+  }();
+  // These spacing bounds keep the reciprocal normal for every supported length.
+  if ( spacing &gt;= F(2) / maximum &amp;&amp; spacing &lt;= (F(1) / F(__limit)) / minimum ) [[likely]] {
+    F step = F(1) / (F(n) * spacing);
+    for ( usize k = 0; k &lt; out.size(); ++k ) out[k] = (Packed || k &lt; (n + 1) / 2 ? F(k) : -F(n - k)) * step;
+  } else {
+    out[0] = F(0);
+    for ( usize k = 1; k &lt; out.size(); ++k ) out[k] = ((Packed || k &lt; (n + 1) / 2 ? F(k) : -F(n - k)) / F(n)) / spacing;
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L45">line 45</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid sampling interval or length&quot;)</code></td><td><a href="../../../source/math/fft/helpers.hpp.html#L19">line 19</a><br>Within <code>( !n || n &gt; __limit || !(spacing &gt; F(0)) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

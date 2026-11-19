@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/elf/read/names.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/elf/read/names.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/elf/read/names.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/linux/elf/read/names.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-9800be898944defd">micron::elf::read::etype_name(half et) noexcept</a></td><td>function; line 24</td></tr><tr class="t-dsc"><td><a href="#f-855fde0fae11316c">micron::elf::read::machine_name(half em) noexcept</a></td><td>function; line 43</td></tr><tr class="t-dsc"><td><a href="#f-cadd393c85a7f519">micron::elf::read::osabi_name(u8 abi) noexcept</a></td><td>function; line 76</td></tr><tr class="t-dsc"><td><a href="#f-f6b56041b22d46a7">micron::elf::read::pt_name(word pt) noexcept</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-104b98c9738c3457">micron::elf::read::sht_name(word sht) noexcept</a></td><td>function; line 138</td></tr><tr class="t-dsc"><td><a href="#f-51070672ea72acd4">micron::elf::read::dt_tag_name(i64 tag) noexcept</a></td><td>function; line 195</td></tr><tr class="t-dsc"><td><a href="#f-f31b09c774b56af4">micron::elf::read::dt_tag_name(half machine, i64 tag) noexcept</a></td><td>function; line 298</td></tr><tr class="t-dsc"><td><a href="#f-91012e51e967e004">micron::elf::read::reloc_type_name(half machine, u32 type)</a></td><td>function; line 649</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-9800be898944defd"><h3><code>micron::elf::read::etype_name(half et) noexcept</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L24">line 24</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+etype_name(half et) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>half et</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+etype_name(half et) noexcept
+{
+  switch ( et ) {
+  case et_none:
+    return &quot;NONE (No file type)&quot;;
+  case et_rel:
+    return &quot;REL (Relocatable file)&quot;;
+  case et_exec:
+    return &quot;EXEC (Executable file)&quot;;
+  case et_dyn:
+    return &quot;DYN (Shared object file)&quot;;
+  case et_core:
+    return &quot;CORE (Core file)&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;NONE (No file type)&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L28">line 28</a></td></tr><tr class="t-dsc"><td><code>&quot;REL (Relocatable file)&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L30">line 30</a></td></tr><tr class="t-dsc"><td><code>&quot;EXEC (Executable file)&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L32">line 32</a></td></tr><tr class="t-dsc"><td><code>&quot;DYN (Shared object file)&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L34">line 34</a></td></tr><tr class="t-dsc"><td><code>&quot;CORE (Core file)&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L36">line 36</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L38">line 38</a></td></tr></tbody></table></section><section class="function-entry" id="f-855fde0fae11316c"><h3><code>micron::elf::read::machine_name(half em) noexcept</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L43">line 43</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+machine_name(half em) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>half em</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+machine_name(half em) noexcept
+{
+  switch ( em ) {
+  case em_x86_64:
+    return &quot;x86-64&quot;;
+  case em_aarch64:
+    return &quot;AArch64&quot;;
+  case em_386:
+    return &quot;Intel 80386&quot;;
+  case em_arm:
+    return &quot;ARM&quot;;
+  case em_mips:
+    return &quot;MIPS&quot;;
+  case em_ppc:
+    return &quot;PowerPC&quot;;
+  case em_ppc64:
+    return &quot;PowerPC64&quot;;
+  case em_s390:
+    return &quot;IBM S/390&quot;;
+  case em_sparcv9:
+    return &quot;SPARC V9&quot;;
+  case em_ia_64:
+    return &quot;Intel IA-64&quot;;
+  case em_riscv:
+    return &quot;RISC-V&quot;;
+  case em_loongarch:
+    return &quot;LoongArch&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;x86-64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>&quot;AArch64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L49">line 49</a></td></tr><tr class="t-dsc"><td><code>&quot;Intel 80386&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L51">line 51</a></td></tr><tr class="t-dsc"><td><code>&quot;ARM&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>&quot;MIPS&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L55">line 55</a></td></tr><tr class="t-dsc"><td><code>&quot;PowerPC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L57">line 57</a></td></tr><tr class="t-dsc"><td><code>&quot;PowerPC64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L59">line 59</a></td></tr><tr class="t-dsc"><td><code>&quot;IBM S/390&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L61">line 61</a></td></tr><tr class="t-dsc"><td><code>&quot;SPARC V9&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L63">line 63</a></td></tr><tr class="t-dsc"><td><code>&quot;Intel IA-64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L65">line 65</a></td></tr><tr class="t-dsc"><td><code>&quot;RISC-V&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L67">line 67</a></td></tr><tr class="t-dsc"><td><code>&quot;LoongArch&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L69">line 69</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L71">line 71</a></td></tr></tbody></table></section><section class="function-entry" id="f-cadd393c85a7f519"><h3><code>micron::elf::read::osabi_name(u8 abi) noexcept</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+osabi_name(u8 abi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 abi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+osabi_name(u8 abi) noexcept
+{
+  switch ( abi ) {
+  case elfosabi_sysv:
+    return &quot;UNIX - System V&quot;;
+  case elfosabi_hpux:
+    return &quot;UNIX - HP-UX&quot;;
+  case elfosabi_netbsd:
+    return &quot;UNIX - NetBSD&quot;;
+  case elfosabi_gnu:
+    return &quot;UNIX - GNU&quot;;
+  case elfosabi_solaris:
+    return &quot;UNIX - Solaris&quot;;
+  case elfosabi_aix:
+    return &quot;UNIX - AIX&quot;;
+  case elfosabi_irix:
+    return &quot;UNIX - IRIX&quot;;
+  case elfosabi_freebsd:
+    return &quot;UNIX - FreeBSD&quot;;
+  case elfosabi_openbsd:
+    return &quot;UNIX - OpenBSD&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;UNIX - System V&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>&quot;UNIX - HP-UX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L82">line 82</a></td></tr><tr class="t-dsc"><td><code>&quot;UNIX - NetBSD&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L84">line 84</a></td></tr><tr class="t-dsc"><td><code>&quot;UNIX - GNU&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>&quot;UNIX - Solaris&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L88">line 88</a></td></tr><tr class="t-dsc"><td><code>&quot;UNIX - AIX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L90">line 90</a></td></tr><tr class="t-dsc"><td><code>&quot;UNIX - IRIX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L92">line 92</a></td></tr><tr class="t-dsc"><td><code>&quot;UNIX - FreeBSD&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L94">line 94</a></td></tr><tr class="t-dsc"><td><code>&quot;UNIX - OpenBSD&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L98">line 98</a></td></tr></tbody></table></section><section class="function-entry" id="f-f6b56041b22d46a7"><h3><code>micron::elf::read::pt_name(word pt) noexcept</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+pt_name(word pt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>word pt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+pt_name(word pt) noexcept
+{
+  switch ( pt ) {
+  case pt_null:
+    return &quot;NULL&quot;;
+  case pt_load:
+    return &quot;LOAD&quot;;
+  case pt_dynamic:
+    return &quot;DYNAMIC&quot;;
+  case pt_interp:
+    return &quot;INTERP&quot;;
+  case pt_note:
+    return &quot;NOTE&quot;;
+  case pt_shlib:
+    return &quot;SHLIB&quot;;
+  case pt_phdr:
+    return &quot;PHDR&quot;;
+  case pt_tls:
+    return &quot;TLS&quot;;
+  case pt_gnu_eh_frame:
+    return &quot;GNU_EH_FRAME&quot;;
+  case pt_gnu_stack:
+    return &quot;GNU_STACK&quot;;
+  case pt_gnu_relro:
+    return &quot;GNU_RELRO&quot;;
+  case pt_gnu_property:
+    return &quot;GNU_PROPERTY&quot;;
+  case pt_arm_exidx:
+    return &quot;ARM_EXIDX&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;NULL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L107">line 107</a></td></tr><tr class="t-dsc"><td><code>&quot;LOAD&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L109">line 109</a></td></tr><tr class="t-dsc"><td><code>&quot;DYNAMIC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>&quot;INTERP&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L113">line 113</a></td></tr><tr class="t-dsc"><td><code>&quot;NOTE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L115">line 115</a></td></tr><tr class="t-dsc"><td><code>&quot;SHLIB&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L117">line 117</a></td></tr><tr class="t-dsc"><td><code>&quot;PHDR&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td><code>&quot;TLS&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L121">line 121</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_EH_FRAME&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L123">line 123</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_STACK&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_RELRO&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L127">line 127</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_PROPERTY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L129">line 129</a></td></tr><tr class="t-dsc"><td><code>&quot;ARM_EXIDX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L133">line 133</a></td></tr></tbody></table></section><section class="function-entry" id="f-104b98c9738c3457"><h3><code>micron::elf::read::sht_name(word sht) noexcept</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L138">line 138</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+sht_name(word sht) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>word sht</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+sht_name(word sht) noexcept
+{
+  switch ( sht ) {
+  case sht_null:
+    return &quot;NULL&quot;;
+  case sht_progbits:
+    return &quot;PROGBITS&quot;;
+  case sht_symtab:
+    return &quot;SYMTAB&quot;;
+  case sht_strtab:
+    return &quot;STRTAB&quot;;
+  case sht_rela:
+    return &quot;RELA&quot;;
+  case sht_hash:
+    return &quot;HASH&quot;;
+  case sht_dynamic:
+    return &quot;DYNAMIC&quot;;
+  case sht_note:
+    return &quot;NOTE&quot;;
+  case sht_nobits:
+    return &quot;NOBITS&quot;;
+  case sht_rel:
+    return &quot;REL&quot;;
+  case sht_shlib:
+    return &quot;SHLIB&quot;;
+  case sht_dynsym:
+    return &quot;DYNSYM&quot;;
+  case sht_init_array:
+    return &quot;INIT_ARRAY&quot;;
+  case sht_fini_array:
+    return &quot;FINI_ARRAY&quot;;
+  case sht_preinit_array:
+    return &quot;PREINIT_ARRAY&quot;;
+  case sht_group:
+    return &quot;GROUP&quot;;
+  case sht_symtab_shndx:
+    return &quot;SYMTAB_SHNDX&quot;;
+  case sht_relr:
+    return &quot;RELR&quot;;
+  case sht_gnu_attributes:
+    return &quot;GNU_ATTRIBUTES&quot;;
+  case sht_gnu_hash:
+    return &quot;GNU_HASH&quot;;
+  case sht_gnu_liblist:
+    return &quot;GNU_LIBLIST&quot;;
+  case sht_gnu_verdef:
+    return &quot;GNU_verdef&quot;;
+  case sht_gnu_verneed:
+    return &quot;GNU_verneed&quot;;
+  case sht_gnu_versym:
+    return &quot;GNU_versym&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;NULL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L142">line 142</a></td></tr><tr class="t-dsc"><td><code>&quot;PROGBITS&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>&quot;SYMTAB&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L146">line 146</a></td></tr><tr class="t-dsc"><td><code>&quot;STRTAB&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L148">line 148</a></td></tr><tr class="t-dsc"><td><code>&quot;RELA&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td><code>&quot;HASH&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L152">line 152</a></td></tr><tr class="t-dsc"><td><code>&quot;DYNAMIC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L154">line 154</a></td></tr><tr class="t-dsc"><td><code>&quot;NOTE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L156">line 156</a></td></tr><tr class="t-dsc"><td><code>&quot;NOBITS&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L158">line 158</a></td></tr><tr class="t-dsc"><td><code>&quot;REL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L160">line 160</a></td></tr><tr class="t-dsc"><td><code>&quot;SHLIB&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L162">line 162</a></td></tr><tr class="t-dsc"><td><code>&quot;DYNSYM&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L164">line 164</a></td></tr><tr class="t-dsc"><td><code>&quot;INIT_ARRAY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L166">line 166</a></td></tr><tr class="t-dsc"><td><code>&quot;FINI_ARRAY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L168">line 168</a></td></tr><tr class="t-dsc"><td><code>&quot;PREINIT_ARRAY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L170">line 170</a></td></tr><tr class="t-dsc"><td><code>&quot;GROUP&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L172">line 172</a></td></tr><tr class="t-dsc"><td><code>&quot;SYMTAB_SHNDX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L174">line 174</a></td></tr><tr class="t-dsc"><td><code>&quot;RELR&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_ATTRIBUTES&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L178">line 178</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_HASH&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L180">line 180</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_LIBLIST&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L182">line 182</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_verdef&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L184">line 184</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_verneed&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L186">line 186</a></td></tr><tr class="t-dsc"><td><code>&quot;GNU_versym&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L188">line 188</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L190">line 190</a></td></tr></tbody></table></section><section class="function-entry" id="f-51070672ea72acd4"><h3><code>micron::elf::read::dt_tag_name(i64 tag) noexcept</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+dt_tag_name(i64 tag) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 tag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+dt_tag_name(i64 tag) noexcept
+{
+  switch ( tag ) {
+  case dt_null:
+    return &quot;DT_NULL&quot;;
+  case dt_needed:
+    return &quot;DT_NEEDED&quot;;
+  case dt_pltrelsz:
+    return &quot;DT_PLTRELSZ&quot;;
+  case dt_pltgot:
+    return &quot;DT_PLTGOT&quot;;
+  case dt_hash:
+    return &quot;DT_HASH&quot;;
+  case dt_strtab:
+    return &quot;DT_STRTAB&quot;;
+  case dt_symtab:
+    return &quot;DT_SYMTAB&quot;;
+  case dt_rela:
+    return &quot;DT_RELA&quot;;
+  case dt_relasz:
+    return &quot;DT_RELASZ&quot;;
+  case dt_relaent:
+    return &quot;DT_RELAENT&quot;;
+  case dt_strsz:
+    return &quot;DT_STRSZ&quot;;
+  case dt_syment:
+    return &quot;DT_SYMENT&quot;;
+  case dt_init:
+    return &quot;DT_INIT&quot;;
+  case dt_fini:
+    return &quot;DT_FINI&quot;;
+  case dt_soname:
+    return &quot;DT_SONAME&quot;;
+  case dt_rpath:
+    return &quot;DT_RPATH&quot;;
+  case dt_symbolic:
+    return &quot;DT_SYMBOLIC&quot;;
+  case dt_rel:
+    return &quot;DT_REL&quot;;
+  case dt_relsz:
+    return &quot;DT_RELSZ&quot;;
+  case dt_relent:
+    return &quot;DT_RELENT&quot;;
+  case dt_pltrel:
+    return &quot;DT_PLTREL&quot;;
+  case dt_debug:
+    return &quot;DT_DEBUG&quot;;
+  case dt_textrel:
+    return &quot;DT_TEXTREL&quot;;
+  case dt_jmprel:
+    return &quot;DT_JMPREL&quot;;
+  case dt_bind_now:
+    return &quot;DT_BIND_NOW&quot;;
+  case dt_init_array:
+    return &quot;DT_INIT_ARRAY&quot;;
+  case dt_fini_array:
+    return &quot;DT_FINI_ARRAY&quot;;
+  case dt_init_arraysz:
+    return &quot;DT_INIT_ARRAYSZ&quot;;
+  case dt_fini_arraysz:
+    return &quot;DT_FINI_ARRAYSZ&quot;;
+  case dt_runpath:
+    return &quot;DT_RUNPATH&quot;;
+  case dt_flags:
+    return &quot;DT_FLAGS&quot;;
+  case dt_preinit_array:
+    return &quot;DT_PREINIT_ARRAY&quot;;
+  case dt_preinit_arraysz:
+    return &quot;DT_PREINIT_ARRAYSZ&quot;;
+  case dt_relrsz:
+    return &quot;DT_RELRSZ&quot;;
+  case dt_relr:
+    return &quot;DT_RELR&quot;;
+  case dt_relrent:
+    return &quot;DT_RELRENT&quot;;
+  case dt_gnu_hash:
+    return &quot;DT_GNU_HASH&quot;;
+  case dt_relacount:
+    return &quot;DT_RELACOUNT&quot;;
+  case dt_relcount:
+    return &quot;DT_RELCOUNT&quot;;
+  case dt_flags_1:
+    return &quot;DT_FLAGS_1&quot;;
+  case dt_verdef:
+    return &quot;DT_VERDEF&quot;;
+  case dt_verdefnum:
+    return &quot;DT_VERDEFNUM&quot;;
+  case dt_verneed:
+    return &quot;DT_VERNEED&quot;;
+  case dt_verneednum:
+    return &quot;DT_VERNEEDNUM&quot;;
+  case dt_versym:
+    return &quot;DT_VERSYM&quot;;
+  default:
+    // DT_LOPROC..DT_HIPROC is a PER-MACHINE namespace: 0x70000001 is DT_ARM_EXIDX on arm and
+    // DT_X86_64_PLTSZ on amd64. it cannot be spelled without e_machine -- use the overload.
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;DT_NULL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L199">line 199</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_NEEDED&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L201">line 201</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_PLTRELSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L203">line 203</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_PLTGOT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_HASH&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L207">line 207</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_STRTAB&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L209">line 209</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_SYMTAB&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L211">line 211</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELA&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L213">line 213</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELASZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L215">line 215</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELAENT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L217">line 217</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_STRSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L219">line 219</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_SYMENT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L221">line 221</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_INIT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L223">line 223</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_FINI&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L225">line 225</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_SONAME&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L227">line 227</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RPATH&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L229">line 229</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_SYMBOLIC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L231">line 231</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_REL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L233">line 233</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L235">line 235</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELENT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L237">line 237</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_PLTREL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L239">line 239</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_DEBUG&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L241">line 241</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_TEXTREL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L243">line 243</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_JMPREL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L245">line 245</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_BIND_NOW&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L247">line 247</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_INIT_ARRAY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L249">line 249</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_FINI_ARRAY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L251">line 251</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_INIT_ARRAYSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L253">line 253</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_FINI_ARRAYSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L255">line 255</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RUNPATH&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L257">line 257</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_FLAGS&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L259">line 259</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_PREINIT_ARRAY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L261">line 261</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_PREINIT_ARRAYSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L263">line 263</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELRSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L265">line 265</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELR&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L267">line 267</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELRENT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L269">line 269</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_GNU_HASH&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L271">line 271</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELACOUNT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L273">line 273</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_RELCOUNT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L275">line 275</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_FLAGS_1&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L277">line 277</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_VERDEF&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L279">line 279</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_VERDEFNUM&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L281">line 281</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_VERNEED&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L283">line 283</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_VERNEEDNUM&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L285">line 285</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_VERSYM&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L287">line 287</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L291">line 291</a></td></tr></tbody></table></section><section class="function-entry" id="f-f31b09c774b56af4"><h3><code>micron::elf::read::dt_tag_name(half machine, i64 tag) noexcept</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L298">line 298</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+dt_tag_name(half machine, i64 tag) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>half machine</code></li><li><code>i64 tag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+dt_tag_name(half machine, i64 tag) noexcept
+{
+  if ( tag &lt; dt_loproc || tag &gt; dt_hiproc ) return dt_tag_name(tag);
+  switch ( machine ) {
+  case em_arm:
+    switch ( tag ) {
+    case dt_arm_exidx:
+      return &quot;DT_ARM_EXIDX&quot;;
+    case dt_arm_exidxsz:
+      return &quot;DT_ARM_EXIDXSZ&quot;;
+    default:
+      return nullptr;
+    }
+  case em_x86_64:
+    switch ( tag ) {
+    case 0x70000000:
+      return &quot;DT_X86_64_PLT&quot;;
+    case 0x70000001:
+      return &quot;DT_X86_64_PLTSZ&quot;;
+    case 0x70000003:
+      return &quot;DT_X86_64_PLTENT&quot;;
+    default:
+      return nullptr;
+    }
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dt_tag_name(tag)</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L300">line 300</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_ARM_EXIDX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L305">line 305</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_ARM_EXIDXSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L307">line 307</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L309">line 309</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_X86_64_PLT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L314">line 314</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_X86_64_PLTSZ&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L316">line 316</a></td></tr><tr class="t-dsc"><td><code>&quot;DT_X86_64_PLTENT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L318">line 318</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L320">line 320</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L323">line 323</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="names.hpp.html#f-51070672ea72acd4">dt_tag_name</a>.</p></section><section class="function-entry" id="f-91012e51e967e004"><h3><code>micron::elf::read::reloc_type_name(half machine, u32 type)</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L649">line 649</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+reloc_type_name(half machine, u32 type)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>half machine</code></li><li><code>u32 type</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+reloc_type_name(half machine, u32 type)
+{
+  switch ( machine ) {
+  case em_x86_64:
+    return __impl::r_name_x86_64(type);
+  case em_386:
+    return __impl::r_name_386(type);
+  case em_arm:
+    return __impl::r_name_arm(type);
+  case em_aarch64:
+    return __impl::r_name_aarch64(type);
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::r_name_x86_64(type)</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L653">line 653</a></td></tr><tr class="t-dsc"><td><code>__impl::r_name_386(type)</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L655">line 655</a></td></tr><tr class="t-dsc"><td><code>__impl::r_name_arm(type)</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L657">line 657</a></td></tr><tr class="t-dsc"><td><code>__impl::r_name_aarch64(type)</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L659">line 659</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L661">line 661</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="names.hpp.html#f-9563588cf4bfed6d">__impl::r_name_x86_64</a>, <a href="names.hpp.html#f-d037cf515253eb83">__impl::r_name_386</a>, <a href="names.hpp.html#f-158ca72db0adab7c">__impl::r_name_arm</a>, <a href="names.hpp.html#f-f83058ae273de042">__impl::r_name_aarch64</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-9563588cf4bfed6d"><h3><code>micron::elf::read::__impl::r_name_x86_64(u32 t)</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L336">line 336</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+r_name_x86_64(u32 t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+r_name_x86_64(u32 t)
+{
+  switch ( t ) {
+  case 0:
+    return &quot;R_X86_64_NONE&quot;;
+  case 1:
+    return &quot;R_X86_64_64&quot;;
+  case 2:
+    return &quot;R_X86_64_PC32&quot;;
+  case 3:
+    return &quot;R_X86_64_GOT32&quot;;
+  case 4:
+    return &quot;R_X86_64_PLT32&quot;;
+  case 5:
+    return &quot;R_X86_64_COPY&quot;;
+  case 6:
+    return &quot;R_X86_64_GLOB_DAT&quot;;
+  case 7:
+    return &quot;R_X86_64_JUMP_SLOT&quot;;
+  case 8:
+    return &quot;R_X86_64_RELATIVE&quot;;
+  case 9:
+    return &quot;R_X86_64_GOTPCREL&quot;;
+  case 10:
+    return &quot;R_X86_64_32&quot;;
+  case 11:
+    return &quot;R_X86_64_32S&quot;;
+  case 12:
+    return &quot;R_X86_64_16&quot;;
+  case 13:
+    return &quot;R_X86_64_PC16&quot;;
+  case 14:
+    return &quot;R_X86_64_8&quot;;
+  case 15:
+    return &quot;R_X86_64_PC8&quot;;
+  case 16:
+    return &quot;R_X86_64_DTPMOD64&quot;;
+  case 17:
+    return &quot;R_X86_64_DTPOFF64&quot;;
+  case 18:
+    return &quot;R_X86_64_TPOFF64&quot;;
+  case 19:
+    return &quot;R_X86_64_TLSGD&quot;;
+  case 20:
+    return &quot;R_X86_64_TLSLD&quot;;
+  case 21:
+    return &quot;R_X86_64_DTPOFF32&quot;;
+  case 22:
+    return &quot;R_X86_64_GOTTPOFF&quot;;
+  case 23:
+    return &quot;R_X86_64_TPOFF32&quot;;
+  case 24:
+    return &quot;R_X86_64_PC64&quot;;
+  case 25:
+    return &quot;R_X86_64_GOTOFF64&quot;;
+  case 26:
+    return &quot;R_X86_64_GOTPC32&quot;;
+  case 27:
+    return &quot;R_X86_64_GOT64&quot;;
+  case 28:
+    return &quot;R_X86_64_GOTPCREL64&quot;;
+  case 29:
+    return &quot;R_X86_64_GOTPC64&quot;;
+  case 30:
+    return &quot;R_X86_64_GOTPLT64&quot;;
+  case 31:
+    return &quot;R_X86_64_PLTOFF64&quot;;
+  case 32:
+    return &quot;R_X86_64_SIZE32&quot;;
+  case 33:
+    return &quot;R_X86_64_SIZE64&quot;;
+  case 34:
+    return &quot;R_X86_64_GOTPC32_TLSDESC&quot;;
+  case 35:
+    return &quot;R_X86_64_TLSDESC_CALL&quot;;
+  case 36:
+    return &quot;R_X86_64_TLSDESC&quot;;
+  case 37:
+    return &quot;R_X86_64_IRELATIVE&quot;;
+  case 38:
+    return &quot;R_X86_64_RELATIVE64&quot;;
+  case 41:
+    return &quot;R_X86_64_GOTPCRELX&quot;;
+  case 42:
+    return &quot;R_X86_64_REX_GOTPCRELX&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;R_X86_64_NONE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L340">line 340</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L342">line 342</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_PC32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L344">line 344</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOT32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L346">line 346</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_PLT32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L348">line 348</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_COPY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L350">line 350</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GLOB_DAT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L352">line 352</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_JUMP_SLOT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L354">line 354</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_RELATIVE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L356">line 356</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTPCREL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L358">line 358</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L360">line 360</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_32S&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L362">line 362</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_16&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_PC16&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L366">line 366</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_8&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L368">line 368</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_PC8&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L370">line 370</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_DTPMOD64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L372">line 372</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_DTPOFF64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L374">line 374</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_TPOFF64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L376">line 376</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_TLSGD&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L378">line 378</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_TLSLD&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L380">line 380</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_DTPOFF32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L382">line 382</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTTPOFF&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L384">line 384</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_TPOFF32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L386">line 386</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_PC64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L388">line 388</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTOFF64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L390">line 390</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTPC32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L392">line 392</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOT64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L394">line 394</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTPCREL64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L396">line 396</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTPC64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L398">line 398</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTPLT64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L400">line 400</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_PLTOFF64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L402">line 402</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_SIZE32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L404">line 404</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_SIZE64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L406">line 406</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTPC32_TLSDESC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L408">line 408</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_TLSDESC_CALL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L410">line 410</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_TLSDESC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L412">line 412</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_IRELATIVE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L414">line 414</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_RELATIVE64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L416">line 416</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_GOTPCRELX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L418">line 418</a></td></tr><tr class="t-dsc"><td><code>&quot;R_X86_64_REX_GOTPCRELX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L420">line 420</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L422">line 422</a></td></tr></tbody></table></section><section class="function-entry" id="f-d037cf515253eb83"><h3><code>micron::elf::read::__impl::r_name_386(u32 t)</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L427">line 427</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+r_name_386(u32 t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+r_name_386(u32 t)
+{
+  switch ( t ) {
+  case 0:
+    return &quot;R_386_NONE&quot;;
+  case 1:
+    return &quot;R_386_32&quot;;
+  case 2:
+    return &quot;R_386_PC32&quot;;
+  case 3:
+    return &quot;R_386_GOT32&quot;;
+  case 4:
+    return &quot;R_386_PLT32&quot;;
+  case 5:
+    return &quot;R_386_COPY&quot;;
+  case 6:
+    return &quot;R_386_GLOB_DAT&quot;;
+  case 7:
+    return &quot;R_386_JMP_SLOT&quot;;
+  case 8:
+    return &quot;R_386_RELATIVE&quot;;
+  case 9:
+    return &quot;R_386_GOTOFF&quot;;
+  case 10:
+    return &quot;R_386_GOTPC&quot;;
+  case 11:
+    return &quot;R_386_32PLT&quot;;
+  case 14:
+    return &quot;R_386_TLS_TPOFF&quot;;
+  case 15:
+    return &quot;R_386_TLS_IE&quot;;
+  case 16:
+    return &quot;R_386_TLS_GOTIE&quot;;
+  case 17:
+    return &quot;R_386_TLS_LE&quot;;
+  case 18:
+    return &quot;R_386_TLS_GD&quot;;
+  case 19:
+    return &quot;R_386_TLS_LDM&quot;;
+  case 20:
+    return &quot;R_386_16&quot;;
+  case 21:
+    return &quot;R_386_PC16&quot;;
+  case 22:
+    return &quot;R_386_8&quot;;
+  case 23:
+    return &quot;R_386_PC8&quot;;
+  case 35:
+    return &quot;R_386_TLS_DTPMOD32&quot;;
+  case 36:
+    return &quot;R_386_TLS_DTPOFF32&quot;;
+  case 37:
+    return &quot;R_386_TLS_TPOFF32&quot;;
+  case 38:
+    return &quot;R_386_SIZE32&quot;;
+  case 39:
+    return &quot;R_386_TLS_GOTDESC&quot;;
+  case 40:
+    return &quot;R_386_TLS_DESC_CALL&quot;;
+  case 41:
+    return &quot;R_386_TLS_DESC&quot;;
+  case 42:
+    return &quot;R_386_IRELATIVE&quot;;
+  case 43:
+    return &quot;R_386_GOT32X&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;R_386_NONE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L431">line 431</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L433">line 433</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_PC32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L435">line 435</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_GOT32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L437">line 437</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_PLT32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L439">line 439</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_COPY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L441">line 441</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_GLOB_DAT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L443">line 443</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_JMP_SLOT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L445">line 445</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_RELATIVE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L447">line 447</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_GOTOFF&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L449">line 449</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_GOTPC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L451">line 451</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_32PLT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L453">line 453</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_TPOFF&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L455">line 455</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_IE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L457">line 457</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_GOTIE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L459">line 459</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_LE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L461">line 461</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_GD&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L463">line 463</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_LDM&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L465">line 465</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_16&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L467">line 467</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_PC16&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L469">line 469</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_8&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L471">line 471</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_PC8&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L473">line 473</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_DTPMOD32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L475">line 475</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_DTPOFF32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L477">line 477</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_TPOFF32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L479">line 479</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_SIZE32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L481">line 481</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_GOTDESC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L483">line 483</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_DESC_CALL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L485">line 485</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_TLS_DESC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L487">line 487</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_IRELATIVE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L489">line 489</a></td></tr><tr class="t-dsc"><td><code>&quot;R_386_GOT32X&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L491">line 491</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L493">line 493</a></td></tr></tbody></table></section><section class="function-entry" id="f-158ca72db0adab7c"><h3><code>micron::elf::read::__impl::r_name_arm(u32 t)</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L498">line 498</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+r_name_arm(u32 t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+r_name_arm(u32 t)
+{
+  switch ( t ) {
+  case 0:
+    return &quot;R_ARM_NONE&quot;;
+  case 1:
+    return &quot;R_ARM_PC24&quot;;
+  case 2:
+    return &quot;R_ARM_ABS32&quot;;
+  case 3:
+    return &quot;R_ARM_REL32&quot;;
+  case 4:
+    return &quot;R_ARM_LDR_PC_G0&quot;;
+  case 5:
+    return &quot;R_ARM_ABS16&quot;;
+  case 6:
+    return &quot;R_ARM_ABS12&quot;;
+  case 7:
+    return &quot;R_ARM_THM_ABS5&quot;;
+  case 8:
+    return &quot;R_ARM_ABS8&quot;;
+  case 9:
+    return &quot;R_ARM_SBREL32&quot;;
+  case 10:
+    return &quot;R_ARM_THM_CALL&quot;;
+  case 11:
+    return &quot;R_ARM_THM_PC8&quot;;
+  case 13:
+    return &quot;R_ARM_TLS_DESC&quot;;
+  case 17:
+    return &quot;R_ARM_TLS_DTPMOD32&quot;;
+  case 18:
+    return &quot;R_ARM_TLS_DTPOFF32&quot;;
+  case 19:
+    return &quot;R_ARM_TLS_TPOFF32&quot;;
+  case 20:
+    return &quot;R_ARM_COPY&quot;;
+  case 21:
+    return &quot;R_ARM_GLOB_DAT&quot;;
+  case 22:
+    return &quot;R_ARM_JUMP_SLOT&quot;;
+  case 23:
+    return &quot;R_ARM_RELATIVE&quot;;
+  case 24:
+    return &quot;R_ARM_GOTOFF32&quot;;
+  case 25:
+    return &quot;R_ARM_BASE_PREL&quot;;
+  case 26:
+    return &quot;R_ARM_GOT_BREL&quot;;
+  case 27:
+    return &quot;R_ARM_PLT32&quot;;
+  case 28:
+    return &quot;R_ARM_CALL&quot;;
+  case 29:
+    return &quot;R_ARM_JUMP24&quot;;
+  case 30:
+    return &quot;R_ARM_THM_JUMP24&quot;;
+  case 31:
+    return &quot;R_ARM_BASE_ABS&quot;;
+  case 38:
+    return &quot;R_ARM_TARGET1&quot;;
+  case 39:
+    return &quot;R_ARM_SBREL31&quot;;
+  case 40:
+    return &quot;R_ARM_V4BX&quot;;
+  case 41:
+    return &quot;R_ARM_TARGET2&quot;;
+  case 42:
+    return &quot;R_ARM_PREL31&quot;;
+  case 43:
+    return &quot;R_ARM_MOVW_ABS_NC&quot;;
+  case 44:
+    return &quot;R_ARM_MOVT_ABS&quot;;
+  case 104:
+    return &quot;R_ARM_TLS_GD32&quot;;
+  case 105:
+    return &quot;R_ARM_TLS_LDM32&quot;;
+  case 106:
+    return &quot;R_ARM_TLS_LDO32&quot;;
+  case 107:
+    return &quot;R_ARM_TLS_IE32&quot;;
+  case 108:
+    return &quot;R_ARM_TLS_LE32&quot;;
+  case 160:
+    return &quot;R_ARM_IRELATIVE&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;R_ARM_NONE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L502">line 502</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_PC24&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L504">line 504</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_ABS32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L506">line 506</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_REL32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L508">line 508</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_LDR_PC_G0&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L510">line 510</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_ABS16&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L512">line 512</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_ABS12&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L514">line 514</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_THM_ABS5&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L516">line 516</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_ABS8&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L518">line 518</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_SBREL32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L520">line 520</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_THM_CALL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L522">line 522</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_THM_PC8&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L524">line 524</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_DESC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L526">line 526</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_DTPMOD32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L528">line 528</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_DTPOFF32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L530">line 530</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_TPOFF32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L532">line 532</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_COPY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L534">line 534</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_GLOB_DAT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L536">line 536</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_JUMP_SLOT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L538">line 538</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_RELATIVE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L540">line 540</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_GOTOFF32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L542">line 542</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_BASE_PREL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L544">line 544</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_GOT_BREL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L546">line 546</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_PLT32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L548">line 548</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_CALL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L550">line 550</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_JUMP24&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L552">line 552</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_THM_JUMP24&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L554">line 554</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_BASE_ABS&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L556">line 556</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TARGET1&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L558">line 558</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_SBREL31&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L560">line 560</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_V4BX&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L562">line 562</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TARGET2&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L564">line 564</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_PREL31&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L566">line 566</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_MOVW_ABS_NC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L568">line 568</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_MOVT_ABS&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L570">line 570</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_GD32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L572">line 572</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_LDM32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L574">line 574</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_LDO32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L576">line 576</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_IE32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L578">line 578</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_TLS_LE32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L580">line 580</a></td></tr><tr class="t-dsc"><td><code>&quot;R_ARM_IRELATIVE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L582">line 582</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L584">line 584</a></td></tr></tbody></table></section><section class="function-entry" id="f-f83058ae273de042"><h3><code>micron::elf::read::__impl::r_name_aarch64(u32 t)</code></h3><p>Defined in <code>linux/elf/read/names.hpp</code>, <a href="../../../../source/linux/elf/read/names.hpp.html#L589">line 589</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr const char *
+r_name_aarch64(u32 t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr const char *
+r_name_aarch64(u32 t)
+{
+  switch ( t ) {
+  case 0:
+    return &quot;R_AARCH64_NONE&quot;;
+  case 257:
+    return &quot;R_AARCH64_ABS64&quot;;
+  case 258:
+    return &quot;R_AARCH64_ABS32&quot;;
+  case 259:
+    return &quot;R_AARCH64_ABS16&quot;;
+  case 260:
+    return &quot;R_AARCH64_PREL64&quot;;
+  case 261:
+    return &quot;R_AARCH64_PREL32&quot;;
+  case 262:
+    return &quot;R_AARCH64_PREL16&quot;;
+  case 274:
+    return &quot;R_AARCH64_ADR_PREL_LO21&quot;;
+  case 275:
+    return &quot;R_AARCH64_ADR_PREL_PG_HI21&quot;;
+  case 277:
+    return &quot;R_AARCH64_ADD_ABS_LO12_NC&quot;;
+  case 282:
+    return &quot;R_AARCH64_JUMP26&quot;;
+  case 283:
+    return &quot;R_AARCH64_CALL26&quot;;
+  case 286:
+    return &quot;R_AARCH64_LDST64_ABS_LO12_NC&quot;;
+  case 311:
+    return &quot;R_AARCH64_ADR_GOT_PAGE&quot;;
+  case 312:
+    return &quot;R_AARCH64_LD64_GOT_LO12_NC&quot;;
+  case 1024:
+    return &quot;R_AARCH64_COPY&quot;;
+  case 1025:
+    return &quot;R_AARCH64_GLOB_DAT&quot;;
+  case 1026:
+    return &quot;R_AARCH64_JUMP_SLOT&quot;;
+  case 1027:
+    return &quot;R_AARCH64_RELATIVE&quot;;
+  case 1028:
+    return &quot;R_AARCH64_TLS_DTPMOD&quot;;
+  case 1029:
+    return &quot;R_AARCH64_TLS_DTPREL&quot;;
+  case 1030:
+    return &quot;R_AARCH64_TLS_TPREL&quot;;
+  case 1031:
+    return &quot;R_AARCH64_TLSDESC&quot;;
+  case 1032:
+    return &quot;R_AARCH64_IRELATIVE&quot;;
+  default:
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;R_AARCH64_NONE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L593">line 593</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_ABS64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L595">line 595</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_ABS32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L597">line 597</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_ABS16&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L599">line 599</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_PREL64&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L601">line 601</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_PREL32&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L603">line 603</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_PREL16&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L605">line 605</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_ADR_PREL_LO21&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L607">line 607</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_ADR_PREL_PG_HI21&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L609">line 609</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_ADD_ABS_LO12_NC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L611">line 611</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_JUMP26&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L613">line 613</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_CALL26&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L615">line 615</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_LDST64_ABS_LO12_NC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L617">line 617</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_ADR_GOT_PAGE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L619">line 619</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_LD64_GOT_LO12_NC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L621">line 621</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_COPY&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L623">line 623</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_GLOB_DAT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L625">line 625</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_JUMP_SLOT&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L627">line 627</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_RELATIVE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L629">line 629</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_TLS_DTPMOD&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L631">line 631</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_TLS_DTPREL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L633">line 633</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_TLS_TPREL&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L635">line 635</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_TLSDESC&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L637">line 637</a></td></tr><tr class="t-dsc"><td><code>&quot;R_AARCH64_IRELATIVE&quot;</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L639">line 639</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/names.hpp.html#L641">line 641</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

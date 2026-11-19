@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/match.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../assets/cppreference2/screen.css"><link rel="stylesheet" href="../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../index.html">Reference</a> <a href="index.html">Headers</a> <a href="../functions/index.html">Functions</a> <a href="../symbols/index.html">Symbols</a> <a href="../source/index.html">Source</a> <a href="../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/match.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../index.html">micron reference</a> › <a href="../modules/utility.html">Functions, tuples, and sum types</a></div><p>Defined in header <code>&lt;micron/match.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../source/match.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-5b39af2f51dd602c">micron::match(pair&lt;T, F&gt; &amp;p)</a></td><td>function; line 115</td></tr><tr class="t-dsc"><td><a href="#f-50c4ecd699f6933d">micron::match(const pair&lt;T, F&gt; &amp;p)</a></td><td>function; line 123</td></tr><tr class="t-dsc"><td><a href="#f-1da999222a446919">micron::lazy_match(pair&lt;T, F&gt; &amp;p)</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-51df4c15646d66a3">micron::lazy_match(const pair&lt;T, F&gt; &amp;p)</a></td><td>function; line 139</td></tr><tr class="t-dsc"><td><a href="#f-4e487d94c884f9e2">micron::match(tuple&lt;Ts...&gt; &amp;t)</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-ab1e2c922d381a1f">micron::match(const tuple&lt;Ts...&gt; &amp;t)</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-57578bc58975430d">micron::lazy_match(tuple&lt;Ts...&gt; &amp;t)</a></td><td>function; line 164</td></tr><tr class="t-dsc"><td><a href="#f-ed773b5201e70fb4">micron::lazy_match(const tuple&lt;Ts...&gt; &amp;t)</a></td><td>function; line 171</td></tr><tr class="t-dsc"><td><a href="#f-3b0d3266b064307d">micron::match(index_sequence&lt;Is...&gt;)</a></td><td>function; line 181</td></tr><tr class="t-dsc"><td><a href="#f-04300d3cc89fd3b9">micron::lazy_match(index_sequence&lt;Is...&gt;)</a></td><td>function; line 188</td></tr><tr class="t-dsc"><td><a href="#f-03ade2e0eb4ee743">micron::match(any&lt;Ts...&gt; &amp;a)</a></td><td>function; line 198</td></tr><tr class="t-dsc"><td><a href="#f-fc6aab74c39dc8bb">micron::match(const any&lt;Ts...&gt; &amp;a)</a></td><td>function; line 214</td></tr><tr class="t-dsc"><td><a href="#f-0b179770d3d8b116">micron::lazy_match(any&lt;Ts...&gt; &amp;a)</a></td><td>function; line 230</td></tr><tr class="t-dsc"><td><a href="#f-8f6d1a1befa3e1c1">micron::lazy_match(const any&lt;Ts...&gt; &amp;a)</a></td><td>function; line 246</td></tr><tr class="t-dsc"><td><a href="#f-563f78c4652f6dcb">micron::match(option&lt;T, F&gt; &amp;o)</a></td><td>function; line 265</td></tr><tr class="t-dsc"><td><a href="#f-7c93cecf7b59442e">micron::match(const option&lt;T, F&gt; &amp;o)</a></td><td>function; line 276</td></tr><tr class="t-dsc"><td><a href="#f-6b82a25c83f709c9">micron::lazy_match(option&lt;T, F&gt; &amp;o)</a></td><td>function; line 287</td></tr><tr class="t-dsc"><td><a href="#f-c0369ae48bfcb6ca">micron::lazy_match(const option&lt;T, F&gt; &amp;o)</a></td><td>function; line 298</td></tr><tr class="t-dsc"><td><a href="#f-d5715e8493a756ee">micron::match(Ts &amp;&amp;...vs)</a></td><td>function; line 310</td></tr><tr class="t-dsc"><td><a href="#f-44652f2b994ac3fd">micron::lazy_match(Ts &amp;&amp;...vs)</a></td><td>function; line 318</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-5b39af2f51dd602c"><h3><code>micron::match(pair&lt;T, F&gt; &amp;p)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L115">line 115</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+match(pair&lt;T, F&gt; &amp;p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pair&lt;T, F&gt; &amp;p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+match(pair&lt;T, F&gt; &amp;p)
+{
+  __match_dispatch&lt;Fs...&gt;::strict(p.a);
+  __match_dispatch&lt;Fs...&gt;::strict(p.b);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ce59817378a8067e">__match_dispatch&lt;Fs...&gt;::strict</a>.</p></section><section class="function-entry" id="f-50c4ecd699f6933d"><h3><code>micron::match(const pair&lt;T, F&gt; &amp;p)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L123">line 123</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+match(const pair&lt;T, F&gt; &amp;p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const pair&lt;T, F&gt; &amp;p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+match(const pair&lt;T, F&gt; &amp;p)
+{
+  __match_dispatch&lt;Fs...&gt;::strict(p.a);
+  __match_dispatch&lt;Fs...&gt;::strict(p.b);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ce59817378a8067e">__match_dispatch&lt;Fs...&gt;::strict</a>.</p></section><section class="function-entry" id="f-1da999222a446919"><h3><code>micron::lazy_match(pair&lt;T, F&gt; &amp;p)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+lazy_match(pair&lt;T, F&gt; &amp;p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pair&lt;T, F&gt; &amp;p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+lazy_match(pair&lt;T, F&gt; &amp;p)
+{
+  __match_dispatch&lt;Fs...&gt;::permissible(p.a);
+  __match_dispatch&lt;Fs...&gt;::permissible(p.b);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-66db91e925ebe7b0">__match_dispatch&lt;Fs...&gt;::permissible</a>.</p></section><section class="function-entry" id="f-51df4c15646d66a3"><h3><code>micron::lazy_match(const pair&lt;T, F&gt; &amp;p)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L139">line 139</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+lazy_match(const pair&lt;T, F&gt; &amp;p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const pair&lt;T, F&gt; &amp;p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+lazy_match(const pair&lt;T, F&gt; &amp;p)
+{
+  __match_dispatch&lt;Fs...&gt;::permissible(p.a);
+  __match_dispatch&lt;Fs...&gt;::permissible(p.b);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-66db91e925ebe7b0">__match_dispatch&lt;Fs...&gt;::permissible</a>.</p></section><section class="function-entry" id="f-4e487d94c884f9e2"><h3><code>micron::match(tuple&lt;Ts...&gt; &amp;t)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(tuple&lt;Ts...&gt; &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>tuple&lt;Ts...&gt; &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(tuple&lt;Ts...&gt; &amp;t)
+{
+  __match_tuple_impl&lt;Fs...&gt;(t, index_sequence_for&lt;Ts...&gt;{});
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-8484c5a21c6550c7">__match_tuple_impl&lt;Fs...&gt;</a>.</p></section><section class="function-entry" id="f-ab1e2c922d381a1f"><h3><code>micron::match(const tuple&lt;Ts...&gt; &amp;t)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(const tuple&lt;Ts...&gt; &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tuple&lt;Ts...&gt; &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(const tuple&lt;Ts...&gt; &amp;t)
+{
+  __match_tuple_impl&lt;Fs...&gt;(t, index_sequence_for&lt;Ts...&gt;{});
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-8484c5a21c6550c7">__match_tuple_impl&lt;Fs...&gt;</a>.</p></section><section class="function-entry" id="f-57578bc58975430d"><h3><code>micron::lazy_match(tuple&lt;Ts...&gt; &amp;t)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L164">line 164</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(tuple&lt;Ts...&gt; &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>tuple&lt;Ts...&gt; &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(tuple&lt;Ts...&gt; &amp;t)
+{
+  __lazy_match_tuple_impl&lt;Fs...&gt;(t, index_sequence_for&lt;Ts...&gt;{});
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-03b3845dcf075a48">__lazy_match_tuple_impl&lt;Fs...&gt;</a>.</p></section><section class="function-entry" id="f-ed773b5201e70fb4"><h3><code>micron::lazy_match(const tuple&lt;Ts...&gt; &amp;t)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L171">line 171</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(const tuple&lt;Ts...&gt; &amp;t)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tuple&lt;Ts...&gt; &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(const tuple&lt;Ts...&gt; &amp;t)
+{
+  __lazy_match_tuple_impl&lt;Fs...&gt;(t, index_sequence_for&lt;Ts...&gt;{});
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-03b3845dcf075a48">__lazy_match_tuple_impl&lt;Fs...&gt;</a>.</p></section><section class="function-entry" id="f-3b0d3266b064307d"><h3><code>micron::match(index_sequence&lt;Is...&gt;)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L181">line 181</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, usize... Is&gt;
+constexpr void
+match(index_sequence&lt;Is...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>index_sequence&lt;Is...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, usize... Is&gt;
+constexpr void
+match(index_sequence&lt;Is...&gt;)
+{
+  (__match_dispatch&lt;Fs...&gt;::strict(integral_constant&lt;usize, Is&gt;{}), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ce59817378a8067e">__match_dispatch&lt;Fs...&gt;::strict</a>.</p></section><section class="function-entry" id="f-04300d3cc89fd3b9"><h3><code>micron::lazy_match(index_sequence&lt;Is...&gt;)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L188">line 188</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, usize... Is&gt;
+constexpr void
+lazy_match(index_sequence&lt;Is...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>index_sequence&lt;Is...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, usize... Is&gt;
+constexpr void
+lazy_match(index_sequence&lt;Is...&gt;)
+{
+  (__match_dispatch&lt;Fs...&gt;::permissible(integral_constant&lt;usize, Is&gt;{}), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-66db91e925ebe7b0">__match_dispatch&lt;Fs...&gt;::permissible</a>.</p></section><section class="function-entry" id="f-03ade2e0eb4ee743"><h3><code>micron::match(any&lt;Ts...&gt; &amp;a)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L198">line 198</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(any&lt;Ts...&gt; &amp;a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>any&lt;Ts...&gt; &amp;a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(any&lt;Ts...&gt; &amp;a)
+{
+  if ( !a.has_value() ) return;
+  bool found = false;
+  (
+      [&amp;]&lt;typename T&gt;() {
+        if ( !found &amp;&amp; a.template is&lt;T&gt;() ) {
+          found = true;
+          __match_dispatch&lt;Fs...&gt;::strict(a.template cast&lt;T&gt;());
+        }
+      }.template operator()&lt;Ts&gt;(),
+      ...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/match.hpp.html#L200">line 200</a></td></tr></tbody></table></section><section class="function-entry" id="f-fc6aab74c39dc8bb"><h3><code>micron::match(const any&lt;Ts...&gt; &amp;a)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L214">line 214</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(const any&lt;Ts...&gt; &amp;a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const any&lt;Ts...&gt; &amp;a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(const any&lt;Ts...&gt; &amp;a)
+{
+  if ( !a.has_value() ) return;
+  bool found = false;
+  (
+      [&amp;]&lt;typename T&gt;() {
+        if ( !found &amp;&amp; a.template is&lt;T&gt;() ) {
+          found = true;
+          __match_dispatch&lt;Fs...&gt;::strict(a.template cast&lt;T&gt;());
+        }
+      }.template operator()&lt;Ts&gt;(),
+      ...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/match.hpp.html#L216">line 216</a></td></tr></tbody></table></section><section class="function-entry" id="f-0b179770d3d8b116"><h3><code>micron::lazy_match(any&lt;Ts...&gt; &amp;a)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L230">line 230</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(any&lt;Ts...&gt; &amp;a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>any&lt;Ts...&gt; &amp;a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(any&lt;Ts...&gt; &amp;a)
+{
+  if ( !a.has_value() ) return;
+  bool found = false;
+  (
+      [&amp;]&lt;typename T&gt;() {
+        if ( !found &amp;&amp; a.template is&lt;T&gt;() ) {
+          found = true;
+          __match_dispatch&lt;Fs...&gt;::permissible(a.template cast&lt;T&gt;());
+        }
+      }.template operator()&lt;Ts&gt;(),
+      ...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/match.hpp.html#L232">line 232</a></td></tr></tbody></table></section><section class="function-entry" id="f-8f6d1a1befa3e1c1"><h3><code>micron::lazy_match(const any&lt;Ts...&gt; &amp;a)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L246">line 246</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(const any&lt;Ts...&gt; &amp;a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const any&lt;Ts...&gt; &amp;a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(const any&lt;Ts...&gt; &amp;a)
+{
+  if ( !a.has_value() ) return;
+  bool found = false;
+  (
+      [&amp;]&lt;typename T&gt;() {
+        if ( !found &amp;&amp; a.template is&lt;T&gt;() ) {
+          found = true;
+          __match_dispatch&lt;Fs...&gt;::permissible(a.template cast&lt;T&gt;());
+        }
+      }.template operator()&lt;Ts&gt;(),
+      ...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/match.hpp.html#L248">line 248</a></td></tr></tbody></table></section><section class="function-entry" id="f-563f78c4652f6dcb"><h3><code>micron::match(option&lt;T, F&gt; &amp;o)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L265">line 265</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+match(option&lt;T, F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>option&lt;T, F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+match(option&lt;T, F&gt; &amp;o)
+{
+  if ( !o.has_value() ) return;
+  if ( o.template is&lt;T&gt;() )
+    __match_dispatch&lt;Fs...&gt;::strict(o.template cast&lt;T&gt;());
+  else
+    __match_dispatch&lt;Fs...&gt;::strict(o.template cast&lt;F&gt;());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/match.hpp.html#L267">line 267</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ce59817378a8067e">__match_dispatch&lt;Fs...&gt;::strict</a>.</p></section><section class="function-entry" id="f-7c93cecf7b59442e"><h3><code>micron::match(const option&lt;T, F&gt; &amp;o)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L276">line 276</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+match(const option&lt;T, F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const option&lt;T, F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+match(const option&lt;T, F&gt; &amp;o)
+{
+  if ( !o.has_value() ) return;
+  if ( o.template is&lt;T&gt;() )
+    __match_dispatch&lt;Fs...&gt;::strict(o.template cast&lt;T&gt;());
+  else
+    __match_dispatch&lt;Fs...&gt;::strict(o.template cast&lt;F&gt;());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/match.hpp.html#L278">line 278</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ce59817378a8067e">__match_dispatch&lt;Fs...&gt;::strict</a>.</p></section><section class="function-entry" id="f-6b82a25c83f709c9"><h3><code>micron::lazy_match(option&lt;T, F&gt; &amp;o)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L287">line 287</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+lazy_match(option&lt;T, F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>option&lt;T, F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+lazy_match(option&lt;T, F&gt; &amp;o)
+{
+  if ( !o.has_value() ) return;
+  if ( o.template is&lt;T&gt;() )
+    __match_dispatch&lt;Fs...&gt;::permissible(o.template cast&lt;T&gt;());
+  else
+    __match_dispatch&lt;Fs...&gt;::permissible(o.template cast&lt;F&gt;());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/match.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="match.hpp.html#f-66db91e925ebe7b0">__match_dispatch&lt;Fs...&gt;::permissible</a>.</p></section><section class="function-entry" id="f-c0369ae48bfcb6ca"><h3><code>micron::lazy_match(const option&lt;T, F&gt; &amp;o)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L298">line 298</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+lazy_match(const option&lt;T, F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const option&lt;T, F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T, typename F&gt;
+constexpr void
+lazy_match(const option&lt;T, F&gt; &amp;o)
+{
+  if ( !o.has_value() ) return;
+  if ( o.template is&lt;T&gt;() )
+    __match_dispatch&lt;Fs...&gt;::permissible(o.template cast&lt;T&gt;());
+  else
+    __match_dispatch&lt;Fs...&gt;::permissible(o.template cast&lt;F&gt;());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/match.hpp.html#L300">line 300</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="match.hpp.html#f-66db91e925ebe7b0">__match_dispatch&lt;Fs...&gt;::permissible</a>.</p></section><section class="function-entry" id="f-d5715e8493a756ee"><h3><code>micron::match(Ts &amp;&amp;...vs)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L310">line 310</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(Ts &amp;&amp;...vs)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Ts &amp;&amp;...vs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+match(Ts &amp;&amp;...vs)
+{
+  (__match_dispatch&lt;Fs...&gt;::strict(micron::forward&lt;Ts&gt;(vs)), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ce59817378a8067e">__match_dispatch&lt;Fs...&gt;::strict</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Ts&gt;</a>.</p></section><section class="function-entry" id="f-44652f2b994ac3fd"><h3><code>micron::lazy_match(Ts &amp;&amp;...vs)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L318">line 318</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(Ts &amp;&amp;...vs)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Ts &amp;&amp;...vs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename... Ts&gt;
+constexpr void
+lazy_match(Ts &amp;&amp;...vs)
+{
+  (__match_dispatch&lt;Fs...&gt;::permissible(micron::forward&lt;Ts&gt;(vs)), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-66db91e925ebe7b0">__match_dispatch&lt;Fs...&gt;::permissible</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Ts&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ccf0408dbf9e49b5"><h3><code>micron::__match_call_one_strict(T &amp;&amp;v, F &amp;&amp;f)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L20">line 20</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F&gt;
+constexpr void
+__match_call_one_strict(T &amp;&amp;v, F &amp;&amp;f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li><li><code>F &amp;&amp;f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F&gt;
+constexpr void
+__match_call_one_strict(T &amp;&amp;v, F &amp;&amp;f)
+{
+  using D = micron::remove_cvref_t&lt;T&gt;;
+
+  if constexpr ( micron::is_invocable_v&lt;F, D &amp;&gt; and micron::is_same_v&lt;arg_type_t&lt;decltype(f)&gt;, D &amp;&gt; ) {
+    f(static_cast&lt;D &amp;&gt;(v));
+  } else if constexpr ( micron::is_invocable_v&lt;F, const D &amp;&gt; and micron::is_same_v&lt;arg_type_t&lt;decltype(f)&gt;, const D &amp;&gt; ) {
+    f(static_cast&lt;const D &amp;&gt;(v));
+  } else if constexpr ( micron::is_invocable_v&lt;F, D&gt; and micron::is_same_v&lt;arg_type_t&lt;decltype(f)&gt;, D&gt; ) {
+    f(static_cast&lt;D&gt;(v));
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-af4812b21b002358"><h3><code>micron::__match_call_one_permissible(T &amp;&amp;v, F &amp;&amp;f)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F&gt;
+constexpr void
+__match_call_one_permissible(T &amp;&amp;v, F &amp;&amp;f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li><li><code>F &amp;&amp;f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F&gt;
+constexpr void
+__match_call_one_permissible(T &amp;&amp;v, F &amp;&amp;f)
+{
+  using D = micron::remove_cvref_t&lt;T&gt;;
+
+  if constexpr ( micron::is_invocable_v&lt;F, D &amp;&gt; ) {
+    f(static_cast&lt;D &amp;&gt;(v));
+  } else if constexpr ( micron::is_invocable_v&lt;F, const D &amp;&gt; ) {
+    f(static_cast&lt;const D &amp;&gt;(v));
+  } else if constexpr ( micron::is_invocable_v&lt;F, D&gt; ) {
+    f(static_cast&lt;D&gt;(v));
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-485a931535ab9c01"><h3><code>micron::__dispatch_one_strict(T &amp;&amp;v, Fs &amp;&amp;...fs)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L53">line 53</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename... Fs&gt;
+constexpr void
+__dispatch_one_strict(T &amp;&amp;v, Fs &amp;&amp;...fs)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li><li><code>Fs &amp;&amp;...fs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename... Fs&gt;
+constexpr void
+__dispatch_one_strict(T &amp;&amp;v, Fs &amp;&amp;...fs)
+{
+  (__match_call_one_strict(micron::forward&lt;T&gt;(v), micron::forward&lt;Fs&gt;(fs)), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ccf0408dbf9e49b5">__match_call_one_strict</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fs&gt;</a>.</p></section><section class="function-entry" id="f-23681763992999e4"><h3><code>micron::__dispatch_one_permissible(T &amp;&amp;v, Fs &amp;&amp;...fs)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L60">line 60</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename... Fs&gt;
+constexpr void
+__dispatch_one_permissible(T &amp;&amp;v, Fs &amp;&amp;...fs)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li><li><code>Fs &amp;&amp;...fs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename... Fs&gt;
+constexpr void
+__dispatch_one_permissible(T &amp;&amp;v, Fs &amp;&amp;...fs)
+{
+  (__match_call_one_permissible(micron::forward&lt;T&gt;(v), micron::forward&lt;Fs&gt;(fs)), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-af4812b21b002358">__match_call_one_permissible</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fs&gt;</a>.</p></section><section class="function-entry" id="f-ce59817378a8067e"><h3><code>micron::__match_dispatch::strict(T &amp;&amp;v)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L68">line 68</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  static constexpr void
+  strict(T &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  static constexpr void
+  strict(T &amp;&amp;v)
+  {
+    (__match_call_one_strict(micron::forward&lt;T&gt;(v), Fs), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ccf0408dbf9e49b5">__match_call_one_strict</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-66db91e925ebe7b0"><h3><code>micron::__match_dispatch::permissible(T &amp;&amp;v)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  static constexpr void
+  permissible(T &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  static constexpr void
+  permissible(T &amp;&amp;v)
+  {
+    (__match_call_one_permissible(micron::forward&lt;T&gt;(v), Fs), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-af4812b21b002358">__match_call_one_permissible</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-9dec0cade285e167"><h3><code>micron::__dispatch_values_strict(T &amp;&amp;v)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L83">line 83</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T&gt;
+constexpr void
+__dispatch_values_strict(T &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T&gt;
+constexpr void
+__dispatch_values_strict(T &amp;&amp;v)
+{
+  __match_dispatch&lt;Fs...&gt;::strict(micron::forward&lt;T&gt;(v));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ce59817378a8067e">__match_dispatch&lt;Fs...&gt;::strict</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-6cee0f47a9e97dfe"><h3><code>micron::__dispatch_values_permissible(T &amp;&amp;v)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L90">line 90</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename T&gt;
+constexpr void
+__dispatch_values_permissible(T &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename T&gt;
+constexpr void
+__dispatch_values_permissible(T &amp;&amp;v)
+{
+  __match_dispatch&lt;Fs...&gt;::permissible(micron::forward&lt;T&gt;(v));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-66db91e925ebe7b0">__match_dispatch&lt;Fs...&gt;::permissible</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-8484c5a21c6550c7"><h3><code>micron::__match_tuple_impl(TupleT &amp;&amp;t, index_sequence&lt;Is...&gt;)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L98">line 98</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename TupleT, usize... Is&gt;
+constexpr void
+__match_tuple_impl(TupleT &amp;&amp;t, index_sequence&lt;Is...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>TupleT &amp;&amp;t</code></li><li><code>index_sequence&lt;Is...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename TupleT, usize... Is&gt;
+constexpr void
+__match_tuple_impl(TupleT &amp;&amp;t, index_sequence&lt;Is...&gt;)
+{
+  (__match_dispatch&lt;Fs...&gt;::strict(get&lt;Is&gt;(micron::forward&lt;TupleT&gt;(t))), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-ce59817378a8067e">__match_dispatch&lt;Fs...&gt;::strict</a>, <a href="tuple.hpp.html#f-99a9c97e75a0ac48">get&lt;Is&gt;</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;TupleT&gt;</a>.</p></section><section class="function-entry" id="f-03b3845dcf075a48"><h3><code>micron::__lazy_match_tuple_impl(TupleT &amp;&amp;t, index_sequence&lt;Is...&gt;)</code></h3><p>Defined in <code>match.hpp</code>, <a href="../source/match.hpp.html#L105">line 105</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto... Fs, typename TupleT, usize... Is&gt;
+constexpr void
+__lazy_match_tuple_impl(TupleT &amp;&amp;t, index_sequence&lt;Is...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>TupleT &amp;&amp;t</code></li><li><code>index_sequence&lt;Is...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto... Fs, typename TupleT, usize... Is&gt;
+constexpr void
+__lazy_match_tuple_impl(TupleT &amp;&amp;t, index_sequence&lt;Is...&gt;)
+{
+  (__match_dispatch&lt;Fs...&gt;::permissible(get&lt;Is&gt;(micron::forward&lt;TupleT&gt;(t))), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="match.hpp.html#f-66db91e925ebe7b0">__match_dispatch&lt;Fs...&gt;::permissible</a>, <a href="tuple.hpp.html#f-99a9c97e75a0ac48">get&lt;Is&gt;</a>, <a href="memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;TupleT&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../about.html">Attribution and licenses</a> · <a href="../index.html">Contents</a></p></div></div>
+</body></html>

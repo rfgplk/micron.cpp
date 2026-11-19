@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/heap/fibonacci_heap.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/heap/fibonacci_heap.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/heaps.html">Heaps</a></div><p>Defined in header <code>&lt;micron/heap/fibonacci_heap.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/heap/fibonacci_heap.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-e1f9e4e39ed1a803">micron::fibonacci_heap</code></td><td>class; line 17</td></tr><tr class="t-dsc"><td><code id="s-45872871452440a0">micron::fibonacci_heap::node::value</code></td><td>member; line 20</td></tr><tr class="t-dsc"><td><code id="s-63b9d8d968d38594">micron::fibonacci_heap::node::parent</code></td><td>member; line 21</td></tr><tr class="t-dsc"><td><code id="s-dac24028bcc02ab2">micron::fibonacci_heap::node::child</code></td><td>member; line 22</td></tr><tr class="t-dsc"><td><code id="s-56f0b259c4fccc4b">micron::fibonacci_heap::node::left</code></td><td>member; line 23</td></tr><tr class="t-dsc"><td><code id="s-654b154c5185a754">micron::fibonacci_heap::node::right</code></td><td>member; line 24</td></tr><tr class="t-dsc"><td><code id="s-1512d2c21bb848e9">micron::fibonacci_heap::node::degree</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><code id="s-ded5e2d7d310c8d1">micron::fibonacci_heap::node::mark</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-1a9321a0e54d9d89">micron::fibonacci_heap::node::allocation_len</code></td><td>member; line 27</td></tr><tr class="t-dsc"><td><code id="s-7f8f173f0d392509">micron::fibonacci_heap::category_type</code></td><td>typedef; line 177</td></tr><tr class="t-dsc"><td><code id="s-7b6106e830248129">micron::fibonacci_heap::mutability_type</code></td><td>typedef; line 178</td></tr><tr class="t-dsc"><td><code id="s-e3f1d20f20aff2a9">micron::fibonacci_heap::memory_type</code></td><td>typedef; line 179</td></tr><tr class="t-dsc"><td><code id="s-b7a1f65d03c8adfa">micron::fibonacci_heap::value_type</code></td><td>typedef; line 180</td></tr><tr class="t-dsc"><td><code id="s-d4ecc773230099e2">micron::fibonacci_heap::size_type</code></td><td>typedef; line 181</td></tr><tr class="t-dsc"><td><code id="s-8f045bf40d7ab5b1">micron::fibonacci_heap::reference</code></td><td>typedef; line 182</td></tr><tr class="t-dsc"><td><code id="s-209cb9a998e281cb">micron::fibonacci_heap::const_reference</code></td><td>typedef; line 183</td></tr><tr class="t-dsc"><td><a href="#f-cd52559c6279ab71">micron::fibonacci_heap::node::node(const T &amp;v, usize len)</a></td><td>function; line 29</td></tr><tr class="t-dsc"><td><a href="#f-a4b2176b54e66648">micron::fibonacci_heap::node::node(T &amp;&amp;v, usize len)</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-db499670d842442d">micron::fibonacci_heap::fibonacci_heap()</a></td><td>function; line 185</td></tr><tr class="t-dsc"><td><a href="#f-ea3f6178cb59a80f">micron::fibonacci_heap::~fibonacci_heap()</a></td><td>function; line 187</td></tr><tr class="t-dsc"><td><a href="#f-8b4f630df7ca02e0">micron::fibonacci_heap::fibonacci_heap(const fibonacci_heap &amp;o)</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-6f47bdce41f17eae">micron::fibonacci_heap::fibonacci_heap(fibonacci_heap &amp;&amp;o) noexcept</a></td><td>function; line 191</td></tr><tr class="t-dsc"><td><a href="#f-7588422341cdd680">micron::fibonacci_heap::operator=(const fibonacci_heap &amp;o)</a></td><td>function; line 197</td></tr><tr class="t-dsc"><td><a href="#f-c146fc2beaa295c7">micron::fibonacci_heap::operator=(fibonacci_heap &amp;&amp;o) noexcept</a></td><td>function; line 200</td></tr><tr class="t-dsc"><td><a href="#f-5f82bf0eb5b0fa3a">micron::fibonacci_heap::insert(T &amp;&amp;v)</a></td><td>function; line 213</td></tr><tr class="t-dsc"><td><a href="#f-2241619e1b219b4c">micron::fibonacci_heap::insert(const T &amp;v)</a></td><td>function; line 229</td></tr><tr class="t-dsc"><td><a href="#f-928c3bdbfec2e662">micron::fibonacci_heap::empty() const noexcept</a></td><td>function; line 235</td></tr><tr class="t-dsc"><td><a href="#f-66b0c0573ca8b149">micron::fibonacci_heap::size() const noexcept</a></td><td>function; line 241</td></tr><tr class="t-dsc"><td><a href="#f-b2ad044a363fae3f">micron::fibonacci_heap::max()</a></td><td>function; line 247</td></tr><tr class="t-dsc"><td><a href="#f-81870bc318fc25f9">micron::fibonacci_heap::pop()</a></td><td>function; line 254</td></tr><tr class="t-dsc"><td><a href="#f-e42c583eb47865d7">micron::fibonacci_heap::clear() noexcept</a></td><td>function; line 290</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-cd52559c6279ab71"><h3><code>micron::fibonacci_heap::node::node(const T &amp;v, usize len)</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L29">line 29</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>node(const T &amp;v, usize len)
+        : value(v), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false), allocation_len(len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">node(const T &amp;v, usize len)
+        : value(v), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false), allocation_len(len)
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a4b2176b54e66648"><h3><code>micron::fibonacci_heap::node::node(T &amp;&amp;v, usize len)</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>node(T &amp;&amp;v, usize len)
+        : value(micron::move(v)), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false), allocation_len(len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">node(T &amp;&amp;v, usize len)
+        : value(micron::move(v)), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false), allocation_len(len)
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-db499670d842442d"><h3><code>micron::fibonacci_heap::fibonacci_heap()</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L185">line 185</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>fibonacci_heap() : min_root(nullptr), total_nodes(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">fibonacci_heap() : min_root(nullptr), total_nodes(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ea3f6178cb59a80f"><h3><code>micron::fibonacci_heap::~fibonacci_heap()</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L187">line 187</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~fibonacci_heap()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~fibonacci_heap() { clear(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fibonacci_heap.hpp.html#f-e42c583eb47865d7">clear</a>.</p></section><section class="function-entry" id="f-8b4f630df7ca02e0"><h3><code>micron::fibonacci_heap::fibonacci_heap(const fibonacci_heap &amp;o)</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>fibonacci_heap(const fibonacci_heap &amp;o) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const fibonacci_heap &amp;o</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-6f47bdce41f17eae"><h3><code>micron::fibonacci_heap::fibonacci_heap(fibonacci_heap &amp;&amp;o) noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L191">line 191</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>fibonacci_heap(fibonacci_heap &amp;&amp;o) noexcept : min_root(o.min_root), total_nodes(o.total_nodes)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fibonacci_heap &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">fibonacci_heap(fibonacci_heap &amp;&amp;o) noexcept : min_root(o.min_root), total_nodes(o.total_nodes)
+  {
+    o.min_root = nullptr;
+    o.total_nodes = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7588422341cdd680"><h3><code>micron::fibonacci_heap::operator=(const fibonacci_heap &amp;o)</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L197">line 197</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>fibonacci_heap &amp;operator=(const fibonacci_heap &amp;o) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const fibonacci_heap &amp;o</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-c146fc2beaa295c7"><h3><code>micron::fibonacci_heap::operator=(fibonacci_heap &amp;&amp;o) noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L200">line 200</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>fibonacci_heap &amp;
+  operator=(fibonacci_heap &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fibonacci_heap &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">fibonacci_heap &amp;
+  operator=(fibonacci_heap &amp;&amp;o) noexcept
+  {
+    if ( this != &amp;o ) {
+      clear();
+      min_root = o.min_root;
+      total_nodes = o.total_nodes;
+      o.min_root = nullptr;
+      o.total_nodes = 0;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L209">line 209</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fibonacci_heap.hpp.html#f-e42c583eb47865d7">clear</a>.</p></section><section class="function-entry" id="f-5f82bf0eb5b0fa3a"><h3><code>micron::fibonacci_heap::insert(T &amp;&amp;v)</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L213">line 213</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  insert(T &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  insert(T &amp;&amp;v)
+  {
+    node *n = __make_node(micron::move(v));
+    if ( !min_root ) {
+      min_root = n;
+    } else {
+      n-&gt;left = min_root;
+      n-&gt;right = min_root-&gt;right;
+      min_root-&gt;right-&gt;left = n;
+      min_root-&gt;right = n;
+      if ( n-&gt;value &gt; min_root-&gt;value ) min_root = n;
+    }
+    total_nodes++;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fibonacci_heap.hpp.html#f-189bf167f39f0e4e">__make_node</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-2241619e1b219b4c"><h3><code>micron::fibonacci_heap::insert(const T &amp;v)</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L229">line 229</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  insert(const T &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  insert(const T &amp;v)
+  {
+    insert(T(v));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fibonacci_heap.hpp.html#f-5f82bf0eb5b0fa3a">insert</a>.</p></section><section class="function-entry" id="f-928c3bdbfec2e662"><h3><code>micron::fibonacci_heap::empty() const noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L235">line 235</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>total_nodes == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const noexcept
+  {
+    return total_nodes == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total_nodes == 0</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L237">line 237</a></td></tr></tbody></table></section><section class="function-entry" id="f-66b0c0573ca8b149"><h3><code>micron::fibonacci_heap::size() const noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L241">line 241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>total_nodes</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return total_nodes;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total_nodes</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L243">line 243</a></td></tr></tbody></table></section><section class="function-entry" id="f-b2ad044a363fae3f"><h3><code>micron::fibonacci_heap::max()</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L247">line 247</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>reference
+  max()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">reference
+  max()
+  {
+    if ( !min_root ) exc&lt;except::library_error&gt;(&quot;fibonacci_heap::max() empty&quot;);
+    return min_root-&gt;value;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>min_root-&gt;value</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L250">line 250</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;fibonacci_heap::max() empty&quot;)</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L249">line 249</a><br>Within <code>( !min_root )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-81870bc318fc25f9"><h3><code>micron::fibonacci_heap::pop()</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L254">line 254</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  pop()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  pop()
+  {
+    if ( !min_root ) exc&lt;except::library_error&gt;(&quot;fibonacci_heap::pop() empty&quot;);
+    node *z = min_root;
+    if ( z-&gt;child ) {
+      node *c = z-&gt;child;
+      do {
+        node *next = c-&gt;right;
+        c-&gt;left = min_root;
+        c-&gt;right = min_root-&gt;right;
+        min_root-&gt;right-&gt;left = c;
+        min_root-&gt;right = c;
+        c-&gt;parent = nullptr;
+        c = next;
+      } while ( c != z-&gt;child );
+    }
+
+    z-&gt;left-&gt;right = z-&gt;right;
+    z-&gt;right-&gt;left = z-&gt;left;
+
+    if ( z == z-&gt;right )
+      min_root = nullptr;
+    else {
+      min_root = z-&gt;right;
+      consolidate();
+    }
+
+    T v = micron::move(z-&gt;value);
+    const usize allocation_len = z-&gt;allocation_len;
+    z-&gt;~node();
+    __allocator_destroy&lt;Alloc, alignof(node)&gt;({ reinterpret_cast&lt;byte *&gt;(z), allocation_len });
+    total_nodes--;
+    return v;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L286">line 286</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;fibonacci_heap::pop() empty&quot;)</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L256">line 256</a><br>Within <code>( !min_root )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="fibonacci_heap.hpp.html#f-1eeddbf8bca1879a">consolidate</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-ec049c2a5d170c8b">__allocator_destroy&lt;Alloc, alignof(node)&gt;</a>.</p></section><section class="function-entry" id="f-e42c583eb47865d7"><h3><code>micron::fibonacci_heap::clear() noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L290">line 290</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear() noexcept
+  {
+    if ( !min_root ) return;
+    node *start = min_root;
+    do {
+      node *n = start;
+      start = start-&gt;right;
+      delete_subtree(n);
+    } while ( start != min_root );
+    min_root = nullptr;
+    total_nodes = 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L292">line 292</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fibonacci_heap.hpp.html#f-25521df5c5aea845">delete_subtree</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-25521df5c5aea845"><h3><code>micron::fibonacci_heap::delete_subtree(node *n) noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  delete_subtree(node *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  delete_subtree(node *n) noexcept
+  {
+    if ( !n ) return;
+    if ( n-&gt;child ) {
+      node *c = n-&gt;child;
+      do {
+        node *next = c-&gt;right;
+        delete_subtree(c);
+        c = next;
+      } while ( c != n-&gt;child );
+    }
+    const usize allocation_len = n-&gt;allocation_len;
+    n-&gt;~node();
+    __allocator_destroy&lt;Alloc, alignof(node)&gt;({ reinterpret_cast&lt;byte *&gt;(n), allocation_len });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L46">line 46</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-ec049c2a5d170c8b">__allocator_destroy&lt;Alloc, alignof(node)&gt;</a>.</p></section><section class="function-entry" id="f-189bf167f39f0e4e"><h3><code>micron::fibonacci_heap::__make_node(U &amp;&amp;value)</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U&gt;
+  static node *
+  __make_node(U &amp;&amp;value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>U &amp;&amp;value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U&gt;
+  static node *
+  __make_node(U &amp;&amp;value)
+  {
+    chunk&lt;byte&gt; storage = __allocator_create&lt;Alloc, alignof(node)&gt;(sizeof(node));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      return new (static_cast&lt;void *&gt;(storage.ptr)) node(micron::forward&lt;U&gt;(value), storage.len);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __allocator_destroy&lt;Alloc, alignof(node)&gt;(storage);
+      throw;
+    }
+#endif
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>new (static_cast&lt;void *&gt;(storage.ptr)) node(micron::forward&lt;U&gt;(value), storage.len)</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L68">line 68</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L72">line 72</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-72a42b38fc50eab2">__allocator_create&lt;Alloc, alignof(node)&gt;</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;U&gt;</a>, <a href="../memory/allocation/allocator_types/__scheme.hpp.html#f-ec049c2a5d170c8b">__allocator_destroy&lt;Alloc, alignof(node)&gt;</a>.</p></section><section class="function-entry" id="f-75a3d7d4de0672a0"><h3><code>micron::fibonacci_heap::link(node *y, node *x) noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L78">line 78</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  link(node *y, node *x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *y</code></li><li><code>node *x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  link(node *y, node *x) noexcept
+  {
+    y-&gt;left-&gt;right = y-&gt;right;
+    y-&gt;right-&gt;left = y-&gt;left;
+
+    y-&gt;parent = x;
+    y-&gt;right = y-&gt;left = y;
+    if ( !x-&gt;child )
+      x-&gt;child = y;
+    else {
+      y-&gt;right = x-&gt;child;
+      y-&gt;left = x-&gt;child-&gt;left;
+      x-&gt;child-&gt;left-&gt;right = y;
+      x-&gt;child-&gt;left = y;
+    }
+    x-&gt;degree++;
+    y-&gt;mark = false;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-1eeddbf8bca1879a"><h3><code>micron::fibonacci_heap::consolidate() noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L98">line 98</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  consolidate() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  consolidate() noexcept
+  {
+    if ( !min_root ) return;
+    constexpr usize max_degree = 64;
+    node *A[max_degree] = { nullptr };
+
+    usize nroots = 0;
+    {
+      node *r = min_root;
+      do {
+        ++nroots;
+        r = r-&gt;right;
+      } while ( r != min_root );
+    }
+    node *w = min_root;
+    for ( usize k = 0; k &lt; nroots; ++k ) {
+      node *x = w;
+      node *next = w-&gt;right;
+      usize d = x-&gt;degree;
+      while ( d &lt; max_degree &amp;&amp; A[d] ) {
+        node *y = A[d];
+        if ( x-&gt;value &lt; y-&gt;value ) micron::swap(x, y);
+        link(y, x);
+        A[d] = nullptr;
+        d++;
+      }
+      if ( d &gt;= max_degree ) d = max_degree - 1;
+      A[d] = x;
+      w = next;
+    }
+
+    min_root = nullptr;
+    for ( usize i = 0; i &lt; max_degree; i++ ) {
+      if ( A[i] ) {
+        if ( !min_root ) {
+          min_root = A[i];
+          min_root-&gt;left = min_root-&gt;right = min_root;
+        } else {
+          A[i]-&gt;left = min_root;
+          A[i]-&gt;right = min_root-&gt;right;
+          min_root-&gt;right-&gt;left = A[i];
+          min_root-&gt;right = A[i];
+          if ( A[i]-&gt;value &gt; min_root-&gt;value ) min_root = A[i];
+        }
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/heap/fibonacci_heap.hpp.html#L100">line 100</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>, <a href="fibonacci_heap.hpp.html#f-75a3d7d4de0672a0">link</a>.</p></section><section class="function-entry" id="f-503ffc3ec449ee8f"><h3><code>micron::fibonacci_heap::cut(node *x, node *y) noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L147">line 147</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  cut(node *x, node *y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *x</code></li><li><code>node *y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  cut(node *x, node *y) noexcept
+  {
+    if ( y-&gt;child == x ) y-&gt;child = (x-&gt;right != x ? x-&gt;right : nullptr);
+    x-&gt;left-&gt;right = x-&gt;right;
+    x-&gt;right-&gt;left = x-&gt;left;
+    y-&gt;degree--;
+
+    x-&gt;left = min_root;
+    x-&gt;right = min_root-&gt;right;
+    min_root-&gt;right-&gt;left = x;
+    min_root-&gt;right = x;
+    x-&gt;parent = nullptr;
+    x-&gt;mark = false;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d08a14084915dd14"><h3><code>micron::fibonacci_heap::cascading_cut(node *y) noexcept</code></h3><p>Defined in <code>heap/fibonacci_heap.hpp</code>, <a href="../../source/heap/fibonacci_heap.hpp.html#L163">line 163</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  cascading_cut(node *y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  cascading_cut(node *y) noexcept
+  {
+    node *z = y-&gt;parent;
+    if ( z ) {
+      if ( !y-&gt;mark )
+        y-&gt;mark = true;
+      else {
+        cut(y, z);
+        cascading_cut(z);
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fibonacci_heap.hpp.html#f-503ffc3ec449ee8f">cut</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

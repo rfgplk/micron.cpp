@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/blas/identities.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/blas/identities.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/blas.html">BLAS</a></div><p>Defined in header <code>&lt;micron/math/blas/identities.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/blas/identities.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-8555e662676c9c42">micron::math::blas::identities::col_view</code></td><td>name; line 29</td></tr><tr class="t-dsc"><td><code id="s-cca1075ad2ca4f38">micron::math::blas::identities::row_view</code></td><td>name; line 30</td></tr><tr class="t-dsc"><td><code id="s-980a247568e20027">micron::math::blas::identities::vec_view</code></td><td>name; line 31</td></tr><tr class="t-dsc"><td><a href="#f-9910bcf122d052ac">micron::math::blas::identities::from_quat(const quat&lt;F&gt; &amp;q, V out) noexcept</a></td><td>function; line 38</td></tr><tr class="t-dsc"><td><a href="#f-2985f0cb87aec46d">micron::math::blas::identities::from_quat(const quat&lt;F&gt; &amp;q) noexcept</a></td><td>function; line 64</td></tr><tr class="t-dsc"><td><a href="#f-97a5a0944bde2baa">micron::math::blas::identities::skew(F vx, F vy, F vz, V out) noexcept</a></td><td>function; line 77</td></tr><tr class="t-dsc"><td><a href="#f-c08928e5ee4801ad">micron::math::blas::identities::skew(const vec&lt;F, 3&gt; &amp;v, V out) noexcept</a></td><td>function; line 98</td></tr><tr class="t-dsc"><td><a href="#f-f2cfd15e54586d4e">micron::math::blas::identities::skew(const vec&lt;F, 3&gt; &amp;v) noexcept</a></td><td>function; line 105</td></tr><tr class="t-dsc"><td><a href="#f-d79537d33aac4270">micron::math::blas::identities::outer(T alpha, const vec_view&lt;T&gt; &amp;x, const vec_view&lt;T&gt; &amp;y, V A) noexcept</a></td><td>function; line 116</td></tr><tr class="t-dsc"><td><a href="#f-3124e3f23acccf69">micron::math::blas::identities::givens(usize i, usize j, F c, F s, V out) noexcept</a></td><td>function; line 128</td></tr><tr class="t-dsc"><td><a href="#f-fecf6b50e4668ae9">micron::math::blas::identities::householder(const vec_view&lt;T&gt; &amp;v, V H_out, T beta) noexcept</a></td><td>function; line 143</td></tr><tr class="t-dsc"><td><a href="#f-dd025a6332bda916">micron::math::blas::identities::householder(const vec_view&lt;T&gt; &amp;v, V H_out) noexcept</a></td><td>function; line 160</td></tr><tr class="t-dsc"><td><a href="#f-18daab114155239d">micron::math::blas::identities::from_axis_angle(F kx, F ky, F kz, F theta, V out) noexcept</a></td><td>function; line 174</td></tr><tr class="t-dsc"><td><a href="#f-23816a02f6272c8f">micron::math::blas::identities::from_axis_angle(const vec&lt;F, 3&gt; &amp;axis, F theta, V out) noexcept</a></td><td>function; line 199</td></tr><tr class="t-dsc"><td><a href="#f-fc367dd11043bb09">micron::math::blas::identities::from_axis_angle(const vec&lt;F, 3&gt; &amp;axis, F theta) noexcept</a></td><td>function; line 206</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-9910bcf122d052ac"><h3><code>micron::math::blas::identities::from_quat(const quat&lt;F&gt; &amp;q, V out) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L38">line 38</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V&gt;
+[[gnu::flatten]] inline constexpr void
+from_quat(const quat&lt;F&gt; &amp;q, V out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;q</code></li><li><code>V out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V&gt;
+[[gnu::flatten]] inline constexpr void
+from_quat(const quat&lt;F&gt; &amp;q, V out) noexcept
+{
+  const F x = q.data[0], y = q.data[1], z = q.data[2], w = q.data[3];
+  const F xx = x * x, yy = y * y, zz = z * z;
+  const F xy = x * y, xz = x * z, yz = y * z;
+  const F wx = w * x, wy = w * y, wz = w * z;
+  const auto wr = [&amp;](usize r, usize c, F v) constexpr noexcept {
+    if constexpr ( row_view_like&lt;V&gt; )
+      bits::mat_at(out.data, r, c, ssize_t(out.ld), 1) = v;
+    else
+      bits::mat_at(out.data, r, c, 1, ssize_t(out.ld)) = v;
+  };
+  wr(0, 0, F(1) - F(2) * (yy + zz));
+  wr(0, 1, F(2) * (xy - wz));
+  wr(0, 2, F(2) * (xz + wy));
+  wr(1, 0, F(2) * (xy + wz));
+  wr(1, 1, F(1) - F(2) * (xx + zz));
+  wr(1, 2, F(2) * (yz - wx));
+  wr(2, 0, F(2) * (xz - wy));
+  wr(2, 1, F(2) * (yz + wx));
+  wr(2, 2, F(1) - F(2) * (xx + yy));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-2985f0cb87aec46d"><h3><code>micron::math::blas::identities::from_quat(const quat&lt;F&gt; &amp;q) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L64">line 64</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;F, 3, 3&gt;
+from_quat(const quat&lt;F&gt; &amp;q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;q</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;F, 3, 3&gt;
+from_quat(const quat&lt;F&gt; &amp;q) noexcept
+{
+  mat&lt;F, 3, 3&gt; m{};
+  row_view&lt;F&gt; v{ m.data, 3, 3, 3 };
+  from_quat&lt;F&gt;(q, v);
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../../source/math/blas/identities.hpp.html#L69">line 69</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="identities.hpp.html#f-9910bcf122d052ac">from_quat&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-97a5a0944bde2baa"><h3><code>micron::math::blas::identities::skew(F vx, F vy, F vz, V out) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L77">line 77</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V&gt;
+[[gnu::flatten]] inline constexpr void
+skew(F vx, F vy, F vz, V out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F vx</code></li><li><code>F vy</code></li><li><code>F vz</code></li><li><code>V out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V&gt;
+[[gnu::flatten]] inline constexpr void
+skew(F vx, F vy, F vz, V out) noexcept
+{
+  const auto wr = [&amp;](usize r, usize c, F v) constexpr noexcept {
+    if constexpr ( row_view_like&lt;V&gt; )
+      bits::mat_at(out.data, r, c, ssize_t(out.ld), 1) = v;
+    else
+      bits::mat_at(out.data, r, c, 1, ssize_t(out.ld)) = v;
+  };
+  wr(0, 0, F(0));
+  wr(0, 1, -vz);
+  wr(0, 2, vy);
+  wr(1, 0, vz);
+  wr(1, 1, F(0));
+  wr(1, 2, -vx);
+  wr(2, 0, -vy);
+  wr(2, 1, vx);
+  wr(2, 2, F(0));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c08928e5ee4801ad"><h3><code>micron::math::blas::identities::skew(const vec&lt;F, 3&gt; &amp;v, V out) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L98">line 98</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V&gt;
+[[gnu::flatten]] inline constexpr void
+skew(const vec&lt;F, 3&gt; &amp;v, V out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;v</code></li><li><code>V out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V&gt;
+[[gnu::flatten]] inline constexpr void
+skew(const vec&lt;F, 3&gt; &amp;v, V out) noexcept
+{
+  skew&lt;F&gt;(v.data[0], v.data[1], v.data[2], out);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="identities.hpp.html#f-97a5a0944bde2baa">skew&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f2cfd15e54586d4e"><h3><code>micron::math::blas::identities::skew(const vec&lt;F, 3&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L105">line 105</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;F, 3, 3&gt;
+skew(const vec&lt;F, 3&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;F, 3, 3&gt;
+skew(const vec&lt;F, 3&gt; &amp;v) noexcept
+{
+  mat&lt;F, 3, 3&gt; m{};
+  row_view&lt;F&gt; rv{ m.data, 3, 3, 3 };
+  skew&lt;F&gt;(v, rv);
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../../source/math/blas/identities.hpp.html#L110">line 110</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="identities.hpp.html#f-97a5a0944bde2baa">skew&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d79537d33aac4270"><h3><code>micron::math::blas::identities::outer(T alpha, const vec_view&lt;T&gt; &amp;x, const vec_view&lt;T&gt; &amp;y, V A) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L116">line 116</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+outer(T alpha, const vec_view&lt;T&gt; &amp;x, const vec_view&lt;T&gt; &amp;y, V A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const vec_view&lt;T&gt; &amp;x</code></li><li><code>const vec_view&lt;T&gt; &amp;y</code></li><li><code>V A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+outer(T alpha, const vec_view&lt;T&gt; &amp;x, const vec_view&lt;T&gt; &amp;y, V A) noexcept
+{
+  const ssize_t rs = row_view_like&lt;V&gt; ? ssize_t(A.ld) : ssize_t(1);
+  const ssize_t cs = row_view_like&lt;V&gt; ? ssize_t(1) : ssize_t(A.ld);
+  for ( usize i = 0; i &lt; A.rows; ++i )
+    for ( usize j = 0; j &lt; A.cols; ++j ) bits::mat_at(A.data, i, j, rs, cs) = T(0);
+  level2::ger&lt;T&gt;(alpha, x, y, A);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="bits/impl.hpp.html#f-1e79a4e118d9d07d">bits::mat_at</a>, <a href="level2.hpp.html#f-e8208ef2493c7a94">level2::ger&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-3124e3f23acccf69"><h3><code>micron::math::blas::identities::givens(usize i, usize j, F c, F s, V out) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+givens(usize i, usize j, F c, F s, V out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize i</code></li><li><code>usize j</code></li><li><code>F c</code></li><li><code>F s</code></li><li><code>V out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+givens(usize i, usize j, F c, F s, V out) noexcept
+{
+  const ssize_t rs = row_view_like&lt;V&gt; ? ssize_t(out.ld) : ssize_t(1);
+  const ssize_t cs = row_view_like&lt;V&gt; ? ssize_t(1) : ssize_t(out.ld);
+  for ( usize r = 0; r &lt; out.rows; ++r )
+    for ( usize cc = 0; cc &lt; out.cols; ++cc ) bits::mat_at(out.data, r, cc, rs, cs) = (r == cc) ? F(1) : F(0);
+  bits::mat_at(out.data, i, i, rs, cs) = c;
+  bits::mat_at(out.data, j, j, rs, cs) = c;
+  bits::mat_at(out.data, i, j, rs, cs) = s;
+  bits::mat_at(out.data, j, i, rs, cs) = -s;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="bits/impl.hpp.html#f-1e79a4e118d9d07d">bits::mat_at</a>.</p></section><section class="function-entry" id="f-fecf6b50e4668ae9"><h3><code>micron::math::blas::identities::householder(const vec_view&lt;T&gt; &amp;v, V H_out, T beta) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L143">line 143</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+householder(const vec_view&lt;T&gt; &amp;v, V H_out, T beta) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec_view&lt;T&gt; &amp;v</code></li><li><code>V H_out</code></li><li><code>T beta</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+householder(const vec_view&lt;T&gt; &amp;v, V H_out, T beta) noexcept
+{
+  const ssize_t rs = row_view_like&lt;V&gt; ? ssize_t(H_out.ld) : ssize_t(1);
+  const ssize_t cs = row_view_like&lt;V&gt; ? ssize_t(1) : ssize_t(H_out.ld);
+  for ( usize r = 0; r &lt; H_out.rows; ++r ) {
+    const T mb_vr = -beta * v.data[ssize_t(r) * v.inc];
+    for ( usize c = 0; c &lt; H_out.cols; ++c ) {
+      const T vc = v.data[ssize_t(c) * v.inc];
+      const T diag = (r == c) ? T(1) : T(0);
+      bits::mat_at(H_out.data, r, c, rs, cs) = bits::fma_acc&lt;T&gt;(mb_vr, vc, diag);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="bits/impl.hpp.html#f-1e79a4e118d9d07d">bits::mat_at</a>, <a href="bits/impl.hpp.html#f-53d7e867428ab4f6">bits::fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-dd025a6332bda916"><h3><code>micron::math::blas::identities::householder(const vec_view&lt;T&gt; &amp;v, V H_out) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L160">line 160</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_real T, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+householder(const vec_view&lt;T&gt; &amp;v, V H_out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec_view&lt;T&gt; &amp;v</code></li><li><code>V H_out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_real T, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+householder(const vec_view&lt;T&gt; &amp;v, V H_out) noexcept
+{
+  T vtv = T(0);
+  for ( usize i = 0; i &lt; v.n; ++i ) {
+    const T vi = v.data[ssize_t(i) * v.inc];
+    vtv = math::fma&lt;T&gt;(vi, vi, vtv);
+  }
+  const T beta = (vtv &gt; T(0)) ? T(2) / vtv : T(0);
+  householder&lt;T&gt;(v, H_out, beta);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>, <a href="identities.hpp.html#f-fecf6b50e4668ae9">householder&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-18daab114155239d"><h3><code>micron::math::blas::identities::from_axis_angle(F kx, F ky, F kz, F theta, V out) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L174">line 174</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+from_axis_angle(F kx, F ky, F kz, F theta, V out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F kx</code></li><li><code>F ky</code></li><li><code>F kz</code></li><li><code>F theta</code></li><li><code>V out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+from_axis_angle(F kx, F ky, F kz, F theta, V out) noexcept
+{
+  const F c = mk::trig::cos&lt;F&gt;(theta);
+  const F s = mk::trig::sin&lt;F&gt;(theta);
+  const F omc = F(1) - c;
+  const auto wr = [&amp;](usize r, usize cc, F v) constexpr noexcept {
+    if constexpr ( row_view_like&lt;V&gt; )
+      bits::mat_at(out.data, r, cc, ssize_t(out.ld), 1) = v;
+    else
+      bits::mat_at(out.data, r, cc, 1, ssize_t(out.ld)) = v;
+  };
+  wr(0, 0, c + kx * kx * omc);
+  wr(0, 1, kx * ky * omc - kz * s);
+  wr(0, 2, kx * kz * omc + ky * s);
+  wr(1, 0, ky * kx * omc + kz * s);
+  wr(1, 1, c + ky * ky * omc);
+  wr(1, 2, ky * kz * omc - kx * s);
+  wr(2, 0, kz * kx * omc - ky * s);
+  wr(2, 1, kz * ky * omc + kx * s);
+  wr(2, 2, c + kz * kz * omc);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-ef4c98c03b016336">mk::trig::cos&lt;F&gt;</a>, <a href="../mk.hpp.html#f-3579de5042a26e2b">mk::trig::sin&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-23816a02f6272c8f"><h3><code>micron::math::blas::identities::from_axis_angle(const vec&lt;F, 3&gt; &amp;axis, F theta, V out) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L199">line 199</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+from_axis_angle(const vec&lt;F, 3&gt; &amp;axis, F theta, V out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;axis</code></li><li><code>F theta</code></li><li><code>V out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename V&gt;
+  requires(mat_view_like&lt;V&gt;)
+[[gnu::flatten]] inline constexpr void
+from_axis_angle(const vec&lt;F, 3&gt; &amp;axis, F theta, V out) noexcept
+{
+  from_axis_angle&lt;F&gt;(axis.data[0], axis.data[1], axis.data[2], theta, out);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="identities.hpp.html#f-18daab114155239d">from_axis_angle&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-fc367dd11043bb09"><h3><code>micron::math::blas::identities::from_axis_angle(const vec&lt;F, 3&gt; &amp;axis, F theta) noexcept</code></h3><p>Defined in <code>math/blas/identities.hpp</code>, <a href="../../../source/math/blas/identities.hpp.html#L206">line 206</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;F, 3, 3&gt;
+from_axis_angle(const vec&lt;F, 3&gt; &amp;axis, F theta) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;axis</code></li><li><code>F theta</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;F, 3, 3&gt;
+from_axis_angle(const vec&lt;F, 3&gt; &amp;axis, F theta) noexcept
+{
+  mat&lt;F, 3, 3&gt; m{};
+  row_view&lt;F&gt; rv{ m.data, 3, 3, 3 };
+  from_axis_angle&lt;F&gt;(axis, theta, rv);
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../../source/math/blas/identities.hpp.html#L211">line 211</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="identities.hpp.html#f-18daab114155239d">from_axis_angle&lt;F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

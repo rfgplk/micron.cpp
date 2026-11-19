@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/graph/cuts.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/graph/cuts.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/graph/cuts.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;flow.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> namespace micron::math::graphs</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> {</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> template&lt;micron::integral I, typename Capacity&gt; struct gomory_hu_workspace {</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a>   micron::vector&lt;Capacity, micron::allocator_serial&lt;&gt;, false&gt; base;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a>   micron::vector&lt;Capacity, micron::allocator_serial&lt;&gt;, false&gt; residual;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a>   micron::vector&lt;max_t, micron::allocator_serial&lt;&gt;, false&gt; level;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a>   micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; next;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a>   micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; queue;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a>   micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; side;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> </span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a>   void</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a>   reserve(usize vertices)</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a>   {</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a>     if ( vertices == 0 || vertices &lt;= micron::numeric_limits&lt;usize&gt;::max() / vertices ) {</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a>       base.reserve(vertices * vertices);</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a>       residual.reserve(vertices * vertices);</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a>     }</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a>     level.reserve(vertices);</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>     next.reserve(vertices);</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>     queue.reserve(vertices);</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>     side.reserve(vertices);</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a>   }</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> };</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> </span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> template&lt;micron::integral I, typename Capacity&gt; struct gomory_hu_result {</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   algorithm_status status{ algorithm_status::ok };</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; parent;</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   micron::vector&lt;Capacity, micron::allocator_serial&lt;&gt;, false&gt; cut;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   weighted_graph&lt;Capacity, empty_property, empty_property, empty_property, I&gt; tree;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; dense_to_vertex;</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; vertex_to_dense;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   micron::vector&lt;micron::vector&lt;u64, micron::allocator_serial&lt;&gt;, false&gt;, micron::allocator_serial&lt;&gt;, false&gt; cut_side;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> </span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>   [[nodiscard]] bool</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>   side_contains(usize tree_child, usize dense_vertex) const noexcept</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>   {</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>     return tree_child &lt; cut_side.size() &amp;&amp; dense_vertex / 64 &lt; cut_side.data()[tree_child].size()</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>            &amp;&amp; (cut_side.data()[tree_child].data()[dense_vertex / 64] &amp; (u64(1) &lt;&lt; (dense_vertex &amp; 63))) != 0;</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   }</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> };</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> </span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> template&lt;graph_model G, typename CapacityMap&gt;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> [[nodiscard]] auto</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> gomory_hu(const G &amp;graph, CapacityMap capacity_map,</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>           gomory_hu_workspace&lt;typename G::index_type,</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>                               micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>                                                                              micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace)</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> {</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>   using I = typename G::index_type;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   using C = micron::remove_cvref_t&lt;decltype(__impl::weight(capacity_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>   gomory_hu_result&lt;I, C&gt; result;</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>   if constexpr ( G::is_directed ) {</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>     result.status = algorithm_status::invalid_graph;</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>     return result;</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   }</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>   auto mapping = __dense_vertex_mapping(graph);</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>   result.dense_to_vertex = micron::move(mapping.dense_to_vertex);</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>   result.vertex_to_dense = micron::move(mapping.vertex_to_dense);</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   const usize n = result.dense_to_vertex.size();</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>   if ( n != 0 &amp;&amp; n &gt; micron::numeric_limits&lt;usize&gt;::max() / n ) {</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>     result.status = algorithm_status::overflow;</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     return result;</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   }</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   workspace.reserve(n);</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>   workspace.base.resize(n * n, C{});</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>   workspace.base.fill(C{});</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>   for ( auto edge : graph.edges() ) {</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     const C capacity = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>     if ( __impl::invalid_weight(capacity) ) {</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>       result.status = algorithm_status::invalid_weight;</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>       return result;</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>     }</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     const usize u = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>     const usize v = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>     if ( u == v ) continue;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>     C sum{};</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>     if ( !__impl::add_distance(workspace.base.data()[u * n + v], capacity, sum) ) {</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>       result.status = algorithm_status::overflow;</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>       return result;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>     }</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>     workspace.base.data()[u * n + v] = sum;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>     if ( !__impl::add_distance(workspace.base.data()[v * n + u], capacity, sum) ) {</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>       result.status = algorithm_status::overflow;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>       return result;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>     }</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>     workspace.base.data()[v * n + u] = sum;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   }</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> </span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   result.parent.resize(n, vertex_id&lt;I&gt;::invalid());</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   result.cut.resize(n, C{});</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>   for ( usize vertex = 1; vertex &lt; n; ++vertex ) result.parent.data()[vertex] = vertex_id&lt;I&gt;(I(0));</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   workspace.level.resize(n, max_t(-1));</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   workspace.next.resize(n, usize(0));</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   workspace.side.resize(n, u8(0));</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> </span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   auto max_flow = [&amp;](usize source, usize sink, C &amp;value) {</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>     workspace.residual = workspace.base;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>     value = C{};</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>     auto build_levels = [&amp;]() {</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>       workspace.level.fill(max_t(-1));</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>       workspace.queue.clear();</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>       workspace.queue.push_back(source);</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>       workspace.level.data()[source] = 0;</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>       usize head = 0;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>       while ( head &lt; workspace.queue.size() ) {</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>         const usize u = workspace.queue.data()[head++];</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>         for ( usize v = 0; v &lt; n; ++v )</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>           if ( workspace.residual.data()[u * n + v] &gt; C{} &amp;&amp; workspace.level.data()[v] &lt; 0 ) {</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>             workspace.level.data()[v] = workspace.level.data()[u] + 1;</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>             workspace.queue.push_back(v);</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>           }</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>       }</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>       return workspace.level.data()[sink] &gt;= 0;</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     };</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     bool overflow = false;</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     auto send = [&amp;](auto &amp;&amp;self, usize u, C offered) -&gt; C {</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>       if ( u == sink || offered == C{} ) return offered;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>       for ( usize &amp;v = workspace.next.data()[u]; v &lt; n; ++v ) {</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>         C &amp;capacity = workspace.residual.data()[u * n + v];</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>         if ( capacity &lt;= C{} || workspace.level.data()[v] != workspace.level.data()[u] + 1 ) continue;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>         const C pushed = self(self, v, offered &lt; capacity ? offered : capacity);</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>         if ( pushed == C{} ) continue;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>         C reverse{};</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>         if ( !__impl::add_distance(workspace.residual.data()[v * n + u], pushed, reverse) ) {</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>           overflow = true;</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>           return C{};</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>         }</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>         capacity -= pushed;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>         workspace.residual.data()[v * n + u] = reverse;</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>         return pushed;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>       }</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>       return C{};</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>     };</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>     C bound{};</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     for ( usize v = 0; v &lt; n; ++v ) {</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>       C sum{};</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>       if ( !__impl::add_distance(bound, workspace.base.data()[source * n + v], sum) ) return algorithm_status::overflow;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>       bound = sum;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     }</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>     while ( build_levels() ) {</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>       workspace.next.fill(usize(0));</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>       for ( ;; ) {</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>         const C pushed = send(send, source, bound);</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>         if ( overflow ) return algorithm_status::overflow;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>         if ( pushed == C{} ) break;</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>         C total{};</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>         if ( !__impl::add_distance(value, pushed, total) ) return algorithm_status::overflow;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>         value = total;</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>       }</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     }</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>     workspace.side.fill(u8(0));</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     workspace.queue.clear();</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>     workspace.queue.push_back(source);</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     workspace.side.data()[source] = 1;</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     for ( usize head = 0; head &lt; workspace.queue.size(); ++head ) {</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>       const usize u = workspace.queue.data()[head];</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>       for ( usize v = 0; v &lt; n; ++v )</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>         if ( workspace.residual.data()[u * n + v] &gt; C{} &amp;&amp; !workspace.side.data()[v] ) {</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>           workspace.side.data()[v] = 1;</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>           workspace.queue.push_back(v);</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>         }</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>     }</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>     return algorithm_status::ok;</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   };</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a> </span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>   for ( usize source = 1; source &lt; n; ++source ) {</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>     const usize sink = static_cast&lt;usize&gt;(result.parent.data()[source].value);</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>     C value{};</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>     result.status = max_flow(source, sink, value);</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>     if ( result.status != algorithm_status::ok ) return result;</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>     for ( usize vertex = source + 1; vertex &lt; n; ++vertex )</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>       if ( result.parent.data()[vertex].value == static_cast&lt;I&gt;(sink) &amp;&amp; workspace.side.data()[vertex] )</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>         result.parent.data()[vertex] = vertex_id&lt;I&gt;(static_cast&lt;I&gt;(source));</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>     if ( sink != 0 ) {</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>       const usize sink_parent = static_cast&lt;usize&gt;(result.parent.data()[sink].value);</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>       if ( workspace.side.data()[sink_parent] ) {</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>         result.parent.data()[source] = result.parent.data()[sink];</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>         result.parent.data()[sink] = vertex_id&lt;I&gt;(static_cast&lt;I&gt;(source));</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>         result.cut.data()[source] = result.cut.data()[sink];</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>         result.cut.data()[sink] = value;</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>         continue;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>       }</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>     }</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>     result.cut.data()[source] = value;</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   }</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> </span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>   (void)result.tree.add_vertices(n);</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   for ( usize child = 1; child &lt; n; ++child )</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>     (void)result.tree.add_edge(static_cast&lt;I&gt;(child), result.parent.data()[child].value, result.cut.data()[child]);</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a> </span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>   const usize words = (n + 63) / 64;</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>   result.cut_side.resize(n);</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>   for ( usize child = 1; child &lt; n; ++child ) {</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>     auto &amp;bits = result.cut_side.data()[child];</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>     bits.resize(words, u64(0));</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>     workspace.side.fill(u8(0));</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>     workspace.queue.clear();</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>     workspace.queue.push_back(child);</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>     workspace.side.data()[child] = 1;</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>     for ( usize head = 0; head &lt; workspace.queue.size(); ++head ) {</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>       const usize u = workspace.queue.data()[head];</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>       bits.data()[u / 64] |= u64(1) &lt;&lt; (u &amp; 63);</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>       if ( u != 0 ) {</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>         const usize p = static_cast&lt;usize&gt;(result.parent.data()[u].value);</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>         if ( !((u == child &amp;&amp; p == static_cast&lt;usize&gt;(result.parent.data()[child].value))</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>                || (p == child &amp;&amp; u == static_cast&lt;usize&gt;(result.parent.data()[child].value)))</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>              &amp;&amp; !workspace.side.data()[p] ) {</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>           workspace.side.data()[p] = 1;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>           workspace.queue.push_back(p);</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>         }</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>       }</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>       for ( usize v = 1; v &lt; n; ++v ) {</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>         const usize p = static_cast&lt;usize&gt;(result.parent.data()[v].value);</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>         if ( p != u || (v == child &amp;&amp; u == static_cast&lt;usize&gt;(result.parent.data()[child].value)) || workspace.side.data()[v] ) continue;</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>         workspace.side.data()[v] = 1;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>         workspace.queue.push_back(v);</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>       }</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>     }</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>   }</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>   return result;</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a> }</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a> </span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a> template&lt;graph_model G, typename CapacityMap&gt;</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> [[nodiscard]] auto</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> gomory_hu(const G &amp;graph, CapacityMap capacity_map)</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> {</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   using C = micron::remove_cvref_t&lt;decltype(__impl::weight(capacity_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>   gomory_hu_workspace&lt;typename G::index_type, C&gt; workspace;</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>   return gomory_hu(graph, capacity_map, workspace);</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> }</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a> </span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a> template&lt;graph_model G&gt;</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a> [[nodiscard]] auto</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a> gomory_hu(const G &amp;graph)</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a> {</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>   return gomory_hu(graph, intrinsic_edge_weight{});</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a> }</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a> </span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a> };      // namespace micron::math::graphs</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

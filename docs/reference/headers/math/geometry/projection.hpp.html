@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/geometry/projection.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/geometry/projection.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/geometry.html">Geometry</a></div><p>Defined in header <code>&lt;micron/math/geometry/projection.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/geometry/projection.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-9dfbc11f26579fad">micron::math::geometry::handedness</code></td><td>enum; line 36</td></tr><tr class="t-dsc"><td><code id="s-7efeefcb8c445a0d">micron::math::geometry::handedness::left</code></td><td>enumerator; line 36</td></tr><tr class="t-dsc"><td><code id="s-36a2242532a8be84">micron::math::geometry::handedness::right</code></td><td>enumerator; line 36</td></tr><tr class="t-dsc"><td><code id="s-97d5a1bf9872a262">micron::math::geometry::clip_depth</code></td><td>enum; line 37</td></tr><tr class="t-dsc"><td><code id="s-59dab310f9c6fa0a">micron::math::geometry::clip_depth::neg_one_to_one</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-1964bd1b19411278">micron::math::geometry::clip_depth::zero_to_one</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><a href="#f-b184e01357213fe1">micron::math::geometry::perspective_projection(F fov_y, F aspect, F near_z, F far_z) noexcept</a></td><td>function; line 41</td></tr><tr class="t-dsc"><td><a href="#f-7de9b58b21ee034a">micron::math::geometry::orthographic_projection(F left, F right, F bottom, F top, F near_z, F far_z) noexcept</a></td><td>function; line 72</td></tr><tr class="t-dsc"><td><a href="#f-c477a9fc4a2ac54d">micron::math::geometry::frustum(F left, F right, F bottom, F top, F near_z, F far_z) noexcept</a></td><td>function; line 92</td></tr><tr class="t-dsc"><td><a href="#f-0d8a5efb2f9947bc">micron::math::geometry::look_at(const vec&lt;F, 3&gt; &amp;eye, const vec&lt;F, 3&gt; &amp;target, const vec&lt;F, 3&gt; &amp;up) noexcept</a></td><td>function; line 193</td></tr><tr class="t-dsc"><td><a href="#f-166de0bff135e37d">micron::math::geometry::look_at(const vec&lt;F, 3&gt; &amp;eye, const vec&lt;F, 3&gt; &amp;target, const vec&lt;F, 3&gt; &amp;up, math::policy::fast_tag) noexcept</a></td><td>function; line 255</td></tr><tr class="t-dsc"><td><a href="#f-5303040369933923">micron::math::geometry::inv_perspective(const transform&lt;F, 3, transform_mode::projective&gt; &amp;p) noexcept</a></td><td>function; line 269</td></tr><tr class="t-dsc"><td><a href="#f-44ecfbbf8ac75042">micron::math::geometry::inv_orthographic(const transform&lt;F, 3, transform_mode::projective&gt; &amp;o) noexcept</a></td><td>function; line 292</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-b184e01357213fe1"><h3><code>micron::math::geometry::perspective_projection(F fov_y, F aspect, F near_z, F far_z) noexcept</code></h3><p>Defined in <code>math/geometry/projection.hpp</code>, <a href="../../../source/math/geometry/projection.hpp.html#L41">line 41</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;handedness Hd = handedness::right, clip_depth Cd = clip_depth::neg_one_to_one, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+perspective_projection(F fov_y, F aspect, F near_z, F far_z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F fov_y</code></li><li><code>F aspect</code></li><li><code>F near_z</code></li><li><code>F far_z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;handedness Hd = handedness::right, clip_depth Cd = clip_depth::neg_one_to_one, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+perspective_projection(F fov_y, F aspect, F near_z, F far_z) noexcept
+{
+  transform&lt;F, 3, transform_mode::projective&gt; out{};      // value-init zeroes M once
+  const F f = F(1) / math::tan(fov_y * F(0.5));
+  out.M.data[0 * 4 + 0] = f / aspect;
+  out.M.data[1 * 4 + 1] = f;
+  if constexpr ( Hd == handedness::right ) {
+    out.M.data[3 * 4 + 2] = F(-1);
+    if constexpr ( Cd == clip_depth::neg_one_to_one ) {
+      out.M.data[2 * 4 + 2] = (far_z + near_z) / (near_z - far_z);
+      out.M.data[2 * 4 + 3] = (F(2) * far_z * near_z) / (near_z - far_z);
+    } else {
+      out.M.data[2 * 4 + 2] = far_z / (near_z - far_z);
+      out.M.data[2 * 4 + 3] = (far_z * near_z) / (near_z - far_z);
+    }
+  } else {
+    out.M.data[3 * 4 + 2] = F(1);
+    if constexpr ( Cd == clip_depth::neg_one_to_one ) {
+      out.M.data[2 * 4 + 2] = (far_z + near_z) / (far_z - near_z);
+      out.M.data[2 * 4 + 3] = -(F(2) * far_z * near_z) / (far_z - near_z);
+    } else {
+      out.M.data[2 * 4 + 2] = far_z / (far_z - near_z);
+      out.M.data[2 * 4 + 3] = -(far_z * near_z) / (far_z - near_z);
+    }
+  }
+  // M[3, 3] stays zero
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L67">line 67</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-eb645e534614d3f4">math::tan</a>.</p></section><section class="function-entry" id="f-7de9b58b21ee034a"><h3><code>micron::math::geometry::orthographic_projection(F left, F right, F bottom, F top, F near_z, F far_z) noexcept</code></h3><p>Defined in <code>math/geometry/projection.hpp</code>, <a href="../../../source/math/geometry/projection.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;handedness Hd = handedness::right, clip_depth Cd = clip_depth::neg_one_to_one, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+orthographic_projection(F left, F right, F bottom, F top, F near_z, F far_z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F left</code></li><li><code>F right</code></li><li><code>F bottom</code></li><li><code>F top</code></li><li><code>F near_z</code></li><li><code>F far_z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;handedness Hd = handedness::right, clip_depth Cd = clip_depth::neg_one_to_one, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+orthographic_projection(F left, F right, F bottom, F top, F near_z, F far_z) noexcept
+{
+  transform&lt;F, 3, transform_mode::projective&gt; out{};      // value-init zeroes M once
+  out.M.data[0 * 4 + 0] = F(2) / (right - left);
+  out.M.data[1 * 4 + 1] = F(2) / (top - bottom);
+  out.M.data[0 * 4 + 3] = -(right + left) / (right - left);
+  out.M.data[1 * 4 + 3] = -(top + bottom) / (top - bottom);
+  if constexpr ( Cd == clip_depth::neg_one_to_one ) {
+    out.M.data[2 * 4 + 2] = (Hd == handedness::right ? F(-2) : F(2)) / (far_z - near_z);
+    out.M.data[2 * 4 + 3] = -(far_z + near_z) / (far_z - near_z);
+  } else {
+    out.M.data[2 * 4 + 2] = (Hd == handedness::right ? F(-1) : F(1)) / (far_z - near_z);
+    out.M.data[2 * 4 + 3] = -near_z / (far_z - near_z);
+  }
+  out.M.data[3 * 4 + 3] = F(1);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L87">line 87</a></td></tr></tbody></table></section><section class="function-entry" id="f-c477a9fc4a2ac54d"><h3><code>micron::math::geometry::frustum(F left, F right, F bottom, F top, F near_z, F far_z) noexcept</code></h3><p>Defined in <code>math/geometry/projection.hpp</code>, <a href="../../../source/math/geometry/projection.hpp.html#L92">line 92</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;handedness Hd = handedness::right, clip_depth Cd = clip_depth::neg_one_to_one, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+frustum(F left, F right, F bottom, F top, F near_z, F far_z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F left</code></li><li><code>F right</code></li><li><code>F bottom</code></li><li><code>F top</code></li><li><code>F near_z</code></li><li><code>F far_z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;handedness Hd = handedness::right, clip_depth Cd = clip_depth::neg_one_to_one, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+frustum(F left, F right, F bottom, F top, F near_z, F far_z) noexcept
+{
+  transform&lt;F, 3, transform_mode::projective&gt; out{};      // value-init zeroes M once
+  out.M.data[0 * 4 + 0] = F(2) * near_z / (right - left);
+  out.M.data[1 * 4 + 1] = F(2) * near_z / (top - bottom);
+  if constexpr ( Hd == handedness::right ) {
+    out.M.data[0 * 4 + 2] = (right + left) / (right - left);
+    out.M.data[1 * 4 + 2] = (top + bottom) / (top - bottom);
+    out.M.data[3 * 4 + 2] = F(-1);
+    if constexpr ( Cd == clip_depth::neg_one_to_one ) {
+      out.M.data[2 * 4 + 2] = -(far_z + near_z) / (far_z - near_z);
+      out.M.data[2 * 4 + 3] = -(F(2) * far_z * near_z) / (far_z - near_z);
+    } else {
+      out.M.data[2 * 4 + 2] = far_z / (near_z - far_z);
+      out.M.data[2 * 4 + 3] = (far_z * near_z) / (near_z - far_z);
+    }
+  } else {
+    out.M.data[0 * 4 + 2] = -(right + left) / (right - left);
+    out.M.data[1 * 4 + 2] = -(top + bottom) / (top - bottom);
+    out.M.data[3 * 4 + 2] = F(1);
+    if constexpr ( Cd == clip_depth::neg_one_to_one ) {
+      out.M.data[2 * 4 + 2] = (far_z + near_z) / (far_z - near_z);
+      out.M.data[2 * 4 + 3] = -(F(2) * far_z * near_z) / (far_z - near_z);
+    } else {
+      out.M.data[2 * 4 + 2] = far_z / (far_z - near_z);
+      out.M.data[2 * 4 + 3] = -(far_z * near_z) / (far_z - near_z);
+    }
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L120">line 120</a></td></tr></tbody></table></section><section class="function-entry" id="f-0d8a5efb2f9947bc"><h3><code>micron::math::geometry::look_at(const vec&lt;F, 3&gt; &amp;eye, const vec&lt;F, 3&gt; &amp;target, const vec&lt;F, 3&gt; &amp;up) noexcept</code></h3><p>Defined in <code>math/geometry/projection.hpp</code>, <a href="../../../source/math/geometry/projection.hpp.html#L193">line 193</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;handedness Hd = handedness::right, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::isometry&gt;
+look_at(const vec&lt;F, 3&gt; &amp;eye, const vec&lt;F, 3&gt; &amp;target, const vec&lt;F, 3&gt; &amp;up) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;eye</code></li><li><code>const vec&lt;F, 3&gt; &amp;target</code></li><li><code>const vec&lt;F, 3&gt; &amp;up</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;handedness Hd = handedness::right, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::isometry&gt;
+look_at(const vec&lt;F, 3&gt; &amp;eye, const vec&lt;F, 3&gt; &amp;target, const vec&lt;F, 3&gt; &amp;up) noexcept
+{
+#if defined(__micron_gfx_simd)
+  if constexpr ( micron::same_as&lt;F, f32&gt; ) {
+    return __look_at_f32&lt;Hd, false&gt;(eye, target, up);
+  }
+#endif
+  // forward = normalize(target - eye)
+  vec&lt;F, 3&gt; f{};
+  for ( usize i = 0; i &lt; 3; ++i ) f.data[i] = target.data[i] - eye.data[i];
+  F fn2 = f.data[0] * f.data[0] + f.data[1] * f.data[1] + f.data[2] * f.data[2];
+  if ( fn2 &gt; F(0) ) {
+    F inv = math::__vsimd::__inv_sqrt_exact_s(fn2);
+    for ( usize i = 0; i &lt; 3; ++i ) f.data[i] *= inv;
+  }
+  // s (side): RH = f x up, LH = up x f
+  vec&lt;F, 3&gt; s{};
+  if constexpr ( Hd == handedness::right )
+    s = linalg::ops::cross&lt;F&gt;(f, up);
+  else
+    s = linalg::ops::cross&lt;F&gt;(up, f);
+  F sn2 = s.data[0] * s.data[0] + s.data[1] * s.data[1] + s.data[2] * s.data[2];
+  if ( sn2 &gt; F(0) ) {
+    F inv = math::__vsimd::__inv_sqrt_exact_s(sn2);
+    for ( usize i = 0; i &lt; 3; ++i ) s.data[i] *= inv;
+  }
+  // u (true up): RH = s x f, LH = f x s
+  vec&lt;F, 3&gt; u{};
+  if constexpr ( Hd == handedness::right )
+    u = linalg::ops::cross&lt;F&gt;(s, f);
+  else
+    u = linalg::ops::cross&lt;F&gt;(f, s);
+
+  transform&lt;F, 3, transform_mode::isometry&gt; out{};      // value-init zeroes M once
+  // rotation part: rows are (s, u, -f) for RH, (s, u, +f) for LH
+  const F fz = (Hd == handedness::right) ? F(-1) : F(1);
+  out.M.data[0 * 4 + 0] = s.data[0];
+  out.M.data[0 * 4 + 1] = s.data[1];
+  out.M.data[0 * 4 + 2] = s.data[2];
+  out.M.data[1 * 4 + 0] = u.data[0];
+  out.M.data[1 * 4 + 1] = u.data[1];
+  out.M.data[1 * 4 + 2] = u.data[2];
+  out.M.data[2 * 4 + 0] = fz * f.data[0];
+  out.M.data[2 * 4 + 1] = fz * f.data[1];
+  out.M.data[2 * 4 + 2] = fz * f.data[2];
+  // translation: -R * eye
+  F tx = F(0), ty = F(0), tz = F(0);
+  for ( usize j = 0; j &lt; 3; ++j ) {
+    tx -= out.M.data[0 * 4 + j] * eye.data[j];
+    ty -= out.M.data[1 * 4 + j] * eye.data[j];
+    tz -= out.M.data[2 * 4 + j] * eye.data[j];
+  }
+  out.M.data[0 * 4 + 3] = tx;
+  out.M.data[1 * 4 + 3] = ty;
+  out.M.data[2 * 4 + 3] = tz;
+  out.M.data[3 * 4 + 3] = F(1);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__look_at_f32&lt;Hd, false&gt;(eye, target, up)</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L249">line 249</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="projection.hpp.html#f-e00e3ff4c792bede">__look_at_f32&lt;Hd, false&gt;</a>, <a href="../__vec_simd.hpp.html#f-f7c775e8f1387b95">math::__vsimd::__inv_sqrt_exact_s</a>, <a href="../linalg/ops.hpp.html#f-f44233de36210ce3">linalg::ops::cross&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-166de0bff135e37d"><h3><code>micron::math::geometry::look_at(const vec&lt;F, 3&gt; &amp;eye, const vec&lt;F, 3&gt; &amp;target, const vec&lt;F, 3&gt; &amp;up, math::policy::fast_tag) noexcept</code></h3><p>Defined in <code>math/geometry/projection.hpp</code>, <a href="../../../source/math/geometry/projection.hpp.html#L255">line 255</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;handedness Hd = handedness::right, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::isometry&gt;
+look_at(const vec&lt;F, 3&gt; &amp;eye, const vec&lt;F, 3&gt; &amp;target, const vec&lt;F, 3&gt; &amp;up, math::policy::fast_tag) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;eye</code></li><li><code>const vec&lt;F, 3&gt; &amp;target</code></li><li><code>const vec&lt;F, 3&gt; &amp;up</code></li><li><code>math::policy::fast_tag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;handedness Hd = handedness::right, ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::isometry&gt;
+look_at(const vec&lt;F, 3&gt; &amp;eye, const vec&lt;F, 3&gt; &amp;target, const vec&lt;F, 3&gt; &amp;up, math::policy::fast_tag) noexcept
+{
+#if defined(__micron_gfx_simd)
+  if constexpr ( micron::same_as&lt;F, f32&gt; ) {
+    return __look_at_f32&lt;Hd, true&gt;(eye, target, up);
+  }
+#endif
+  return look_at&lt;Hd, F&gt;(eye, target, up);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__look_at_f32&lt;Hd, true&gt;(eye, target, up)</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L259">line 259</a></td></tr><tr class="t-dsc"><td><code>look_at&lt;Hd, F&gt;(eye, target, up)</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L262">line 262</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="projection.hpp.html#f-e00e3ff4c792bede">__look_at_f32&lt;Hd, true&gt;</a>, <a href="projection.hpp.html#f-0d8a5efb2f9947bc">look_at&lt;Hd, F&gt;</a>.</p></section><section class="function-entry" id="f-5303040369933923"><h3><code>micron::math::geometry::inv_perspective(const transform&lt;F, 3, transform_mode::projective&gt; &amp;p) noexcept</code></h3><p>Defined in <code>math/geometry/projection.hpp</code>, <a href="../../../source/math/geometry/projection.hpp.html#L269">line 269</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+inv_perspective(const transform&lt;F, 3, transform_mode::projective&gt; &amp;p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const transform&lt;F, 3, transform_mode::projective&gt; &amp;p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+inv_perspective(const transform&lt;F, 3, transform_mode::projective&gt; &amp;p) noexcept
+{
+  const F A = p.M.data[0 * 4 + 0];
+  const F B = p.M.data[1 * 4 + 1];
+  const F P = p.M.data[0 * 4 + 2];
+  const F Q = p.M.data[1 * 4 + 2];
+  const F C = p.M.data[2 * 4 + 2];
+  const F D = p.M.data[2 * 4 + 3];
+  const F E = p.M.data[3 * 4 + 2];
+  transform&lt;F, 3, transform_mode::projective&gt; out{};      // value-init zeroes M once
+  out.M.data[0 * 4 + 0] = F(1) / A;
+  out.M.data[0 * 4 + 3] = -P / (A * E);
+  out.M.data[1 * 4 + 1] = F(1) / B;
+  out.M.data[1 * 4 + 3] = -Q / (B * E);
+  out.M.data[2 * 4 + 3] = F(1) / E;
+  out.M.data[3 * 4 + 2] = F(1) / D;
+  out.M.data[3 * 4 + 3] = -C / (D * E);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L286">line 286</a></td></tr></tbody></table></section><section class="function-entry" id="f-44ecfbbf8ac75042"><h3><code>micron::math::geometry::inv_orthographic(const transform&lt;F, 3, transform_mode::projective&gt; &amp;o) noexcept</code></h3><p>Defined in <code>math/geometry/projection.hpp</code>, <a href="../../../source/math/geometry/projection.hpp.html#L292">line 292</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+inv_orthographic(const transform&lt;F, 3, transform_mode::projective&gt; &amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const transform&lt;F, 3, transform_mode::projective&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::projective&gt;
+inv_orthographic(const transform&lt;F, 3, transform_mode::projective&gt; &amp;o) noexcept
+{
+  const F A = o.M.data[0 * 4 + 0];
+  const F B = o.M.data[1 * 4 + 1];
+  const F C = o.M.data[2 * 4 + 2];
+  const F Tx = o.M.data[0 * 4 + 3];
+  const F Ty = o.M.data[1 * 4 + 3];
+  const F Tz = o.M.data[2 * 4 + 3];
+  transform&lt;F, 3, transform_mode::projective&gt; out{};      // value-init zeroes M once
+  out.M.data[0 * 4 + 0] = F(1) / A;
+  out.M.data[1 * 4 + 1] = F(1) / B;
+  out.M.data[2 * 4 + 2] = F(1) / C;
+  out.M.data[0 * 4 + 3] = -Tx / A;
+  out.M.data[1 * 4 + 3] = -Ty / B;
+  out.M.data[2 * 4 + 3] = -Tz / C;
+  out.M.data[3 * 4 + 3] = F(1);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L308">line 308</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e00e3ff4c792bede"><h3><code>micron::math::geometry::__look_at_f32(const vec&lt;f32, 3&gt; &amp;eye, const vec&lt;f32, 3&gt; &amp;target, const vec&lt;f32, 3&gt; &amp;up) noexcept</code></h3><p>Defined in <code>math/geometry/projection.hpp</code>, <a href="../../../source/math/geometry/projection.hpp.html#L127">line 127</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;handedness Hd, bool Fast&gt;
+[[nodiscard, gnu::always_inline]] inline transform&lt;f32, 3, transform_mode::isometry&gt;
+__look_at_f32(const vec&lt;f32, 3&gt; &amp;eye, const vec&lt;f32, 3&gt; &amp;target, const vec&lt;f32, 3&gt; &amp;up) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_gfx_simd)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;f32, 3&gt; &amp;eye</code></li><li><code>const vec&lt;f32, 3&gt; &amp;target</code></li><li><code>const vec&lt;f32, 3&gt; &amp;up</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;handedness Hd, bool Fast&gt;
+[[nodiscard, gnu::always_inline]] inline transform&lt;f32, 3, transform_mode::isometry&gt;
+__look_at_f32(const vec&lt;f32, 3&gt; &amp;eye, const vec&lt;f32, 3&gt; &amp;target, const vec&lt;f32, 3&gt; &amp;up) noexcept
+{
+  namespace vs = math::__vsimd;
+  const simd::f128 e = vs::__load(reinterpret_cast&lt;const float *&gt;(eye.data));
+  const simd::f128 t = vs::__load(reinterpret_cast&lt;const float *&gt;(target.data));
+  const simd::f128 u = vs::__load(reinterpret_cast&lt;const float *&gt;(up.data));
+
+  // forward = normalize(target - eye), guarded on fn2 &gt; 0 like the scalar path
+  const simd::f128 fv = vs::__sub(t, e);
+  const simd::f128 fn2 = vs::__dot3_splat(fv, fv);
+  simd::f128 fi;
+  if constexpr ( Fast )
+    fi = vs::__inv_sqrt_fast(fn2);
+  else
+    fi = vs::__inv_sqrt_exact(fn2);
+  const simd::f128 fN = vs::__select(vs::__cmp_gt(fn2, vs::__splat(0.0f)), vs::__mul(fv, fi), fv);
+  // s (side): RH = f x up, LH = up x f
+  simd::f128 sv;
+  if constexpr ( Hd == handedness::right )
+    sv = vs::__cross3(fN, u);
+  else
+    sv = vs::__cross3(u, fN);
+  const simd::f128 sn2 = vs::__dot3_splat(sv, sv);
+  simd::f128 si;
+  if constexpr ( Fast )
+    si = vs::__inv_sqrt_fast(sn2);
+  else
+    si = vs::__inv_sqrt_exact(sn2);
+  const simd::f128 sN = vs::__select(vs::__cmp_gt(sn2, vs::__splat(0.0f)), vs::__mul(sv, si), sv);
+  // u (true up): RH = s x f, LH = f x s
+  simd::f128 uv;
+  if constexpr ( Hd == handedness::right )
+    uv = vs::__cross3(sN, fN);
+  else
+    uv = vs::__cross3(fN, sN);
+  // forward row is -f for RH, +f for LH; sign flip is exact
+  simd::f128 fz;
+  if constexpr ( Hd == handedness::right )
+    fz = vs::__xor(fN, vs::__splat(-0.0f));
+  else
+    fz = fN;
+
+  // translation: -R * eye via the column form -- transpose the three rotation
+  // rows into columns once, then one mul + two fma cover all three dots
+  const simd::f128 lo = vs::__shuf2&lt;0, 1, 0, 1&gt;(sN, uv);      // (s0 s1 u0 u1)
+  const simd::f128 hi = vs::__shuf2&lt;2, 3, 2, 3&gt;(sN, uv);      // (s2 s3 u2 u3)
+  const simd::f128 c0 = vs::__shuf2&lt;0, 2, 0, 0&gt;(lo, fz);      // (s0 u0 f0 .)
+  const simd::f128 c1 = vs::__shuf2&lt;1, 3, 1, 1&gt;(lo, fz);      // (s1 u1 f1 .)
+  const simd::f128 c2 = vs::__shuf2&lt;0, 2, 2, 2&gt;(hi, fz);      // (s2 u2 f2 .)
+  simd::f128 acc = vs::__mul(c0, vs::__swz&lt;0, 0, 0, 0&gt;(e));
+  acc = vs::__fma(c1, vs::__swz&lt;1, 1, 1, 1&gt;(e), acc);
+  acc = vs::__fma(c2, vs::__swz&lt;2, 2, 2, 2&gt;(e), acc);
+  const simd::f128 tv = vs::__xor(acc, vs::__splat(-0.0f));      // (t0 t1 t2 .)
+
+  transform&lt;f32, 3, transform_mode::isometry&gt; out{ mat&lt;f32, 4, 4&gt;(micron::__mat_uninit) };
+  float *op = reinterpret_cast&lt;float *&gt;(out.M.data);
+  vs::__store(op + 0, vs::__insert_lane3(sN, tv));
+  vs::__store(op + 4, vs::__insert_lane3(uv, vs::__swz&lt;1, 1, 1, 1&gt;(tv)));
+  vs::__store(op + 8, vs::__insert_lane3(fz, vs::__swz&lt;2, 2, 2, 2&gt;(tv)));
+  vs::__store(op + 12, vs::__setr(0.0f, 0.0f, 0.0f, 1.0f));
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/projection.hpp.html#L187">line 187</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#s-9b6df6c914115c2b">mat&lt;f32, 4, 4&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

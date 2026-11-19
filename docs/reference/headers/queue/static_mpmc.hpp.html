@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/queue/static_mpmc.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/queue/static_mpmc.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/queues.html">Queues</a></div><p>Defined in header <code>&lt;micron/queue/static_mpmc.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/queue/static_mpmc.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-b981904d23494752">micron::static_mpmc</code></td><td>class; line 26</td></tr><tr class="t-dsc"><td><code id="s-d7d5c07ba517750a">micron::static_mpmc::value_type</code></td><td>typedef; line 46</td></tr><tr class="t-dsc"><td><a href="#f-502b9e75a24ad00d">micron::static_mpmc::static_mpmc() noexcept</a></td><td>function; line 48</td></tr><tr class="t-dsc"><td><a href="#f-0ccff677ad1c72e7">micron::static_mpmc::static_mpmc(const static_mpmc &amp;)</a></td><td>function; line 57</td></tr><tr class="t-dsc"><td><a href="#f-37bcddb70d091094">micron::static_mpmc::static_mpmc(static_mpmc &amp;&amp;)</a></td><td>function; line 58</td></tr><tr class="t-dsc"><td><a href="#f-8daa0a1a386444eb">micron::static_mpmc::operator=(const static_mpmc &amp;)</a></td><td>function; line 59</td></tr><tr class="t-dsc"><td><a href="#f-3e10ea2ea19553ca">micron::static_mpmc::operator=(static_mpmc &amp;&amp;)</a></td><td>function; line 60</td></tr><tr class="t-dsc"><td><a href="#f-c020f4964224833d">micron::static_mpmc::capacity() noexcept</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-45bba6bc6c11e515">micron::static_mpmc::max_size() noexcept</a></td><td>function; line 69</td></tr><tr class="t-dsc"><td><a href="#f-3fddc345c1e42c7a">micron::static_mpmc::size() const noexcept</a></td><td>function; line 76</td></tr><tr class="t-dsc"><td><a href="#f-7f2cb6c0fbb4b3ff">micron::static_mpmc::empty() const noexcept</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-3f4ac7d0b33faf1c">micron::static_mpmc::maybe_nonempty() const noexcept</a></td><td>function; line 94</td></tr><tr class="t-dsc"><td><a href="#f-08f5f85f5b51a635">micron::static_mpmc::push(T val) noexcept</a></td><td>function; line 100</td></tr><tr class="t-dsc"><td><a href="#f-d95dcb45f2efb675">micron::static_mpmc::pop(T &amp;out) noexcept</a></td><td>function; line 130</td></tr><tr class="t-dsc"><td><a href="#f-4c9fe7ce1617e0df">micron::static_mpmc::pop() noexcept</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-2d1cc125fac66337">micron::static_mpmc::drain(Fn &amp;&amp;fn)</a></td><td>function; line 165</td></tr><tr class="t-dsc"><td><a href="#f-8ebb8d44b9b0c190">micron::static_mpmc::clear() noexcept</a></td><td>function; line 178</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-502b9e75a24ad00d"><h3><code>micron::static_mpmc::static_mpmc() noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static_mpmc() noexcept : __tail(0), __head(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static_mpmc() noexcept : __tail(0), __head(0)
+  {
+    for ( usize i = 0; i &lt; __capacity; ++i ) {
+      __cells[i].seq.store(i, memory_order_relaxed);
+      __cells[i].state.store(0, memory_order_relaxed);
+      __cells[i].v = T{};
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-0ccff677ad1c72e7"><h3><code>micron::static_mpmc::static_mpmc(const static_mpmc &amp;)</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L57">line 57</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static_mpmc(const static_mpmc &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const static_mpmc &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-37bcddb70d091094"><h3><code>micron::static_mpmc::static_mpmc(static_mpmc &amp;&amp;)</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L58">line 58</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static_mpmc(static_mpmc &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>static_mpmc &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-8daa0a1a386444eb"><h3><code>micron::static_mpmc::operator=(const static_mpmc &amp;)</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L59">line 59</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static_mpmc &amp;operator=(const static_mpmc &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const static_mpmc &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-3e10ea2ea19553ca"><h3><code>micron::static_mpmc::operator=(static_mpmc &amp;&amp;)</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L60">line 60</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static_mpmc &amp;operator=(static_mpmc &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>static_mpmc &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-c020f4964224833d"><h3><code>micron::static_mpmc::capacity() noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr usize
+  capacity() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__capacity</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr usize
+  capacity() noexcept
+  {
+    return __capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__capacity</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L65">line 65</a></td></tr></tbody></table></section><section class="function-entry" id="f-45bba6bc6c11e515"><h3><code>micron::static_mpmc::max_size() noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr usize
+  max_size() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__capacity</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr usize
+  max_size() noexcept
+  {
+    return __capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__capacity</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L71">line 71</a></td></tr></tbody></table></section><section class="function-entry" id="f-3fddc345c1e42c7a"><h3><code>micron::static_mpmc::size() const noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  size() const noexcept
+  {
+    const usize h = __head.get(memory_order_acquire);
+    const usize t = __tail.get(memory_order_acquire);
+    const usize n = t - h;
+    return n &lt; __capacity ? n : __capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n &lt; __capacity ? n : __capacity</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L81">line 81</a></td></tr></tbody></table></section><section class="function-entry" id="f-7f2cb6c0fbb4b3ff"><h3><code>micron::static_mpmc::empty() const noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+  empty() const noexcept
+  {
+    const usize h = __head.get(memory_order_acquire);
+    return h == __tail.get(memory_order_acquire);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>h == __tail.get(memory_order_acquire)</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L89">line 89</a></td></tr></tbody></table></section><section class="function-entry" id="f-3f4ac7d0b33faf1c"><h3><code>micron::static_mpmc::maybe_nonempty() const noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L94">line 94</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  maybe_nonempty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__tail.get(memory_order_relaxed) != __head.get(memory_order_relaxed)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  maybe_nonempty() const noexcept
+  {
+    return __tail.get(memory_order_relaxed) != __head.get(memory_order_relaxed);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__tail.get(memory_order_relaxed) != __head.get(memory_order_relaxed)</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L96">line 96</a></td></tr></tbody></table></section><section class="function-entry" id="f-08f5f85f5b51a635"><h3><code>micron::static_mpmc::push(T val) noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L100">line 100</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  push(T val) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  push(T val) noexcept
+  {
+    usize pos = __tail.get(memory_order_relaxed);
+    unsigned backoff = 1u;
+    for ( ;; ) {
+      __cell &amp;c = __cells[pos &amp; __mask];
+      const usize seq = c.seq.get(memory_order_acquire);
+      const __diff dif = static_cast&lt;__diff&gt;(seq - pos);
+      if ( dif == 0 ) {
+        if constexpr ( __capacity == 1 ) {
+          if ( c.state.get(memory_order_acquire) != 0 ) return false;
+        }
+        // a failed weak CAS already refreshes pos, so the loop reloads nothing
+        if ( __tail.compare_exchange_weak(pos, pos + 1u, memory_order_relaxed, memory_order_relaxed) ) {
+          c.v = val;
+          if constexpr ( __capacity == 1 ) c.state.store(1, memory_order_relaxed);
+          c.seq.store(pos + 1u, memory_order_release);      // publishes c.v
+          return true;
+        }
+        backoff = __spin_backoff(backoff);
+      } else if ( dif &lt; 0 ) {
+        return false;      // full
+      } else {
+        backoff = __spin_backoff(backoff);
+        pos = __tail.get(memory_order_relaxed);
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L110">line 110</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L117">line 117</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L121">line 121</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__backoff.hpp.html#f-099849a93a975aa4">__spin_backoff</a>.</p></section><section class="function-entry" id="f-d95dcb45f2efb675"><h3><code>micron::static_mpmc::pop(T &amp;out) noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L130">line 130</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+  pop(T &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+  pop(T &amp;out) noexcept
+  {
+    usize pos = __head.get(memory_order_relaxed);
+    unsigned backoff = 1u;
+    for ( ;; ) {
+      __cell &amp;c = __cells[pos &amp; __mask];
+      const usize seq = c.seq.get(memory_order_acquire);
+      const __diff dif = static_cast&lt;__diff&gt;(seq - (pos + 1u));
+      if ( dif == 0 ) {
+        if ( __head.compare_exchange_weak(pos, pos + 1u, memory_order_relaxed, memory_order_relaxed) ) {
+          out = c.v;
+          if constexpr ( __capacity == 1 ) c.state.store(0, memory_order_release);
+          c.seq.store(pos + __capacity, memory_order_release);      // reopens the cell
+          return true;
+        }
+        backoff = __spin_backoff(backoff);
+      } else if ( dif &lt; 0 ) {
+        return false;      // empty
+      } else {
+        backoff = __spin_backoff(backoff);
+        pos = __head.get(memory_order_relaxed);
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L143">line 143</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L147">line 147</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__backoff.hpp.html#f-099849a93a975aa4">__spin_backoff</a>.</p></section><section class="function-entry" id="f-4c9fe7ce1617e0df"><h3><code>micron::static_mpmc::pop() noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] [[gnu::always_inline]] inline T
+  pop() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] [[gnu::always_inline]] inline T
+  pop() noexcept
+  {
+    T out{};
+    return pop(out) ? out : T{};
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pop(out) ? out : T{}</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L160">line 160</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="static_mpmc.hpp.html#f-d95dcb45f2efb675">pop</a>.</p></section><section class="function-entry" id="f-2d1cc125fac66337"><h3><code>micron::static_mpmc::drain(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L165">line 165</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  inline u32
+  drain(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  inline u32
+  drain(Fn &amp;&amp;fn)
+  {
+    u32 n = 0;
+    T v{};
+    while ( pop(v) ) {
+      fn(v);
+      ++n;
+    }
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/queue/static_mpmc.hpp.html#L173">line 173</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="static_mpmc.hpp.html#f-d95dcb45f2efb675">pop</a>.</p></section><section class="function-entry" id="f-8ebb8d44b9b0c190"><h3><code>micron::static_mpmc::clear() noexcept</code></h3><p>Defined in <code>queue/static_mpmc.hpp</code>, <a href="../../source/queue/static_mpmc.hpp.html#L178">line 178</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  clear() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  clear() noexcept
+  {
+    T v{};
+    while ( pop(v) );
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="static_mpmc.hpp.html#f-d95dcb45f2efb675">pop</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

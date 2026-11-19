@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/bits/log.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/bits/log.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/bits/log.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/bits/log.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-7f8c2495fae2cc97">micron::math::mkbits::log_ns::log_f64(f64 x) noexcept</a></td><td>function; line 38</td></tr><tr class="t-dsc"><td><a href="#f-9e2d996e0f5b0e0c">micron::math::mkbits::log_ns::log_f32(f32 x) noexcept</a></td><td>function; line 83</td></tr><tr class="t-dsc"><td><a href="#f-40c0f0183eb47f4e">micron::math::mkbits::log_ns::log1p_f64(f64 x) noexcept</a></td><td>function; line 120</td></tr><tr class="t-dsc"><td><a href="#f-5b487875c4124527">micron::math::mkbits::log_ns::log1p_f32(f32 x) noexcept</a></td><td>function; line 138</td></tr><tr class="t-dsc"><td><a href="#f-7ca216cac9a6c738">micron::math::mkbits::log_ns::log2_f64(f64 x) noexcept</a></td><td>function; line 156</td></tr><tr class="t-dsc"><td><a href="#f-be4f889817f90955">micron::math::mkbits::log_ns::log2_f32(f32 x) noexcept</a></td><td>function; line 174</td></tr><tr class="t-dsc"><td><a href="#f-942df91b95926565">micron::math::mkbits::log_ns::log10_f64(f64 x) noexcept</a></td><td>function; line 192</td></tr><tr class="t-dsc"><td><a href="#f-32455cdce44dc3a5">micron::math::mkbits::log_ns::log10_f32(f32 x) noexcept</a></td><td>function; line 210</td></tr><tr class="t-dsc"><td><a href="#f-21564ec1da0141cd">micron::math::mkbits::log_ns::log(F x) noexcept</a></td><td>function; line 229</td></tr><tr class="t-dsc"><td><a href="#f-ef62a37d53ae9c9d">micron::math::mkbits::log_ns::log2(F x) noexcept</a></td><td>function; line 242</td></tr><tr class="t-dsc"><td><a href="#f-452c4f561b065c66">micron::math::mkbits::log_ns::log10(F x) noexcept</a></td><td>function; line 255</td></tr><tr class="t-dsc"><td><a href="#f-93b1d193e5e93a44">micron::math::mkbits::log_ns::log1p(F x) noexcept</a></td><td>function; line 268</td></tr><tr class="t-dsc"><td><a href="#f-cb034ccd45231ed4">micron::math::mkbits::log_ns::log_dd_kernel_f64(f64 x) noexcept</a></td><td>function; line 280</td></tr><tr class="t-dsc"><td><a href="#f-ae4bf16f18f101e1">micron::math::mkbits::log_ns::log_dd_f64_with_special(f64 x, bool *handled) noexcept</a></td><td>function; line 329</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-7f8c2495fae2cc97"><h3><code>micron::math::mkbits::log_ns::log_f64(f64 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L38">line 38</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr f64
+  log_f64(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr f64
+  log_f64(f64 x) noexcept
+  {
+    using namespace coeff::log_f64_data;
+
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    if ( x &lt; 0 ) [[unlikely]]
+      return ieee::qnan_v&lt;f64&gt;();
+    if ( x == 0 ) [[unlikely]]
+      return ieee::inf_v&lt;f64&gt;(1);
+    if ( ieee::is_inf(x) ) [[unlikely]]
+      return x;
+
+    int k;
+    f64 m = manip::frexp&lt;f64&gt;(x, &amp;k);
+    if ( m &lt; 0x1.6a09e667f3bcdp-1 ) {
+      m = m + m;
+      k -= 1;
+    }
+
+    f64 f = m - 1.0;
+    f64 s = f / (2.0 + f);
+    f64 z = s * s;
+    f64 w = z * z;
+
+    // odd
+    f64 t1 = hw::fmadd_sd(Lg6, w, Lg4);
+    t1 = hw::fmadd_sd(t1, w, Lg2);
+    t1 = t1 * w;
+    // even
+    f64 t2 = hw::fmadd_sd(Lg7, w, Lg5);
+    t2 = hw::fmadd_sd(t2, w, Lg3);
+    t2 = hw::fmadd_sd(t2, w, Lg1);
+    t2 = t2 * z;
+    f64 R = t1 + t2;
+
+    f64 hfsq = 0.5 * f * f;
+    f64 log_m = s * (hfsq + R) + (f - hfsq);
+
+    // log(x) = k * ln2 + log_m
+    f64 fk = f64(k);
+    return hw::fmadd_sd(fk, ln2_hi, hw::fmadd_sd(fk, ln2_lo, log_m));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L43">line 43</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f64&gt;()</code></td><td><a href="../../../source/math/bits/log.hpp.html#L45">line 45</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;f64&gt;(1)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L49">line 49</a></td></tr><tr class="t-dsc"><td><code>hw::fmadd_sd(fk, ln2_hi, hw::fmadd_sd(fk, ln2_lo, log_m))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L79">line 79</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="manip.hpp.html#f-b9ca2a40f546de77">manip::frexp&lt;f64&gt;</a>, <a href="../__asm/hw.hpp.html#f-c2d5a2e0427c549b">hw::fmadd_sd</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-9e2d996e0f5b0e0c"><h3><code>micron::math::mkbits::log_ns::log_f32(f32 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr f32
+  log_f32(f32 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr f32
+  log_f32(f32 x) noexcept
+  {
+    using namespace coeff::log_f32_data;
+
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    if ( x &lt; 0 ) [[unlikely]]
+      return ieee::qnan_v&lt;f32&gt;();
+    if ( x == 0 ) [[unlikely]]
+      return ieee::inf_v&lt;f32&gt;(1);
+    if ( ieee::is_inf(x) ) [[unlikely]]
+      return x;
+
+    int k;
+    f32 m = manip::frexp&lt;f32&gt;(x, &amp;k);
+    if ( m &lt; 0x1.6a09e6p-1f ) {
+      m = m + m;
+      k -= 1;
+    }
+
+    f32 f = m - 1.0f;
+    f32 s = f / (2.0f + f);
+    f32 z = s * s;
+    f32 w = z * z;
+    f32 t1 = hw::fmadd_ss(Lg4, w, Lg2);
+    t1 = t1 * w;
+    f32 t2 = hw::fmadd_ss(Lg3, w, Lg1);
+    t2 = t2 * z;
+    f32 R = t1 + t2;
+    f32 hfsq = 0.5f * f * f;
+    f32 log_m = s * (hfsq + R) + (f - hfsq);
+
+    f32 fk = f32(k);
+    return hw::fmadd_ss(fk, ln2_hi, hw::fmadd_ss(fk, ln2_lo, log_m));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L88">line 88</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f32&gt;()</code></td><td><a href="../../../source/math/bits/log.hpp.html#L90">line 90</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;f32&gt;(1)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L92">line 92</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L94">line 94</a></td></tr><tr class="t-dsc"><td><code>hw::fmadd_ss(fk, ln2_hi, hw::fmadd_ss(fk, ln2_lo, log_m))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L116">line 116</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f32&gt;</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f32&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="manip.hpp.html#f-b9ca2a40f546de77">manip::frexp&lt;f32&gt;</a>, <a href="../__asm/hw.hpp.html#f-559a8ea9a8ccd344">hw::fmadd_ss</a>, <a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>.</p></section><section class="function-entry" id="f-40c0f0183eb47f4e"><h3><code>micron::math::mkbits::log_ns::log1p_f64(f64 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L120">line 120</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr f64
+  log1p_f64(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr f64
+  log1p_f64(f64 x) noexcept
+  {
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    if ( x == -1.0 ) [[unlikely]]
+      return ieee::inf_v&lt;f64&gt;(1);
+    if ( x &lt; -1.0 ) [[unlikely]]
+      return ieee::qnan_v&lt;f64&gt;();
+    if ( ieee::is_inf(x) ) [[unlikely]]
+      return x;
+    if ( manip::fabs(x) &lt; 0x1.0p-54 ) [[unlikely]]
+      return x;
+    f64 u = 1.0 + x;
+    f64 c = (u - 1.0) - x;
+    return log_f64(u) - c / u;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L123">line 123</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;f64&gt;(1)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f64&gt;()</code></td><td><a href="../../../source/math/bits/log.hpp.html#L127">line 127</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L129">line 129</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>log_f64(u) - c / u</code></td><td><a href="../../../source/math/bits/log.hpp.html#L134">line 134</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="manip.hpp.html#f-da39f5f12006f2e7">manip::fabs</a>, <a href="log.hpp.html#f-7f8c2495fae2cc97">log_f64</a>.</p></section><section class="function-entry" id="f-5b487875c4124527"><h3><code>micron::math::mkbits::log_ns::log1p_f32(f32 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L138">line 138</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr f32
+  log1p_f32(f32 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr f32
+  log1p_f32(f32 x) noexcept
+  {
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    if ( x == -1.0f ) [[unlikely]]
+      return ieee::inf_v&lt;f32&gt;(1);
+    if ( x &lt; -1.0f ) [[unlikely]]
+      return ieee::qnan_v&lt;f32&gt;();
+    if ( ieee::is_inf(x) ) [[unlikely]]
+      return x;
+    if ( manip::fabs(x) &lt; 0x1.0p-25f ) [[unlikely]]
+      return x;
+    f32 u = 1.0f + x;
+    f32 c = (u - 1.0f) - x;
+    return log_f32(u) - c / u;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;f32&gt;(1)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L143">line 143</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f32&gt;()</code></td><td><a href="../../../source/math/bits/log.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L147">line 147</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L149">line 149</a></td></tr><tr class="t-dsc"><td><code>log_f32(u) - c / u</code></td><td><a href="../../../source/math/bits/log.hpp.html#L152">line 152</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f32&gt;</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f32&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="manip.hpp.html#f-da39f5f12006f2e7">manip::fabs</a>, <a href="log.hpp.html#f-9e2d996e0f5b0e0c">log_f32</a>.</p></section><section class="function-entry" id="f-7ca216cac9a6c738"><h3><code>micron::math::mkbits::log_ns::log2_f64(f64 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L156">line 156</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f64
+  log2_f64(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f64
+  log2_f64(f64 x) noexcept
+  {
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    if ( x &lt; 0 ) [[unlikely]]
+      return ieee::qnan_v&lt;f64&gt;();
+    if ( x == 0 ) [[unlikely]]
+      return ieee::inf_v&lt;f64&gt;(1);
+    if ( ieee::is_inf(x) ) [[unlikely]]
+      return x;
+
+    constexpr f64 inv_ln2_hi = 0x1.71547652b82fep+0;
+    constexpr f64 inv_ln2_lo = 0x1.777d0ffda0d24p-56;
+    f64 lx = log_f64(x);
+    return hw::fmadd_sd(lx, inv_ln2_hi, lx * inv_ln2_lo);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L159">line 159</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f64&gt;()</code></td><td><a href="../../../source/math/bits/log.hpp.html#L161">line 161</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;f64&gt;(1)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L163">line 163</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>hw::fmadd_sd(lx, inv_ln2_hi, lx * inv_ln2_lo)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L170">line 170</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="log.hpp.html#f-7f8c2495fae2cc97">log_f64</a>, <a href="../__asm/hw.hpp.html#f-c2d5a2e0427c549b">hw::fmadd_sd</a>.</p></section><section class="function-entry" id="f-be4f889817f90955"><h3><code>micron::math::mkbits::log_ns::log2_f32(f32 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L174">line 174</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f32
+  log2_f32(f32 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f32
+  log2_f32(f32 x) noexcept
+  {
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    if ( x &lt; 0 ) [[unlikely]]
+      return ieee::qnan_v&lt;f32&gt;();
+    if ( x == 0 ) [[unlikely]]
+      return ieee::inf_v&lt;f32&gt;(1);
+    if ( ieee::is_inf(x) ) [[unlikely]]
+      return x;
+
+    constexpr f32 inv_ln2_hi = 0x1.715476p+0f;
+    constexpr f32 inv_ln2_lo = 0x1.4ae0bep-26f;
+    const f32 lx = log_f32(x);
+    return hw::fmadd_ss(lx, inv_ln2_hi, lx * inv_ln2_lo);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L177">line 177</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f32&gt;()</code></td><td><a href="../../../source/math/bits/log.hpp.html#L179">line 179</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;f32&gt;(1)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L183">line 183</a></td></tr><tr class="t-dsc"><td><code>hw::fmadd_ss(lx, inv_ln2_hi, lx * inv_ln2_lo)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f32&gt;</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f32&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="log.hpp.html#f-9e2d996e0f5b0e0c">log_f32</a>, <a href="../__asm/hw.hpp.html#f-559a8ea9a8ccd344">hw::fmadd_ss</a>.</p></section><section class="function-entry" id="f-942df91b95926565"><h3><code>micron::math::mkbits::log_ns::log10_f64(f64 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L192">line 192</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f64
+  log10_f64(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f64
+  log10_f64(f64 x) noexcept
+  {
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    if ( x &lt; 0 ) [[unlikely]]
+      return ieee::qnan_v&lt;f64&gt;();
+    if ( x == 0 ) [[unlikely]]
+      return ieee::inf_v&lt;f64&gt;(1);
+    if ( ieee::is_inf(x) ) [[unlikely]]
+      return x;
+
+    constexpr f64 inv_ln10_hi = 0x1.bcb7b1526e50ep-2;
+    constexpr f64 inv_ln10_lo = 0x1.95355baaafad3p-57;
+    f64 lx = log_f64(x);
+    return hw::fmadd_sd(lx, inv_ln10_hi, lx * inv_ln10_lo);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L195">line 195</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f64&gt;()</code></td><td><a href="../../../source/math/bits/log.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;f64&gt;(1)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L199">line 199</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L201">line 201</a></td></tr><tr class="t-dsc"><td><code>hw::fmadd_sd(lx, inv_ln10_hi, lx * inv_ln10_lo)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L206">line 206</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="log.hpp.html#f-7f8c2495fae2cc97">log_f64</a>, <a href="../__asm/hw.hpp.html#f-c2d5a2e0427c549b">hw::fmadd_sd</a>.</p></section><section class="function-entry" id="f-32455cdce44dc3a5"><h3><code>micron::math::mkbits::log_ns::log10_f32(f32 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L210">line 210</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f32
+  log10_f32(f32 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f32
+  log10_f32(f32 x) noexcept
+  {
+    if ( ieee::is_nan(x) ) [[unlikely]]
+      return x;
+    if ( x &lt; 0 ) [[unlikely]]
+      return ieee::qnan_v&lt;f32&gt;();
+    if ( x == 0 ) [[unlikely]]
+      return ieee::inf_v&lt;f32&gt;(1);
+    if ( ieee::is_inf(x) ) [[unlikely]]
+      return x;
+
+    constexpr f32 inv_ln10_hi = 0x1.bcb7b2p-2f;
+    constexpr f32 inv_ln10_lo = -0x1.5b235ep-29f;
+    const f32 lx = log_f32(x);
+    return hw::fmadd_ss(lx, inv_ln10_hi, lx * inv_ln10_lo);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L213">line 213</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;f32&gt;()</code></td><td><a href="../../../source/math/bits/log.hpp.html#L215">line 215</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;f32&gt;(1)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L217">line 217</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/log.hpp.html#L219">line 219</a></td></tr><tr class="t-dsc"><td><code>hw::fmadd_ss(lx, inv_ln10_hi, lx * inv_ln10_lo)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L224">line 224</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f32&gt;</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f32&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="log.hpp.html#f-9e2d996e0f5b0e0c">log_f32</a>, <a href="../__asm/hw.hpp.html#f-559a8ea9a8ccd344">hw::fmadd_ss</a>.</p></section><section class="function-entry" id="f-21564ec1da0141cd"><h3><code>micron::math::mkbits::log_ns::log(F x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L229">line 229</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr F
+  log(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr F
+  log(F x) noexcept
+  {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::log(x);
+#endif
+    if constexpr ( sizeof(F) == sizeof(f32) )
+      return F(log_f32(f32(x)));
+    else
+      return F(log_f64(f64(x)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wasm::math::log(x)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L232">line 232</a></td></tr><tr class="t-dsc"><td><code>F(log_f32(f32(x)))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L235">line 235</a></td></tr><tr class="t-dsc"><td><code>F(log_f64(f64(x)))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L237">line 237</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/math/extended.hpp.html#f-562e437537f58e28">micron::wasm::math::log</a>, <a href="log.hpp.html#f-9e2d996e0f5b0e0c">log_f32</a>, <a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="log.hpp.html#f-7f8c2495fae2cc97">log_f64</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-ef62a37d53ae9c9d"><h3><code>micron::math::mkbits::log_ns::log2(F x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L242">line 242</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr F
+  log2(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr F
+  log2(F x) noexcept
+  {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::log2(x);
+#endif
+    if constexpr ( sizeof(F) == sizeof(f32) )
+      return F(log2_f32(f32(x)));
+    else
+      return F(log2_f64(f64(x)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wasm::math::log2(x)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L245">line 245</a></td></tr><tr class="t-dsc"><td><code>F(log2_f32(f32(x)))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L248">line 248</a></td></tr><tr class="t-dsc"><td><code>F(log2_f64(f64(x)))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L250">line 250</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/math/extended.hpp.html#f-2c30e1be2cd70c80">micron::wasm::math::log2</a>, <a href="log.hpp.html#f-be4f889817f90955">log2_f32</a>, <a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="log.hpp.html#f-7ca216cac9a6c738">log2_f64</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-452c4f561b065c66"><h3><code>micron::math::mkbits::log_ns::log10(F x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L255">line 255</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr F
+  log10(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr F
+  log10(F x) noexcept
+  {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::log10(x);
+#endif
+    if constexpr ( sizeof(F) == sizeof(f32) )
+      return F(log10_f32(f32(x)));
+    else
+      return F(log10_f64(f64(x)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wasm::math::log10(x)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L258">line 258</a></td></tr><tr class="t-dsc"><td><code>F(log10_f32(f32(x)))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L261">line 261</a></td></tr><tr class="t-dsc"><td><code>F(log10_f64(f64(x)))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L263">line 263</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/math/extended.hpp.html#f-fe86615417558da3">micron::wasm::math::log10</a>, <a href="log.hpp.html#f-32455cdce44dc3a5">log10_f32</a>, <a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="log.hpp.html#f-942df91b95926565">log10_f64</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-93b1d193e5e93a44"><h3><code>micron::math::mkbits::log_ns::log1p(F x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L268">line 268</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr F
+  log1p(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr F
+  log1p(F x) noexcept
+  {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::log1p(x);
+#endif
+    if constexpr ( sizeof(F) == sizeof(f32) )
+      return F(log1p_f32(f32(x)));
+    else
+      return F(log1p_f64(f64(x)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wasm::math::log1p(x)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L271">line 271</a></td></tr><tr class="t-dsc"><td><code>F(log1p_f32(f32(x)))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L274">line 274</a></td></tr><tr class="t-dsc"><td><code>F(log1p_f64(f64(x)))</code></td><td><a href="../../../source/math/bits/log.hpp.html#L276">line 276</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/math/extended.hpp.html#f-33058485642efcbf">micron::wasm::math::log1p</a>, <a href="log.hpp.html#f-5b487875c4124527">log1p_f32</a>, <a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="log.hpp.html#f-40c0f0183eb47f4e">log1p_f64</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-cb034ccd45231ed4"><h3><code>micron::math::mkbits::log_ns::log_dd_kernel_f64(f64 x) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L280">line 280</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr dd64
+  log_dd_kernel_f64(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr dd64
+  log_dd_kernel_f64(f64 x) noexcept
+  {
+    using namespace coeff::log_f64_data;
+
+    int k;
+    f64 m = manip::frexp&lt;f64&gt;(x, &amp;k);
+    if ( m &lt; 0x1.6a09e667f3bcdp-1 ) {
+      m = m + m;
+      k -= 1;
+    }
+    // sterbenz f and q
+    const f64 f = m - 1.0;
+    const f64 q = 2.0 + f;
+
+    const dd64 s = dd::div(dd64{ f, 0.0 }, dd64{ q, 0.0 });
+
+    // f**2/2 exactly
+    const dd64 ff = dd::two_prod(f, f);
+    const dd64 hfsq{ ff.hi * 0.5, ff.lo * 0.5 };
+
+    // s**2 in dd64 for the polynomial argument
+    const dd64 z_dd = dd::mul(s, s);
+    const f64 z = z_dd.hi;
+    const f64 w = z * z;
+
+    // Remez polynomial in z, w
+    f64 t1 = hw::fmadd_sd(Lg6, w, Lg4);
+    t1 = hw::fmadd_sd(t1, w, Lg2);
+    t1 = t1 * w;
+    f64 t2 = hw::fmadd_sd(Lg7, w, Lg5);
+    t2 = hw::fmadd_sd(t2, w, Lg3);
+    t2 = hw::fmadd_sd(t2, w, Lg1);
+    t2 = t2 * z;
+    const f64 R = t1 + t2;
+
+    // log(1+f) = (f - f**2/2) + s x (f**2/2 + R)
+    const dd64 hfsq_plus_R = dd::add(hfsq, R);
+    const dd64 corr = dd::mul(s, hfsq_plus_R);
+    const dd64 f_minus_hfsq = dd::sub(dd64{ f, 0.0 }, hfsq);
+    const dd64 log_m_dd = dd::add(f_minus_hfsq, corr);
+
+    // k x ln2
+    const dd64 ln2_dd{ ln2_hi, ln2_lo };
+    const dd64 k_ln2 = dd::mul(ln2_dd, dd64{ f64(k), 0.0 });
+
+    return dd::add(k_ln2, log_m_dd);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dd::add(k_ln2, log_m_dd)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L325">line 325</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="manip.hpp.html#f-b9ca2a40f546de77">manip::frexp&lt;f64&gt;</a>, <a href="../dd64.hpp.html#f-1e9236a0eac52192">dd::div</a>, <a href="../dd64.hpp.html#f-11758c007c03dc6d">dd::two_prod</a>, <a href="../dd64.hpp.html#f-efc565bc283bb029">dd::mul</a>, <a href="../__asm/hw.hpp.html#f-c2d5a2e0427c549b">hw::fmadd_sd</a>, <a href="../dd64.hpp.html#f-d2977be18724faea">dd::add</a>, <a href="../dd64.hpp.html#f-86d163d56510ef61">dd::sub</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-ae4bf16f18f101e1"><h3><code>micron::math::mkbits::log_ns::log_dd_f64_with_special(f64 x, bool *handled) noexcept</code></h3><p>Defined in <code>math/bits/log.hpp</code>, <a href="../../../source/math/bits/log.hpp.html#L329">line 329</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr dd64
+  log_dd_f64_with_special(f64 x, bool *handled) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li><li><code>bool *handled</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr dd64
+  log_dd_f64_with_special(f64 x, bool *handled) noexcept
+  {
+
+    if ( ieee::is_nan(x) ) {
+      *handled = true;
+      return dd64{ x, 0.0 };
+    }
+    if ( x &lt; 0 ) {
+      *handled = true;
+      return dd64{ ieee::qnan_v&lt;f64&gt;(), 0.0 };
+    }
+    if ( x == 0 ) {
+      *handled = true;
+      return dd64{ ieee::inf_v&lt;f64&gt;(1), 0.0 };
+    }
+    if ( ieee::is_inf(x) ) {
+      *handled = true;
+      return dd64{ x, 0.0 };
+    }
+    *handled = false;
+    return log_dd_kernel_f64(x);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dd64{ x, 0.0 }</code></td><td><a href="../../../source/math/bits/log.hpp.html#L334">line 334</a></td></tr><tr class="t-dsc"><td><code>dd64{ ieee::qnan_v&lt;f64&gt;(), 0.0 }</code></td><td><a href="../../../source/math/bits/log.hpp.html#L338">line 338</a></td></tr><tr class="t-dsc"><td><code>dd64{ ieee::inf_v&lt;f64&gt;(1), 0.0 }</code></td><td><a href="../../../source/math/bits/log.hpp.html#L342">line 342</a></td></tr><tr class="t-dsc"><td><code>dd64{ x, 0.0 }</code></td><td><a href="../../../source/math/bits/log.hpp.html#L346">line 346</a></td></tr><tr class="t-dsc"><td><code>log_dd_kernel_f64(x)</code></td><td><a href="../../../source/math/bits/log.hpp.html#L349">line 349</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;f64&gt;</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="log.hpp.html#f-cb034ccd45231ed4">log_dd_kernel_f64</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

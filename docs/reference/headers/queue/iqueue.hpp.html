@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/queue/iqueue.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/queue/iqueue.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/queues.html">Queues</a></div><p>Defined in header <code>&lt;micron/queue/iqueue.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/queue/iqueue.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-9b9b5984cbfd79af">micron::immutable_queue</code></td><td>class; line 29</td></tr><tr class="t-dsc"><td><code id="s-45a2855052ebe833">micron::immutable_queue::category_type</code></td><td>typedef; line 307</td></tr><tr class="t-dsc"><td><code id="s-4cf8c8fdddaa8164">micron::immutable_queue::mutability_type</code></td><td>typedef; line 308</td></tr><tr class="t-dsc"><td><code id="s-f093f91c1cb8704c">micron::immutable_queue::memory_type</code></td><td>typedef; line 309</td></tr><tr class="t-dsc"><td><code id="s-f865f6adbd75614e">micron::immutable_queue::size_type</code></td><td>typedef; line 310</td></tr><tr class="t-dsc"><td><code id="s-0fb5bb5ddee10ce3">micron::immutable_queue::value_type</code></td><td>typedef; line 311</td></tr><tr class="t-dsc"><td><code id="s-0d0f3abfac6af50e">micron::immutable_queue::const_reference</code></td><td>typedef; line 312</td></tr><tr class="t-dsc"><td><code id="s-5e3a4d4d35ad5d7d">micron::immutable_queue::const_ref</code></td><td>typedef; line 313</td></tr><tr class="t-dsc"><td><code id="s-8632319ac5747386">micron::immutable_queue::const_pointer</code></td><td>typedef; line 314</td></tr><tr class="t-dsc"><td><code id="s-8964b5408aa68a60">micron::immutable_queue::const_iterator</code></td><td>class; line 604</td></tr><tr class="t-dsc"><td><code id="s-c39638f2963f94c4">micron::immutable_queue::iterator</code></td><td>typedef; line 745</td></tr><tr class="t-dsc"><td><code id="s-b24c3e7fd99a3eeb">micron::iqueue</code></td><td>typedef; line 775</td></tr><tr class="t-dsc"><td><a href="#f-15d008856fcf1bed">micron::immutable_queue::~immutable_queue(void)</a></td><td>function; line 317</td></tr><tr class="t-dsc"><td><a href="#f-b99c014b3f3d9ce5">micron::immutable_queue::immutable_queue(void)</a></td><td>function; line 325</td></tr><tr class="t-dsc"><td><a href="#f-ed16fc6c4b2321d1">micron::immutable_queue::immutable_queue(const immutable_queue &amp;o)</a></td><td>function; line 331</td></tr><tr class="t-dsc"><td><a href="#f-1f59d0ad7c7f7dea">micron::immutable_queue::operator=(const immutable_queue &amp;o)</a></td><td>function; line 339</td></tr><tr class="t-dsc"><td><a href="#f-0f649671d4a101c7">micron::immutable_queue::immutable_queue(immutable_queue &amp;&amp;o) noexcept</a></td><td>function; line 360</td></tr><tr class="t-dsc"><td><a href="#f-2357cc7e6aedbb3d">micron::immutable_queue::operator=(immutable_queue &amp;&amp;o) noexcept</a></td><td>function; line 374</td></tr><tr class="t-dsc"><td><a href="#f-76e2377fd759e1dd">micron::immutable_queue::push(const T &amp;v) const</a></td><td>function; line 401</td></tr><tr class="t-dsc"><td><a href="#f-b25cb406ad04ded5">micron::immutable_queue::push(T &amp;&amp;v) const</a></td><td>function; line 410</td></tr><tr class="t-dsc"><td><a href="#f-003da32750079e1d">micron::immutable_queue::emplace(Args &amp;&amp;...args) const</a></td><td>function; line 420</td></tr><tr class="t-dsc"><td><a href="#f-1d1ad1234dc92b93">micron::immutable_queue::pop(void) const</a></td><td>function; line 446</td></tr><tr class="t-dsc"><td><a href="#f-ea9676326cfedfef">micron::immutable_queue::front(void) const</a></td><td>function; line 456</td></tr><tr class="t-dsc"><td><a href="#f-dae0d099c1d835f2">micron::immutable_queue::peek(void) const</a></td><td>function; line 462</td></tr><tr class="t-dsc"><td><a href="#f-f84d77c3dbd73a18">micron::immutable_queue::last(void) const</a></td><td>function; line 470</td></tr><tr class="t-dsc"><td><a href="#f-dfe8bdb2acc14c24">micron::immutable_queue::at(usize idx) const</a></td><td>function; line 482</td></tr><tr class="t-dsc"><td><a href="#f-041d0c46cc3cb386">micron::immutable_queue::size() const noexcept</a></td><td>function; line 510</td></tr><tr class="t-dsc"><td><a href="#f-2ce371a0ba6f0b44">micron::immutable_queue::empty() const noexcept</a></td><td>function; line 516</td></tr><tr class="t-dsc"><td><a href="#f-c2550426af9a3136">micron::immutable_queue::clear(void) const</a></td><td>function; line 522</td></tr><tr class="t-dsc"><td><a href="#f-7d9b4c75afaa2c40">micron::immutable_queue::identity() const noexcept</a></td><td>function; line 528</td></tr><tr class="t-dsc"><td><a href="#f-ad8faf56a0fbfee8">micron::immutable_queue::operator==(const immutable_queue &amp;o) const</a></td><td>function; line 534</td></tr><tr class="t-dsc"><td><a href="#f-2e8c9198b0a0ad9a">micron::immutable_queue::operator!=(const immutable_queue &amp;o) const</a></td><td>function; line 548</td></tr><tr class="t-dsc"><td><a href="#f-79743feddf487ecd">micron::immutable_queue::update_front(Fn &amp;&amp;fn) const</a></td><td>function; line 555</td></tr><tr class="t-dsc"><td><a href="#f-27f9acfc8c8f5abc">micron::immutable_queue::for_each(Fn &amp;&amp;fn) const</a></td><td>function; line 574</td></tr><tr class="t-dsc"><td><a href="#f-7a5168effd909823">micron::immutable_queue::const_iterator::const_iterator()</a></td><td>function; line 653</td></tr><tr class="t-dsc"><td><a href="#f-34ec6ab4e043f4ec">micron::immutable_queue::const_iterator::const_iterator(const __node *front, const __node *mid, usize ml, const __node *rear, usize rl)</a></td><td>function; line 655</td></tr><tr class="t-dsc"><td><a href="#f-8242a97362475c3d">micron::immutable_queue::const_iterator::const_iterator(const const_iterator &amp;o)</a></td><td>function; line 660</td></tr><tr class="t-dsc"><td><a href="#f-3305ba8863647a6e">micron::immutable_queue::const_iterator::const_iterator(const_iterator &amp;&amp;o) noexcept</a></td><td>function; line 662</td></tr><tr class="t-dsc"><td><a href="#f-dc520ff84f947497">micron::immutable_queue::const_iterator::~const_iterator()</a></td><td>function; line 669</td></tr><tr class="t-dsc"><td><a href="#f-89dd9e072be9194e">micron::immutable_queue::const_iterator::operator=(const const_iterator &amp;o)</a></td><td>function; line 672</td></tr><tr class="t-dsc"><td><a href="#f-b40914e46251d295">micron::immutable_queue::const_iterator::operator=(const_iterator &amp;&amp;o) noexcept</a></td><td>function; line 683</td></tr><tr class="t-dsc"><td><a href="#f-ff38faa29e315fba">micron::immutable_queue::const_iterator::operator==(const const_iterator &amp;o) const</a></td><td>function; line 697</td></tr><tr class="t-dsc"><td><a href="#f-163b37095f976f5e">micron::immutable_queue::const_iterator::operator!=(const const_iterator &amp;o) const</a></td><td>function; line 703</td></tr><tr class="t-dsc"><td><a href="#f-4fb100c8de0944fe">micron::immutable_queue::const_iterator::value(void) const</a></td><td>function; line 709</td></tr><tr class="t-dsc"><td><a href="#f-4854e70ed8302ba2">micron::immutable_queue::const_iterator::operator*(void) const</a></td><td>function; line 715</td></tr><tr class="t-dsc"><td><a href="#f-91cf1b20118c1cb9">micron::immutable_queue::const_iterator::operator-&gt;(void) const</a></td><td>function; line 721</td></tr><tr class="t-dsc"><td><a href="#f-4c3496bf8562d9a1">micron::immutable_queue::const_iterator::operator++(void)</a></td><td>function; line 727</td></tr><tr class="t-dsc"><td><a href="#f-9d081d7f48e7eef4">micron::immutable_queue::const_iterator::operator++(int)</a></td><td>function; line 737</td></tr><tr class="t-dsc"><td><a href="#f-e934ed6c17eadf16">micron::immutable_queue::begin(void) const</a></td><td>function; line 748</td></tr><tr class="t-dsc"><td><a href="#f-12e1a850cc7d6cb6">micron::immutable_queue::end(void) const</a></td><td>function; line 756</td></tr><tr class="t-dsc"><td><a href="#f-2072ac63edc41b5a">micron::immutable_queue::cbegin(void) const</a></td><td>function; line 762</td></tr><tr class="t-dsc"><td><a href="#f-8305810cb922f4fa">micron::immutable_queue::cend(void) const</a></td><td>function; line 768</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-15d008856fcf1bed"><h3><code>micron::immutable_queue::~immutable_queue(void)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L317">line 317</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~immutable_queue(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~immutable_queue(void)
+  {
+    __release(__front);
+    __release(__rear);
+    __release_rot(__state);
+    __release(__rotation_rear);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-3bdad9532fa6d3e0">__release</a>, <a href="iqueue.hpp.html#f-6eaeb0b160f9e90a">__release_rot</a>.</p></section><section class="function-entry" id="f-b99c014b3f3d9ce5"><h3><code>micron::immutable_queue::immutable_queue(void)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L325">line 325</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue(void)
+      : __front(nullptr), __f_len(0), __rear(nullptr), __r_len(0), __state(__idle_rot()), __rotation_rear(nullptr), __rotation_rear_len(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue(void)
+      : __front(nullptr), __f_len(0), __rear(nullptr), __r_len(0), __state(__idle_rot()), __rotation_rear(nullptr), __rotation_rear_len(0)
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ed16fc6c4b2321d1"><h3><code>micron::immutable_queue::immutable_queue(const immutable_queue &amp;o)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L331">line 331</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue(const immutable_queue &amp;o)
+      : __front(__retain(o.__front)), __f_len(o.__f_len), __rear(__retain(o.__rear)), __r_len(o.__r_len), __state(o.__state),
+        __rotation_rear(__retain(o.__rotation_rear)), __rotation_rear_len(o.__rotation_rear_len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const immutable_queue &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue(const immutable_queue &amp;o)
+      : __front(__retain(o.__front)), __f_len(o.__f_len), __rear(__retain(o.__rear)), __r_len(o.__r_len), __state(o.__state),
+        __rotation_rear(__retain(o.__rotation_rear)), __rotation_rear_len(o.__rotation_rear_len)
+  {
+    __retain_rot(__state);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-fd79ba3f7eaa52cb">__retain_rot</a>.</p></section><section class="function-entry" id="f-1f59d0ad7c7f7dea"><h3><code>micron::immutable_queue::operator=(const immutable_queue &amp;o)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L339">line 339</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue &amp;
+  operator=(const immutable_queue &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const immutable_queue &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue &amp;
+  operator=(const immutable_queue &amp;o)
+  {
+    // NOTE: important
+    if ( this != &amp;o ) [[likely]] {
+      __release(__front);
+      __release(__rear);
+      __release_rot(__state);
+      __release(__rotation_rear);
+      __front = __retain(o.__front);
+      __f_len = o.__f_len;
+      __rear = __retain(o.__rear);
+      __r_len = o.__r_len;
+      __state = o.__state;
+      __retain_rot(__state);
+      __rotation_rear = __retain(o.__rotation_rear);
+      __rotation_rear_len = o.__rotation_rear_len;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/iqueue.hpp.html#L356">line 356</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-3bdad9532fa6d3e0">__release</a>, <a href="iqueue.hpp.html#f-6eaeb0b160f9e90a">__release_rot</a>, <a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>, <a href="iqueue.hpp.html#f-fd79ba3f7eaa52cb">__retain_rot</a>.</p></section><section class="function-entry" id="f-0f649671d4a101c7"><h3><code>micron::immutable_queue::immutable_queue(immutable_queue &amp;&amp;o) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L360">line 360</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue(immutable_queue &amp;&amp;o) noexcept
+      : __front(o.__front), __f_len(o.__f_len), __rear(o.__rear), __r_len(o.__r_len), __state(o.__state),
+        __rotation_rear(o.__rotation_rear), __rotation_rear_len(o.__rotation_rear_len)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>immutable_queue &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue(immutable_queue &amp;&amp;o) noexcept
+      : __front(o.__front), __f_len(o.__f_len), __rear(o.__rear), __r_len(o.__r_len), __state(o.__state),
+        __rotation_rear(o.__rotation_rear), __rotation_rear_len(o.__rotation_rear_len)
+  {
+    o.__front = nullptr;
+    o.__f_len = 0;
+    o.__rear = nullptr;
+    o.__r_len = 0;
+    o.__state = __idle_rot();
+    o.__rotation_rear = nullptr;
+    o.__rotation_rear_len = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-bbc51accfae1d839">__idle_rot</a>.</p></section><section class="function-entry" id="f-2357cc7e6aedbb3d"><h3><code>micron::immutable_queue::operator=(immutable_queue &amp;&amp;o) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L374">line 374</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue &amp;
+  operator=(immutable_queue &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>immutable_queue &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue &amp;
+  operator=(immutable_queue &amp;&amp;o) noexcept
+  {
+    if ( this != &amp;o ) [[likely]] {
+      __release(__front);
+      __release(__rear);
+      __release_rot(__state);
+      __release(__rotation_rear);
+      __front = o.__front;
+      __f_len = o.__f_len;
+      __rear = o.__rear;
+      __r_len = o.__r_len;
+      __state = o.__state;
+      __rotation_rear = o.__rotation_rear;
+      __rotation_rear_len = o.__rotation_rear_len;
+      o.__front = nullptr;
+      o.__f_len = 0;
+      o.__rear = nullptr;
+      o.__r_len = 0;
+      o.__state = __idle_rot();
+      o.__rotation_rear = nullptr;
+      o.__rotation_rear_len = 0;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/iqueue.hpp.html#L396">line 396</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-3bdad9532fa6d3e0">__release</a>, <a href="iqueue.hpp.html#f-6eaeb0b160f9e90a">__release_rot</a>, <a href="iqueue.hpp.html#f-bbc51accfae1d839">__idle_rot</a>.</p></section><section class="function-entry" id="f-76e2377fd759e1dd"><h3><code>micron::immutable_queue::push(const T &amp;v) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L401">line 401</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue
+  push(const T &amp;v) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue
+  push(const T &amp;v) const
+  {
+    __node *nr = __make_node(v, __retain(__rear));
+    __rot s = __state;
+    __retain_rot(s);
+    return __check(__retain(__front), __f_len, nr, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__check(__retain(__front), __f_len, nr, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L406">line 406</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-2f5773ce46364ebb">__make_node</a>, <a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>, <a href="iqueue.hpp.html#f-fd79ba3f7eaa52cb">__retain_rot</a>, <a href="iqueue.hpp.html#f-b9c4cfcd2af4ebf6">__check</a>.</p></section><section class="function-entry" id="f-b25cb406ad04ded5"><h3><code>micron::immutable_queue::push(T &amp;&amp;v) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L410">line 410</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue
+  push(T &amp;&amp;v) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue
+  push(T &amp;&amp;v) const
+  {
+    __node *nr = __make_node(micron::move(v), __retain(__rear));
+    __rot s = __state;
+    __retain_rot(s);
+    return __check(__retain(__front), __f_len, nr, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__check(__retain(__front), __f_len, nr, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L415">line 415</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-2f5773ce46364ebb">__make_node</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>, <a href="iqueue.hpp.html#f-fd79ba3f7eaa52cb">__retain_rot</a>, <a href="iqueue.hpp.html#f-b9c4cfcd2af4ebf6">__check</a>.</p></section><section class="function-entry" id="f-003da32750079e1d"><h3><code>micron::immutable_queue::emplace(Args &amp;&amp;...args) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L420">line 420</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  immutable_queue
+  emplace(Args &amp;&amp;...args) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  immutable_queue
+  emplace(Args &amp;&amp;...args) const
+  {
+    //  construct T in-place, then cons onto rear
+    void *raw = nullptr;
+    __node *n = nullptr;
+    __node *next = __retain(__rear);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      raw = ::operator new(sizeof(__node), static_cast&lt;std::align_val_t&gt;(alignof(__node)));
+      n = new (raw) __node{ next, 1, T(micron::forward&lt;Args&gt;(args)...) };
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      if ( raw ) ::operator delete(raw, static_cast&lt;std::align_val_t&gt;(alignof(__node)));
+      __release(next);
+      throw;
+    }
+#endif
+
+    __rot s = __state;
+    __retain_rot(s);
+    return __check(__retain(__front), __f_len, n, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__check(__retain(__front), __f_len, n, __r_len + 1, s, __retain(__rotation_rear), __rotation_rear_len)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L441">line 441</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/iqueue.hpp.html#L435">line 435</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="iqueue.hpp.html#f-3bdad9532fa6d3e0">__release</a>, <a href="iqueue.hpp.html#f-fd79ba3f7eaa52cb">__retain_rot</a>, <a href="iqueue.hpp.html#f-b9c4cfcd2af4ebf6">__check</a>.</p></section><section class="function-entry" id="f-1d1ad1234dc92b93"><h3><code>micron::immutable_queue::pop(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L446">line 446</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue
+  pop(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue
+  pop(void) const
+  {
+    if ( !__front ) [[unlikely]]
+      return immutable_queue();
+
+    __rot ns = __invalidate(__state);
+    return __check(__retain(__front-&gt;next), __f_len - 1, __retain(__rear), __r_len, ns, __retain(__rotation_rear), __rotation_rear_len);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>immutable_queue()</code></td><td><a href="../../source/queue/iqueue.hpp.html#L449">line 449</a></td></tr><tr class="t-dsc"><td><code>__check(__retain(__front-&gt;next), __f_len - 1, __retain(__rear), __r_len, ns, __retain(__rotation_rear), __rotation_rear_len)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L452">line 452</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-b99c014b3f3d9ce5">immutable_queue</a>, <a href="iqueue.hpp.html#f-15104f7f013ac838">__invalidate</a>, <a href="iqueue.hpp.html#f-b9c4cfcd2af4ebf6">__check</a>, <a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>.</p></section><section class="function-entry" id="f-ea9676326cfedfef"><h3><code>micron::immutable_queue::front(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L456">line 456</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+  front(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__front-&gt;value</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+  front(void) const
+  {
+    return __front-&gt;value;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__front-&gt;value</code></td><td><a href="../../source/queue/iqueue.hpp.html#L458">line 458</a></td></tr></tbody></table></section><section class="function-entry" id="f-dae0d099c1d835f2"><h3><code>micron::immutable_queue::peek(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L462">line 462</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T *
+  peek(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__front ? micron::addressof(__front-&gt;value) : nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T *
+  peek(void) const
+  {
+    return __front ? micron::addressof(__front-&gt;value) : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__front ? micron::addressof(__front-&gt;value) : nullptr</code></td><td><a href="../../source/queue/iqueue.hpp.html#L464">line 464</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-f84d77c3dbd73a18"><h3><code>micron::immutable_queue::last(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L470">line 470</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+  last(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+  last(void) const
+  {
+    if ( __rear ) [[likely]]
+      return __rear-&gt;value;
+    if ( __rotation_rear ) return __rotation_rear-&gt;value;
+    //  rear empty: walk front to tail
+    const __node *n = __front;
+    while ( n-&gt;next ) n = n-&gt;next;
+    return n-&gt;value;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__rear-&gt;value</code></td><td><a href="../../source/queue/iqueue.hpp.html#L473">line 473</a></td></tr><tr class="t-dsc"><td><code>__rotation_rear-&gt;value</code></td><td><a href="../../source/queue/iqueue.hpp.html#L474">line 474</a></td></tr><tr class="t-dsc"><td><code>n-&gt;value</code></td><td><a href="../../source/queue/iqueue.hpp.html#L478">line 478</a></td></tr></tbody></table></section><section class="function-entry" id="f-dfe8bdb2acc14c24"><h3><code>micron::immutable_queue::at(usize idx) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L482">line 482</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+  at(usize idx) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+  at(usize idx) const
+  {
+    if ( idx &gt;= size() ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;micron::immutable_queue at(): index out of range&quot;);
+
+    const usize visible_front = __f_len - __rotation_rear_len;
+    if ( idx &lt; visible_front ) {
+      const __node *n = __front;
+      for ( usize i = 0; i &lt; idx; ++i ) n = n-&gt;next;
+      return n-&gt;value;
+    }
+
+    idx -= visible_front;
+    const __node *n;
+    usize rear_pos;
+    if ( idx &lt; __rotation_rear_len ) {
+      rear_pos = __rotation_rear_len - idx - 1;
+      n = __rotation_rear;
+    } else {
+      idx -= __rotation_rear_len;
+      rear_pos = __r_len - idx - 1;
+      n = __rear;
+    }
+    for ( usize i = 0; i &lt; rear_pos; ++i ) n = n-&gt;next;
+    return n-&gt;value;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n-&gt;value</code></td><td><a href="../../source/queue/iqueue.hpp.html#L491">line 491</a></td></tr><tr class="t-dsc"><td><code>n-&gt;value</code></td><td><a href="../../source/queue/iqueue.hpp.html#L506">line 506</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::immutable_queue at(): index out of range&quot;)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L485">line 485</a><br>Within <code>( idx &gt;= size() )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-041d0c46cc3cb386">size</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-041d0c46cc3cb386"><h3><code>micron::immutable_queue::size() const noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L510">line 510</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__f_len + __r_len</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return __f_len + __r_len;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__f_len + __r_len</code></td><td><a href="../../source/queue/iqueue.hpp.html#L512">line 512</a></td></tr></tbody></table></section><section class="function-entry" id="f-2ce371a0ba6f0b44"><h3><code>micron::immutable_queue::empty() const noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L516">line 516</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__f_len + __r_len == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const noexcept
+  {
+    return __f_len + __r_len == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__f_len + __r_len == 0</code></td><td><a href="../../source/queue/iqueue.hpp.html#L518">line 518</a></td></tr></tbody></table></section><section class="function-entry" id="f-c2550426af9a3136"><h3><code>micron::immutable_queue::clear(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L522">line 522</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue
+  clear(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>immutable_queue()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue
+  clear(void) const
+  {
+    return immutable_queue();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>immutable_queue()</code></td><td><a href="../../source/queue/iqueue.hpp.html#L524">line 524</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-b99c014b3f3d9ce5">immutable_queue</a>.</p></section><section class="function-entry" id="f-7d9b4c75afaa2c40"><h3><code>micron::immutable_queue::identity() const noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L528">line 528</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const void *
+  identity() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__front</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const void *
+  identity() const noexcept
+  {
+    return __front;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__front</code></td><td><a href="../../source/queue/iqueue.hpp.html#L530">line 530</a></td></tr></tbody></table></section><section class="function-entry" id="f-ad8faf56a0fbfee8"><h3><code>micron::immutable_queue::operator==(const immutable_queue &amp;o) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L534">line 534</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  operator==(const immutable_queue &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const immutable_queue &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  operator==(const immutable_queue &amp;o) const
+  {
+    if ( __front == o.__front &amp;&amp; __rear == o.__rear &amp;&amp; __rotation_rear == o.__rotation_rear &amp;&amp; size() == o.size() ) [[unlikely]]
+      return true;
+    if ( size() != o.size() ) return false;
+    auto a = begin(), ae = end();
+    auto b = o.begin();
+    for ( ; a != ae; ++a, ++b ) {
+      if ( *a != *b ) return false;
+    }
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/iqueue.hpp.html#L537">line 537</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/iqueue.hpp.html#L538">line 538</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/iqueue.hpp.html#L542">line 542</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/iqueue.hpp.html#L544">line 544</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-041d0c46cc3cb386">size</a>, <a href="iqueue.hpp.html#f-e934ed6c17eadf16">begin</a>, <a href="iqueue.hpp.html#f-12e1a850cc7d6cb6">end</a>.</p></section><section class="function-entry" id="f-2e8c9198b0a0ad9a"><h3><code>micron::immutable_queue::operator!=(const immutable_queue &amp;o) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L548">line 548</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  operator!=(const immutable_queue &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const immutable_queue &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>!(*this == o)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  operator!=(const immutable_queue &amp;o) const
+  {
+    return !(*this == o);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>!(*this == o)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L550">line 550</a></td></tr></tbody></table></section><section class="function-entry" id="f-79743feddf487ecd"><h3><code>micron::immutable_queue::update_front(Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L555">line 555</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  immutable_queue
+  update_front(Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  immutable_queue
+  update_front(Fn &amp;&amp;fn) const
+  {
+    if ( !__front ) [[unlikely]]
+      return *this;
+    immutable_queue result;
+    bool first = true;
+    for_each([&amp;](const T &amp;value) {
+      if ( first ) {
+        result = result.push(fn(value));
+        first = false;
+      } else {
+        result = result.push(value);
+      }
+    });
+    return result;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/iqueue.hpp.html#L558">line 558</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/queue/iqueue.hpp.html#L569">line 569</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-27f9acfc8c8f5abc">for_each</a>.</p></section><section class="function-entry" id="f-27f9acfc8c8f5abc"><h3><code>micron::immutable_queue::for_each(Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L574">line 574</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const
+  {
+    const __node *cur = __front;
+    while ( cur ) {
+      fn(static_cast&lt;const T &amp;&gt;(cur-&gt;value));
+      cur = cur-&gt;next;
+    }
+
+    const usize count = __rotation_rear_len + __r_len;
+    if ( count == 0 ) return;
+    auto *buf = static_cast&lt;const __node **&gt;(::operator new(count * sizeof(const __node *)));
+    usize base = 0;
+    cur = __rotation_rear;
+    for ( usize i = 0; i &lt; __rotation_rear_len; ++i, cur = cur-&gt;next ) buf[base + __rotation_rear_len - i - 1] = cur;
+    base += __rotation_rear_len;
+    cur = __rear;
+    for ( usize i = 0; i &lt; __r_len; ++i, cur = cur-&gt;next ) buf[base + __r_len - i - 1] = cur;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( usize i = 0; i &lt; count; ++i ) fn(static_cast&lt;const T &amp;&gt;(buf[i]-&gt;value));
+    } catch ( ... ) {
+      ::operator delete(buf);
+      throw;
+    }
+#else
+    for ( usize i = 0; i &lt; count; ++i ) fn(static_cast&lt;const T &amp;&gt;(buf[i]-&gt;value));
+#endif
+    ::operator delete(buf);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/queue/iqueue.hpp.html#L583">line 583</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/iqueue.hpp.html#L596">line 596</a></td></tr></tbody></table></section><section class="function-entry" id="f-7a5168effd909823"><h3><code>micron::immutable_queue::const_iterator::const_iterator()</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L653">line 653</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator() : __cur(nullptr), __back(nullptr), __index(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator() : __cur(nullptr), __back(nullptr), __index(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-34ec6ab4e043f4ec"><h3><code>micron::immutable_queue::const_iterator::const_iterator(const __node *front, const __node *mid, usize ml, const __node *rear, usize rl)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L655">line 655</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit const_iterator(const __node *front, const __node *mid, usize ml, const __node *rear, usize rl)
+        : __cur(front), __back(__make_back(mid, ml, rear, rl)), __index(0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __node *front</code></li><li><code>const __node *mid</code></li><li><code>usize ml</code></li><li><code>const __node *rear</code></li><li><code>usize rl</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit const_iterator(const __node *front, const __node *mid, usize ml, const __node *rear, usize rl)
+        : __cur(front), __back(__make_back(mid, ml, rear, rl)), __index(0)
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8242a97362475c3d"><h3><code>micron::immutable_queue::const_iterator::const_iterator(const const_iterator &amp;o)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L660">line 660</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator(const const_iterator &amp;o) : __cur(o.__cur), __back(__retain_back(o.__back)), __index(o.__index)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;o</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator(const const_iterator &amp;o) : __cur(o.__cur), __back(__retain_back(o.__back)), __index(o.__index) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3305ba8863647a6e"><h3><code>micron::immutable_queue::const_iterator::const_iterator(const_iterator &amp;&amp;o) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L662">line 662</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator(const_iterator &amp;&amp;o) noexcept : __cur(o.__cur), __back(o.__back), __index(o.__index)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const_iterator &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator(const_iterator &amp;&amp;o) noexcept : __cur(o.__cur), __back(o.__back), __index(o.__index)
+    {
+      o.__cur = nullptr;
+      o.__back = nullptr;
+      o.__index = 0;
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-dc520ff84f947497"><h3><code>micron::immutable_queue::const_iterator::~const_iterator()</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L669">line 669</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~const_iterator()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~const_iterator() { __release_back(__back); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-644a85a95b6b0e11">__release_back</a>.</p></section><section class="function-entry" id="f-89dd9e072be9194e"><h3><code>micron::immutable_queue::const_iterator::operator=(const const_iterator &amp;o)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L672">line 672</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator &amp;
+    operator=(const const_iterator &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator &amp;
+    operator=(const const_iterator &amp;o)
+    {
+      if ( this == micron::addr(o) ) return *this;
+      __release_back(__back);
+      __cur = o.__cur;
+      __back = __retain_back(o.__back);
+      __index = o.__index;
+      return *this;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/iqueue.hpp.html#L674">line 674</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/iqueue.hpp.html#L679">line 679</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="iqueue.hpp.html#f-644a85a95b6b0e11">__release_back</a>, <a href="iqueue.hpp.html#f-6bedb1c947735daf">__retain_back</a>.</p></section><section class="function-entry" id="f-b40914e46251d295"><h3><code>micron::immutable_queue::const_iterator::operator=(const_iterator &amp;&amp;o) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L683">line 683</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator &amp;
+    operator=(const_iterator &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const_iterator &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator &amp;
+    operator=(const_iterator &amp;&amp;o) noexcept
+    {
+      if ( this == micron::addr(o) ) return *this;
+      __release_back(__back);
+      __cur = o.__cur;
+      __back = o.__back;
+      __index = o.__index;
+      o.__cur = nullptr;
+      o.__back = nullptr;
+      o.__index = 0;
+      return *this;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/iqueue.hpp.html#L685">line 685</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/iqueue.hpp.html#L693">line 693</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="iqueue.hpp.html#f-644a85a95b6b0e11">__release_back</a>.</p></section><section class="function-entry" id="f-ff38faa29e315fba"><h3><code>micron::immutable_queue::const_iterator::operator==(const const_iterator &amp;o) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L697">line 697</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator==(const const_iterator &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__node_at() == o.__node_at()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator==(const const_iterator &amp;o) const
+    {
+      return __node_at() == o.__node_at();
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__node_at() == o.__node_at()</code></td><td><a href="../../source/queue/iqueue.hpp.html#L699">line 699</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-a510f3726f9ea2bd">__node_at</a>.</p></section><section class="function-entry" id="f-163b37095f976f5e"><h3><code>micron::immutable_queue::const_iterator::operator!=(const const_iterator &amp;o) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L703">line 703</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator!=(const const_iterator &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>!(*this == o)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator!=(const const_iterator &amp;o) const
+    {
+      return !(*this == o);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>!(*this == o)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L705">line 705</a></td></tr></tbody></table></section><section class="function-entry" id="f-4fb100c8de0944fe"><h3><code>micron::immutable_queue::const_iterator::value(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L709">line 709</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+    value(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__node_at()-&gt;value</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+    value(void) const
+    {
+      return __node_at()-&gt;value;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__node_at()-&gt;value</code></td><td><a href="../../source/queue/iqueue.hpp.html#L711">line 711</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-a510f3726f9ea2bd">__node_at</a>.</p></section><section class="function-entry" id="f-4854e70ed8302ba2"><h3><code>micron::immutable_queue::const_iterator::operator*(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L715">line 715</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+    operator*(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>value()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+    operator*(void) const
+    {
+      return value();
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value()</code></td><td><a href="../../source/queue/iqueue.hpp.html#L717">line 717</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-4fb100c8de0944fe">value</a>.</p></section><section class="function-entry" id="f-91cf1b20118c1cb9"><h3><code>micron::immutable_queue::const_iterator::operator-&gt;(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L721">line 721</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T *
+    operator-&gt;(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addressof(__node_at()-&gt;value)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T *
+    operator-&gt;(void) const
+    {
+      return micron::addressof(__node_at()-&gt;value);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addressof(__node_at()-&gt;value)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L723">line 723</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="iqueue.hpp.html#f-a510f3726f9ea2bd">__node_at</a>.</p></section><section class="function-entry" id="f-4c3496bf8562d9a1"><h3><code>micron::immutable_queue::const_iterator::operator++(void)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L727">line 727</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator &amp;
+    operator++(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator &amp;
+    operator++(void)
+    {
+      if ( __cur ) {
+        __cur = __cur-&gt;next;
+      } else if ( __back &amp;&amp; __index &lt; __back-&gt;count )
+        ++__index;
+      return *this;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/queue/iqueue.hpp.html#L733">line 733</a></td></tr></tbody></table></section><section class="function-entry" id="f-9d081d7f48e7eef4"><h3><code>micron::immutable_queue::const_iterator::operator++(int)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L737">line 737</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+    operator++(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+    operator++(int)
+    {
+      const_iterator tmp = *this;
+      ++(*this);
+      return tmp;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tmp</code></td><td><a href="../../source/queue/iqueue.hpp.html#L741">line 741</a></td></tr></tbody></table></section><section class="function-entry" id="f-e934ed6c17eadf16"><h3><code>micron::immutable_queue::begin(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L748">line 748</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  begin(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  begin(void) const
+  {
+    if ( empty() ) [[unlikely]]
+      return const_iterator();
+    return const_iterator(__front, __rotation_rear, __rotation_rear_len, __rear, __r_len);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator()</code></td><td><a href="../../source/queue/iqueue.hpp.html#L751">line 751</a></td></tr><tr class="t-dsc"><td><code>const_iterator(__front, __rotation_rear, __rotation_rear_len, __rear, __r_len)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L752">line 752</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-2ce371a0ba6f0b44">empty</a>, <a href="iqueue.hpp.html#s-8964b5408aa68a60">const_iterator</a>.</p></section><section class="function-entry" id="f-12e1a850cc7d6cb6"><h3><code>micron::immutable_queue::end(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L756">line 756</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  end(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  end(void) const
+  {
+    return const_iterator();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator()</code></td><td><a href="../../source/queue/iqueue.hpp.html#L758">line 758</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#s-8964b5408aa68a60">const_iterator</a>.</p></section><section class="function-entry" id="f-2072ac63edc41b5a"><h3><code>micron::immutable_queue::cbegin(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L762">line 762</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  cbegin(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>begin()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  cbegin(void) const
+  {
+    return begin();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>begin()</code></td><td><a href="../../source/queue/iqueue.hpp.html#L764">line 764</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-e934ed6c17eadf16">begin</a>.</p></section><section class="function-entry" id="f-8305810cb922f4fa"><h3><code>micron::immutable_queue::cend(void) const</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L768">line 768</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  cend(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  cend(void) const
+  {
+    return const_iterator();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator()</code></td><td><a href="../../source/queue/iqueue.hpp.html#L770">line 770</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#s-8964b5408aa68a60">const_iterator</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-2f5773ce46364ebb"><h3><code>micron::immutable_queue::__make_node(Tf &amp;&amp;v, __node *nxt)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L45">line 45</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Tf&gt;
+  static inline __node *
+  __make_node(Tf &amp;&amp;v, __node *nxt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Tf &amp;&amp;v</code></li><li><code>__node *nxt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Tf&gt;
+  static inline __node *
+  __make_node(Tf &amp;&amp;v, __node *nxt)
+  {
+    void *raw = nullptr;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      raw = ::operator new(sizeof(__node), static_cast&lt;std::align_val_t&gt;(alignof(__node)));
+      return new (raw) __node{ nxt, 1, T(static_cast&lt;Tf &amp;&amp;&gt;(v)) };
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      if ( raw ) ::operator delete(raw, static_cast&lt;std::align_val_t&gt;(alignof(__node)));
+      __release(nxt);
+      throw;
+    }
+#endif
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>new (raw) __node{ nxt, 1, T(static_cast&lt;Tf &amp;&amp;&gt;(v)) }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L52">line 52</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/iqueue.hpp.html#L57">line 57</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-3bdad9532fa6d3e0">__release</a>.</p></section><section class="function-entry" id="f-71c7f8edeb6de63f"><h3><code>micron::immutable_queue::__dealloc_node(__node *n)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L63">line 63</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline void
+  __dealloc_node(__node *n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline void
+  __dealloc_node(__node *n)
+  {
+    n-&gt;~__node();
+    ::operator delete(n, static_cast&lt;std::align_val_t&gt;(alignof(__node)));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e2a1ea7c05b2e5ce"><h3><code>micron::immutable_queue::__retain(__node *n) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L70">line 70</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) __node *
+  __retain(__node *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) __node *
+  __retain(__node *n) noexcept
+  {
+    if ( n ) [[likely]]
+      ++n-&gt;refs;
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/queue/iqueue.hpp.html#L74">line 74</a></td></tr></tbody></table></section><section class="function-entry" id="f-3bdad9532fa6d3e0"><h3><code>micron::immutable_queue::__release(__node *n) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L78">line 78</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline void
+  __release(__node *n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node *n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline void
+  __release(__node *n) noexcept
+  {
+    while ( n ) [[likely]] {
+      if ( --n-&gt;refs != 0 ) [[likely]]
+        break;
+      __node *nxt = n-&gt;next;
+      __dealloc_node(n);
+      n = nxt;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-71c7f8edeb6de63f">__dealloc_node</a>.</p></section><section class="function-entry" id="f-bbc51accfae1d839"><h3><code>micron::immutable_queue::__idle_rot(void) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L109">line 109</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __rot
+  __idle_rot(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>{ __idle, 0, nullptr, nullptr, nullptr, nullptr }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __rot
+  __idle_rot(void) noexcept
+  {
+    return { __idle, 0, nullptr, nullptr, nullptr, nullptr };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ __idle, 0, nullptr, nullptr, nullptr, nullptr }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L111">line 111</a></td></tr></tbody></table></section><section class="function-entry" id="f-fd79ba3f7eaa52cb"><h3><code>micron::immutable_queue::__retain_rot(const __rot &amp;s) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L115">line 115</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline void
+  __retain_rot(const __rot &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __rot &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline void
+  __retain_rot(const __rot &amp;s) noexcept
+  {
+    __retain(s.f);
+    __retain(s.fp);
+    __retain(s.r);
+    __retain(s.rp);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>.</p></section><section class="function-entry" id="f-6eaeb0b160f9e90a"><h3><code>micron::immutable_queue::__release_rot(const __rot &amp;s) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L124">line 124</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline void
+  __release_rot(const __rot &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __rot &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline void
+  __release_rot(const __rot &amp;s) noexcept
+  {
+    __release(s.f);
+    __release(s.fp);
+    __release(s.r);
+    __release(s.rp);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-3bdad9532fa6d3e0">__release</a>.</p></section><section class="function-entry" id="f-1c31d151e1bc01c5"><h3><code>micron::immutable_queue::__node_owner::__node_owner(__node *n = nullptr) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L135">line 135</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __node_owner(__node *n = nullptr) noexcept : value(n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node *n = nullptr</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __node_owner(__node *n = nullptr) noexcept : value(n) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-89aca916644f24c8"><h3><code>micron::immutable_queue::__node_owner::~__node_owner()</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L137">line 137</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~__node_owner()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~__node_owner() { __release(value); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-3bdad9532fa6d3e0">__release</a>.</p></section><section class="function-entry" id="f-15fed7f1bbfb5793"><h3><code>micron::immutable_queue::__node_owner::take() noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L140">line 140</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node *
+    take() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node *
+    take() noexcept
+    {
+      __node *result = value;
+      value = nullptr;
+      return result;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/queue/iqueue.hpp.html#L144">line 144</a></td></tr></tbody></table></section><section class="function-entry" id="f-46ff6c7227acf790"><h3><code>micron::immutable_queue::__rot_owner::__rot_owner(const __rot &amp;s) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L152">line 152</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __rot_owner(const __rot &amp;s) noexcept : value(s), active(true)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __rot &amp;s</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __rot_owner(const __rot &amp;s) noexcept : value(s), active(true) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7bfd6e5d1aa385bf"><h3><code>micron::immutable_queue::__rot_owner::~__rot_owner()</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L154">line 154</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~__rot_owner()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~__rot_owner()
+    {
+      if ( active ) __release_rot(value);
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-6eaeb0b160f9e90a">__release_rot</a>.</p></section><section class="function-entry" id="f-564c82212fb6f5ab"><h3><code>micron::immutable_queue::__rot_owner::reset() noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L160">line 160</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    reset() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    reset() noexcept
+    {
+      if ( active ) __release_rot(value);
+      active = false;
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-6eaeb0b160f9e90a">__release_rot</a>.</p></section><section class="function-entry" id="f-71f717e3cdeb8a2b"><h3><code>micron::immutable_queue::__rot_owner::take() noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L167">line 167</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__rot
+    take() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__rot
+    take() noexcept
+    {
+      active = false;
+      return value;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value</code></td><td><a href="../../source/queue/iqueue.hpp.html#L170">line 170</a></td></tr></tbody></table></section><section class="function-entry" id="f-03d7b93cf143ed06"><h3><code>micron::immutable_queue::__rot_owner::take_rp() noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L174">line 174</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node *
+    take_rp() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__node *
+    take_rp() noexcept
+    {
+      __node *result = value.rp;
+      value.rp = nullptr;
+      return result;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/queue/iqueue.hpp.html#L178">line 178</a></td></tr></tbody></table></section><section class="function-entry" id="f-ddff3cf97f648178"><h3><code>micron::immutable_queue::__exec(const __rot &amp;s)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L190">line 190</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __rot
+  __exec(const __rot &amp;s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __rot &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __rot
+  __exec(const __rot &amp;s)
+  {
+    switch ( s.phase ) {
+    case __reversing:
+      if ( s.f ) [[likely]] {
+        __node_owner f(__retain(s.f-&gt;next));
+        __node_owner fp(__make_node(s.f-&gt;value, __retain(s.fp)));
+        __node_owner r(__retain(s.r-&gt;next));
+        __node_owner rp(__make_node(s.r-&gt;value, __retain(s.rp)));
+        return { __reversing, s.ok + 1, f.take(), fp.take(), r.take(), rp.take() };
+      } else {
+        //  front exhausted; rear has exactly one element left
+        __node_owner fp(__retain(s.fp));
+        __node_owner rp(__make_node(s.r-&gt;value, __retain(s.rp)));
+        return { __appending, s.ok, nullptr, fp.take(), nullptr, rp.take() };
+      }
+
+    case __appending:
+      if ( s.ok == 0 ) [[unlikely]] {
+        return { __done, 0, nullptr, nullptr, nullptr, __retain(s.rp) };
+      } else {
+        __node_owner fp(__retain(s.fp-&gt;next));
+        __node_owner rp(__make_node(s.fp-&gt;value, __retain(s.rp)));
+        return { __appending, s.ok - 1, nullptr, fp.take(), nullptr, rp.take() };
+      }
+
+    default: {
+      __rot copy = s;
+      __retain_rot(copy);
+      return copy;
+    }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ __reversing, s.ok + 1, f.take(), fp.take(), r.take(), rp.take() }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L199">line 199</a></td></tr><tr class="t-dsc"><td><code>{ __appending, s.ok, nullptr, fp.take(), nullptr, rp.take() }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L204">line 204</a></td></tr><tr class="t-dsc"><td><code>{ __done, 0, nullptr, nullptr, nullptr, __retain(s.rp) }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L209">line 209</a></td></tr><tr class="t-dsc"><td><code>{ __appending, s.ok - 1, nullptr, fp.take(), nullptr, rp.take() }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L213">line 213</a></td></tr><tr class="t-dsc"><td><code>copy</code></td><td><a href="../../source/queue/iqueue.hpp.html#L219">line 219</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>, <a href="iqueue.hpp.html#f-2f5773ce46364ebb">__make_node</a>, <a href="iqueue.hpp.html#f-fd79ba3f7eaa52cb">__retain_rot</a>.</p></section><section class="function-entry" id="f-15104f7f013ac838"><h3><code>micron::immutable_queue::__invalidate(const __rot &amp;s)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L231">line 231</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __rot
+  __invalidate(const __rot &amp;s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __rot &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __rot
+  __invalidate(const __rot &amp;s)
+  {
+    switch ( s.phase ) {
+    case __reversing: {
+      return { __reversing, s.ok - 1, __retain(s.f), __retain(s.fp), __retain(s.r), __retain(s.rp) };
+    }
+    case __appending: {
+      if ( s.ok == 0 ) [[unlikely]] {
+        //  drop top element of rp
+        return { __done, 0, nullptr, nullptr, nullptr, __retain(s.rp-&gt;next) };
+      } else {
+        return { __appending, s.ok - 1, nullptr, __retain(s.fp), nullptr, __retain(s.rp) };
+      }
+    }
+    default: {
+      __rot copy = s;
+      __retain_rot(copy);
+      return copy;
+    }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ __reversing, s.ok - 1, __retain(s.f), __retain(s.fp), __retain(s.r), __retain(s.rp) }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L235">line 235</a></td></tr><tr class="t-dsc"><td><code>{ __done, 0, nullptr, nullptr, nullptr, __retain(s.rp-&gt;next) }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L240">line 240</a></td></tr><tr class="t-dsc"><td><code>{ __appending, s.ok - 1, nullptr, __retain(s.fp), nullptr, __retain(s.rp) }</code></td><td><a href="../../source/queue/iqueue.hpp.html#L242">line 242</a></td></tr><tr class="t-dsc"><td><code>copy</code></td><td><a href="../../source/queue/iqueue.hpp.html#L248">line 248</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>, <a href="iqueue.hpp.html#f-fd79ba3f7eaa52cb">__retain_rot</a>.</p></section><section class="function-entry" id="f-3792e121fd6c4288"><h3><code>micron::immutable_queue::__exec_twice(__node *f, usize fl, __node *r, usize rl, __rot state, __node *mid, usize ml)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L255">line 255</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static immutable_queue
+  __exec_twice(__node *f, usize fl, __node *r, usize rl, __rot state, __node *mid, usize ml)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node *f</code></li><li><code>usize fl</code></li><li><code>__node *r</code></li><li><code>usize rl</code></li><li><code>__rot state</code></li><li><code>__node *mid</code></li><li><code>usize ml</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static immutable_queue
+  __exec_twice(__node *f, usize fl, __node *r, usize rl, __rot state, __node *mid, usize ml)
+  {
+    __node_owner owned_f(f), owned_r(r), owned_mid(mid);
+    __rot_owner owned_state(state);
+    __rot_owner s1(__exec(owned_state.value));
+    owned_state.reset();
+    __rot_owner s2(__exec(s1.value));
+    s1.reset();
+
+    if ( s2.value.phase == __done ) [[unlikely]] {
+      //  rotation complete: rp is the new front list
+      //  transfer ownership of rp out of s2
+      __node *new_f = s2.take_rp();
+      return immutable_queue(new_f, fl, owned_r.take(), rl, __idle_rot(), nullptr, 0);
+    }
+
+    return immutable_queue(owned_f.take(), fl, owned_r.take(), rl, s2.take(), owned_mid.take(), ml);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>immutable_queue(new_f, fl, owned_r.take(), rl, __idle_rot(), nullptr, 0)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L268">line 268</a></td></tr><tr class="t-dsc"><td><code>immutable_queue(owned_f.take(), fl, owned_r.take(), rl, s2.take(), owned_mid.take(), ml)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L271">line 271</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-ddff3cf97f648178">__exec</a>, <a href="iqueue.hpp.html#f-b99c014b3f3d9ce5">immutable_queue</a>, <a href="iqueue.hpp.html#f-bbc51accfae1d839">__idle_rot</a>.</p></section><section class="function-entry" id="f-b9c4cfcd2af4ebf6"><h3><code>micron::immutable_queue::__check(__node *f, usize fl, __node *r, usize rl, __rot state, __node *mid, usize ml)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L278">line 278</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static immutable_queue
+  __check(__node *f, usize fl, __node *r, usize rl, __rot state, __node *mid, usize ml)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node *f</code></li><li><code>usize fl</code></li><li><code>__node *r</code></li><li><code>usize rl</code></li><li><code>__rot state</code></li><li><code>__node *mid</code></li><li><code>usize ml</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static immutable_queue
+  __check(__node *f, usize fl, __node *r, usize rl, __rot state, __node *mid, usize ml)
+  {
+    if ( rl &lt;= fl ) [[likely]] {
+      return __exec_twice(f, fl, r, rl, state, mid, ml);
+    } else {
+      //  invariant violated: begin rotation
+      //  Reversing(0, f, nil, r, nil)
+      __rot new_state = { __reversing, 0, __retain(f), nullptr, __retain(r), nullptr };
+      __release_rot(state);
+      __release(mid);      // rotations cannot overlap; normally null
+      return __exec_twice(f, fl + rl, nullptr, 0, new_state, r, rl);
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__exec_twice(f, fl, r, rl, state, mid, ml)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L281">line 281</a></td></tr><tr class="t-dsc"><td><code>__exec_twice(f, fl + rl, nullptr, 0, new_state, r, rl)</code></td><td><a href="../../source/queue/iqueue.hpp.html#L288">line 288</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="iqueue.hpp.html#f-3792e121fd6c4288">__exec_twice</a>, <a href="iqueue.hpp.html#f-e2a1ea7c05b2e5ce">__retain</a>, <a href="iqueue.hpp.html#f-6eaeb0b160f9e90a">__release_rot</a>, <a href="iqueue.hpp.html#f-3bdad9532fa6d3e0">__release</a>.</p></section><section class="function-entry" id="f-8372386e7a247d91"><h3><code>micron::immutable_queue::immutable_queue(__node *f, usize fl, __node *r, usize rl, const __rot &amp;s, __node *mid, usize ml)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L301">line 301</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>immutable_queue(__node *f, usize fl, __node *r, usize rl, const __rot &amp;s, __node *mid, usize ml)
+      : __front(f), __f_len(fl), __rear(r), __r_len(rl), __state(s), __rotation_rear(mid), __rotation_rear_len(ml)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__node *f</code></li><li><code>usize fl</code></li><li><code>__node *r</code></li><li><code>usize rl</code></li><li><code>const __rot &amp;s</code></li><li><code>__node *mid</code></li><li><code>usize ml</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">immutable_queue(__node *f, usize fl, __node *r, usize rl, const __rot &amp;s, __node *mid, usize ml)
+      : __front(f), __f_len(fl), __rear(r), __r_len(rl), __state(s), __rotation_rear(mid), __rotation_rear_len(ml)
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-12365b1d256b0f40"><h3><code>micron::immutable_queue::const_iterator::__make_back(const __node *mid, usize ml, const __node *rear, usize rl)</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L617">line 617</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __backing *
+    __make_back(const __node *mid, usize ml, const __node *rear, usize rl)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __node *mid</code></li><li><code>usize ml</code></li><li><code>const __node *rear</code></li><li><code>usize rl</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __backing *
+    __make_back(const __node *mid, usize ml, const __node *rear, usize rl)
+    {
+      const usize count = ml + rl;
+      if ( count == 0 ) return nullptr;
+      const usize bytes = sizeof(__backing) + (count - 1) * sizeof(const __node *);
+      auto *back = static_cast&lt;__backing *&gt;(::operator new(bytes));
+      back-&gt;refs = 1;
+      back-&gt;count = count;
+      const __node *node = mid;
+      for ( usize i = 0; i &lt; ml; ++i, node = node-&gt;next ) back-&gt;nodes[ml - i - 1] = node;
+      node = rear;
+      for ( usize i = 0; i &lt; rl; ++i, node = node-&gt;next ) back-&gt;nodes[ml + rl - i - 1] = node;
+      return back;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/queue/iqueue.hpp.html#L620">line 620</a></td></tr><tr class="t-dsc"><td><code>back</code></td><td><a href="../../source/queue/iqueue.hpp.html#L629">line 629</a></td></tr></tbody></table></section><section class="function-entry" id="f-6bedb1c947735daf"><h3><code>micron::immutable_queue::const_iterator::__retain_back(__backing *back) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L633">line 633</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __backing *
+    __retain_back(__backing *back) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__backing *back</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __backing *
+    __retain_back(__backing *back) noexcept
+    {
+      if ( back ) ++back-&gt;refs;
+      return back;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>back</code></td><td><a href="../../source/queue/iqueue.hpp.html#L636">line 636</a></td></tr></tbody></table></section><section class="function-entry" id="f-644a85a95b6b0e11"><h3><code>micron::immutable_queue::const_iterator::__release_back(__backing *back) noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L640">line 640</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+    __release_back(__backing *back) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__backing *back</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+    __release_back(__backing *back) noexcept
+    {
+      if ( back &amp;&amp; --back-&gt;refs == 0 ) ::operator delete(back);
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a510f3726f9ea2bd"><h3><code>micron::immutable_queue::const_iterator::__node_at() const noexcept</code></h3><p>Defined in <code>queue/iqueue.hpp</code>, <a href="../../source/queue/iqueue.hpp.html#L646">line 646</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const __node *
+    __node_at() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const __node *
+    __node_at() const noexcept
+    {
+      if ( __cur ) return __cur;
+      return __back &amp;&amp; __index &lt; __back-&gt;count ? __back-&gt;nodes[__index] : nullptr;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__cur</code></td><td><a href="../../source/queue/iqueue.hpp.html#L648">line 648</a></td></tr><tr class="t-dsc"><td><code>__back &amp;&amp; __index &lt; __back-&gt;count ? __back-&gt;nodes[__index] : nullptr</code></td><td><a href="../../source/queue/iqueue.hpp.html#L649">line 649</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

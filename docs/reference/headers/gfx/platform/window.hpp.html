@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/gfx/platform/window.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/gfx/platform/window.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphics.html">Graphics</a></div><p>Defined in header <code>&lt;micron/gfx/platform/window.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/gfx/platform/window.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-945f565ea8fb94ae">micron::gfx::platform::x11_visual_choice</code></td><td>struct; line 23</td></tr><tr class="t-dsc"><td><code id="s-5b8665718347d3a9">micron::gfx::platform::x11_visual_choice::visual</code></td><td>member; line 24</td></tr><tr class="t-dsc"><td><code id="s-4101316ff2414ae8">micron::gfx::platform::x11_visual_choice::extra</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><code id="s-badcb686cf4930c4">micron::gfx::platform::window_hooks</code></td><td>struct; line 28</td></tr><tr class="t-dsc"><td><code id="s-f55d4085bb8da40b">micron::gfx::platform::window_hooks::x11_pick_visual</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-92f283ef02fbeeb9">micron::gfx::platform::window_hooks::x11_user</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-bee6dd41132a4413">micron::gfx::platform::window_hooks::wl_create_native</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-90e9f4f360113c52">micron::gfx::platform::window_hooks::wl_resize_native</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-5922285d9acae530">micron::gfx::platform::window_hooks::wl_destroy_native</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-1538ae605fc29ee7">micron::gfx::platform::window_hooks::wl_user</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-3661e6c5834c6382">micron::gfx::platform::window</code></td><td>class; line 38</td></tr><tr class="t-dsc"><td><a href="#f-6e62139e9a6362db">micron::gfx::platform::window::~window()</a></td><td>function; line 166</td></tr><tr class="t-dsc"><td><a href="#f-9631206acd4188ba">micron::gfx::platform::window::window(display &amp;dpy, i32 width, i32 height, const char *title, const window_hooks &amp;hooks = {})</a></td><td>function; line 172</td></tr><tr class="t-dsc"><td><a href="#f-aafc570d8110d812">micron::gfx::platform::window::window(const window &amp;)</a></td><td>function; line 188</td></tr><tr class="t-dsc"><td><a href="#f-d0929f9025dd3982">micron::gfx::platform::window::window(window &amp;&amp;)</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-e95e84ca8a9166cc">micron::gfx::platform::window::operator=(const window &amp;)</a></td><td>function; line 191</td></tr><tr class="t-dsc"><td><a href="#f-6bf6d3f69959b16b">micron::gfx::platform::window::operator=(window &amp;&amp;)</a></td><td>function; line 192</td></tr><tr class="t-dsc"><td><a href="#f-6c590d08f8f5f142">micron::gfx::platform::window::width() const noexcept</a></td><td>function; line 195</td></tr><tr class="t-dsc"><td><a href="#f-f6d9a729d941a1e5">micron::gfx::platform::window::height() const noexcept</a></td><td>function; line 202</td></tr><tr class="t-dsc"><td><a href="#f-735c88cfa80a0d78">micron::gfx::platform::window::should_close() const noexcept</a></td><td>function; line 209</td></tr><tr class="t-dsc"><td><a href="#f-6dee525816738264">micron::gfx::platform::window::set_title(const char *t) noexcept</a></td><td>function; line 216</td></tr><tr class="t-dsc"><td><a href="#f-3368d9c3df771ef0">micron::gfx::platform::window::resize(i32 w, i32 h) noexcept</a></td><td>function; line 225</td></tr><tr class="t-dsc"><td><a href="#f-98053abea3a7d040">micron::gfx::platform::window::set_internal_resize_cb(void (*f)(void *, i32, i32) noexcept, void *data) noexcept</a></td><td>function; line 237</td></tr><tr class="t-dsc"><td><a href="#f-afb1a25c2204f20f">micron::gfx::platform::window::poll_events() noexcept</a></td><td>function; line 244</td></tr><tr class="t-dsc"><td><a href="#f-fc8adc71b8263d1c">micron::gfx::platform::window::as_x11() noexcept</a></td><td>function; line 253</td></tr><tr class="t-dsc"><td><a href="#f-ba8bef90b64387b9">micron::gfx::platform::window::as_wayland() noexcept</a></td><td>function; line 259</td></tr><tr class="t-dsc"><td><a href="#f-b9507306c6782df3">micron::gfx::platform::window::dpy() noexcept</a></td><td>function; line 265</td></tr><tr class="t-dsc"><td><a href="#f-a716491dfd48a42a">micron::gfx::platform::window::dpy() const noexcept</a></td><td>function; line 271</td></tr><tr class="t-dsc"><td><a href="#f-3fa7d2cecccdd495">micron::gfx::platform::window::x11_visual() const noexcept</a></td><td>function; line 277</td></tr><tr class="t-dsc"><td><a href="#f-250cf5bed7b34403">micron::gfx::platform::window::x11_extra() const noexcept</a></td><td>function; line 283</td></tr><tr class="t-dsc"><td><a href="#f-90dde46fcf418bc8">micron::gfx::platform::window::wl_native() const noexcept</a></td><td>function; line 289</td></tr><tr class="t-dsc"><td><a href="#f-13eae9f5b33d2c8e">micron::gfx::platform::window::set_resize_func() noexcept</a></td><td>function; line 297</td></tr><tr class="t-dsc"><td><a href="#f-e7b40fc850e154eb">micron::gfx::platform::window::set_close_func() noexcept</a></td><td>function; line 311</td></tr><tr class="t-dsc"><td><a href="#f-e03b4bb21c675760">micron::gfx::platform::window::set_focus_func() noexcept</a></td><td>function; line 325</td></tr><tr class="t-dsc"><td><a href="#f-f6d08417d8b09b4b">micron::gfx::platform::window::set_expose_func() noexcept</a></td><td>function; line 339</td></tr><tr class="t-dsc"><td><a href="#f-17fb09add054e925">micron::gfx::platform::window::set_visibility_func() noexcept</a></td><td>function; line 353</td></tr><tr class="t-dsc"><td><a href="#f-3052541f7acae956">micron::gfx::platform::window::set_move_func() noexcept</a></td><td>function; line 367</td></tr><tr class="t-dsc"><td><a href="#f-45fad40a35e00507">micron::gfx::platform::window::clear_resize_func() noexcept</a></td><td>function; line 379</td></tr><tr class="t-dsc"><td><a href="#f-dd538c335d67fa1b">micron::gfx::platform::window::clear_close_func() noexcept</a></td><td>function; line 385</td></tr><tr class="t-dsc"><td><a href="#f-737218b0eecdefd2">micron::gfx::platform::window::clear_focus_func() noexcept</a></td><td>function; line 391</td></tr><tr class="t-dsc"><td><a href="#f-117cbae5298dc595">micron::gfx::platform::window::clear_expose_func() noexcept</a></td><td>function; line 397</td></tr><tr class="t-dsc"><td><a href="#f-495c0e43417db894">micron::gfx::platform::window::clear_visibility_func() noexcept</a></td><td>function; line 403</td></tr><tr class="t-dsc"><td><a href="#f-f888de51a0eb6be8">micron::gfx::platform::window::clear_move_func() noexcept</a></td><td>function; line 409</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-6e62139e9a6362db"><h3><code>micron::gfx::platform::window::~window()</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L166">line 166</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~window()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~window()
+  {
+    if ( __wl_native &amp;&amp; __hooks.wl_destroy_native ) __hooks.wl_destroy_native(__wl_native);
+    __wl_native = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9631206acd4188ba"><h3><code>micron::gfx::platform::window::window(display &amp;dpy, i32 width, i32 height, const char *title, const window_hooks &amp;hooks = {})</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L172">line 172</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>window(display &amp;dpy, i32 width, i32 height, const char *title, const window_hooks &amp;hooks = {}) : __dpy(&amp;dpy), __hooks(hooks)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>display &amp;dpy</code></li><li><code>i32 width</code></li><li><code>i32 height</code></li><li><code>const char *title</code></li><li><code>const window_hooks &amp;hooks = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">window(display &amp;dpy, i32 width, i32 height, const char *title, const window_hooks &amp;hooks = {}) : __dpy(&amp;dpy), __hooks(hooks)
+  {
+    switch ( dpy.backend() ) {
+    case backend_tag_t::x11:
+      __build_x11(width, height, title);
+      break;
+    case backend_tag_t::wayland:
+      __build_wayland(width, height, title);
+      break;
+    case backend_tag_t::none:
+    default:
+      throw except::logic_error(&quot;gfx::window: display has no backend&quot;);
+    }
+    __install_platform_thunks();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw except::logic_error(&quot;gfx::window: display has no backend&quot;);</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L183">line 183</a><br>Within <code>( dpy.backend() )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="window.hpp.html#f-c9cc87afec5e625d">__build_x11</a>, <a href="window.hpp.html#f-81d45d171d2ae726">__build_wayland</a>, <a href="window.hpp.html#f-019729ec0887e092">__install_platform_thunks</a>.</p></section><section class="function-entry" id="f-aafc570d8110d812"><h3><code>micron::gfx::platform::window::window(const window &amp;)</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L188">line 188</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>window(const window &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const window &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-d0929f9025dd3982"><h3><code>micron::gfx::platform::window::window(window &amp;&amp;)</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>window(window &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>window &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-e95e84ca8a9166cc"><h3><code>micron::gfx::platform::window::operator=(const window &amp;)</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L191">line 191</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>window &amp;operator=(const window &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const window &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-6bf6d3f69959b16b"><h3><code>micron::gfx::platform::window::operator=(window &amp;&amp;)</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L192">line 192</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>window &amp;operator=(window &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>window &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-6c590d08f8f5f142"><h3><code>micron::gfx::platform::window::width() const noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>i32
+  width() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">i32
+  width() const noexcept
+  {
+    if ( __dpy-&gt;backend() == backend_tag_t::x11 ) return __x11.width();
+    return __wl.width();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__x11.width()</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>__wl.width()</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L198">line 198</a></td></tr></tbody></table></section><section class="function-entry" id="f-f6d9a729d941a1e5"><h3><code>micron::gfx::platform::window::height() const noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L202">line 202</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>i32
+  height() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">i32
+  height() const noexcept
+  {
+    if ( __dpy-&gt;backend() == backend_tag_t::x11 ) return __x11.height();
+    return __wl.height();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__x11.height()</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L204">line 204</a></td></tr><tr class="t-dsc"><td><code>__wl.height()</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L205">line 205</a></td></tr></tbody></table></section><section class="function-entry" id="f-735c88cfa80a0d78"><h3><code>micron::gfx::platform::window::should_close() const noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L209">line 209</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  should_close() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  should_close() const noexcept
+  {
+    if ( __dpy-&gt;backend() == backend_tag_t::x11 ) return __x11.should_close();
+    return __wl.should_close();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__x11.should_close()</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L211">line 211</a></td></tr><tr class="t-dsc"><td><code>__wl.should_close()</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L212">line 212</a></td></tr></tbody></table></section><section class="function-entry" id="f-6dee525816738264"><h3><code>micron::gfx::platform::window::set_title(const char *t) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L216">line 216</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  set_title(const char *t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  set_title(const char *t) noexcept
+  {
+    if ( __dpy-&gt;backend() == backend_tag_t::x11 )
+      __x11.set_title(t);
+    else if ( __dpy-&gt;backend() == backend_tag_t::wayland )
+      __wl.set_title(t);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3368d9c3df771ef0"><h3><code>micron::gfx::platform::window::resize(i32 w, i32 h) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L225">line 225</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  resize(i32 w, i32 h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 w</code></li><li><code>i32 h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  resize(i32 w, i32 h) noexcept
+  {
+    if ( __dpy-&gt;backend() == backend_tag_t::x11 )
+      __x11.resize(w, h);
+    else if ( __dpy-&gt;backend() == backend_tag_t::wayland ) {
+      __wl.resize(w, h);
+      if ( __wl_native &amp;&amp; __hooks.wl_resize_native ) __hooks.wl_resize_native(__wl_native, w, h);
+    }
+    if ( __internal_resize ) __internal_resize(__internal_resize_data, w, h);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-98053abea3a7d040"><h3><code>micron::gfx::platform::window::set_internal_resize_cb(void (*f)(void *, i32, i32) noexcept, void *data) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L237">line 237</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  set_internal_resize_cb(void (*f)(void *, i32, i32) noexcept, void *data) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void (*f)(void *, i32, i32) noexcept</code></li><li><code>void *data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  set_internal_resize_cb(void (*f)(void *, i32, i32) noexcept, void *data) noexcept
+  {
+    __internal_resize = f;
+    __internal_resize_data = data;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-afb1a25c2204f20f"><h3><code>micron::gfx::platform::window::poll_events() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L244">line 244</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  poll_events() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  poll_events() noexcept
+  {
+    if ( __dpy-&gt;backend() == backend_tag_t::x11 )
+      __x11.poll_events();
+    else if ( __dpy-&gt;backend() == backend_tag_t::wayland )
+      __wl.poll_events();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fc8adc71b8263d1c"><h3><code>micron::gfx::platform::window::as_x11() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L253">line 253</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>x11_window_t *
+  as_x11() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__dpy-&gt;backend() == backend_tag_t::x11 ? &amp;__x11 : nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">x11_window_t *
+  as_x11() noexcept
+  {
+    return __dpy-&gt;backend() == backend_tag_t::x11 ? &amp;__x11 : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__dpy-&gt;backend() == backend_tag_t::x11 ? &amp;__x11 : nullptr</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L255">line 255</a></td></tr></tbody></table></section><section class="function-entry" id="f-ba8bef90b64387b9"><h3><code>micron::gfx::platform::window::as_wayland() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L259">line 259</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>wayland_window_t *
+  as_wayland() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__dpy-&gt;backend() == backend_tag_t::wayland ? &amp;__wl : nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">wayland_window_t *
+  as_wayland() noexcept
+  {
+    return __dpy-&gt;backend() == backend_tag_t::wayland ? &amp;__wl : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__dpy-&gt;backend() == backend_tag_t::wayland ? &amp;__wl : nullptr</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L261">line 261</a></td></tr></tbody></table></section><section class="function-entry" id="f-b9507306c6782df3"><h3><code>micron::gfx::platform::window::dpy() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L265">line 265</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>display &amp;
+  dpy() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>*__dpy</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">display &amp;
+  dpy() noexcept
+  {
+    return *__dpy;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*__dpy</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L267">line 267</a></td></tr></tbody></table></section><section class="function-entry" id="f-a716491dfd48a42a"><h3><code>micron::gfx::platform::window::dpy() const noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L271">line 271</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const display &amp;
+  dpy() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>*__dpy</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const display &amp;
+  dpy() const noexcept
+  {
+    return *__dpy;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*__dpy</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L273">line 273</a></td></tr></tbody></table></section><section class="function-entry" id="f-3fa7d2cecccdd495"><h3><code>micron::gfx::platform::window::x11_visual() const noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L277">line 277</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>XVisualInfo *
+  x11_visual() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__x11_visual</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">XVisualInfo *
+  x11_visual() const noexcept
+  {
+    return __x11_visual;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__x11_visual</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L279">line 279</a></td></tr></tbody></table></section><section class="function-entry" id="f-250cf5bed7b34403"><h3><code>micron::gfx::platform::window::x11_extra() const noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L283">line 283</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void *
+  x11_extra() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__x11_extra</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void *
+  x11_extra() const noexcept
+  {
+    return __x11_extra;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__x11_extra</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L285">line 285</a></td></tr></tbody></table></section><section class="function-entry" id="f-90dde46fcf418bc8"><h3><code>micron::gfx::platform::window::wl_native() const noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L289">line 289</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void *
+  wl_native() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__wl_native</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void *
+  wl_native() const noexcept
+  {
+    return __wl_native;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__wl_native</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L291">line 291</a></td></tr></tbody></table></section><section class="function-entry" id="f-13eae9f5b33d2c8e"><h3><code>micron::gfx::platform::window::set_resize_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L297">line 297</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn), i32, i32&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;, i32, i32&gt;)
+  void
+  set_resize_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn), i32, i32&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;, i32, i32&gt;)
+  void
+  set_resize_func() noexcept
+  {
+    __user_resize = +[](void *self_v, i32 w, i32 h) noexcept {
+      auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+      if constexpr ( micron::is_invocable_v&lt;decltype(Fn), i32, i32&gt; )
+        Fn(w, h);
+      else
+        Fn(self, w, h);
+    };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e7b40fc850e154eb"><h3><code>micron::gfx::platform::window::set_close_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L311">line 311</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn)&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;&gt;)
+  void
+  set_close_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn)&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;&gt;)
+  void
+  set_close_func() noexcept
+  {
+    __user_close = +[](void *self_v) noexcept {
+      auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+      if constexpr ( micron::is_invocable_v&lt;decltype(Fn)&gt; )
+        Fn();
+      else
+        Fn(self);
+    };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e03b4bb21c675760"><h3><code>micron::gfx::platform::window::set_focus_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L325">line 325</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn), bool&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;, bool&gt;)
+  void
+  set_focus_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn), bool&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;, bool&gt;)
+  void
+  set_focus_func() noexcept
+  {
+    __user_focus = +[](void *self_v, bool focused) noexcept {
+      auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+      if constexpr ( micron::is_invocable_v&lt;decltype(Fn), bool&gt; )
+        Fn(focused);
+      else
+        Fn(self, focused);
+    };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f6d08417d8b09b4b"><h3><code>micron::gfx::platform::window::set_expose_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L339">line 339</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn)&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;&gt;)
+  void
+  set_expose_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn)&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;&gt;)
+  void
+  set_expose_func() noexcept
+  {
+    __user_expose = +[](void *self_v) noexcept {
+      auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+      if constexpr ( micron::is_invocable_v&lt;decltype(Fn)&gt; )
+        Fn();
+      else
+        Fn(self);
+    };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-17fb09add054e925"><h3><code>micron::gfx::platform::window::set_visibility_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L353">line 353</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn), bool&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;, bool&gt;)
+  void
+  set_visibility_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn), bool&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;, bool&gt;)
+  void
+  set_visibility_func() noexcept
+  {
+    __user_visibility = +[](void *self_v, bool visible) noexcept {
+      auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+      if constexpr ( micron::is_invocable_v&lt;decltype(Fn), bool&gt; )
+        Fn(visible);
+      else
+        Fn(self, visible);
+    };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3052541f7acae956"><h3><code>micron::gfx::platform::window::set_move_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L367">line 367</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn), i32, i32&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;, i32, i32&gt;)
+  void
+  set_move_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn&gt;
+    requires(micron::is_invocable_v&lt;decltype(Fn), i32, i32&gt; || micron::is_invocable_v&lt;decltype(Fn), window &amp;, i32, i32&gt;)
+  void
+  set_move_func() noexcept
+  {
+    __user_move = +[](void *self_v, i32 x, i32 y) noexcept {
+      auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+      if constexpr ( micron::is_invocable_v&lt;decltype(Fn), i32, i32&gt; )
+        Fn(x, y);
+      else
+        Fn(self, x, y);
+    };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-45fad40a35e00507"><h3><code>micron::gfx::platform::window::clear_resize_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L379">line 379</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear_resize_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear_resize_func() noexcept
+  {
+    __user_resize = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-dd538c335d67fa1b"><h3><code>micron::gfx::platform::window::clear_close_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L385">line 385</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear_close_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear_close_func() noexcept
+  {
+    __user_close = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-737218b0eecdefd2"><h3><code>micron::gfx::platform::window::clear_focus_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L391">line 391</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear_focus_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear_focus_func() noexcept
+  {
+    __user_focus = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-117cbae5298dc595"><h3><code>micron::gfx::platform::window::clear_expose_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L397">line 397</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear_expose_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear_expose_func() noexcept
+  {
+    __user_expose = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-495c0e43417db894"><h3><code>micron::gfx::platform::window::clear_visibility_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L403">line 403</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear_visibility_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear_visibility_func() noexcept
+  {
+    __user_visibility = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f888de51a0eb6be8"><h3><code>micron::gfx::platform::window::clear_move_func() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L409">line 409</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear_move_func() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear_move_func() noexcept
+  {
+    __user_move = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-3b32d622477d4cf0"><h3><code>micron::gfx::platform::window::__platform_resize_thunk(void *self_v, i32 w, i32 h) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L61">line 61</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __platform_resize_thunk(void *self_v, i32 w, i32 h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *self_v</code></li><li><code>i32 w</code></li><li><code>i32 h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __platform_resize_thunk(void *self_v, i32 w, i32 h) noexcept
+  {
+    auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+    if ( self.__wl_native &amp;&amp; self.__hooks.wl_resize_native ) self.__hooks.wl_resize_native(self.__wl_native, w, h);
+    if ( self.__internal_resize ) self.__internal_resize(self.__internal_resize_data, w, h);
+    if ( self.__user_resize ) self.__user_resize(self_v, w, h);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d960214a95cf71ca"><h3><code>micron::gfx::platform::window::__platform_close_thunk(void *self_v) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L70">line 70</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __platform_close_thunk(void *self_v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *self_v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __platform_close_thunk(void *self_v) noexcept
+  {
+    auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+    if ( self.__user_close ) self.__user_close(self_v);
+    (void)self;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-524220de5975c3ff"><h3><code>micron::gfx::platform::window::__platform_focus_thunk(void *self_v, bool f) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L78">line 78</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __platform_focus_thunk(void *self_v, bool f) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *self_v</code></li><li><code>bool f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __platform_focus_thunk(void *self_v, bool f) noexcept
+  {
+    auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+    if ( self.__user_focus ) self.__user_focus(self_v, f);
+    (void)self;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7d79db81456a19ce"><h3><code>micron::gfx::platform::window::__platform_expose_thunk(void *self_v) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L86">line 86</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __platform_expose_thunk(void *self_v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *self_v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __platform_expose_thunk(void *self_v) noexcept
+  {
+    auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+    if ( self.__user_expose ) self.__user_expose(self_v);
+    (void)self;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fc709c21ab592c81"><h3><code>micron::gfx::platform::window::__platform_visibility_thunk(void *self_v, bool v) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L94">line 94</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __platform_visibility_thunk(void *self_v, bool v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *self_v</code></li><li><code>bool v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __platform_visibility_thunk(void *self_v, bool v) noexcept
+  {
+    auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+    if ( self.__user_visibility ) self.__user_visibility(self_v, v);
+    (void)self;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c663111d2498fddf"><h3><code>micron::gfx::platform::window::__platform_move_thunk(void *self_v, i32 x, i32 y) noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L102">line 102</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __platform_move_thunk(void *self_v, i32 x, i32 y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *self_v</code></li><li><code>i32 x</code></li><li><code>i32 y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __platform_move_thunk(void *self_v, i32 x, i32 y) noexcept
+  {
+    auto &amp;self = *static_cast&lt;window *&gt;(self_v);
+    if ( self.__user_move ) self.__user_move(self_v, x, y);
+    (void)self;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c9cc87afec5e625d"><h3><code>micron::gfx::platform::window::__build_x11(i32 width, i32 height, const char *title)</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L110">line 110</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __build_x11(i32 width, i32 height, const char *title)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 width</code></li><li><code>i32 height</code></li><li><code>const char *title</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __build_x11(i32 width, i32 height, const char *title)
+  {
+    auto *xd = __dpy-&gt;as_x11();
+    if ( !xd ) throw except::logic_error(&quot;gfx::window: display is not x11 but backend says x11&quot;);
+
+    if ( __hooks.x11_pick_visual ) {
+      auto choice = __hooks.x11_pick_visual(*xd, x11_lib(), __hooks.x11_user);
+      __x11_visual = choice.visual;
+      __x11_extra = choice.extra;
+    } else {
+
+      auto &amp;lib = x11_lib();
+      if ( !lib.XMatchVisualInfo ) throw except::library_error(&quot;gfx::window: x11_pick_visual hook absent and XMatchVisualInfo unavailable&quot;);
+      const int xscreen = xd-&gt;screen();
+
+      if ( !lib.XMatchVisualInfo(xd-&gt;display(), xscreen, 24, TrueColor, &amp;__x11_visual_storage)
+           &amp;&amp; !lib.XMatchVisualInfo(xd-&gt;display(), xscreen, 32, TrueColor, &amp;__x11_visual_storage) ) {
+        throw except::library_error(&quot;gfx::window: XMatchVisualInfo found no TrueColor visual&quot;);
+      }
+      __x11_visual = &amp;__x11_visual_storage;
+    }
+    if ( !__x11_visual ) throw except::library_error(&quot;gfx::window: no X11 visual picked&quot;);
+
+    __x11.create(*xd, __x11_visual, width, height, title);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw except::logic_error(&quot;gfx::window: display is not x11 but backend says x11&quot;);</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L113">line 113</a><br>Within <code>( !xd )</code></td></tr><tr class="t-dsc"><td><code>throw except::library_error(&quot;gfx::window: x11_pick_visual hook absent and XMatchVisualInfo unavailable&quot;);</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L122">line 122</a><br>Within <code>else of ( __hooks.x11_pick_visual )</code>, <code>( !lib.XMatchVisualInfo )</code></td></tr><tr class="t-dsc"><td><code>throw except::library_error(&quot;gfx::window: XMatchVisualInfo found no TrueColor visual&quot;);</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L127">line 127</a><br>Within <code>else of ( __hooks.x11_pick_visual )</code>, <code>( !lib.XMatchVisualInfo(xd-&gt;display(), xscreen, 24, TrueColor, &amp;__x11_visual_storage)
+           &amp;&amp; !lib.XMatchVisualInfo(xd-&gt;display(), xscreen, 32, TrueColor, &amp;__x11_visual_storage) )</code></td></tr><tr class="t-dsc"><td><code>throw except::library_error(&quot;gfx::window: no X11 visual picked&quot;);</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L131">line 131</a><br>Within <code>( !__x11_visual )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="display.hpp.html#f-143ec7449a872842">x11_lib</a>.</p></section><section class="function-entry" id="f-81d45d171d2ae726"><h3><code>micron::gfx::platform::window::__build_wayland(i32 width, i32 height, const char *title)</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L137">line 137</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __build_wayland(i32 width, i32 height, const char *title)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 width</code></li><li><code>i32 height</code></li><li><code>const char *title</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __build_wayland(i32 width, i32 height, const char *title)
+  {
+    auto *wd = __dpy-&gt;as_wayland();
+    if ( !wd ) throw except::logic_error(&quot;gfx::window: display is not wayland but backend says wayland&quot;);
+    __wl.create(*wd, width, height, title);
+
+    if ( __hooks.wl_create_native ) __wl_native = __hooks.wl_create_native(__wl.surface(), __wl.width(), __wl.height(), __hooks.wl_user);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw except::logic_error(&quot;gfx::window: display is not wayland but backend says wayland&quot;);</code></td><td><a href="../../../source/gfx/platform/window.hpp.html#L140">line 140</a><br>Within <code>( !wd )</code></td></tr></tbody></table></section><section class="function-entry" id="f-019729ec0887e092"><h3><code>micron::gfx::platform::window::__install_platform_thunks() noexcept</code></h3><p>Defined in <code>gfx/platform/window.hpp</code>, <a href="../../../source/gfx/platform/window.hpp.html#L147">line 147</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __install_platform_thunks() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __install_platform_thunks() noexcept
+  {
+    __x11.set_owner(this);
+    __wl.set_owner(this);
+    __x11.set_resize_cb(&amp;__platform_resize_thunk);
+    __wl.set_resize_cb(&amp;__platform_resize_thunk);
+    __x11.set_close_cb(&amp;__platform_close_thunk);
+    __wl.set_close_cb(&amp;__platform_close_thunk);
+    __x11.set_focus_cb(&amp;__platform_focus_thunk);
+    __wl.set_focus_cb(&amp;__platform_focus_thunk);
+    __x11.set_expose_cb(&amp;__platform_expose_thunk);
+    __wl.set_expose_cb(&amp;__platform_expose_thunk);
+    __x11.set_visibility_cb(&amp;__platform_visibility_thunk);
+    __wl.set_visibility_cb(&amp;__platform_visibility_thunk);
+    __x11.set_move_cb(&amp;__platform_move_thunk);
+    __wl.set_move_cb(&amp;__platform_move_thunk);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

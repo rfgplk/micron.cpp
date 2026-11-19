@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/graph/kernels/arch/bitset_arm32.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../../index.html">Reference</a> <a href="../../../../../headers/index.html">Headers</a> <a href="../../../../../functions/index.html">Functions</a> <a href="../../../../../symbols/index.html">Symbols</a> <a href="../../../../index.html">Source</a> <a href="../../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/graph/kernels/arch/bitset_arm32.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../../../headers/math/graph/kernels/arch/bitset_arm32.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../../../types.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> // arm32 neon kernels</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> namespace micron::math::graphs::kernels::__impl</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> {</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> using __graph_word_vector = u32 __attribute__((vector_size(16)));</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> </span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> inline void</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> word_union_arch(u64 *out, const u64 *a, const u64 *b, usize words) noexcept</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> {</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a>   constexpr usize word_step = sizeof(__graph_word_vector) / sizeof(u64);</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a>   usize i = 0;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a>   for ( ; i + word_step &lt;= words; i += word_step ) {</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a>     __graph_word_vector av{}, bv{}, value{};</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a>     __builtin_memcpy(&amp;av, a + i, sizeof(av));</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a>     __builtin_memcpy(&amp;bv, b + i, sizeof(bv));</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a>     value = av | bv;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a>     __builtin_memcpy(out + i, &amp;value, sizeof(value));</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a>   }</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>   for ( ; i &lt; words; ++i ) out[i] = a[i] | b[i];</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> }</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> </span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> inline void</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> word_intersection_arch(u64 *out, const u64 *a, const u64 *b, usize words) noexcept</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> {</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   constexpr usize word_step = sizeof(__graph_word_vector) / sizeof(u64);</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   usize i = 0;</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   for ( ; i + word_step &lt;= words; i += word_step ) {</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>     __graph_word_vector av{}, bv{}, value{};</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>     __builtin_memcpy(&amp;av, a + i, sizeof(av));</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>     __builtin_memcpy(&amp;bv, b + i, sizeof(bv));</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>     value = av &amp; bv;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>     __builtin_memcpy(out + i, &amp;value, sizeof(value));</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>   }</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>   for ( ; i &lt; words; ++i ) out[i] = a[i] &amp; b[i];</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> }</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> </span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> [[nodiscard]] inline usize</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> popcount_arch(const u64 *words, usize count) noexcept</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> {</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>   usize result = 0;</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   for ( usize i = 0; i &lt; count; ++i ) result += static_cast&lt;usize&gt;(__builtin_popcountll(words[i]));</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   return result;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> }</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> </span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> [[nodiscard]] inline usize</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> intersection_popcount_arch(const u64 *a, const u64 *b, usize count) noexcept</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> {</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>   usize result = 0;</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>   for ( usize i = 0; i &lt; count; ++i ) result += static_cast&lt;usize&gt;(__builtin_popcountll(a[i] &amp; b[i]));</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   return result;</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> }</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> </span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> };      // namespace micron::math::graphs::kernels::__impl</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../../about.html">Attribution and licenses</a> · <a href="../../../../../index.html">Contents</a></p></div></div>
+</body></html>

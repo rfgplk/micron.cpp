@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/string/conversions/fixed.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/string/conversions/fixed.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/strings.html">Strings</a></div><p>Defined in header <code>&lt;micron/string/conversions/fixed.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/string/conversions/fixed.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-4ffe39a23d1eae88"><h3><code>micron::__impl::__ryu::__fx::__decompose(f64 v) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr parts
+__decompose(f64 v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr parts
+__decompose(f64 v) noexcept
+{
+  const u64 bits = micron::math::ieee::to_bits&lt;f64&gt;(v);
+  const u32 be = static_cast&lt;u32&gt;((bits &gt;&gt; 52) &amp; 0x7FFu);
+  const u64 mf = bits &amp; ((1ull &lt;&lt; 52) - 1);
+
+  parts p{};
+  p.neg = (bits &gt;&gt; 63) != 0;
+  if ( be == 0x7FFu ) {
+    p.is_inf = (mf == 0);
+    p.is_nan = (mf != 0);
+    return p;
+  }
+  if ( be == 0 ) {
+    if ( mf == 0 ) {
+      p.is_zero = true;
+      return p;
+    }
+    p.m2 = mf;      // subnormal: no implicit bit
+    p.e2 = 1 - 1023 - 52;
+    return p;
+  }
+  p.m2 = mf | (1ull &lt;&lt; 52);
+  p.e2 = static_cast&lt;i32&gt;(be) - 1023 - 52;
+  return p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L48">line 48</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L57">line 57</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../math/ieee.hpp.html#f-4ae309043c1a9124">micron::math::ieee::to_bits&lt;f64&gt;</a>.</p></section><section class="function-entry" id="f-2ee45e1313ab2ea2"><h3><code>micron::__impl::__ryu::__fx::__fixed_u64(u64 m2, i32 e2, u32 p) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L106">line 106</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr fixed64
+__fixed_u64(u64 m2, i32 e2, u32 p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 m2</code></li><li><code>i32 e2</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr fixed64
+__fixed_u64(u64 m2, i32 e2, u32 p) noexcept
+{
+  fixed64 r{};
+  if ( p &gt; __max_u64_prec ) return r;
+
+  u64 ip = 0, frac = 0;
+  u32 t = 0;
+  if ( e2 &gt;= 0 ) {
+    if ( e2 &gt;= 64 ) return r;      // |v| &gt;= 2^64
+    if ( e2 &gt; 0 &amp;&amp; (m2 &gt;&gt; (64 - static_cast&lt;u32&gt;(e2))) != 0 ) return r;
+    ip = m2 &lt;&lt; e2;
+  } else {
+    t = static_cast&lt;u32&gt;(-e2);
+    if ( t &gt;= 64 ) {
+      ip = 0;
+      frac = m2;      // the whole significand is fractional
+    } else {
+      ip = m2 &gt;&gt; t;
+      frac = m2 &amp; ((1ull &lt;&lt; t) - 1);
+    }
+  }
+
+  u64 fp = 0;
+  bool up = false;
+  if ( frac != 0 &amp;&amp; p &gt; 0 ) {
+    if ( t &lt;= p ) {
+      // fp = frac * 5^p * 2^(p-t)
+      fp = frac * __pow5_u64[p];
+      fp &lt;&lt;= (p - t);
+    } else {
+      const u32 u = t - p;
+      if ( u &gt;= 99 ) {
+        fp = 0;      // product &lt; 2^98 &lt;= 2^(u-1): strictly below half, rounds down
+      } else {
+        const __fmt_uint128_t prod = umul128(frac, __pow5_u64[p]);
+        const u64 lo = prod.lo;      // a plain {lo,hi} struct on every arch, not a builtin
+        const u64 hi = prod.hi;
+        u64 rem_hi = 0, rem_lo = 0;
+        if ( u &lt; 64 ) {
+          fp = (u == 0) ? lo : ((hi &lt;&lt; (64 - u)) | (lo &gt;&gt; u));
+          rem_lo = (u == 0) ? 0ull : (lo &amp; ((1ull &lt;&lt; u) - 1));
+        } else {
+          const u32 s = u - 64;
+          fp = (s == 0) ? hi : (hi &gt;&gt; s);
+          rem_hi = (s == 0) ? 0ull : (hi &amp; ((1ull &lt;&lt; s) - 1));
+          rem_lo = lo;
+        }
+        // half == 2^(u-1); compare the remainder against it
+        if ( u &lt; 64 ) {
+          const u64 half = 1ull &lt;&lt; (u - 1);
+          up = (rem_lo &gt; half) || (rem_lo == half &amp;&amp; ((p == 0 ? ip : fp) &amp; 1) != 0);
+        } else {
+          const u32 s = u - 64;
+          // half sits at bit (u-1): in rem_hi when s &gt; 0, else the top bit of rem_lo
+          if ( s == 0 ) {
+            const u64 half = 1ull &lt;&lt; 63;
+            up = (rem_lo &gt; half) || (rem_lo == half &amp;&amp; ((p == 0 ? ip : fp) &amp; 1) != 0);
+          } else {
+            const u64 half_hi = 1ull &lt;&lt; (s - 1);
+            up = (rem_hi &gt; half_hi) || (rem_hi == half_hi &amp;&amp; rem_lo != 0)
+                 || (rem_hi == half_hi &amp;&amp; rem_lo == 0 &amp;&amp; ((p == 0 ? ip : fp) &amp; 1) != 0);
+          }
+        }
+      }
+    }
+  } else if ( frac != 0 &amp;&amp; p == 0 ) {
+    // rounding the fraction away entirely: compare frac against half of 2^t
+    if ( t &lt; 64 ) {
+      const u64 half = 1ull &lt;&lt; (t - 1);
+      up = (frac &gt; half) || (frac == half &amp;&amp; (ip &amp; 1) != 0);
+    } else {
+      // t &gt;= 64 means |v| &lt; 1 and frac == m2 &lt; 2^53 &lt; 2^(t-1): below half
+      up = false;
+    }
+  }
+
+  if ( up ) ++fp;
+  if ( p &gt; 0 &amp;&amp; fp == __pow10_u64[p] ) {      // the fraction carried into the integer
+    fp = 0;
+    if ( ip == ~0ull ) return r;
+    ++ip;
+  } else if ( p == 0 &amp;&amp; up ) {
+    if ( ip == ~0ull ) return r;
+    ++ip;
+  }
+
+  r.ip = ip;
+  r.fp = fp;
+  r.ok = true;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L109">line 109</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L114">line 114</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L115">line 115</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L185">line 185</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L188">line 188</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L195">line 195</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f2813456e3b1b2dd">umul128</a>.</p></section><section class="function-entry" id="f-0dcd9ffcfa1b8ccb"><h3><code>micron::__impl::__ryu::__fx::__emit_fixed64(char *buf, usize buf_sz, bool neg, u64 ip, u64 fp, u32 p) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L199">line 199</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__emit_fixed64(char *buf, usize buf_sz, bool neg, u64 ip, u64 fp, u32 p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>bool neg</code></li><li><code>u64 ip</code></li><li><code>u64 fp</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__emit_fixed64(char *buf, usize buf_sz, bool neg, u64 ip, u64 fp, u32 p) noexcept
+{
+  char itmp[24];
+  char *iend = itmp + 24;
+  char *ist = uint_to_buf_backward(iend, ip);
+  const usize ilen = static_cast&lt;usize&gt;(iend - ist);
+
+  const usize need = (neg ? 1u : 0u) + ilen + (p &gt; 0 ? 1u + static_cast&lt;usize&gt;(p) : 0u);
+  if ( buf_sz &lt; need ) return 0;
+
+  usize pos = 0;
+  if ( neg ) buf[pos++] = &#x27;-&#x27;;
+  for ( usize i = 0; i &lt; ilen; ++i ) buf[pos++] = ist[i];
+  if ( p &gt; 0 ) {
+    buf[pos++] = &#x27;.&#x27;;
+    char ftmp[24];
+    char *fend = ftmp + 24;
+    char *fst = uint_to_buf_backward(fend, fp);
+    const usize flen = static_cast&lt;usize&gt;(fend - fst);
+    for ( usize i = flen; i &lt; p; ++i ) buf[pos++] = &#x27;0&#x27;;      // left-pad to exactly p places
+    for ( usize i = 0; i &lt; flen; ++i ) buf[pos++] = fst[i];
+  }
+  return pos;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L207">line 207</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L221">line 221</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-8d02868078781426">uint_to_buf_backward</a>.</p></section><section class="function-entry" id="f-8bc83a0c9d181bd3"><h3><code>micron::__impl::__ryu::__fx::__exact_round(u64 m2, i32 e2, cut mode, i32 arg, char *dig, u32 &amp;n, i32 &amp;pt) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L232">line 232</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::noinline, gnu::cold]] inline constexpr void
+__exact_round(u64 m2, i32 e2, cut mode, i32 arg, char *dig, u32 &amp;n, i32 &amp;pt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 m2</code></li><li><code>i32 e2</code></li><li><code>cut mode</code></li><li><code>i32 arg</code></li><li><code>char *dig</code></li><li><code>u32 &amp;n</code></li><li><code>i32 &amp;pt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::noinline, gnu::cold]] inline constexpr void
+__exact_round(u64 m2, i32 e2, cut mode, i32 arg, char *dig, u32 &amp;n, i32 &amp;pt) noexcept
+{
+  micron::__impl::__dec::__decimal v;
+  micron::__impl::__dec::__dec_load_u64(v, m2);
+  micron::__impl::__dec::__dec_shift(v, e2);
+
+  pt = v.point;
+  n = 0;
+  if ( v.ndigits == 0 ) return;      // exact zero
+
+  const i32 keep = (mode == cut::significant) ? arg : v.point + arg;
+  if ( keep &lt; 0 ) return;      // every digit is past the cut: rounds to zero
+
+  u32 k = static_cast&lt;u32&gt;(keep);
+  if ( k &gt;= v.ndigits ) {      // nothing is cut, so nothing rounds
+    for ( u32 i = 0; i &lt; v.ndigits; ++i ) dig[i] = static_cast&lt;char&gt;(&#x27;0&#x27; + v.d[i]);
+    n = v.ndigits;
+    return;
+  }
+
+  const bool up = micron::__impl::__dec::__dec_round_up(v, k);
+  for ( u32 i = 0; i &lt; k; ++i ) dig[i] = static_cast&lt;char&gt;(&#x27;0&#x27; + v.d[i]);
+  n = k;
+  if ( !up ) return;
+
+  for ( u32 i = k; i-- &gt; 0; ) {
+    if ( dig[i] != &#x27;9&#x27; ) {
+      ++dig[i];
+      return;
+    }
+    dig[i] = &#x27;0&#x27;;
+  }
+  // the carry escaped the leading digit: 0.999.. -&gt; 0.100.. * 10^(pt+1)
+  dig[0] = &#x27;1&#x27;;
+  if ( n == 0 ) n = 1;
+  ++pt;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/fixed.hpp.html#L240">line 240</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/fixed.hpp.html#L243">line 243</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/fixed.hpp.html#L249">line 249</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/fixed.hpp.html#L255">line 255</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/fixed.hpp.html#L260">line 260</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decimal.hpp.html#f-feec5b0ddfd82ef6">micron::__impl::__dec::__dec_load_u64</a>, <a href="decimal.hpp.html#f-a9a0551d4e3540d5">micron::__impl::__dec::__dec_shift</a>, <a href="decimal.hpp.html#f-88283752c29f0f05">micron::__impl::__dec::__dec_round_up</a>.</p></section><section class="function-entry" id="f-7e77a5cb350428dd"><h3><code>micron::__impl::__ryu::__fx::__emit_special(const parts &amp;p, char *buf, usize buf_sz) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L274">line 274</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__emit_special(const parts &amp;p, char *buf, usize buf_sz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parts &amp;p</code></li><li><code>char *buf</code></li><li><code>usize buf_sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__emit_special(const parts &amp;p, char *buf, usize buf_sz) noexcept
+{
+  if ( p.is_nan ) {
+    if ( buf_sz &lt; 3 ) return 0;
+    buf[0] = &#x27;N&#x27;;
+    buf[1] = &#x27;a&#x27;;
+    buf[2] = &#x27;N&#x27;;
+    return 3;
+  }
+  // inf
+  const usize need = p.neg ? 4u : 3u;
+  if ( buf_sz &lt; need ) return 0;
+  usize pos = 0;
+  if ( p.neg ) buf[pos++] = &#x27;-&#x27;;
+  buf[pos++] = &#x27;I&#x27;;
+  buf[pos++] = &#x27;n&#x27;;
+  buf[pos++] = &#x27;f&#x27;;
+  return pos;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L277">line 277</a></td></tr><tr class="t-dsc"><td><code>3</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L281">line 281</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L285">line 285</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L291">line 291</a></td></tr></tbody></table></section><section class="function-entry" id="f-6abad70c02727a3a"><h3><code>micron::__impl::__ryu::__fx::__emit_fixed(char *buf, usize buf_sz, bool neg, const char *dig, u32 n, i32 pt, u32 prec) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L295">line 295</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__emit_fixed(char *buf, usize buf_sz, bool neg, const char *dig, u32 n, i32 pt, u32 prec) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>bool neg</code></li><li><code>const char *dig</code></li><li><code>u32 n</code></li><li><code>i32 pt</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__emit_fixed(char *buf, usize buf_sz, bool neg, const char *dig, u32 n, i32 pt, u32 prec) noexcept
+{
+  const usize idig = (pt &gt; 0) ? static_cast&lt;usize&gt;(pt) : 1u;
+  const usize need = (neg ? 1u : 0u) + idig + (prec &gt; 0 ? 1u + static_cast&lt;usize&gt;(prec) : 0u);
+  if ( buf_sz &lt; need ) return 0;
+
+  usize pos = 0;
+  if ( neg ) buf[pos++] = &#x27;-&#x27;;
+  if ( pt &lt;= 0 )
+    buf[pos++] = &#x27;0&#x27;;
+  else
+    for ( i32 i = 0; i &lt; pt; ++i ) buf[pos++] = (static_cast&lt;u32&gt;(i) &lt; n) ? dig[i] : &#x27;0&#x27;;
+
+  if ( prec &gt; 0 ) {
+    buf[pos++] = &#x27;.&#x27;;
+    for ( u32 j = 0; j &lt; prec; ++j ) {
+      const i32 idx = pt + static_cast&lt;i32&gt;(j);
+      buf[pos++] = (idx &gt;= 0 &amp;&amp; static_cast&lt;u32&gt;(idx) &lt; n) ? dig[idx] : &#x27;0&#x27;;
+    }
+  }
+  return pos;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L299">line 299</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L315">line 315</a></td></tr></tbody></table></section><section class="function-entry" id="f-5a5a8e0271502148"><h3><code>micron::__impl::__ryu::__fx::__emit_sci(char *buf, usize buf_sz, bool neg, const char *dig, u32 n, i32 sci_exp, u32 prec) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L319">line 319</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__emit_sci(char *buf, usize buf_sz, bool neg, const char *dig, u32 n, i32 sci_exp, u32 prec) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>bool neg</code></li><li><code>const char *dig</code></li><li><code>u32 n</code></li><li><code>i32 sci_exp</code></li><li><code>u32 prec</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__emit_sci(char *buf, usize buf_sz, bool neg, const char *dig, u32 n, i32 sci_exp, u32 prec) noexcept
+{
+  u32 edig = 2;
+  u32 ae = static_cast&lt;u32&gt;(sci_exp &lt; 0 ? -sci_exp : sci_exp);
+  if ( ae &gt;= 100 ) edig = 3;
+  const usize need = (neg ? 1u : 0u) + 1u + (prec &gt; 0 ? 1u + static_cast&lt;usize&gt;(prec) : 0u) + 2u + edig;
+  if ( buf_sz &lt; need ) return 0;
+
+  usize pos = 0;
+  if ( neg ) buf[pos++] = &#x27;-&#x27;;
+  buf[pos++] = (n &gt; 0) ? dig[0] : &#x27;0&#x27;;
+  if ( prec &gt; 0 ) {
+    buf[pos++] = &#x27;.&#x27;;
+    for ( u32 j = 1; j &lt;= prec; ++j ) buf[pos++] = (j &lt; n) ? dig[j] : &#x27;0&#x27;;
+  }
+  buf[pos++] = &#x27;e&#x27;;
+  buf[pos++] = (sci_exp &lt; 0) ? &#x27;-&#x27; : &#x27;+&#x27;;
+  if ( edig == 3 ) {
+    buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + ae / 100);
+    ae %= 100;
+  }
+  buf[pos++] = __digit_tbl[ae].d[0];
+  buf[pos++] = __digit_tbl[ae].d[1];
+  return pos;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L325">line 325</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L342">line 342</a></td></tr></tbody></table></section><section class="function-entry" id="f-ce7371b91ddc7bb8"><h3><code>micron::__impl::__ryu::d2f_size(f64 val, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L351">line 351</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_size(f64 val, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_size(f64 val, u32 precision) noexcept
+{
+  const __fx::parts p = __fx::__decompose(val);
+  if ( p.is_nan ) return 3;
+  if ( p.is_inf ) return p.neg ? 4u : 3u;
+
+  // integer digits, from the values binary exponent
+  usize idig = 1;
+  if ( !p.is_zero ) {
+    const i32 bexp = p.e2 + static_cast&lt;i32&gt;(64u - micron::__impl::clz64(p.m2));
+    if ( bexp &gt; 0 ) idig = static_cast&lt;usize&gt;(log10_pow2(bexp)) + 1u;
+  }
+  return (p.neg ? 1u : 0u) + idig + (precision &gt; 0 ? 1u + static_cast&lt;usize&gt;(precision) : 0u);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>3</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L354">line 354</a></td></tr><tr class="t-dsc"><td><code>p.neg ? 4u : 3u</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L355">line 355</a></td></tr><tr class="t-dsc"><td><code>(p.neg ? 1u : 0u) + idig + (precision &gt; 0 ? 1u + static_cast&lt;usize&gt;(precision) : 0u)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L363">line 363</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-4ffe39a23d1eae88">__fx::__decompose</a>, <a href="bits.hpp.html#f-e27efe8bc790122c">micron::__impl::clz64</a>, <a href="bits.hpp.html#f-3ab52f4712faa95e">log10_pow2</a>.</p></section><section class="function-entry" id="f-c113c453a6179c0a"><h3><code>micron::__impl::__ryu::d2e_size(f64 val, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L367">line 367</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2e_size(f64 val, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2e_size(f64 val, u32 precision) noexcept
+{
+  const __fx::parts p = __fx::__decompose(val);
+  if ( p.is_nan ) return 3;
+  if ( p.is_inf ) return p.neg ? 4u : 3u;
+  return (p.neg ? 1u : 0u) + 1u + (precision &gt; 0 ? 1u + static_cast&lt;usize&gt;(precision) : 0u) + 5u;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>3</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L370">line 370</a></td></tr><tr class="t-dsc"><td><code>p.neg ? 4u : 3u</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L371">line 371</a></td></tr><tr class="t-dsc"><td><code>(p.neg ? 1u : 0u) + 1u + (precision &gt; 0 ? 1u + static_cast&lt;usize&gt;(precision) : 0u) + 5u</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L372">line 372</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-4ffe39a23d1eae88">__fx::__decompose</a>.</p></section><section class="function-entry" id="f-f4eaed268a2b5416"><h3><code>micron::__impl::__ryu::d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L376">line 376</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
+{
+  const __fx::parts p = __fx::__decompose(val);
+  if ( p.is_nan || p.is_inf ) return __fx::__emit_special(p, buf, buf_sz);
+  if ( p.is_zero ) return __fx::__emit_fixed(buf, buf_sz, p.neg, nullptr, 0, 0, precision);
+
+  const __fx::fixed64 k = __fx::__fixed_u64(p.m2, p.e2, precision);
+  if ( k.ok ) return __fx::__emit_fixed64(buf, buf_sz, p.neg, k.ip, k.fp, precision);
+
+  char dig[__fx::__dig_cap];
+  u32 n = 0;
+  i32 pt = 0;
+  __fx::__exact_round(p.m2, p.e2, __fx::cut::fraction, static_cast&lt;i32&gt;(precision), dig, n, pt);
+  return __fx::__emit_fixed(buf, buf_sz, p.neg, dig, n, pt, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fx::__emit_special(p, buf, buf_sz)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L379">line 379</a></td></tr><tr class="t-dsc"><td><code>__fx::__emit_fixed(buf, buf_sz, p.neg, nullptr, 0, 0, precision)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L380">line 380</a></td></tr><tr class="t-dsc"><td><code>__fx::__emit_fixed64(buf, buf_sz, p.neg, k.ip, k.fp, precision)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L383">line 383</a></td></tr><tr class="t-dsc"><td><code>__fx::__emit_fixed(buf, buf_sz, p.neg, dig, n, pt, precision)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L389">line 389</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-4ffe39a23d1eae88">__fx::__decompose</a>, <a href="fixed.hpp.html#f-7e77a5cb350428dd">__fx::__emit_special</a>, <a href="fixed.hpp.html#f-6abad70c02727a3a">__fx::__emit_fixed</a>, <a href="fixed.hpp.html#f-2ee45e1313ab2ea2">__fx::__fixed_u64</a>, <a href="fixed.hpp.html#f-0dcd9ffcfa1b8ccb">__fx::__emit_fixed64</a>, <a href="fixed.hpp.html#f-8bc83a0c9d181bd3">__fx::__exact_round</a>.</p></section><section class="function-entry" id="f-275f14f344994627"><h3><code>micron::__impl::__ryu::d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L393">line 393</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2e_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
+{
+  const __fx::parts p = __fx::__decompose(val);
+  if ( p.is_nan || p.is_inf ) return __fx::__emit_special(p, buf, buf_sz);
+  if ( p.is_zero ) return __fx::__emit_sci(buf, buf_sz, p.neg, nullptr, 0, 0, precision);
+
+  char dig[__fx::__dig_cap];
+  u32 n = 0;
+  i32 pt = 0;
+  // %e keeps precision+1 significant digits
+  __fx::__exact_round(p.m2, p.e2, __fx::cut::significant, static_cast&lt;i32&gt;(precision) + 1, dig, n, pt);
+  return __fx::__emit_sci(buf, buf_sz, p.neg, dig, n, pt - 1, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fx::__emit_special(p, buf, buf_sz)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L396">line 396</a></td></tr><tr class="t-dsc"><td><code>__fx::__emit_sci(buf, buf_sz, p.neg, nullptr, 0, 0, precision)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L397">line 397</a></td></tr><tr class="t-dsc"><td><code>__fx::__emit_sci(buf, buf_sz, p.neg, dig, n, pt - 1, precision)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L404">line 404</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-4ffe39a23d1eae88">__fx::__decompose</a>, <a href="fixed.hpp.html#f-7e77a5cb350428dd">__fx::__emit_special</a>, <a href="fixed.hpp.html#f-5a5a8e0271502148">__fx::__emit_sci</a>, <a href="fixed.hpp.html#f-8bc83a0c9d181bd3">__fx::__exact_round</a>.</p></section><section class="function-entry" id="f-40689b4edf3b1b7c"><h3><code>micron::__impl::__ryu::__d2g_core(f64 val, char *buf, usize buf_sz, u32 precision, bool alt, bool upper)</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L410">line 410</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__d2g_core(f64 val, char *buf, usize buf_sz, u32 precision, bool alt, bool upper)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>u32 precision</code></li><li><code>bool alt</code></li><li><code>bool upper</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__d2g_core(f64 val, char *buf, usize buf_sz, u32 precision, bool alt, bool upper)
+{
+  const __fx::parts p = __fx::__decompose(val);
+  if ( p.is_nan || p.is_inf ) return __fx::__emit_special(p, buf, buf_sz);
+
+  const u32 P = (precision == 0) ? 1u : precision;
+
+  char dig[__fx::__dig_cap];
+  u32 n = 0;
+  i32 pt = 0;
+  if ( !p.is_zero ) __fx::__exact_round(p.m2, p.e2, __fx::cut::significant, static_cast&lt;i32&gt;(P), dig, n, pt);
+  const i32 X = p.is_zero ? 0 : (pt - 1);
+
+  usize len = 0;
+  if ( X &gt;= -4 &amp;&amp; X &lt; static_cast&lt;i32&gt;(P) )
+    len = __fx::__emit_fixed(buf, buf_sz, p.neg, dig, n, pt, static_cast&lt;u32&gt;(static_cast&lt;i32&gt;(P) - 1 - X));
+  else
+    len = __fx::__emit_sci(buf, buf_sz, p.neg, dig, n, X, P - 1u);
+  if ( len == 0 ) return 0;
+
+  if ( !alt ) {
+    usize dot = len, epos = len;
+    for ( usize i = 0; i &lt; len; ++i ) {
+      if ( buf[i] == &#x27;.&#x27; )
+        dot = i;
+      else if ( buf[i] == &#x27;e&#x27; ) {
+        epos = i;
+        break;
+      }
+    }
+    if ( dot != len ) {
+      usize end = epos;
+      while ( end &gt; dot + 1 &amp;&amp; buf[end - 1] == &#x27;0&#x27; ) --end;
+      if ( end == dot + 1 ) end = dot;
+      if ( end != epos ) {
+        usize w = end;
+        for ( usize i = epos; i &lt; len; ++i ) buf[w++] = buf[i];      // pull the exponent down
+        len = w;
+      }
+    }
+  }
+  if ( upper )
+    for ( usize i = 0; i &lt; len; ++i )
+      if ( buf[i] == &#x27;e&#x27; ) buf[i] = &#x27;E&#x27;;
+  return len;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fx::__emit_special(p, buf, buf_sz)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L413">line 413</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L428">line 428</a></td></tr><tr class="t-dsc"><td><code>len</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L454">line 454</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-4ffe39a23d1eae88">__fx::__decompose</a>, <a href="fixed.hpp.html#f-7e77a5cb350428dd">__fx::__emit_special</a>, <a href="fixed.hpp.html#f-8bc83a0c9d181bd3">__fx::__exact_round</a>, <a href="fixed.hpp.html#f-6abad70c02727a3a">__fx::__emit_fixed</a>, <a href="fixed.hpp.html#f-5a5a8e0271502148">__fx::__emit_sci</a>.</p></section><section class="function-entry" id="f-3c2c3c69021016f3"><h3><code>micron::__impl::__ryu::d2g_size(f64 val, u32 precision, bool alt) noexcept</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L458">line 458</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2g_size(f64 val, u32 precision, bool alt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>u32 precision</code></li><li><code>bool alt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2g_size(f64 val, u32 precision, bool alt) noexcept
+{
+  char scratch[__fmt_fixed_max];
+  return __d2g_core(val, scratch, __fmt_fixed_max, precision, alt, false);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__d2g_core(val, scratch, __fmt_fixed_max, precision, alt, false)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L461">line 461</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-40689b4edf3b1b7c">__d2g_core</a>.</p></section><section class="function-entry" id="f-223b066aa5f3fd13"><h3><code>micron::__impl::__ryu::d2g_buffered(f64 val, char *buf, usize buf_sz, u32 precision, bool alt, bool upper)</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L465">line 465</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2g_buffered(f64 val, char *buf, usize buf_sz, u32 precision, bool alt, bool upper)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>u32 precision</code></li><li><code>bool alt</code></li><li><code>bool upper</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2g_buffered(f64 val, char *buf, usize buf_sz, u32 precision, bool alt, bool upper)
+{
+  char scratch[__fmt_fixed_max];
+  const usize len = __d2g_core(val, scratch, __fmt_fixed_max, precision, alt, upper);
+  if ( len == 0 || len &gt; buf_sz ) return 0;
+  for ( usize i = 0; i &lt; len; ++i ) buf[i] = scratch[i];
+  return len;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L469">line 469</a></td></tr><tr class="t-dsc"><td><code>len</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L471">line 471</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-40689b4edf3b1b7c">__d2g_core</a>.</p></section><section class="function-entry" id="f-f26f755ad92157db"><h3><code>micron::__impl::__ryu::d2a_buffered(f64 val, char *buf, usize buf_sz, u32 precision, bool has_prec, bool upper)</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L481">line 481</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2a_buffered(f64 val, char *buf, usize buf_sz, u32 precision, bool has_prec, bool upper)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>u32 precision</code></li><li><code>bool has_prec</code></li><li><code>bool upper</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2a_buffered(f64 val, char *buf, usize buf_sz, u32 precision, bool has_prec, bool upper)
+{
+  const u64 bits = micron::math::ieee::to_bits&lt;f64&gt;(val);
+  const u32 be = static_cast&lt;u32&gt;((bits &gt;&gt; 52) &amp; 0x7FFu);
+  const u64 mf = bits &amp; ((1ull &lt;&lt; 52) - 1);
+  const bool neg = (bits &gt;&gt; 63) != 0;
+
+  if ( be == 0x7FFu ) {
+    __fx::parts sp{};
+    sp.neg = neg;
+    sp.is_nan = (mf != 0);
+    sp.is_inf = (mf == 0);
+    return __fx::__emit_special(sp, buf, buf_sz);
+  }
+
+  u32 lead = 0;
+  i32 exp2 = 0;
+  if ( be == 0 ) {
+    lead = 0;
+    exp2 = (mf == 0) ? 0 : -1022;
+  } else {
+    lead = 1;
+    exp2 = static_cast&lt;i32&gt;(be) - 1023;
+  }
+
+  u8 nib[13] = {};
+  for ( u32 i = 0; i &lt; 13; ++i ) nib[i] = static_cast&lt;u8&gt;((mf &gt;&gt; (48u - 4u * i)) &amp; 0xFull);
+
+  u32 ndig = 13;
+  if ( has_prec ) {
+    if ( precision &lt; 13u ) {
+      const u32 shift = 52u - 4u * precision;
+      const u64 disc = mf &amp; ((1ull &lt;&lt; shift) - 1);
+      const u64 half = 1ull &lt;&lt; (shift - 1);
+      const u32 last = (precision == 0) ? lead : nib[precision - 1];
+      if ( disc &gt; half || (disc == half &amp;&amp; (last &amp; 1u) != 0u) ) {
+        u32 i = precision;
+        bool carry = true;
+        while ( carry &amp;&amp; i-- &gt; 0 ) {
+          if ( nib[i] == 0xFu )
+            nib[i] = 0;
+          else {
+            ++nib[i];
+            carry = false;
+          }
+        }
+        if ( carry ) ++lead;      // 0x1.fff.. -&gt; 0x2.000..
+      }
+    }
+    ndig = precision;
+  } else {
+    while ( ndig &gt; 0 &amp;&amp; nib[ndig - 1] == 0 ) --ndig;      // trim, and drop a bare &#x27;.&#x27;
+  }
+
+  const char *tbl = upper ? __hex_upper : __hex_lower;
+  u32 ae = static_cast&lt;u32&gt;(exp2 &lt; 0 ? -exp2 : exp2);
+  u32 edig = 1;
+  for ( u32 t = ae; t &gt;= 10u; t /= 10u ) ++edig;
+
+  const usize need = (neg ? 1u : 0u) + 2u + 1u + (ndig &gt; 0 ? 1u + static_cast&lt;usize&gt;(ndig) : 0u) + 1u + 1u + edig;
+  if ( buf_sz &lt; need ) return 0;
+
+  usize pos = 0;
+  if ( neg ) buf[pos++] = &#x27;-&#x27;;
+  buf[pos++] = &#x27;0&#x27;;
+  buf[pos++] = upper ? &#x27;X&#x27; : &#x27;x&#x27;;
+  buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + lead);
+  if ( ndig &gt; 0 ) {
+    buf[pos++] = &#x27;.&#x27;;
+    for ( u32 i = 0; i &lt; ndig; ++i ) buf[pos++] = (i &lt; 13u) ? tbl[nib[i]] : &#x27;0&#x27;;
+  }
+  buf[pos++] = upper ? &#x27;P&#x27; : &#x27;p&#x27;;
+  buf[pos++] = (exp2 &lt; 0) ? &#x27;-&#x27; : &#x27;+&#x27;;
+  {
+    char tmp[8];
+    u32 t = edig;
+    u32 v = ae;
+    while ( t-- &gt; 0 ) {
+      tmp[t] = static_cast&lt;char&gt;(&#x27;0&#x27; + v % 10u);
+      v /= 10u;
+    }
+    for ( u32 i = 0; i &lt; edig; ++i ) buf[pos++] = tmp[i];
+  }
+  return pos;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__fx::__emit_special(sp, buf, buf_sz)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L493">line 493</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L541">line 541</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L564">line 564</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../math/ieee.hpp.html#f-4ae309043c1a9124">micron::math::ieee::to_bits&lt;f64&gt;</a>, <a href="fixed.hpp.html#f-7e77a5cb350428dd">__fx::__emit_special</a>.</p></section><section class="function-entry" id="f-0bd1f3a83b6fadea"><h3><code>micron::__impl::__ryu::x2a_buffered(F val, char *buf, usize buf_sz)</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L570">line 570</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+inline usize
+x2a_buffered(F val, char *buf, usize buf_sz)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_has_wide_float)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F val</code></li><li><code>char *buf</code></li><li><code>usize buf_sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+inline usize
+x2a_buffered(F val, char *buf, usize buf_sz)
+{
+  if constexpr ( sizeof(F) &lt;= 8 ) {
+    return d2a_buffered(static_cast&lt;f64&gt;(val), buf, buf_sz, 0, false, false);
+  } else {
+    unsigned char raw[sizeof(F)] = {};
+    __builtin_memcpy(raw, &amp;val, sizeof(F));      // every arch micron targets is little-endian
+
+    u64 lo = 0, hi = 0;
+    for ( u32 i = 0; i &lt; 8; ++i ) lo |= static_cast&lt;u64&gt;(raw[i]) &lt;&lt; (8u * i);
+
+    u32 se = 0;
+    i32 shift = 0;
+    bool nan_bit = false;
+#if defined(__micron_ldbl_x87_80)
+    if constexpr ( micron::is_same_v&lt;F, long double&gt; ) {
+      se = static_cast&lt;u32&gt;(raw[8]) | (static_cast&lt;u32&gt;(raw[9]) &lt;&lt; 8);
+      shift = 63;
+      nan_bit = (lo &amp; 0x7FFFFFFFFFFFFFFFull) != 0;
+    } else
+#endif
+    {
+      for ( u32 i = 8; i &lt; 16 &amp;&amp; i &lt; sizeof(F); ++i ) hi |= static_cast&lt;u64&gt;(raw[i]) &lt;&lt; (8u * (i - 8u));
+      se = static_cast&lt;u32&gt;(hi &gt;&gt; 48);
+      hi &amp;= 0x0000FFFFFFFFFFFFull;
+      shift = 112;
+      nan_bit = (hi | lo) != 0;
+      if ( (se &amp; 0x7FFFu) != 0 &amp;&amp; (se &amp; 0x7FFFu) != 0x7FFFu ) hi |= (1ull &lt;&lt; 48);      // implicit bit
+    }
+
+    const bool neg = (se &amp; 0x8000u) != 0;
+    const u32 e = se &amp; 0x7FFFu;
+
+    if ( e == 0x7FFFu ) {
+      __fx::parts sp{};
+      sp.neg = neg;
+      sp.is_nan = nan_bit;
+      sp.is_inf = !nan_bit;
+      return __fx::__emit_special(sp, buf, buf_sz);
+    }
+
+    i32 exp2 = (e == 0 ? 1 : static_cast&lt;i32&gt;(e)) - 16383 - shift;
+
+    if ( (hi | lo) == 0 ) {
+      const usize need = (neg ? 1u : 0u) + 6u;
+      if ( buf_sz &lt; need ) return 0;
+      usize z = 0;
+      if ( neg ) buf[z++] = &#x27;-&#x27;;
+      buf[z++] = &#x27;0&#x27;;
+      buf[z++] = &#x27;x&#x27;;
+      buf[z++] = &#x27;0&#x27;;
+      buf[z++] = &#x27;p&#x27;;
+      buf[z++] = &#x27;+&#x27;;
+      buf[z++] = &#x27;0&#x27;;
+      return z;
+    }
+
+    while ( (lo &amp; 0xFull) == 0 ) {      // strip trailing zero nibbles, exact
+      lo = (lo &gt;&gt; 4) | (hi &lt;&lt; 60);
+      hi &gt;&gt;= 4;
+      exp2 += 4;
+    }
+
+    char tmp[40];
+    char *tend = tmp + 40;
+    char *start = micron::__impl::uint128_to_buf_base_backward(tend, hi, lo, 16u, false);
+    const usize hlen = static_cast&lt;usize&gt;(tend - start);
+
+    u32 ae = static_cast&lt;u32&gt;(exp2 &lt; 0 ? -exp2 : exp2);
+    u32 edig = 1;
+    for ( u32 t = ae; t &gt;= 10u; t /= 10u ) ++edig;
+
+    const usize need = (neg ? 1u : 0u) + 2u + hlen + 2u + edig;
+    if ( buf_sz &lt; need ) return 0;
+
+    usize pos = 0;
+    if ( neg ) buf[pos++] = &#x27;-&#x27;;
+    buf[pos++] = &#x27;0&#x27;;
+    buf[pos++] = &#x27;x&#x27;;
+    for ( char *q = start; q != tend; ++q ) buf[pos++] = *q;
+    buf[pos++] = &#x27;p&#x27;;
+    buf[pos++] = (exp2 &lt; 0) ? &#x27;-&#x27; : &#x27;+&#x27;;
+    {
+      char et[8];
+      u32 t = edig;
+      u32 v = ae;
+      while ( t-- &gt; 0 ) {
+        et[t] = static_cast&lt;char&gt;(&#x27;0&#x27; + v % 10u);
+        v /= 10u;
+      }
+      for ( u32 i = 0; i &lt; edig; ++i ) buf[pos++] = et[i];
+    }
+    return pos;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d2a_buffered(static_cast&lt;f64&gt;(val), buf, buf_sz, 0, false, false)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L573">line 573</a></td></tr><tr class="t-dsc"><td><code>__fx::__emit_special(sp, buf, buf_sz)</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L608">line 608</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L615">line 615</a></td></tr><tr class="t-dsc"><td><code>z</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L624">line 624</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L643">line 643</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L662">line 662</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-f26f755ad92157db">d2a_buffered</a>, <a href="fixed.hpp.html#f-7e77a5cb350428dd">__fx::__emit_special</a>, <a href="bits.hpp.html#f-188987f812880441">micron::__impl::uint128_to_buf_base_backward</a>.</p></section><section class="function-entry" id="f-46798ce2e238b229"><h3><code>micron::__impl::__ryu::d2f_trim_buffered(f64 val, char *buf, usize buf_sz, u32 precision)</code></h3><p>Defined in <code>string/conversions/fixed.hpp</code>, <a href="../../../source/string/conversions/fixed.hpp.html#L668">line 668</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_trim_buffered(f64 val, char *buf, usize buf_sz, u32 precision)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 val</code></li><li><code>char *buf</code></li><li><code>usize buf_sz</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_trim_buffered(f64 val, char *buf, usize buf_sz, u32 precision)
+{
+  usize n = d2f_buffered(val, buf, buf_sz, precision);
+  usize dot = n;
+  for ( usize i = 0; i &lt; n; ++i ) {
+    if ( buf[i] == &#x27;.&#x27; ) {
+      dot = i;
+      break;
+    }
+  }
+  usize end = n;
+  if ( dot != n ) {                                            // has a fractional part -&gt; trim it
+    while ( end &gt; dot + 1 &amp;&amp; buf[end - 1] == &#x27;0&#x27; ) --end;      // strip trailing zeros
+    if ( end == dot + 1 ) end = dot;                           // drop a bare trailing &#x27;.&#x27;
+  }
+  if ( end &gt;= 1 &amp;&amp; buf[0] == &#x27;-&#x27; ) {
+    bool __all_zero = true;
+    for ( usize i = 1; i &lt; end; ++i )
+      if ( buf[i] != &#x27;0&#x27; &amp;&amp; buf[i] != &#x27;.&#x27; ) {
+        __all_zero = false;
+        break;
+      }
+    if ( __all_zero ) {
+      for ( usize i = 1; i &lt; end; ++i ) buf[i - 1] = buf[i];      // shift left over the leading &#x27;-&#x27;
+      --end;
+    }
+  }
+  return end;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>end</code></td><td><a href="../../../source/string/conversions/fixed.hpp.html#L695">line 695</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-f4eaed268a2b5416">d2f_buffered</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

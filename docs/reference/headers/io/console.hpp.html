@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/console.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/console.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/io.html">Input and output</a></div><p>Defined in header <code>&lt;micron/io/console.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/io/console.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-babe1af7a1f6dd88">micron::style</code></td><td>enum; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-4f63541aa6446912">micron::style::blink</code></td><td>enumerator; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-bbdd597076310063">micron::style::bold</code></td><td>enumerator; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-9bd9b3db24e686b0">micron::style::dim</code></td><td>enumerator; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-055739f1b1632b31">micron::style::hidden</code></td><td>enumerator; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-f5a1f740c40cdbda">micron::style::italic</code></td><td>enumerator; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6e2522f2e15bf15d">micron::style::reset</code></td><td>enumerator; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6d90bf722679c634">micron::style::reverse</code></td><td>enumerator; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-79945098ffc4fc0d">micron::style::underline</code></td><td>enumerator; line 22<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-3e975abe96705ea8">micron::color</code></td><td>enum; line 24<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-31418de86efff944">micron::color::black</code></td><td>enumerator; line 25<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-c04af629cf18215d">micron::color::red</code></td><td>enumerator; line 26<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-d56e97ccee1fd5bb">micron::color::green</code></td><td>enumerator; line 27<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-fb1790e4cb2b1f90">micron::color::yellow</code></td><td>enumerator; line 28<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6395700441410191">micron::color::blue</code></td><td>enumerator; line 29<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-8312493f41643222">micron::color::magenta</code></td><td>enumerator; line 30<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-67404d32c6585dbf">micron::color::cyan</code></td><td>enumerator; line 31<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-32eb88f253ebe02f">micron::color::white</code></td><td>enumerator; line 32<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-13e33e5607fa742e">micron::color::reset</code></td><td>enumerator; line 33<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-716f14fc741fdbe0">micron::color::fgblack</code></td><td>enumerator; line 34<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6748ca246f543fd5">micron::color::fgred</code></td><td>enumerator; line 35<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-2bb79ca260d8d3e4">micron::color::fggreen</code></td><td>enumerator; line 36<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-5ceb8774e2f7552f">micron::color::fgyellow</code></td><td>enumerator; line 37<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-15c6ccecc7c645b4">micron::color::fgblue</code></td><td>enumerator; line 38<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-17c8d0ee60875758">micron::color::fgmagenta</code></td><td>enumerator; line 39<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-56a3476944acddb5">micron::color::fgcyan</code></td><td>enumerator; line 40<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-c1fc8c533835e077">micron::color::fgwhite</code></td><td>enumerator; line 41<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-56a58a2566a0291d">micron::color::fgreset</code></td><td>enumerator; line 42<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-f9889b34bad878c9">micron::ansi_colors</code></td><td>struct; line 45<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-5531368802ffc7fb">micron::ansi_colors::bold</code></td><td>member; line 47<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-4535ebdf0baff612">micron::ansi_colors::dim</code></td><td>member; line 48<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-5877dcfff529bb14">micron::ansi_colors::italic</code></td><td>member; line 49<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-d9472d7a44165244">micron::ansi_colors::underline</code></td><td>member; line 50<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-167efe0abbd3f0f8">micron::ansi_colors::blink</code></td><td>member; line 51<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-0165de19b5f321fe">micron::ansi_colors::reverse</code></td><td>member; line 52<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-eb60cef1167c2932">micron::ansi_colors::hidden</code></td><td>member; line 53<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-61a022d90c8ca618">micron::ansi_colors::sreset</code></td><td>member; line 54<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-7b22e6eb1b9b896f">micron::ansi_colors::black</code></td><td>member; line 56<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-58a7c774e7a14046">micron::ansi_colors::red</code></td><td>member; line 57<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-80d0e8ebee56f443">micron::ansi_colors::green</code></td><td>member; line 58<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-cd613095e815117e">micron::ansi_colors::yellow</code></td><td>member; line 59<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-38a073363a0c0660">micron::ansi_colors::blue</code></td><td>member; line 60<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-72c2e31cfbf5e3f3">micron::ansi_colors::magenta</code></td><td>member; line 61<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-b5068f3a76cf768e">micron::ansi_colors::cyan</code></td><td>member; line 62<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-4e92c15b11947c16">micron::ansi_colors::white</code></td><td>member; line 63<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-e7d073b126f50594">micron::ansi_colors::reset</code></td><td>member; line 64<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-3e8e0ab3b68847c2">micron::ansi_colors::fgblack</code></td><td>member; line 66<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6e80b8bc1a474da4">micron::ansi_colors::fgred</code></td><td>member; line 67<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-bf7b109fe0094bc6">micron::ansi_colors::fggreen</code></td><td>member; line 68<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-cd08d9ef9bf9b87b">micron::ansi_colors::fgyellow</code></td><td>member; line 69<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-028dcac154f34683">micron::ansi_colors::fgblue</code></td><td>member; line 70<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6507711edeb18d35">micron::ansi_colors::fgmagenta</code></td><td>member; line 71<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6ae9198768febcb9">micron::ansi_colors::fgcyan</code></td><td>member; line 72<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-5932e23d9f0cec6c">micron::ansi_colors::fgwhite</code></td><td>member; line 73<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-7da94b7a9ff9b00a">micron::ansi_colors::fgreset</code></td><td>member; line 74<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-b1bffff73f60a184">micron::set_color_reset(void)</a></td><td>function; line 78<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-4504881b020d0ade">micron::set_color(color c, style s = style::bold)</a></td><td>function; line 85<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-b1e2ee32046fdf1e">micron::cerror(const T &amp;...str)</a></td><td>function; line 193<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-0fb8440aca273603">micron::console_newline(void)</a></td><td>function; line 233<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-89e0e1c247793475">micron::console(const T &amp;...str)</a></td><td>function; line 241<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-cb537fd51b2d7078">micron::console(const T &amp;...str)</a></td><td>function; line 248<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-98487321d5c96282">micron::consoled(const T &amp;...str)</a></td><td>function; line 255<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-3cc0e64a30d0238f">micron::console_bin(const T &amp;...str)</a></td><td>function; line 262<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-b1bffff73f60a184"><h3><code>micron::set_color_reset(void)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+set_color_reset(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+set_color_reset(void)
+{
+  const char *buf = &quot;\033[0m&quot;;
+  io::print(buf);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="echo.hpp.html#f-56f14f73c7703bf5">io::print</a>.</p></section><section class="function-entry" id="f-4504881b020d0ade"><h3><code>micron::set_color(color c, style s = style::bold)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L85">line 85</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+set_color(color c, style s = style::bold)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>color c</code></li><li><code>style s = style::bold</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+set_color(color c, style s = style::bold)
+{
+  char buf[] = &quot;\033[1;xxm&quot;;
+  switch ( c ) {
+  case color::black:
+    buf[4] = ansi_colors::black[0];
+    buf[5] = ansi_colors::black[1];
+    break;
+  case color::red:
+    buf[4] = ansi_colors::red[0];
+    buf[5] = ansi_colors::red[1];
+    break;
+  case color::green:
+    buf[4] = ansi_colors::green[0];
+    buf[5] = ansi_colors::green[1];
+    break;
+  case color::yellow:
+    buf[4] = ansi_colors::yellow[0];
+    buf[5] = ansi_colors::yellow[1];
+    break;
+  case color::blue:
+    buf[4] = ansi_colors::blue[0];
+    buf[5] = ansi_colors::blue[1];
+    break;
+  case color::magenta:
+    buf[4] = ansi_colors::magenta[0];
+    buf[5] = ansi_colors::magenta[1];
+    break;
+  case color::cyan:
+    buf[4] = ansi_colors::cyan[0];
+    buf[5] = ansi_colors::cyan[1];
+    break;
+  case color::white:
+    buf[4] = ansi_colors::white[0];
+    buf[5] = ansi_colors::white[1];
+    break;
+  case color::reset:
+    buf[4] = ansi_colors::reset[0];
+    buf[5] = ansi_colors::reset[1];
+    break;
+  case color::fgblack:
+    buf[4] = ansi_colors::fgblack[0];
+    buf[5] = ansi_colors::fgblack[1];
+    break;
+  case color::fgred:
+    buf[4] = ansi_colors::fgred[0];
+    buf[5] = ansi_colors::fgred[1];
+    break;
+  case color::fggreen:
+    buf[4] = ansi_colors::fggreen[0];
+    buf[5] = ansi_colors::fggreen[1];
+    break;
+  case color::fgyellow:
+    buf[4] = ansi_colors::fgyellow[0];
+    buf[5] = ansi_colors::fgyellow[1];
+    break;
+  case color::fgblue:
+    buf[4] = ansi_colors::fgblue[0];
+    buf[5] = ansi_colors::fgblue[1];
+    break;
+  case color::fgmagenta:
+    buf[4] = ansi_colors::fgmagenta[0];
+    buf[5] = ansi_colors::fgmagenta[1];
+    break;
+  case color::fgcyan:
+    buf[4] = ansi_colors::fgcyan[0];
+    buf[5] = ansi_colors::fgcyan[1];
+    break;
+  case color::fgwhite:
+    buf[4] = ansi_colors::fgwhite[0];
+    buf[5] = ansi_colors::fgwhite[1];
+    break;
+  case color::fgreset:
+    buf[4] = ansi_colors::fgreset[0];
+    buf[5] = ansi_colors::fgreset[1];
+    break;
+  };
+  switch ( s ) {
+  case style::bold:
+    buf[2] = ansi_colors::bold[0];
+    break;
+  case style::dim:
+    buf[2] = ansi_colors::dim[0];
+    break;
+  case style::italic:
+    buf[2] = ansi_colors::italic[0];
+    break;
+  case style::underline:
+    buf[2] = ansi_colors::underline[0];
+    break;
+  case style::blink:
+    buf[2] = ansi_colors::blink[0];
+    break;
+  case style::reverse:
+    buf[2] = ansi_colors::reverse[0];
+    break;
+  case style::hidden:
+    buf[2] = ansi_colors::hidden[0];
+    break;
+  case style::reset:
+    buf[2] = ansi_colors::sreset[0];
+    break;
+  };
+  io::print(buf);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="echo.hpp.html#f-56f14f73c7703bf5">io::print</a>.</p></section><section class="function-entry" id="f-b1e2ee32046fdf1e"><h3><code>micron::cerror(const T &amp;...str)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L193">line 193</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+inline void
+cerror(const T &amp;...str)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+inline void
+cerror(const T &amp;...str)
+{
+  set_color(color::red, style::italic);
+  set_color(color::red, style::bold);
+  io::errorln(str...);
+  set_color_reset();
+  (
+      [&amp;] {
+        if constexpr ( requires { except::standard_error(str); } ) exc_silent&lt;except::standard_error&gt;(str);
+      }(),
+      ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="console.hpp.html#f-4504881b020d0ade">set_color</a>, <a href="echo.hpp.html#f-2b570b945121be43">io::errorln</a>, <a href="console.hpp.html#f-b1bffff73f60a184">set_color_reset</a>.</p></section><section class="function-entry" id="f-0fb8440aca273603"><h3><code>micron::console_newline(void)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L233">line 233</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+console_newline(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+console_newline(void)
+{
+  io::println(&quot;\n&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="echo.hpp.html#f-6f53894b3a57425c">io::println</a>.</p></section><section class="function-entry" id="f-89e0e1c247793475"><h3><code>micron::console(const T &amp;...str)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L241">line 241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+  requires(micron::is_pointer_v&lt;T&gt; and ...)
+inline void
+console(const T &amp;...str)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+  requires(micron::is_pointer_v&lt;T&gt; and ...)
+inline void
+console(const T &amp;...str)
+{
+  io::println(str...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="echo.hpp.html#f-6f53894b3a57425c">io::println</a>.</p></section><section class="function-entry" id="f-cb537fd51b2d7078"><h3><code>micron::console(const T &amp;...str)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L248">line 248</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+inline void
+console(const T &amp;...str)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+inline void
+console(const T &amp;...str)
+{
+  io::println(str...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="echo.hpp.html#f-6f53894b3a57425c">io::println</a>.</p></section><section class="function-entry" id="f-98487321d5c96282"><h3><code>micron::consoled(const T &amp;...str)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L255">line 255</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+inline void
+consoled(const T &amp;...str)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+inline void
+consoled(const T &amp;...str)
+{
+  io::print(str...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="echo.hpp.html#f-56f14f73c7703bf5">io::print</a>.</p></section><section class="function-entry" id="f-3cc0e64a30d0238f"><h3><code>micron::console_bin(const T &amp;...str)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L262">line 262</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+inline void
+console_bin(const T &amp;...str)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+inline void
+console_bin(const T &amp;...str)
+{
+  io::bin(str...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="echo.hpp.html#f-e17df1c8654800b2">io::bin</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-d8b7f6180c59ee3d"><h3><code>micron::__micron_log(const char *FILEMACRO, int line, const T &amp;...str)</code></h3><p>Defined in <code>io/console.hpp</code>, <a href="../../source/io/console.hpp.html#L208">line 208</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt;
+inline void
+__micron_log(const char *FILEMACRO, int line, const T &amp;...str)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *FILEMACRO</code></li><li><code>int line</code></li><li><code>const T &amp;...str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... T&gt;
+inline void
+__micron_log(const char *FILEMACRO, int line, const T &amp;...str)
+{
+  set_color(color::cyan, style::italic);
+  set_color(color::cyan, style::bold);
+  io::print(FILEMACRO);
+  io::print(&quot;:&quot;);
+  set_color_reset();
+  set_color(color::cyan, style::bold);
+  io::print(line);
+  io::print(&quot;: &quot;);
+  set_color_reset();
+  set_color(color::yellow, style::bold);
+  io::println(str...);
+  set_color_reset();
+  io::println(&quot;\n&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="console.hpp.html#f-4504881b020d0ade">set_color</a>, <a href="echo.hpp.html#f-56f14f73c7703bf5">io::print</a>, <a href="console.hpp.html#f-b1bffff73f60a184">set_color_reset</a>, <a href="echo.hpp.html#f-6f53894b3a57425c">io::println</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

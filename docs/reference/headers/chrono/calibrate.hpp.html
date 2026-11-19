@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/chrono/calibrate.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/chrono/calibrate.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/chrono.html">Date and time</a></div><p>Defined in header <code>&lt;micron/chrono/calibrate.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/chrono/calibrate.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-5619d2334d66c2f8">micron::chrono::tsc_traits</code></td><td>struct; line 75</td></tr><tr class="t-dsc"><td><code id="s-024751f85a60afac">micron::chrono::tsc_traits::present</code></td><td>member; line 76</td></tr><tr class="t-dsc"><td><code id="s-4510966077efc96e">micron::chrono::tsc_traits::invariant</code></td><td>member; line 77</td></tr><tr class="t-dsc"><td><code id="s-e85e9894cc56a9b4">micron::chrono::tsc_traits::has_rdtscp</code></td><td>member; line 78</td></tr><tr class="t-dsc"><td><code id="s-d6a01c95f9f69edf">micron::chrono::tsc_traits::has_serialize</code></td><td>member; line 79</td></tr><tr class="t-dsc"><td><code id="s-0f8d317fbf4c41da">micron::chrono::tsc_traits::nominal_hz</code></td><td>member; line 80</td></tr><tr class="t-dsc"><td><code id="s-4b2364aa9e163093">MICRON_CHRONO_CALIB_ITERS</code></td><td>macro; line 220<br><small><code>#if !defined(MICRON_CHRONO_CALIB_ITERS)</code></small></td></tr><tr class="t-dsc"><td><code id="s-fc980bd6ff196cf3">MICRON_CHRONO_CALIB_TRIES</code></td><td>macro; line 223<br><small><code>#if !defined(MICRON_CHRONO_CALIB_TRIES)</code></small></td></tr><tr class="t-dsc"><td><code id="s-68b2160791e76d77">MICRON_CHRONO_CALIB_WARMUP_NS</code></td><td>macro; line 226<br><small><code>#if !defined(MICRON_CHRONO_CALIB_WARMUP_NS)</code></small></td></tr><tr class="t-dsc"><td><code id="s-a09b7b552354bcaf">micron::chrono::calib_iters</code></td><td>variable; line 229</td></tr><tr class="t-dsc"><td><code id="s-61314473977afab1">micron::chrono::calib_tries</code></td><td>variable; line 230</td></tr><tr class="t-dsc"><td><code id="s-1b17ba6ad75f55d6">micron::chrono::calib_warmup_ns</code></td><td>variable; line 231</td></tr><tr class="t-dsc"><td><code id="s-2a9e924fd545cc40">micron::chrono::freq_spread</code></td><td>struct; line 303</td></tr><tr class="t-dsc"><td><code id="s-95cd71854e78fdbe">micron::chrono::freq_spread::min_hz</code></td><td>member; line 304</td></tr><tr class="t-dsc"><td><code id="s-a82cfc8e7ab67b2b">micron::chrono::freq_spread::median_hz</code></td><td>member; line 305</td></tr><tr class="t-dsc"><td><code id="s-b069e33c945dcaee">micron::chrono::freq_spread::max_hz</code></td><td>member; line 306</td></tr><tr class="t-dsc"><td><code id="s-e6c139b24c783a70">micron::chrono::freq_spread::samples</code></td><td>member; line 307</td></tr><tr class="t-dsc"><td><code id="s-05d39b3a115f1a11">micron::chrono::timer_stats</code></td><td>struct; line 354</td></tr><tr class="t-dsc"><td><code id="s-91ee422263facebb">micron::chrono::timer_stats::min_ticks</code></td><td>member; line 355</td></tr><tr class="t-dsc"><td><code id="s-6d2dce009800d8e5">micron::chrono::timer_stats::median_ticks</code></td><td>member; line 356</td></tr><tr class="t-dsc"><td><code id="s-0d947b2366809b6e">micron::chrono::timer_stats::max_ticks</code></td><td>member; line 357</td></tr><tr class="t-dsc"><td><code id="s-1b0544d681bee95a">micron::chrono::timer_stats::min_ns</code></td><td>member; line 358</td></tr><tr class="t-dsc"><td><code id="s-94440290a641b541">micron::chrono::timer_stats::median_ns</code></td><td>member; line 359</td></tr><tr class="t-dsc"><td><code id="s-a71387780997c145">micron::chrono::clock_report</code></td><td>struct; line 438</td></tr><tr class="t-dsc"><td><code id="s-2b6b1206d5237bfb">micron::chrono::clock_report::tick_hz</code></td><td>member; line 439</td></tr><tr class="t-dsc"><td><code id="s-ae1b90833c356f2d">micron::chrono::clock_report::core_hz</code></td><td>member; line 440</td></tr><tr class="t-dsc"><td><code id="s-49d32fd5728043d1">micron::chrono::clock_report::counter_native</code></td><td>member; line 441</td></tr><tr class="t-dsc"><td><code id="s-17b0e50b704591b9">micron::chrono::clock_report::counter_invariant</code></td><td>member; line 442</td></tr><tr class="t-dsc"><td><code id="s-9b03f15a74421b67">micron::chrono::clock_report::has_rdtscp</code></td><td>member; line 443</td></tr><tr class="t-dsc"><td><code id="s-28601d4d00ff860b">micron::chrono::clock_report::has_serialize</code></td><td>member; line 444</td></tr><tr class="t-dsc"><td><code id="s-615f2b5fc04c03db">micron::chrono::clock_report::counter_overhead_ticks</code></td><td>member; line 445</td></tr><tr class="t-dsc"><td><code id="s-9f5751deb3f94e4b">micron::chrono::clock_report::counter_resolution_ticks</code></td><td>member; line 446</td></tr><tr class="t-dsc"><td><code id="s-22047c0bd41ad507">micron::chrono::clock_report::realtime_cost_ns</code></td><td>member; line 447</td></tr><tr class="t-dsc"><td><code id="s-85e4af8c4a9e331f">micron::chrono::clock_report::monotonic_cost_ns</code></td><td>member; line 448</td></tr><tr class="t-dsc"><td><code id="s-c53a888deb846e5b">micron::chrono::clock_report::monotonic_coarse_cost_ns</code></td><td>member; line 449</td></tr><tr class="t-dsc"><td><code id="s-400ad1037ff4289a">micron::chrono::clock_report::monotonic_res_ns</code></td><td>member; line 450</td></tr><tr class="t-dsc"><td><a href="#f-8adee7651ffd634f">micron::chrono::cycles_to_ns(u64 cycles, u64 hz) noexcept</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-b8e7e15982f5bba5">micron::chrono::ns_to_cycles(u64 ns, u64 hz) noexcept</a></td><td>function; line 58</td></tr><tr class="t-dsc"><td><a href="#f-dcb849cb7b90ec81">micron::chrono::cycles_to_us(u64 cycles, u64 hz) noexcept</a></td><td>function; line 70</td></tr><tr class="t-dsc"><td><a href="#f-e2c5e69256b89854">micron::chrono::counter_traits(void) noexcept</a></td><td>function; line 84</td></tr><tr class="t-dsc"><td><a href="#f-91a7cac52cca8220">micron::chrono::calibrate_tick_hz(u64 window_ns = 20&#x27;000&#x27;000ull) noexcept</a></td><td>function; line 162</td></tr><tr class="t-dsc"><td><a href="#f-ba10156e72779087">micron::chrono::tick_hz(void) noexcept</a></td><td>function; line 179</td></tr><tr class="t-dsc"><td><a href="#f-7c790087d270631f">micron::chrono::set_tick_hz(u64 hz) noexcept</a></td><td>function; line 199</td></tr><tr class="t-dsc"><td><a href="#f-c171cee3669bac82">micron::chrono::ticks_to_ns(u64 ticks) noexcept</a></td><td>function; line 206</td></tr><tr class="t-dsc"><td><a href="#f-d7b73ece35c08ad3">micron::chrono::ns_to_ticks(u64 ns) noexcept</a></td><td>function; line 212</td></tr><tr class="t-dsc"><td><a href="#f-c2b020a3cac12054">micron::chrono::calibrate_core_hz(void) noexcept</a></td><td>function; line 277</td></tr><tr class="t-dsc"><td><a href="#f-8c8cf7cdfd5bced9">micron::chrono::core_hz_spread(void) noexcept</a></td><td>function; line 311</td></tr><tr class="t-dsc"><td><a href="#f-73adfae8711bd39d">micron::chrono::core_hz(void) noexcept</a></td><td>function; line 330</td></tr><tr class="t-dsc"><td><a href="#f-3a6021c6a7e2a4ba">micron::chrono::set_core_hz(u64 hz) noexcept</a></td><td>function; line 342</td></tr><tr class="t-dsc"><td><a href="#f-5faefa5f3dc62297">micron::chrono::reset_core_hz(void) noexcept</a></td><td>function; line 349</td></tr><tr class="t-dsc"><td><a href="#f-2825e09c5a8f5430">micron::chrono::timer_overhead(u32 samples = 65) noexcept</a></td><td>function; line 364</td></tr><tr class="t-dsc"><td><a href="#f-f92b3e15d9e0ff58">micron::chrono::timer_resolution(u32 samples = 65) noexcept</a></td><td>function; line 396</td></tr><tr class="t-dsc"><td><a href="#f-717ea7f40c3af462">micron::chrono::clock_cost_ns(clockid_t clk, u32 reps = 1000) noexcept</a></td><td>function; line 423</td></tr><tr class="t-dsc"><td><a href="#f-7443c278fd67b731">micron::chrono::report(void) noexcept</a></td><td>function; line 454</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-8adee7651ffd634f"><h3><code>micron::chrono::cycles_to_ns(u64 cycles, u64 hz) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u64
+cycles_to_ns(u64 cycles, u64 hz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 cycles</code></li><li><code>u64 hz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u64
+cycles_to_ns(u64 cycles, u64 hz) noexcept
+{
+  if ( hz == 0 ) return 0;
+#if defined(__micron_has_int128)
+  return static_cast&lt;u64&gt;((static_cast&lt;uint128_t&gt;(cycles) * 1&#x27;000&#x27;000&#x27;000ull) / hz);
+#else
+  // exact and overflow-free without a wide type
+  const u64 q = cycles / hz;
+  const u64 r = cycles % hz;
+  return q * 1&#x27;000&#x27;000&#x27;000ull + (r * 1&#x27;000&#x27;000&#x27;000ull) / hz;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;u64&gt;((static_cast&lt;uint128_t&gt;(cycles) * 1&#x27;000&#x27;000&#x27;000ull) / hz)</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L48">line 48</a></td></tr><tr class="t-dsc"><td><code>q * 1&#x27;000&#x27;000&#x27;000ull + (r * 1&#x27;000&#x27;000&#x27;000ull) / hz</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L53">line 53</a></td></tr></tbody></table></section><section class="function-entry" id="f-b8e7e15982f5bba5"><h3><code>micron::chrono::ns_to_cycles(u64 ns, u64 hz) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L58">line 58</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u64
+ns_to_cycles(u64 ns, u64 hz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 ns</code></li><li><code>u64 hz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u64
+ns_to_cycles(u64 ns, u64 hz) noexcept
+{
+#if defined(__micron_has_int128)
+  return static_cast&lt;u64&gt;((static_cast&lt;uint128_t&gt;(ns) * hz) / 1&#x27;000&#x27;000&#x27;000ull);
+#else
+  const u64 q = ns / 1&#x27;000&#x27;000&#x27;000ull;
+  const u64 r = ns % 1&#x27;000&#x27;000&#x27;000ull;
+  return q * hz + (r * hz) / 1&#x27;000&#x27;000&#x27;000ull;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u64&gt;((static_cast&lt;uint128_t&gt;(ns) * hz) / 1&#x27;000&#x27;000&#x27;000ull)</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L61">line 61</a></td></tr><tr class="t-dsc"><td><code>q * hz + (r * hz) / 1&#x27;000&#x27;000&#x27;000ull</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L65">line 65</a></td></tr></tbody></table></section><section class="function-entry" id="f-dcb849cb7b90ec81"><h3><code>micron::chrono::cycles_to_us(u64 cycles, u64 hz) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L70">line 70</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u64
+cycles_to_us(u64 cycles, u64 hz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 cycles</code></li><li><code>u64 hz</code></li></ul><h4>Effects</h4><p>Returns <code>hz == 0 ? 0 : cycles_to_ns(cycles, hz) / 1&#x27;000ull</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u64
+cycles_to_us(u64 cycles, u64 hz) noexcept
+{
+  return hz == 0 ? 0 : cycles_to_ns(cycles, hz) / 1&#x27;000ull;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>hz == 0 ? 0 : cycles_to_ns(cycles, hz) / 1&#x27;000ull</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L72">line 72</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calibrate.hpp.html#f-8adee7651ffd634f">cycles_to_ns</a>.</p></section><section class="function-entry" id="f-e2c5e69256b89854"><h3><code>micron::chrono::counter_traits(void) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L84">line 84</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline tsc_traits
+counter_traits(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline tsc_traits
+counter_traits(void) noexcept
+{
+  tsc_traits t{};
+#if defined(__micron_arch_x86_any)
+  t.present = true;
+  if ( micron::__cpuid_has_leaf(0x8000&#x27;0007u) ) t.invariant = (micron::__cpuid_read(0x8000&#x27;0007u).edx &gt;&gt; 8) &amp; 1u;
+  if ( micron::__cpuid_has_leaf(0x8000&#x27;0001u) ) t.has_rdtscp = (micron::__cpuid_read(0x8000&#x27;0001u).edx &gt;&gt; 27) &amp; 1u;
+  if ( micron::__cpuid_has_leaf(7u) ) t.has_serialize = (micron::__cpuid_read(7u, 0u).edx &gt;&gt; 14) &amp; 1u;
+
+  // leaf 0x15: ecx * ebx / eax
+  if ( micron::__cpuid_has_leaf(0x15u) ) {
+    const cpuid_regs r = micron::__cpuid_read(0x15u, 0u);
+    if ( r.eax != 0 &amp;&amp; r.ebx != 0 &amp;&amp; r.ecx != 0 )
+      t.nominal_hz = (static_cast&lt;u64&gt;(r.ecx) * static_cast&lt;u64&gt;(r.ebx)) / static_cast&lt;u64&gt;(r.eax);
+  }
+  // leaf 0x16: base frequency in MHz
+  if ( t.nominal_hz == 0 &amp;&amp; micron::__cpuid_has_leaf(0x16u) ) {
+    const u32 mhz = micron::__cpuid_read(0x16u).eax &amp; 0xFFFFu;
+    if ( mhz != 0 ) t.nominal_hz = static_cast&lt;u64&gt;(mhz) * 1&#x27;000&#x27;000ull;
+  }
+#elif defined(__micron_arch_arm64)
+  t.present = true;
+  t.invariant = true;
+  u64 f = 0;
+  __asm__ __volatile__(&quot;mrs %0, cntfrq_el0&quot; : &quot;=r&quot;(f));
+  t.nominal_hz = f;
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(MICRON_CHRONO_ARM32_CNTVCT)
+  t.present = true;
+  t.invariant = true;
+  u32 f = 0;
+  __asm__ __volatile__(&quot;mrc p15, 0, %0, c14, c0, 0&quot; : &quot;=r&quot;(f));
+  t.nominal_hz = f;
+#endif
+  return t;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L117">line 117</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__cpuid.hpp.html#f-04714fd44acad0ca">micron::__cpuid_has_leaf</a>, <a href="../bits/__cpuid.hpp.html#f-ffec39fa940e6c44">micron::__cpuid_read</a>.</p></section><section class="function-entry" id="f-91a7cac52cca8220"><h3><code>micron::chrono::calibrate_tick_hz(u64 window_ns = 20&#x27;000&#x27;000ull) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L162">line 162</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+calibrate_tick_hz(u64 window_ns = 20&#x27;000&#x27;000ull) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 window_ns = 20&#x27;000&#x27;000ull</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+calibrate_tick_hz(u64 window_ns = 20&#x27;000&#x27;000ull) noexcept
+{
+  const i64 t0 = clock_ns(clock_monotonic);
+  if ( t0 &lt; 0 ) return 0;
+  const u64 c0 = tick&lt;serial::mfence_lfence&gt;();
+  i64 t1 = t0;
+  while ( static_cast&lt;u64&gt;(t1 - t0) &lt; window_ns ) {
+    t1 = clock_ns(clock_monotonic);
+    if ( t1 &lt; 0 ) return 0;
+  }
+  const u64 c1 = tick&lt;serial::mfence_lfence&gt;();
+  const u64 dt = static_cast&lt;u64&gt;(t1 - t0);
+  if ( dt == 0 || c1 &lt;= c0 ) return 0;
+  return static_cast&lt;u64&gt;((static_cast&lt;u64&gt;(c1 - c0) * 1&#x27;000&#x27;000&#x27;000ull) / dt);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L170">line 170</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L174">line 174</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;u64&gt;((static_cast&lt;u64&gt;(c1 - c0) * 1&#x27;000&#x27;000&#x27;000ull) / dt)</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L175">line 175</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="clock.hpp.html#f-ff2ff9e9d46edddd">clock_ns</a>, <a href="cycles.hpp.html#f-9555137f1113f155">tick&lt;serial::mfence_lfence&gt;</a>.</p></section><section class="function-entry" id="f-ba10156e72779087"><h3><code>micron::chrono::tick_hz(void) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L179">line 179</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+tick_hz(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+tick_hz(void) noexcept
+{
+  if ( __atomic_load_n(&amp;__impl::__tick_hz_state, __ATOMIC_ACQUIRE) != 0u ) [[likely]]
+    return __impl::__tick_hz_slot;
+
+  u64 hz = 0;
+  if constexpr ( !counter_is_native ) {
+    hz = 1&#x27;000&#x27;000&#x27;000ull;
+  } else {
+    const tsc_traits t = counter_traits();
+    hz = t.nominal_hz;
+    if ( hz == 0 ) hz = calibrate_tick_hz();
+    if ( hz == 0 ) hz = 1&#x27;000&#x27;000&#x27;000ull;
+  }
+  __impl::__tick_hz_slot = hz;
+  __atomic_store_n(&amp;__impl::__tick_hz_state, 1u, __ATOMIC_RELEASE);
+  return hz;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__tick_hz_slot</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L182">line 182</a></td></tr><tr class="t-dsc"><td><code>hz</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L195">line 195</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calibrate.hpp.html#f-e2c5e69256b89854">counter_traits</a>, <a href="calibrate.hpp.html#f-91a7cac52cca8220">calibrate_tick_hz</a>.</p></section><section class="function-entry" id="f-7c790087d270631f"><h3><code>micron::chrono::set_tick_hz(u64 hz) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L199">line 199</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+set_tick_hz(u64 hz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 hz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+set_tick_hz(u64 hz) noexcept
+{
+  __impl::__tick_hz_slot = hz;
+  __atomic_store_n(&amp;__impl::__tick_hz_state, 1u, __ATOMIC_RELEASE);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c171cee3669bac82"><h3><code>micron::chrono::ticks_to_ns(u64 ticks) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L206">line 206</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+ticks_to_ns(u64 ticks) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 ticks</code></li></ul><h4>Effects</h4><p>Returns <code>cycles_to_ns(ticks, tick_hz())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+ticks_to_ns(u64 ticks) noexcept
+{
+  return cycles_to_ns(ticks, tick_hz());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cycles_to_ns(ticks, tick_hz())</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L208">line 208</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calibrate.hpp.html#f-8adee7651ffd634f">cycles_to_ns</a>, <a href="calibrate.hpp.html#f-ba10156e72779087">tick_hz</a>.</p></section><section class="function-entry" id="f-d7b73ece35c08ad3"><h3><code>micron::chrono::ns_to_ticks(u64 ns) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L212">line 212</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+ns_to_ticks(u64 ns) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 ns</code></li></ul><h4>Effects</h4><p>Returns <code>ns_to_cycles(ns, tick_hz())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+ns_to_ticks(u64 ns) noexcept
+{
+  return ns_to_cycles(ns, tick_hz());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ns_to_cycles(ns, tick_hz())</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L214">line 214</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calibrate.hpp.html#f-b8e7e15982f5bba5">ns_to_cycles</a>, <a href="calibrate.hpp.html#f-ba10156e72779087">tick_hz</a>.</p></section><section class="function-entry" id="f-c2b020a3cac12054"><h3><code>micron::chrono::calibrate_core_hz(void) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L277">line 277</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+calibrate_core_hz(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+calibrate_core_hz(void) noexcept
+{
+  const i64 w0 = clock_ns(clock_monotonic);
+  if ( w0 &gt;= 0 ) {
+    for ( ;; ) {
+      (void)__calib_sample();
+      const i64 wn = clock_ns(clock_monotonic);
+      if ( wn &lt; 0 || static_cast&lt;u64&gt;(wn - w0) &gt;= calib_warmup_ns ) break;
+    }
+  }
+
+  u64 samples[calib_tries];
+  u32 got = 0;
+  for ( u32 i = 0; i &lt; calib_tries; ++i ) {
+    const u64 ns = __calib_sample();
+    if ( ns != 0 ) samples[got++] = ns;
+  }
+  if ( got == 0 ) return 0;
+
+  // WARNING: on a part that boosts, &quot;the highest frequency observed&quot; is the boost clock
+  const u64 fastest = __impl::__min_u64(samples, got);
+  if ( fastest == 0 ) return 0;
+  // calib_iters extra iterations cost calib_iters core cycles
+  return (static_cast&lt;u64&gt;(calib_iters) * 1&#x27;000&#x27;000&#x27;000ull) / fastest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L294">line 294</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L298">line 298</a></td></tr><tr class="t-dsc"><td><code>(static_cast&lt;u64&gt;(calib_iters) * 1&#x27;000&#x27;000&#x27;000ull) / fastest</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L300">line 300</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="clock.hpp.html#f-ff2ff9e9d46edddd">clock_ns</a>, <a href="calibrate.hpp.html#f-e4b69a2fe9d0c04f">__calib_sample</a>, <a href="calibrate.hpp.html#f-383f587f3e673388">__impl::__min_u64</a>.</p></section><section class="function-entry" id="f-8c8cf7cdfd5bced9"><h3><code>micron::chrono::core_hz_spread(void) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L311">line 311</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline freq_spread
+core_hz_spread(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline freq_spread
+core_hz_spread(void) noexcept
+{
+  freq_spread s{};
+  u64 v[calib_tries];
+  u32 got = 0;
+  for ( u32 i = 0; i &lt; calib_tries; ++i ) {
+    const u64 ns = __calib_sample();
+    if ( ns != 0 ) v[got++] = (static_cast&lt;u64&gt;(calib_iters) * 1&#x27;000&#x27;000&#x27;000ull) / ns;
+  }
+  if ( got == 0 ) return s;
+  __impl::__sort_u64(v, got);
+  s.samples = got;
+  s.min_hz = v[0];
+  s.median_hz = v[(got - 1) / 2];
+  s.max_hz = v[got - 1];
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L320">line 320</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L326">line 326</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calibrate.hpp.html#f-e4b69a2fe9d0c04f">__calib_sample</a>, <a href="calibrate.hpp.html#f-02b40d63ddaacef8">__impl::__sort_u64</a>.</p></section><section class="function-entry" id="f-73adfae8711bd39d"><h3><code>micron::chrono::core_hz(void) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L330">line 330</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+core_hz(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+core_hz(void) noexcept
+{
+  if ( __atomic_load_n(&amp;__impl::__core_hz_state, __ATOMIC_ACQUIRE) != 0u ) [[likely]]
+    return __impl::__core_hz_slot;
+  u64 hz = calibrate_core_hz();
+  if ( hz == 0 ) hz = tick_hz();
+  __impl::__core_hz_slot = hz;
+  __atomic_store_n(&amp;__impl::__core_hz_state, 1u, __ATOMIC_RELEASE);
+  return hz;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__core_hz_slot</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L333">line 333</a></td></tr><tr class="t-dsc"><td><code>hz</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L338">line 338</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calibrate.hpp.html#f-c2b020a3cac12054">calibrate_core_hz</a>, <a href="calibrate.hpp.html#f-ba10156e72779087">tick_hz</a>.</p></section><section class="function-entry" id="f-3a6021c6a7e2a4ba"><h3><code>micron::chrono::set_core_hz(u64 hz) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L342">line 342</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+set_core_hz(u64 hz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 hz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+set_core_hz(u64 hz) noexcept
+{
+  __impl::__core_hz_slot = hz;
+  __atomic_store_n(&amp;__impl::__core_hz_state, 1u, __ATOMIC_RELEASE);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5faefa5f3dc62297"><h3><code>micron::chrono::reset_core_hz(void) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L349">line 349</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+reset_core_hz(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+reset_core_hz(void) noexcept
+{
+  __atomic_store_n(&amp;__impl::__core_hz_state, 0u, __ATOMIC_RELEASE);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-2825e09c5a8f5430"><h3><code>micron::chrono::timer_overhead(u32 samples = 65) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L364">line 364</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;serial S = default_serial&gt;
+inline timer_stats
+timer_overhead(u32 samples = 65) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 samples = 65</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;serial S = default_serial&gt;
+inline timer_stats
+timer_overhead(u32 samples = 65) noexcept
+{
+  constexpr u32 __cap = 257;
+  if ( samples &gt; __cap ) samples = __cap;
+  if ( samples &lt; 3 ) samples = 3;
+  u64 v[__cap];
+
+  for ( u32 i = 0; i &lt; 8; ++i ) {
+    const u64 a = tick_start&lt;S&gt;();
+    const u64 b = tick_end&lt;S&gt;();
+    (void)a;
+    (void)b;
+  }
+  for ( u32 i = 0; i &lt; samples; ++i ) {
+    const u64 a = tick_start&lt;S&gt;();
+    const u64 b = tick_end&lt;S&gt;();
+    v[i] = b &gt; a ? b - a : 0;
+  }
+
+  timer_stats s{};
+  s.min_ticks = __impl::__min_u64(v, samples);
+  __impl::__sort_u64(v, samples);
+  s.median_ticks = v[(samples - 1) / 2];
+  s.max_ticks = v[samples - 1];
+  const u64 hz = tick_hz();
+  s.min_ns = cycles_to_ns(s.min_ticks, hz);
+  s.median_ns = cycles_to_ns(s.median_ticks, hz);
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L391">line 391</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cycles.hpp.html#f-e61a406249c4b0cf">tick_start&lt;S&gt;</a>, <a href="cycles.hpp.html#f-ba40c21d86af0c27">tick_end&lt;S&gt;</a>, <a href="calibrate.hpp.html#f-383f587f3e673388">__impl::__min_u64</a>, <a href="calibrate.hpp.html#f-02b40d63ddaacef8">__impl::__sort_u64</a>, <a href="calibrate.hpp.html#f-ba10156e72779087">tick_hz</a>, <a href="calibrate.hpp.html#f-8adee7651ffd634f">cycles_to_ns</a>.</p></section><section class="function-entry" id="f-f92b3e15d9e0ff58"><h3><code>micron::chrono::timer_resolution(u32 samples = 65) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L396">line 396</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;serial S = default_serial&gt;
+inline timer_stats
+timer_resolution(u32 samples = 65) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 samples = 65</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;serial S = default_serial&gt;
+inline timer_stats
+timer_resolution(u32 samples = 65) noexcept
+{
+  constexpr u32 __cap = 257;
+  if ( samples &gt; __cap ) samples = __cap;
+  if ( samples &lt; 3 ) samples = 3;
+  u64 v[__cap];
+  u32 got = 0;
+
+  for ( u32 i = 0; i &lt; samples * 4 &amp;&amp; got &lt; samples; ++i ) {
+    const u64 a = tick&lt;S&gt;();
+    u64 b = a;
+    for ( u32 k = 0; k &lt; 4096 &amp;&amp; b == a; ++k ) b = tick&lt;S&gt;();
+    if ( b &gt; a ) v[got++] = b - a;
+  }
+  timer_stats s{};
+  if ( got == 0 ) return s;
+  s.min_ticks = __impl::__min_u64(v, got);
+  __impl::__sort_u64(v, got);
+  s.median_ticks = v[(got - 1) / 2];
+  s.max_ticks = v[got - 1];
+  const u64 hz = tick_hz();
+  s.min_ns = cycles_to_ns(s.min_ticks, hz);
+  s.median_ns = cycles_to_ns(s.median_ticks, hz);
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L411">line 411</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L419">line 419</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cycles.hpp.html#f-9555137f1113f155">tick&lt;S&gt;</a>, <a href="calibrate.hpp.html#f-383f587f3e673388">__impl::__min_u64</a>, <a href="calibrate.hpp.html#f-02b40d63ddaacef8">__impl::__sort_u64</a>, <a href="calibrate.hpp.html#f-ba10156e72779087">tick_hz</a>, <a href="calibrate.hpp.html#f-8adee7651ffd634f">cycles_to_ns</a>.</p></section><section class="function-entry" id="f-717ea7f40c3af462"><h3><code>micron::chrono::clock_cost_ns(clockid_t clk, u32 reps = 1000) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L423">line 423</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+clock_cost_ns(clockid_t clk, u32 reps = 1000) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>clockid_t clk</code></li><li><code>u32 reps = 1000</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+clock_cost_ns(clockid_t clk, u32 reps = 1000) noexcept
+{
+  if ( reps == 0 ) reps = 1;
+  const i64 t0 = clock_ns(clock_monotonic);
+  if ( t0 &lt; 0 ) return 0;
+  i64 sink = 0;
+  for ( u32 i = 0; i &lt; reps; ++i ) {
+    sink += clock_ns(clk);
+    __asm__ __volatile__(&quot;&quot; : &quot;+r&quot;(sink));
+  }
+  const i64 t1 = clock_ns(clock_monotonic);
+  if ( t1 &lt; 0 || t1 &lt;= t0 ) return 0;
+  return static_cast&lt;u64&gt;(t1 - t0) / reps;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L427">line 427</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L434">line 434</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;u64&gt;(t1 - t0) / reps</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L435">line 435</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="clock.hpp.html#f-ff2ff9e9d46edddd">clock_ns</a>.</p></section><section class="function-entry" id="f-7443c278fd67b731"><h3><code>micron::chrono::report(void) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L454">line 454</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline clock_report
+report(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline clock_report
+report(void) noexcept
+{
+  clock_report r{};
+  const tsc_traits t = counter_traits();
+  r.tick_hz = tick_hz();
+  r.core_hz = core_hz();
+  r.counter_native = counter_is_native;
+  r.counter_invariant = t.invariant;
+  r.has_rdtscp = t.has_rdtscp;
+  r.has_serialize = t.has_serialize;
+  r.counter_overhead_ticks = timer_overhead&lt;&gt;().min_ticks;
+  r.counter_resolution_ticks = timer_resolution&lt;&gt;().min_ticks;
+  r.realtime_cost_ns = clock_cost_ns(clock_realtime);
+  r.monotonic_cost_ns = clock_cost_ns(clock_monotonic);
+  r.monotonic_coarse_cost_ns = clock_cost_ns(clock_monotonic_coarse);
+  const i64 res = clock_resolution_ns(clock_monotonic);
+  r.monotonic_res_ns = res &lt; 0 ? 0 : static_cast&lt;u64&gt;(res);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L471">line 471</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calibrate.hpp.html#f-e2c5e69256b89854">counter_traits</a>, <a href="calibrate.hpp.html#f-ba10156e72779087">tick_hz</a>, <a href="calibrate.hpp.html#f-73adfae8711bd39d">core_hz</a>, <a href="calibrate.hpp.html#f-2825e09c5a8f5430">timer_overhead&lt;&gt;</a>, <a href="calibrate.hpp.html#f-f92b3e15d9e0ff58">timer_resolution&lt;&gt;</a>, <a href="calibrate.hpp.html#f-717ea7f40c3af462">clock_cost_ns</a>, <a href="clock.hpp.html#f-004adccc1acbd217">clock_resolution_ns</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-02b40d63ddaacef8"><h3><code>micron::chrono::__impl::__sort_u64(u64 *v, u32 n) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L123">line 123</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__sort_u64(u64 *v, u32 n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 *v</code></li><li><code>u32 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__sort_u64(u64 *v, u32 n) noexcept
+{
+  for ( u32 i = 1; i &lt; n; ++i ) {
+    const u64 key = v[i];
+    u32 j = i;
+    while ( j &gt; 0 &amp;&amp; v[j - 1] &gt; key ) {
+      v[j] = v[j - 1];
+      --j;
+    }
+    v[j] = key;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c4fa986113ed1856"><h3><code>micron::chrono::__impl::__median_u64(u64 *v, u32 n) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L137">line 137</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+__median_u64(u64 *v, u32 n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 *v</code></li><li><code>u32 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+__median_u64(u64 *v, u32 n) noexcept
+{
+  if ( n == 0 ) return 0;
+  __sort_u64(v, n);
+  return v[(n - 1) / 2];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>v[(n - 1) / 2]</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L141">line 141</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="calibrate.hpp.html#f-02b40d63ddaacef8">__sort_u64</a>.</p></section><section class="function-entry" id="f-383f587f3e673388"><h3><code>micron::chrono::__impl::__min_u64(const u64 *v, u32 n) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L145">line 145</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+__min_u64(const u64 *v, u32 n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u64 *v</code></li><li><code>u32 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+__min_u64(const u64 *v, u32 n) noexcept
+{
+  if ( n == 0 ) return 0;
+  u64 m = v[0];
+  for ( u32 i = 1; i &lt; n; ++i )
+    if ( v[i] &lt; m ) m = v[i];
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L147">line 147</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L151">line 151</a></td></tr></tbody></table></section><section class="function-entry" id="f-0c93f087b3372b0c"><h3><code>micron::chrono::__impl::calib_kernel(i64 iters) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L243">line 243</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::noinline]] inline void
+calib_kernel(i64 iters) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm64) || defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 iters</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::noinline]] inline void
+calib_kernel(i64 iters) noexcept
+{
+  if ( iters &lt;= 0 ) return;
+  iters &amp;= ~static_cast&lt;i64&gt;(3);
+  do {
+    __asm__ __volatile__(&quot;&quot; : &quot;+r&quot;(iters));
+    --iters;
+    __asm__ __volatile__(&quot;&quot; : &quot;+r&quot;(iters));
+    --iters;
+    __asm__ __volatile__(&quot;&quot; : &quot;+r&quot;(iters));
+    --iters;
+    --iters;
+  } while ( iters &gt; 0 );
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/chrono/calibrate.hpp.html#L245">line 245</a></td></tr></tbody></table></section><section class="function-entry" id="f-e4b69a2fe9d0c04f"><h3><code>micron::chrono::__calib_sample(void) noexcept</code></h3><p>Defined in <code>chrono/calibrate.hpp</code>, <a href="../../source/chrono/calibrate.hpp.html#L263">line 263</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+__calib_sample(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+__calib_sample(void) noexcept
+{
+  const i64 t0 = clock_ns(clock_monotonic);
+  __impl::calib_kernel(calib_iters);
+  const i64 t1 = clock_ns(clock_monotonic);
+  __impl::calib_kernel(calib_iters * 2);
+  const i64 t2 = clock_ns(clock_monotonic);
+  if ( t0 &lt; 0 || t1 &lt; 0 || t2 &lt; 0 ) return 0;
+  const i64 d = (t2 - t1) - (t1 - t0);
+  return d &gt; 0 ? static_cast&lt;u64&gt;(d) : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L270">line 270</a></td></tr><tr class="t-dsc"><td><code>d &gt; 0 ? static_cast&lt;u64&gt;(d) : 0</code></td><td><a href="../../source/chrono/calibrate.hpp.html#L272">line 272</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="clock.hpp.html#f-ff2ff9e9d46edddd">clock_ns</a>, <a href="calibrate.hpp.html#f-0c93f087b3372b0c">__impl::calib_kernel</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

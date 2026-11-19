@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sync/pause.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sync/pause.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/synchronization.html">Synchronization</a></div><p>Defined in header <code>&lt;micron/sync/pause.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sync/pause.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-d4ab0415b16f2d48">micron::cpu_pause()</a></td><td>function; line 36<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-b5aeaa6d4dbdb44d">micron::pause(F f, Args... args)</a></td><td>function; line 49<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-a0f262ddc2a87c2c">micron::pause()</a></td><td>function; line 66<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-37c59fe3ef8dee23">micron::wait(int pid)</a></td><td>function; line 83<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-df89846a00870b0d">micron::wait_thread(int tid)</a></td><td>function; line 94<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-a74828f6caee1785">micron::can_wait(int tid)</a></td><td>function; line 109<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-68af3804986f149a">micron::try_wait_thread(int tid)</a></td><td>function; line 119<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-04afbb2e430bb01c">micron::await(Args... args)</a></td><td>function; line 129<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-7c2fa68f8afe6ed4">micron::spin_for(fduration_t timeout)</a></td><td>function; line 148<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-b113156d418fbdd5">micron::wait_for(fduration_t timeout)</a></td><td>function; line 158<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-14ac074edc229396">micron::sleep_duration(const fduration_t s)</a></td><td>function; line 169<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-89b84bc8280e78a9">micron::ssleep(const umax_t s)</a></td><td>function; line 191<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-f07faed1fb3502b9">micron::sleep_for(umax_t ms)</a></td><td>function; line 206<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-9f61de339552e10d">micron::sleep(ulong_t ms)</a></td><td>function; line 221<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-9fcc58fe7ef3f2fb">micron::sleep_nano(umax_t ns)</a></td><td>function; line 236<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-d4ab0415b16f2d48"><h3><code>micron::cpu_pause()</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L36">line 36</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;umax_t L&gt;
+void
+cpu_pause()</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;umax_t L&gt;
+void
+cpu_pause()
+{
+  timespec_t r = { L / 1000000000UL, L % 1000000000UL };
+
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, r) != -error::interrupted ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-b5aeaa6d4dbdb44d"><h3><code>micron::pause(F f, Args... args)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L49">line 49</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename... Args&gt;
+inline void
+pause(F f, Args... args)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F f</code></li><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename... Args&gt;
+inline void
+pause(F f, Args... args)
+{
+  micron::__testcancel();
+  micron::posix::sigset_t old;
+  micron::posix::sigset_t signal;
+  micron::posix::sigemptyset(signal);
+  micron::posix::sigaddset(signal, posix::sig_cont);
+  micron::posix::sigprocmask(posix::sig_block, signal, &amp;old);
+  int sig = 0;
+  auto s = micron::posix::sigwait(signal, sig);
+  micron::posix::sigprocmask(posix::sig_setmask, old, nullptr);
+  micron::__testcancel();
+  if ( s == 0 ) f(sig, args...);
+  return;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sync/pause.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/signal.hpp.html#f-a3519d6915ce00cd">micron::posix::sigemptyset</a>, <a href="../linux/sys/signal.hpp.html#f-f92e6cd4c4320ade">micron::posix::sigaddset</a>, <a href="../linux/sys/signal.hpp.html#f-bd7867fe541a6dbf">micron::posix::sigprocmask</a>, <a href="../linux/sys/signal.hpp.html#f-4ad390545219c197">micron::posix::sigwait</a>.</p></section><section class="function-entry" id="f-a0f262ddc2a87c2c"><h3><code>micron::pause()</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L66">line 66</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+pause()</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+pause()
+{
+  micron::__testcancel();
+  micron::posix::sigset_t signal;
+  micron::posix::sigemptyset(signal);
+  micron::posix::sigaddset(signal, posix::sig_cont);
+  micron::posix::sigprocmask(posix::sig_block, signal, nullptr);
+  int sig = 0;
+  micron::posix::sigwait(signal, sig);
+  micron::__testcancel();
+  return;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sync/pause.hpp.html#L76">line 76</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/signal.hpp.html#f-a3519d6915ce00cd">micron::posix::sigemptyset</a>, <a href="../linux/sys/signal.hpp.html#f-f92e6cd4c4320ade">micron::posix::sigaddset</a>, <a href="../linux/sys/signal.hpp.html#f-bd7867fe541a6dbf">micron::posix::sigprocmask</a>, <a href="../linux/sys/signal.hpp.html#f-4ad390545219c197">micron::posix::sigwait</a>.</p></section><section class="function-entry" id="f-37c59fe3ef8dee23"><h3><code>micron::wait(int pid)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+wait(int pid)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int pid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+wait(int pid)
+{
+  micron::__testcancel();
+  int status = 0;
+  int r = micron::waitpid(pid, &amp;status, 0);
+  micron::__testcancel();
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/sync/pause.hpp.html#L89">line 89</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/process/wait.hpp.html#f-72deb6806252135c">micron::waitpid</a>.</p></section><section class="function-entry" id="f-df89846a00870b0d"><h3><code>micron::wait_thread(int tid)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L94">line 94</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+wait_thread(int tid)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int tid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+wait_thread(int tid)
+{
+  // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
+  micron::__testcancel();
+  micron::posix::siginfo_t i;
+  int r = static_cast&lt;int&gt;(micron::waitid(static_cast&lt;idtype_t&gt;(P_PID), static_cast&lt;posix::id_t&gt;(tid), i, exited));
+  micron::__testcancel();
+  if ( r &lt; 0 ) {
+    if ( r == -10 ) {
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/sync/pause.hpp.html#L105">line 105</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/process/wait.hpp.html#f-13cff28beb45579f">micron::waitid</a>.</p></section><section class="function-entry" id="f-a74828f6caee1785"><h3><code>micron::can_wait(int tid)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L109">line 109</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+can_wait(int tid)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int tid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+can_wait(int tid)
+{
+  // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
+  micron::posix::siginfo_t i;
+  micron::waitid(static_cast&lt;idtype_t&gt;(P_PID), static_cast&lt;posix::id_t&gt;(tid), i, exited | nowait);
+  if ( i.si_code == posix::cld_exited or i.si_code == posix::cld_dumped or i.si_code == posix::cld_killed ) return true;
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/sync/pause.hpp.html#L114">line 114</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sync/pause.hpp.html#L115">line 115</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/process/wait.hpp.html#f-13cff28beb45579f">micron::waitid</a>.</p></section><section class="function-entry" id="f-68af3804986f149a"><h3><code>micron::try_wait_thread(int tid)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L119">line 119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+try_wait_thread(int tid)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int tid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+try_wait_thread(int tid)
+{
+  // int waitid(idtype_t idtype, id_t id, micron::siginfo_t *infop, int options);
+  int status = 0;
+  return micron::waitpid(tid, &amp;status, nohang);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::waitpid(tid, &amp;status, nohang)</code></td><td><a href="../../source/sync/pause.hpp.html#L123">line 123</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/process/wait.hpp.html#f-72deb6806252135c">micron::waitpid</a>.</p></section><section class="function-entry" id="f-04afbb2e430bb01c"><h3><code>micron::await(Args... args)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L129">line 129</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+inline int
+await(Args... args)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+inline int
+await(Args... args)
+{
+  micron::__testcancel();
+  micron::posix::sigset_t old;
+  int save;
+  micron::posix::sigset_t signal;
+  micron::posix::sigemptyset(signal);
+  (micron::posix::sigaddset(signal, args), ...);
+  if ( micron::posix::sigprocmask(posix::sig_setmask, signal, &amp;old) &lt; 0 ) return -1;
+  micron::posix::sigwait(signal, save);
+  if ( micron::posix::sigprocmask(posix::sig_setmask, old, nullptr) &lt; 0 ) return -1;
+  micron::__testcancel();
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/sync/pause.hpp.html#L137">line 137</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/sync/pause.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/sync/pause.hpp.html#L141">line 141</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/signal.hpp.html#f-a3519d6915ce00cd">micron::posix::sigemptyset</a>, <a href="../linux/sys/signal.hpp.html#f-f92e6cd4c4320ade">micron::posix::sigaddset</a>, <a href="../linux/sys/signal.hpp.html#f-bd7867fe541a6dbf">micron::posix::sigprocmask</a>, <a href="../linux/sys/signal.hpp.html#f-4ad390545219c197">micron::posix::sigwait</a>.</p></section><section class="function-entry" id="f-7c2fa68f8afe6ed4"><h3><code>micron::spin_for(fduration_t timeout)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L148">line 148</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+spin_for(fduration_t timeout)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fduration_t timeout</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+spin_for(fduration_t timeout)
+{
+  auto start = micron::steady_clock::now();
+  for ( ;; ) {
+    if ( (micron::steady_clock::now() - start &gt;= timeout) ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-b113156d418fbdd5"><h3><code>micron::wait_for(fduration_t timeout)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L158">line 158</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+wait_for(fduration_t timeout)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fduration_t timeout</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+wait_for(fduration_t timeout)
+{
+  auto start = micron::steady_clock::now();
+  for ( ;; ) {
+    if ( (micron::steady_clock::now() - start &gt;= timeout) ) break;
+    // since its a ms dt
+    cpu_pause&lt;1000&gt;();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="pause.hpp.html#f-d4ab0415b16f2d48">cpu_pause&lt;1000&gt;</a>.</p></section><section class="function-entry" id="f-14ac074edc229396"><h3><code>micron::sleep_duration(const fduration_t s)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L169">line 169</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+sleep_duration(const fduration_t s)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const fduration_t s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+sleep_duration(const fduration_t s)
+{
+  timespec_t r, rmn;
+
+  // clamp negatives to 0; a negative duration would otherwise yield a negative tv_nsec and EINVAL-spin.
+  const auto total_ms = s &lt; static_cast&lt;micron::fduration_t&gt;(0) ? static_cast&lt;micron::fduration_t&gt;(0) : s;
+
+  r.tv_sec = static_cast&lt;time64_t&gt;(total_ms / 1000.0);
+
+  const auto frac_ms = total_ms - static_cast&lt;micron::fduration_t&gt;(r.tv_sec) * 1000.0;
+
+  r.tv_nsec = static_cast&lt;long&gt;(frac_ms * 1&#x27;000&#x27;000.0);
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, rmn) != -error::interrupted ) break;
+    r = rmn;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-89b84bc8280e78a9"><h3><code>micron::ssleep(const umax_t s)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L191">line 191</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+ssleep(const umax_t s)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const umax_t s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+ssleep(const umax_t s)
+{
+  timespec_t r, rmn;
+  r.tv_sec = static_cast&lt;time64_t&gt;(s);
+  r.tv_nsec = 0;
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, rmn) != -error::interrupted ) break;
+    r = rmn;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-f07faed1fb3502b9"><h3><code>micron::sleep_for(umax_t ms)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L206">line 206</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+sleep_for(umax_t ms)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>umax_t ms</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+sleep_for(umax_t ms)
+{
+  timespec_t r;
+  r.tv_sec = ms / 1000;
+  r.tv_nsec = (ms % 1000) * 1000000UL;
+
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, r) != -error::interrupted ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-9f61de339552e10d"><h3><code>micron::sleep(ulong_t ms)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L221">line 221</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+sleep(ulong_t ms)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>ulong_t ms</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+sleep(ulong_t ms)
+{
+  timespec_t r;
+  r.tv_sec = ms / 1000;
+  r.tv_nsec = (ms % 1000) * 1000000UL;
+
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, r) != -error::interrupted ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-9fcc58fe7ef3f2fb"><h3><code>micron::sleep_nano(umax_t ns)</code></h3><p>Defined in <code>sync/pause.hpp</code>, <a href="../../source/sync/pause.hpp.html#L236">line 236</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+sleep_nano(umax_t ns)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>umax_t ns</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+sleep_nano(umax_t ns)
+{
+  timespec_t r;
+  r.tv_sec = ns / 1000000000UL;
+  r.tv_nsec = ns % 1000000000UL;
+
+  for ( ;; ) {
+    micron::__testcancel();
+    if ( micron::nanosleep(r, r) != -error::interrupted ) break;
+    __cpu_pause();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__cancelpoint.hpp.html#f-f8efc5d0129e42c0">micron::__testcancel</a>, <a href="../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

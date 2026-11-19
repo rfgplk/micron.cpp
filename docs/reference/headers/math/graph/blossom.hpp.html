@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/blossom.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/blossom.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/blossom.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/blossom.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-9b01deae6635320d">micron::math::graphs::matching_objective</code></td><td>enum; line 16</td></tr><tr class="t-dsc"><td><code id="s-c3c1faec6db601c6">micron::math::graphs::matching_objective::maximum_cardinality_then_weight</code></td><td>enumerator; line 16</td></tr><tr class="t-dsc"><td><code id="s-9492672d7a2fa048">micron::math::graphs::matching_objective::maximum_weight</code></td><td>enumerator; line 16</td></tr><tr class="t-dsc"><td><code id="s-b3b50a1b4259fd69">micron::math::graphs::unit_edge_weight</code></td><td>struct; line 18</td></tr><tr class="t-dsc"><td><code id="s-0fc1066fb388ddba">micron::math::graphs::weighted_matching_result</code></td><td>struct; line 27</td></tr><tr class="t-dsc"><td><code id="s-5b0a1eefc0dd9662">micron::math::graphs::weighted_matching_result::status</code></td><td>member; line 28</td></tr><tr class="t-dsc"><td><code id="s-2b560d077b25304b">micron::math::graphs::weighted_matching_result::mate</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-0cd299bcfa7d7cd8">micron::math::graphs::weighted_matching_result::mate_edge</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-56353cc98ea0544d">micron::math::graphs::weighted_matching_result::edges</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-bbba6b1e0717588f">micron::math::graphs::weighted_matching_result::cardinality</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-3ee2e09b62ba3e69">micron::math::graphs::weighted_matching_result::total_weight</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-25bdf2b7a1c3e99f">micron::math::graphs::weighted_matching_result::vertices</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-f5bcf3fb1ffdf509">micron::math::graphs::weighted_matching_workspace</code></td><td>struct; line 43</td></tr><tr class="t-dsc"><td><code id="s-23005ab74e45969c">micron::math::graphs::weighted_matching_workspace::dense_to_vertex</code></td><td>member; line 44</td></tr><tr class="t-dsc"><td><code id="s-080ed0add7143f24">micron::math::graphs::weighted_matching_workspace::vertex_to_dense</code></td><td>member; line 45</td></tr><tr class="t-dsc"><td><code id="s-91246ec4f67c3978">micron::math::graphs::weighted_matching_workspace::chosen</code></td><td>member; line 46</td></tr><tr class="t-dsc"><td><code id="s-acb6c080cb87d0de">micron::math::graphs::weighted_matching_workspace::chosen_weight</code></td><td>member; line 47</td></tr><tr class="t-dsc"><td><a href="#f-94288d2bc360f538">micron::math::graphs::unit_edge_weight::operator()(const G &amp;, typename G::edge_descriptor) const noexcept</a></td><td>function; line 21</td></tr><tr class="t-dsc"><td><a href="#f-b634ca6e411435bc">micron::math::graphs::weighted_matching_result::perfect() const noexcept</a></td><td>function; line 37</td></tr><tr class="t-dsc"><td><a href="#f-463dac30b1ca307d">micron::math::graphs::weighted_matching_workspace::reserve(usize vertex_slots, usize vertices)</a></td><td>function; line 50</td></tr><tr class="t-dsc"><td><a href="#f-108f2ed0c993494e">micron::math::graphs::maximum_weighted_matching(
+    const G &amp;graph, WeightMap weight_map,
+    weighted_matching_workspace&lt;typename G::index_type,
+                                micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                               micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt;
+        &amp;workspace,
+    matching_objective objective = matching_objective::maximum_weight)</a></td><td>function; line 509</td></tr><tr class="t-dsc"><td><a href="#f-9e4d294ee1723195">micron::math::graphs::maximum_weighted_matching(const G &amp;graph, WeightMap weight_map, matching_objective objective = matching_objective::maximum_weight)</a></td><td>function; line 617</td></tr><tr class="t-dsc"><td><a href="#f-95c8f06de4e0dd97">micron::math::graphs::maximum_weighted_matching(
+    const G &amp;graph,
+    weighted_matching_workspace&lt;typename G::index_type, micron::remove_cvref_t&lt;decltype(__impl::weight(
+                                                            micron::declval&lt;intrinsic_edge_weight &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                            micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace,
+    matching_objective objective = matching_objective::maximum_weight)</a></td><td>function; line 627</td></tr><tr class="t-dsc"><td><a href="#f-8a9be40c7d94ceb2">micron::math::graphs::maximum_weighted_matching(const G &amp;graph, matching_objective objective = matching_objective::maximum_weight)</a></td><td>function; line 639</td></tr><tr class="t-dsc"><td><a href="#f-83f0f5a93e631bd5">micron::math::graphs::maximum_cardinality_matching(const G &amp;graph)</a></td><td>function; line 646</td></tr><tr class="t-dsc"><td><a href="#f-b6d7f7c46e8045e4">micron::math::graphs::maximum_cardinality_matching(const G &amp;graph, weighted_matching_workspace&lt;typename G::index_type, i32&gt; &amp;workspace)</a></td><td>function; line 653</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-94288d2bc360f538"><h3><code>micron::math::graphs::unit_edge_weight::operator()(const G &amp;, typename G::edge_descriptor) const noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L21">line 21</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+  [[nodiscard]] constexpr i32
+  operator()(const G &amp;, typename G::edge_descriptor) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;</code></li><li><code>typename G::edge_descriptor</code></li></ul><h4>Effects</h4><p>Returns <code>1</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+  [[nodiscard]] constexpr i32
+  operator()(const G &amp;, typename G::edge_descriptor) const noexcept
+  {
+    return 1;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>1</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L23">line 23</a></td></tr></tbody></table></section><section class="function-entry" id="f-b634ca6e411435bc"><h3><code>micron::math::graphs::weighted_matching_result::perfect() const noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L37">line 37</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  perfect() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>cardinality * 2 == vertices</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  perfect() const noexcept
+  {
+    return cardinality * 2 == vertices;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cardinality * 2 == vertices</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L39">line 39</a></td></tr></tbody></table></section><section class="function-entry" id="f-463dac30b1ca307d"><h3><code>micron::math::graphs::weighted_matching_workspace::reserve(usize vertex_slots, usize vertices)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L50">line 50</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reserve(usize vertex_slots, usize vertices)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertex_slots</code></li><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reserve(usize vertex_slots, usize vertices)
+  {
+    dense_to_vertex.reserve(vertices);
+    vertex_to_dense.reserve(vertex_slots);
+    chosen.reserve(vertices * vertices);
+    chosen_weight.reserve(vertices * vertices);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-108f2ed0c993494e"><h3><code>micron::math::graphs::maximum_weighted_matching(
+    const G &amp;graph, WeightMap weight_map,
+    weighted_matching_workspace&lt;typename G::index_type,
+                                micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                               micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt;
+        &amp;workspace,
+    matching_objective objective = matching_objective::maximum_weight)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L509">line 509</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+maximum_weighted_matching(
+    const G &amp;graph, WeightMap weight_map,
+    weighted_matching_workspace&lt;typename G::index_type,
+                                micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                               micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt;
+        &amp;workspace,
+    matching_objective objective = matching_objective::maximum_weight)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>WeightMap weight_map</code></li><li><code>weighted_matching_workspace&lt;typename G::index_type,
+                                micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                               micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt;
+        &amp;workspace</code></li><li><code>matching_objective objective = matching_objective::maximum_weight</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+maximum_weighted_matching(
+    const G &amp;graph, WeightMap weight_map,
+    weighted_matching_workspace&lt;typename G::index_type,
+                                micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                               micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt;
+        &amp;workspace,
+    matching_objective objective = matching_objective::maximum_weight)
+{
+  using I = typename G::index_type;
+  using W = micron::remove_cvref_t&lt;decltype(__impl::weight(weight_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+  weighted_matching_result&lt;I, W&gt; result{
+    algorithm_status::ok,
+    micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), vertex_id&lt;I&gt;::invalid()),
+    micron::vector&lt;edge_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), edge_id&lt;I&gt;::invalid()),
+    {},
+    0,
+    W{},
+    graph.vertices_count()
+  };
+  if constexpr ( G::is_directed ) {
+    result.status = algorithm_status::invalid_graph;
+    return result;
+  }
+  workspace.reserve(graph.vertex_slots(), graph.vertices_count());
+  workspace.dense_to_vertex.clear();
+  workspace.vertex_to_dense.resize(graph.vertex_slots(), vertex_id&lt;I&gt;::invalid_value());
+  workspace.vertex_to_dense.fill(vertex_id&lt;I&gt;::invalid_value());
+  for ( auto vertex : graph.vertices() ) {
+    workspace.vertex_to_dense.data()[static_cast&lt;usize&gt;(vertex.value)] = static_cast&lt;I&gt;(workspace.dense_to_vertex.size());
+    workspace.dense_to_vertex.push_back(vertex);
+  }
+  const usize n = workspace.dense_to_vertex.size();
+  __impl::weighted_blossom_engine&lt;W&gt; engine(n);
+  using score = __impl::blossom_score&lt;W&gt;;
+  workspace.chosen.resize(n * n, edge_id&lt;I&gt;::invalid());
+  workspace.chosen.fill(edge_id&lt;I&gt;::invalid());
+  workspace.chosen_weight.resize(n * n, W{});
+  workspace.chosen_weight.fill(W{});
+  auto &amp;chosen = workspace.chosen;
+  auto &amp;chosen_weight = workspace.chosen_weight;
+  for ( auto edge : graph.edges() ) {
+    const W weight = static_cast&lt;W&gt;(__impl::weight(weight_map, graph, edge.id));
+    if ( __impl::nonfinite_weight(weight) ) {
+      result.status = algorithm_status::invalid_weight;
+      return result;
+    }
+    if ( edge.source == edge.target ) continue;
+    const usize u = static_cast&lt;usize&gt;(workspace.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);
+    const usize v = static_cast&lt;usize&gt;(workspace.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);
+    const usize position = u * n + v;
+    if ( !chosen.data()[position].valid() || chosen_weight.data()[position] &lt; weight
+         || (!(weight &lt; chosen_weight.data()[position]) &amp;&amp; !(chosen_weight.data()[position] &lt; weight)
+             &amp;&amp; edge.id &lt; chosen.data()[position]) ) {
+      chosen.data()[position] = chosen.data()[v * n + u] = edge.id;
+      chosen_weight.data()[position] = chosen_weight.data()[v * n + u] = weight;
+    }
+  }
+  typename score::number_type cardinality_bonus{};
+  if ( objective == matching_objective::maximum_cardinality_then_weight ) {
+    typename score::number_type largest_magnitude{};
+    for ( usize u = 0; u &lt; n; ++u )
+      for ( usize v = u + 1; v &lt; n; ++v ) {
+        if ( !chosen.data()[u * n + v].valid() ) continue;
+        typename score::number_type value = static_cast&lt;typename score::number_type&gt;(chosen_weight.data()[u * n + v]);
+        if ( value &lt; typename score::number_type{} ) value = -value;
+        if ( largest_magnitude &lt; value ) largest_magnitude = value;
+      }
+    cardinality_bonus = largest_magnitude * static_cast&lt;typename score::number_type&gt;(n + 1) + static_cast&lt;typename score::number_type&gt;(1);
+  }
+  for ( usize u = 0; u &lt; n; ++u )
+    for ( usize v = u + 1; v &lt; n; ++v ) {
+      if ( !chosen.data()[u * n + v].valid() ) continue;
+      const W weight = chosen_weight.data()[u * n + v];
+      score value{};
+      if constexpr ( micron::is_integral_v&lt;W&gt; )
+        value.weight = (static_cast&lt;int128_t&gt;(weight) + cardinality_bonus) * 2;
+      else
+        value.weight = (static_cast&lt;long double&gt;(weight) + cardinality_bonus) * 2.0L;
+      if ( objective == matching_objective::maximum_weight &amp;&amp; !(score{} &lt; value) ) continue;
+      engine.add_edge(u + 1, v + 1, value);
+    }
+  const auto &amp;match = engine.solve();
+  result.edges.reserve(n / 2);
+  for ( usize u = 1; u &lt;= n; ++u ) {
+    const int raw_v = match.data()[u];
+    if ( raw_v &lt;= 0 || raw_v &gt; static_cast&lt;int&gt;(n) ) continue;
+    const usize v = static_cast&lt;usize&gt;(raw_v - 1);
+    const auto original_u = workspace.dense_to_vertex.data()[u - 1];
+    const auto original_v = workspace.dense_to_vertex.data()[v];
+    const edge_id&lt;I&gt; edge = chosen.data()[(u - 1) * n + v];
+    result.mate.data()[static_cast&lt;usize&gt;(original_u.value)] = original_v;
+    result.mate_edge.data()[static_cast&lt;usize&gt;(original_u.value)] = edge;
+    if ( u - 1 &lt; v ) {
+      result.edges.push_back(edge);
+      ++result.cardinality;
+      W total{};
+      if ( !__impl::add_distance(result.total_weight, chosen_weight.data()[(u - 1) * n + v], total) ) {
+        result.status = algorithm_status::overflow;
+        return result;
+      }
+      result.total_weight = total;
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L530">line 530</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L553">line 553</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L607">line 607</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L612">line 612</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="descriptors.hpp.html#f-67b6ee49c7d91c89">vertex_id&lt;I&gt;::invalid</a>, <a href="descriptors.hpp.html#f-c53b29501dfdc86c">edge_id&lt;I&gt;::invalid</a>, <a href="descriptors.hpp.html#f-ef8d5d2565228ebe">vertex_id&lt;I&gt;::invalid_value</a>, <a href="paths.hpp.html#f-db1488364cb16b49">__impl::nonfinite_weight</a>, <a href="paths.hpp.html#f-9a610a726936d64e">__impl::add_distance</a>.</p></section><section class="function-entry" id="f-9e4d294ee1723195"><h3><code>micron::math::graphs::maximum_weighted_matching(const G &amp;graph, WeightMap weight_map, matching_objective objective = matching_objective::maximum_weight)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L617">line 617</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+maximum_weighted_matching(const G &amp;graph, WeightMap weight_map, matching_objective objective = matching_objective::maximum_weight)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>WeightMap weight_map</code></li><li><code>matching_objective objective = matching_objective::maximum_weight</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+maximum_weighted_matching(const G &amp;graph, WeightMap weight_map, matching_objective objective = matching_objective::maximum_weight)
+{
+  using I = typename G::index_type;
+  using W = micron::remove_cvref_t&lt;decltype(__impl::weight(weight_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+  weighted_matching_workspace&lt;I, W&gt; workspace;
+  return maximum_weighted_matching(graph, weight_map, workspace, objective);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>maximum_weighted_matching(graph, weight_map, workspace, objective)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L622">line 622</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="blossom.hpp.html#f-108f2ed0c993494e">maximum_weighted_matching</a>.</p></section><section class="function-entry" id="f-95c8f06de4e0dd97"><h3><code>micron::math::graphs::maximum_weighted_matching(
+    const G &amp;graph,
+    weighted_matching_workspace&lt;typename G::index_type, micron::remove_cvref_t&lt;decltype(__impl::weight(
+                                                            micron::declval&lt;intrinsic_edge_weight &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                            micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace,
+    matching_objective objective = matching_objective::maximum_weight)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L627">line 627</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+maximum_weighted_matching(
+    const G &amp;graph,
+    weighted_matching_workspace&lt;typename G::index_type, micron::remove_cvref_t&lt;decltype(__impl::weight(
+                                                            micron::declval&lt;intrinsic_edge_weight &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                            micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace,
+    matching_objective objective = matching_objective::maximum_weight)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>weighted_matching_workspace&lt;typename G::index_type, micron::remove_cvref_t&lt;decltype(__impl::weight(
+                                                            micron::declval&lt;intrinsic_edge_weight &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                            micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace</code></li><li><code>matching_objective objective = matching_objective::maximum_weight</code></li></ul><h4>Effects</h4><p>Returns <code>maximum_weighted_matching(graph, intrinsic_edge_weight{}, workspace, objective)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+maximum_weighted_matching(
+    const G &amp;graph,
+    weighted_matching_workspace&lt;typename G::index_type, micron::remove_cvref_t&lt;decltype(__impl::weight(
+                                                            micron::declval&lt;intrinsic_edge_weight &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                            micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace,
+    matching_objective objective = matching_objective::maximum_weight)
+{
+  return maximum_weighted_matching(graph, intrinsic_edge_weight{}, workspace, objective);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>maximum_weighted_matching(graph, intrinsic_edge_weight{}, workspace, objective)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L634">line 634</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-108f2ed0c993494e">maximum_weighted_matching</a>.</p></section><section class="function-entry" id="f-8a9be40c7d94ceb2"><h3><code>micron::math::graphs::maximum_weighted_matching(const G &amp;graph, matching_objective objective = matching_objective::maximum_weight)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L639">line 639</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+maximum_weighted_matching(const G &amp;graph, matching_objective objective = matching_objective::maximum_weight)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>matching_objective objective = matching_objective::maximum_weight</code></li></ul><h4>Effects</h4><p>Returns <code>maximum_weighted_matching(graph, intrinsic_edge_weight{}, objective)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+maximum_weighted_matching(const G &amp;graph, matching_objective objective = matching_objective::maximum_weight)
+{
+  return maximum_weighted_matching(graph, intrinsic_edge_weight{}, objective);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>maximum_weighted_matching(graph, intrinsic_edge_weight{}, objective)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L641">line 641</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-108f2ed0c993494e">maximum_weighted_matching</a>.</p></section><section class="function-entry" id="f-83f0f5a93e631bd5"><h3><code>micron::math::graphs::maximum_cardinality_matching(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L646">line 646</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+maximum_cardinality_matching(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Returns <code>maximum_weighted_matching(graph, unit_edge_weight{}, matching_objective::maximum_cardinality_then_weight)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+maximum_cardinality_matching(const G &amp;graph)
+{
+  return maximum_weighted_matching(graph, unit_edge_weight{}, matching_objective::maximum_cardinality_then_weight);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>maximum_weighted_matching(graph, unit_edge_weight{}, matching_objective::maximum_cardinality_then_weight)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L648">line 648</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-108f2ed0c993494e">maximum_weighted_matching</a>.</p></section><section class="function-entry" id="f-b6d7f7c46e8045e4"><h3><code>micron::math::graphs::maximum_cardinality_matching(const G &amp;graph, weighted_matching_workspace&lt;typename G::index_type, i32&gt; &amp;workspace)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L653">line 653</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+maximum_cardinality_matching(const G &amp;graph, weighted_matching_workspace&lt;typename G::index_type, i32&gt; &amp;workspace)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>weighted_matching_workspace&lt;typename G::index_type, i32&gt; &amp;workspace</code></li></ul><h4>Effects</h4><p>Returns <code>maximum_weighted_matching(graph, unit_edge_weight{}, workspace, matching_objective::maximum_cardinality_then_weight)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+maximum_cardinality_matching(const G &amp;graph, weighted_matching_workspace&lt;typename G::index_type, i32&gt; &amp;workspace)
+{
+  return maximum_weighted_matching(graph, unit_edge_weight{}, workspace, matching_objective::maximum_cardinality_then_weight);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>maximum_weighted_matching(graph, unit_edge_weight{}, workspace, matching_objective::maximum_cardinality_then_weight)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L655">line 655</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-108f2ed0c993494e">maximum_weighted_matching</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-b029a52882506201"><h3><code>micron::math::graphs::__impl::blossom_score::operator==(const blossom_score &amp;, const blossom_score &amp;) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>friend constexpr bool operator==(const blossom_score &amp;, const blossom_score &amp;) noexcept = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;</code></li><li><code>const blossom_score &amp;</code></li></ul><h4>Effects</h4><p>This is a declaration. Its body is supplied by the runtime, compiler, or host. The source declaration does not specify additional effects.</p></section><section class="function-entry" id="f-8fc3e8d44e033d4b"><h3><code>micron::math::graphs::__impl::blossom_score::operator&lt;(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L70">line 70</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>friend constexpr bool
+  operator&lt;(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;a</code></li><li><code>const blossom_score &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>a.cardinal &lt; b.cardinal || (a.cardinal == b.cardinal &amp;&amp; a.weight &lt; b.weight)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">friend constexpr bool
+  operator&lt;(const blossom_score &amp;a, const blossom_score &amp;b) noexcept
+  {
+    return a.cardinal &lt; b.cardinal || (a.cardinal == b.cardinal &amp;&amp; a.weight &lt; b.weight);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a.cardinal &lt; b.cardinal || (a.cardinal == b.cardinal &amp;&amp; a.weight &lt; b.weight)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L72">line 72</a></td></tr></tbody></table></section><section class="function-entry" id="f-d46e7078fc2f06f2"><h3><code>micron::math::graphs::__impl::blossom_score::operator&gt;(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L76">line 76</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>friend constexpr bool
+  operator&gt;(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;a</code></li><li><code>const blossom_score &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>b &lt; a</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">friend constexpr bool
+  operator&gt;(const blossom_score &amp;a, const blossom_score &amp;b) noexcept
+  {
+    return b &lt; a;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>b &lt; a</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L78">line 78</a></td></tr></tbody></table></section><section class="function-entry" id="f-1486e97f511eec51"><h3><code>micron::math::graphs::__impl::blossom_score::operator&lt;=(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L82">line 82</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>friend constexpr bool
+  operator&lt;=(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;a</code></li><li><code>const blossom_score &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>!(b &lt; a)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">friend constexpr bool
+  operator&lt;=(const blossom_score &amp;a, const blossom_score &amp;b) noexcept
+  {
+    return !(b &lt; a);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>!(b &lt; a)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L84">line 84</a></td></tr></tbody></table></section><section class="function-entry" id="f-70105055f29a881f"><h3><code>micron::math::graphs::__impl::blossom_score::operator+(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L88">line 88</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>friend constexpr blossom_score
+  operator+(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;a</code></li><li><code>const blossom_score &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>{ a.cardinal + b.cardinal, a.weight + b.weight }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">friend constexpr blossom_score
+  operator+(const blossom_score &amp;a, const blossom_score &amp;b) noexcept
+  {
+    return { a.cardinal + b.cardinal, a.weight + b.weight };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ a.cardinal + b.cardinal, a.weight + b.weight }</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L90">line 90</a></td></tr></tbody></table></section><section class="function-entry" id="f-b8dff6d2c2532670"><h3><code>micron::math::graphs::__impl::blossom_score::operator-(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L94">line 94</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>friend constexpr blossom_score
+  operator-(const blossom_score &amp;a, const blossom_score &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;a</code></li><li><code>const blossom_score &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>{ a.cardinal - b.cardinal, a.weight - b.weight }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">friend constexpr blossom_score
+  operator-(const blossom_score &amp;a, const blossom_score &amp;b) noexcept
+  {
+    return { a.cardinal - b.cardinal, a.weight - b.weight };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ a.cardinal - b.cardinal, a.weight - b.weight }</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L96">line 96</a></td></tr></tbody></table></section><section class="function-entry" id="f-7fe5b998f7685bcf"><h3><code>micron::math::graphs::__impl::blossom_score::operator*(const blossom_score &amp;a, int value) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L100">line 100</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>friend constexpr blossom_score
+  operator*(const blossom_score &amp;a, int value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;a</code></li><li><code>int value</code></li></ul><h4>Effects</h4><p>Returns <code>{ a.cardinal * value, a.weight * static_cast&lt;number_type&gt;(value) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">friend constexpr blossom_score
+  operator*(const blossom_score &amp;a, int value) noexcept
+  {
+    return { a.cardinal * value, a.weight * static_cast&lt;number_type&gt;(value) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ a.cardinal * value, a.weight * static_cast&lt;number_type&gt;(value) }</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L102">line 102</a></td></tr></tbody></table></section><section class="function-entry" id="f-b7891ce107d7f99d"><h3><code>micron::math::graphs::__impl::blossom_score::operator/(const blossom_score &amp;a, int value) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L106">line 106</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>friend constexpr blossom_score
+  operator/(const blossom_score &amp;a, int value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;a</code></li><li><code>int value</code></li></ul><h4>Effects</h4><p>Returns <code>{ a.cardinal / value, a.weight / static_cast&lt;number_type&gt;(value) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">friend constexpr blossom_score
+  operator/(const blossom_score &amp;a, int value) noexcept
+  {
+    return { a.cardinal / value, a.weight / static_cast&lt;number_type&gt;(value) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ a.cardinal / value, a.weight / static_cast&lt;number_type&gt;(value) }</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L108">line 108</a></td></tr></tbody></table></section><section class="function-entry" id="f-b5100ff8cca5220d"><h3><code>micron::math::graphs::__impl::blossom_score::operator+=(const blossom_score &amp;other) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L112">line 112</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>blossom_score &amp;
+  operator+=(const blossom_score &amp;other) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;other</code></li></ul><h4>Effects</h4><p>Returns <code>*this = *this + other</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">blossom_score &amp;
+  operator+=(const blossom_score &amp;other) noexcept
+  {
+    return *this = *this + other;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this = *this + other</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L114">line 114</a></td></tr></tbody></table></section><section class="function-entry" id="f-f3a0eec22762911c"><h3><code>micron::math::graphs::__impl::blossom_score::operator-=(const blossom_score &amp;other) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L118">line 118</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>blossom_score &amp;
+  operator-=(const blossom_score &amp;other) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_score &amp;other</code></li></ul><h4>Effects</h4><p>Returns <code>*this = *this - other</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">blossom_score &amp;
+  operator-=(const blossom_score &amp;other) noexcept
+  {
+    return *this = *this - other;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this = *this - other</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L120">line 120</a></td></tr></tbody></table></section><section class="function-entry" id="f-4e91c9e17c87a646"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::g(usize u, usize v) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L152">line 152</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] blossom_edge &amp;
+  g(usize u, usize v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize u</code></li><li><code>usize v</code></li></ul><h4>Effects</h4><p>Returns <code>__edges.data()[u * __stride + v]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] blossom_edge &amp;
+  g(usize u, usize v) noexcept
+  {
+    return __edges.data()[u * __stride + v];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__edges.data()[u * __stride + v]</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L154">line 154</a></td></tr></tbody></table></section><section class="function-entry" id="f-23415c70d52c30a6"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::g(usize u, usize v) const noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L158">line 158</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const blossom_edge &amp;
+  g(usize u, usize v) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize u</code></li><li><code>usize v</code></li></ul><h4>Effects</h4><p>Returns <code>__edges.data()[u * __stride + v]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const blossom_edge &amp;
+  g(usize u, usize v) const noexcept
+  {
+    return __edges.data()[u * __stride + v];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__edges.data()[u * __stride + v]</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L160">line 160</a></td></tr></tbody></table></section><section class="function-entry" id="f-5f0e62d73ad7e8d4"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::from(usize u, usize v) noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L164">line 164</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] int &amp;
+  from(usize u, usize v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize u</code></li><li><code>usize v</code></li></ul><h4>Effects</h4><p>Returns <code>__flower_from.data()[u * __stride + v]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] int &amp;
+  from(usize u, usize v) noexcept
+  {
+    return __flower_from.data()[u * __stride + v];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__flower_from.data()[u * __stride + v]</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L166">line 166</a></td></tr></tbody></table></section><section class="function-entry" id="f-e5f03011bc13be97"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::from(usize u, usize v) const noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L170">line 170</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] int
+  from(usize u, usize v) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize u</code></li><li><code>usize v</code></li></ul><h4>Effects</h4><p>Returns <code>__flower_from.data()[u * __stride + v]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] int
+  from(usize u, usize v) const noexcept
+  {
+    return __flower_from.data()[u * __stride + v];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__flower_from.data()[u * __stride + v]</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L172">line 172</a></td></tr></tbody></table></section><section class="function-entry" id="f-ff513d2fbf140160"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::zero() noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L176">line 176</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static constexpr score
+  zero() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static constexpr score
+  zero() noexcept
+  {
+    return {};
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L178">line 178</a></td></tr></tbody></table></section><section class="function-entry" id="f-e029b7ffe24a6003"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::edge_present(usize u, usize v) const noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L182">line 182</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  edge_present(usize u, usize v) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize u</code></li><li><code>usize v</code></li></ul><h4>Effects</h4><p>Returns <code>zero() &lt; g(u, v).weight</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  edge_present(usize u, usize v) const noexcept
+  {
+    return zero() &lt; g(u, v).weight;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>zero() &lt; g(u, v).weight</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L184">line 184</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-ff513d2fbf140160">zero</a>, <a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>.</p></section><section class="function-entry" id="f-a3d9491ffe799a13"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::delta(const blossom_edge &amp;edge) const noexcept</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L188">line 188</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] score
+  delta(const blossom_edge &amp;edge) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_edge &amp;edge</code></li></ul><h4>Effects</h4><p>Returns <code>__label.data()[edge.source] + __label.data()[edge.target] - edge.weight * 2</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] score
+  delta(const blossom_edge &amp;edge) const noexcept
+  {
+    return __label.data()[edge.source] + __label.data()[edge.target] - edge.weight * 2;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__label.data()[edge.source] + __label.data()[edge.target] - edge.weight * 2</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L190">line 190</a></td></tr></tbody></table></section><section class="function-entry" id="f-2c8f585ee96a9f76"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::update_slack(int u, int x)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L194">line 194</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  update_slack(int u, int x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int u</code></li><li><code>int x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  update_slack(int u, int x)
+  {
+    if ( __slack.data()[x] == 0
+         || delta(g(static_cast&lt;usize&gt;(u), static_cast&lt;usize&gt;(x)))
+                &lt; delta(g(static_cast&lt;usize&gt;(__slack.data()[x]), static_cast&lt;usize&gt;(x))) )
+      __slack.data()[x] = u;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-a3d9491ffe799a13">delta</a>, <a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>.</p></section><section class="function-entry" id="f-be67353d266ddb85"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::set_slack(int x)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L203">line 203</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  set_slack(int x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  set_slack(int x)
+  {
+    __slack.data()[x] = 0;
+    for ( usize u = 1; u &lt;= __n; ++u )
+      if ( edge_present(u, static_cast&lt;usize&gt;(x)) &amp;&amp; __base.data()[u] != x &amp;&amp; __state.data()[__base.data()[u]] == 0 )
+        update_slack(static_cast&lt;int&gt;(u), x);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-e029b7ffe24a6003">edge_present</a>, <a href="blossom.hpp.html#f-2c8f585ee96a9f76">update_slack</a>.</p></section><section class="function-entry" id="f-21ce355eb9bb69b6"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::queue_push(int x)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L212">line 212</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  queue_push(int x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  queue_push(int x)
+  {
+    if ( x &lt;= static_cast&lt;int&gt;(__n) ) {
+      __queue.push_back(x);
+      return;
+    }
+    for ( int vertex : __flower.data()[x] ) queue_push(vertex);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/graph/blossom.hpp.html#L216">line 216</a></td></tr></tbody></table></section><section class="function-entry" id="f-7d1cd7168d1711eb"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::set_base(int x, int base)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L222">line 222</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  set_base(int x, int base)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int x</code></li><li><code>int base</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  set_base(int x, int base)
+  {
+    __base.data()[x] = base;
+    if ( x &gt; static_cast&lt;int&gt;(__n) )
+      for ( int vertex : __flower.data()[x] ) set_base(vertex, base);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4b28bfd48d9d4318"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::flower_position(int blossom, int root)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L230">line 230</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+  flower_position(int blossom, int root)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int blossom</code></li><li><code>int root</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+  flower_position(int blossom, int root)
+  {
+    auto &amp;cycle = __flower.data()[blossom];
+    usize position = 0;
+    while ( position &lt; cycle.size() &amp;&amp; cycle.data()[position] != root ) ++position;
+    if ( position == cycle.size() ) return 0;
+    if ( position &amp; 1u ) {
+      for ( usize left = 1, right = cycle.size() - 1; left &lt; right; ++left, --right ) micron::swap(cycle.data()[left], cycle.data()[right]);
+      return static_cast&lt;int&gt;(cycle.size() - position);
+    }
+    return static_cast&lt;int&gt;(position);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L235">line 235</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(cycle.size() - position)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L238">line 238</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(position)</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L240">line 240</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-0e60234d03070c39"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::rotate_flower(int blossom, usize position)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L244">line 244</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  rotate_flower(int blossom, usize position)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int blossom</code></li><li><code>usize position</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  rotate_flower(int blossom, usize position)
+  {
+    auto &amp;cycle = __flower.data()[blossom];
+    if ( position == 0 || position &gt;= cycle.size() ) return;
+    micron::vector&lt;int, micron::allocator_serial&lt;&gt;, false&gt; rotated;
+    rotated.reserve(cycle.size());
+    for ( usize i = position; i &lt; cycle.size(); ++i ) rotated.push_back(cycle.data()[i]);
+    for ( usize i = 0; i &lt; position; ++i ) rotated.push_back(cycle.data()[i]);
+    cycle = micron::move(rotated);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/graph/blossom.hpp.html#L247">line 247</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-16021974e9dc5ae9"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::set_match(int u, int v)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L256">line 256</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  set_match(int u, int v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int u</code></li><li><code>int v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  set_match(int u, int v)
+  {
+    const auto edge = g(static_cast&lt;usize&gt;(u), static_cast&lt;usize&gt;(v));
+    __match.data()[u] = edge_present(static_cast&lt;usize&gt;(u), static_cast&lt;usize&gt;(v)) ? edge.target : 0;
+    if ( u &lt;= static_cast&lt;int&gt;(__n) ) return;
+    const int root = from(static_cast&lt;usize&gt;(u), static_cast&lt;usize&gt;(edge.source));
+    const int position = flower_position(u, root);
+    for ( int i = 0; i &lt; position; ++i )
+      set_match(__flower.data()[u].data()[static_cast&lt;usize&gt;(i)], __flower.data()[u].data()[static_cast&lt;usize&gt;(i ^ 1)]);
+    set_match(root, v);
+    rotate_flower(u, static_cast&lt;usize&gt;(position));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/graph/blossom.hpp.html#L260">line 260</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>, <a href="blossom.hpp.html#f-e029b7ffe24a6003">edge_present</a>, <a href="blossom.hpp.html#f-5f0e62d73ad7e8d4">from</a>, <a href="blossom.hpp.html#f-4b28bfd48d9d4318">flower_position</a>, <a href="blossom.hpp.html#f-0e60234d03070c39">rotate_flower</a>.</p></section><section class="function-entry" id="f-ced37bc5757db9e6"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::augment(int u, int v)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L270">line 270</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  augment(int u, int v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int u</code></li><li><code>int v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  augment(int u, int v)
+  {
+    for ( ;; ) {
+      const int next = __base.data()[__match.data()[u]];
+      set_match(u, v);
+      if ( next == 0 ) return;
+      set_match(next, __base.data()[__parent.data()[next]]);
+      u = __base.data()[__parent.data()[next]];
+      v = next;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/graph/blossom.hpp.html#L275">line 275</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-16021974e9dc5ae9">set_match</a>.</p></section><section class="function-entry" id="f-c95488a9f1e13012"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::lca(int u, int v)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L283">line 283</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+  lca(int u, int v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int u</code></li><li><code>int v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+  lca(int u, int v)
+  {
+    ++__visit_token;
+    while ( u != 0 || v != 0 ) {
+      if ( u != 0 ) {
+        if ( __visited.data()[u] == __visit_token ) return u;
+        __visited.data()[u] = __visit_token;
+        u = __base.data()[__match.data()[u]];
+        if ( u != 0 ) u = __base.data()[__parent.data()[u]];
+      }
+      micron::swap(u, v);
+    }
+    return 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>u</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L288">line 288</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L295">line 295</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-0343c70ef6d9d35c"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::add_blossom(int u, int ancestor, int v)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L299">line 299</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  add_blossom(int u, int ancestor, int v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int u</code></li><li><code>int ancestor</code></li><li><code>int v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  add_blossom(int u, int ancestor, int v)
+  {
+    int blossom = static_cast&lt;int&gt;(__n + 1);
+    while ( blossom &lt;= static_cast&lt;int&gt;(__nodes) &amp;&amp; __base.data()[blossom] != 0 ) ++blossom;
+    if ( blossom &gt; static_cast&lt;int&gt;(__nodes) ) __nodes = static_cast&lt;usize&gt;(blossom);
+    __label.data()[blossom] = zero();
+    __state.data()[blossom] = 0;
+    __match.data()[blossom] = __match.data()[ancestor];
+    __flower.data()[blossom].clear();
+    __flower.data()[blossom].push_back(ancestor);
+    for ( int x = u, y = 0; x != ancestor; x = __base.data()[__parent.data()[y]] ) {
+      __flower.data()[blossom].push_back(x);
+      y = __base.data()[__match.data()[x]];
+      __flower.data()[blossom].push_back(y);
+      queue_push(y);
+    }
+    auto &amp;cycle = __flower.data()[blossom];
+    for ( usize left = 1, right = cycle.size() - 1; left &lt; right; ++left, --right ) micron::swap(cycle.data()[left], cycle.data()[right]);
+    for ( int x = v, y = 0; x != ancestor; x = __base.data()[__parent.data()[y]] ) {
+      cycle.push_back(x);
+      y = __base.data()[__match.data()[x]];
+      cycle.push_back(y);
+      queue_push(y);
+    }
+    set_base(blossom, blossom);
+    for ( usize x = 1; x &lt; __stride; ++x ) {
+      g(static_cast&lt;usize&gt;(blossom), x) = { blossom, static_cast&lt;int&gt;(x), zero() };
+      g(x, static_cast&lt;usize&gt;(blossom)) = { static_cast&lt;int&gt;(x), blossom, zero() };
+      from(static_cast&lt;usize&gt;(blossom), x) = 0;
+    }
+    for ( int part : cycle ) {
+      for ( usize x = 1; x &lt;= __nodes; ++x )
+        if ( !edge_present(static_cast&lt;usize&gt;(blossom), x)
+             || delta(g(static_cast&lt;usize&gt;(part), x)) &lt; delta(g(static_cast&lt;usize&gt;(blossom), x)) ) {
+          g(static_cast&lt;usize&gt;(blossom), x) = g(static_cast&lt;usize&gt;(part), x);
+          g(x, static_cast&lt;usize&gt;(blossom)) = g(x, static_cast&lt;usize&gt;(part));
+        }
+      for ( usize x = 1; x &lt;= __n; ++x )
+        if ( from(static_cast&lt;usize&gt;(part), x) != 0 ) from(static_cast&lt;usize&gt;(blossom), x) = part;
+    }
+    set_slack(blossom);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-ff513d2fbf140160">zero</a>, <a href="blossom.hpp.html#f-21ce355eb9bb69b6">queue_push</a>, <a href="../../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>, <a href="blossom.hpp.html#f-7d1cd7168d1711eb">set_base</a>, <a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>, <a href="blossom.hpp.html#f-e029b7ffe24a6003">edge_present</a>, <a href="blossom.hpp.html#f-a3d9491ffe799a13">delta</a>, <a href="blossom.hpp.html#f-5f0e62d73ad7e8d4">from</a>, <a href="blossom.hpp.html#f-be67353d266ddb85">set_slack</a>.</p></section><section class="function-entry" id="f-f1991e8a7ebc5a7d"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::expand_blossom(int blossom)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L343">line 343</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  expand_blossom(int blossom)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int blossom</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  expand_blossom(int blossom)
+  {
+    for ( int part : __flower.data()[blossom] ) set_base(part, part);
+    const auto parent_edge = g(static_cast&lt;usize&gt;(blossom), static_cast&lt;usize&gt;(__parent.data()[blossom]));
+    const int root = from(static_cast&lt;usize&gt;(blossom), static_cast&lt;usize&gt;(parent_edge.source));
+    const int position = flower_position(blossom, root);
+    for ( int i = 0; i &lt; position; i += 2 ) {
+      const int outer = __flower.data()[blossom].data()[static_cast&lt;usize&gt;(i)];
+      const int inner = __flower.data()[blossom].data()[static_cast&lt;usize&gt;(i + 1)];
+      __parent.data()[outer] = g(static_cast&lt;usize&gt;(inner), static_cast&lt;usize&gt;(outer)).source;
+      __state.data()[outer] = 1;
+      __state.data()[inner] = 0;
+      __slack.data()[outer] = 0;
+      set_slack(inner);
+      queue_push(inner);
+    }
+    __state.data()[root] = 1;
+    __parent.data()[root] = __parent.data()[blossom];
+    for ( usize i = static_cast&lt;usize&gt;(position + 1); i &lt; __flower.data()[blossom].size(); ++i ) {
+      const int part = __flower.data()[blossom].data()[i];
+      __state.data()[part] = -1;
+      set_slack(part);
+    }
+    __base.data()[blossom] = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-7d1cd7168d1711eb">set_base</a>, <a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>, <a href="blossom.hpp.html#f-5f0e62d73ad7e8d4">from</a>, <a href="blossom.hpp.html#f-4b28bfd48d9d4318">flower_position</a>, <a href="blossom.hpp.html#f-be67353d266ddb85">set_slack</a>, <a href="blossom.hpp.html#f-21ce355eb9bb69b6">queue_push</a>.</p></section><section class="function-entry" id="f-0e09aecb553a5183"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::found_edge(const blossom_edge &amp;edge)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L370">line 370</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  found_edge(const blossom_edge &amp;edge)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const blossom_edge &amp;edge</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  found_edge(const blossom_edge &amp;edge)
+  {
+    const int u = __base.data()[edge.source];
+    const int v = __base.data()[edge.target];
+    if ( __state.data()[v] == -1 ) {
+      __parent.data()[v] = edge.source;
+      __state.data()[v] = 1;
+      const int next = __base.data()[__match.data()[v]];
+      __slack.data()[v] = 0;
+      __slack.data()[next] = 0;
+      __state.data()[next] = 0;
+      queue_push(next);
+    } else if ( __state.data()[v] == 0 ) {
+      const int ancestor = lca(u, v);
+      if ( ancestor == 0 ) {
+        augment(u, v);
+        augment(v, u);
+        return true;
+      }
+      add_blossom(u, ancestor, v);
+    }
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L387">line 387</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L391">line 391</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-21ce355eb9bb69b6">queue_push</a>, <a href="blossom.hpp.html#f-c95488a9f1e13012">lca</a>, <a href="blossom.hpp.html#f-ced37bc5757db9e6">augment</a>, <a href="blossom.hpp.html#f-0343c70ef6d9d35c">add_blossom</a>.</p></section><section class="function-entry" id="f-e5d83a6aac69a083"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::matching_step()</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L395">line 395</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  matching_step()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  matching_step()
+  {
+    __state.fill(-1);
+    __slack.fill(0);
+    __queue.clear();
+    __queue_head = 0;
+    for ( usize x = 1; x &lt;= __nodes; ++x )
+      if ( __base.data()[x] == static_cast&lt;int&gt;(x) &amp;&amp; __match.data()[x] == 0 ) {
+        __parent.data()[x] = 0;
+        __state.data()[x] = 0;
+        queue_push(static_cast&lt;int&gt;(x));
+      }
+    if ( __queue.empty() ) return false;
+    for ( ;; ) {
+      while ( __queue_head &lt; __queue.size() ) {
+        const int u = __queue.data()[__queue_head++];
+        if ( __state.data()[__base.data()[u]] == 1 ) continue;
+        for ( usize v = 1; v &lt;= __n; ++v ) {
+          if ( !edge_present(static_cast&lt;usize&gt;(u), v) || __base.data()[u] == __base.data()[v] ) continue;
+          if ( delta(g(static_cast&lt;usize&gt;(u), v)) == zero() ) {
+            if ( found_edge(g(static_cast&lt;usize&gt;(u), v)) ) return true;
+          } else {
+            update_slack(u, __base.data()[v]);
+          }
+        }
+      }
+
+      score adjustment{};
+      bool have_adjustment = false;
+      auto consider = [&amp;](const score &amp;candidate) {
+        if ( !have_adjustment || candidate &lt; adjustment ) {
+          adjustment = candidate;
+          have_adjustment = true;
+        }
+      };
+      for ( usize blossom = __n + 1; blossom &lt;= __nodes; ++blossom )
+        if ( __base.data()[blossom] == static_cast&lt;int&gt;(blossom) &amp;&amp; __state.data()[blossom] == 1 ) consider(__label.data()[blossom] / 2);
+      for ( usize x = 1; x &lt;= __nodes; ++x )
+        if ( __base.data()[x] == static_cast&lt;int&gt;(x) &amp;&amp; __slack.data()[x] != 0 ) {
+          const score candidate = delta(g(static_cast&lt;usize&gt;(__slack.data()[x]), x));
+          if ( __state.data()[x] == -1 )
+            consider(candidate);
+          else if ( __state.data()[x] == 0 )
+            consider(candidate / 2);
+        }
+      if ( !have_adjustment ) return false;
+      for ( usize u = 1; u &lt;= __n; ++u ) {
+        if ( __state.data()[__base.data()[u]] == 0 ) {
+          if ( __label.data()[u] &lt;= adjustment ) return false;
+          __label.data()[u] -= adjustment;
+        } else if ( __state.data()[__base.data()[u]] == 1 ) {
+          __label.data()[u] += adjustment;
+        }
+      }
+      for ( usize blossom = __n + 1; blossom &lt;= __nodes; ++blossom )
+        if ( __base.data()[blossom] == static_cast&lt;int&gt;(blossom) ) {
+          if ( __state.data()[blossom] == 0 )
+            __label.data()[blossom] += adjustment * 2;
+          else if ( __state.data()[blossom] == 1 )
+            __label.data()[blossom] -= adjustment * 2;
+        }
+      __queue.clear();
+      __queue_head = 0;
+      for ( usize x = 1; x &lt;= __nodes; ++x )
+        if ( __base.data()[x] == static_cast&lt;int&gt;(x) &amp;&amp; __slack.data()[x] != 0 &amp;&amp; __base.data()[__slack.data()[x]] != static_cast&lt;int&gt;(x)
+             &amp;&amp; delta(g(static_cast&lt;usize&gt;(__slack.data()[x]), x)) == zero() )
+          if ( found_edge(g(static_cast&lt;usize&gt;(__slack.data()[x]), x)) ) return true;
+      for ( usize blossom = __n + 1; blossom &lt;= __nodes; ++blossom )
+        if ( __base.data()[blossom] == static_cast&lt;int&gt;(blossom) &amp;&amp; __state.data()[blossom] == 1 &amp;&amp; __label.data()[blossom] == zero() )
+          expand_blossom(static_cast&lt;int&gt;(blossom));
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L407">line 407</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L415">line 415</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L440">line 440</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L443">line 443</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L461">line 461</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-21ce355eb9bb69b6">queue_push</a>, <a href="blossom.hpp.html#f-e029b7ffe24a6003">edge_present</a>, <a href="blossom.hpp.html#f-a3d9491ffe799a13">delta</a>, <a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>, <a href="blossom.hpp.html#f-ff513d2fbf140160">zero</a>, <a href="blossom.hpp.html#f-0e09aecb553a5183">found_edge</a>, <a href="blossom.hpp.html#f-2c8f585ee96a9f76">update_slack</a>, <a href="blossom.hpp.html#f-f1991e8a7ebc5a7d">expand_blossom</a>.</p></section><section class="function-entry" id="f-ad084bff6545764e"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::weighted_blossom_engine(usize vertices)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L469">line 469</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit weighted_blossom_engine(usize vertices)
+      : __n(vertices), __nodes(vertices), __stride(vertices * 2 + 1), __edges(__stride * __stride, blossom_edge{}),
+        __label(__stride, zero()), __match(__stride, 0), __slack(__stride, 0), __base(__stride, 0), __parent(__stride, 0),
+        __state(__stride, -1), __visited(__stride, usize(0)), __flower(__stride), __flower_from(__stride * __stride, 0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit weighted_blossom_engine(usize vertices)
+      : __n(vertices), __nodes(vertices), __stride(vertices * 2 + 1), __edges(__stride * __stride, blossom_edge{}),
+        __label(__stride, zero()), __match(__stride, 0), __slack(__stride, 0), __base(__stride, 0), __parent(__stride, 0),
+        __state(__stride, -1), __visited(__stride, usize(0)), __flower(__stride), __flower_from(__stride * __stride, 0)
+  {
+    for ( usize u = 0; u &lt; __stride; ++u )
+      for ( usize v = 0; v &lt; __stride; ++v ) g(u, v) = { static_cast&lt;int&gt;(u), static_cast&lt;int&gt;(v), zero() };
+    for ( usize vertex = 1; vertex &lt;= __n; ++vertex ) {
+      __base.data()[vertex] = static_cast&lt;int&gt;(vertex);
+      from(vertex, vertex) = static_cast&lt;int&gt;(vertex);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>, <a href="blossom.hpp.html#f-ff513d2fbf140160">zero</a>, <a href="blossom.hpp.html#f-5f0e62d73ad7e8d4">from</a>.</p></section><section class="function-entry" id="f-8aa0edd5881e783e"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::add_edge(usize u, usize v, const score &amp;value)</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L483">line 483</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  add_edge(usize u, usize v, const score &amp;value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize u</code></li><li><code>usize v</code></li><li><code>const score &amp;value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  add_edge(usize u, usize v, const score &amp;value)
+  {
+    if ( g(u, v).weight &lt; value ) {
+      g(u, v) = { static_cast&lt;int&gt;(u), static_cast&lt;int&gt;(v), value };
+      g(v, u) = { static_cast&lt;int&gt;(v), static_cast&lt;int&gt;(u), value };
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>.</p></section><section class="function-entry" id="f-3c761f0388e3c51d"><h3><code>micron::math::graphs::__impl::weighted_blossom_engine::solve()</code></h3><p>Defined in <code>math/graph/blossom.hpp</code>, <a href="../../../source/math/graph/blossom.hpp.html#L492">line 492</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const micron::vector&lt;int, micron::allocator_serial&lt;&gt;, false&gt; &amp;
+  solve()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const micron::vector&lt;int, micron::allocator_serial&lt;&gt;, false&gt; &amp;
+  solve()
+  {
+    score maximum{};
+    for ( usize u = 1; u &lt;= __n; ++u )
+      for ( usize v = 1; v &lt;= __n; ++v )
+        if ( maximum &lt; g(u, v).weight ) maximum = g(u, v).weight;
+    for ( usize u = 1; u &lt;= __n; ++u ) __label.data()[u] = maximum;
+    while ( matching_step() ) {
+    }
+    return __match;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__match</code></td><td><a href="../../../source/math/graph/blossom.hpp.html#L501">line 501</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="blossom.hpp.html#f-4e91c9e17c87a646">g</a>, <a href="blossom.hpp.html#f-e5d83a6aac69a083">matching_step</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

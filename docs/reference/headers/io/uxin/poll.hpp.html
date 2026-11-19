@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/uxin/poll.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/uxin/poll.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/input.html">Input devices</a></div><p>Defined in header <code>&lt;micron/io/uxin/poll.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/io/uxin/poll.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-9e6db74d43a2357a">micron::uxin::poll_flag</code></td><td>typedef; line 22</td></tr><tr class="t-dsc"><td><a href="#f-7c0dc6f6c77d361b">micron::uxin::get_event(const device_t &amp;dev)</a></td><td>function; line 25</td></tr><tr class="t-dsc"><td><a href="#f-e20ee6ee0948a984">micron::uxin::poll(const device_t &amp;dev, Args &amp;&amp;...raw_in)</a></td><td>function; line 35</td></tr><tr class="t-dsc"><td><a href="#f-ebf2e310f7f37f51">micron::uxin::poll(input_t &amp;inp, Args &amp;&amp;...raw_in)</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-12594a4ff24f26d7">micron::uxin::poll_pack(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</a></td><td>function; line 118</td></tr><tr class="t-dsc"><td><a href="#f-e62150819e8a3d53">micron::uxin::poll_pack_rt(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</a></td><td>function; line 162</td></tr><tr class="t-dsc"><td><a href="#f-40a70a610df92ff6">micron::uxin::poll_pack_once(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</a></td><td>function; line 195</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-7c0dc6f6c77d361b"><h3><code>micron::uxin::get_event(const device_t &amp;dev)</code></h3><p>Defined in <code>io/uxin/poll.hpp</code>, <a href="../../../source/io/uxin/poll.hpp.html#L25">line 25</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline input_event
+get_event(const device_t &amp;dev)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const device_t &amp;dev</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline input_event
+get_event(const device_t &amp;dev)
+{
+  input_event event_buf;
+  if ( !read_raw(dev, event_buf) ) return {};
+  return event_buf;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L28">line 28</a></td></tr><tr class="t-dsc"><td><code>event_buf</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L29">line 29</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reader.hpp.html#f-3f75fa2373971751">read_raw</a>.</p></section><section class="function-entry" id="f-e20ee6ee0948a984"><h3><code>micron::uxin::poll(const device_t &amp;dev, Args &amp;&amp;...raw_in)</code></h3><p>Defined in <code>io/uxin/poll.hpp</code>, <a href="../../../source/io/uxin/poll.hpp.html#L35">line 35</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;umax_t S = 250, auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;micron::remove_cvref_t&lt;Args&gt;, input_packet_t&gt; &amp;&amp; ...))
+poll_flag
+poll(const device_t &amp;dev, Args &amp;&amp;...raw_in)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const device_t &amp;dev</code></li><li><code>Args &amp;&amp;...raw_in</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;umax_t S = 250, auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;micron::remove_cvref_t&lt;Args&gt;, input_packet_t&gt; &amp;&amp; ...))
+poll_flag
+poll(const device_t &amp;dev, Args &amp;&amp;...raw_in)
+{
+  if ( dev.bound_fd.has_error() ) return -1;
+  auto for_every = [](const input_event &amp;event, input_packet_t &amp;__raw_in) {
+    if ( __raw_in.mask_type == event.type ) {
+      for ( const auto &amp;mask : __raw_in.button_mask ) {
+        if ( mask == event.code ) {
+          // pressed
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
+          if ( event.value ) {
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
+          } else {
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
+            // unpressed
+          }
+        }
+      }
+    }
+  };
+  posix::pollfd pfd = make_poll(dev.bound_fd);
+  for ( ;; ) {
+    int res = micron::poll_for(pfd, S);
+    if ( res &lt; 0 ) {
+      return -1;
+    } else if ( !res )
+      continue;
+    if ( micron::poll_hungup(pfd) || micron::poll_errored(pfd) || micron::poll_invalid(pfd) ) return -1;
+    if ( pfd.revents &amp; posix::poll_in ) {
+      input_event ev = Fn(dev);
+      (for_every(ev, raw_in), ...);
+    }
+  }
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L37">line 37</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L61">line 61</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L67">line 67</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/poll.hpp.html#f-167dd0fef28538b0">make_poll</a>, <a href="../../linux/poll.hpp.html#f-9db108db4681f3ac">micron::poll_for</a>, <a href="../../linux/poll.hpp.html#f-ab7c38e3f67b2896">micron::poll_hungup</a>, <a href="../../linux/poll.hpp.html#f-e2cc9243f9aad008">micron::poll_errored</a>, <a href="../../linux/poll.hpp.html#f-c213c23b5227b884">micron::poll_invalid</a>.</p></section><section class="function-entry" id="f-ebf2e310f7f37f51"><h3><code>micron::uxin::poll(input_t &amp;inp, Args &amp;&amp;...raw_in)</code></h3><p>Defined in <code>io/uxin/poll.hpp</code>, <a href="../../../source/io/uxin/poll.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;umax_t S = 250, auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;input_packet_t, micron::remove_cvref_t&lt;Args&gt;&gt; &amp;&amp; ...))
+poll_flag
+poll(input_t &amp;inp, Args &amp;&amp;...raw_in)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>input_t &amp;inp</code></li><li><code>Args &amp;&amp;...raw_in</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;umax_t S = 250, auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;input_packet_t, micron::remove_cvref_t&lt;Args&gt;&gt; &amp;&amp; ...))
+poll_flag
+poll(input_t &amp;inp, Args &amp;&amp;...raw_in)
+{
+  if ( inp.device.bound_fd.has_error() ) return -1;
+  auto for_every = [&amp;](const input_event &amp;event, input_packet_t &amp;__raw_in) {
+    if ( __raw_in.mask_type == event.type ) {
+      for ( const auto &amp;mask : __raw_in.button_mask ) {
+        if ( mask == event.code ) {
+          inp.history.push(event);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
+          if ( event.value ) {
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
+          } else {
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
+            // unpressed
+          }
+        }
+      }
+    }
+  };
+  pollfd pfd = make_poll(inp.device.bound_fd);
+  for ( ;; ) {
+    int res = micron::poll_for(pfd, S);
+    if ( res &lt; 0 ) {
+      return -1;
+    } else if ( !res )
+      continue;
+    if ( micron::poll_hungup(pfd) || micron::poll_errored(pfd) || micron::poll_invalid(pfd) ) return -1;
+    if ( pfd.revents &amp; posix::poll_in ) {
+      input_event ev = Fn(inp.device);
+      (for_every(ev, raw_in), ...);
+    }
+  }
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L99">line 99</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L105">line 105</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/poll.hpp.html#f-167dd0fef28538b0">make_poll</a>, <a href="../../linux/poll.hpp.html#f-9db108db4681f3ac">micron::poll_for</a>, <a href="../../linux/poll.hpp.html#f-ab7c38e3f67b2896">micron::poll_hungup</a>, <a href="../../linux/poll.hpp.html#f-e2cc9243f9aad008">micron::poll_errored</a>, <a href="../../linux/poll.hpp.html#f-c213c23b5227b884">micron::poll_invalid</a>.</p></section><section class="function-entry" id="f-12594a4ff24f26d7"><h3><code>micron::uxin::poll_pack(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</code></h3><p>Defined in <code>io/uxin/poll.hpp</code>, <a href="../../../source/io/uxin/poll.hpp.html#L118">line 118</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;umax_t S = 1, auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;input_packet_t, micron::remove_cvref_t&lt;Args&gt;&gt; &amp;&amp; ...))
+poll_flag
+poll_pack(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>vector&lt;input_t&gt; &amp;inp</code></li><li><code>Args &amp;&amp;...raw_in</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;umax_t S = 1, auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;input_packet_t, micron::remove_cvref_t&lt;Args&gt;&gt; &amp;&amp; ...))
+poll_flag
+poll_pack(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)
+{
+  for ( const auto &amp;_inp : inp )
+    if ( _inp.device.bound_fd.has_error() ) return -1;
+  auto for_every = [](input_t &amp;_inp, const input_event &amp;event, input_packet_t &amp;__raw_in) {
+    if ( __raw_in.mask_type == event.type ) {
+      for ( const auto &amp;mask : __raw_in.button_mask ) {
+        if ( mask == event.code ) {
+          _inp.history.push(event);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
+          if ( event.value ) {
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
+          } else {
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
+            // unpressed
+          }
+        }
+      }
+    }
+  };
+  micron::fvector&lt;posix::pollfd&gt; pfd_pack;
+  for ( usize k = 0; k &lt; inp.size(); ++k ) pfd_pack.push_back(__make_poll(inp[k]));
+  for ( ;; ) {
+    for ( usize j = 0; j &lt; inp.size(); ++j ) {
+      auto &amp;pfd = pfd_pack[j];
+      auto &amp;inp_i = inp[j];
+      int res = micron::poll_for(pfd, S);
+      if ( res &lt; 0 ) {
+        return -1;
+      } else if ( !res )
+        continue;
+      if ( micron::poll_hungup(pfd) || micron::poll_errored(pfd) || micron::poll_invalid(pfd) ) return -1;
+      if ( pfd.revents &amp; posix::poll_in ) {
+        input_event ev = Fn(inp_i.device);
+        (for_every(inp_i, ev, raw_in), ...);
+      }
+    }
+  }
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L121">line 121</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L146">line 146</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L149">line 149</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L156">line 156</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="poll.hpp.html#f-78eebfef430c4083">__make_poll</a>, <a href="../../linux/poll.hpp.html#f-9db108db4681f3ac">micron::poll_for</a>, <a href="../../linux/poll.hpp.html#f-ab7c38e3f67b2896">micron::poll_hungup</a>, <a href="../../linux/poll.hpp.html#f-e2cc9243f9aad008">micron::poll_errored</a>, <a href="../../linux/poll.hpp.html#f-c213c23b5227b884">micron::poll_invalid</a>.</p></section><section class="function-entry" id="f-e62150819e8a3d53"><h3><code>micron::uxin::poll_pack_rt(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</code></h3><p>Defined in <code>io/uxin/poll.hpp</code>, <a href="../../../source/io/uxin/poll.hpp.html#L162">line 162</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;input_packet_t, micron::remove_cvref_t&lt;Args&gt;&gt; &amp;&amp; ...))
+poll_flag
+poll_pack_rt(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>vector&lt;input_t&gt; &amp;inp</code></li><li><code>Args &amp;&amp;...raw_in</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;input_packet_t, micron::remove_cvref_t&lt;Args&gt;&gt; &amp;&amp; ...))
+poll_flag
+poll_pack_rt(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)
+{
+  for ( const auto &amp;_inp : inp )
+    if ( _inp.device.bound_fd.has_error() ) return -1;
+  auto for_every = [](input_t &amp;_inp, const input_event &amp;event, input_packet_t &amp;__raw_in) {
+    if ( __raw_in.mask_type == event.type ) {
+      for ( const auto &amp;mask : __raw_in.button_mask ) {
+        if ( mask == event.code ) {
+          _inp.history.push(event);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
+          if ( event.value ) {
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
+          } else {
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
+            // unpressed
+          }
+        }
+      }
+    }
+  };
+  for ( ;; ) {
+    for ( usize j = 0; j &lt; inp.size(); ++j ) {
+      auto &amp;inp_i = inp[j];
+      input_event ev = Fn(inp_i.device);
+      (for_every(inp_i, ev, raw_in), ...);
+    }
+  }
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L189">line 189</a></td></tr></tbody></table></section><section class="function-entry" id="f-40a70a610df92ff6"><h3><code>micron::uxin::poll_pack_once(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</code></h3><p>Defined in <code>io/uxin/poll.hpp</code>, <a href="../../../source/io/uxin/poll.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;input_packet_t, micron::remove_cvref_t&lt;Args&gt;&gt; &amp;&amp; ...))
+poll_flag
+poll_pack_once(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>vector&lt;input_t&gt; &amp;inp</code></li><li><code>Args &amp;&amp;...raw_in</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn = get_event, typename... Args&gt;
+  requires((micron::same_as&lt;input_packet_t, micron::remove_cvref_t&lt;Args&gt;&gt; &amp;&amp; ...))
+poll_flag
+poll_pack_once(vector&lt;input_t&gt; &amp;inp, Args &amp;&amp;...raw_in)
+{
+  for ( const auto &amp;_inp : inp )
+    if ( _inp.device.bound_fd.has_error() ) return -1;
+  auto for_every = [](input_t &amp;_inp, const input_event &amp;event, input_packet_t &amp;__raw_in) {
+    if ( __raw_in.mask_type == event.type ) {
+      for ( const auto &amp;mask : __raw_in.button_mask ) {
+        if ( mask == event.code ) {
+          _inp.history.push(event);
+          if ( __raw_in.callback ) __raw_in.callback(event.time, event.code, event.value);
+          if ( event.value ) {
+            if ( __raw_in.actuate_callback ) __raw_in.actuate_callback(event.time, event.code, event.value);
+          } else {
+            if ( __raw_in.release_callback ) __raw_in.release_callback(event.time, event.code, event.value);
+            // unpressed
+          }
+        }
+      }
+    }
+  };
+  for ( usize j = 0; j &lt; inp.size(); ++j ) {
+    auto &amp;inp_i = inp[j];
+    input_event ev = Fn(inp_i.device);
+    (for_every(inp_i, ev, raw_in), ...);
+  }
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L198">line 198</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L220">line 220</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-78eebfef430c4083"><h3><code>micron::uxin::__make_poll(const input_t &amp;arg)</code></h3><p>Defined in <code>io/uxin/poll.hpp</code>, <a href="../../../source/io/uxin/poll.hpp.html#L109">line 109</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline posix::pollfd
+__make_poll(const input_t &amp;arg)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const input_t &amp;arg</code></li></ul><h4>Effects</h4><p>Returns <code>make_poll(arg.device.bound_fd)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline posix::pollfd
+__make_poll(const input_t &amp;arg)
+{
+  return make_poll(arg.device.bound_fd);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>make_poll(arg.device.bound_fd)</code></td><td><a href="../../../source/io/uxin/poll.hpp.html#L111">line 111</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/poll.hpp.html#f-167dd0fef28538b0">make_poll</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

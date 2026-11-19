@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/graph/matrix.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/graph/matrix.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/graph/matrix.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../concepts.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;../../vector/vector.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../matrix/dynmat.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../sparse/csr.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;graph.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;paths.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> namespace micron::math::graphs</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> {</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> </span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> template&lt;typename Matrix, micron::integral I&gt; struct matrix_conversion_result {</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a>   Matrix value;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a>   micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; dense_to_vertex;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a>   micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; vertex_to_dense;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a>   micron::vector&lt;edge_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; dense_to_edge;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> };</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> </span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> template&lt;graph_model G&gt;</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> [[nodiscard]] auto</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> __dense_vertex_mapping(const G &amp;graph)</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> {</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>   using I = typename G::index_type;</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> </span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   struct mapping {</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a>     micron::vector&lt;vertex_id&lt;I&gt;, micron::allocator_serial&lt;&gt;, false&gt; dense_to_vertex;</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>     micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; vertex_to_dense;</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>   } result{ {}, micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), vertex_id&lt;I&gt;::invalid_value()) };</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> </span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   result.dense_to_vertex.reserve(graph.vertices_count());</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   for ( auto vertex : graph.vertices() ) {</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>     const I dense = static_cast&lt;I&gt;(result.dense_to_vertex.size());</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>     result.vertex_to_dense.data()[static_cast&lt;usize&gt;(vertex.value)] = dense;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>     result.dense_to_vertex.push_back(vertex);</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   }</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   return result;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> }</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> </span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> template&lt;arith_scalar T = u8, graph_model G&gt;</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> [[nodiscard]] matrix_conversion_result&lt;dynmat&lt;T&gt;, typename G::index_type&gt;</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> adjacency_matrix(const G &amp;graph, T absent = T(0), T present = T(1))</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> {</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   using I = typename G::index_type;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>   auto mapping = __dense_vertex_mapping(graph);</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   const usize n = graph.vertices_count();</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   matrix_conversion_result&lt;dynmat&lt;T&gt;, I&gt; result{</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>     dynmat&lt;T&gt;(n, n, absent), micron::move(mapping.dense_to_vertex), micron::move(mapping.vertex_to_dense), {}</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>   };</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   for ( auto edge : graph.edges() ) {</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>     const usize u = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>     const usize v = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>     result.value.at(u, v) = present;</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>     if constexpr ( !G::is_directed ) result.value.at(v, u) = present;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   }</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>   return result;</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> }</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> </span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> template&lt;arith_scalar T = u8, graph_model G&gt;</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> [[nodiscard]] dynmat&lt;T&gt;</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> to_adjacency_matrix(const G &amp;graph, T absent = T(0), T present = T(1))</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> {</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>   auto result = adjacency_matrix&lt;T&gt;(graph, absent, present);</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   return micron::move(result.value);</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> }</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> </span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> template&lt;arith_scalar T, graph_model G, typename WeightMap = intrinsic_edge_weight&gt;</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> [[nodiscard]] matrix_conversion_result&lt;dynmat&lt;T&gt;, typename G::index_type&gt;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> weighted_adjacency_matrix(const G &amp;graph, WeightMap weight_map = {}, T absent = T(0))</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> {</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>   using I = typename G::index_type;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>   auto mapping = __dense_vertex_mapping(graph);</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   const usize n = graph.vertices_count();</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   matrix_conversion_result&lt;dynmat&lt;T&gt;, I&gt; result{</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>     dynmat&lt;T&gt;(n, n, absent), micron::move(mapping.dense_to_vertex), micron::move(mapping.vertex_to_dense), {}</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>   };</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>   for ( auto edge : graph.edges() ) {</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     const usize u = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>     const usize v = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>     const T weight = static_cast&lt;T&gt;(__impl::weight(weight_map, graph, edge.id));</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>     result.value.at(u, v) = weight;</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>     if constexpr ( !G::is_directed ) result.value.at(v, u) = weight;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   }</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>   return result;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> }</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> </span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> template&lt;arith_scalar T = usize, graph_model G&gt;</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> [[nodiscard]] matrix_conversion_result&lt;dynmat&lt;T&gt;, typename G::index_type&gt;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> degree_matrix(const G &amp;graph)</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> {</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>   using I = typename G::index_type;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   auto mapping = __dense_vertex_mapping(graph);</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   const usize n = graph.vertices_count();</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   matrix_conversion_result&lt;dynmat&lt;T&gt;, I&gt; result{</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>     dynmat&lt;T&gt;(n, n, T(0)), micron::move(mapping.dense_to_vertex), micron::move(mapping.vertex_to_dense), {}</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>   };</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   for ( usize i = 0; i &lt; n; ++i ) result.value.at(i, i) = static_cast&lt;T&gt;(graph.degree(result.dense_to_vertex.data()[i]));</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   return result;</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> }</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> </span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> template&lt;arith_scalar T = i64, graph_model G&gt;</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> [[nodiscard]] matrix_conversion_result&lt;dynmat&lt;T&gt;, typename G::index_type&gt;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> laplacian_matrix(const G &amp;graph)</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> {</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   auto result = adjacency_matrix&lt;T&gt;(graph, T(0), T(1));</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   const usize n = result.value.rows;</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   for ( usize i = 0; i &lt; n; ++i ) {</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>     T degree{};</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     for ( usize j = 0; j &lt; n; ++j ) degree += result.value.at(i, j);</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>     for ( usize j = 0; j &lt; n; ++j ) result.value.at(i, j) = -result.value.at(i, j);</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>     result.value.at(i, i) += degree;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>   }</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>   return result;</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> }</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> </span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> template&lt;arith_scalar T = i64, graph_model G&gt;</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> [[nodiscard]] matrix_conversion_result&lt;dynmat&lt;T&gt;, typename G::index_type&gt;</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> incidence_matrix(const G &amp;graph)</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> {</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>   using I = typename G::index_type;</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>   auto mapping = __dense_vertex_mapping(graph);</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>   const usize n = graph.vertices_count();</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>   const usize m = graph.edges_count();</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>   matrix_conversion_result&lt;dynmat&lt;T&gt;, I&gt; result{</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>     dynmat&lt;T&gt;(n, m, T(0)), micron::move(mapping.dense_to_vertex), micron::move(mapping.vertex_to_dense), {}</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>   };</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   result.dense_to_edge.reserve(m);</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>   usize column = 0;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>   for ( auto edge : graph.edges() ) {</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>     const usize u = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     const usize v = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     if constexpr ( G::is_directed ) {</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>       result.value.at(u, column) -= T(1);</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>       result.value.at(v, column) += T(1);</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     } else {</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>       result.value.at(u, column) += T(1);</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>       result.value.at(v, column) += T(1);</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>     }</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>     result.dense_to_edge.push_back(edge.id);</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     ++column;</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>   }</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>   return result;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a> }</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> </span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> template&lt;arith_scalar T = u8, graph_model G&gt;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> [[nodiscard]] matrix_conversion_result&lt;sparse::csr&lt;T, typename G::index_type&gt;, typename G::index_type&gt;</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> sparse_adjacency_matrix(const G &amp;graph, T present = T(1))</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a> {</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   using I = typename G::index_type;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>   auto mapping = __dense_vertex_mapping(graph);</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>   const usize n = graph.vertices_count();</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>   matrix_conversion_result&lt;sparse::csr&lt;T, I&gt;, I&gt; result{</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>     sparse::csr&lt;T, I&gt;(n, n), micron::move(mapping.dense_to_vertex), micron::move(mapping.vertex_to_dense), {}</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>   };</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>   micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; count(n, usize(0));</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>   for ( auto edge : graph.edges() ) {</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     const usize u = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>     const usize v = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     ++count.data()[u];</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     if constexpr ( !G::is_directed )</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>       if ( u != v ) ++count.data()[v];</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>   }</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>   for ( usize row = 0; row &lt; n; ++row )</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     result.value.outer.data()[row + 1] = result.value.outer.data()[row] + static_cast&lt;I&gt;(count.data()[row]);</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   result.value.inner.resize(static_cast&lt;usize&gt;(result.value.outer.data()[n]), I{});</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>   result.value.values.resize(result.value.inner.size(), T{});</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>   micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; cursor(n, usize(0));</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>   for ( usize row = 0; row &lt; n; ++row ) cursor.data()[row] = static_cast&lt;usize&gt;(result.value.outer.data()[row]);</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   for ( auto edge : graph.edges() ) {</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     const I u = result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)];</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>     const I v = result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)];</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>     usize position = cursor.data()[static_cast&lt;usize&gt;(u)]++;</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>     result.value.inner.data()[position] = v;</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>     result.value.values.data()[position] = present;</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>     if constexpr ( !G::is_directed ) {</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>       if ( u != v ) {</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>         position = cursor.data()[static_cast&lt;usize&gt;(v)]++;</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>         result.value.inner.data()[position] = u;</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>         result.value.values.data()[position] = present;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>       }</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>     }</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>   }</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>   return result;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a> }</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a> </span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a> template&lt;arith_scalar T, graph_model G, typename WeightMap = intrinsic_edge_weight&gt;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a> [[nodiscard]] matrix_conversion_result&lt;sparse::csr&lt;T, typename G::index_type&gt;, typename G::index_type&gt;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a> sparse_weighted_adjacency_matrix(const G &amp;graph, WeightMap weight_map = {})</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a> {</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   auto result = sparse_adjacency_matrix&lt;T&gt;(graph, T{});</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>   micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; cursor(result.value.rows, usize(0));</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>   for ( usize row = 0; row &lt; result.value.rows; ++row ) cursor.data()[row] = static_cast&lt;usize&gt;(result.value.outer.data()[row]);</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   for ( auto edge : graph.edges() ) {</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>     const auto u = result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)];</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>     const auto v = result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)];</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>     const T weight = static_cast&lt;T&gt;(__impl::weight(weight_map, graph, edge.id));</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>     result.value.values.data()[cursor.data()[static_cast&lt;usize&gt;(u)]++] = weight;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>     if constexpr ( !G::is_directed )</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>       if ( u != v ) result.value.values.data()[cursor.data()[static_cast&lt;usize&gt;(v)]++] = weight;</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>   }</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>   return result;</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> }</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> </span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a> template&lt;arith_scalar T = u8, graph_model G&gt;</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a> [[nodiscard]] matrix_conversion_result&lt;sparse::csc&lt;T, typename G::index_type&gt;, typename G::index_type&gt;</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a> sparse_adjacency_matrix_csc(const G &amp;graph, T present = T(1))</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a> {</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>   auto row_major = sparse_adjacency_matrix&lt;T&gt;(graph, present);</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>   return { sparse::to_csc(row_major.value), micron::move(row_major.dense_to_vertex), micron::move(row_major.vertex_to_dense),</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>            micron::move(row_major.dense_to_edge) };</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a> }</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a> </span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a> template&lt;typename G = graph&lt;&gt;, typename Matrix&gt;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a> [[nodiscard]] G</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a> from_adjacency_matrix(const Matrix &amp;matrix)</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a> {</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>   G result;</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>   const usize n = static_cast&lt;usize&gt;(matrix.rows &lt; matrix.cols ? matrix.rows : matrix.cols);</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>   (void)result.add_vertices(n);</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>   for ( usize i = 0; i &lt; n; ++i ) {</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>     const usize begin = G::is_directed ? 0 : i;</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>     for ( usize j = begin; j &lt; n; ++j ) {</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>       const auto &amp;entry = matrix.at(i, j);</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>       using entry_type = micron::remove_cvref_t&lt;decltype(entry)&gt;;</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>       if ( entry == entry_type(0) ) continue;</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>       if constexpr ( weighted_bundle&lt;typename G::edge_property_type&gt; )</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>         (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(i), static_cast&lt;typename G::index_type&gt;(j), entry);</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>       else</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>         (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(i), static_cast&lt;typename G::index_type&gt;(j));</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>     }</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>   }</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   return result;</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> }</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> </span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> template&lt;typename G = graph&lt;&gt;, arith_scalar T, micron::integral I&gt;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a> [[nodiscard]] G</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a> from_sparse_adjacency_matrix(const sparse::csr&lt;T, I&gt; &amp;matrix)</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a> {</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>   G result;</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>   const usize n = matrix.rows &lt; matrix.cols ? matrix.rows : matrix.cols;</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>   (void)result.add_vertices(n);</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>   if ( matrix.outer.size() &lt; matrix.rows + 1 || matrix.inner.size() != matrix.values.size() ) return result;</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>   for ( usize row = 0; row &lt; n; ++row ) {</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>     usize begin = static_cast&lt;usize&gt;(matrix.outer.data()[row]);</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>     usize end = static_cast&lt;usize&gt;(matrix.outer.data()[row + 1]);</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     if ( begin &gt; end || end &gt; matrix.inner.size() ) return G{};</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>     for ( usize position = begin; position &lt; end; ++position ) {</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>       const usize column = static_cast&lt;usize&gt;(matrix.inner.data()[position]);</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>       if ( column &gt;= n || matrix.values.data()[position] == T{} ) continue;</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>       if constexpr ( !G::is_directed )</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>         if ( column &lt; row ) continue;</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>       if constexpr ( weighted_bundle&lt;typename G::edge_property_type&gt; )</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>         (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(row), static_cast&lt;typename G::index_type&gt;(column),</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>                               matrix.values.data()[position]);</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>       else</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>         (void)result.add_edge(static_cast&lt;typename G::index_type&gt;(row), static_cast&lt;typename G::index_type&gt;(column));</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>     }</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>   }</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>   return result;</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a> }</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a> </span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> template&lt;typename G = graph&lt;&gt;, arith_scalar T, micron::integral I&gt;</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a> [[nodiscard]] G</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> from_sparse_adjacency_matrix(const sparse::csc&lt;T, I&gt; &amp;matrix)</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> {</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>   return from_sparse_adjacency_matrix&lt;G&gt;(sparse::to_csr(matrix));</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> }</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> </span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> };      // namespace micron::math::graphs</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

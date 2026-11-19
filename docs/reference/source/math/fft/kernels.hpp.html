@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/fft/kernels.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/fft/kernels.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/fft/kernels.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> #pragma once</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> </span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> #include &quot;packet.hpp&quot;</span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> </span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> namespace micron::math::fft::__impl</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> {</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> // each packet lane is an ind. butterfly</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> // NOTE: no horizontal reductions or materialized real/imaginary arrays are needed between loads and stores</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> template&lt;usize R, bool Inverse, typename P, fft_scalar F&gt;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> [[gnu::always_inline]] inline void</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> __codelet(const typename P::value *v, complex&lt;F&gt; *out, usize stride) noexcept</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> {</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a>   if constexpr ( R == 2 ) {</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a>     P::store(out, P::add(v[0], v[1]));</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a>     P::store(out + stride, P::sub(v[0], v[1]));</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a>   } else if constexpr ( R == 3 ) {</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a>     auto sum = P::add(v[1], v[2]);</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a>     auto center = P::sub(v[0], P::scale(sum, F(0.5)));</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a>     auto difference</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a>         = P::template rotate&lt;Inverse&gt;(P::scale(P::sub(v[1], v[2]), F(0.866025403784438646763723170752936183471402626905190314L)));</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a>     P::store(out, P::add(v[0], sum));</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a>     P::store(out + stride, P::add(center, difference));</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a>     P::store(out + 2 * stride, P::sub(center, difference));</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a>   } else if constexpr ( R == 4 ) {</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>     auto a = P::add(v[0], v[2]), b = P::sub(v[0], v[2]);</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>     auto c = P::add(v[1], v[3]), d = P::template rotate&lt;Inverse&gt;(P::sub(v[1], v[3]));</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>     P::store(out, P::add(a, c));</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a>     P::store(out + 2 * stride, P::sub(a, c));</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>     P::store(out + stride, P::add(b, d));</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>     P::store(out + 3 * stride, P::sub(b, d));</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   } else if constexpr ( R == 5 ) {</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>     constexpr F c1 = F(0.309016994374947424102293417182819058860154589902881431L);</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>     constexpr F c2 = F(-0.809016994374947424102293417182819058860154589902881431L);</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>     constexpr F s1 = F(0.951056516295153572116439333379382143405698634125750222L);</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>     constexpr F s2 = F(0.587785252292473129168705954639072768597652437643145991L);</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>     auto p = P::add(v[1], v[4]), q = P::add(v[2], v[3]);</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>     auto d = P::sub(v[1], v[4]), e = P::sub(v[2], v[3]);</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>     P::store(out, P::add(P::add(v[0], p), q));</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>     auto a = P::add(v[0], P::add(P::scale(p, c1), P::scale(q, c2)));</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>     auto c = P::template rotate&lt;Inverse&gt;(P::add(P::scale(d, s1), P::scale(e, s2)));</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>     P::store(out + stride, P::add(a, c));</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>     P::store(out + 4 * stride, P::sub(a, c));</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>     auto b = P::add(v[0], P::add(P::scale(p, c2), P::scale(q, c1)));</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>     auto f = P::template rotate&lt;Inverse&gt;(P::sub(P::scale(d, s2), P::scale(e, s1)));</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>     P::store(out + 2 * stride, P::add(b, f));</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>     P::store(out + 3 * stride, P::sub(b, f));</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   } else if constexpr ( R == 8 ) {</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>     constexpr F h = F(0.707106781186547524400844362104849039284835937688474037L);</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>     auto a = P::add(v[0], v[4]), b = P::sub(v[0], v[4]);</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>     auto c = P::add(v[2], v[6]), d = P::template rotate&lt;Inverse&gt;(P::sub(v[2], v[6]));</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>     auto e0 = P::add(a, c), e2 = P::sub(a, c), e1 = P::add(b, d), e3 = P::sub(b, d);</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>     a = P::add(v[1], v[5]);</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>     b = P::sub(v[1], v[5]);</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>     c = P::add(v[3], v[7]);</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>     d = P::template rotate&lt;Inverse&gt;(P::sub(v[3], v[7]));</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>     auto t = P::add(a, c);</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>     P::store(out, P::add(e0, t));</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>     P::store(out + 4 * stride, P::sub(e0, t));</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>     t = P::template rotate&lt;Inverse&gt;(P::sub(a, c));</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>     P::store(out + 2 * stride, P::add(e2, t));</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>     P::store(out + 6 * stride, P::sub(e2, t));</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>     t = P::add(b, d);</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>     t = P::scale(P::add(t, P::template rotate&lt;Inverse&gt;(t)), h);</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>     P::store(out + stride, P::add(e1, t));</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>     P::store(out + 5 * stride, P::sub(e1, t));</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>     t = P::sub(b, d);</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>     t = P::scale(P::sub(P::template rotate&lt;Inverse&gt;(t), t), h);</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     P::store(out + 3 * stride, P::add(e3, t));</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>     P::store(out + 7 * stride, P::sub(e3, t));</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   } else {</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>     static_assert(R == 7);</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>     constexpr F c[3]</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>         = { F(0.623489801858733530525004884004239810632274730896402106L), F(-0.222520933956314404288902564496794759466355568764544955L),</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>             F(-0.900968867902419126236102319507445051165919162131857151L) };</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>     constexpr F s[3]</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>         = { F(0.781831482468029808708444526674057750232334518708687529L), F(0.974927912181823607018131682993931217232785800619997438L),</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>             F(0.433883739117558120475768332848358754609990727787459876L) };</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>     typename P::value sums[3], differences[3];</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     auto dc = v[0];</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>     for ( usize j = 0; j &lt; 3; ++j ) {</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>       sums[j] = P::add(v[j + 1], v[6 - j]);</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>       differences[j] = P::sub(v[j + 1], v[6 - j]);</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>       dc = P::add(dc, sums[j]);</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>     }</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>     P::store(out, dc);</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>     for ( usize l = 1; l &lt;= 3; ++l ) {</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>       auto a = P::add(v[0], P::scale(sums[0], c[l - 1]));</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>       auto b = P::scale(differences[0], s[l - 1]);</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>       for ( usize j = 1; j &lt; 3; ++j ) {</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>         usize phase = (l * (j + 1)) % 7, index = phase &gt; 3 ? 6 - phase : phase - 1;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>         a = P::add(a, P::scale(sums[j], c[index]));</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>         b = P::add(b, P::scale(differences[j], phase &gt; 3 ? -s[index] : s[index]));</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>       }</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>       b = P::template rotate&lt;Inverse&gt;(b);</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>       P::store(out + l * stride, P::add(a, b));</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>       P::store(out + (7 - l) * stride, P::sub(a, b));</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>     }</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   }</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> }</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> </span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> template&lt;usize R, bool Inverse, typename P, fft_scalar F&gt;</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> [[gnu::always_inline]] inline void</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> __stage_packet(complex&lt;F&gt; *out, const complex&lt;F&gt; *twiddles, usize m, usize k) noexcept</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> {</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>   typename P::value v[R];</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   v[0] = P::load(out + k);</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   for ( usize j = 1; j &lt; R; ++j ) {</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>     auto w = P::load(twiddles + (j - 1) * m + k);</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>     if constexpr ( Inverse ) w = P::conjugate(w);</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     v[j] = P::mul(P::load(out + j * m + k), w);</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>   }</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   __codelet&lt;R, Inverse, P&gt;(v, out + k, m);</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> }</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> </span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> template&lt;usize R, bool Inverse, fft_scalar F&gt;</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> void</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> __stage(complex&lt;F&gt; *out, const complex&lt;F&gt; *twiddles, usize m, usize begin, usize end) noexcept</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> {</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>   using P = __complex_packet&lt;F&gt;;</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>   if ( begin &gt;= end ) return;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>   const usize vector_end = end - (end - begin) % P::width;</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>   usize k = begin;</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>   for ( ; k &lt; vector_end; k += P::width ) __stage_packet&lt;R, Inverse, P&gt;(out, twiddles, m, k);</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>   if constexpr ( P::width &gt; 1 )</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>     for ( usize tail = 0; tail &lt; (end - begin) % P::width; ++tail )</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>       __stage_packet&lt;R, Inverse, __scalar_packet&lt;F&gt;&gt;(out, twiddles, m, vector_end + tail);</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> }</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a> </span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> template&lt;usize R, bool Inverse, fft_scalar F&gt;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> [[gnu::noinline]] void</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> __leaf_large(const complex&lt;F&gt; *in, complex&lt;F&gt; *out, usize stride) noexcept</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> {</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>   using P = __scalar_packet&lt;F&gt;;</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>   typename P::value v[R];</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>   for ( usize j = 0; j &lt; R; ++j ) v[j] = in[j * stride];</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>   __codelet&lt;R, Inverse, P&gt;(v, out, 1);</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> }</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> </span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> template&lt;usize R, bool Inverse, fft_scalar F&gt;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> [[gnu::always_inline]] inline void</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> __leaf(const complex&lt;F&gt; *in, complex&lt;F&gt; *out, usize stride) noexcept</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> {</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>   if constexpr ( R &gt; 4 ) {</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>     // NOTE: keep the larger codelets live ranges and stack frame out of the recursive radix-2/4 dispatcher</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     // they are reached only at the leaves</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>     __leaf_large&lt;R, Inverse&gt;(in, out, stride);</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>   } else {</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>     using P = __scalar_packet&lt;F&gt;;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>     typename P::value v[R] = { in[0], in[stride] };</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     if constexpr ( R &gt;= 3 ) v[2] = in[2 * stride];</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     if constexpr ( R == 4 ) v[3] = in[3 * stride];</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     __codelet&lt;R, Inverse, P&gt;(v, out, 1);</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>   }</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a> }</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> };      // namespace micron::math::fft::__impl</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

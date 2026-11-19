@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/__asm/hw.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/__asm/hw.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/__asm/hw.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/__asm/hw.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-e08d815208024473">micron::math::hw::v</code></td><td>variable; line 89<br><small><code>#else of #if defined(__has_builtin) &amp;&amp; __has_builtin(__builtin_assoc_barrier)</code></small></td></tr><tr class="t-dsc"><td><code id="s-b1ef18d0585a5ea8">micron::math::hw::r</code></td><td>variable; line 105<br><small><code>#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse)</code></small></td></tr><tr class="t-dsc"><td><code id="s-ce49b96439e73b1d">micron::math::hw::r</code></td><td>variable; line 109<br><small><code>#elif defined(__micron_arch_x86_any) &amp;&amp; defined(__FLT_EVAL_METHOD__) &amp;&amp; __FLT_EVAL_METHOD__ == 2</code></small></td></tr><tr class="t-dsc"><td><code id="s-6f9de3d50dfa9426">micron::math::hw::r</code></td><td>variable; line 115<br><small><code>#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_neon)</code></small></td></tr><tr class="t-dsc"><td><code id="s-8bf9db9aad294cb8">micron::math::hw::r</code></td><td>variable; line 137<br><small><code>#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse2)</code></small></td></tr><tr class="t-dsc"><td><code id="s-a9b062d2d9af8abd">micron::math::hw::r</code></td><td>variable; line 142<br><small><code>#elif defined(__micron_arch_x86_any) &amp;&amp; defined(__FLT_EVAL_METHOD__) &amp;&amp; __FLT_EVAL_METHOD__ == 2</code></small></td></tr><tr class="t-dsc"><td><code id="s-04af8ddb27687525">micron::math::hw::r</code></td><td>variable; line 148<br><small><code>#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_neon)</code></small></td></tr><tr class="t-dsc"><td><code id="s-a3bcd51f9536ab52">micron::math::hw::r</code></td><td>variable; line 179<br><small><code>#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-df6e9d24d3cb41b0">micron::math::hw::fp_barrier(F x) noexcept</a></td><td>function; line 81</td></tr><tr class="t-dsc"><td><a href="#f-89fe2077a5484c28">micron::math::hw::sqrt_ss(f32 x) noexcept</a></td><td>function; line 95</td></tr><tr class="t-dsc"><td><a href="#f-a401ef5304ea75a2">micron::math::hw::sqrt_sd(f64 x) noexcept</a></td><td>function; line 127</td></tr><tr class="t-dsc"><td><a href="#f-bdbccf950b9fd222">micron::math::hw::sqrt(F x) noexcept</a></td><td>function; line 161</td></tr><tr class="t-dsc"><td><a href="#f-a021e66daf52e042">micron::math::hw::rsqrt_approx_ss(f32 x) noexcept</a></td><td>function; line 173</td></tr><tr class="t-dsc"><td><a href="#f-559a8ea9a8ccd344">micron::math::hw::fmadd_ss(f32 a, f32 b, f32 c) noexcept</a></td><td>function; line 190</td></tr><tr class="t-dsc"><td><a href="#f-c2d5a2e0427c549b">micron::math::hw::fmadd_sd(f64 a, f64 b, f64 c) noexcept</a></td><td>function; line 221</td></tr><tr class="t-dsc"><td><a href="#f-6d67d0667deff5fb">micron::math::hw::fmadd(F a, F b, F c) noexcept</a></td><td>function; line 251</td></tr><tr class="t-dsc"><td><a href="#f-d99d2f2543797b83">micron::math::hw::round_ss(f32 x) noexcept</a></td><td>function; line 270</td></tr><tr class="t-dsc"><td><a href="#f-4a899be1821fcdfe">micron::math::hw::round_sd(f64 x) noexcept</a></td><td>function; line 337</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-df6e9d24d3cb41b0"><h3><code>micron::math::hw::fp_barrier(F x) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L81">line 81</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+fp_barrier(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+fp_barrier(F x) noexcept
+{
+  if consteval {
+    return x;
+  }
+#if defined(__has_builtin) &amp;&amp; __has_builtin(__builtin_assoc_barrier)
+  return __builtin_assoc_barrier(x);
+#else
+  volatile F v = x;
+  return v;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L84">line 84</a></td></tr><tr class="t-dsc"><td><code>__builtin_assoc_barrier(x)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L87">line 87</a></td></tr><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L90">line 90</a></td></tr></tbody></table></section><section class="function-entry" id="f-89fe2077a5484c28"><h3><code>micron::math::hw::sqrt_ss(f32 x) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L95">line 95</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f32
+sqrt_ss(f32 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f32
+sqrt_ss(f32 x) noexcept
+{
+  if consteval {
+#if defined(__micron_compiler_gcc)
+    return f32(__builtin_sqrtf(x));
+#else
+    return __constexpr_sqrt(x);
+#endif
+  }
+#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse)
+  f32 r;
+  __asm__(&quot;sqrtss %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  return r;
+#elif defined(__micron_arch_x86_any) &amp;&amp; defined(__FLT_EVAL_METHOD__) &amp;&amp; __FLT_EVAL_METHOD__ == 2
+  f32 r;
+  __asm__(&quot;fsqrt&quot; : &quot;=t&quot;(r) : &quot;0&quot;(x));
+  return r;
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)
+  return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::sqrt(simd::neon::splat_f32(x)));
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_neon)
+  f32 r;
+  __asm__(&quot;vsqrt.f32 %0, %1&quot; : &quot;=t&quot;(r) : &quot;t&quot;(x));
+  return r;
+#elif defined(__micron_arch_arm32) &amp;&amp; !defined(__micron_arm_fp)
+  // no FPU at all, so the #else would call sqrtf
+  return __constexpr_sqrt(x);
+#else
+  return f32(__builtin_sqrtf(x));
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f32(__builtin_sqrtf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L99">line 99</a></td></tr><tr class="t-dsc"><td><code>__constexpr_sqrt(x)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L107">line 107</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::sqrt(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L113">line 113</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L117">line 117</a></td></tr><tr class="t-dsc"><td><code>__constexpr_sqrt(x)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_sqrtf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L122">line 122</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="hw.hpp.html#f-516d92908e020d51">__constexpr_sqrt</a>, <a href="../../simd/aliases/neon.hpp.html#f-571373fccce69219">simd::neon::get_lane_f32&lt;0&gt;</a>, <a href="../../simd/aliases/neon.hpp.html#f-8950ccc823ee6dc4">simd::neon::sqrt</a>, <a href="../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>.</p></section><section class="function-entry" id="f-a401ef5304ea75a2"><h3><code>micron::math::hw::sqrt_sd(f64 x) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L127">line 127</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f64
+sqrt_sd(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f64
+sqrt_sd(f64 x) noexcept
+{
+  if consteval {
+#if defined(__micron_compiler_gcc)
+    return f64(__builtin_sqrt(x));
+#else
+    return __constexpr_sqrt(x);
+#endif
+  }
+#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse2)
+  f64 r;
+  __asm__(&quot;sqrtsd %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  return r;
+#elif defined(__micron_arch_x86_any) &amp;&amp; defined(__FLT_EVAL_METHOD__) &amp;&amp; __FLT_EVAL_METHOD__ == 2
+  // same as sqrt_ss
+  f64 r;
+  __asm__(&quot;fsqrt&quot; : &quot;=t&quot;(r) : &quot;0&quot;(x));
+  return r;
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)
+  return simd::neon::get_lane_f64&lt;0&gt;(simd::neon::sqrt(simd::neon::splat_f64(x)));
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_neon)
+  f64 r;
+  __asm__(&quot;vsqrt.f64 %P0, %P1&quot; : &quot;=w&quot;(r) : &quot;w&quot;(x));
+  return r;
+#elif defined(__micron_arch_arm32) &amp;&amp; !defined(__micron_arm_fp)
+  // same as sqrt_ss
+  return __constexpr_sqrt(x);
+#else
+  return f64(__builtin_sqrt(x));
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(__builtin_sqrt(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>__constexpr_sqrt(x)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L133">line 133</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L139">line 139</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L144">line 144</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f64&lt;0&gt;(simd::neon::sqrt(simd::neon::splat_f64(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L146">line 146</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td><code>__constexpr_sqrt(x)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L153">line 153</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_sqrt(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L155">line 155</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="hw.hpp.html#f-516d92908e020d51">__constexpr_sqrt</a>, <a href="../../simd/aliases/neon.hpp.html#f-c1ba3cc92282ceca">simd::neon::get_lane_f64&lt;0&gt;</a>, <a href="../../simd/aliases/neon.hpp.html#f-8950ccc823ee6dc4">simd::neon::sqrt</a>, <a href="../../simd/aliases/neon.hpp.html#f-16792ec8f7dd3e5f">simd::neon::splat_f64</a>.</p></section><section class="function-entry" id="f-bdbccf950b9fd222"><h3><code>micron::math::hw::sqrt(F x) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L161">line 161</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+sqrt(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+sqrt(F x) noexcept
+{
+#if defined(__micron_arch_wasm_any)
+  if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::sqrt(x);
+#endif
+  if constexpr ( sizeof(F) == sizeof(f32) )
+    return F(sqrt_ss(f32(x)));
+  else
+    return F(sqrt_sd(f64(x)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wasm::math::sqrt(x)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L164">line 164</a></td></tr><tr class="t-dsc"><td><code>F(sqrt_ss(f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L167">line 167</a></td></tr><tr class="t-dsc"><td><code>F(sqrt_sd(f64(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L169">line 169</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/math/real.hpp.html#f-09f8310e67ca6125">micron::wasm::math::sqrt</a>, <a href="hw.hpp.html#f-89fe2077a5484c28">sqrt_ss</a>, <a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="hw.hpp.html#f-a401ef5304ea75a2">sqrt_sd</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-a021e66daf52e042"><h3><code>micron::math::hw::rsqrt_approx_ss(f32 x) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L173">line 173</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f32
+rsqrt_approx_ss(f32 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f32
+rsqrt_approx_ss(f32 x) noexcept
+{
+  if consteval {
+    return 1.0f / __constexpr_sqrt(x);
+  }
+#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse)
+  f32 r;
+  __asm__(&quot;rsqrtss %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  return r;
+#elif defined(__micron_arch_arm_any) &amp;&amp; defined(__micron_arm_neon)
+  return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::rsqrt_est(simd::neon::splat_f32(x)));
+#else
+  return 1.0f / sqrt_ss(x);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>1.0f / __constexpr_sqrt(x)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::rsqrt_est(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L183">line 183</a></td></tr><tr class="t-dsc"><td><code>1.0f / sqrt_ss(x)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L185">line 185</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hw.hpp.html#f-516d92908e020d51">__constexpr_sqrt</a>, <a href="../../simd/aliases/neon.hpp.html#f-571373fccce69219">simd::neon::get_lane_f32&lt;0&gt;</a>, <a href="../../simd/aliases/neon.hpp.html#f-308302d372c4f402">simd::neon::rsqrt_est</a>, <a href="../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="hw.hpp.html#f-89fe2077a5484c28">sqrt_ss</a>.</p></section><section class="function-entry" id="f-559a8ea9a8ccd344"><h3><code>micron::math::hw::fmadd_ss(f32 a, f32 b, f32 c) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L190">line 190</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f32
+fmadd_ss(f32 a, f32 b, f32 c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 a</code></li><li><code>f32 b</code></li><li><code>f32 c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f32
+fmadd_ss(f32 a, f32 b, f32 c) noexcept
+{
+  if consteval {
+    // clang SOMEHOW doesn&#x27;t support fma for constexprs?!?!
+#if defined(__micron_compiler_gcc)
+    return f32(__builtin_fmaf(a, b, c));
+#else
+    return f32(a * b + c);
+#endif
+  }
+#if defined(__micron_x86_fma)
+  f32 r = c;
+  __asm__(&quot;vfmadd231ss %2, %1, %0&quot; : &quot;+x&quot;(r) : &quot;x&quot;(a), &quot;x&quot;(b));
+  return r;
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)
+  return __builtin_fmaf(a, b, c);      // emits scalar fmadd on arm64; matches the consteval path
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_fma) &amp;&amp; defined(__micron_arm_neon)
+  f32 r = c;
+  __asm__(&quot;vfma.f32 %0, %1, %2&quot; : &quot;+t&quot;(r) : &quot;t&quot;(a), &quot;t&quot;(b));
+  return r;
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_neon)
+  // cortex a8 (armv7/neon) has no hardware FMA, do vmla.f32
+  f32 r = c;
+  __asm__(&quot;vmla.f32 %0, %1, %2&quot; : &quot;+t&quot;(r) : &quot;t&quot;(a), &quot;t&quot;(b));
+  return r;
+#else
+  return f32(__builtin_fmaf(a, b, c));
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f32(__builtin_fmaf(a, b, c))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L195">line 195</a></td></tr><tr class="t-dsc"><td><code>f32(a * b + c)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L203">line 203</a></td></tr><tr class="t-dsc"><td><code>__builtin_fmaf(a, b, c)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L209">line 209</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L214">line 214</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_fmaf(a, b, c))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L216">line 216</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>.</p></section><section class="function-entry" id="f-c2d5a2e0427c549b"><h3><code>micron::math::hw::fmadd_sd(f64 a, f64 b, f64 c) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L221">line 221</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr f64
+fmadd_sd(f64 a, f64 b, f64 c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 a</code></li><li><code>f64 b</code></li><li><code>f64 c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr f64
+fmadd_sd(f64 a, f64 b, f64 c) noexcept
+{
+  if consteval {
+#if defined(__micron_compiler_gcc)
+    return f64(__builtin_fma(a, b, c));
+#else
+    return f64(a * b + c);
+#endif
+  }
+#if defined(__micron_x86_fma)
+  f64 r = c;
+  __asm__(&quot;vfmadd231sd %2, %1, %0&quot; : &quot;+x&quot;(r) : &quot;x&quot;(a), &quot;x&quot;(b));
+  return r;
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)
+  return __builtin_fma(a, b, c);      // emits scalar fmadd on arm64; matches the consteval path
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_fma)
+  f64 r = c;
+  __asm__(&quot;vfma.f64 %P0, %P1, %P2&quot; : &quot;+w&quot;(r) : &quot;w&quot;(a), &quot;w&quot;(b));
+  return r;
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_neon)
+  f64 r = c;
+  __asm__(&quot;vmla.f64 %P0, %P1, %P2&quot; : &quot;+w&quot;(r) : &quot;w&quot;(a), &quot;w&quot;(b));
+  return r;
+#else
+  return f64(__builtin_fma(a, b, c));
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(__builtin_fma(a, b, c))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L225">line 225</a></td></tr><tr class="t-dsc"><td><code>f64(a * b + c)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L227">line 227</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L233">line 233</a></td></tr><tr class="t-dsc"><td><code>__builtin_fma(a, b, c)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L235">line 235</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L239">line 239</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L243">line 243</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_fma(a, b, c))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L245">line 245</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-6d67d0667deff5fb"><h3><code>micron::math::hw::fmadd(F a, F b, F c) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L251">line 251</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+fmadd(F a, F b, F c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li><li><code>F c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+fmadd(F a, F b, F c) noexcept
+{
+#if defined(__micron_arch_wasm_any)
+  if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::fma(a, b, c);
+#endif
+  if constexpr ( sizeof(F) == sizeof(f32) )
+    return F(fmadd_ss(f32(a), f32(b), f32(c)));
+  else
+    return F(fmadd_sd(f64(a), f64(b), f64(c)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wasm::math::fma(a, b, c)</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L254">line 254</a></td></tr><tr class="t-dsc"><td><code>F(fmadd_ss(f32(a), f32(b), f32(c)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L257">line 257</a></td></tr><tr class="t-dsc"><td><code>F(fmadd_sd(f64(a), f64(b), f64(c)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L259">line 259</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/math/real.hpp.html#f-5b2e3a41f9eca0c0">micron::wasm::math::fma</a>, <a href="hw.hpp.html#f-559a8ea9a8ccd344">fmadd_ss</a>, <a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="hw.hpp.html#f-c2d5a2e0427c549b">fmadd_sd</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-d99d2f2543797b83"><h3><code>micron::math::hw::round_ss(f32 x) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L270">line 270</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int Mode&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr f32
+round_ss(f32 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int Mode&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr f32
+round_ss(f32 x) noexcept
+{
+  static_assert(Mode &gt;= 0 &amp;&amp; Mode &lt; 4, &quot;round mode must be 0..3&quot;);
+  if consteval {
+    if constexpr ( Mode == 0 )
+      return f32(__builtin_nearbyintf(x));
+    else if constexpr ( Mode == 1 )
+      return f32(__builtin_floorf(x));
+    else if constexpr ( Mode == 2 )
+      return f32(__builtin_ceilf(x));
+    else
+      return f32(__builtin_truncf(x));
+  }
+#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse4_1)
+  f32 r;
+  if constexpr ( Mode == 0 )
+    __asm__(&quot;roundss $0, %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  else if constexpr ( Mode == 1 )
+    __asm__(&quot;roundss $1, %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  else if constexpr ( Mode == 2 )
+    __asm__(&quot;roundss $2, %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  else
+    __asm__(&quot;roundss $3, %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  return r;
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)
+  if constexpr ( Mode == 0 )
+    return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::rint(simd::neon::splat_f32(x)));
+  else if constexpr ( Mode == 1 )
+    return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::floor(simd::neon::splat_f32(x)));
+  else if constexpr ( Mode == 2 )
+    return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::ceil(simd::neon::splat_f32(x)));
+  else
+    return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::trunc(simd::neon::splat_f32(x)));
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_neon) &amp;&amp; defined(__micron_arm_directed_rounding)
+  if constexpr ( Mode == 0 )
+    return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::rint(simd::neon::splat_f32(x)));
+  else if constexpr ( Mode == 1 )
+    return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::floor(simd::neon::splat_f32(x)));
+  else if constexpr ( Mode == 2 )
+    return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::ceil(simd::neon::splat_f32(x)));
+  else
+    return simd::neon::get_lane_f32&lt;0&gt;(simd::neon::trunc(simd::neon::splat_f32(x)));
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_directed_rounding)
+  f32 r;
+  if constexpr ( Mode == 0 )
+    __asm__(&quot;vrintn.f32 %0, %1&quot; : &quot;=t&quot;(r) : &quot;t&quot;(x));
+  else if constexpr ( Mode == 1 )
+    __asm__(&quot;vrintm.f32 %0, %1&quot; : &quot;=t&quot;(r) : &quot;t&quot;(x));
+  else if constexpr ( Mode == 2 )
+    __asm__(&quot;vrintp.f32 %0, %1&quot; : &quot;=t&quot;(r) : &quot;t&quot;(x));
+  else
+    __asm__(&quot;vrintz.f32 %0, %1&quot; : &quot;=t&quot;(r) : &quot;t&quot;(x));
+  return r;
+#else
+  if constexpr ( Mode == 0 )
+    return f32(__builtin_nearbyintf(x));
+  else if constexpr ( Mode == 1 )
+    return f32(__builtin_floorf(x));
+  else if constexpr ( Mode == 2 )
+    return f32(__builtin_ceilf(x));
+  else
+    return f32(__builtin_truncf(x));
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f32(__builtin_nearbyintf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L275">line 275</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_floorf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L277">line 277</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_ceilf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L279">line 279</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_truncf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L281">line 281</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L293">line 293</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::rint(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L296">line 296</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::floor(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L298">line 298</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::ceil(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L300">line 300</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::trunc(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L302">line 302</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::rint(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L305">line 305</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::floor(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L307">line 307</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::ceil(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L309">line 309</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f32&lt;0&gt;(simd::neon::trunc(simd::neon::splat_f32(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L311">line 311</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L322">line 322</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_nearbyintf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L325">line 325</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_floorf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L327">line 327</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_ceilf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L329">line 329</a></td></tr><tr class="t-dsc"><td><code>f32(__builtin_truncf(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L331">line 331</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(Mode &gt;= 0 &amp;&amp; Mode &lt; 4, &quot;round mode must be 0..3&quot;);</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L272">line 272</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-571373fccce69219">simd::neon::get_lane_f32&lt;0&gt;</a>, <a href="../../simd/aliases/neon.hpp.html#f-32c2fdd63a0205de">simd::neon::rint</a>, <a href="../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-7b48d95dca79ff91">simd::neon::floor</a>, <a href="../../simd/aliases/neon.hpp.html#f-344375e194986313">simd::neon::ceil</a>, <a href="../../simd/aliases/neon.hpp.html#f-98c8c9a8544b5a41">simd::neon::trunc</a>.</p></section><section class="function-entry" id="f-4a899be1821fcdfe"><h3><code>micron::math::hw::round_sd(f64 x) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L337">line 337</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int Mode&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr f64
+round_sd(f64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int Mode&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr f64
+round_sd(f64 x) noexcept
+{
+  static_assert(Mode &gt;= 0 &amp;&amp; Mode &lt; 4, &quot;round mode must be 0..3&quot;);
+  if consteval {
+    if constexpr ( Mode == 0 )
+      return f64(__builtin_nearbyint(x));
+    else if constexpr ( Mode == 1 )
+      return f64(__builtin_floor(x));
+    else if constexpr ( Mode == 2 )
+      return f64(__builtin_ceil(x));
+    else
+      return f64(__builtin_trunc(x));
+  }
+#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse4_1)
+  f64 r;
+  if constexpr ( Mode == 0 )
+    __asm__(&quot;roundsd $0, %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  else if constexpr ( Mode == 1 )
+    __asm__(&quot;roundsd $1, %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  else if constexpr ( Mode == 2 )
+    __asm__(&quot;roundsd $2, %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  else
+    __asm__(&quot;roundsd $3, %1, %0&quot; : &quot;=x&quot;(r) : &quot;x&quot;(x));
+  return r;
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)
+  if constexpr ( Mode == 0 )
+    return simd::neon::get_lane_f64&lt;0&gt;(simd::neon::rint(simd::neon::splat_f64(x)));
+  else if constexpr ( Mode == 1 )
+    return simd::neon::get_lane_f64&lt;0&gt;(simd::neon::floor(simd::neon::splat_f64(x)));
+  else if constexpr ( Mode == 2 )
+    return simd::neon::get_lane_f64&lt;0&gt;(simd::neon::ceil(simd::neon::splat_f64(x)));
+  else
+    return simd::neon::get_lane_f64&lt;0&gt;(simd::neon::trunc(simd::neon::splat_f64(x)));
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_directed_rounding)
+  f64 r;
+  if constexpr ( Mode == 0 )
+    __asm__(&quot;vrintn.f64 %P0, %P1&quot; : &quot;=w&quot;(r) : &quot;w&quot;(x));
+  else if constexpr ( Mode == 1 )
+    __asm__(&quot;vrintm.f64 %P0, %P1&quot; : &quot;=w&quot;(r) : &quot;w&quot;(x));
+  else if constexpr ( Mode == 2 )
+    __asm__(&quot;vrintp.f64 %P0, %P1&quot; : &quot;=w&quot;(r) : &quot;w&quot;(x));
+  else
+    __asm__(&quot;vrintz.f64 %P0, %P1&quot; : &quot;=w&quot;(r) : &quot;w&quot;(x));
+  return r;
+#else
+  if constexpr ( Mode == 0 )
+    return f64(__builtin_nearbyint(x));
+  else if constexpr ( Mode == 1 )
+    return f64(__builtin_floor(x));
+  else if constexpr ( Mode == 2 )
+    return f64(__builtin_ceil(x));
+  else
+    return f64(__builtin_trunc(x));
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(__builtin_nearbyint(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L342">line 342</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_floor(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L344">line 344</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_ceil(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L346">line 346</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_trunc(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L348">line 348</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L360">line 360</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f64&lt;0&gt;(simd::neon::rint(simd::neon::splat_f64(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L363">line 363</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f64&lt;0&gt;(simd::neon::floor(simd::neon::splat_f64(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L365">line 365</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f64&lt;0&gt;(simd::neon::ceil(simd::neon::splat_f64(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L367">line 367</a></td></tr><tr class="t-dsc"><td><code>simd::neon::get_lane_f64&lt;0&gt;(simd::neon::trunc(simd::neon::splat_f64(x)))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L369">line 369</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L380">line 380</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_nearbyint(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L383">line 383</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_floor(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L385">line 385</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_ceil(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L387">line 387</a></td></tr><tr class="t-dsc"><td><code>f64(__builtin_trunc(x))</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L389">line 389</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(Mode &gt;= 0 &amp;&amp; Mode &lt; 4, &quot;round mode must be 0..3&quot;);</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L339">line 339</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="../../simd/aliases/neon.hpp.html#f-c1ba3cc92282ceca">simd::neon::get_lane_f64&lt;0&gt;</a>, <a href="../../simd/aliases/neon.hpp.html#f-32c2fdd63a0205de">simd::neon::rint</a>, <a href="../../simd/aliases/neon.hpp.html#f-16792ec8f7dd3e5f">simd::neon::splat_f64</a>, <a href="../../simd/aliases/neon.hpp.html#f-7b48d95dca79ff91">simd::neon::floor</a>, <a href="../../simd/aliases/neon.hpp.html#f-344375e194986313">simd::neon::ceil</a>, <a href="../../simd/aliases/neon.hpp.html#f-98c8c9a8544b5a41">simd::neon::trunc</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-516d92908e020d51"><h3><code>micron::math::hw::__constexpr_sqrt(F x) noexcept</code></h3><p>Defined in <code>math/__asm/hw.hpp</code>, <a href="../../../source/math/__asm/hw.hpp.html#L28">line 28</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+[[nodiscard]] inline constexpr F
+__constexpr_sqrt(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+[[nodiscard]] inline constexpr F
+__constexpr_sqrt(F x) noexcept
+{
+  if ( x == F(0) or x == F(1) ) return x;
+  if ( !(x &gt; F(0)) ) return x == x ? F(__builtin_nan(&quot;&quot;)) : x;      // negative -&gt; NaN, NaN -&gt; itself
+  if ( x &gt;= F(__builtin_huge_val()) ) return x;                     // +inf; the reduction cannot end
+
+  constexpr bool single = sizeof(F) == sizeof(f32);
+  int e = 0;
+  F v = x;
+  for ( int i = 0; i &lt; 20 &amp;&amp; v &gt;= F(0x1p+64); ++i ) {
+    v *= F(0x1p-64);
+    e += 32;
+  }
+  for ( int i = 0; i &lt; 32 &amp;&amp; v &gt;= F(4); ++i ) {
+    v *= F(0.25);
+    e += 1;
+  }
+  for ( int i = 0; i &lt; 20 &amp;&amp; v &lt; F(0x1p-64); ++i ) {
+    v *= F(0x1p+64);
+    e -= 32;
+  }
+  for ( int i = 0; i &lt; 32 &amp;&amp; v &lt; F(1); ++i ) {
+    v *= F(4);
+    e -= 1;
+  }
+
+  F r = v;
+  for ( int i = 0; i &lt; (single ? 20 : 40); ++i ) {
+    const F next = (r + v / r) * F(0.5);
+    if ( next == r ) break;
+    r = next;
+  }
+
+  // heron settles on either neighbour of the root
+  const F split = single ? F(0x1p12) + F(1) : F(0x1p27) + F(1);
+  const F u = single ? F(0x1p-23) : F(0x1p-52);      // ulp of [1, 2), which is where r lives
+  const F c = split * r;
+  const F rh = c - (c - r);
+  const F rl = r - rh;
+  const F t = ((v - rh * rh) - (rh * rl + rh * rl)) - rl * rl;
+  const F h = u * u * F(0.25);
+  if ( t - r * u &gt; h )
+    r += u;
+  else if ( t + r * u &lt; h )
+    r -= u;
+
+  for ( int i = 0; i &lt; e; ++i ) r *= F(2);
+  for ( int i = 0; i &gt; e; --i ) r *= F(0.5);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L30">line 30</a></td></tr><tr class="t-dsc"><td><code>x == x ? F(__builtin_nan(&quot;&quot;)) : x</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L31">line 31</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L32">line 32</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/__asm/hw.hpp.html#L76">line 76</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

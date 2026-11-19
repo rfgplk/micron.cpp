@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mutex/locks/mcs_lock.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">mutex/locks/mcs_lock.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/mutex/locks/mcs_lock.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../atomic/atomic.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;../mutex.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> </span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../backoff.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;__node_pool.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> </span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> namespace micron</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> {</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> </span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #ifndef MICRON_MCS_RECURSION_ROUNDS</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #define MICRON_MCS_RECURSION_ROUNDS 1024u</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #endif</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> </span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> // %%%%%%%%%%%%%%%%%%</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> // queuing_mutex</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> //</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> // WARNING: RELEASE IS BY THE LOCK, NOT BY THE THREAD;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> // unlock() with nothing held is noop; a second seqd unlock() of one acquisition is a noop; not recursive; THE ACQUIRING THREAD MUST NEVER</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> // EXIT AND THE LOCK MUST NOT BE DTORD WHILE AN ACQ IS PENDING</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> enum class __mcs_slot_state : u8 { idle = 0, busy = 1, releasing = 2 };</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> </span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> struct __mcs_slot {</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>   mcs_node node;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   atomic_token&lt;__mcs_slot_state&gt; state;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> </span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>   constexpr __mcs_slot() noexcept : node(), state(__mcs_slot_state::idle) { }</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> };</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> </span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> class mcs_lock</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> {</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   using __pool = __lock_slot_table&lt;__mcs_slot&gt;;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> </span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   const u64 __id;</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   queuing_mutex __q;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   atomic_token&lt;__mcs_slot *&gt; __holder;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>   [[no_unique_address]] __lock_stats st;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> </span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>   static bool</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>   __idle(const __mcs_slot &amp;s) noexcept</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>   {</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>     return s.state.get(memory_order::acquire) == __mcs_slot_state::idle;</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   }</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> </span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   [[gnu::noinline]] void</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   __await_node(__mcs_slot *s)</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   {</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>     default_backoff bo;</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>     for ( ;; ) {</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>       // avoid shadowing</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>       const __mcs_slot_state __st = s-&gt;state.get(memory_order::acquire);</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>       if ( __st == __mcs_slot_state::idle ) return;</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>       if ( __st == __mcs_slot_state::busy ) {</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>         if ( __holder.get(memory_order::acquire) != s )</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>           micron::exc&lt;except::thread_error&gt;(&quot;mcs_lock re-entered while this thread was still acquiring it&quot;);</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>         if ( bo.rounds() &gt;= MICRON_MCS_RECURSION_ROUNDS )</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>           micron::exc&lt;except::thread_error&gt;(&quot;mcs_lock is not recursive: this thread already holds it&quot;);</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>       }</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>       bo.relax();</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>     }</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>   }</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> </span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   void</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>   reset() noexcept</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>   {</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     unlock();</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   }</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> </span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> public:</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>   using node_type = mcs_node;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> </span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   ~mcs_lock() { __pool::release(this); }</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> </span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>   mcs_lock() noexcept : __id(__next_lock_slot_id()), __q(), __holder(nullptr) { }</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> </span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>   mcs_lock(const mcs_lock &amp;) = delete;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>   mcs_lock(mcs_lock &amp;&amp;) = delete;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   mcs_lock &amp;operator=(const mcs_lock &amp;) = delete;</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> </span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>   auto</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   operator()()</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   {</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>     bool fresh = false;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>     __mcs_slot *s = __pool::claim_evicting(this, __id, fresh, __idle);</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>     if ( fresh ) s-&gt;state.store(__mcs_slot_state::idle, memory_order::relaxed);</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> </span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>     if ( s-&gt;state.get(memory_order::acquire) != __mcs_slot_state::idle ) __await_node(s);</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> </span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>     s-&gt;state.store(__mcs_slot_state::busy, memory_order::relaxed);</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>     __q.lock(s-&gt;node);</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>     __holder.store(s, memory_order::release);</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>     st.note_acquire();</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>     return &amp;mcs_lock::reset;</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   }</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> </span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   auto</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   lock()</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   {</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>     return operator()();</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   }</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> </span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>   bool</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>   try_lock() noexcept</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   {</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>     bool fresh = false;</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> </span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>     __mcs_slot *s = __pool::try_claim(this, __id, fresh, __idle);</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     if ( s == nullptr ) return false;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>     if ( fresh ) s-&gt;state.store(__mcs_slot_state::idle, memory_order::relaxed);</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> </span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>     if ( s-&gt;state.get(memory_order::acquire) != __mcs_slot_state::idle ) return false;</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> </span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>     s-&gt;state.store(__mcs_slot_state::busy, memory_order::relaxed);</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>     if ( __q.try_lock(s-&gt;node) ) {</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>       __holder.store(s, memory_order::release);</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>       st.note_acquire();</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>       return true;</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     }</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     s-&gt;state.store(__mcs_slot_state::idle, memory_order::relaxed);</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     return false;</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>   }</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> </span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>   void</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   unlock() noexcept</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>   {</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>     __mcs_slot *s = __holder.get(memory_order::acquire);</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>     if ( s == nullptr ) return;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     s-&gt;state.store(__mcs_slot_state::releasing, memory_order::release);</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>     __holder.store(nullptr, memory_order::release);</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     __q.unlock(s-&gt;node);</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     s-&gt;state.store(__mcs_slot_state::idle, memory_order::release);</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>   }</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> </span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>   auto</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>   retrieve() noexcept</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>   {</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>     return &amp;mcs_lock::reset;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>   }</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> </span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>   bool</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>   operator!() const noexcept</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>   {</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     return !__q.is_locked();</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>   }</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> </span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>   bool</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   is_locked() const noexcept</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   {</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     return __q.is_locked();</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>   }</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> </span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   [[nodiscard]] bool</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>   holds() const noexcept</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>   {</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>     const __mcs_slot *s = __pool::find(this, __id);</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     return s != nullptr and __holder.get(memory_order::acquire) == s;</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>   }</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a> </span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>   // arrivals in queue order; 0 unless MICRON_LOCK_STATS</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>   [[nodiscard]] u32</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>   enqueued() const noexcept</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>   {</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     return __q.enqueued();</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   }</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> </span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>   [[nodiscard]] const __lock_stats &amp;</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>   stats() const noexcept</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   {</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     return st;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>   }</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a> </span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>   template&lt;typename... T&gt; friend void unlock(T &amp;...);</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> };</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> </span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

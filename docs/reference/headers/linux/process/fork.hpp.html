@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/process/fork.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/process/fork.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/process/fork.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/process/fork.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-5d3108d1f424574e">micron::try_fork() noexcept</a></td><td>function; line 21</td></tr><tr class="t-dsc"><td><a href="#f-c778fa927f703e4f">micron::fork()</a></td><td>function; line 60</td></tr><tr class="t-dsc"><td><a href="#f-1b5bf0225cdfd62b">micron::wfork()</a></td><td>function; line 69</td></tr><tr class="t-dsc"><td><a href="#f-db04a41be06f1e4b">micron::fork(Args &amp;&amp;...args)</a></td><td>function; line 84</td></tr><tr class="t-dsc"><td><a href="#f-5c799a2fade7b255">micron::wfork(Args &amp;&amp;...args)</a></td><td>function; line 91</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-5d3108d1f424574e"><h3><code>micron::try_fork() noexcept</code></h3><p>Defined in <code>linux/process/fork.hpp</code>, <a href="../../../source/linux/process/fork.hpp.html#L21">line 21</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline int
+try_fork() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::posix::__fork_clone(posix::sig_chld)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline int
+try_fork() noexcept
+{
+  return micron::posix::__fork_clone(posix::sig_chld);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::posix::__fork_clone(posix::sig_chld)</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L23">line 23</a></td></tr></tbody></table></section><section class="function-entry" id="f-c778fa927f703e4f"><h3><code>micron::fork()</code></h3><p>Defined in <code>linux/process/fork.hpp</code>, <a href="../../../source/linux/process/fork.hpp.html#L60">line 60</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+fork()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__base_fork()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+fork()
+{
+  // invoked base fork
+  return __base_fork();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__base_fork()</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L63">line 63</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fork.hpp.html#f-09064560088c15fa">__base_fork</a>.</p></section><section class="function-entry" id="f-1b5bf0225cdfd62b"><h3><code>micron::wfork()</code></h3><p>Defined in <code>linux/process/fork.hpp</code>, <a href="../../../source/linux/process/fork.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int Stack = default_stack_size&gt;
+int
+wfork()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int Stack = default_stack_size&gt;
+int
+wfork()
+{
+  int pid = __base_fork();
+  if ( pid == 0 ) return pid;
+  if ( pid &lt; 1 ) {
+    return pid;
+  }
+  int status = 0;
+  micron::waitpid(pid, &amp;status, 0);
+  if ( micron::wifexited(status) ) return micron::wexitstatus(status);
+  return status;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pid</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L72">line 72</a></td></tr><tr class="t-dsc"><td><code>pid</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L74">line 74</a></td></tr><tr class="t-dsc"><td><code>micron::wexitstatus(status)</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L78">line 78</a></td></tr><tr class="t-dsc"><td><code>status</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L79">line 79</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fork.hpp.html#f-09064560088c15fa">__base_fork</a>, <a href="wait.hpp.html#f-72deb6806252135c">micron::waitpid</a>, <a href="wait.hpp.html#f-76d33c351667921d">micron::wifexited</a>, <a href="wait.hpp.html#f-706ac8dabc838509">micron::wexitstatus</a>.</p></section><section class="function-entry" id="f-db04a41be06f1e4b"><h3><code>micron::fork(Args &amp;&amp;...args)</code></h3><p>Defined in <code>linux/process/fork.hpp</code>, <a href="../../../source/linux/process/fork.hpp.html#L84">line 84</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, typename... Args&gt;
+int
+fork(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Returns <code>__base_fork&lt;Fn&gt;(micron::forward&lt;Args&gt;(args)...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, typename... Args&gt;
+int
+fork(Args &amp;&amp;...args)
+{
+  return __base_fork&lt;Fn&gt;(micron::forward&lt;Args&gt;(args)...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__base_fork&lt;Fn&gt;(micron::forward&lt;Args&gt;(args)...)</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L86">line 86</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fork.hpp.html#f-09064560088c15fa">__base_fork&lt;Fn&gt;</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-5c799a2fade7b255"><h3><code>micron::wfork(Args &amp;&amp;...args)</code></h3><p>Defined in <code>linux/process/fork.hpp</code>, <a href="../../../source/linux/process/fork.hpp.html#L91">line 91</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn, typename... Args&gt;
+int
+wfork(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn, typename... Args&gt;
+int
+wfork(Args &amp;&amp;...args)
+{
+  int pid = __base_fork&lt;Fn&gt;(micron::forward&lt;Args&gt;(args)...);
+  if ( pid == 0 ) return pid;
+  if ( pid &lt; 1 ) {
+    return pid;
+  }
+  int status = 0;
+  micron::waitpid(pid, &amp;status, 0);
+  if ( micron::wifexited(status) ) return micron::wexitstatus(status);
+  return status;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pid</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L94">line 94</a></td></tr><tr class="t-dsc"><td><code>pid</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>micron::wexitstatus(status)</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>status</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L101">line 101</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fork.hpp.html#f-09064560088c15fa">__base_fork&lt;Fn&gt;</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="wait.hpp.html#f-72deb6806252135c">micron::waitpid</a>, <a href="wait.hpp.html#f-76d33c351667921d">micron::wifexited</a>, <a href="wait.hpp.html#f-706ac8dabc838509">micron::wexitstatus</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-09064560088c15fa"><h3><code>micron::__base_fork()</code></h3><p>Defined in <code>linux/process/fork.hpp</code>, <a href="../../../source/linux/process/fork.hpp.html#L28">line 28</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+__base_fork()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+__base_fork()
+{
+  int pid = micron::posix::__fork_clone(posix::sig_chld);
+  if ( pid &lt; 0 ) exc&lt;except::system_error&gt;(&quot;micron process failed to fork()&quot;);
+  return pid;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pid</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L32">line 32</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::system_error&gt;(&quot;micron process failed to fork()&quot;)</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L31">line 31</a><br>Within <code>( pid &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::system_error&gt;</a>.</p></section><section class="function-entry" id="f-361fd404921daedc"><h3><code>micron::__base_fork(Args &amp;&amp;...args)</code></h3><p>Defined in <code>linux/process/fork.hpp</code>, <a href="../../../source/linux/process/fork.hpp.html#L40">line 40</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;auto Fn = __default_callback, int Stack = default_stack_size, typename... Args&gt;
+int
+__base_fork(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;auto Fn = __default_callback, int Stack = default_stack_size, typename... Args&gt;
+int
+__base_fork(Args &amp;&amp;...args)
+{
+  int pid = micron::posix::__fork_clone(posix::sig_chld);
+  if ( pid &lt; 0 ) exc&lt;except::system_error&gt;(&quot;micron process failed to fork()&quot;);
+  if ( pid == 0 ) {
+    // child: COW address space, same stack pointer -&gt; forwarded args are live here
+    using ret_t = decltype(Fn(micron::forward&lt;Args&gt;(args)...));
+    if constexpr ( micron::is_same_v&lt;ret_t, int&gt; ) {
+      int rc = Fn(micron::forward&lt;Args&gt;(args)...);
+      micron::syscall(SYS_exit_group, rc);
+    } else {
+      Fn(micron::forward&lt;Args&gt;(args)...);
+      micron::syscall(SYS_exit_group, 0);
+    }
+    __builtin_unreachable();
+  }
+  return pid;      // parent
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pid</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L56">line 56</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::system_error&gt;(&quot;micron process failed to fork()&quot;)</code></td><td><a href="../../../source/linux/process/fork.hpp.html#L43">line 43</a><br>Within <code>( pid &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::system_error&gt;</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="../sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/mutex/locks/recursive_lock.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/mutex/locks/recursive_lock.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/mutexes.html">Mutexes and locks</a></div><p>Defined in header <code>&lt;micron/mutex/locks/recursive_lock.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/mutex/locks/recursive_lock.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-dc96d7a11137e72f">micron::recursive_lock</code></td><td>class; line 21</td></tr><tr class="t-dsc"><td><a href="#f-16e6176059c6328a">micron::recursive_lock::recursive_lock() noexcept</a></td><td>function; line 58</td></tr><tr class="t-dsc"><td><a href="#f-2b9e8477b8f23ece">micron::recursive_lock::recursive_lock(const recursive_lock &amp;)</a></td><td>function; line 60</td></tr><tr class="t-dsc"><td><a href="#f-3651b0ec04bc84e9">micron::recursive_lock::recursive_lock(recursive_lock &amp;&amp;)</a></td><td>function; line 61</td></tr><tr class="t-dsc"><td><a href="#f-ed66edc4abc62969">micron::recursive_lock::operator=(const recursive_lock &amp;)</a></td><td>function; line 62</td></tr><tr class="t-dsc"><td><a href="#f-292f27d3350eb4bc">micron::recursive_lock::operator()()</a></td><td>function; line 65</td></tr><tr class="t-dsc"><td><a href="#f-1bc95237620998df">micron::recursive_lock::lock()</a></td><td>function; line 90</td></tr><tr class="t-dsc"><td><a href="#f-b1c3c7326c46553a">micron::recursive_lock::try_lock() noexcept</a></td><td>function; line 96</td></tr><tr class="t-dsc"><td><a href="#f-d5a5e7dc3f952e77">micron::recursive_lock::unlock() noexcept</a></td><td>function; line 113</td></tr><tr class="t-dsc"><td><a href="#f-f44896ffafb8628d">micron::recursive_lock::retrieve()</a></td><td>function; line 119</td></tr><tr class="t-dsc"><td><a href="#f-6e1f264832887050">micron::recursive_lock::operator!() const noexcept</a></td><td>function; line 125</td></tr><tr class="t-dsc"><td><a href="#f-328b9ad9c5308c77">micron::recursive_lock::is_locked() const noexcept</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-2672a0292c06319a">micron::recursive_lock::lock_depth() const noexcept</a></td><td>function; line 137</td></tr><tr class="t-dsc"><td><a href="#f-2c042d20556ca942">micron::recursive_lock::unlock(T &amp;...)</a></td><td>function; line 142</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-16e6176059c6328a"><h3><code>micron::recursive_lock::recursive_lock() noexcept</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L58">line 58</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>recursive_lock() noexcept : owner(__ownerless), depth(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">recursive_lock() noexcept : owner(__ownerless), depth(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-2b9e8477b8f23ece"><h3><code>micron::recursive_lock::recursive_lock(const recursive_lock &amp;)</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L60">line 60</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>recursive_lock(const recursive_lock &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const recursive_lock &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-3651b0ec04bc84e9"><h3><code>micron::recursive_lock::recursive_lock(recursive_lock &amp;&amp;)</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L61">line 61</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>recursive_lock(recursive_lock &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>recursive_lock &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-ed66edc4abc62969"><h3><code>micron::recursive_lock::operator=(const recursive_lock &amp;)</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>recursive_lock &amp;operator=(const recursive_lock &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const recursive_lock &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-292f27d3350eb4bc"><h3><code>micron::recursive_lock::operator()()</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L65">line 65</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  operator()()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  operator()()
+  {
+    const usize me = current_thread();
+
+    default_backoff bo;
+    for ( ;; ) {
+
+      usize cur = owner.get(memory_order::acquire);
+      if ( cur == me ) {
+        depth.fetch_add(1, memory_order::relaxed);
+        return &amp;recursive_lock::reset;
+      }
+
+      if ( cur == __ownerless ) {
+        if ( owner.compare_and_swap(__ownerless, me) ) {
+          depth.store(1, memory_order::release);
+          return &amp;recursive_lock::reset;
+        }
+      }
+
+      bo.relax();
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;recursive_lock::reset</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>&amp;recursive_lock::reset</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L81">line 81</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="recursive_lock.hpp.html#f-0604263935b4c1ae">current_thread</a>.</p></section><section class="function-entry" id="f-1bc95237620998df"><h3><code>micron::recursive_lock::lock()</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L90">line 90</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  lock()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>operator()()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  lock()
+  {
+    return operator()();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>operator()()</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L92">line 92</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="recursive_lock.hpp.html#f-292f27d3350eb4bc">operator()</a>.</p></section><section class="function-entry" id="f-b1c3c7326c46553a"><h3><code>micron::recursive_lock::try_lock() noexcept</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L96">line 96</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  try_lock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  try_lock() noexcept
+  {
+    const usize me = current_thread();
+
+    usize cur = owner.get(memory_order::acquire);
+    if ( cur == me ) {
+      depth.fetch_add(1, memory_order::relaxed);
+      return true;
+    }
+    if ( cur == __ownerless &amp;&amp; owner.compare_and_swap(__ownerless, me) ) {
+      depth.store(1, memory_order::release);
+      return true;
+    }
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L103">line 103</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L107">line 107</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L109">line 109</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="recursive_lock.hpp.html#f-0604263935b4c1ae">current_thread</a>.</p></section><section class="function-entry" id="f-d5a5e7dc3f952e77"><h3><code>micron::recursive_lock::unlock() noexcept</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  unlock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  unlock() noexcept
+  {
+    reset();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="recursive_lock.hpp.html#f-13eebe5995ae3da4">reset</a>.</p></section><section class="function-entry" id="f-f44896ffafb8628d"><h3><code>micron::recursive_lock::retrieve()</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L119">line 119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  retrieve()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>&amp;recursive_lock::reset</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  retrieve()
+  {
+    return &amp;recursive_lock::reset;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;recursive_lock::reset</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L121">line 121</a></td></tr></tbody></table></section><section class="function-entry" id="f-6e1f264832887050"><h3><code>micron::recursive_lock::operator!() const noexcept</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L125">line 125</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  operator!() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>owner.get(memory_order::relaxed) == __ownerless</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  operator!() const noexcept
+  {
+    return owner.get(memory_order::relaxed) == __ownerless;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>owner.get(memory_order::relaxed) == __ownerless</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L127">line 127</a></td></tr></tbody></table></section><section class="function-entry" id="f-328b9ad9c5308c77"><h3><code>micron::recursive_lock::is_locked() const noexcept</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  is_locked() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>owner.get(memory_order::relaxed) != __ownerless</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  is_locked() const noexcept
+  {
+    return owner.get(memory_order::relaxed) != __ownerless;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>owner.get(memory_order::relaxed) != __ownerless</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L133">line 133</a></td></tr></tbody></table></section><section class="function-entry" id="f-2672a0292c06319a"><h3><code>micron::recursive_lock::lock_depth() const noexcept</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L137">line 137</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  lock_depth() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>depth.get(memory_order::relaxed)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  lock_depth() const noexcept
+  {
+    return depth.get(memory_order::relaxed);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>depth.get(memory_order::relaxed)</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L139">line 139</a></td></tr></tbody></table></section><section class="function-entry" id="f-2c042d20556ca942"><h3><code>micron::recursive_lock::unlock(T &amp;...)</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L142">line 142</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... T&gt; friend void unlock(T &amp;...);</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;...</code></li></ul><h4>Effects</h4><p>See <a href="recursive_lock.hpp.html#f-d5a5e7dc3f952e77">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-0604263935b4c1ae"><h3><code>micron::recursive_lock::current_thread() noexcept</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L29">line 29</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static usize
+  current_thread() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static usize
+  current_thread() noexcept
+  {
+    static thread_local usize __id = 0;
+    if ( __id == 0 ) [[unlikely]]
+      __id = __lock_owner_ids.fetch_add(1, memory_order::acq_rel);
+    return __id;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__id</code></td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L34">line 34</a></td></tr></tbody></table></section><section class="function-entry" id="f-13eebe5995ae3da4"><h3><code>micron::recursive_lock::reset()</code></h3><p>Defined in <code>mutex/locks/recursive_lock.hpp</code>, <a href="../../../source/mutex/locks/recursive_lock.hpp.html#L38">line 38</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reset()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reset()
+  {
+    if ( owner.get(memory_order::relaxed) != current_thread() ) {      // only the owner may unlock (no ownership theft)
+      __micron_lock_misuse(&quot;recursive_lock::unlock from a non-owner&quot;);
+      return;
+    }
+    usize d = depth.get(memory_order::relaxed);
+    if ( d == 0 ) {      // not actually held (no count underflow)
+      __micron_lock_misuse(&quot;recursive_lock::unlock at depth 0&quot;);
+      return;
+    }
+    if ( d &gt; 1 ) {
+      depth.store(d - 1, memory_order::relaxed);
+    } else {
+      depth.store(0, memory_order::release);
+      owner.store(__ownerless, memory_order::release);
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L42">line 42</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/mutex/locks/recursive_lock.hpp.html#L47">line 47</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="recursive_lock.hpp.html#f-0604263935b4c1ae">current_thread</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

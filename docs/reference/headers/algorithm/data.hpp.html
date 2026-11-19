@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/data.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/data.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/algorithms.html">Algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/data.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/algorithm/data.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-dd1a9c3daaa0be08">micron::melt(const T &amp;obj)</a></td><td>function; line 27</td></tr><tr class="t-dsc"><td><a href="#f-e6fcd1a4abe0435d">micron::cut(const T &amp;obj, const T &amp;bins)</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-9d7a7738fde95fe1">micron::merge(I first1, I last1, J first2, J last2, O d_first)</a></td><td>function; line 59</td></tr><tr class="t-dsc"><td><a href="#f-fbc7e539034d3fe5">micron::merge(const T &amp;obj1, const T &amp;obj2)</a></td><td>function; line 75</td></tr><tr class="t-dsc"><td><a href="#f-99fe46781237d2d6">micron::concat(const T &amp;obj1, const T &amp;obj2)</a></td><td>function; line 84</td></tr><tr class="t-dsc"><td><a href="#f-33cd90016c06d614">micron::reverse(I first, I last)</a></td><td>function; line 91</td></tr><tr class="t-dsc"><td><a href="#f-82e68adabdbddca7">micron::rotate(I first, I n_first, I last)</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-451895d6394a322e">micron::cycle_rotate(I first, I n_first, I last)</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-4f26686b824500c1">micron::make_heap(C &amp;c) noexcept</a></td><td>function; line 195</td></tr><tr class="t-dsc"><td><a href="#f-4ee97813fa889057">micron::make_heap(C &amp;c, Cmp comp) noexcept</a></td><td>function; line 211</td></tr><tr class="t-dsc"><td><a href="#f-59e824b93a500b23">micron::make_heap(C &amp;c, typename C::umax_type lim) noexcept</a></td><td>function; line 224</td></tr><tr class="t-dsc"><td><a href="#f-f7445147a0c88219">micron::make_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</a></td><td>function; line 239</td></tr><tr class="t-dsc"><td><a href="#f-fd98a4a801edbc12">micron::push_heap(C &amp;c) noexcept</a></td><td>function; line 251</td></tr><tr class="t-dsc"><td><a href="#f-107ec918b7057434">micron::push_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</a></td><td>function; line 264</td></tr><tr class="t-dsc"><td><a href="#f-695f6f909ce1f3fd">micron::push_heap(C &amp;c, typename C::umax_type lim) noexcept</a></td><td>function; line 273</td></tr><tr class="t-dsc"><td><a href="#f-2d387291c95a9e0e">micron::push_heap(C &amp;c, Cmp comp) noexcept</a></td><td>function; line 285</td></tr><tr class="t-dsc"><td><a href="#f-7efce58e87fdb890">micron::pop_heap(C &amp;c) noexcept</a></td><td>function; line 295</td></tr><tr class="t-dsc"><td><a href="#f-f688c4e28b810649">micron::pop_heap(C &amp;c, Cmp comp) noexcept</a></td><td>function; line 314</td></tr><tr class="t-dsc"><td><a href="#f-9a8716f6d40ba337">micron::pop_heap(C &amp;c, typename C::umax_type lim) noexcept</a></td><td>function; line 330</td></tr><tr class="t-dsc"><td><a href="#f-7eeffaed5a2f9e64">micron::pop_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</a></td><td>function; line 348</td></tr><tr class="t-dsc"><td><a href="#f-6ecea84b9ad34e20">micron::sort_heap(C &amp;c) noexcept</a></td><td>function; line 363</td></tr><tr class="t-dsc"><td><a href="#f-e740cb0470011826">micron::sort_heap_min(C &amp;c) noexcept</a></td><td>function; line 385</td></tr><tr class="t-dsc"><td><a href="#f-de6d095426eb0ff1">micron::sort_heap(C &amp;c, Cmp comp) noexcept</a></td><td>function; line 404</td></tr><tr class="t-dsc"><td><a href="#f-8e6c7eea88eb5f61">micron::is_heap(const C &amp;c) noexcept</a></td><td>function; line 421</td></tr><tr class="t-dsc"><td><a href="#f-c3157951b68d3430">micron::is_heap(const C &amp;c, Cmp comp) noexcept</a></td><td>function; line 439</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-dd1a9c3daaa0be08"><h3><code>micron::melt(const T &amp;obj)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L27">line 27</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+  requires is_iterable_container&lt;typename T::value_type&gt;
+T
+melt(const T &amp;obj)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;obj</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+  requires is_iterable_container&lt;typename T::value_type&gt;
+T
+melt(const T &amp;obj)
+{
+  T out;
+  using Row = typename T::value_type;
+  for ( umax_t i = 0; i &lt; obj[0].size(); i++ ) {
+    for ( umax_t j = 0; j &lt; obj.size(); j++ ) {
+      Row r(2);
+      r[0] = obj[j][i];
+      r[1] = static_cast&lt;typename Row::value_type&gt;(j);
+      out.push_back(r);
+    }
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/data.hpp.html#L39">line 39</a></td></tr></tbody></table></section><section class="function-entry" id="f-e6fcd1a4abe0435d"><h3><code>micron::cut(const T &amp;obj, const T &amp;bins)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+  requires micron::is_arithmetic_v&lt;typename T::value_type&gt;
+T
+cut(const T &amp;obj, const T &amp;bins)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;obj</code></li><li><code>const T &amp;bins</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+  requires micron::is_arithmetic_v&lt;typename T::value_type&gt;
+T
+cut(const T &amp;obj, const T &amp;bins)
+{
+  T out;
+  out.resize(obj.size());
+  for ( umax_t i = 0; i &lt; obj.size(); i++ ) {
+    umax_t bin_index = 0;
+    while ( bin_index &lt; bins.size() - 1 &amp;&amp; obj[i] &gt; bins[bin_index + 1] ) bin_index++;
+    out[i] = bin_index;
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/data.hpp.html#L54">line 54</a></td></tr></tbody></table></section><section class="function-entry" id="f-9d7a7738fde95fe1"><h3><code>micron::merge(I first1, I last1, J first2, J last2, O d_first)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L59">line 59</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, typename J, typename O&gt;
+constexpr O
+merge(I first1, I last1, J first2, J last2, O d_first)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I first1</code></li><li><code>I last1</code></li><li><code>J first2</code></li><li><code>J last2</code></li><li><code>O d_first</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, typename J, typename O&gt;
+constexpr O
+merge(I first1, I last1, J first2, J last2, O d_first)
+{
+  while ( first1 != last1 &amp;&amp; first2 != last2 ) {
+    if ( *first2 &lt; *first1 ) {
+      *d_first++ = *first2++;
+    } else {
+      *d_first++ = *first1++;
+    }
+  }
+  while ( first1 != last1 ) *d_first++ = *first1++;
+  while ( first2 != last2 ) *d_first++ = *first2++;
+  return d_first;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d_first</code></td><td><a href="../../source/algorithm/data.hpp.html#L70">line 70</a></td></tr></tbody></table></section><section class="function-entry" id="f-fbc7e539034d3fe5"><h3><code>micron::merge(const T &amp;obj1, const T &amp;obj2)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L75">line 75</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+T
+merge(const T &amp;obj1, const T &amp;obj2)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;obj1</code></li><li><code>const T &amp;obj2</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+T
+merge(const T &amp;obj1, const T &amp;obj2)
+{
+  T out = obj1;
+  out.insert(out.end(), obj2.begin(), obj2.end());
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/algorithm/data.hpp.html#L79">line 79</a></td></tr></tbody></table></section><section class="function-entry" id="f-99fe46781237d2d6"><h3><code>micron::concat(const T &amp;obj1, const T &amp;obj2)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L84">line 84</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+T
+concat(const T &amp;obj1, const T &amp;obj2)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;obj1</code></li><li><code>const T &amp;obj2</code></li></ul><h4>Effects</h4><p>Returns <code>merge(obj1, obj2)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+T
+concat(const T &amp;obj1, const T &amp;obj2)
+{
+  return merge(obj1, obj2);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>merge(obj1, obj2)</code></td><td><a href="../../source/algorithm/data.hpp.html#L86">line 86</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-9d7a7738fde95fe1">merge</a>.</p></section><section class="function-entry" id="f-33cd90016c06d614"><h3><code>micron::reverse(I first, I last)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L91">line 91</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I&gt;
+void
+reverse(I first, I last)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I first</code></li><li><code>I last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I&gt;
+void
+reverse(I first, I last)
+{
+  while ( (first != last) &amp;&amp; (first != --last) ) {
+    auto tmp = *first;
+    *first = *last;
+    *last = tmp;
+    ++first;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-82e68adabdbddca7"><h3><code>micron::rotate(I first, I n_first, I last)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I&gt;
+I
+rotate(I first, I n_first, I last)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I first</code></li><li><code>I n_first</code></li><li><code>I last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I&gt;
+I
+rotate(I first, I n_first, I last)
+{
+  if ( first == n_first ) return last;
+  if ( n_first == last ) return first;
+
+  auto rev = [](I a, I b) {
+    while ( a &lt; b ) {
+      --b;
+      if ( !(a &lt; b) ) {
+        auto tmp = *a;
+        *a = *b;
+        *b = tmp;
+        break;
+      }
+      auto tmp = *a;
+      *a = *b;
+      *b = tmp;
+      ++a;
+    }
+  };
+  rev(first, n_first);
+  rev(n_first, last);
+  rev(first, last);
+  return first + (last - n_first);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>last</code></td><td><a href="../../source/algorithm/data.hpp.html#L105">line 105</a></td></tr><tr class="t-dsc"><td><code>first</code></td><td><a href="../../source/algorithm/data.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>first + (last - n_first)</code></td><td><a href="../../source/algorithm/data.hpp.html#L126">line 126</a></td></tr></tbody></table></section><section class="function-entry" id="f-451895d6394a322e"><h3><code>micron::cycle_rotate(I first, I n_first, I last)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I&gt;
+I
+cycle_rotate(I first, I n_first, I last)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I first</code></li><li><code>I n_first</code></li><li><code>I last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I&gt;
+I
+cycle_rotate(I first, I n_first, I last)
+{
+  if ( first == n_first || n_first == last ) return last;
+
+  using diff_t = ptrdiff_t;
+  diff_t n = last - first;
+  diff_t k = n_first - first;
+  diff_t g = math::gcd(n, k);
+
+  for ( diff_t i = 0; i &lt; g; ++i ) {
+    auto tmp = *(first + i);
+    diff_t j = i;
+
+    while ( true ) {
+      diff_t m = j + k;
+      if ( m &gt;= n ) m -= n;
+      if ( m == i ) break;
+      *(first + j) = *(first + m);
+      j = m;
+    }
+
+    *(first + j) = tmp;
+  }
+
+  return first + (last - n_first);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>last</code></td><td><a href="../../source/algorithm/data.hpp.html#L133">line 133</a></td></tr><tr class="t-dsc"><td><code>first + (last - n_first)</code></td><td><a href="../../source/algorithm/data.hpp.html#L155">line 155</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/arbint/number.hpp.html#f-92252513cda16a46">math::gcd</a>.</p></section><section class="function-entry" id="f-4f26686b824500c1"><h3><code>micron::make_heap(C &amp;c) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+make_heap(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+make_heap(C &amp;c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &lt; b; };
+
+  umax_t n = c.size();
+  if ( n &lt; 2 ) return;
+
+  for ( umax_t i = (n &gt;&gt; 1); i &gt; 0; ) {
+    --i;
+    __sift_down(c.begin(), i, n, comp);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L201">line 201</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-4ee97813fa889057"><h3><code>micron::make_heap(C &amp;c, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+make_heap(C &amp;c, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+make_heap(C &amp;c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  if ( n &lt; 2 ) return;
+
+  for ( umax_t i = (n &gt;&gt; 1); i &gt; 0; ) {
+    --i;
+    __sift_down(c.begin(), i, n, comp);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L214">line 214</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-59e824b93a500b23"><h3><code>micron::make_heap(C &amp;c, typename C::umax_type lim) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L224">line 224</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+make_heap(C &amp;c, typename C::umax_type lim) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::umax_type lim</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+make_heap(C &amp;c, typename C::umax_type lim) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &lt; b; };
+
+  if ( lim &lt; 2 ) return;
+
+  for ( umax_t i = (lim &gt;&gt; 1); i &gt; 0; ) {
+    --i;
+    __sift_down(c.begin(), i, lim, comp);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L229">line 229</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-f7445147a0c88219"><h3><code>micron::make_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L239">line 239</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+make_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::umax_type lim</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+make_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept
+{
+  if ( lim &lt; 2 ) return;
+
+  for ( umax_t i = (lim &gt;&gt; 1); i &gt; 0; ) {
+    --i;
+    __sift_down(c.begin(), i, lim, comp);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L241">line 241</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-fd98a4a801edbc12"><h3><code>micron::push_heap(C &amp;c) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L251">line 251</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+push_heap(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+push_heap(C &amp;c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &lt; b; };
+
+  umax_t n = c.size();
+  if ( n &lt; 2 ) return;
+
+  __sift_up(c.begin(), n - 1, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L257">line 257</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-d40d4e30e872f84e">__sift_up</a>.</p></section><section class="function-entry" id="f-107ec918b7057434"><h3><code>micron::push_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L264">line 264</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+push_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::umax_type lim</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+push_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept
+{
+  if ( lim &lt; 2 ) return;
+
+  __sift_up(c.begin(), lim - 1, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L266">line 266</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-d40d4e30e872f84e">__sift_up</a>.</p></section><section class="function-entry" id="f-695f6f909ce1f3fd"><h3><code>micron::push_heap(C &amp;c, typename C::umax_type lim) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L273">line 273</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+push_heap(C &amp;c, typename C::umax_type lim) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::umax_type lim</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+push_heap(C &amp;c, typename C::umax_type lim) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &lt; b; };
+
+  if ( lim &lt; 2 ) return;
+
+  __sift_up(c.begin(), lim - 1, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L278">line 278</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-d40d4e30e872f84e">__sift_up</a>.</p></section><section class="function-entry" id="f-2d387291c95a9e0e"><h3><code>micron::push_heap(C &amp;c, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L285">line 285</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+push_heap(C &amp;c, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+push_heap(C &amp;c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  if ( n &lt; 2 ) return;
+
+  __sift_up(c.begin(), n - 1, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L288">line 288</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="data.hpp.html#f-d40d4e30e872f84e">__sift_up</a>.</p></section><section class="function-entry" id="f-7efce58e87fdb890"><h3><code>micron::pop_heap(C &amp;c) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L295">line 295</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+pop_heap(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+pop_heap(C &amp;c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &lt; b; };
+
+  umax_t n = c.size();
+  if ( n &lt; 2 ) return;
+
+  auto *first = c.begin();
+
+  auto tmp = micron::move(first[0]);
+  first[0] = micron::move(first[n - 1]);
+  first[n - 1] = micron::move(tmp);
+
+  __sift_down(first, 0, n - 1, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L301">line 301</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-f688c4e28b810649"><h3><code>micron::pop_heap(C &amp;c, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L314">line 314</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+pop_heap(C &amp;c, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+pop_heap(C &amp;c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  if ( n &lt; 2 ) return;
+
+  auto *first = c.begin();
+
+  auto tmp = micron::move(first[0]);
+  first[0] = micron::move(first[n - 1]);
+  first[n - 1] = micron::move(tmp);
+
+  __sift_down(first, 0, n - 1, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L317">line 317</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-9a8716f6d40ba337"><h3><code>micron::pop_heap(C &amp;c, typename C::umax_type lim) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L330">line 330</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+pop_heap(C &amp;c, typename C::umax_type lim) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::umax_type lim</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+pop_heap(C &amp;c, typename C::umax_type lim) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &lt; b; };
+
+  if ( lim &lt; 2 ) return;
+
+  auto *first = c.begin();
+
+  auto tmp = micron::move(first[0]);
+  first[0] = micron::move(first[lim - 1]);
+  first[lim - 1] = micron::move(tmp);
+
+  __sift_down(first, 0, lim - 1, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L335">line 335</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-7eeffaed5a2f9e64"><h3><code>micron::pop_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L348">line 348</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+pop_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>typename C::umax_type lim</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+pop_heap(C &amp;c, typename C::umax_type lim, Cmp comp) noexcept
+{
+  if ( lim &lt; 2 ) return;
+
+  auto *first = c.begin();
+
+  auto tmp = micron::move(first[0]);
+  first[0] = micron::move(first[lim - 1]);
+  first[lim - 1] = micron::move(tmp);
+
+  __sift_down(first, 0, lim - 1, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L350">line 350</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-6ecea84b9ad34e20"><h3><code>micron::sort_heap(C &amp;c) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L363">line 363</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+sort_heap(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+sort_heap(C &amp;c) noexcept
+{
+  // Default sort_heap consumes a MAX-heap (built by make_heap default) and
+  // produces ASCENDING output. __sift_down with comp = (a &lt; b) maintains
+  // the max-heap invariant on the shrinking prefix.
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &lt; b; };
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  while ( n &gt; 1 ) {
+    auto tmp = micron::move(first[0]);
+    first[0] = micron::move(first[n - 1]);
+    first[n - 1] = micron::move(tmp);
+
+    --n;
+    __sift_down(first, 0, n, comp);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-e740cb0470011826"><h3><code>micron::sort_heap_min(C &amp;c) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L385">line 385</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr void
+sort_heap_min(C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr void
+sort_heap_min(C &amp;c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &gt; b; };
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  while ( n &gt; 1 ) {
+    auto tmp = micron::move(first[0]);
+    first[0] = micron::move(first[n - 1]);
+    first[n - 1] = micron::move(tmp);
+
+    --n;
+    __sift_down(first, 0, n, comp);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-de6d095426eb0ff1"><h3><code>micron::sort_heap(C &amp;c, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L404">line 404</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+sort_heap(C &amp;c, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr void
+sort_heap(C &amp;c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  while ( n &gt; 1 ) {
+    auto tmp = micron::move(first[0]);
+    first[0] = micron::move(first[n - 1]);
+    first[n - 1] = micron::move(tmp);
+
+    --n;
+    __sift_down(first, 0, n, comp);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="data.hpp.html#f-90d0069907df3686">__sift_down</a>.</p></section><section class="function-entry" id="f-8e6c7eea88eb5f61"><h3><code>micron::is_heap(const C &amp;c) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L421">line 421</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C&gt;
+constexpr bool
+is_heap(const C &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C&gt;
+constexpr bool
+is_heap(const C &amp;c) noexcept
+{
+  using T = typename C::value_type;
+  auto comp = [](const T &amp;a, const T &amp;b) { return a &lt; b; };
+
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  for ( umax_t i = 1; i &lt; n; ++i ) {
+    umax_t parent = (i - 1) &gt;&gt; 1;
+    if ( comp(first[parent], first[i]) ) return false;
+  }
+
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/algorithm/data.hpp.html#L431">line 431</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/algorithm/data.hpp.html#L434">line 434</a></td></tr></tbody></table></section><section class="function-entry" id="f-c3157951b68d3430"><h3><code>micron::is_heap(const C &amp;c, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L439">line 439</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr bool
+is_heap(const C &amp;c, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const C &amp;c</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container C, typename Cmp&gt;
+constexpr bool
+is_heap(const C &amp;c, Cmp comp) noexcept
+{
+  umax_t n = c.size();
+  auto *first = c.begin();
+
+  for ( umax_t i = 1; i &lt; n; ++i ) {
+    umax_t parent = (i - 1) &gt;&gt; 1;
+    if ( comp(first[parent], first[i]) ) return false;
+  }
+
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/algorithm/data.hpp.html#L446">line 446</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/algorithm/data.hpp.html#L449">line 449</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-90d0069907df3686"><h3><code>micron::__sift_down(T *first, umax_t start, umax_t end, Cmp comp)</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L160">line 160</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Cmp&gt;
+constexpr void
+__sift_down(T *first, umax_t start, umax_t end, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *first</code></li><li><code>umax_t start</code></li><li><code>umax_t end</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Cmp&gt;
+constexpr void
+__sift_down(T *first, umax_t start, umax_t end, Cmp comp)
+{
+  umax_t root = start;
+  while ( true ) {
+    umax_t child = 2 * root + 1;
+    if ( child &gt;= end ) break;
+    if ( child + 1 &lt; end &amp;&amp; comp(first[child], first[child + 1]) ) child++;
+    if ( comp(first[root], first[child]) ) {
+      micron::swap(first[root], first[child]);
+      root = child;
+    } else {
+      break;
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-d40d4e30e872f84e"><h3><code>micron::__sift_up(T *first, umax_t idx, Cmp comp) noexcept</code></h3><p>Defined in <code>algorithm/data.hpp</code>, <a href="../../source/algorithm/data.hpp.html#L178">line 178</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Cmp&gt;
+constexpr void
+__sift_up(T *first, umax_t idx, Cmp comp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *first</code></li><li><code>umax_t idx</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Cmp&gt;
+constexpr void
+__sift_up(T *first, umax_t idx, Cmp comp) noexcept
+{
+  while ( idx &gt; 0 ) {
+    umax_t parent = (idx - 1) &gt;&gt; 1;
+
+    if ( !comp(first[parent], first[idx]) ) return;
+
+    auto tmp = micron::move(first[parent]);
+    first[parent] = micron::move(first[idx]);
+    first[idx] = micron::move(tmp);
+
+    idx = parent;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/data.hpp.html#L183">line 183</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

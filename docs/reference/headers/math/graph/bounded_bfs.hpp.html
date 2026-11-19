@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/bounded_bfs.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/bounded_bfs.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/bounded_bfs.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/bounded_bfs.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-187c8a6eae43d083">micron::math::graphs::fixed_bfs_workspace</code></td><td>struct; line 14</td></tr><tr class="t-dsc"><td><code id="s-e8603e58e2503f9a">micron::math::graphs::fixed_bfs_workspace::vertex_descriptor</code></td><td>typedef; line 16</td></tr><tr class="t-dsc"><td><code id="s-b28999c9d3d77159">micron::math::graphs::fixed_bfs_workspace::frontier</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><code id="s-17f2a54c681709d9">micron::math::graphs::fixed_bfs_workspace::order</code></td><td>member; line 19</td></tr><tr class="t-dsc"><td><code id="s-63a3278c1d950b6d">micron::math::graphs::fixed_bfs_workspace::parent</code></td><td>member; line 20</td></tr><tr class="t-dsc"><td><code id="s-d719791ea6036af7">micron::math::graphs::fixed_bfs_workspace::depth</code></td><td>member; line 21</td></tr><tr class="t-dsc"><td><code id="s-00db5ea8834cc864">micron::math::graphs::fixed_bfs_workspace::discovered</code></td><td>member; line 22</td></tr><tr class="t-dsc"><td><code id="s-e0666fab83448d2d">micron::math::graphs::bfs_limits</code></td><td>struct; line 42</td></tr><tr class="t-dsc"><td><code id="s-1eb095818aab0d76">micron::math::graphs::bounded_bfs_result</code></td><td>struct; line 48</td></tr><tr class="t-dsc"><td><code id="s-5184be643a29931b">micron::math::graphs::bounded_bfs_result::status</code></td><td>member; line 49</td></tr><tr class="t-dsc"><td><code id="s-f8f47b311a892470">micron::math::graphs::bounded_bfs_result::edges</code></td><td>member; line 50</td></tr><tr class="t-dsc"><td><code id="s-48f486eb1760effa">micron::math::graphs::bounded_bfs_result::complete</code></td><td>member; line 53</td></tr><tr class="t-dsc"><td><a href="#f-9022f9ef3ec27d8e">micron::math::graphs::fixed_bfs_workspace::reset(usize slots)</a></td><td>function; line 25</td></tr><tr class="t-dsc"><td><a href="#f-1af625aec4713492">micron::math::graphs::bounded_bfs_into(const G &amp;graph, typename G::vertex_descriptor source, fixed_bfs_workspace&lt;typename G::index_type, Capacity&gt; &amp;workspace,
+                 bfs_limits limits = {}, Visitor visitor = {})</a></td><td>function; line 63</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-9022f9ef3ec27d8e"><h3><code>micron::math::graphs::fixed_bfs_workspace::reset(usize slots)</code></h3><p>Defined in <code>math/graph/bounded_bfs.hpp</code>, <a href="../../../source/math/graph/bounded_bfs.hpp.html#L25">line 25</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  reset(usize slots)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize slots</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  reset(usize slots)
+  {
+    if ( slots &gt; Capacity ) return false;
+    frontier.clear();
+    order.clear();
+    parent.clear();
+    depth.clear();
+    discovered.clear();
+    for ( usize i = 0; i &lt; slots; ++i ) {
+      parent.push_back(vertex_descriptor::invalid());
+      depth.push_back(0);
+      discovered.push_back(0);
+    }
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L27">line 27</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L38">line 38</a></td></tr></tbody></table></section><section class="function-entry" id="f-1af625aec4713492"><h3><code>micron::math::graphs::bounded_bfs_into(const G &amp;graph, typename G::vertex_descriptor source, fixed_bfs_workspace&lt;typename G::index_type, Capacity&gt; &amp;workspace,
+                 bfs_limits limits = {}, Visitor visitor = {})</code></h3><p>Defined in <code>math/graph/bounded_bfs.hpp</code>, <a href="../../../source/math/graph/bounded_bfs.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, usize Capacity, typename Visitor = null_visitor&gt;
+[[nodiscard]] bounded_bfs_result
+bounded_bfs_into(const G &amp;graph, typename G::vertex_descriptor source, fixed_bfs_workspace&lt;typename G::index_type, Capacity&gt; &amp;workspace,
+                 bfs_limits limits = {}, Visitor visitor = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>fixed_bfs_workspace&lt;typename G::index_type, Capacity&gt; &amp;workspace</code></li><li><code>bfs_limits limits = {}</code></li><li><code>Visitor visitor = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, usize Capacity, typename Visitor = null_visitor&gt;
+[[nodiscard]] bounded_bfs_result
+bounded_bfs_into(const G &amp;graph, typename G::vertex_descriptor source, fixed_bfs_workspace&lt;typename G::index_type, Capacity&gt; &amp;workspace,
+                 bfs_limits limits = {}, Visitor visitor = {})
+{
+  if ( !graph.has_vertex(source) ) return { algorithm_status::invalid_vertex, 0, false };
+  if ( graph.vertex_slots() &gt; Capacity || !limits.vertices ) return { algorithm_status::overflow, 0, false };
+  if ( !workspace.reset(graph.vertex_slots()) ) return { algorithm_status::overflow, 0, false };
+  workspace.frontier.push_back(source);
+  workspace.discovered.data()[static_cast&lt;usize&gt;(source.value)] = 1;
+  workspace.parent.data()[static_cast&lt;usize&gt;(source.value)] = source;
+  bounded_bfs_result result;
+  if ( !__impl::discover(visitor, graph, source) ) return { algorithm_status::ok, 0, false };
+
+  usize head = 0;
+  while ( head &lt; workspace.frontier.size() ) {
+    const auto u = workspace.frontier.data()[head++];
+    workspace.order.push_back(u);
+    const usize depth = workspace.depth.data()[static_cast&lt;usize&gt;(u.value)];
+    if ( depth == limits.depth ) {
+      result.complete = false;
+      __impl::finish(visitor, graph, u);
+      continue;
+    }
+    for ( auto edge : graph.out_edges(u) ) {
+      if ( result.edges == limits.edges ) return { algorithm_status::overflow, result.edges, false };
+      ++result.edges;
+      if ( !__impl::examine_edge(visitor, graph, edge) ) return { algorithm_status::ok, result.edges, false };
+      const auto v = G::is_directed ? graph.target(edge) : graph.opposite(edge, u);
+      const usize slot = static_cast&lt;usize&gt;(v.value);
+      if ( !graph.has_vertex(v) || slot &gt;= workspace.discovered.size() ) return { algorithm_status::invalid_graph, result.edges, false };
+      if ( workspace.discovered.data()[slot] ) continue;
+      if ( workspace.frontier.size() == Capacity || workspace.frontier.size() == limits.vertices )
+        return { algorithm_status::overflow, result.edges, false };
+      workspace.discovered.data()[slot] = 1;
+      workspace.parent.data()[slot] = u;
+      workspace.depth.data()[slot] = depth + 1;
+      workspace.frontier.push_back(v);
+      if ( !__impl::discover(visitor, graph, v) ) return { algorithm_status::ok, result.edges, false };
+    }
+    __impl::finish(visitor, graph, u);
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ algorithm_status::invalid_vertex, 0, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L66">line 66</a></td></tr><tr class="t-dsc"><td><code>{ algorithm_status::overflow, 0, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L67">line 67</a></td></tr><tr class="t-dsc"><td><code>{ algorithm_status::overflow, 0, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L68">line 68</a></td></tr><tr class="t-dsc"><td><code>{ algorithm_status::ok, 0, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L73">line 73</a></td></tr><tr class="t-dsc"><td><code>{ algorithm_status::overflow, result.edges, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>{ algorithm_status::ok, result.edges, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L88">line 88</a></td></tr><tr class="t-dsc"><td><code>{ algorithm_status::invalid_graph, result.edges, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L91">line 91</a></td></tr><tr class="t-dsc"><td><code>{ algorithm_status::overflow, result.edges, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L94">line 94</a></td></tr><tr class="t-dsc"><td><code>{ algorithm_status::ok, result.edges, false }</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L99">line 99</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/bounded_bfs.hpp.html#L103">line 103</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="traversal.hpp.html#f-ea27205ff0a40800">__impl::discover</a>, <a href="traversal.hpp.html#f-c3182faf98778f95">__impl::finish</a>, <a href="traversal.hpp.html#f-258e48adf6029f15">__impl::examine_edge</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

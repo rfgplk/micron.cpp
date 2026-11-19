@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/splines/bits/impl.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/splines/bits/impl.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/splines/bits/impl.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/math/splines/bits/impl.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-c21f6140604e40e0"><h3><code>micron::math::splines::__impl_splines_bits::strictly_increasing(const F *__restrict__ x, usize n) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L25">line 25</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr bool
+strictly_increasing(const F *__restrict__ x, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *__restrict__ x</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr bool
+strictly_increasing(const F *__restrict__ x, usize n) noexcept
+{
+  if ( n &lt; 2 ) return true;
+  for ( usize i = 1; i &lt; n; ++i )
+    if ( !(x[i] &gt; x[i - 1]) ) return false;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L27">line 27</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L29">line 29</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L30">line 30</a></td></tr></tbody></table></section><section class="function-entry" id="f-065b37a743531f50"><h3><code>micron::math::splines::__impl_splines_bits::binary_advance(F knot, F query, usize candidate, usize &amp;index) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L35">line 35</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+binary_advance(F knot, F query, usize candidate, usize &amp;index) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F knot</code></li><li><code>F query</code></li><li><code>usize candidate</code></li><li><code>usize &amp;index</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[gnu::always_inline]] inline void
+binary_advance(F knot, F query, usize candidate, usize &amp;index) noexcept
+{
+#if defined(__OPTIMIZE__) &amp;&amp; defined(__micron_arch_amd64)
+  if constexpr ( sizeof(F) == 8 ) {
+#if defined(__micron_x86_avx)
+    asm volatile(&quot;vucomisd %[knot], %[query]\n\t&quot;
+#else
+    asm volatile(&quot;ucomisd %[knot], %[query]\n\t&quot;
+#endif
+                 &quot;cmovae %[candidate], %[index]&quot;
+                 : [index] &quot;+&amp;r&quot;(index)
+                 : [candidate] &quot;r&quot;(candidate), [knot] &quot;x&quot;(knot), [query] &quot;x&quot;(query)
+                 : &quot;cc&quot;);
+  } else if constexpr ( sizeof(F) == 4 ) {
+#if defined(__micron_x86_avx)
+    asm volatile(&quot;vucomiss %[knot], %[query]\n\t&quot;
+#else
+    asm volatile(&quot;ucomiss %[knot], %[query]\n\t&quot;
+#endif
+                 &quot;cmovae %[candidate], %[index]&quot;
+                 : [index] &quot;+&amp;r&quot;(index)
+                 : [candidate] &quot;r&quot;(candidate), [knot] &quot;x&quot;(knot), [query] &quot;x&quot;(query)
+                 : &quot;cc&quot;);
+  } else {
+    // long double / f128 have no xmm register class; ucomis* cannot take them
+    if ( knot &lt;= query ) index = candidate;
+  }
+#else
+  if ( knot &lt;= query ) index = candidate;
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d9371a1079a29294"><h3><code>micron::math::splines::__impl_splines_bits::locate_segment(const F *__restrict__ xs, usize n, F x, usize &amp;last) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline usize
+locate_segment(const F *__restrict__ xs, usize n, F x, usize &amp;last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *__restrict__ xs</code></li><li><code>usize n</code></li><li><code>F x</code></li><li><code>usize &amp;last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline usize
+locate_segment(const F *__restrict__ xs, usize n, F x, usize &amp;last) noexcept
+{
+  const usize last_seg = (n &gt;= 2) ? (n - 2) : 0;
+
+  if ( !(x &gt; xs[0]) ) {
+    last = 0;
+    return 0;
+  }
+  if ( !(x &lt; xs[n - 1]) ) {
+    last = last_seg;
+    return last_seg;
+  }
+
+  const usize i = last &lt;= last_seg ? last : last_seg;
+  if ( x &gt;= xs[i] &amp;&amp; x &lt;= xs[i + 1] ) {
+    last = i;
+    return i;
+  }
+  if ( i + 1 &lt;= last_seg &amp;&amp; x &gt;= xs[i + 1] &amp;&amp; x &lt;= xs[i + 2] ) {
+    last = i + 1;
+    return i + 1;
+  }
+
+#if defined(__OPTIMIZE__) &amp;&amp; defined(__micron_arch_amd64)
+  usize lo = 0;
+  usize step = micron::bit_floor(last_seg);
+  if ( step != 0 &amp;&amp; last_seg == (step &lt;&lt; 1) - 1 ) {
+    for ( ; step != 0; step &gt;&gt;= 1 ) {
+      const usize candidate = lo + step;
+      binary_advance&lt;F&gt;(xs[candidate], x, candidate, lo);
+    }
+  } else {
+    for ( ; step != 0; step &gt;&gt;= 1 ) {
+      const usize unbounded = lo + step;
+      const usize candidate = unbounded &lt; last_seg ? unbounded : last_seg;
+      binary_advance&lt;F&gt;(xs[candidate], x, candidate, lo);
+    }
+  }
+#else
+  usize lo = 0;
+  usize hi = n - 1;
+  while ( hi - lo &gt; 1 ) {
+    const usize mid = lo + ((hi - lo) &gt;&gt; 1);
+    if ( xs[mid] &lt;= x )
+      lo = mid;
+    else
+      hi = mid;
+  }
+#endif
+  last = lo;
+  return lo;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>last_seg</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L79">line 79</a></td></tr><tr class="t-dsc"><td><code>i</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L85">line 85</a></td></tr><tr class="t-dsc"><td><code>i + 1</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>lo</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L119">line 119</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../bits.hpp.html#f-a8dcc9baaae18c91">micron::bit_floor</a>, <a href="impl.hpp.html#f-065b37a743531f50">binary_advance&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a7018121eee8f27a"><h3><code>micron::math::splines::__impl_splines_bits::eval_cubic_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L124">line 124</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_cubic_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const poly_coeffs&lt;F, 3&gt; &amp;p</code></li><li><code>F t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_cubic_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept
+{
+  F r = math::fma&lt;F&gt;(p.data[3], t, p.data[2]);
+  r = math::fma&lt;F&gt;(r, t, p.data[1]);
+  r = math::fma&lt;F&gt;(r, t, p.data[0]);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L129">line 129</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2aa3b3f0a089a097"><h3><code>micron::math::splines::__impl_splines_bits::eval_cubic_deriv1_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L134">line 134</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_cubic_deriv1_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const poly_coeffs&lt;F, 3&gt; &amp;p</code></li><li><code>F t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_cubic_deriv1_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept
+{
+  F r = math::fma&lt;F&gt;(F(3) * p.data[3], t, F(2) * p.data[2]);
+  r = math::fma&lt;F&gt;(r, t, p.data[1]);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L138">line 138</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-067cf729c84b8a57"><h3><code>micron::math::splines::__impl_splines_bits::eval_cubic_deriv2_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L143">line 143</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_cubic_deriv2_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const poly_coeffs&lt;F, 3&gt; &amp;p</code></li><li><code>F t</code></li></ul><h4>Effects</h4><p>Returns <code>math::fma&lt;F&gt;(F(6) * p.data[3], t, F(2) * p.data[2])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_cubic_deriv2_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept
+{
+  return math::fma&lt;F&gt;(F(6) * p.data[3], t, F(2) * p.data[2]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(F(6) * p.data[3], t, F(2) * p.data[2])</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L145">line 145</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a927a69e4d26f748"><h3><code>micron::math::splines::__impl_splines_bits::eval_cubic_antideriv_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L150">line 150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_cubic_antideriv_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const poly_coeffs&lt;F, 3&gt; &amp;p</code></li><li><code>F t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_cubic_antideriv_local(const poly_coeffs&lt;F, 3&gt; &amp;p, F t) noexcept
+{
+  // via horner
+  F r = math::fma&lt;F&gt;(p.data[3] * F(0.25), t, p.data[2] * (F(1) / F(3)));
+  r = math::fma&lt;F&gt;(r, t, p.data[1] * F(0.5));
+  r = math::fma&lt;F&gt;(r, t, p.data[0]);
+  return r * t;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r * t</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L156">line 156</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-64d36855769f0d67"><h3><code>micron::math::splines::__impl_splines_bits::build_cubic_segments(const F *__restrict__ xs, const F *__restrict__ ys, const F *__restrict__ M, poly_coeffs&lt;F, 3&gt; *__restrict__ seg,
+                     usize n) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L161">line 161</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+build_cubic_segments(const F *__restrict__ xs, const F *__restrict__ ys, const F *__restrict__ M, poly_coeffs&lt;F, 3&gt; *__restrict__ seg,
+                     usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *__restrict__ xs</code></li><li><code>const F *__restrict__ ys</code></li><li><code>const F *__restrict__ M</code></li><li><code>poly_coeffs&lt;F, 3&gt; *__restrict__ seg</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+build_cubic_segments(const F *__restrict__ xs, const F *__restrict__ ys, const F *__restrict__ M, poly_coeffs&lt;F, 3&gt; *__restrict__ seg,
+                     usize n) noexcept
+{
+  const F sixth = F(1) / F(6);
+  for ( usize i = 0; i + 1 &lt; n; ++i ) {
+    const F h = xs[i + 1] - xs[i];
+    const F dy = ys[i + 1] - ys[i];
+    const F Mi = M[i];
+    const F Mi1 = M[i + 1];
+    seg[i].data[0] = ys[i];
+    seg[i].data[1] = dy / h - h * (F(2) * Mi + Mi1) * sixth;
+    seg[i].data[2] = F(0.5) * Mi;
+    seg[i].data[3] = (Mi1 - Mi) / (F(6) * h);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e77a1f512186f244"><h3><code>micron::math::splines::__impl_splines_bits::build_cubic_segments_from_slopes(const F *__restrict__ xs, const F *__restrict__ ys, const F *__restrict__ m,
+                                 poly_coeffs&lt;F, 3&gt; *__restrict__ seg, usize n) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L179">line 179</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+build_cubic_segments_from_slopes(const F *__restrict__ xs, const F *__restrict__ ys, const F *__restrict__ m,
+                                 poly_coeffs&lt;F, 3&gt; *__restrict__ seg, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *__restrict__ xs</code></li><li><code>const F *__restrict__ ys</code></li><li><code>const F *__restrict__ m</code></li><li><code>poly_coeffs&lt;F, 3&gt; *__restrict__ seg</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+build_cubic_segments_from_slopes(const F *__restrict__ xs, const F *__restrict__ ys, const F *__restrict__ m,
+                                 poly_coeffs&lt;F, 3&gt; *__restrict__ seg, usize n) noexcept
+{
+  for ( usize i = 0; i + 1 &lt; n; ++i ) {
+    const F h = xs[i + 1] - xs[i];
+    const F inv_h = F(1) / h;
+    const F delta = (ys[i + 1] - ys[i]) * inv_h;
+    const F mi = m[i];
+    const F mi1 = m[i + 1];
+    seg[i].data[0] = ys[i];
+    seg[i].data[1] = mi;
+    seg[i].data[2] = (F(3) * delta - F(2) * mi - mi1) * inv_h;
+    seg[i].data[3] = (mi + mi1 - F(2) * delta) * (inv_h * inv_h);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d30123df2e47ee8d"><h3><code>micron::math::splines::__impl_splines_bits::pchip_slopes(const F *__restrict__ xs, const F *__restrict__ ys, F *__restrict__ m, usize n) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L197">line 197</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+pchip_slopes(const F *__restrict__ xs, const F *__restrict__ ys, F *__restrict__ m, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *__restrict__ xs</code></li><li><code>const F *__restrict__ ys</code></li><li><code>F *__restrict__ m</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+pchip_slopes(const F *__restrict__ xs, const F *__restrict__ ys, F *__restrict__ m, usize n) noexcept
+{
+  if ( n == 0 ) return;
+  if ( n == 1 ) {
+    m[0] = F(0);
+    return;
+  }
+  if ( n == 2 ) {
+    const F s = (ys[1] - ys[0]) / (xs[1] - xs[0]);
+    m[0] = s;
+    m[1] = s;
+    return;
+  }
+
+  for ( usize i = 1; i + 1 &lt; n; ++i ) {
+    const F h0 = xs[i] - xs[i - 1];
+    const F h1 = xs[i + 1] - xs[i];
+    const F s0 = (ys[i] - ys[i - 1]) / h0;
+    const F s1 = (ys[i + 1] - ys[i]) / h1;
+    if ( s0 * s1 &lt;= F(0) ) {
+      m[i] = F(0);
+    } else {
+      const F w0 = F(2) * h1 + h0;
+      const F w1 = h1 + F(2) * h0;
+      m[i] = (w0 + w1) / (w0 / s0 + w1 / s1);
+    }
+  }
+
+  {
+    const F h0 = xs[1] - xs[0];
+    const F h1 = xs[2] - xs[1];
+    const F s0 = (ys[1] - ys[0]) / h0;
+    const F s1 = (ys[2] - ys[1]) / h1;
+    F t = ((F(2) * h0 + h1) * s0 - h0 * s1) / (h0 + h1);
+    if ( t * s0 &lt;= F(0) )
+      t = F(0);
+    else if ( s0 * s1 &lt;= F(0) &amp;&amp; (t &lt; F(0) ? -t : t) &gt; F(3) * (s0 &lt; F(0) ? -s0 : s0) )
+      t = F(3) * s0;
+    m[0] = t;
+  }
+  {
+    const F h0 = xs[n - 2] - xs[n - 3];
+    const F h1 = xs[n - 1] - xs[n - 2];
+    const F s0 = (ys[n - 2] - ys[n - 3]) / h0;
+    const F s1 = (ys[n - 1] - ys[n - 2]) / h1;
+    F t = ((F(2) * h1 + h0) * s1 - h1 * s0) / (h0 + h1);
+    if ( t * s1 &lt;= F(0) )
+      t = F(0);
+    else if ( s0 * s1 &lt;= F(0) &amp;&amp; (t &lt; F(0) ? -t : t) &gt; F(3) * (s1 &lt; F(0) ? -s1 : s1) )
+      t = F(3) * s1;
+    m[n - 1] = t;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L199">line 199</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L202">line 202</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L208">line 208</a></td></tr></tbody></table></section><section class="function-entry" id="f-9477291630c28ebb"><h3><code>micron::math::splines::__impl_splines_bits::is_sorted_nondecreasing(const F *__restrict__ x, usize n, usize probe = 8) noexcept</code></h3><p>Defined in <code>math/splines/bits/impl.hpp</code>, <a href="../../../../source/math/splines/bits/impl.hpp.html#L253">line 253</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline bool
+is_sorted_nondecreasing(const F *__restrict__ x, usize n, usize probe = 8) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *__restrict__ x</code></li><li><code>usize n</code></li><li><code>usize probe = 8</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline bool
+is_sorted_nondecreasing(const F *__restrict__ x, usize n, usize probe = 8) noexcept
+{
+  (void)probe;
+  if ( n == 0 ) return true;
+  if ( !(x[0] == x[0]) ) return false;
+  for ( usize i = 1; i &lt; n; ++i )
+    if ( !(x[i] &gt;= x[i - 1]) ) return false;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L256">line 256</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L257">line 257</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L259">line 259</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/math/splines/bits/impl.hpp.html#L260">line 260</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

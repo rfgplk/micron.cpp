@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bits/__ar.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">bits/__ar.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/bits/__ar.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;__arch.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #if defined(__micron_arch_wasm32)</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;wasm/ar.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #else</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;__arch.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../attributes.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../types.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> </span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> // activation record control</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> //</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> // in dev, NOTE:</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> //   .. frame_pointer()/return_address&lt;L&gt;()/caller() and frame-chain walking assume the target was</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> //     built with frame pointers; -Ofast OMITS them, so chain walking is best effort attempt</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> //   .. thread_pointer() assumes a TCB is installed (not available via freestanding; pthread/glibc pulls it in hosted)</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> //   .. set_stack_pointer()/call_on_stack() are dangerous</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> </span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> namespace micron</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> {</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> namespace ar</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> {</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> </span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> [[nodiscard, gnu::always_inline]] inline void *</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> stack_pointer() noexcept</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> {</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   void *sp;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> #if defined(__micron_arch_amd64)</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   asm volatile(&quot;movq %%rsp, %0&quot; : &quot;=r&quot;(sp));</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> #elif defined(__micron_arch_x86)</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   asm volatile(&quot;movl %%esp, %0&quot; : &quot;=r&quot;(sp));</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> #elif defined(__micron_arch_arm64) || defined(__micron_arch_arm32)</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   asm volatile(&quot;mov %0, sp&quot; : &quot;=r&quot;(sp));</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> #endif</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>   return sp;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> }</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> </span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> [[nodiscard, gnu::always_inline]] inline void *</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> frame_pointer() noexcept</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> {</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   return __builtin_frame_address(0);</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> }</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> </span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> [[nodiscard, gnu::always_inline]] inline void *</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> program_counter() noexcept</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> {</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   void *pc;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> #if defined(__micron_arch_amd64)</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   asm volatile(&quot;leaq (%%rip), %0&quot; : &quot;=r&quot;(pc));</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> #elif defined(__micron_arch_x86)</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>   asm volatile(&quot;call 1f\n\t&quot;      // i386 has no PC-relative LEA; read EIP via call/pop</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>                &quot;1: popl %0&quot;</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>                : &quot;=r&quot;(pc));</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>   asm volatile(&quot;adr %0, .&quot; : &quot;=r&quot;(pc));</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   asm volatile(&quot;mov %0, pc&quot; : &quot;=r&quot;(pc));</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> #endif</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>   return pc;</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> }</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> </span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> template&lt;unsigned Level = 0&gt;</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> [[nodiscard, gnu::always_inline]] inline void *</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> return_address() noexcept</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> {</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   return __builtin_return_address(Level);</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> }</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> </span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> template&lt;unsigned Level = 0&gt;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> [[nodiscard, gnu::always_inline]] inline void *</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> frame_address() noexcept</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> {</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>   return __builtin_frame_address(Level);</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> }</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> </span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> [[nodiscard, gnu::always_inline]] inline void *</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> thread_pointer() noexcept</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> {</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   void *tp;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> #if defined(__micron_arch_amd64)</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> #if defined(__micron_x86_fsgsbase)</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>   asm volatile(&quot;rdfsbase %0&quot; : &quot;=r&quot;(tp));</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> #else</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>   asm volatile(&quot;movq %%fs:0, %0&quot; : &quot;=r&quot;(tp));</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> #endif</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> #elif defined(__micron_arch_x86)</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>   asm volatile(&quot;movl %%gs:0, %0&quot; : &quot;=r&quot;(tp));</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   asm volatile(&quot;mrs %0, tpidr_el0&quot; : &quot;=r&quot;(tp));</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   asm volatile(&quot;mrc p15, 0, %0, c13, c0, 3&quot; : &quot;=r&quot;(tp));</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> #endif</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>   return tp;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> }</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> </span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> [[gnu::always_inline]] inline bool</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> set_thread_pointer([[maybe_unused]] void *tp) noexcept</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> {</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> #if defined(__micron_arch_arm64)</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>   asm volatile(&quot;msr tpidr_el0, %0&quot; ::&quot;r&quot;(tp));</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>   return true;</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> #elif defined(__micron_arch_amd64) &amp;&amp; defined(__micron_x86_fsgsbase)</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   asm volatile(&quot;wrfsbase %0&quot; ::&quot;r&quot;(tp));</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   return true;</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> #else</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>   return false;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> #endif</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> }</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> </span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> [[nodiscard, gnu::always_inline]] inline u16</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> code_segment() noexcept</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> {</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>   u16 s;</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>   asm volatile(&quot;mov %%cs, %0&quot; : &quot;=r&quot;(s));</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>   return s;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> }</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> </span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> [[nodiscard, gnu::always_inline]] inline u16</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> data_segment() noexcept</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> {</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   u16 s;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>   asm volatile(&quot;mov %%ds, %0&quot; : &quot;=r&quot;(s));</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   return s;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> }</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> </span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> [[nodiscard, gnu::always_inline]] inline u16</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> extra_segment() noexcept</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> {</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>   u16 s;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>   asm volatile(&quot;mov %%es, %0&quot; : &quot;=r&quot;(s));</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>   return s;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> }</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> </span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> [[nodiscard, gnu::always_inline]] inline u16</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> stack_segment() noexcept</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> {</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>   u16 s;</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>   asm volatile(&quot;mov %%ss, %0&quot; : &quot;=r&quot;(s));</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>   return s;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> }</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> </span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> [[nodiscard, gnu::always_inline]] inline u16</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> fs_segment() noexcept</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a> {</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   u16 s;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>   asm volatile(&quot;mov %%fs, %0&quot; : &quot;=r&quot;(s));</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>   return s;</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> }</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a> </span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> [[nodiscard, gnu::always_inline]] inline u16</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> gs_segment() noexcept</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a> {</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>   u16 s;</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>   asm volatile(&quot;mov %%gs, %0&quot; : &quot;=r&quot;(s));</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>   return s;</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a> }</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a> #endif</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a> </span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a> struct record {</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>   void *sp;      // stack pointer</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   void *fp;      // frame (base) pointer</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>   void *pc;      // program counter / return address</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a> };</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> </span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a> [[nodiscard, gnu::always_inline]] inline record</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a> here() noexcept</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a> {</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>   return record{ stack_pointer(), frame_pointer(), program_counter() };</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> }</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> </span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> // NOTE: REQUIRES the walked code be built with -fno-omit-frame-pointer</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> [[gnu::always_inline]] inline bool</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a> caller(record &amp;r) noexcept</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> {</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   if ( r.fp == nullptr ) return false;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   void **fp = static_cast&lt;void **&gt;(r.fp);</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>   void *saved_fp = fp[0];      // caller&#x27;s frame pointer</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>   void *ret = fp[1];           // return address</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>   // frames grow toward higher addresses up the chain; reject garbage / cycles</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>   if ( saved_fp == nullptr || saved_fp &lt;= r.fp ) return false;</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   r.sp = static_cast&lt;void *&gt;(fp + 2);</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>   r.fp = saved_fp;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   r.pc = ret;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>   return true;</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a> }</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a> </span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a> // dangerous code below</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a> </span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a> // mutate the live stack pointer; only sound/safe in SPECIFIC use cases (coroutines/fibers/not returing from old frames); calling fn must be</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a> // naked or pure asm almost always</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a> [[gnu::always_inline]] inline void</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> set_stack_pointer(void *sp) noexcept</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> {</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a> #if defined(__micron_arch_amd64)</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>   asm volatile(&quot;movq %0, %%rsp&quot; ::&quot;r&quot;(sp) : &quot;memory&quot;);</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> #elif defined(__micron_arch_x86)</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>   asm volatile(&quot;movl %0, %%esp&quot; ::&quot;r&quot;(sp) : &quot;memory&quot;);</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> #elif defined(__micron_arch_arm64) || defined(__micron_arch_arm32)</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   asm volatile(&quot;mov sp, %0&quot; ::&quot;r&quot;(sp) : &quot;memory&quot;);</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a> #endif</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a> }</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a> </span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a> inline __attribute__((noinline)) void</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a> call_on_stack([[maybe_unused]] void *stack_top, [[maybe_unused]] void (*fn)(void *), [[maybe_unused]] void *arg) noexcept</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a> {</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a> #if defined(__micron_arch_amd64)</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   asm volatile(&quot;movq %%rsp, %%r15\n\t&quot;      // save old sp (callee-saved, preserved by fn)</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>                &quot;andq $-16, %0\n\t&quot;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>                &quot;movq %0, %%rsp\n\t&quot;         // pivot</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>                &quot;movq %2, %%rdi\n\t&quot;         // arg -&gt; a1</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>                &quot;callq *%1\n\t&quot;              // fn(arg)</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>                &quot;movq %%r15, %%rsp\n\t&quot;      // restore</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>                : &quot;+r&quot;(stack_top)</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>                : &quot;r&quot;(fn), &quot;r&quot;(arg)</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>                : &quot;r15&quot;, &quot;rdi&quot;, &quot;rax&quot;, &quot;rcx&quot;, &quot;rdx&quot;, &quot;rsi&quot;, &quot;r8&quot;, &quot;r9&quot;, &quot;r10&quot;, &quot;r11&quot;, &quot;memory&quot;, &quot;cc&quot;);</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a> #elif defined(__micron_arch_x86)</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>   asm volatile(&quot;movl %%esp, %%edi\n\t&quot;      // save old sp (edi callee-saved on i386)</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>                &quot;andl $-16, %0\n\t&quot;</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>                &quot;movl %0, %%esp\n\t&quot;</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>                &quot;subl $12, %%esp\n\t&quot;      // keep 16-byte alignment after the arg push</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>                &quot;pushl %2\n\t&quot;             // arg</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>                &quot;calll *%1\n\t&quot;</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>                &quot;movl %%edi, %%esp\n\t&quot;      // restore</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>                : &quot;+r&quot;(stack_top)</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>                : &quot;r&quot;(fn), &quot;r&quot;(arg)</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>                : &quot;edi&quot;, &quot;eax&quot;, &quot;ecx&quot;, &quot;edx&quot;, &quot;memory&quot;, &quot;cc&quot;);</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>   asm volatile(&quot;mov x19, sp\n\t&quot;      // save old sp (callee-saved)</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>                &quot;and %0, %0, #-16\n\t&quot;</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>                &quot;mov sp, %0\n\t&quot;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>                &quot;mov x0, %2\n\t&quot;       // arg</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>                &quot;blr %1\n\t&quot;           // fn(arg)</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>                &quot;mov sp, x19\n\t&quot;      // restore</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>                : &quot;+r&quot;(stack_top)</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>                : &quot;r&quot;(fn), &quot;r&quot;(arg)</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>                : &quot;x19&quot;, &quot;x0&quot;, &quot;x1&quot;, &quot;x2&quot;, &quot;x3&quot;, &quot;x4&quot;, &quot;x5&quot;, &quot;x6&quot;, &quot;x7&quot;, &quot;x8&quot;, &quot;x9&quot;, &quot;x10&quot;, &quot;x11&quot;, &quot;x12&quot;, &quot;x13&quot;, &quot;x14&quot;, &quot;x15&quot;, &quot;x16&quot;, &quot;x17&quot;,</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>                  &quot;x18&quot;, &quot;x30&quot;, &quot;memory&quot;, &quot;cc&quot;);</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>   asm volatile(&quot;mov r4, sp\n\t&quot;      // save old sp (callee-saved)</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>                &quot;and %0, %0, #-8\n\t&quot;</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>                &quot;mov sp, %0\n\t&quot;</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>                &quot;mov r0, %2\n\t&quot;      // arg</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>                &quot;blx %1\n\t&quot;          // fn(arg)</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>                &quot;mov sp, r4\n\t&quot;      // restore</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>                : &quot;+r&quot;(stack_top)</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>                : &quot;r&quot;(fn), &quot;r&quot;(arg)</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>                : &quot;r4&quot;, &quot;r0&quot;, &quot;r1&quot;, &quot;r2&quot;, &quot;r3&quot;, &quot;r12&quot;, &quot;lr&quot;, &quot;memory&quot;, &quot;cc&quot;);</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> #endif</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> }</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a> </span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a> // fiber CPU contexts</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a> //</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a> // NOTE: by default our swap will _NOT_ save/restore the FP control state (measured 6.9 vs 8.4 cyc/switch hot)</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a> // every fiber instead starts with the thread&#x27;s current FP env</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a> // code that changes rounding/exception modes must NEVER hold that change across a suspend point</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a> // unless compiled with -DMICRON_FIBER_FPENV</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> //</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a> // under FPENV only the control modes (rounding, exception masks) are per-fiber; the sticky MXCSR status bits are masked out at save</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> //</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> // ldmxcsr/fldcw serialize the pipeline (~50 cyc each) whenever the loaded word differs from the live one</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a> // letting sticky status bits ride along makes every switch a real control word change (measured 113 cyc/switch)</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> </span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> #if defined(__micron_arch_amd64)</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> </span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a> struct __fiber_ctx {</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>   u64 rbx;        // 0x00</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>   u64 rbp;        // 0x08</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>   u64 r12;        // 0x10  carries fn-arg into the trampoline (make_context)</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>   u64 r13;        // 0x18  carries fn-ptr into the trampoline (make_context)</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>   u64 r14;        // 0x20</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>   u64 r15;        // 0x28</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a>   u64 rsp;        // 0x30</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>   u64 rip;        // 0x38  resume PC (trampoline for a fresh ctx; return addr for a suspended one)</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>   u32 mxcsr;      // 0x40  SSE control/status (callee-saved bits)</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>   u16 fcw;        // 0x44  x87 control word</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a> };</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a> </span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> static_assert(__builtin_offsetof(__fiber_ctx, rsp) == 0x30, &quot;amd64 __fiber_ctx rsp offset&quot;);</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a> static_assert(__builtin_offsetof(__fiber_ctx, rip) == 0x38, &quot;amd64 __fiber_ctx rip offset&quot;);</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a> static_assert(__builtin_offsetof(__fiber_ctx, mxcsr) == 0x40, &quot;amd64 __fiber_ctx mxcsr offset&quot;);</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a> static_assert(__builtin_offsetof(__fiber_ctx, fcw) == 0x44, &quot;amd64 __fiber_ctx fcw offset&quot;);</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a> </span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> [[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a> __micron_swap_context(__fiber_ctx * /*rdi from*/, __fiber_ctx * /*rsi to*/) noexcept</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a> {</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>   // WARNING: xmm0 through xmm15 aren&#x27;t saved explicitly</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>   // red zones are _technically_ ignored (investigate)</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>   // TODO: maybe do it via another macro? would suck up too many cycles unconditionally</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>   asm volatile(&quot;movq %rbx, 0x00(%rdi)\n\t&quot;</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>                &quot;movq %rbp, 0x08(%rdi)\n\t&quot;</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a>                &quot;movq %r12, 0x10(%rdi)\n\t&quot;</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>                &quot;movq %r13, 0x18(%rdi)\n\t&quot;</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>                &quot;movq %r14, 0x20(%rdi)\n\t&quot;</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>                &quot;movq %r15, 0x28(%rdi)\n\t&quot;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a>                &quot;movq (%rsp), %rax\n\t&quot;      // return address -&gt; from-&gt;rip</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a>                &quot;movq %rax, 0x38(%rdi)\n\t&quot;</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a>                &quot;leaq 8(%rsp), %rax\n\t&quot;</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a>                &quot;movq %rax, 0x30(%rdi)\n\t&quot;</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a> #if defined(MICRON_FIBER_FPENV)</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a>                &quot;stmxcsr 0x40(%rdi)\n\t&quot;</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a>                &quot;andl $-64, 0x40(%rdi)\n\t&quot;      // drop sticky status bits (0-5); control modes only</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a>                &quot;fnstcw 0x44(%rdi)\n\t&quot;</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a>                &quot;ldmxcsr 0x40(%rsi)\n\t&quot;      // restore *to</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a>                &quot;fldcw 0x44(%rsi)\n\t&quot;</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a> #endif</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>                &quot;movq 0x00(%rsi), %rbx\n\t&quot;</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>                &quot;movq 0x08(%rsi), %rbp\n\t&quot;</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>                &quot;movq 0x10(%rsi), %r12\n\t&quot;</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>                &quot;movq 0x18(%rsi), %r13\n\t&quot;</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>                &quot;movq 0x20(%rsi), %r14\n\t&quot;</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>                &quot;movq 0x28(%rsi), %r15\n\t&quot;</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>                &quot;movq 0x30(%rsi), %rsp\n\t&quot;</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>                &quot;jmp *0x38(%rsi)\n\t&quot;);</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a> }</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a> </span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a> [[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a> __micron_fiber_trampoline() noexcept</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a> {</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>   asm volatile(&quot;andq $-16, %rsp\n\t&quot;      // defensive 16-align</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>                &quot;xorl %ebp, %ebp\n\t&quot;      // terminate the unwind/backtrace chain</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>                &quot;movq %r12, %rdi\n\t&quot;      // arg -&gt; a0</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>                &quot;callq *%r13\n\t&quot;          // fn(arg)</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>                &quot;ud2\n\t&quot;);                // fn must not return</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a> }</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a> </span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a> [[gnu::always_inline]] inline void</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a> make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a> {</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>   // zero it first</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>   *ctx = __fiber_ctx{};</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>   ctx-&gt;rsp = reinterpret_cast&lt;u64&gt;(stack_top) &amp; ~static_cast&lt;u64&gt;(15);</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>   ctx-&gt;rip = reinterpret_cast&lt;u64&gt;(&amp;__micron_fiber_trampoline);</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>   ctx-&gt;r12 = reinterpret_cast&lt;u64&gt;(arg);</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>   ctx-&gt;r13 = reinterpret_cast&lt;u64&gt;(fn);</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a> #if defined(MICRON_FIBER_FPENV)</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a>   // seed from the live control state, status bits masked</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>   u32 __mx;</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>   u16 __cw;</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>   asm volatile(&quot;stmxcsr %0&quot; : &quot;=m&quot;(__mx));</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>   asm volatile(&quot;fnstcw %0&quot; : &quot;=m&quot;(__cw));</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a>   ctx-&gt;mxcsr = __mx &amp; ~0x3Fu;</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>   ctx-&gt;fcw = __cw;</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a> #endif</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a> }</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a> </span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a> #elif defined(__micron_arch_x86)</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a> </span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a> struct __fiber_ctx {</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a>   u32 ebx;        // 0x00</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>   u32 esi;        // 0x04  carries fn-arg into the trampoline</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a>   u32 edi;        // 0x08  carries fn-ptr into the trampoline</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>   u32 ebp;        // 0x0c</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a>   u32 esp;        // 0x10</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>   u32 eip;        // 0x14  resume PC</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a>   u32 mxcsr;      // 0x18  (only meaningful with SSE)</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>   u16 fcw;        // 0x1c  x87 control word</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a> };</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a> </span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a> static_assert(__builtin_offsetof(__fiber_ctx, esp) == 0x10, &quot;i386 __fiber_ctx esp offset&quot;);</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a> static_assert(__builtin_offsetof(__fiber_ctx, eip) == 0x14, &quot;i386 __fiber_ctx eip offset&quot;);</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a> static_assert(__builtin_offsetof(__fiber_ctx, mxcsr) == 0x18, &quot;i386 __fiber_ctx mxcsr offset&quot;);</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a> static_assert(__builtin_offsetof(__fiber_ctx, fcw) == 0x1c, &quot;i386 __fiber_ctx fcw offset&quot;);</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a> </span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a> [[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a> __micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a> {</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>   // cdecl: from @ 4(%esp), to @ 8(%esp)</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a>   asm volatile(&quot;movl 4(%esp), %eax\n\t&quot;      // from</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>                &quot;movl %ebx, 0x00(%eax)\n\t&quot;</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>                &quot;movl %esi, 0x04(%eax)\n\t&quot;</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>                &quot;movl %edi, 0x08(%eax)\n\t&quot;</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a>                &quot;movl %ebp, 0x0c(%eax)\n\t&quot;</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>                &quot;movl (%esp), %ecx\n\t&quot;      // return addr -&gt; from-&gt;eip</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>                &quot;movl %ecx, 0x14(%eax)\n\t&quot;</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>                &quot;leal 4(%esp), %ecx\n\t&quot;      // caller esp past ret -&gt; from-&gt;esp</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>                &quot;movl %ecx, 0x10(%eax)\n\t&quot;</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a> #if defined(MICRON_FIBER_FPENV)</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a> #if defined(__SSE__)</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>                &quot;stmxcsr 0x18(%eax)\n\t&quot;</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>                &quot;andl $-64, 0x18(%eax)\n\t&quot;      // drop sticky status bits (0-5); control modes only</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a> #endif</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>                &quot;fnstcw 0x1c(%eax)\n\t&quot;</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a> #endif</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>                &quot;movl 8(%esp), %eax\n\t&quot;      // to (esp still original here)</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a> #if defined(MICRON_FIBER_FPENV)</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a> #if defined(__SSE__)</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>                &quot;ldmxcsr 0x18(%eax)\n\t&quot;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a> #endif</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a>                &quot;fldcw 0x1c(%eax)\n\t&quot;</span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a> #endif</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>                &quot;movl 0x00(%eax), %ebx\n\t&quot;</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>                &quot;movl 0x04(%eax), %esi\n\t&quot;</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>                &quot;movl 0x08(%eax), %edi\n\t&quot;</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>                &quot;movl 0x0c(%eax), %ebp\n\t&quot;</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a>                &quot;movl 0x10(%eax), %esp\n\t&quot;</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>                &quot;jmp *0x14(%eax)\n\t&quot;);</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a> }</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a> </span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a> [[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a> __micron_fiber_trampoline() noexcept</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a> {</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>   asm volatile(&quot;andl $-16, %esp\n\t&quot;</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>                &quot;xorl %ebp, %ebp\n\t&quot;</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>                &quot;subl $12, %esp\n\t&quot;      // keep 16-byte alignment after the arg push</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>                &quot;pushl %esi\n\t&quot;          // arg</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>                &quot;calll *%edi\n\t&quot;         // fn(arg)</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>                &quot;ud2\n\t&quot;);</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a> }</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a> </span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a> [[gnu::always_inline]] inline void</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a> make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a> {</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>   *ctx = __fiber_ctx{};      // recycled FCBs: don&#x27;t leak the previous fiber&#x27;s callee-saved regs</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>   ctx-&gt;esp = reinterpret_cast&lt;u32&gt;(stack_top) &amp; ~static_cast&lt;u32&gt;(15);</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>   ctx-&gt;eip = reinterpret_cast&lt;u32&gt;(&amp;__micron_fiber_trampoline);</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>   ctx-&gt;esi = reinterpret_cast&lt;u32&gt;(arg);</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>   ctx-&gt;edi = reinterpret_cast&lt;u32&gt;(fn);</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a> #if defined(MICRON_FIBER_FPENV)</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>   // live-seed, status bits masked</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>   u16 __cw;</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>   asm volatile(&quot;fnstcw %0&quot; : &quot;=m&quot;(__cw));</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>   ctx-&gt;fcw = __cw;</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a> #if defined(__SSE__)</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a>   u32 __mx;</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>   asm volatile(&quot;stmxcsr %0&quot; : &quot;=m&quot;(__mx));</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>   ctx-&gt;mxcsr = __mx &amp; ~0x3Fu;</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a> #endif</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a> #endif</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a> }</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a> </span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a> #elif defined(__micron_arch_arm64)</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a> </span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a> struct __fiber_ctx {</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>   u64 x[12];      // 0x00  x19..x30 ; x[10]=x29(fp) x[11]=x30(lr/resume) ; x[0]=x19 arg, x[1]=x20 fn (make_context)</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>   u64 sp;         // 0x60</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>   u64 d[8];       // 0x68  d8..d15 (callee-saved low 64 bits, AAPCS64)</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a> };</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a> </span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a> static_assert(__builtin_offsetof(__fiber_ctx, sp) == 0x60, &quot;arm64 __fiber_ctx sp offset&quot;);</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a> static_assert(__builtin_offsetof(__fiber_ctx, d) == 0x68, &quot;arm64 __fiber_ctx d offset&quot;);</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a> </span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a> // aarch64 GCC IGNORES __attribute__((naked)); emit both routines as top-level asm (see clone.hpp:99)</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a> extern &quot;C&quot; void __micron_swap_context(__fiber_ctx *from, __fiber_ctx *to) noexcept;</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a> extern &quot;C&quot; void __micron_fiber_trampoline() noexcept;</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a> </span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a> }      // namespace ar</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a> }      // namespace micron</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a> </span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a> asm(&quot;.text\n\t&quot;</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a>     &quot;.weak __micron_swap_context\n\t&quot;</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>     &quot;.type __micron_swap_context, %function\n\t&quot;</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>     &quot;.p2align 2\n&quot;</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>     &quot;__micron_swap_context:\n\t&quot;</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>     // x0 = from, x1 = to</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>     &quot;stp x19, x20, [x0, #0x00]\n\t&quot;</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a>     &quot;stp x21, x22, [x0, #0x10]\n\t&quot;</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>     &quot;stp x23, x24, [x0, #0x20]\n\t&quot;</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>     &quot;stp x25, x26, [x0, #0x30]\n\t&quot;</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>     &quot;stp x27, x28, [x0, #0x40]\n\t&quot;</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>     &quot;stp x29, x30, [x0, #0x50]\n\t&quot;      // fp, lr (lr = resume pc)</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>     &quot;mov x2, sp\n\t&quot;</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a>     &quot;str x2, [x0, #0x60]\n\t&quot;</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a>     &quot;stp d8, d9,   [x0, #0x68]\n\t&quot;</span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a>     &quot;stp d10, d11, [x0, #0x78]\n\t&quot;</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>     &quot;stp d12, d13, [x0, #0x88]\n\t&quot;</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>     &quot;stp d14, d15, [x0, #0x98]\n\t&quot;</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>     &quot;ldp x19, x20, [x1, #0x00]\n\t&quot;      // restore *to</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a>     &quot;ldp x21, x22, [x1, #0x10]\n\t&quot;</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a>     &quot;ldp x23, x24, [x1, #0x20]\n\t&quot;</span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>     &quot;ldp x25, x26, [x1, #0x30]\n\t&quot;</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a>     &quot;ldp x27, x28, [x1, #0x40]\n\t&quot;</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a>     &quot;ldp x29, x30, [x1, #0x50]\n\t&quot;</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>     &quot;ldr x2, [x1, #0x60]\n\t&quot;</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>     &quot;mov sp, x2\n\t&quot;</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>     &quot;ldp d8, d9,   [x1, #0x68]\n\t&quot;</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>     &quot;ldp d10, d11, [x1, #0x78]\n\t&quot;</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a>     &quot;ldp d12, d13, [x1, #0x88]\n\t&quot;</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a>     &quot;ldp d14, d15, [x1, #0x98]\n\t&quot;</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a>     &quot;ret\n\t&quot;);      // branch to x30 (resume pc)</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a> </span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a> asm(&quot;.text\n\t&quot;</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a>     &quot;.weak __micron_fiber_trampoline\n\t&quot;</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a>     &quot;.type __micron_fiber_trampoline, %function\n\t&quot;</span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a>     &quot;.p2align 2\n&quot;</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a>     &quot;__micron_fiber_trampoline:\n\t&quot;</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a>     &quot;mov x29, #0\n\t&quot;      // terminate unwind chain</span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a>     &quot;mov x0, x19\n\t&quot;      // arg -&gt; a0</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a>     &quot;blr x20\n\t&quot;          // fn(arg)</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a>     &quot;brk #0\n\t&quot;);</span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a> </span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a> namespace micron</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a> {</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a> namespace ar</span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a> {</span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a> </span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a> [[gnu::always_inline]] inline void</span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a> make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</span>
+<span id="L508" class="source-line"><a class="line-number" href="#L508">508</a> {</span>
+<span id="L509" class="source-line"><a class="line-number" href="#L509">509</a>   *ctx = __fiber_ctx{};      // recycled FCBs: don&#x27;t leak the previous fiber&#x27;s x21..x28 / d8..d15</span>
+<span id="L510" class="source-line"><a class="line-number" href="#L510">510</a>   ctx-&gt;sp = reinterpret_cast&lt;u64&gt;(stack_top) &amp; ~static_cast&lt;u64&gt;(15);</span>
+<span id="L511" class="source-line"><a class="line-number" href="#L511">511</a>   ctx-&gt;x[11] = reinterpret_cast&lt;u64&gt;(&amp;__micron_fiber_trampoline);      // x30 = entry</span>
+<span id="L512" class="source-line"><a class="line-number" href="#L512">512</a>   ctx-&gt;x[0] = reinterpret_cast&lt;u64&gt;(arg);                              // x19</span>
+<span id="L513" class="source-line"><a class="line-number" href="#L513">513</a>   ctx-&gt;x[1] = reinterpret_cast&lt;u64&gt;(fn);                               // x20</span>
+<span id="L514" class="source-line"><a class="line-number" href="#L514">514</a> }</span>
+<span id="L515" class="source-line"><a class="line-number" href="#L515">515</a> </span>
+<span id="L516" class="source-line"><a class="line-number" href="#L516">516</a> #elif defined(__micron_arch_arm32)</span>
+<span id="L517" class="source-line"><a class="line-number" href="#L517">517</a> </span>
+<span id="L518" class="source-line"><a class="line-number" href="#L518">518</a> struct __fiber_ctx {</span>
+<span id="L519" class="source-line"><a class="line-number" href="#L519">519</a>   u32 r[8];      // 0x00  r4..r11 ; r[0]=r4 arg, r[1]=r5 fn (make_context)</span>
+<span id="L520" class="source-line"><a class="line-number" href="#L520">520</a>   u32 sp;        // 0x20</span>
+<span id="L521" class="source-line"><a class="line-number" href="#L521">521</a>   u32 lr;        // 0x24  resume pc</span>
+<span id="L522" class="source-line"><a class="line-number" href="#L522">522</a>   u64 d[8];      // 0x28  d8..d15 (guarded by __ARM_FP)</span>
+<span id="L523" class="source-line"><a class="line-number" href="#L523">523</a> };</span>
+<span id="L524" class="source-line"><a class="line-number" href="#L524">524</a> </span>
+<span id="L525" class="source-line"><a class="line-number" href="#L525">525</a> static_assert(__builtin_offsetof(__fiber_ctx, sp) == 0x20, &quot;arm32 __fiber_ctx sp offset&quot;);</span>
+<span id="L526" class="source-line"><a class="line-number" href="#L526">526</a> static_assert(__builtin_offsetof(__fiber_ctx, lr) == 0x24, &quot;arm32 __fiber_ctx lr offset&quot;);</span>
+<span id="L527" class="source-line"><a class="line-number" href="#L527">527</a> static_assert(__builtin_offsetof(__fiber_ctx, d) == 0x28, &quot;arm32 __fiber_ctx d offset&quot;);</span>
+<span id="L528" class="source-line"><a class="line-number" href="#L528">528</a> static_assert(sizeof(__fiber_ctx) == 0x68, &quot;arm32 __fiber_ctx size&quot;);</span>
+<span id="L529" class="source-line"><a class="line-number" href="#L529">529</a> </span>
+<span id="L530" class="source-line"><a class="line-number" href="#L530">530</a> [[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp void</span>
+<span id="L531" class="source-line"><a class="line-number" href="#L531">531</a> __micron_swap_context(__fiber_ctx *, __fiber_ctx *) noexcept</span>
+<span id="L532" class="source-line"><a class="line-number" href="#L532">532</a> {</span>
+<span id="L533" class="source-line"><a class="line-number" href="#L533">533</a>   // r0 = from, r1 = to</span>
+<span id="L534" class="source-line"><a class="line-number" href="#L534">534</a>   asm volatile(&quot;stm r0, {r4-r11}\n\t&quot;      // r4..r11 at 0x00..0x1c</span>
+<span id="L535" class="source-line"><a class="line-number" href="#L535">535</a>                &quot;str sp, [r0, #0x20]\n\t&quot;</span>
+<span id="L536" class="source-line"><a class="line-number" href="#L536">536</a>                &quot;str lr, [r0, #0x24]\n\t&quot;</span>
+<span id="L537" class="source-line"><a class="line-number" href="#L537">537</a> #if defined(__ARM_FP)</span>
+<span id="L538" class="source-line"><a class="line-number" href="#L538">538</a>                &quot;add r2, r0, #0x28\n\t&quot;</span>
+<span id="L539" class="source-line"><a class="line-number" href="#L539">539</a>                &quot;vstm r2, {d8-d15}\n\t&quot;      // callee-saved VFP regs</span>
+<span id="L540" class="source-line"><a class="line-number" href="#L540">540</a>                &quot;add r2, r1, #0x28\n\t&quot;</span>
+<span id="L541" class="source-line"><a class="line-number" href="#L541">541</a>                &quot;vldm r2, {d8-d15}\n\t&quot;</span>
+<span id="L542" class="source-line"><a class="line-number" href="#L542">542</a> #endif</span>
+<span id="L543" class="source-line"><a class="line-number" href="#L543">543</a>                &quot;ldr sp, [r1, #0x20]\n\t&quot;</span>
+<span id="L544" class="source-line"><a class="line-number" href="#L544">544</a>                &quot;ldr lr, [r1, #0x24]\n\t&quot;</span>
+<span id="L545" class="source-line"><a class="line-number" href="#L545">545</a>                &quot;ldm r1, {r4-r11}\n\t&quot;</span>
+<span id="L546" class="source-line"><a class="line-number" href="#L546">546</a>                &quot;bx lr\n\t&quot;);</span>
+<span id="L547" class="source-line"><a class="line-number" href="#L547">547</a> }</span>
+<span id="L548" class="source-line"><a class="line-number" href="#L548">548</a> </span>
+<span id="L549" class="source-line"><a class="line-number" href="#L549">549</a> [[maybe_unused]] static __attribute__((naked, noinline, noreturn)) __micron_no_ssp void</span>
+<span id="L550" class="source-line"><a class="line-number" href="#L550">550</a> __micron_fiber_trampoline() noexcept</span>
+<span id="L551" class="source-line"><a class="line-number" href="#L551">551</a> {</span>
+<span id="L552" class="source-line"><a class="line-number" href="#L552">552</a>   // gcc&#x27;s frame pointer is r11 in arm mode but r7 in thumb, and this</span>
+<span id="L553" class="source-line"><a class="line-number" href="#L553">553</a>   // toolchain defaults to thumb-2 (__thumb__), so zero both, we don&#x27;t know which mode we&#x27;re in</span>
+<span id="L554" class="source-line"><a class="line-number" href="#L554">554</a>   asm volatile(&quot;mov r11, #0\n\t&quot;</span>
+<span id="L555" class="source-line"><a class="line-number" href="#L555">555</a>                &quot;mov r7, #0\n\t&quot;</span>
+<span id="L556" class="source-line"><a class="line-number" href="#L556">556</a>                &quot;mov r0, r4\n\t&quot;      // arg -&gt; a0</span>
+<span id="L557" class="source-line"><a class="line-number" href="#L557">557</a>                &quot;blx r5\n\t&quot;          // fn(arg)</span>
+<span id="L558" class="source-line"><a class="line-number" href="#L558">558</a>                &quot;udf #0\n\t&quot;);</span>
+<span id="L559" class="source-line"><a class="line-number" href="#L559">559</a> }</span>
+<span id="L560" class="source-line"><a class="line-number" href="#L560">560</a> </span>
+<span id="L561" class="source-line"><a class="line-number" href="#L561">561</a> [[gnu::always_inline]] inline void</span>
+<span id="L562" class="source-line"><a class="line-number" href="#L562">562</a> make_context(__fiber_ctx *ctx, void *stack_top, void (*fn)(void *), void *arg) noexcept</span>
+<span id="L563" class="source-line"><a class="line-number" href="#L563">563</a> {</span>
+<span id="L564" class="source-line"><a class="line-number" href="#L564">564</a>   *ctx = __fiber_ctx{};      // recycled FCBs: don&#x27;t leak the previous fiber&#x27;s r6..r11 / d8..d15</span>
+<span id="L565" class="source-line"><a class="line-number" href="#L565">565</a>   ctx-&gt;sp = reinterpret_cast&lt;u32&gt;(stack_top) &amp; ~static_cast&lt;u32&gt;(15);</span>
+<span id="L566" class="source-line"><a class="line-number" href="#L566">566</a>   ctx-&gt;lr = reinterpret_cast&lt;u32&gt;(&amp;__micron_fiber_trampoline);</span>
+<span id="L567" class="source-line"><a class="line-number" href="#L567">567</a>   ctx-&gt;r[0] = reinterpret_cast&lt;u32&gt;(arg);      // r4</span>
+<span id="L568" class="source-line"><a class="line-number" href="#L568">568</a>   ctx-&gt;r[1] = reinterpret_cast&lt;u32&gt;(fn);       // r5</span>
+<span id="L569" class="source-line"><a class="line-number" href="#L569">569</a> }</span>
+<span id="L570" class="source-line"><a class="line-number" href="#L570">570</a> </span>
+<span id="L571" class="source-line"><a class="line-number" href="#L571">571</a> #endif</span>
+<span id="L572" class="source-line"><a class="line-number" href="#L572">572</a> </span>
+<span id="L573" class="source-line"><a class="line-number" href="#L573">573</a> };      // namespace ar</span>
+<span id="L574" class="source-line"><a class="line-number" href="#L574">574</a> };      // namespace micron</span>
+<span id="L575" class="source-line"><a class="line-number" href="#L575">575</a> </span>
+<span id="L576" class="source-line"><a class="line-number" href="#L576">576</a> #endif      // __micron_arch_wasm32</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

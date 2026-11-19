@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/linalg/ops.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/linalg/ops.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/matrix.html">Matrices and linear algebra</a></div><p>Defined in header <code>&lt;micron/math/linalg/ops.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/linalg/ops.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-1368387ded3c3143">micron::math::linalg::ops::pa</code></td><td>variable; line 79</td></tr><tr class="t-dsc"><td><code id="s-bd16553b04cbf2ec">micron::math::linalg::ops::pb</code></td><td>variable; line 80</td></tr><tr class="t-dsc"><td><code id="s-362733429099fdc7">micron::math::linalg::ops::a</code></td><td>variable; line 387</td></tr><tr class="t-dsc"><td><code id="s-b954648de0408b58">micron::math::linalg::ops::vp</code></td><td>variable; line 388</td></tr><tr class="t-dsc"><td><code id="s-8832db18726448b0">micron::math::linalg::ops::r</code></td><td>variable; line 389</td></tr><tr class="t-dsc"><td><code id="s-953281fce7300e21">micron::math::linalg::ops::i</code></td><td>variable; line 390</td></tr><tr class="t-dsc"><td><code id="s-a7c7d097ec35a4c8">micron::math::linalg::ops::row</code></td><td>variable; line 391</td></tr><tr class="t-dsc"><td><code id="s-b1ab778c55713d21">micron::math::linalg::ops::acc</code></td><td>variable; line 392</td></tr><tr class="t-dsc"><td><code id="s-0518fa18ae456533">micron::math::linalg::ops::j</code></td><td>variable; line 393</td></tr><tr class="t-dsc"><td><code id="s-13fb23d50f622060">micron::math::linalg::ops::a</code></td><td>variable; line 450</td></tr><tr class="t-dsc"><td><code id="s-36c81e32cee9941f">micron::math::linalg::ops::b</code></td><td>variable; line 451</td></tr><tr class="t-dsc"><td><code id="s-59f4178029548c81">micron::math::linalg::ops::C</code></td><td>variable; line 452</td></tr><tr class="t-dsc"><td><code id="s-6ed0316256fa7379">micron::math::linalg::ops::c</code></td><td>variable; line 453</td></tr><tr class="t-dsc"><td><code id="s-abd4e39276ff024f">micron::math::linalg::ops::i</code></td><td>variable; line 454</td></tr><tr class="t-dsc"><td><code id="s-fc7ac1a551822c3f">micron::math::linalg::ops::row</code></td><td>variable; line 455</td></tr><tr class="t-dsc"><td><code id="s-43a61fc41f360af8">micron::math::linalg::ops::j</code></td><td>variable; line 456</td></tr><tr class="t-dsc"><td><code id="s-b8054bbc6a47d199">micron::math::linalg::ops::acc</code></td><td>variable; line 457</td></tr><tr class="t-dsc"><td><code id="s-2296cfe05a6aea60">micron::math::linalg::ops::p</code></td><td>variable; line 458</td></tr><tr class="t-dsc"><td><a href="#f-5b7412ca67334070">micron::math::linalg::ops::dot(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;b) noexcept</a></td><td>function; line 31</td></tr><tr class="t-dsc"><td><a href="#f-f44233de36210ce3">micron::math::linalg::ops::cross(const vec&lt;F, 3&gt; &amp;a, const vec&lt;F, 3&gt; &amp;b) noexcept</a></td><td>function; line 66</td></tr><tr class="t-dsc"><td><a href="#f-49ec06f1e6125f7d">micron::math::linalg::ops::outer(const vec&lt;T, R&gt; &amp;a, const vec&lt;T, C&gt; &amp;b) noexcept</a></td><td>function; line 87</td></tr><tr class="t-dsc"><td><a href="#f-cc18707a1d23347b">micron::math::linalg::ops::norm(const vec&lt;F, N&gt; &amp;v) noexcept</a></td><td>function; line 99</td></tr><tr class="t-dsc"><td><a href="#f-4e6d467d55c652f3">micron::math::linalg::ops::norm_sq(const vec&lt;T, N&gt; &amp;v) noexcept</a></td><td>function; line 106</td></tr><tr class="t-dsc"><td><a href="#f-e22544577048cc23">micron::math::linalg::ops::norm_l1(const vec&lt;F, N&gt; &amp;v) noexcept</a></td><td>function; line 113</td></tr><tr class="t-dsc"><td><a href="#f-d15a0247ad48385e">micron::math::linalg::ops::norm_inf(const vec&lt;F, N&gt; &amp;v) noexcept</a></td><td>function; line 122</td></tr><tr class="t-dsc"><td><a href="#f-2fdc5369c28b8e95">micron::math::linalg::ops::normalize(const vec&lt;F, N&gt; &amp;v) noexcept</a></td><td>function; line 134</td></tr><tr class="t-dsc"><td><a href="#f-284d2faa5edee196">micron::math::linalg::ops::normalize(const vec&lt;F, N&gt; &amp;v, P) noexcept</a></td><td>function; line 165</td></tr><tr class="t-dsc"><td><a href="#f-661a97abff4c79c6">micron::math::linalg::ops::hadamard(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;b) noexcept</a></td><td>function; line 198</td></tr><tr class="t-dsc"><td><a href="#f-6a42e8840c8cc139">micron::math::linalg::ops::abs_v(const vec&lt;F, N&gt; &amp;a) noexcept</a></td><td>function; line 207</td></tr><tr class="t-dsc"><td><a href="#f-aba433ac994c9833">micron::math::linalg::ops::clamp_v(const vec&lt;T, N&gt; &amp;a, T lo, T hi) noexcept</a></td><td>function; line 216</td></tr><tr class="t-dsc"><td><a href="#f-27eaa1262a222e46">micron::math::linalg::ops::clamp_v(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;lo, const vec&lt;T, N&gt; &amp;hi) noexcept</a></td><td>function; line 225</td></tr><tr class="t-dsc"><td><a href="#f-0140702b35b63ea4">micron::math::linalg::ops::lerp(const vec&lt;F, N&gt; &amp;a, const vec&lt;F, N&gt; &amp;b, U t) noexcept</a></td><td>function; line 240</td></tr><tr class="t-dsc"><td><a href="#f-3e13a35ce15d4fc6">micron::math::linalg::ops::lerp_s(F a, F b, F t) noexcept</a></td><td>function; line 250</td></tr><tr class="t-dsc"><td><a href="#f-6abc1041d6ab041b">micron::math::linalg::ops::nlerp(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b, U t) noexcept</a></td><td>function; line 258</td></tr><tr class="t-dsc"><td><a href="#f-22ff4609a099aea8">micron::math::linalg::ops::slerp(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b, U t) noexcept</a></td><td>function; line 273</td></tr><tr class="t-dsc"><td><a href="#f-30943a8f07bb17b7">micron::math::linalg::ops::reflect(const vec&lt;F, N&gt; &amp;i, const vec&lt;F, N&gt; &amp;n) noexcept</a></td><td>function; line 304</td></tr><tr class="t-dsc"><td><a href="#f-66ae01de51b14f0a">micron::math::linalg::ops::refract(const vec&lt;F, N&gt; &amp;i, const vec&lt;F, N&gt; &amp;n, F eta) noexcept</a></td><td>function; line 314</td></tr><tr class="t-dsc"><td><a href="#f-e98dd7f84698c967">micron::math::linalg::ops::project(const vec&lt;F, N&gt; &amp;u, const vec&lt;F, N&gt; &amp;v) noexcept</a></td><td>function; line 330</td></tr><tr class="t-dsc"><td><a href="#f-fbb2a440d79a9e5f">micron::math::linalg::ops::gemv(const mat&lt;T, R, C&gt; &amp;m, const vec&lt;T, C&gt; &amp;v) noexcept</a></td><td>function; line 342</td></tr><tr class="t-dsc"><td><a href="#f-e162a1447f6563c7">micron::math::linalg::ops::gemm(const mat&lt;T, M, K&gt; &amp;A, const mat&lt;T, K, N&gt; &amp;B) noexcept</a></td><td>function; line 406</td></tr><tr class="t-dsc"><td><a href="#f-267cf7da56e54efa">micron::math::linalg::ops::transpose(const mat&lt;T, R, C&gt; &amp;m) noexcept</a></td><td>function; line 473</td></tr><tr class="t-dsc"><td><a href="#f-70cd99eb9dc903f4">micron::math::linalg::ops::det2(const mat&lt;F, 2, 2&gt; &amp;m) noexcept</a></td><td>function; line 483</td></tr><tr class="t-dsc"><td><a href="#f-261a51c1584913b7">micron::math::linalg::ops::det3(const mat&lt;F, 3, 3&gt; &amp;m) noexcept</a></td><td>function; line 490</td></tr><tr class="t-dsc"><td><a href="#f-09f31bbd3da556ed">micron::math::linalg::ops::det4(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</a></td><td>function; line 502</td></tr><tr class="t-dsc"><td><a href="#f-3b3094a88765df93">micron::math::linalg::ops::inv2(const mat&lt;F, 2, 2&gt; &amp;m) noexcept</a></td><td>function; line 522</td></tr><tr class="t-dsc"><td><a href="#f-cb812f5b6165db0f">micron::math::linalg::ops::inv3(const mat&lt;F, 3, 3&gt; &amp;m) noexcept</a></td><td>function; line 536</td></tr><tr class="t-dsc"><td><a href="#f-b7b7b4b1b500aeb7">micron::math::linalg::ops::inv4_adj(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</a></td><td>function; line 576</td></tr><tr class="t-dsc"><td><a href="#f-898f53128092c08b">micron::math::linalg::ops::inv4(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</a></td><td>function; line 696</td></tr><tr class="t-dsc"><td><a href="#f-2c24cd1718507cd9">micron::math::linalg::ops::solve2(const mat&lt;F, 2, 2&gt; &amp;A, const vec&lt;F, 2&gt; &amp;b) noexcept</a></td><td>function; line 708</td></tr><tr class="t-dsc"><td><a href="#f-2176a28327ccfb11">micron::math::linalg::ops::solve3(const mat&lt;F, 3, 3&gt; &amp;A, const vec&lt;F, 3&gt; &amp;b) noexcept</a></td><td>function; line 715</td></tr><tr class="t-dsc"><td><a href="#f-ae1c17c3af6534dc">micron::math::linalg::ops::solve4(const mat&lt;F, 4, 4&gt; &amp;A, const vec&lt;F, 4&gt; &amp;b) noexcept</a></td><td>function; line 722</td></tr><tr class="t-dsc"><td><a href="#f-d9c56a59e51709d0">micron::math::linalg::ops::mul(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b) noexcept</a></td><td>function; line 729</td></tr><tr class="t-dsc"><td><a href="#f-6f1427d8957d77e7">micron::math::linalg::ops::conjugate(const quat&lt;F&gt; &amp;q) noexcept</a></td><td>function; line 742</td></tr><tr class="t-dsc"><td><a href="#f-bf2d0d0bdc1d0039">micron::math::linalg::ops::norm(const quat&lt;F&gt; &amp;q) noexcept</a></td><td>function; line 749</td></tr><tr class="t-dsc"><td><a href="#f-3c1ec335d1368136">micron::math::linalg::ops::normalize(const quat&lt;F&gt; &amp;q) noexcept</a></td><td>function; line 757</td></tr><tr class="t-dsc"><td><a href="#f-bb7b16bb2a35485f">micron::math::linalg::ops::rotate(const quat&lt;F&gt; &amp;q, const vec&lt;F, 3&gt; &amp;v) noexcept</a></td><td>function; line 768</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-5b7412ca67334070"><h3><code>micron::math::linalg::ops::dot(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L31">line 31</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr T
+dot(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;T, N&gt; &amp;a</code></li><li><code>const vec&lt;T, N&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr T
+dot(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;b) noexcept
+{
+  const T *__restrict__ pa = a.data;
+  const T *__restrict__ pb = b.data;
+  if constexpr ( N &gt;= 4 ) {
+    // dual accumulators
+    T acc0{}, acc1{};
+    constexpr usize H = N / 2;
+    for ( usize i = 0; i &lt; H; ++i ) {
+      if constexpr ( micron::is_floating_point_v&lt;T&gt; )
+        acc0 = math::fma&lt;T&gt;(pa[i], pb[i], acc0);
+      else
+        acc0 += pa[i] * pb[i];
+    }
+    for ( usize i = H; i &lt; N; ++i ) {
+      if constexpr ( micron::is_floating_point_v&lt;T&gt; )
+        acc1 = math::fma&lt;T&gt;(pa[i], pb[i], acc1);
+      else
+        acc1 += pa[i] * pb[i];
+    }
+    return acc0 + acc1;
+  } else {
+    T acc{};
+    for ( usize i = 0; i &lt; N; ++i ) {
+      if constexpr ( micron::is_floating_point_v&lt;T&gt; )
+        acc = math::fma&lt;T&gt;(pa[i], pb[i], acc);
+      else
+        acc += pa[i] * pb[i];
+    }
+    return acc;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>acc0 + acc1</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L51">line 51</a></td></tr><tr class="t-dsc"><td><code>acc</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L60">line 60</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-f44233de36210ce3"><h3><code>micron::math::linalg::ops::cross(const vec&lt;F, 3&gt; &amp;a, const vec&lt;F, 3&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L66">line 66</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+cross(const vec&lt;F, 3&gt; &amp;a, const vec&lt;F, 3&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, 3&gt; &amp;a</code></li><li><code>const vec&lt;F, 3&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+cross(const vec&lt;F, 3&gt; &amp;a, const vec&lt;F, 3&gt; &amp;b) noexcept
+{
+  if !consteval {
+#if defined(__micron_gfx_simd)
+    if constexpr ( micron::same_as&lt;F, f32&gt; ) {
+      vec&lt;F, 3&gt; out{};
+      const simd::f128 va = __vsimd::__load(reinterpret_cast&lt;const float *&gt;(a.data));
+      const simd::f128 vb = __vsimd::__load(reinterpret_cast&lt;const float *&gt;(b.data));
+      __vsimd::__store(reinterpret_cast&lt;float *&gt;(out.data), __vsimd::__cross3(va, vb));
+      return out;
+    }
+#endif
+  }
+  const F *__restrict__ pa = a.data;
+  const F *__restrict__ pb = b.data;
+  return { math::fma&lt;F&gt;(pa[1], pb[2], -pa[2] * pb[1]), math::fma&lt;F&gt;(pa[2], pb[0], -pa[0] * pb[2]),
+           math::fma&lt;F&gt;(pa[0], pb[1], -pa[1] * pb[0]) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>{ math::fma&lt;F&gt;(pa[1], pb[2], -pa[2] * pb[1]), math::fma&lt;F&gt;(pa[2], pb[0], -pa[0] * pb[2]),
+           math::fma&lt;F&gt;(pa[0], pb[1], -pa[1] * pb[0]) }</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L81">line 81</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__vec_simd.hpp.html#f-dbf46e12e8bd7182">__vsimd::__load</a>, <a href="../__vec_simd.hpp.html#f-dd64a7bfe59a174e">__vsimd::__store</a>, <a href="../__vec_simd.hpp.html#f-8c987544d0627597">__vsimd::__cross3</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-49ec06f1e6125f7d"><h3><code>micron::math::linalg::ops::outer(const vec&lt;T, R&gt; &amp;a, const vec&lt;T, C&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L87">line 87</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize R, usize C&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr mat&lt;T, R, C&gt;
+outer(const vec&lt;T, R&gt; &amp;a, const vec&lt;T, C&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;T, R&gt; &amp;a</code></li><li><code>const vec&lt;T, C&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize R, usize C&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr mat&lt;T, R, C&gt;
+outer(const vec&lt;T, R&gt; &amp;a, const vec&lt;T, C&gt; &amp;b) noexcept
+{
+  mat&lt;T, R, C&gt; m{};
+  for ( usize r = 0; r &lt; R; ++r )
+    for ( usize c = 0; c &lt; C; ++c ) m.data[r * C + c] = a.data[r] * b.data[c];
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L92">line 92</a></td></tr></tbody></table></section><section class="function-entry" id="f-cc18707a1d23347b"><h3><code>micron::math::linalg::ops::norm(const vec&lt;F, N&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L99">line 99</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline F
+norm(const vec&lt;F, N&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Returns <code>math::fsqrt(dot(v, v))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline F
+norm(const vec&lt;F, N&gt; &amp;v) noexcept
+{
+  return math::fsqrt(dot(v, v));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fsqrt(dot(v, v))</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L101">line 101</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="ops.hpp.html#f-5b7412ca67334070">dot</a>.</p></section><section class="function-entry" id="f-4e6d467d55c652f3"><h3><code>micron::math::linalg::ops::norm_sq(const vec&lt;T, N&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L106">line 106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T
+norm_sq(const vec&lt;T, N&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;T, N&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Returns <code>dot(v, v)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T
+norm_sq(const vec&lt;T, N&gt; &amp;v) noexcept
+{
+  return dot(v, v);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dot(v, v)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L108">line 108</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-5b7412ca67334070">dot</a>.</p></section><section class="function-entry" id="f-e22544577048cc23"><h3><code>micron::math::linalg::ops::norm_l1(const vec&lt;F, N&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+norm_l1(const vec&lt;F, N&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+norm_l1(const vec&lt;F, N&gt; &amp;v) noexcept
+{
+  F s = F(0);
+  for ( usize i = 0; i &lt; N; ++i ) s += math::fabs(v.data[i]);
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L117">line 117</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>.</p></section><section class="function-entry" id="f-d15a0247ad48385e"><h3><code>micron::math::linalg::ops::norm_inf(const vec&lt;F, N&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L122">line 122</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+norm_inf(const vec&lt;F, N&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+norm_inf(const vec&lt;F, N&gt; &amp;v) noexcept
+{
+  F m = math::fabs(v.data[0]);
+  for ( usize i = 1; i &lt; N; ++i ) {
+    F a = math::fabs(v.data[i]);
+    if ( a &gt; m ) m = a;
+  }
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L129">line 129</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>.</p></section><section class="function-entry" id="f-2fdc5369c28b8e95"><h3><code>micron::math::linalg::ops::normalize(const vec&lt;F, N&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L134">line 134</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, N&gt;
+normalize(const vec&lt;F, N&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, N&gt;
+normalize(const vec&lt;F, N&gt; &amp;v) noexcept
+{
+#if defined(__micron_gfx_simd)
+  if constexpr ( micron::same_as&lt;F, f32&gt; &amp;&amp; (N == 3 || N == 4) ) {
+    static_assert(sizeof(vec&lt;f32, 3&gt;) == 16 &amp;&amp; sizeof(vec&lt;f32, 4&gt;) == 16);
+    vec&lt;F, N&gt; out{};
+    const simd::f128 vv = __vsimd::__load(reinterpret_cast&lt;const float *&gt;(v.data));
+    simd::f128 n2;
+    if constexpr ( N == 3 )
+      n2 = __vsimd::__dot3_splat(vv, vv);
+    else
+      n2 = __vsimd::__dot4_splat(vv, vv);
+    const simd::f128 r = __vsimd::__mul(vv, __vsimd::__inv_sqrt_exact(n2));
+    // n == 0 &lt;=&gt; n2 == 0 (sqrt of any nonzero, incl. denormal, is nonzero)
+    const simd::f128 zmask = __vsimd::__cmp_eq(n2, __vsimd::__splat(0.0f));
+    __vsimd::__store(reinterpret_cast&lt;float *&gt;(out.data), __vsimd::__select(zmask, vv, r));
+    return out;
+  }
+#endif
+  const F n2 = dot(v, v);
+  if ( n2 == F(0) ) return v;
+  const F inv = __vsimd::__inv_sqrt_exact_s(n2);
+  vec&lt;F, N&gt; r{};
+  for ( usize i = 0; i &lt; N; ++i ) r.data[i] = v.data[i] * inv;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L154">line 154</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L158">line 158</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(sizeof(vec&lt;f32, 3&gt;) == 16 &amp;&amp; sizeof(vec&lt;f32, 4&gt;) == 16);</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L138">line 138</a><br>Within <code>( micron::same_as&lt;F, f32&gt; &amp;&amp; (N == 3 || N == 4) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__vec_simd.hpp.html#f-dbf46e12e8bd7182">__vsimd::__load</a>, <a href="../__vec_simd.hpp.html#f-50c16a9870ae22de">__vsimd::__dot3_splat</a>, <a href="../__vec_simd.hpp.html#f-2027a39a9e6ed377">__vsimd::__dot4_splat</a>, <a href="../__vec_simd.hpp.html#f-da291b0abbc1b2c7">__vsimd::__mul</a>, <a href="../__vec_simd.hpp.html#f-fd1b4d9f010f98cb">__vsimd::__inv_sqrt_exact</a>, <a href="../__vec_simd.hpp.html#f-5ae4962b562d6809">__vsimd::__cmp_eq</a>, <a href="../__vec_simd.hpp.html#f-30a2a33d2febc9ef">__vsimd::__splat</a>, <a href="../__vec_simd.hpp.html#f-dd64a7bfe59a174e">__vsimd::__store</a>, <a href="../__vec_simd.hpp.html#f-5282a2317c93f5da">__vsimd::__select</a>, <a href="ops.hpp.html#f-5b7412ca67334070">dot</a>, <a href="../__vec_simd.hpp.html#f-f7c775e8f1387b95">__vsimd::__inv_sqrt_exact_s</a>.</p></section><section class="function-entry" id="f-284d2faa5edee196"><h3><code>micron::math::linalg::ops::normalize(const vec&lt;F, N&gt; &amp;v, P) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L165">line 165</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N, math::policy::policy_tag P&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, N&gt;
+normalize(const vec&lt;F, N&gt; &amp;v, P) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;v</code></li><li><code>P</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N, math::policy::policy_tag P&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, N&gt;
+normalize(const vec&lt;F, N&gt; &amp;v, P) noexcept
+{
+  if constexpr ( micron::is_same_v&lt;P, math::policy::fast_tag&gt; &amp;&amp; micron::same_as&lt;F, f32&gt; ) {
+#if defined(__micron_gfx_simd)
+    if constexpr ( N == 3 || N == 4 ) {
+      vec&lt;F, N&gt; out{};
+      const simd::f128 vv = __vsimd::__load(reinterpret_cast&lt;const float *&gt;(v.data));
+      simd::f128 n2;
+      if constexpr ( N == 3 )
+        n2 = __vsimd::__dot3_splat(vv, vv);
+      else
+        n2 = __vsimd::__dot4_splat(vv, vv);
+      const simd::f128 r = __vsimd::__mul(vv, __vsimd::__inv_sqrt_fast(n2));
+      const simd::f128 zmask = __vsimd::__cmp_eq(n2, __vsimd::__splat(0.0f));
+      __vsimd::__store(reinterpret_cast&lt;float *&gt;(out.data), __vsimd::__select(zmask, vv, r));
+      return out;
+    }
+#endif
+    const F n2 = dot(v, v);
+    if ( n2 == F(0) ) return v;
+    const F inv = __vsimd::__inv_sqrt_fast_s(n2);
+    vec&lt;F, N&gt; r{};
+    for ( usize i = 0; i &lt; N; ++i ) r.data[i] = v.data[i] * inv;
+    return r;
+  } else {
+    return normalize&lt;F, N&gt;(v);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L180">line 180</a></td></tr><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L184">line 184</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L188">line 188</a></td></tr><tr class="t-dsc"><td><code>normalize&lt;F, N&gt;(v)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L190">line 190</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__vec_simd.hpp.html#f-dbf46e12e8bd7182">__vsimd::__load</a>, <a href="../__vec_simd.hpp.html#f-50c16a9870ae22de">__vsimd::__dot3_splat</a>, <a href="../__vec_simd.hpp.html#f-2027a39a9e6ed377">__vsimd::__dot4_splat</a>, <a href="../__vec_simd.hpp.html#f-da291b0abbc1b2c7">__vsimd::__mul</a>, <a href="../__vec_simd.hpp.html#f-99f43ab225547705">__vsimd::__inv_sqrt_fast</a>, <a href="../__vec_simd.hpp.html#f-5ae4962b562d6809">__vsimd::__cmp_eq</a>, <a href="../__vec_simd.hpp.html#f-30a2a33d2febc9ef">__vsimd::__splat</a>, <a href="../__vec_simd.hpp.html#f-dd64a7bfe59a174e">__vsimd::__store</a>, <a href="../__vec_simd.hpp.html#f-5282a2317c93f5da">__vsimd::__select</a>, <a href="ops.hpp.html#f-5b7412ca67334070">dot</a>, <a href="../__vec_simd.hpp.html#f-f9b6f3f7b5c8f6bd">__vsimd::__inv_sqrt_fast_s</a>, <a href="ops.hpp.html#f-2fdc5369c28b8e95">normalize&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-661a97abff4c79c6"><h3><code>micron::math::linalg::ops::hadamard(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L198">line 198</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;T, N&gt;
+hadamard(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;T, N&gt; &amp;a</code></li><li><code>const vec&lt;T, N&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;T, N&gt;
+hadamard(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;b) noexcept
+{
+  vec&lt;T, N&gt; r{};
+  for ( usize i = 0; i &lt; N; ++i ) r.data[i] = a.data[i] * b.data[i];
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L202">line 202</a></td></tr></tbody></table></section><section class="function-entry" id="f-6a42e8840c8cc139"><h3><code>micron::math::linalg::ops::abs_v(const vec&lt;F, N&gt; &amp;a) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L207">line 207</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, N&gt;
+abs_v(const vec&lt;F, N&gt; &amp;a) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, N&gt;
+abs_v(const vec&lt;F, N&gt; &amp;a) noexcept
+{
+  vec&lt;F, N&gt; r{};
+  for ( usize i = 0; i &lt; N; ++i ) r.data[i] = math::fabs(a.data[i]);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L211">line 211</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>.</p></section><section class="function-entry" id="f-aba433ac994c9833"><h3><code>micron::math::linalg::ops::clamp_v(const vec&lt;T, N&gt; &amp;a, T lo, T hi) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L216">line 216</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;T, N&gt;
+clamp_v(const vec&lt;T, N&gt; &amp;a, T lo, T hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;T, N&gt; &amp;a</code></li><li><code>T lo</code></li><li><code>T hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;T, N&gt;
+clamp_v(const vec&lt;T, N&gt; &amp;a, T lo, T hi) noexcept
+{
+  vec&lt;T, N&gt; r{};
+  for ( usize i = 0; i &lt; N; ++i ) r.data[i] = (a.data[i] &lt; lo) ? lo : ((a.data[i] &gt; hi) ? hi : a.data[i]);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L220">line 220</a></td></tr></tbody></table></section><section class="function-entry" id="f-27eaa1262a222e46"><h3><code>micron::math::linalg::ops::clamp_v(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;lo, const vec&lt;T, N&gt; &amp;hi) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L225">line 225</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;T, N&gt;
+clamp_v(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;lo, const vec&lt;T, N&gt; &amp;hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;T, N&gt; &amp;a</code></li><li><code>const vec&lt;T, N&gt; &amp;lo</code></li><li><code>const vec&lt;T, N&gt; &amp;hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;T, N&gt;
+clamp_v(const vec&lt;T, N&gt; &amp;a, const vec&lt;T, N&gt; &amp;lo, const vec&lt;T, N&gt; &amp;hi) noexcept
+{
+  vec&lt;T, N&gt; r{};
+  for ( usize i = 0; i &lt; N; ++i ) {
+    T x = a.data[i];
+    r.data[i] = (x &lt; lo.data[i]) ? lo.data[i] : ((x &gt; hi.data[i]) ? hi.data[i] : x);
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L232">line 232</a></td></tr></tbody></table></section><section class="function-entry" id="f-0140702b35b63ea4"><h3><code>micron::math::linalg::ops::lerp(const vec&lt;F, N&gt; &amp;a, const vec&lt;F, N&gt; &amp;b, U t) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L240">line 240</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N, typename U&gt;
+  requires(micron::is_convertible_v&lt;U, F&gt;)
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, N&gt;
+lerp(const vec&lt;F, N&gt; &amp;a, const vec&lt;F, N&gt; &amp;b, U t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;a</code></li><li><code>const vec&lt;F, N&gt; &amp;b</code></li><li><code>U t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N, typename U&gt;
+  requires(micron::is_convertible_v&lt;U, F&gt;)
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, N&gt;
+lerp(const vec&lt;F, N&gt; &amp;a, const vec&lt;F, N&gt; &amp;b, U t) noexcept
+{
+  F ft = static_cast&lt;F&gt;(t);
+  vec&lt;F, N&gt; r{};
+  for ( usize i = 0; i &lt; N; ++i ) r.data[i] = math::fma&lt;F&gt;(ft, b.data[i] - a.data[i], a.data[i]);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L245">line 245</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3e13a35ce15d4fc6"><h3><code>micron::math::linalg::ops::lerp_s(F a, F b, F t) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L250">line 250</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lerp_s(F a, F b, F t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li><li><code>F t</code></li></ul><h4>Effects</h4><p>Returns <code>math::fma&lt;F&gt;(t, b - a, a)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+lerp_s(F a, F b, F t) noexcept
+{
+  return math::fma&lt;F&gt;(t, b - a, a);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(t, b - a, a)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L252">line 252</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-6abc1041d6ab041b"><h3><code>micron::math::linalg::ops::nlerp(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b, U t) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L258">line 258</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename U&gt;
+  requires(micron::is_convertible_v&lt;U, F&gt;)
+[[nodiscard, gnu::always_inline]] inline quat&lt;F&gt;
+nlerp(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b, U t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;a</code></li><li><code>const quat&lt;F&gt; &amp;b</code></li><li><code>U t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename U&gt;
+  requires(micron::is_convertible_v&lt;U, F&gt;)
+[[nodiscard, gnu::always_inline]] inline quat&lt;F&gt;
+nlerp(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b, U t) noexcept
+{
+  F ft = static_cast&lt;F&gt;(t);
+  vec&lt;F, 4&gt; va{ a.data[0], a.data[1], a.data[2], a.data[3] };
+  vec&lt;F, 4&gt; vb{ b.data[0], b.data[1], b.data[2], b.data[3] };
+  vec&lt;F, 4&gt; r = lerp(va, vb, ft);
+  F n = norm(r);
+  quat&lt;F&gt; q{};
+  for ( usize i = 0; i &lt; 4; ++i ) q.data[i] = r.data[i] / n;
+  return q;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>q</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L267">line 267</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-0140702b35b63ea4">lerp</a>, <a href="ops.hpp.html#f-cc18707a1d23347b">norm</a>.</p></section><section class="function-entry" id="f-22ff4609a099aea8"><h3><code>micron::math::linalg::ops::slerp(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b, U t) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L273">line 273</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, typename U&gt;
+  requires(micron::is_convertible_v&lt;U, F&gt;)
+[[nodiscard]] inline quat&lt;F&gt;
+slerp(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b, U t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;a</code></li><li><code>const quat&lt;F&gt; &amp;b</code></li><li><code>U t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, typename U&gt;
+  requires(micron::is_convertible_v&lt;U, F&gt;)
+[[nodiscard]] inline quat&lt;F&gt;
+slerp(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b, U t) noexcept
+{
+  F ft = static_cast&lt;F&gt;(t);
+  vec&lt;F, 4&gt; va{ a.data[0], a.data[1], a.data[2], a.data[3] };
+  vec&lt;F, 4&gt; vb{ b.data[0], b.data[1], b.data[2], b.data[3] };
+  F cos_theta = dot(va, vb);
+  if ( cos_theta &lt; F(0) ) {
+    for ( usize i = 0; i &lt; 4; ++i ) vb.data[i] = -vb.data[i];
+    cos_theta = -cos_theta;
+  }
+  if ( cos_theta &gt; F(0.9995) ) {
+    vec&lt;F, 4&gt; r = lerp(va, vb, ft);
+    F n = norm(r);
+    quat&lt;F&gt; q{};
+    for ( usize i = 0; i &lt; 4; ++i ) q.data[i] = r.data[i] / n;
+    return q;
+  }
+  const F sin_theta = math::fsqrt(F(1) - cos_theta * cos_theta);
+  const F theta = mkbits::trig_ns::acos&lt;F&gt;(cos_theta);
+  const F inv_sin_theta = F(1) / sin_theta;
+  const F w_a = mkbits::trig_ns::sin&lt;F&gt;((F(1) - ft) * theta) * inv_sin_theta;
+  const F w_b = mkbits::trig_ns::sin&lt;F&gt;(ft * theta) * inv_sin_theta;
+  quat&lt;F&gt; q{};
+  for ( usize i = 0; i &lt; 4; ++i ) q.data[i] = w_a * va.data[i] + w_b * vb.data[i];
+  return q;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>q</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L288">line 288</a></td></tr><tr class="t-dsc"><td><code>q</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L297">line 297</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-5b7412ca67334070">dot</a>, <a href="ops.hpp.html#f-0140702b35b63ea4">lerp</a>, <a href="ops.hpp.html#f-cc18707a1d23347b">norm</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../bits/trig.hpp.html#f-8ee39dcdb18f66ad">mkbits::trig_ns::acos&lt;F&gt;</a>, <a href="../bits/trig.hpp.html#f-24beb2526a01333c">mkbits::trig_ns::sin&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-30943a8f07bb17b7"><h3><code>micron::math::linalg::ops::reflect(const vec&lt;F, N&gt; &amp;i, const vec&lt;F, N&gt; &amp;n) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L304">line 304</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, N&gt;
+reflect(const vec&lt;F, N&gt; &amp;i, const vec&lt;F, N&gt; &amp;n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;i</code></li><li><code>const vec&lt;F, N&gt; &amp;n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, N&gt;
+reflect(const vec&lt;F, N&gt; &amp;i, const vec&lt;F, N&gt; &amp;n) noexcept
+{
+  F d = dot(i, n);
+  vec&lt;F, N&gt; r{};
+  for ( usize k = 0; k &lt; N; ++k ) r.data[k] = math::fma&lt;F&gt;(F(-2) * d, n.data[k], i.data[k]);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L309">line 309</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-5b7412ca67334070">dot</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-66ae01de51b14f0a"><h3><code>micron::math::linalg::ops::refract(const vec&lt;F, N&gt; &amp;i, const vec&lt;F, N&gt; &amp;n, F eta) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L314">line 314</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline vec&lt;F, N&gt;
+refract(const vec&lt;F, N&gt; &amp;i, const vec&lt;F, N&gt; &amp;n, F eta) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;i</code></li><li><code>const vec&lt;F, N&gt; &amp;n</code></li><li><code>F eta</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline vec&lt;F, N&gt;
+refract(const vec&lt;F, N&gt; &amp;i, const vec&lt;F, N&gt; &amp;n, F eta) noexcept
+{
+  F d = dot(i, n);
+  F k = F(1) - eta * eta * (F(1) - d * d);
+  vec&lt;F, N&gt; r{};
+  if ( k &lt; F(0) ) {
+    for ( usize j = 0; j &lt; N; ++j ) r.data[j] = F(0);
+    return r;
+  }
+  F s = math::fsqrt(k);
+  for ( usize j = 0; j &lt; N; ++j ) r.data[j] = eta * i.data[j] - (eta * d + s) * n.data[j];
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L321">line 321</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L325">line 325</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-5b7412ca67334070">dot</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-e98dd7f84698c967"><h3><code>micron::math::linalg::ops::project(const vec&lt;F, N&gt; &amp;u, const vec&lt;F, N&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L330">line 330</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, N&gt;
+project(const vec&lt;F, N&gt; &amp;u, const vec&lt;F, N&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;u</code></li><li><code>const vec&lt;F, N&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, N&gt;
+project(const vec&lt;F, N&gt; &amp;u, const vec&lt;F, N&gt; &amp;v) noexcept
+{
+  F num = dot(u, v);
+  F den = dot(v, v);
+  F t = num / den;
+  vec&lt;F, N&gt; r{};
+  for ( usize i = 0; i &lt; N; ++i ) r.data[i] = t * v.data[i];
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L337">line 337</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-5b7412ca67334070">dot</a>.</p></section><section class="function-entry" id="f-fbb2a440d79a9e5f"><h3><code>micron::math::linalg::ops::gemv(const mat&lt;T, R, C&gt; &amp;m, const vec&lt;T, C&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L342">line 342</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize R, usize C&gt;
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr vec&lt;T, R&gt;
+gemv(const mat&lt;T, R, C&gt; &amp;m, const vec&lt;T, C&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;T, R, C&gt; &amp;m</code></li><li><code>const vec&lt;T, C&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize R, usize C&gt;
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr vec&lt;T, R&gt;
+gemv(const mat&lt;T, R, C&gt; &amp;m, const vec&lt;T, C&gt; &amp;v) noexcept
+{
+  if !consteval {
+#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)
+    // row-major mat4*vec4 (f32)
+    if constexpr ( micron::same_as&lt;T, f32&gt; &amp;&amp; R == 4 &amp;&amp; C == 4 ) {
+      vec&lt;T, 4&gt; out{};
+      const float *mp = reinterpret_cast&lt;const float *&gt;(m.data);
+      const __m128 vv = simd::sse::loadu_f32(reinterpret_cast&lt;const float *&gt;(v.data));
+      const __m128 p0 = simd::sse::mul_f32(simd::sse::loadu_f32(mp + 0), vv);
+      const __m128 p1 = simd::sse::mul_f32(simd::sse::loadu_f32(mp + 4), vv);
+      const __m128 p2 = simd::sse::mul_f32(simd::sse::loadu_f32(mp + 8), vv);
+      const __m128 p3 = simd::sse::mul_f32(simd::sse::loadu_f32(mp + 12), vv);
+      const __m128 s01 = simd::sse::hadd_f32(p0, p1);
+      const __m128 s23 = simd::sse::hadd_f32(p2, p3);
+      const __m128 rr = simd::sse::hadd_f32(s01, s23);
+      simd::sse::storeu_f32(reinterpret_cast&lt;float *&gt;(out.data), rr);
+      return out;
+    }
+#elif defined(__micron_arch_arm_any) &amp;&amp; defined(__micron_arm_neon)
+    if constexpr ( micron::same_as&lt;T, f32&gt; &amp;&amp; R == 4 &amp;&amp; C == 4 ) {
+      vec&lt;T, 4&gt; out{};
+      const float *mp = reinterpret_cast&lt;const float *&gt;(m.data);
+      const float *vp = reinterpret_cast&lt;const float *&gt;(v.data);
+      const float32x4_t m0 = simd::neon::load_f32(mp + 0);
+      const float32x4_t m1 = simd::neon::load_f32(mp + 4);
+      const float32x4_t m2 = simd::neon::load_f32(mp + 8);
+      const float32x4_t m3 = simd::neon::load_f32(mp + 12);
+      const float32x4_t e0 = simd::neon::zip_lo_f32(m0, m1);
+      const float32x4_t e1 = simd::neon::zip_hi_f32(m0, m1);
+      const float32x4_t e2 = simd::neon::zip_lo_f32(m2, m3);
+      const float32x4_t e3 = simd::neon::zip_hi_f32(m2, m3);
+      const float32x4_t c0 = simd::neon::concat_lo_f32(e0, e2);
+      const float32x4_t c1 = simd::neon::concat_hi_f32(e0, e2);
+      const float32x4_t c2 = simd::neon::concat_lo_f32(e1, e3);
+      const float32x4_t c3 = simd::neon::concat_hi_f32(e1, e3);
+      float32x4_t r = simd::neon::mul(simd::neon::splat_f32(vp[0]), c0);
+      r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(vp[1]), c1));
+      r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(vp[2]), c2));
+      r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(vp[3]), c3));
+      simd::neon::store_f32(reinterpret_cast&lt;float *&gt;(out.data), r);
+      return out;
+    }
+#endif
+  }
+  const T *__restrict__ a = m.data;
+  const T *__restrict__ vp = v.data;
+  vec&lt;T, R&gt; r{};
+  for ( usize i = 0; i &lt; R; ++i ) {
+    const T *__restrict__ row = a + i * C;
+    T acc{};
+    for ( usize j = 0; j &lt; C; ++j ) {
+      if constexpr ( micron::is_floating_point_v&lt;T&gt; )
+        acc = math::fma&lt;T&gt;(row[j], vp[j], acc);
+      else
+        acc += row[j] * vp[j];
+    }
+    r.data[i] = acc;
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L359">line 359</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L383">line 383</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L401">line 401</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../simd/aliases/sse.hpp.html#f-2fb8f61d88262627">simd::sse::loadu_f32</a>, <a href="../../simd/aliases/sse.hpp.html#f-e26d1423c245e227">simd::sse::mul_f32</a>, <a href="../../simd/aliases/sse.hpp.html#f-56f6a8f8466fc056">simd::sse::hadd_f32</a>, <a href="../../simd/aliases/sse.hpp.html#f-7dad405bfd3b0b16">simd::sse::storeu_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">simd::neon::load_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-cff0e0cd4e0a8733">simd::neon::zip_lo_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-01d5ab4de296d434">simd::neon::zip_hi_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-ffd7e88932562087">simd::neon::concat_lo_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-1886b4fc4ea3ceea">simd::neon::concat_hi_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-ab4be90efdab0c2a">simd::neon::mul</a>, <a href="../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-b0226ef72e98ddfe">simd::neon::add</a>, <a href="../../simd/aliases/neon.hpp.html#f-b2d69468a29bad57">simd::neon::store_f32</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-e162a1447f6563c7"><h3><code>micron::math::linalg::ops::gemm(const mat&lt;T, M, K&gt; &amp;A, const mat&lt;T, K, N&gt; &amp;B) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L406">line 406</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize M, usize K, usize N&gt;
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr mat&lt;T, M, N&gt;
+gemm(const mat&lt;T, M, K&gt; &amp;A, const mat&lt;T, K, N&gt; &amp;B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;T, M, K&gt; &amp;A</code></li><li><code>const mat&lt;T, K, N&gt; &amp;B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize M, usize K, usize N&gt;
+[[nodiscard, gnu::always_inline, gnu::flatten]] inline constexpr mat&lt;T, M, N&gt;
+gemm(const mat&lt;T, M, K&gt; &amp;A, const mat&lt;T, K, N&gt; &amp;B) noexcept
+{
+  if !consteval {
+#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)
+    if constexpr ( micron::same_as&lt;T, f32&gt; &amp;&amp; M == 4 &amp;&amp; K == 4 &amp;&amp; N == 4 ) {
+      mat&lt;T, 4, 4&gt; Cm = mat&lt;T, 4, 4&gt;::zero();
+      const float *ap = reinterpret_cast&lt;const float *&gt;(A.data);
+      const float *bp = reinterpret_cast&lt;const float *&gt;(B.data);
+      float *cp = reinterpret_cast&lt;float *&gt;(Cm.data);
+      const __m128 b0 = simd::sse::loadu_f32(bp + 0);
+      const __m128 b1 = simd::sse::loadu_f32(bp + 4);
+      const __m128 b2 = simd::sse::loadu_f32(bp + 8);
+      const __m128 b3 = simd::sse::loadu_f32(bp + 12);
+      for ( int i = 0; i &lt; 4; ++i ) {
+        const __m128 ar = simd::sse::loadu_f32(ap + i * 4);
+        __m128 r = simd::sse::mul_f32(simd::sse::shuffle_f32&lt;0x00&gt;(ar, ar), b0);
+        r = simd::fma::fma_f32(simd::sse::shuffle_f32&lt;0x55&gt;(ar, ar), b1, r);
+        r = simd::fma::fma_f32(simd::sse::shuffle_f32&lt;0xAA&gt;(ar, ar), b2, r);
+        r = simd::fma::fma_f32(simd::sse::shuffle_f32&lt;0xFF&gt;(ar, ar), b3, r);
+        simd::sse::storeu_f32(cp + i * 4, r);
+      }
+      return Cm;
+    }
+#elif defined(__micron_arch_arm_any) &amp;&amp; defined(__micron_arm_neon)
+    if constexpr ( micron::same_as&lt;T, f32&gt; &amp;&amp; M == 4 &amp;&amp; K == 4 &amp;&amp; N == 4 ) {
+      mat&lt;T, 4, 4&gt; Cm = mat&lt;T, 4, 4&gt;::zero();
+      const float *ap = reinterpret_cast&lt;const float *&gt;(A.data);
+      const float *bp = reinterpret_cast&lt;const float *&gt;(B.data);
+      float *cp = reinterpret_cast&lt;float *&gt;(Cm.data);
+      const float32x4_t b0 = simd::neon::load_f32(bp + 0);
+      const float32x4_t b1 = simd::neon::load_f32(bp + 4);
+      const float32x4_t b2 = simd::neon::load_f32(bp + 8);
+      const float32x4_t b3 = simd::neon::load_f32(bp + 12);
+      for ( int i = 0; i &lt; 4; ++i ) {
+        float32x4_t r = simd::neon::mul(simd::neon::splat_f32(ap[i * 4 + 0]), b0);
+        r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(ap[i * 4 + 1]), b1));
+        r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(ap[i * 4 + 2]), b2));
+        r = simd::neon::add(r, simd::neon::mul(simd::neon::splat_f32(ap[i * 4 + 3]), b3));
+        simd::neon::store_f32(cp + i * 4, r);
+      }
+      return Cm;
+    }
+#endif
+  }
+  const T *__restrict__ a = A.data;
+  const T *__restrict__ b = B.data;
+  mat&lt;T, M, N&gt; C = mat&lt;T, M, N&gt;::zero();
+  T *__restrict__ c = C.data;
+  for ( usize i = 0; i &lt; M; ++i ) {
+    const T *__restrict__ row = a + i * K;
+    for ( usize j = 0; j &lt; N; ++j ) {
+      T acc{};
+      for ( usize p = 0; p &lt; K; ++p ) {
+        if constexpr ( micron::is_floating_point_v&lt;T&gt; )
+          acc = math::fma&lt;T&gt;(row[p], b[p * N + j], acc);
+        else
+          acc += row[p] * b[p * N + j];
+      }
+      c[i * N + j] = acc;
+    }
+  }
+  return C;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>Cm</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L427">line 427</a></td></tr><tr class="t-dsc"><td><code>Cm</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L446">line 446</a></td></tr><tr class="t-dsc"><td><code>C</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L467">line 467</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;T, 4, 4&gt;::zero</a>, <a href="../../simd/aliases/sse.hpp.html#f-2fb8f61d88262627">simd::sse::loadu_f32</a>, <a href="../../simd/aliases/sse.hpp.html#f-e26d1423c245e227">simd::sse::mul_f32</a>, <a href="../../simd/aliases/sse.hpp.html#f-1fb443aa407f9596">simd::sse::shuffle_f32&lt;0x00&gt;</a>, <a href="../../simd/aliases/fma.hpp.html#f-ceab39f17d77ac9c">simd::fma::fma_f32</a>, <a href="../../simd/aliases/sse.hpp.html#f-1fb443aa407f9596">simd::sse::shuffle_f32&lt;0x55&gt;</a>, <a href="../../simd/aliases/sse.hpp.html#f-1fb443aa407f9596">simd::sse::shuffle_f32&lt;0xAA&gt;</a>, <a href="../../simd/aliases/sse.hpp.html#f-1fb443aa407f9596">simd::sse::shuffle_f32&lt;0xFF&gt;</a>, <a href="../../simd/aliases/sse.hpp.html#f-7dad405bfd3b0b16">simd::sse::storeu_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">simd::neon::load_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-ab4be90efdab0c2a">simd::neon::mul</a>, <a href="../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-b0226ef72e98ddfe">simd::neon::add</a>, <a href="../../simd/aliases/neon.hpp.html#f-b2d69468a29bad57">simd::neon::store_f32</a>, <a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;T, M, N&gt;::zero</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-267cf7da56e54efa"><h3><code>micron::math::linalg::ops::transpose(const mat&lt;T, R, C&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L473">line 473</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;arith_scalar T, usize R, usize C&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr mat&lt;T, C, R&gt;
+transpose(const mat&lt;T, R, C&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;T, R, C&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;arith_scalar T, usize R, usize C&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr mat&lt;T, C, R&gt;
+transpose(const mat&lt;T, R, C&gt; &amp;m) noexcept
+{
+  mat&lt;T, C, R&gt; r{};
+  for ( usize i = 0; i &lt; R; ++i )
+    for ( usize j = 0; j &lt; C; ++j ) r.data[j * R + i] = m.data[i * C + j];
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L478">line 478</a></td></tr></tbody></table></section><section class="function-entry" id="f-70cd99eb9dc903f4"><h3><code>micron::math::linalg::ops::det2(const mat&lt;F, 2, 2&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L483">line 483</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+det2(const mat&lt;F, 2, 2&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 2, 2&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Returns <code>math::fma&lt;F&gt;(m.data[0], m.data[3], -m.data[1] * m.data[2])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+det2(const mat&lt;F, 2, 2&gt; &amp;m) noexcept
+{
+  return math::fma&lt;F&gt;(m.data[0], m.data[3], -m.data[1] * m.data[2]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(m.data[0], m.data[3], -m.data[1] * m.data[2])</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L485">line 485</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-261a51c1584913b7"><h3><code>micron::math::linalg::ops::det3(const mat&lt;F, 3, 3&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L490">line 490</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+det3(const mat&lt;F, 3, 3&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 3, 3&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr F
+det3(const mat&lt;F, 3, 3&gt; &amp;m) noexcept
+{
+  const F *a = m.data;
+  // a[i*3+j]
+  F m0 = math::fma&lt;F&gt;(a[4], a[8], -a[5] * a[7]);
+  F m1 = math::fma&lt;F&gt;(a[3], a[8], -a[5] * a[6]);
+  F m2 = math::fma&lt;F&gt;(a[3], a[7], -a[4] * a[6]);
+  return math::fma&lt;F&gt;(a[0], m0, math::fma&lt;F&gt;(-a[1], m1, a[2] * m2));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(a[0], m0, math::fma&lt;F&gt;(-a[1], m1, a[2] * m2))</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L497">line 497</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-09f31bbd3da556ed"><h3><code>micron::math::linalg::ops::det4(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L502">line 502</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr F
+det4(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 4, 4&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr F
+det4(const mat&lt;F, 4, 4&gt; &amp;m) noexcept
+{
+  const F *__restrict__ a = m.data;
+  // 2x2 minors of the lower 2 rows
+  F c0 = math::fma&lt;F&gt;(a[10], a[15], -a[11] * a[14]);
+  F c1 = math::fma&lt;F&gt;(a[9], a[15], -a[11] * a[13]);
+  F c2 = math::fma&lt;F&gt;(a[9], a[14], -a[10] * a[13]);
+  F c3 = math::fma&lt;F&gt;(a[8], a[15], -a[11] * a[12]);
+  F c4 = math::fma&lt;F&gt;(a[8], a[14], -a[10] * a[12]);
+  F c5 = math::fma&lt;F&gt;(a[8], a[13], -a[9] * a[12]);
+  // expansion along the first row
+  F t0 = a[0] * math::fma&lt;F&gt;(a[5], c0, math::fma&lt;F&gt;(-a[6], c1, a[7] * c2));
+  F t1 = a[1] * math::fma&lt;F&gt;(a[4], c0, math::fma&lt;F&gt;(-a[6], c3, a[7] * c4));
+  F t2 = a[2] * math::fma&lt;F&gt;(a[4], c1, math::fma&lt;F&gt;(-a[5], c3, a[7] * c5));
+  F t3 = a[3] * math::fma&lt;F&gt;(a[4], c2, math::fma&lt;F&gt;(-a[5], c4, a[6] * c5));
+  return t0 - t1 + t2 - t3;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t0 - t1 + t2 - t3</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L517">line 517</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3b3094a88765df93"><h3><code>micron::math::linalg::ops::inv2(const mat&lt;F, 2, 2&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L522">line 522</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr mat&lt;F, 2, 2&gt;
+inv2(const mat&lt;F, 2, 2&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 2, 2&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr mat&lt;F, 2, 2&gt;
+inv2(const mat&lt;F, 2, 2&gt; &amp;m) noexcept
+{
+  F d = det2(m);
+  F inv = F(1) / d;
+  mat&lt;F, 2, 2&gt; r{};
+  r.data[0] = m.data[3] * inv;
+  r.data[1] = -m.data[1] * inv;
+  r.data[2] = -m.data[2] * inv;
+  r.data[3] = m.data[0] * inv;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L531">line 531</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-70cd99eb9dc903f4">det2</a>.</p></section><section class="function-entry" id="f-cb812f5b6165db0f"><h3><code>micron::math::linalg::ops::inv3(const mat&lt;F, 3, 3&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L536">line 536</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr mat&lt;F, 3, 3&gt;
+inv3(const mat&lt;F, 3, 3&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 3, 3&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr mat&lt;F, 3, 3&gt;
+inv3(const mat&lt;F, 3, 3&gt; &amp;m) noexcept
+{
+  const F *a = m.data;
+  F c00 = math::fma&lt;F&gt;(a[4], a[8], -a[5] * a[7]);
+  F c01 = math::fma&lt;F&gt;(a[5], a[6], -a[3] * a[8]);
+  F c02 = math::fma&lt;F&gt;(a[3], a[7], -a[4] * a[6]);
+  F c10 = math::fma&lt;F&gt;(a[2], a[7], -a[1] * a[8]);
+  F c11 = math::fma&lt;F&gt;(a[0], a[8], -a[2] * a[6]);
+  F c12 = math::fma&lt;F&gt;(a[1], a[6], -a[0] * a[7]);
+  F c20 = math::fma&lt;F&gt;(a[1], a[5], -a[2] * a[4]);
+  F c21 = math::fma&lt;F&gt;(a[2], a[3], -a[0] * a[5]);
+  F c22 = math::fma&lt;F&gt;(a[0], a[4], -a[1] * a[3]);
+  F d = a[0] * c00 + a[1] * c01 + a[2] * c02;
+  F inv = F(1) / d;
+  mat&lt;F, 3, 3&gt; r{};
+  r.data[0] = c00 * inv;
+  r.data[1] = c10 * inv;
+  r.data[2] = c20 * inv;
+  r.data[3] = c01 * inv;
+  r.data[4] = c11 * inv;
+  r.data[5] = c21 * inv;
+  r.data[6] = c02 * inv;
+  r.data[7] = c12 * inv;
+  r.data[8] = c22 * inv;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L560">line 560</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-b7b7b4b1b500aeb7"><h3><code>micron::math::linalg::ops::inv4_adj(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L576">line 576</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr mat&lt;F, 4, 4&gt;
+inv4_adj(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 4, 4&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr mat&lt;F, 4, 4&gt;
+inv4_adj(const mat&lt;F, 4, 4&gt; &amp;m) noexcept
+{
+  const F *__restrict__ a = m.data;
+  F b00 = a[0] * a[5] - a[1] * a[4];
+  F b01 = a[0] * a[6] - a[2] * a[4];
+  F b02 = a[0] * a[7] - a[3] * a[4];
+  F b03 = a[1] * a[6] - a[2] * a[5];
+  F b04 = a[1] * a[7] - a[3] * a[5];
+  F b05 = a[2] * a[7] - a[3] * a[6];
+  F b06 = a[8] * a[13] - a[9] * a[12];
+  F b07 = a[8] * a[14] - a[10] * a[12];
+  F b08 = a[8] * a[15] - a[11] * a[12];
+  F b09 = a[9] * a[14] - a[10] * a[13];
+  F b10 = a[9] * a[15] - a[11] * a[13];
+  F b11 = a[10] * a[15] - a[11] * a[14];
+
+  F d = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
+  F inv = F(1) / d;
+
+  // in-place stores keep register pressure low
+  mat&lt;F, 4, 4&gt; r = __mat4_scratch&lt;F&gt;();
+  r.data[0] = (a[5] * b11 - a[6] * b10 + a[7] * b09) * inv;
+  r.data[1] = (-a[1] * b11 + a[2] * b10 - a[3] * b09) * inv;
+  r.data[2] = (a[13] * b05 - a[14] * b04 + a[15] * b03) * inv;
+  r.data[3] = (-a[9] * b05 + a[10] * b04 - a[11] * b03) * inv;
+  r.data[4] = (-a[4] * b11 + a[6] * b08 - a[7] * b07) * inv;
+  r.data[5] = (a[0] * b11 - a[2] * b08 + a[3] * b07) * inv;
+  r.data[6] = (-a[12] * b05 + a[14] * b02 - a[15] * b01) * inv;
+  r.data[7] = (a[8] * b05 - a[10] * b02 + a[11] * b01) * inv;
+  r.data[8] = (a[4] * b10 - a[5] * b08 + a[7] * b06) * inv;
+  r.data[9] = (-a[0] * b10 + a[1] * b08 - a[3] * b06) * inv;
+  r.data[10] = (a[12] * b04 - a[13] * b02 + a[15] * b00) * inv;
+  r.data[11] = (-a[8] * b04 + a[9] * b02 - a[11] * b00) * inv;
+  r.data[12] = (-a[4] * b09 + a[5] * b07 - a[6] * b06) * inv;
+  r.data[13] = (a[0] * b09 - a[1] * b07 + a[2] * b06) * inv;
+  r.data[14] = (-a[12] * b03 + a[13] * b01 - a[14] * b00) * inv;
+  r.data[15] = (a[8] * b03 - a[9] * b01 + a[10] * b00) * inv;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L613">line 613</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-91ba9e05645c2b94">__mat4_scratch&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-898f53128092c08b"><h3><code>micron::math::linalg::ops::inv4(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L696">line 696</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr mat&lt;F, 4, 4&gt;
+inv4(const mat&lt;F, 4, 4&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 4, 4&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constexpr mat&lt;F, 4, 4&gt;
+inv4(const mat&lt;F, 4, 4&gt; &amp;m) noexcept
+{
+  if !consteval {
+#if defined(__micron_gfx_simd)
+    if constexpr ( micron::same_as&lt;F, f32&gt; ) return __inv4_f32(m);
+#endif
+  }
+  return inv4_adj&lt;F&gt;(m);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__inv4_f32(m)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L700">line 700</a></td></tr><tr class="t-dsc"><td><code>inv4_adj&lt;F&gt;(m)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L703">line 703</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-0e410cca8eb723ee">__inv4_f32</a>, <a href="ops.hpp.html#f-b7b7b4b1b500aeb7">inv4_adj&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2c24cd1718507cd9"><h3><code>micron::math::linalg::ops::solve2(const mat&lt;F, 2, 2&gt; &amp;A, const vec&lt;F, 2&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L708">line 708</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, 2&gt;
+solve2(const mat&lt;F, 2, 2&gt; &amp;A, const vec&lt;F, 2&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 2, 2&gt; &amp;A</code></li><li><code>const vec&lt;F, 2&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>gemv(inv2(A), b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, 2&gt;
+solve2(const mat&lt;F, 2, 2&gt; &amp;A, const vec&lt;F, 2&gt; &amp;b) noexcept
+{
+  return gemv(inv2(A), b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>gemv(inv2(A), b)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L710">line 710</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-fbb2a440d79a9e5f">gemv</a>, <a href="ops.hpp.html#f-3b3094a88765df93">inv2</a>.</p></section><section class="function-entry" id="f-2176a28327ccfb11"><h3><code>micron::math::linalg::ops::solve3(const mat&lt;F, 3, 3&gt; &amp;A, const vec&lt;F, 3&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L715">line 715</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, 3&gt;
+solve3(const mat&lt;F, 3, 3&gt; &amp;A, const vec&lt;F, 3&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 3, 3&gt; &amp;A</code></li><li><code>const vec&lt;F, 3&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>gemv(inv3(A), b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, 3&gt;
+solve3(const mat&lt;F, 3, 3&gt; &amp;A, const vec&lt;F, 3&gt; &amp;b) noexcept
+{
+  return gemv(inv3(A), b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>gemv(inv3(A), b)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L717">line 717</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-fbb2a440d79a9e5f">gemv</a>, <a href="ops.hpp.html#f-cb812f5b6165db0f">inv3</a>.</p></section><section class="function-entry" id="f-ae1c17c3af6534dc"><h3><code>micron::math::linalg::ops::solve4(const mat&lt;F, 4, 4&gt; &amp;A, const vec&lt;F, 4&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L722">line 722</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, 4&gt;
+solve4(const mat&lt;F, 4, 4&gt; &amp;A, const vec&lt;F, 4&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 4, 4&gt; &amp;A</code></li><li><code>const vec&lt;F, 4&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>gemv(inv4(A), b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline vec&lt;F, 4&gt;
+solve4(const mat&lt;F, 4, 4&gt; &amp;A, const vec&lt;F, 4&gt; &amp;b) noexcept
+{
+  return gemv(inv4(A), b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>gemv(inv4(A), b)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L724">line 724</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-fbb2a440d79a9e5f">gemv</a>, <a href="ops.hpp.html#f-898f53128092c08b">inv4</a>.</p></section><section class="function-entry" id="f-d9c56a59e51709d0"><h3><code>micron::math::linalg::ops::mul(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L729">line 729</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quat&lt;F&gt;
+mul(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;a</code></li><li><code>const quat&lt;F&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quat&lt;F&gt;
+mul(const quat&lt;F&gt; &amp;a, const quat&lt;F&gt; &amp;b) noexcept
+{
+  // (x,y,z,w) Hamilton product
+  F ax = a.data[0], ay = a.data[1], az = a.data[2], aw = a.data[3];
+  F bx = b.data[0], by = b.data[1], bz = b.data[2], bw = b.data[3];
+  return { math::fma&lt;F&gt;(aw, bx, math::fma&lt;F&gt;(ax, bw, math::fma&lt;F&gt;(ay, bz, -az * by))),
+           math::fma&lt;F&gt;(aw, by, math::fma&lt;F&gt;(ay, bw, math::fma&lt;F&gt;(az, bx, -ax * bz))),
+           math::fma&lt;F&gt;(aw, bz, math::fma&lt;F&gt;(az, bw, math::fma&lt;F&gt;(ax, by, -ay * bx))),
+           math::fma&lt;F&gt;(aw, bw, -math::fma&lt;F&gt;(ax, bx, math::fma&lt;F&gt;(ay, by, az * bz))) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ math::fma&lt;F&gt;(aw, bx, math::fma&lt;F&gt;(ax, bw, math::fma&lt;F&gt;(ay, bz, -az * by))),
+           math::fma&lt;F&gt;(aw, by, math::fma&lt;F&gt;(ay, bw, math::fma&lt;F&gt;(az, bx, -ax * bz))),
+           math::fma&lt;F&gt;(aw, bz, math::fma&lt;F&gt;(az, bw, math::fma&lt;F&gt;(ax, by, -ay * bx))),
+           math::fma&lt;F&gt;(aw, bw, -math::fma&lt;F&gt;(ax, bx, math::fma&lt;F&gt;(ay, by, az * bz))) }</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L734">line 734</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-6f1427d8957d77e7"><h3><code>micron::math::linalg::ops::conjugate(const quat&lt;F&gt; &amp;q) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L742">line 742</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quat&lt;F&gt;
+conjugate(const quat&lt;F&gt; &amp;q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;q</code></li></ul><h4>Effects</h4><p>Returns <code>{ -q.data[0], -q.data[1], -q.data[2], q.data[3] }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quat&lt;F&gt;
+conjugate(const quat&lt;F&gt; &amp;q) noexcept
+{
+  return { -q.data[0], -q.data[1], -q.data[2], q.data[3] };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ -q.data[0], -q.data[1], -q.data[2], q.data[3] }</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L744">line 744</a></td></tr></tbody></table></section><section class="function-entry" id="f-bf2d0d0bdc1d0039"><h3><code>micron::math::linalg::ops::norm(const quat&lt;F&gt; &amp;q) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L749">line 749</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+norm(const quat&lt;F&gt; &amp;q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;q</code></li></ul><h4>Effects</h4><p>Returns <code>math::fsqrt(
+      math::fma&lt;F&gt;(q.data[0], q.data[0], math::fma&lt;F&gt;(q.data[1], q.data[1], math::fma&lt;F&gt;(q.data[2], q.data[2], q.data[3] * q.data[3]))))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+norm(const quat&lt;F&gt; &amp;q) noexcept
+{
+  return math::fsqrt(
+      math::fma&lt;F&gt;(q.data[0], q.data[0], math::fma&lt;F&gt;(q.data[1], q.data[1], math::fma&lt;F&gt;(q.data[2], q.data[2], q.data[3] * q.data[3]))));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fsqrt(
+      math::fma&lt;F&gt;(q.data[0], q.data[0], math::fma&lt;F&gt;(q.data[1], q.data[1], math::fma&lt;F&gt;(q.data[2], q.data[2], q.data[3] * q.data[3]))))</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L751">line 751</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3c1ec335d1368136"><h3><code>micron::math::linalg::ops::normalize(const quat&lt;F&gt; &amp;q) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L757">line 757</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline quat&lt;F&gt;
+normalize(const quat&lt;F&gt; &amp;q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;q</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline quat&lt;F&gt;
+normalize(const quat&lt;F&gt; &amp;q) noexcept
+{
+  F n = norm(q);
+  if ( n == F(0) ) return q;
+  F inv = F(1) / n;
+  return { q.data[0] * inv, q.data[1] * inv, q.data[2] * inv, q.data[3] * inv };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>q</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L760">line 760</a></td></tr><tr class="t-dsc"><td><code>{ q.data[0] * inv, q.data[1] * inv, q.data[2] * inv, q.data[3] * inv }</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L762">line 762</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-cc18707a1d23347b">norm</a>.</p></section><section class="function-entry" id="f-bb7b16bb2a35485f"><h3><code>micron::math::linalg::ops::rotate(const quat&lt;F&gt; &amp;q, const vec&lt;F, 3&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L768">line 768</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+rotate(const quat&lt;F&gt; &amp;q, const vec&lt;F, 3&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quat&lt;F&gt; &amp;q</code></li><li><code>const vec&lt;F, 3&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr vec&lt;F, 3&gt;
+rotate(const quat&lt;F&gt; &amp;q, const vec&lt;F, 3&gt; &amp;v) noexcept
+{
+  // r = v + 2 * cross(q.xyz, cross(q.xyz, v) + q.w * v)
+  vec&lt;F, 3&gt; qv{ q.data[0], q.data[1], q.data[2] };
+  vec&lt;F, 3&gt; t = cross(qv, v);
+  vec&lt;F, 3&gt; u = cross(qv, t);
+  return { v.data[0] + F(2) * (q.data[3] * t.data[0] + u.data[0]), v.data[1] + F(2) * (q.data[3] * t.data[1] + u.data[1]),
+           v.data[2] + F(2) * (q.data[3] * t.data[2] + u.data[2]) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ v.data[0] + F(2) * (q.data[3] * t.data[0] + u.data[0]), v.data[1] + F(2) * (q.data[3] * t.data[1] + u.data[1]),
+           v.data[2] + F(2) * (q.data[3] * t.data[2] + u.data[2]) }</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L774">line 774</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ops.hpp.html#f-f44233de36210ce3">cross</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-91ba9e05645c2b94"><h3><code>micron::math::linalg::ops::__mat4_scratch(void) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L566">line 566</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr mat&lt;F, 4, 4&gt;
+__mat4_scratch(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr mat&lt;F, 4, 4&gt;
+__mat4_scratch(void) noexcept
+{
+  if !consteval {
+    return mat&lt;F, 4, 4&gt;(micron::__mat_uninit);
+  }
+  return mat&lt;F, 4, 4&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mat&lt;F, 4, 4&gt;(micron::__mat_uninit)</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L569">line 569</a></td></tr><tr class="t-dsc"><td><code>mat&lt;F, 4, 4&gt;{}</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L571">line 571</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="types.hpp.html#s-fc0603226a43d5bb">mat&lt;F, 4, 4&gt;</a>.</p></section><section class="function-entry" id="f-f4bf2866196d8d50"><h3><code>micron::math::linalg::ops::__m2mul(simd::f128 u, simd::f128 v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L623">line 623</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2mul(simd::f128 u, simd::f128 v) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_gfx_simd)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>simd::f128 u</code></li><li><code>simd::f128 v</code></li></ul><h4>Effects</h4><p>Returns <code>__vsimd::__fma(u, __vsimd::__swz&lt;0, 3, 0, 3&gt;(v), __vsimd::__mul(__vsimd::__swz&lt;1, 0, 3, 2&gt;(u), __vsimd::__swz&lt;2, 1, 2, 1&gt;(v)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2mul(simd::f128 u, simd::f128 v) noexcept
+{
+  return __vsimd::__fma(u, __vsimd::__swz&lt;0, 3, 0, 3&gt;(v), __vsimd::__mul(__vsimd::__swz&lt;1, 0, 3, 2&gt;(u), __vsimd::__swz&lt;2, 1, 2, 1&gt;(v)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__vsimd::__fma(u, __vsimd::__swz&lt;0, 3, 0, 3&gt;(v), __vsimd::__mul(__vsimd::__swz&lt;1, 0, 3, 2&gt;(u), __vsimd::__swz&lt;2, 1, 2, 1&gt;(v)))</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L625">line 625</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__vec_simd.hpp.html#f-62ef38d97bebd1d2">__vsimd::__fma</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;0, 3, 0, 3&gt;</a>, <a href="../__vec_simd.hpp.html#f-da291b0abbc1b2c7">__vsimd::__mul</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;1, 0, 3, 2&gt;</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;2, 1, 2, 1&gt;</a>.</p></section><section class="function-entry" id="f-223003bce0977fc6"><h3><code>micron::math::linalg::ops::__m2adjmul(simd::f128 u, simd::f128 v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L630">line 630</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2adjmul(simd::f128 u, simd::f128 v) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_gfx_simd)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>simd::f128 u</code></li><li><code>simd::f128 v</code></li></ul><h4>Effects</h4><p>Returns <code>__vsimd::__fms(__vsimd::__swz&lt;3, 3, 0, 0&gt;(u), v, __vsimd::__mul(__vsimd::__swz&lt;1, 1, 2, 2&gt;(u), __vsimd::__swz&lt;2, 3, 0, 1&gt;(v)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2adjmul(simd::f128 u, simd::f128 v) noexcept
+{
+  return __vsimd::__fms(__vsimd::__swz&lt;3, 3, 0, 0&gt;(u), v, __vsimd::__mul(__vsimd::__swz&lt;1, 1, 2, 2&gt;(u), __vsimd::__swz&lt;2, 3, 0, 1&gt;(v)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__vsimd::__fms(__vsimd::__swz&lt;3, 3, 0, 0&gt;(u), v, __vsimd::__mul(__vsimd::__swz&lt;1, 1, 2, 2&gt;(u), __vsimd::__swz&lt;2, 3, 0, 1&gt;(v)))</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L632">line 632</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__vec_simd.hpp.html#f-425dd001b00cfbb4">__vsimd::__fms</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;3, 3, 0, 0&gt;</a>, <a href="../__vec_simd.hpp.html#f-da291b0abbc1b2c7">__vsimd::__mul</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;1, 1, 2, 2&gt;</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;2, 3, 0, 1&gt;</a>.</p></section><section class="function-entry" id="f-ef4b9cbfc9ec2626"><h3><code>micron::math::linalg::ops::__m2muladj(simd::f128 u, simd::f128 v) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L637">line 637</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2muladj(simd::f128 u, simd::f128 v) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_gfx_simd)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>simd::f128 u</code></li><li><code>simd::f128 v</code></li></ul><h4>Effects</h4><p>Returns <code>__vsimd::__fms(u, __vsimd::__swz&lt;3, 0, 3, 0&gt;(v), __vsimd::__mul(__vsimd::__swz&lt;1, 0, 3, 2&gt;(u), __vsimd::__swz&lt;2, 1, 2, 1&gt;(v)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline simd::f128
+__m2muladj(simd::f128 u, simd::f128 v) noexcept
+{
+  return __vsimd::__fms(u, __vsimd::__swz&lt;3, 0, 3, 0&gt;(v), __vsimd::__mul(__vsimd::__swz&lt;1, 0, 3, 2&gt;(u), __vsimd::__swz&lt;2, 1, 2, 1&gt;(v)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__vsimd::__fms(u, __vsimd::__swz&lt;3, 0, 3, 0&gt;(v), __vsimd::__mul(__vsimd::__swz&lt;1, 0, 3, 2&gt;(u), __vsimd::__swz&lt;2, 1, 2, 1&gt;(v)))</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L639">line 639</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__vec_simd.hpp.html#f-425dd001b00cfbb4">__vsimd::__fms</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;3, 0, 3, 0&gt;</a>, <a href="../__vec_simd.hpp.html#f-da291b0abbc1b2c7">__vsimd::__mul</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;1, 0, 3, 2&gt;</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;2, 1, 2, 1&gt;</a>.</p></section><section class="function-entry" id="f-0e410cca8eb723ee"><h3><code>micron::math::linalg::ops::__inv4_f32(const mat&lt;f32, 4, 4&gt; &amp;m) noexcept</code></h3><p>Defined in <code>math/linalg/ops.hpp</code>, <a href="../../../source/math/linalg/ops.hpp.html#L645">line 645</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline mat&lt;f32, 4, 4&gt;
+__inv4_f32(const mat&lt;f32, 4, 4&gt; &amp;m) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_gfx_simd)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;f32, 4, 4&gt; &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline mat&lt;f32, 4, 4&gt;
+__inv4_f32(const mat&lt;f32, 4, 4&gt; &amp;m) noexcept
+{
+  const float *mp = reinterpret_cast&lt;const float *&gt;(m.data);
+  const simd::f128 r0 = __vsimd::__load(mp + 0);
+  const simd::f128 r1 = __vsimd::__load(mp + 4);
+  const simd::f128 r2 = __vsimd::__load(mp + 8);
+  const simd::f128 r3 = __vsimd::__load(mp + 12);
+
+  const simd::f128 A = __vsimd::__shuf2&lt;0, 1, 0, 1&gt;(r0, r1);
+  const simd::f128 B = __vsimd::__shuf2&lt;2, 3, 2, 3&gt;(r0, r1);
+  const simd::f128 C = __vsimd::__shuf2&lt;0, 1, 0, 1&gt;(r2, r3);
+  const simd::f128 D = __vsimd::__shuf2&lt;2, 3, 2, 3&gt;(r2, r3);
+
+  // (|A|, |B|, |C|, |D|)
+  const simd::f128 detSub = __vsimd::__sub(__vsimd::__mul(__vsimd::__shuf2&lt;0, 2, 0, 2&gt;(r0, r2), __vsimd::__shuf2&lt;1, 3, 1, 3&gt;(r1, r3)),
+                                           __vsimd::__mul(__vsimd::__shuf2&lt;1, 3, 1, 3&gt;(r0, r2), __vsimd::__shuf2&lt;0, 2, 0, 2&gt;(r1, r3)));
+  const simd::f128 detA = __vsimd::__swz&lt;0, 0, 0, 0&gt;(detSub);
+  const simd::f128 detB = __vsimd::__swz&lt;1, 1, 1, 1&gt;(detSub);
+  const simd::f128 detC = __vsimd::__swz&lt;2, 2, 2, 2&gt;(detSub);
+  const simd::f128 detD = __vsimd::__swz&lt;3, 3, 3, 3&gt;(detSub);
+
+  const simd::f128 D_C = __m2adjmul(D, C);
+  const simd::f128 A_B = __m2adjmul(A, B);
+  const simd::f128 X_ = __vsimd::__fms(detD, A, __m2mul(B, D_C));
+  const simd::f128 W_ = __vsimd::__fms(detA, D, __m2mul(C, A_B));
+  const simd::f128 Y_ = __vsimd::__fms(detB, C, __m2muladj(D, A_B));
+  const simd::f128 Z_ = __vsimd::__fms(detC, B, __m2muladj(A, D_C));
+
+  // |M| = |A||D| + |B||C| - tr((A#B)(D#C))
+  const simd::f128 tr = __vsimd::__sum_splat(__vsimd::__mul(A_B, __vsimd::__swz&lt;0, 2, 1, 3&gt;(D_C)));
+  const simd::f128 detM = __vsimd::__sub(__vsimd::__fma(detB, detC, __vsimd::__mul(detA, detD)), tr);
+
+  // adjugate signs folded into the one exact division
+  const simd::f128 rDetM = __vsimd::__recip_signed(__vsimd::__setr(1.0f, -1.0f, -1.0f, 1.0f), detM);
+  const simd::f128 X = __vsimd::__mul(X_, rDetM);
+  const simd::f128 Y = __vsimd::__mul(Y_, rDetM);
+  const simd::f128 Z = __vsimd::__mul(Z_, rDetM);
+  const simd::f128 W = __vsimd::__mul(W_, rDetM);
+
+  mat&lt;f32, 4, 4&gt; r(micron::__mat_uninit);
+  float *rp = reinterpret_cast&lt;float *&gt;(r.data);
+  __vsimd::__store(rp + 0, __vsimd::__shuf2&lt;3, 1, 3, 1&gt;(X, Y));
+  __vsimd::__store(rp + 4, __vsimd::__shuf2&lt;2, 0, 2, 0&gt;(X, Y));
+  __vsimd::__store(rp + 8, __vsimd::__shuf2&lt;3, 1, 3, 1&gt;(Z, W));
+  __vsimd::__store(rp + 12, __vsimd::__shuf2&lt;2, 0, 2, 0&gt;(Z, W));
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/ops.hpp.html#L690">line 690</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../__vec_simd.hpp.html#f-dbf46e12e8bd7182">__vsimd::__load</a>, <a href="../__vec_simd.hpp.html#f-cf7d6aca2dfae774">__vsimd::__shuf2&lt;0, 1, 0, 1&gt;</a>, <a href="../__vec_simd.hpp.html#f-cf7d6aca2dfae774">__vsimd::__shuf2&lt;2, 3, 2, 3&gt;</a>, <a href="../__vec_simd.hpp.html#f-bef7618587c29cba">__vsimd::__sub</a>, <a href="../__vec_simd.hpp.html#f-da291b0abbc1b2c7">__vsimd::__mul</a>, <a href="../__vec_simd.hpp.html#f-cf7d6aca2dfae774">__vsimd::__shuf2&lt;0, 2, 0, 2&gt;</a>, <a href="../__vec_simd.hpp.html#f-cf7d6aca2dfae774">__vsimd::__shuf2&lt;1, 3, 1, 3&gt;</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;0, 0, 0, 0&gt;</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;1, 1, 1, 1&gt;</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;2, 2, 2, 2&gt;</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;3, 3, 3, 3&gt;</a>, <a href="ops.hpp.html#f-223003bce0977fc6">__m2adjmul</a>, <a href="../__vec_simd.hpp.html#f-425dd001b00cfbb4">__vsimd::__fms</a>, <a href="ops.hpp.html#f-f4bf2866196d8d50">__m2mul</a>, <a href="ops.hpp.html#f-ef4b9cbfc9ec2626">__m2muladj</a>, <a href="../__vec_simd.hpp.html#f-2b8b2cc6d407bf55">__vsimd::__sum_splat</a>, <a href="../__vec_simd.hpp.html#f-c73ced267c015f7d">__vsimd::__swz&lt;0, 2, 1, 3&gt;</a>, <a href="../__vec_simd.hpp.html#f-62ef38d97bebd1d2">__vsimd::__fma</a>, <a href="../__vec_simd.hpp.html#f-875d27cfaba595ff">__vsimd::__recip_signed</a>, <a href="../__vec_simd.hpp.html#f-d71da1cd81f81a09">__vsimd::__setr</a>, <a href="../__vec_simd.hpp.html#f-dd64a7bfe59a174e">__vsimd::__store</a>, <a href="../__vec_simd.hpp.html#f-cf7d6aca2dfae774">__vsimd::__shuf2&lt;3, 1, 3, 1&gt;</a>, <a href="../__vec_simd.hpp.html#f-cf7d6aca2dfae774">__vsimd::__shuf2&lt;2, 0, 2, 0&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

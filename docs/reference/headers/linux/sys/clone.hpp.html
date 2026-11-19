@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/sys/clone.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/sys/clone.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/sys/clone.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/sys/clone.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-2f0bab5592581e63">micron::posix::clone_flags</code></td><td>enum; line 273</td></tr><tr class="t-dsc"><td><code id="s-b034dcb9eb91ee32">micron::posix::clone_flags::clear_tid</code></td><td>enumerator; line 274</td></tr><tr class="t-dsc"><td><code id="s-188925ae11df5c19">micron::posix::clone_flags::set_tid</code></td><td>enumerator; line 275</td></tr><tr class="t-dsc"><td><code id="s-90ea2cd14b7f7d53">micron::posix::clone_flags::detached_obsolete</code></td><td>enumerator; line 276</td></tr><tr class="t-dsc"><td><code id="s-d31ad35fb3377d9c">micron::posix::clone_flags::new_cgroup</code></td><td>enumerator; line 277</td></tr><tr class="t-dsc"><td><code id="s-010870c18fb61ef8">micron::posix::clone_flags::copy_files</code></td><td>enumerator; line 278</td></tr><tr class="t-dsc"><td><code id="s-ecaa9925ebf1d03f">micron::posix::clone_flags::same_io</code></td><td>enumerator; line 279</td></tr><tr class="t-dsc"><td><code id="s-13bde3c2e0c6e1b8">micron::posix::clone_flags::newcgroup</code></td><td>enumerator; line 280</td></tr><tr class="t-dsc"><td><code id="s-c97176ff88727925">micron::posix::clone_flags::newipc</code></td><td>enumerator; line 281</td></tr><tr class="t-dsc"><td><code id="s-415b3783b6ddb8b8">micron::posix::clone_flags::newnet</code></td><td>enumerator; line 282</td></tr><tr class="t-dsc"><td><code id="s-46e73ed8ef11a9e3">micron::posix::clone_flags::newns</code></td><td>enumerator; line 283</td></tr><tr class="t-dsc"><td><code id="s-2ee51fb7a3b009bd">micron::posix::clone_flags::newpid</code></td><td>enumerator; line 284</td></tr><tr class="t-dsc"><td><code id="s-d891f0572d6731bd">micron::posix::clone_flags::newuser</code></td><td>enumerator; line 285</td></tr><tr class="t-dsc"><td><code id="s-1d0ae0cc17639388">micron::posix::clone_flags::parent_copy</code></td><td>enumerator; line 286</td></tr><tr class="t-dsc"><td><code id="s-c510c9954fb2df21">micron::posix::clone_flags::parent_settid</code></td><td>enumerator; line 287</td></tr><tr class="t-dsc"><td><code id="s-4378508c0aa6d6c1">micron::posix::clone_flags::pid_pointer</code></td><td>enumerator; line 288</td></tr><tr class="t-dsc"><td><code id="s-0bb0c690ec145043">micron::posix::clone_flags::ptrace</code></td><td>enumerator; line 289</td></tr><tr class="t-dsc"><td><code id="s-7bead71420300cca">micron::posix::clone_flags::enable_tls</code></td><td>enumerator; line 290</td></tr><tr class="t-dsc"><td><code id="s-b39f6726776b5246">micron::posix::clone_flags::share_signals</code></td><td>enumerator; line 291</td></tr><tr class="t-dsc"><td><code id="s-826b62a51a77cb0e">micron::posix::clone_flags::start_stopped_removed</code></td><td>enumerator; line 292</td></tr><tr class="t-dsc"><td><code id="s-4ca2316d5fedd649">micron::posix::clone_flags::share_semaphores</code></td><td>enumerator; line 293</td></tr><tr class="t-dsc"><td><code id="s-e18f8eab3a50551c">micron::posix::clone_flags::as_thread</code></td><td>enumerator; line 294</td></tr><tr class="t-dsc"><td><code id="s-b469a8c856ea2715">micron::posix::clone_flags::no_trace</code></td><td>enumerator; line 295</td></tr><tr class="t-dsc"><td><code id="s-0067bc219e4536b1">micron::posix::clone_flags::vfork_obsolete</code></td><td>enumerator; line 296</td></tr><tr class="t-dsc"><td><code id="s-e34f274c16e03bfc">micron::posix::clone_flags::same_memory</code></td><td>enumerator; line 297</td></tr><tr class="t-dsc"><td><code id="s-3544ed6185f9179e">micron::posix::posix_process_flags</code></td><td>enum; line 300</td></tr><tr class="t-dsc"><td><code id="s-00c21c3aff676cb7">micron::posix::posix_process_flags::reset_ids</code></td><td>enumerator; line 301</td></tr><tr class="t-dsc"><td><code id="s-9b3f02d9ce5e34d1">micron::posix::posix_process_flags::set_pgroup</code></td><td>enumerator; line 302</td></tr><tr class="t-dsc"><td><code id="s-76a4097680fa8f20">micron::posix::posix_process_flags::sig_def</code></td><td>enumerator; line 303</td></tr><tr class="t-dsc"><td><code id="s-93313c26d17643ad">micron::posix::posix_process_flags::sig_mask</code></td><td>enumerator; line 304</td></tr><tr class="t-dsc"><td><code id="s-68ac272d9dd05360">micron::posix::posix_process_flags::sched_param</code></td><td>enumerator; line 305</td></tr><tr class="t-dsc"><td><code id="s-05680447c930eff5">micron::posix::posix_process_flags::set_scheduler</code></td><td>enumerator; line 306</td></tr><tr class="t-dsc"><td><code id="s-95b614602a83f872">micron::posix::posix_process_flags::use_vfork</code></td><td>enumerator; line 307</td></tr><tr class="t-dsc"><td><code id="s-9a820ea27ec0a9a1">micron::posix::posix_process_flags::new_session</code></td><td>enumerator; line 308</td></tr><tr class="t-dsc"><td><code id="s-e6165e786d5d4322">micron::posix::posix_process_flags::set_cgroup</code></td><td>enumerator; line 309</td></tr><tr class="t-dsc"><td><code id="s-93f92b47e1e6502d">micron::posix::clone_args</code></td><td>struct; line 325</td></tr><tr class="t-dsc"><td><code id="s-f5eb9dead56de64f">micron::posix::clone_args::flags</code></td><td>member; line 326</td></tr><tr class="t-dsc"><td><code id="s-289130fd080183ba">micron::posix::clone_args::pidfd</code></td><td>member; line 327</td></tr><tr class="t-dsc"><td><code id="s-d135c89507cbb14a">micron::posix::clone_args::child_tid</code></td><td>member; line 329</td></tr><tr class="t-dsc"><td><code id="s-30105459cd367c1e">micron::posix::clone_args::parent_tid</code></td><td>member; line 331</td></tr><tr class="t-dsc"><td><code id="s-ebb0168dbdfc6b95">micron::posix::clone_args::exit_signal</code></td><td>member; line 333</td></tr><tr class="t-dsc"><td><code id="s-7aa662f40865fbc6">micron::posix::clone_args::stack</code></td><td>member; line 335</td></tr><tr class="t-dsc"><td><code id="s-01ae9e4a77d6301f">micron::posix::clone_args::stack_size</code></td><td>member; line 336</td></tr><tr class="t-dsc"><td><code id="s-5bf8e2c9635572c0">micron::posix::clone_args::tls</code></td><td>member; line 337</td></tr><tr class="t-dsc"><td><code id="s-0178c1dc427542a4">micron::posix::clone_args::set_tid</code></td><td>member; line 338</td></tr><tr class="t-dsc"><td><code id="s-2e42a03012340898">micron::posix::clone_args::set_tid_size</code></td><td>member; line 340</td></tr><tr class="t-dsc"><td><code id="s-f19232257697041d">micron::posix::clone_args::cgroup</code></td><td>member; line 342</td></tr><tr class="t-dsc"><td><code id="s-1ea3b10ccc3050fa">micron::posix::micthread_flags</code></td><td>variable; line 352</td></tr></tbody></table><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-95481194f5790087"><h3><code>__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L31">line 31</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_amd64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*)(void *)</code></li><li><code>void *</code></li><li><code>unsigned long</code></li><li><code>void *</code></li><li><code>int *</code></li><li><code>void *</code></li><li><code>int *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+{
+  // entry: rdi=fn rsi=stack rdx=flags rcx=arg r8=ptid r9=tls 8(%rsp)=ctid
+  asm volatile(&quot;xorl %eax, %eax\n\t&quot;
+               &quot;movb $56, %al\n\t&quot;           // SYS_clone
+               &quot;movq %rdi, %r11\n\t&quot;         // save fn
+               &quot;movq %rdx, %rdi\n\t&quot;         // flags -&gt; a1
+               &quot;movq %r8, %rdx\n\t&quot;          // ptid  -&gt; a3
+               &quot;movq %r9, %r8\n\t&quot;           // tls   -&gt; a5
+               &quot;movq 8(%rsp), %r10\n\t&quot;      // ctid  -&gt; a4
+               &quot;movq %r11, %r9\n\t&quot;          // fn    -&gt; r9 (preserved across syscall)
+               &quot;andq $-16, %rsi\n\t&quot;         // align child stack top
+               &quot;subq $8, %rsi\n\t&quot;
+               &quot;movq %rcx, (%rsi)\n\t&quot;      // seed arg on child stack
+               &quot;syscall\n\t&quot;
+               &quot;testq %rax, %rax\n\t&quot;
+               &quot;jnz 1f\n\t&quot;               // parent -&gt; return pid in rax
+               &quot;xorl %ebp, %ebp\n\t&quot;      // child: terminate unwind chain
+               &quot;popq %rdi\n\t&quot;            // arg -&gt; a1 of fn
+               &quot;callq *%r9\n\t&quot;           // fn(arg)
+               &quot;movl %eax, %edi\n\t&quot;      // status
+               &quot;xorl %eax, %eax\n\t&quot;
+               &quot;movb $60, %al\n\t&quot;      // SYS_exit
+               &quot;syscall\n\t&quot;
+               &quot;hlt\n\t&quot;
+               &quot;1:\n\t&quot;
+               &quot;ret\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-67000b03ebd13332"><h3><code>__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L61">line 61</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_arch_x86)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*)(void *)</code></li><li><code>void *</code></li><li><code>unsigned long</code></li><li><code>void *</code></li><li><code>int *</code></li><li><code>void *</code></li><li><code>int *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+{
+  // all args on stack; +16 after pushing the 4 callee-saved regs
+  asm volatile(&quot;pushl %ebp\n\t&quot;
+               &quot;pushl %edi\n\t&quot;
+               &quot;pushl %esi\n\t&quot;
+               &quot;pushl %ebx\n\t&quot;
+               &quot;movl 20(%esp), %eax\n\t&quot;      // fn
+               &quot;movl 24(%esp), %ecx\n\t&quot;      // stack top
+               &quot;movl 28(%esp), %ebx\n\t&quot;      // flags -&gt; a1
+               &quot;movl 36(%esp), %edx\n\t&quot;      // ptid  -&gt; a3
+               &quot;movl 40(%esp), %esi\n\t&quot;      // tls   -&gt; a4 (CLONE_BACKWARDS)
+               &quot;movl 44(%esp), %edi\n\t&quot;      // ctid  -&gt; a5
+               &quot;andl $-16, %ecx\n\t&quot;          // align top
+               &quot;subl $16, %ecx\n\t&quot;           // reserve seed area below newsp
+               &quot;movl %eax, (%ecx)\n\t&quot;        // fn  at newsp+0
+               &quot;movl 32(%esp), %eax\n\t&quot;      // arg
+               &quot;movl %eax, 4(%ecx)\n\t&quot;       // arg at newsp+4
+               &quot;movl $120, %eax\n\t&quot;          // SYS_clone
+               &quot;int $0x80\n\t&quot;
+               &quot;testl %eax, %eax\n\t&quot;
+               &quot;jnz 1f\n\t&quot;                  // parent
+               &quot;movl (%esp), %eax\n\t&quot;       // child: fn
+               &quot;movl 4(%esp), %edx\n\t&quot;      // arg
+               &quot;xorl %ebp, %ebp\n\t&quot;
+               &quot;subl $16, %esp\n\t&quot;         // align outgoing frame
+               &quot;movl %edx, (%esp)\n\t&quot;      // arg -&gt; outgoing slot
+               &quot;calll *%eax\n\t&quot;            // fn(arg)
+               &quot;movl %eax, %ebx\n\t&quot;        // status
+               &quot;movl $1, %eax\n\t&quot;          // SYS_exit
+               &quot;int $0x80\n\t&quot;
+               &quot;hlt\n\t&quot;
+               &quot;1:\n\t&quot;
+               &quot;popl %ebx\n\t&quot;
+               &quot;popl %esi\n\t&quot;
+               &quot;popl %edi\n\t&quot;
+               &quot;popl %ebp\n\t&quot;
+               &quot;ret\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a90fb214b15a021d"><h3><code>__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *);</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_arch_arm64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*)(void *)</code></li><li><code>void *</code></li><li><code>unsigned long</code></li><li><code>void *</code></li><li><code>int *</code></li><li><code>void *</code></li><li><code>int *</code></li></ul><h4>Effects</h4><p>See <a href="clone.hpp.html#f-95481194f5790087">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-ca0df000fcfc87a0"><h3><code>__micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L127">line 127</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*)(void *)</code></li><li><code>void *</code></li><li><code>unsigned long</code></li><li><code>void *</code></li><li><code>int *</code></li><li><code>void *</code></li><li><code>int *</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp
+    long __micron_clone_entry(int (*)(void *), void *, unsigned long, void *, int *, void *, int *)
+{
+  // entry: r0=fn r1=stack r2=flags r3=arg; ptid@[sp,#0] tls@[sp,#4] ctid@[sp,#8] (+16 after push)
+  asm volatile(&quot;stmfd sp!, {r4, r5, r6, r7}\n\t&quot;
+               &quot;mov r7, #120\n\t&quot;           // SYS_clone
+               &quot;mov r5, r0\n\t&quot;             // fn  -&gt; r5 (callee-saved, survives into child)
+               &quot;mov r6, r3\n\t&quot;             // arg -&gt; r6 (callee-saved, survives into child)
+               &quot;mov r0, r2\n\t&quot;             // flags -&gt; a0
+               &quot;and r1, r1, #-16\n\t&quot;       // align newsp (a1)
+               &quot;ldr r2, [sp, #16]\n\t&quot;      // ptid -&gt; a2
+               &quot;ldr r3, [sp, #20]\n\t&quot;      // tls  -&gt; a3 (CLONE_BACKWARDS)
+               &quot;ldr r4, [sp, #24]\n\t&quot;      // ctid -&gt; a4
+               &quot;svc #0\n\t&quot;
+               &quot;tst r0, r0\n\t&quot;
+               &quot;bne 1f\n\t&quot;          // parent
+               &quot;mov r0, r6\n\t&quot;      // child: arg -&gt; a0
+               &quot;blx r5\n\t&quot;          // fn(arg)
+               &quot;mov r7, #1\n\t&quot;      // SYS_exit
+               &quot;svc #0\n\t&quot;
+               &quot;1:\n\t&quot;
+               &quot;ldmfd sp!, {r4, r5, r6, r7}\n\t&quot;
+               &quot;bx lr\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ca7494f6d221f880"><h3><code>__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L155">line 155</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_amd64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*)(void *)</code></li><li><code>void *</code></li><li><code>void *</code></li><li><code>unsigned long</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
+{
+  // rdi=thunk rsi=payload rdx=&amp;clone_args rcx=args_size
+  asm volatile(&quot;pushq %r12\n\t&quot;      // preserve callee-saved (parent path restores)
+               &quot;pushq %r13\n\t&quot;
+               &quot;movq %rdi, %r12\n\t&quot;      // thunk -&gt; r12 (survives into child)
+               &quot;movq %rsi, %r13\n\t&quot;      // payload -&gt; r13
+               &quot;movq %rdx, %rdi\n\t&quot;      // &amp;clone_args -&gt; a1
+               &quot;movq %rcx, %rsi\n\t&quot;      // args_size  -&gt; a2
+               &quot;movl $435, %eax\n\t&quot;      // SYS_clone3
+               &quot;syscall\n\t&quot;
+               &quot;testq %rax, %rax\n\t&quot;
+               &quot;jnz 1f\n\t&quot;               // parent -&gt; return tid in rax
+               &quot;xorl %ebp, %ebp\n\t&quot;      // child: terminate unwind chain
+               &quot;andq $-16, %rsp\n\t&quot;      // 16-byte align for the call ABI
+               &quot;movq %r13, %rdi\n\t&quot;      // payload -&gt; a1
+               &quot;callq *%r12\n\t&quot;          // thunk(payload)
+               &quot;movl %eax, %edi\n\t&quot;      // status
+               &quot;movl $60, %eax\n\t&quot;       // SYS_exit
+               &quot;syscall\n\t&quot;
+               &quot;hlt\n\t&quot;
+               &quot;1:\n\t&quot;
+               &quot;popq %r13\n\t&quot;
+               &quot;popq %r12\n\t&quot;
+               &quot;ret\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-98507811caad2016"><h3><code>__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L183">line 183</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_arch_x86)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*)(void *)</code></li><li><code>void *</code></li><li><code>void *</code></li><li><code>unsigned long</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
+{
+  // cdecl stack args; +16 after pushing the 4 callee-saved regs
+  asm volatile(&quot;pushl %ebp\n\t&quot;
+               &quot;pushl %edi\n\t&quot;
+               &quot;pushl %esi\n\t&quot;
+               &quot;pushl %ebx\n\t&quot;
+               &quot;movl 28(%esp), %ebx\n\t&quot;      // &amp;clone_args -&gt; a1
+               &quot;movl 32(%esp), %ecx\n\t&quot;      // args_size  -&gt; a2
+               &quot;movl 20(%esp), %esi\n\t&quot;      // thunk -&gt; esi (callee-saved, survives into child)
+               &quot;movl 24(%esp), %edi\n\t&quot;      // payload -&gt; edi
+               &quot;movl $435, %eax\n\t&quot;          // SYS_clone3
+               &quot;int $0x80\n\t&quot;
+               &quot;testl %eax, %eax\n\t&quot;
+               &quot;jnz 1f\n\t&quot;               // parent
+               &quot;xorl %ebp, %ebp\n\t&quot;      // child
+               &quot;andl $-16, %esp\n\t&quot;      // align
+               &quot;subl $12, %esp\n\t&quot;       // keep 16-byte alignment after the arg push
+               &quot;pushl %edi\n\t&quot;           // payload arg
+               &quot;calll *%esi\n\t&quot;          // thunk(payload)
+               &quot;movl %eax, %ebx\n\t&quot;      // status
+               &quot;movl $1, %eax\n\t&quot;        // SYS_exit
+               &quot;int $0x80\n\t&quot;
+               &quot;hlt\n\t&quot;
+               &quot;1:\n\t&quot;
+               &quot;popl %ebx\n\t&quot;
+               &quot;popl %esi\n\t&quot;
+               &quot;popl %edi\n\t&quot;
+               &quot;popl %ebp\n\t&quot;
+               &quot;ret\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ff3aca43788f8392"><h3><code>__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L215">line 215</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>long __micron_clone3_entry(int (*)(void *), void *, void *, unsigned long);</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_arch_arm64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*)(void *)</code></li><li><code>void *</code></li><li><code>void *</code></li><li><code>unsigned long</code></li></ul><h4>Effects</h4><p>See <a href="clone.hpp.html#f-ca7494f6d221f880">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-7ade77bfee5def26"><h3><code>__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L239">line 239</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#elif defined(__micron_arch_arm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*)(void *)</code></li><li><code>void *</code></li><li><code>void *</code></li><li><code>unsigned long</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[maybe_unused]] static __attribute__((naked, noinline)) __micron_no_ssp long
+__micron_clone3_entry(int (*)(void *), void *, void *, unsigned long)
+{
+  // r0=thunk r1=payload r2=&amp;clone_args r3=args_size
+  asm volatile(&quot;stmfd sp!, {r4, r5, r7}\n\t&quot;      // preserve callee-saved
+               &quot;mov r4, r0\n\t&quot;                   // thunk (survives into child)
+               &quot;mov r5, r1\n\t&quot;                   // payload
+               &quot;mov r0, r2\n\t&quot;                   // &amp;clone_args -&gt; a1
+               &quot;mov r1, r3\n\t&quot;                   // args_size  -&gt; a2
+               &quot;mov r7, #435\n\t&quot;                 // SYS_clone3
+               &quot;svc #0\n\t&quot;
+               &quot;tst r0, r0\n\t&quot;
+               &quot;bne 1f\n\t&quot;          // parent
+               &quot;mov r0, r5\n\t&quot;      // child: payload -&gt; a1
+               &quot;blx r4\n\t&quot;          // thunk(payload)
+               &quot;mov r7, #1\n\t&quot;      // SYS_exit
+               &quot;svc #0\n\t&quot;
+               &quot;1:\n\t&quot;
+               &quot;ldmfd sp!, {r4, r5, r7}\n\t&quot;
+               &quot;bx lr\n\t&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c6e873105acade8b"><h3><code>posix::clone_kernel(unsigned long flags, void *stack, int *parent_tid, int *child_tid, unsigned long tls)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L313">line 313</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  clone_kernel(unsigned long flags, void *stack, int *parent_tid, int *child_tid, unsigned long tls)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>unsigned long flags</code></li><li><code>void *stack</code></li><li><code>int *parent_tid</code></li><li><code>int *child_tid</code></li><li><code>unsigned long tls</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  clone_kernel(unsigned long flags, void *stack, int *parent_tid, int *child_tid, unsigned long tls)
+  {
+#if defined(__micron_arch_arm32) || defined(__micron_arch_x86)
+    // WARNING: arm32 (and i386) are CLONE_BACKWARDS; tls and child_tid are swapped vs arm64/x86_64
+    return micron::syscall(SYS_clone, flags, stack, parent_tid, tls, child_tid);
+#else
+    return micron::syscall(SYS_clone, flags, stack, parent_tid, child_tid, tls);
+#endif
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::syscall(SYS_clone, flags, stack, parent_tid, tls, child_tid)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L317">line 317</a></td></tr><tr class="t-dsc"><td><code>micron::syscall(SYS_clone, flags, stack, parent_tid, child_tid, tls)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L319">line 319</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-c2b8a97b4cb7cf0f"><h3><code>posix::clone3_kernel(clone_args &amp;args)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L347">line 347</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  clone3_kernel(clone_args &amp;args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>clone_args &amp;args</code></li></ul><h4>Effects</h4><p>Returns <code>micron::syscall(SYS_clone3, &amp;args, sizeof(args))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  clone3_kernel(clone_args &amp;args)
+  {
+    return micron::syscall(SYS_clone3, &amp;args, sizeof(args));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::syscall(SYS_clone3, &amp;args, sizeof(args))</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L349">line 349</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-5244a94f4658edd4"><h3><code>posix::clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid, int *child_tid,
+               unsigned long flags = micthread_flags)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L363">line 363</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline pid_t
+  clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid, int *child_tid,
+               unsigned long flags = micthread_flags)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*thunk)(void *)</code></li><li><code>void *payload</code></li><li><code>void *stack_low</code></li><li><code>usize stack_size</code></li><li><code>unsigned long tls</code></li><li><code>pid_t *parent_tid</code></li><li><code>int *child_tid</code></li><li><code>unsigned long flags = micthread_flags</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline pid_t
+  clone3_spawn(int (*thunk)(void *), void *payload, void *stack_low, usize stack_size, unsigned long tls, pid_t *parent_tid, int *child_tid,
+               unsigned long flags = micthread_flags)
+  {
+    if ( !thunk || !stack_low || stack_size == 0 ) return -EINVAL;
+    if ( child_tid ) *child_tid = __micthread_ctid_alive;
+    unsigned long tls_arg = tls;
+#if defined(__micron_arch_x86)
+    // CLONE_SETTLS replaces the inherited %gs slot; unlike set_thread_area it cannot allocate one.
+    struct __i386_clone_user_desc {
+      unsigned int entry_number, base_addr, limit, flags;
+    };
+
+    unsigned short selector;
+    asm volatile(&quot;movw %%gs, %0&quot; : &quot;=r&quot;(selector));
+    __i386_clone_user_desc __i386_tls_desc{ static_cast&lt;unsigned int&gt;(selector &gt;&gt; 3), static_cast&lt;unsigned int&gt;(tls), 0xfffffu, 0x51u };
+    tls_arg = reinterpret_cast&lt;unsigned long&gt;(&amp;__i386_tls_desc);
+#endif
+    long raw;
+    if ( __clone3_gate.open(kernel::feature::clone3) ) [[likely]] {
+      clone_args args{};
+      args.flags = flags;
+      args.exit_signal = 0;
+      args.stack = static_cast&lt;u64&gt;(reinterpret_cast&lt;uintptr_t&gt;(stack_low));
+      args.stack_size = stack_size;
+      args.tls = tls_arg;
+      args.parent_tid = static_cast&lt;u64&gt;(reinterpret_cast&lt;uintptr_t&gt;(parent_tid));
+      args.child_tid = static_cast&lt;u64&gt;(reinterpret_cast&lt;uintptr_t&gt;(child_tid));
+      raw = ::__micron_clone3_entry(thunk, payload, &amp;args, sizeof(args));
+      if ( !(micron::syscall_failed(raw) &amp;&amp; micron::syscall_errno(raw) == ENOSYS) ) [[likely]] {
+        if ( micron::syscall_failed(raw) &amp;&amp; child_tid ) *child_tid = 0;      // no child ran
+        return static_cast&lt;pid_t&gt;(raw);
+      }
+      __clone3_gate.demote();
+    }
+    byte *top = reinterpret_cast&lt;byte *&gt;(stack_low) + stack_size;
+    raw = ::__micron_clone_entry(thunk, top, flags, payload, reinterpret_cast&lt;int *&gt;(parent_tid), reinterpret_cast&lt;void *&gt;(tls_arg),
+                                 child_tid);
+    if ( micron::syscall_failed(raw) &amp;&amp; child_tid ) *child_tid = 0;      // no child ran
+    return static_cast&lt;pid_t&gt;(raw);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-EINVAL</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L366">line 366</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;pid_t&gt;(raw)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L393">line 393</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;pid_t&gt;(raw)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L401">line 401</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-58f441e7b9a1ad97">micron::syscall_failed</a>, <a href="syscall_arm32.hpp.html#f-9c1737a3507eeb48">micron::syscall_errno</a>.</p></section><section class="function-entry" id="f-2d7f4a6882a5578c"><h3><code>posix::fork_kernel(void)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L405">line 405</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto
+  fork_kernel(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto
+  fork_kernel(void)
+  {
+#if defined(__micron_syscall_generic)
+    // arm64 has no fork
+    return micron::syscall(SYS_clone, static_cast&lt;unsigned long&gt;(sig_chld), 0, 0, 0, 0);
+#else
+    return micron::syscall(SYS_fork);
+#endif
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::syscall(SYS_clone, static_cast&lt;unsigned long&gt;(sig_chld), 0, 0, 0, 0)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L409">line 409</a></td></tr><tr class="t-dsc"><td><code>micron::syscall(SYS_fork)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L411">line 411</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-f0a23e5c35a58320"><h3><code>posix::__micron_fold_exit_signal(unsigned long flags, int exit_signal) noexcept</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L416">line 416</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) unsigned long
+  __micron_fold_exit_signal(unsigned long flags, int exit_signal) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>unsigned long flags</code></li><li><code>int exit_signal</code></li></ul><h4>Effects</h4><p>Returns <code>(flags &amp; ~0xffUL) | (static_cast&lt;unsigned long&gt;(exit_signal) &amp; 0xffUL)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) unsigned long
+  __micron_fold_exit_signal(unsigned long flags, int exit_signal) noexcept
+  {
+    return (flags &amp; ~0xffUL) | (static_cast&lt;unsigned long&gt;(exit_signal) &amp; 0xffUL);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(flags &amp; ~0xffUL) | (static_cast&lt;unsigned long&gt;(exit_signal) &amp; 0xffUL)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L418">line 418</a></td></tr></tbody></table></section><section class="function-entry" id="f-20404b05f7c3cefc"><h3><code>posix::__clone_payload::thunk(void *p)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L425">line 425</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static int
+    thunk(void *p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static int
+    thunk(void *p)
+    {
+      auto *self = static_cast&lt;__clone_payload *&gt;(p);
+      int rc = __invoke(self, micron::make_index_sequence&lt;sizeof...(Args)&gt;{});
+      destroy(self);
+      return rc;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rc</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L430">line 430</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="clone.hpp.html#f-27fd1e83b3329e27">__invoke</a>, <a href="clone.hpp.html#f-ae653071e2ea0068">destroy</a>.</p></section><section class="function-entry" id="f-ae653071e2ea0068"><h3><code>posix::__clone_payload::destroy(__clone_payload *self)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L434">line 434</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+    destroy(__clone_payload *self)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__clone_payload *self</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+    destroy(__clone_payload *self)
+    {
+      __cleanup(self, micron::make_index_sequence&lt;sizeof...(Args)&gt;{});
+      delete self;
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="clone.hpp.html#f-5c4459b63f5e0b59">__cleanup</a>.</p></section><section class="function-entry" id="f-27fd1e83b3329e27"><h3><code>posix::__clone_payload::__invoke(__clone_payload *self, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L443">line 443</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+    static int
+    __invoke(__clone_payload *self, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__clone_payload *self</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+    static int
+    __invoke(__clone_payload *self, micron::index_sequence&lt;I...&gt;)
+    {
+      using ret_t = decltype(Fn(static_cast&lt;Args &amp;&amp;&gt;(*static_cast&lt;Args *&gt;(self-&gt;args[I]))...));
+      if constexpr ( micron::is_same_v&lt;ret_t, int&gt; )
+        return Fn(static_cast&lt;Args &amp;&amp;&gt;(*static_cast&lt;Args *&gt;(self-&gt;args[I]))...);
+      else {
+        Fn(static_cast&lt;Args &amp;&amp;&gt;(*static_cast&lt;Args *&gt;(self-&gt;args[I]))...);
+        return 0;
+      }
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>Fn(static_cast&lt;Args &amp;&amp;&gt;(*static_cast&lt;Args *&gt;(self-&gt;args[I]))...)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L447">line 447</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L450">line 450</a></td></tr></tbody></table></section><section class="function-entry" id="f-5c4459b63f5e0b59"><h3><code>posix::__clone_payload::__cleanup([[maybe_unused]] __clone_payload *self, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L456">line 456</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+    static void
+    __cleanup([[maybe_unused]] __clone_payload *self, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>[[maybe_unused]] __clone_payload *self</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+    static void
+    __cleanup([[maybe_unused]] __clone_payload *self, micron::index_sequence&lt;I...&gt;)
+    {
+      (delete static_cast&lt;Args *&gt;(self-&gt;args[I]), ...);
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4b850eede9dcf09e"><h3><code>posix::clone(addr_t *stack, int flags, Args &amp;&amp;...args)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L464">line 464</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Sz, auto Fn, typename... Args&gt;
+  pid_t
+  clone(addr_t *stack, int flags, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>addr_t *stack</code></li><li><code>int flags</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Sz, auto Fn, typename... Args&gt;
+  pid_t
+  clone(addr_t *stack, int flags, Args &amp;&amp;...args)
+  {
+    if ( !stack ) return -EINVAL;
+
+    using payload_t = __clone_payload&lt;Fn, micron::decay_t&lt;Args&gt;...&gt;;
+    auto *payload = new payload_t{ { reinterpret_cast&lt;void *&gt;(new micron::decay_t&lt;Args&gt;(static_cast&lt;Args &amp;&amp;&gt;(args)))... } };
+
+    unsigned long f = static_cast&lt;unsigned long&gt;(static_cast&lt;unsigned&gt;(flags));
+    int exit_signal = sig_chld;
+    if ( (f &amp; clone_parent) or ((f &amp; clone_sighand) and (f &amp; clone_thread)) ) exit_signal = 0;      // kernel constraint otherwise -22
+    f = __micron_fold_exit_signal(f, exit_signal);
+
+    uintptr_t top = (reinterpret_cast&lt;uintptr_t&gt;(stack) + Sz) &amp; ~uintptr_t(0xF);
+
+    long raw = ::__micron_clone_entry(&amp;payload_t::thunk, reinterpret_cast&lt;void *&gt;(top), f, reinterpret_cast&lt;void *&gt;(payload), nullptr,
+                                      nullptr, nullptr);
+
+    if ( micron::syscall_failed(raw) ) {
+      payload_t::destroy(payload);      // clone failed, no child ran
+      return static_cast&lt;pid_t&gt;(raw);
+    }
+    if ( !(f &amp; clone_vm) ) payload_t::destroy(payload);      // parent owns its independent (COW) copy
+    return static_cast&lt;pid_t&gt;(raw);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-EINVAL</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L466">line 466</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;pid_t&gt;(raw)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L483">line 483</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;pid_t&gt;(raw)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L486">line 486</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="clone.hpp.html#f-f0a23e5c35a58320">__micron_fold_exit_signal</a>, <a href="../../types.hpp.html#s-7d2021401cb248d6">uintptr_t</a>, <a href="syscall_arm32.hpp.html#f-58f441e7b9a1ad97">micron::syscall_failed</a>.</p></section><section class="function-entry" id="f-616bf34199f1f708"><h3><code>posix::__fork_clone(int exit_signal)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L491">line 491</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pid_t
+  __fork_clone(int exit_signal)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int exit_signal</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pid_t
+  __fork_clone(int exit_signal)
+  {
+    // these should be exactly like this
+    posix::clone_args clone_args{};
+    clone_args.flags = 0;
+    clone_args.exit_signal = static_cast&lt;u64&gt;(exit_signal);      // should be sig_chld
+    clone_args.stack = 0;
+    clone_args.stack_size = 0;
+    clone_args.parent_tid = 0;
+    clone_args.child_tid = 0;
+    clone_args.tls = 0;
+
+    long raw = -ENOSYS;
+    if ( kernel::has(kernel::feature::clone3) ) [[likely]]
+      raw = posix::clone3_kernel(clone_args);
+    if ( micron::syscall_failed(raw) &amp;&amp; micron::syscall_errno(raw) == ENOSYS ) {
+      // clone3 unavailable (pre-5.3 kernel, or under qemu-user)
+      raw = posix::fork_kernel();
+    }
+    return static_cast&lt;pid_t&gt;(raw);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;pid_t&gt;(raw)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L510">line 510</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="clone.hpp.html#f-c2b8a97b4cb7cf0f">posix::clone3_kernel</a>, <a href="syscall_arm32.hpp.html#f-58f441e7b9a1ad97">micron::syscall_failed</a>, <a href="syscall_arm32.hpp.html#f-9c1737a3507eeb48">micron::syscall_errno</a>, <a href="clone.hpp.html#f-2d7f4a6882a5578c">posix::fork_kernel</a>.</p></section><section class="function-entry" id="f-01eb879ea005424c"><h3><code>posix::clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stack_size, int *parent_tid = nullptr,
+        int *child_tid = nullptr, unsigned long tls = 0, int exit_signal = sig_chld)</code></h3><p>Defined in <code>linux/sys/clone.hpp</code>, <a href="../../../source/linux/sys/clone.hpp.html#L515">line 515</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pid_t
+  clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stack_size, int *parent_tid = nullptr,
+        int *child_tid = nullptr, unsigned long tls = 0, int exit_signal = sig_chld)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int (*fn)(void *)</code></li><li><code>void *arg</code></li><li><code>unsigned long flags</code></li><li><code>void *stack</code></li><li><code>usize stack_size</code></li><li><code>int *parent_tid = nullptr</code></li><li><code>int *child_tid = nullptr</code></li><li><code>unsigned long tls = 0</code></li><li><code>int exit_signal = sig_chld</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pid_t
+  clone(int (*fn)(void *), void *arg, unsigned long flags, void *stack, usize stack_size, int *parent_tid = nullptr,
+        int *child_tid = nullptr, unsigned long tls = 0, int exit_signal = sig_chld)
+  {
+    if ( !stack or !fn or stack_size == 0 ) return -EINVAL;
+
+    if ( (flags &amp; clone_parent) or ((flags &amp; clone_sighand) and (flags &amp; clone_thread)) )
+      exit_signal = 0;      // kernel constraint otherwise -22
+    unsigned long f = __micron_fold_exit_signal(flags, exit_signal);
+
+    uintptr_t top = (reinterpret_cast&lt;uintptr_t&gt;(stack) + stack_size) &amp; ~uintptr_t(0xF);
+
+    long raw = ::__micron_clone_entry(fn, reinterpret_cast&lt;void *&gt;(top), f, arg, parent_tid, reinterpret_cast&lt;void *&gt;(tls), child_tid);
+    return static_cast&lt;pid_t&gt;(raw);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-EINVAL</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L518">line 518</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;pid_t&gt;(raw)</code></td><td><a href="../../../source/linux/sys/clone.hpp.html#L527">line 527</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="clone.hpp.html#f-f0a23e5c35a58320">__micron_fold_exit_signal</a>, <a href="../../types.hpp.html#s-7d2021401cb248d6">uintptr_t</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

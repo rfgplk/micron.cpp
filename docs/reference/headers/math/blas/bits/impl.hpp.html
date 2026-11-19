@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/blas/bits/impl.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/blas/bits/impl.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/blas/bits/impl.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/math/blas/bits/impl.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-18e2ff7238ed1778">micron::math::blas::bits::m_out</code></td><td>variable; line 521</td></tr><tr class="t-dsc"><td><code id="s-09b1b10d2c2cae25">micron::math::blas::bits::n_in</code></td><td>variable; line 522</td></tr><tr class="t-dsc"><td><code id="s-f1461d3c36764b68">micron::math::blas::bits::step_inner</code></td><td>variable; line 523</td></tr><tr class="t-dsc"><td><code id="s-45c91fe042de29e6">micron::math::blas::bits::step_outer</code></td><td>variable; line 524</td></tr><tr class="t-dsc"><td><code id="s-d72d6bcafd4c4463">micron::math::blas::bits::beta_zero</code></td><td>variable; line 525</td></tr><tr class="t-dsc"><td><code id="s-c797ec53d05f611f">micron::math::blas::bits::beta_one</code></td><td>variable; line 526</td></tr><tr class="t-dsc"><td><code id="s-e4fc97465766b551">micron::math::blas::bits::i</code></td><td>variable; line 527</td></tr><tr class="t-dsc"><td><code id="s-36c8a177fc371617">micron::math::blas::bits::row</code></td><td>variable; line 528</td></tr><tr class="t-dsc"><td><code id="s-de152e3ed25a8ef9">micron::math::blas::bits::s0</code></td><td>variable; line 530</td></tr><tr class="t-dsc"><td><code id="s-c364a3da22497f51">micron::math::blas::bits::s1</code></td><td>variable; line 530</td></tr><tr class="t-dsc"><td><code id="s-c9d85952f32c3a3c">micron::math::blas::bits::s2</code></td><td>variable; line 530</td></tr><tr class="t-dsc"><td><code id="s-6d9dd8891e840abc">micron::math::blas::bits::s3</code></td><td>variable; line 530</td></tr><tr class="t-dsc"><td><code id="s-74a4545ef5f55203">micron::math::blas::bits::j</code></td><td>variable; line 531</td></tr><tr class="t-dsc"><td><code id="s-3093318af65ff4ee">micron::math::blas::bits::tail</code></td><td>variable; line 547</td></tr><tr class="t-dsc"><td><code id="s-9ffb1749a2d7eab1">micron::math::blas::bits::acc</code></td><td>variable; line 549</td></tr><tr class="t-dsc"><td><code id="s-2f034995e90cb068">micron::math::blas::bits::yi</code></td><td>variable; line 550</td></tr><tr class="t-dsc"><td><code id="s-710159c78038a00a">micron::math::blas::bits::i</code></td><td>variable; line 967</td></tr><tr class="t-dsc"><td><code id="s-782fd4dc4c909948">micron::math::blas::bits::c_row</code></td><td>variable; line 968</td></tr><tr class="t-dsc"><td><code id="s-4c0cd704766cd3d3">micron::math::blas::bits::a_row</code></td><td>variable; line 969</td></tr><tr class="t-dsc"><td><code id="s-d8b513e2607693a7">micron::math::blas::bits::j</code></td><td>variable; line 973</td></tr><tr class="t-dsc"><td><code id="s-c77a8f5b41b3135c">micron::math::blas::bits::j</code></td><td>variable; line 975</td></tr><tr class="t-dsc"><td><code id="s-646d6cbea57847e3">micron::math::blas::bits::j</code></td><td>variable; line 979</td></tr><tr class="t-dsc"><td><code id="s-567b5d3b250cc215">micron::math::blas::bits::j</code></td><td>variable; line 981</td></tr><tr class="t-dsc"><td><code id="s-21e0d19775607ac4">micron::math::blas::bits::p</code></td><td>variable; line 985</td></tr><tr class="t-dsc"><td><code id="s-8024e0fbd500298b">micron::math::blas::bits::a</code></td><td>variable; line 986</td></tr><tr class="t-dsc"><td><code id="s-edb4860d991b3ce2">micron::math::blas::bits::b_row</code></td><td>variable; line 987</td></tr><tr class="t-dsc"><td><code id="s-c457e959e1c71fe4">micron::math::blas::bits::j</code></td><td>variable; line 988</td></tr><tr class="t-dsc"><td><code id="s-025335f15b0e3017">micron::math::blas::bits::c0</code></td><td>variable; line 999</td></tr><tr class="t-dsc"><td><code id="s-9b45237b1b4648a1">micron::math::blas::bits::c1</code></td><td>variable; line 1000</td></tr><tr class="t-dsc"><td><code id="s-a325cb9df98ccc80">micron::math::blas::bits::c2</code></td><td>variable; line 1001</td></tr><tr class="t-dsc"><td><code id="s-bbea933795313ecd">micron::math::blas::bits::c3</code></td><td>variable; line 1002</td></tr><tr class="t-dsc"><td><code id="s-d08043f7888f8c02">micron::math::blas::bits::cj</code></td><td>variable; line 1009</td></tr><tr class="t-dsc"><td><a href="#f-1e79a4e118d9d07d">micron::math::blas::bits::mat_at(T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept</a></td><td>function; line 39</td></tr><tr class="t-dsc"><td><a href="#f-2c915859c765049a">micron::math::blas::bits::mat_at(const T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept</a></td><td>function; line 46</td></tr><tr class="t-dsc"><td><a href="#f-53d7e867428ab4f6">micron::math::blas::bits::fma_acc(T a, T b, T c) noexcept</a></td><td>function; line 55</td></tr><tr class="t-dsc"><td><a href="#f-8fecef021c8422b5">micron::math::blas::bits::gemv_n_panel_avx2_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</a></td><td>function; line 69<br><small><code>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-fbc8a57818fa455e">micron::math::blas::bits::gemv_n_panel_avx2_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</a></td><td>function; line 145<br><small><code>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-d543c9bbdc28f4df">micron::math::blas::bits::gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</a></td><td>function; line 211<br><small><code>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-bb609a9f8c9b4540">micron::math::blas::bits::gemv_t_panel_avx2_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</a></td><td>function; line 277<br><small><code>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-2d7803383dd79883">micron::math::blas::bits::gemv_t_panel_neon_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</a></td><td>function; line 340<br><small><code>#if defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-9be8bfbb411c609d">micron::math::blas::bits::gemv_t_panel_neon_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</a></td><td>function; line 400<br><small><code>#if defined(__micron_arch_arm_any) &amp;&amp; defined(__micron_arm_neon)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-830597f18da3e578">micron::math::blas::bits::gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
+            ssize_t incy) noexcept</a></td><td>function; line 468</td></tr><tr class="t-dsc"><td><a href="#f-6bbc13908572ccea">micron::math::blas::bits::ger_kernel(usize m, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</a></td><td>function; line 565</td></tr><tr class="t-dsc"><td><a href="#f-e477c31c9682e8d6">micron::math::blas::bits::symv_kernel(bool upper, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
+            ssize_t incy) noexcept</a></td><td>function; line 580</td></tr><tr class="t-dsc"><td><a href="#f-72fdc90f843f2fd6">micron::math::blas::bits::syr_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</a></td><td>function; line 604</td></tr><tr class="t-dsc"><td><a href="#f-0f351b7fc338ff2a">micron::math::blas::bits::syr2_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</a></td><td>function; line 627</td></tr><tr class="t-dsc"><td><a href="#f-064f181bf53210b3">micron::math::blas::bits::trmv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept</a></td><td>function; line 653</td></tr><tr class="t-dsc"><td><a href="#f-6711804721dcbe46">micron::math::blas::bits::trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept</a></td><td>function; line 698</td></tr><tr class="t-dsc"><td><a href="#f-c0492d7e16092436">micron::math::blas::bits::gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const __packed_f64 *A, ssize_t a_rs, ssize_t a_cs, const __packed_f64 *B,
+                  ssize_t b_rs, ssize_t b_cs, double beta, __packed_f64 *C, ssize_t rs_C) noexcept</a></td><td>function; line 740<br><small><code>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-4980dc03f8c05a8e">micron::math::blas::bits::gemm_4x8_avx2_f64_aligned(usize m, usize n, usize k, double alpha, const __packed_f64 *A, ssize_t a_rs, ssize_t a_cs, const __packed_f64 *B,
+                          ssize_t b_rs, ssize_t b_cs, double beta, __packed_f64 *C, ssize_t rs_C) noexcept</a></td><td>function; line 834<br><small><code>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-1b2426c09d278e36">micron::math::blas::bits::gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B,
+            ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</a></td><td>function; line 932</td></tr><tr class="t-dsc"><td><a href="#f-c9a20d0873e1863a">micron::math::blas::bits::gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                    ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</a></td><td>function; line 1021</td></tr><tr class="t-dsc"><td><a href="#f-c5371b79627ceb23">micron::math::blas::bits::gemm_kernel_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</a></td><td>function; line 1059</td></tr><tr class="t-dsc"><td><a href="#f-da6b808ea2f1698a">micron::math::blas::bits::gemm_kernel_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</a></td><td>function; line 1071</td></tr><tr class="t-dsc"><td><a href="#f-8df957f39758eedb">micron::math::blas::bits::gemm_kernel_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</a></td><td>function; line 1083</td></tr><tr class="t-dsc"><td><a href="#f-a5fcfe932cdc017a">micron::math::blas::bits::trsm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
+                 ssize_t cs_B) noexcept</a></td><td>function; line 1097</td></tr><tr class="t-dsc"><td><a href="#f-ac05794323b11ffd">micron::math::blas::bits::trsm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
+                  ssize_t rs_B, ssize_t cs_B) noexcept</a></td><td>function; line 1145</td></tr><tr class="t-dsc"><td><a href="#f-f29e8867d6c0ed6a">micron::math::blas::bits::trmm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
+                 ssize_t cs_B) noexcept</a></td><td>function; line 1195</td></tr><tr class="t-dsc"><td><a href="#f-04bd15862fe2877e">micron::math::blas::bits::trmm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
+                  ssize_t rs_B, ssize_t cs_B) noexcept</a></td><td>function; line 1241</td></tr><tr class="t-dsc"><td><a href="#f-7fca1bc75e421f60">micron::math::blas::bits::syrk_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T beta, T *C, ssize_t rs_C,
+            ssize_t cs_C) noexcept</a></td><td>function; line 1289</td></tr><tr class="t-dsc"><td><a href="#f-ad00034a9ae5e828">micron::math::blas::bits::syr2k_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+             T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</a></td><td>function; line 1317</td></tr><tr class="t-dsc"><td><a href="#f-f898f9f09d0e120e">micron::math::blas::bits::symm_left_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+                 T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</a></td><td>function; line 1346</td></tr><tr class="t-dsc"><td><a href="#f-156f45b95eac2582">micron::math::blas::bits::symm_right_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+                  T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</a></td><td>function; line 1370</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-1e79a4e118d9d07d"><h3><code>micron::math::blas::bits::mat_at(T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L39">line 39</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T &amp;
+mat_at(T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *data</code></li><li><code>usize i</code></li><li><code>usize j</code></li><li><code>ssize_t rs</code></li><li><code>ssize_t cs</code></li></ul><h4>Effects</h4><p>Returns <code>data[ssize_t(i) * rs + ssize_t(j) * cs]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T &amp;
+mat_at(T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept
+{
+  return data[ssize_t(i) * rs + ssize_t(j) * cs];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>data[ssize_t(i) * rs + ssize_t(j) * cs]</code></td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L41">line 41</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-2c915859c765049a"><h3><code>micron::math::blas::bits::mat_at(const T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L46">line 46</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr const T &amp;
+mat_at(const T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *data</code></li><li><code>usize i</code></li><li><code>usize j</code></li><li><code>ssize_t rs</code></li><li><code>ssize_t cs</code></li></ul><h4>Effects</h4><p>Returns <code>data[ssize_t(i) * rs + ssize_t(j) * cs]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr const T &amp;
+mat_at(const T *data, usize i, usize j, ssize_t rs, ssize_t cs) noexcept
+{
+  return data[ssize_t(i) * rs + ssize_t(j) * cs];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>data[ssize_t(i) * rs + ssize_t(j) * cs]</code></td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L48">line 48</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-53d7e867428ab4f6"><h3><code>micron::math::blas::bits::fma_acc(T a, T b, T c) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::always_inline]] inline constexpr T
+fma_acc(T a, T b, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T a</code></li><li><code>T b</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::always_inline]] inline constexpr T
+fma_acc(T a, T b, T c) noexcept
+{
+  if constexpr ( ieee754_floating&lt;T&gt; )
+    return math::fma&lt;T&gt;(a, b, c);
+  else
+    return c + a * b;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fma&lt;T&gt;(a, b, c)</code></td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>c + a * b</code></td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L60">line 60</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-8fecef021c8422b5"><h3><code>micron::math::blas::bits::gemv_n_panel_avx2_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten, gnu::hot]] inline void
+gemv_n_panel_avx2_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>double alpha</code></li><li><code>const __packed_f64 *A</code></li><li><code>ssize_t rs_A</code></li><li><code>const __packed_f64 *x</code></li><li><code>double beta</code></li><li><code>__packed_f64 *y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten, gnu::hot]] inline void
+gemv_n_panel_avx2_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept
+{
+  if ( beta == 0.0 ) {
+    const __m256d z = simd::avx::zero_f64();
+    usize i = 0;
+    for ( ; i + 4 &lt;= m; i += 4 ) simd::avx::storeu_f64(y + i, z);
+    for ( ; i &lt; m; ++i ) y[i] = 0.0;
+  } else if ( beta != 1.0 ) {
+    const __m256d vbeta = simd::avx::splat_f64(beta);
+    usize i = 0;
+    for ( ; i + 4 &lt;= m; i += 4 ) simd::avx::storeu_f64(y + i, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(y + i)));
+    for ( ; i &lt; m; ++i ) y[i] *= beta;
+  }
+
+  const __m256d valpha = simd::avx::splat_f64(alpha);
+  usize i = 0;
+  // 4-row dot-product fan-out: one x-load shared across 4 row-loads + 4 FMAs
+  for ( ; i + 4 &lt;= m; i += 4 ) {
+    __m256d acc0 = simd::avx::zero_f64();
+    __m256d acc1 = simd::avx::zero_f64();
+    __m256d acc2 = simd::avx::zero_f64();
+    __m256d acc3 = simd::avx::zero_f64();
+    const __packed_f64 *r0 = A + ssize_t(i + 0) * rs_A;
+    const __packed_f64 *r1 = A + ssize_t(i + 1) * rs_A;
+    const __packed_f64 *r2 = A + ssize_t(i + 2) * rs_A;
+    const __packed_f64 *r3 = A + ssize_t(i + 3) * rs_A;
+    usize j = 0;
+    for ( ; j + 4 &lt;= n; j += 4 ) {
+      const __m256d xv = simd::avx::loadu_f64(x + j);
+      acc0 = simd::fma::fma_f64(simd::avx::loadu_f64(r0 + j), xv, acc0);
+      acc1 = simd::fma::fma_f64(simd::avx::loadu_f64(r1 + j), xv, acc1);
+      acc2 = simd::fma::fma_f64(simd::avx::loadu_f64(r2 + j), xv, acc2);
+      acc3 = simd::fma::fma_f64(simd::avx::loadu_f64(r3 + j), xv, acc3);
+    }
+    const __m256d h01 = simd::avx::hadd_f64(acc0, acc1);
+    const __m256d h23 = simd::avx::hadd_f64(acc2, acc3);
+    const __m256d lo = simd::avx::permute2f128_f64&lt;0x20&gt;(h01, h23);
+    const __m256d hi = simd::avx::permute2f128_f64&lt;0x31&gt;(h01, h23);
+    __m256d sums = simd::avx::add_f64(lo, hi);
+
+    // j-tail (n%4)
+    if ( j &lt; n ) {
+      alignas(32) double s[4];
+      simd::avx::store_f64(s, sums);
+      for ( usize jj = j; jj &lt; n; ++jj ) {
+        const double xv = x[jj];
+        s[0] = math::fma&lt;double&gt;(r0[jj], xv, s[0]);
+        s[1] = math::fma&lt;double&gt;(r1[jj], xv, s[1]);
+        s[2] = math::fma&lt;double&gt;(r2[jj], xv, s[2]);
+        s[3] = math::fma&lt;double&gt;(r3[jj], xv, s[3]);
+      }
+      sums = simd::avx::load_f64(s);
+    }
+
+    const __m256d yv = simd::avx::loadu_f64(y + i);
+    simd::avx::storeu_f64(y + i, simd::fma::fma_f64(valpha, sums, yv));
+  }
+  // i-tail
+  for ( ; i &lt; m; ++i ) {
+    __m256d acc = simd::avx::zero_f64();
+    const __packed_f64 *row = A + ssize_t(i) * rs_A;
+    usize j = 0;
+    for ( ; j + 4 &lt;= n; j += 4 ) {
+      acc = simd::fma::fma_f64(simd::avx::loadu_f64(row + j), simd::avx::loadu_f64(x + j), acc);
+    }
+    const __m128d lo = simd::avx::cast_f64_to_lo128(acc);
+    const __m128d hi = simd::avx::extract_f128_f64&lt;1&gt;(acc);
+    const __m128d s2 = simd::sse::add_f64(lo, hi);
+    double tail = simd::sse::extract_low_f64(simd::sse::hadd_f64(s2, s2));
+    for ( ; j &lt; n; ++j ) tail = math::fma&lt;double&gt;(row[j], x[j], tail);
+    y[i] = math::fma&lt;double&gt;(alpha, tail, y[i]);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../simd/aliases/avx.hpp.html#f-1bbef7ccde3bd8e3">simd::avx::zero_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-0985bad31a5e9b37">simd::avx::storeu_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-5f532602589de650">simd::avx::splat_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2605ffbee71492bd">simd::avx::mul_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-a016f230dba616d5">simd::avx::loadu_f64</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../../../simd/aliases/fma.hpp.html#f-47a063f82f2a4521">simd::fma::fma_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-fae55fac5cfb3408">simd::avx::hadd_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2dc8e793f27d9333">simd::avx::permute2f128_f64&lt;0x20&gt;</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2dc8e793f27d9333">simd::avx::permute2f128_f64&lt;0x31&gt;</a>, <a href="../../../simd/aliases/avx.hpp.html#f-7b754e86ab7ef393">simd::avx::add_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-edd9b4daadd92b1a">simd::avx::store_f64</a>, <a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;double&gt;</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2e369b18a43856c5">simd::avx::load_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-f6b76ed8ddc0145e">simd::avx::cast_f64_to_lo128</a>, <a href="../../../simd/aliases/avx.hpp.html#f-0d580f8181c5e8f3">simd::avx::extract_f128_f64&lt;1&gt;</a>, <a href="../../../simd/aliases/sse.hpp.html#f-1f57d593ee8cc937">simd::sse::add_f64</a>, <a href="../../../simd/aliases/sse.hpp.html#f-f4151c6674d91d65">simd::sse::extract_low_f64</a>, <a href="../../../simd/aliases/sse.hpp.html#f-75815d099c3a3012">simd::sse::hadd_f64</a>.</p></section><section class="function-entry" id="f-fbc8a57818fa455e"><h3><code>micron::math::blas::bits::gemv_n_panel_avx2_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L145">line 145</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten, gnu::hot]] inline void
+gemv_n_panel_avx2_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>float alpha</code></li><li><code>const __packed_f32 *A</code></li><li><code>ssize_t rs_A</code></li><li><code>const __packed_f32 *x</code></li><li><code>float beta</code></li><li><code>__packed_f32 *y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten, gnu::hot]] inline void
+gemv_n_panel_avx2_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept
+{
+  if ( beta == 0.0f ) {
+    const __m256 z = simd::avx::zero_f32();
+    usize i = 0;
+    for ( ; i + 8 &lt;= m; i += 8 ) simd::avx::storeu_f32(y + i, z);
+    for ( ; i &lt; m; ++i ) y[i] = 0.0f;
+  } else if ( beta != 1.0f ) {
+    const __m256 vbeta = simd::avx::splat_f32(beta);
+    usize i = 0;
+    for ( ; i + 8 &lt;= m; i += 8 ) simd::avx::storeu_f32(y + i, simd::avx::mul_f32(vbeta, simd::avx::loadu_f32(y + i)));
+    for ( ; i &lt; m; ++i ) y[i] *= beta;
+  }
+
+  usize i = 0;
+  for ( ; i + 4 &lt;= m; i += 4 ) {
+    __m256 acc0 = simd::avx::zero_f32();
+    __m256 acc1 = simd::avx::zero_f32();
+    __m256 acc2 = simd::avx::zero_f32();
+    __m256 acc3 = simd::avx::zero_f32();
+    const __packed_f32 *r0 = A + ssize_t(i + 0) * rs_A;
+    const __packed_f32 *r1 = A + ssize_t(i + 1) * rs_A;
+    const __packed_f32 *r2 = A + ssize_t(i + 2) * rs_A;
+    const __packed_f32 *r3 = A + ssize_t(i + 3) * rs_A;
+    usize j = 0;
+    for ( ; j + 8 &lt;= n; j += 8 ) {
+      const __m256 xv = simd::avx::loadu_f32(x + j);
+      acc0 = simd::fma::fma_f32(simd::avx::loadu_f32(r0 + j), xv, acc0);
+      acc1 = simd::fma::fma_f32(simd::avx::loadu_f32(r1 + j), xv, acc1);
+      acc2 = simd::fma::fma_f32(simd::avx::loadu_f32(r2 + j), xv, acc2);
+      acc3 = simd::fma::fma_f32(simd::avx::loadu_f32(r3 + j), xv, acc3);
+    }
+    auto reduce8 = [](__m256 v) -&gt; float {
+      __m128 lo = simd::avx::cast_f32_to_lo128(v);
+      __m128 hi = simd::avx::extract_f128_f32&lt;1&gt;(v);
+      __m128 s4 = simd::sse::add_f32(lo, hi);
+      __m128 s2 = simd::sse::hadd_f32(s4, s4);
+      __m128 s1 = simd::sse::hadd_f32(s2, s2);
+      return simd::sse::extract_low_f32(s1);
+    };
+    float s0 = reduce8(acc0), s1 = reduce8(acc1);
+    float s2 = reduce8(acc2), s3 = reduce8(acc3);
+    for ( ; j &lt; n; ++j ) {
+      const float xv = x[j];
+      s0 = math::fma&lt;float&gt;(r0[j], xv, s0);
+      s1 = math::fma&lt;float&gt;(r1[j], xv, s1);
+      s2 = math::fma&lt;float&gt;(r2[j], xv, s2);
+      s3 = math::fma&lt;float&gt;(r3[j], xv, s3);
+    }
+    y[i + 0] = math::fma&lt;float&gt;(alpha, s0, y[i + 0]);
+    y[i + 1] = math::fma&lt;float&gt;(alpha, s1, y[i + 1]);
+    y[i + 2] = math::fma&lt;float&gt;(alpha, s2, y[i + 2]);
+    y[i + 3] = math::fma&lt;float&gt;(alpha, s3, y[i + 3]);
+  }
+  for ( ; i &lt; m; ++i ) {
+    float acc = 0.0f;
+    for ( usize j = 0; j &lt; n; ++j ) acc = math::fma&lt;float&gt;(A[ssize_t(i) * rs_A + ssize_t(j)], x[j], acc);
+    y[i] = math::fma&lt;float&gt;(alpha, acc, y[i]);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../simd/aliases/avx.hpp.html#f-b42df41c4d68c8cb">simd::avx::zero_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-5d06a8619637679c">simd::avx::storeu_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-bbaf12c28ed15657">simd::avx::splat_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-f10ab2faed74d28b">simd::avx::mul_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-38526ee9d557f57a">simd::avx::loadu_f32</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../../../simd/aliases/fma.hpp.html#f-ceab39f17d77ac9c">simd::fma::fma_f32</a>, <a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;float&gt;</a>.</p></section><section class="function-entry" id="f-d543c9bbdc28f4df"><h3><code>micron::math::blas::bits::gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline void
+gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>double alpha</code></li><li><code>const __packed_f64 *A</code></li><li><code>ssize_t rs_A</code></li><li><code>const __packed_f64 *x</code></li><li><code>double beta</code></li><li><code>__packed_f64 *y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline void
+gemv_t_panel_avx2_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept
+{
+  constexpr usize NB = 16;       // j-strip width (4 ymm of 4 doubles each)
+  constexpr usize MC = 128;      // m-block height; NB*MC doubles = 16 KiB pack, fits L1
+  alignas(32) double Ap[NB * MC];
+
+  if ( beta == 0.0 ) {
+    const __m256d z = simd::avx::zero_f64();
+    usize j = 0;
+    for ( ; j + 4 &lt;= n; j += 4 ) simd::avx::storeu_f64(y + j, z);
+    for ( ; j &lt; n; ++j ) y[j] = 0.0;
+  } else if ( beta != 1.0 ) {
+    const __m256d vbeta = simd::avx::splat_f64(beta);
+    usize j = 0;
+    for ( ; j + 4 &lt;= n; j += 4 ) simd::avx::storeu_f64(y + j, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(y + j)));
+    for ( ; j &lt; n; ++j ) y[j] *= beta;
+  }
+
+  usize j = 0;
+  for ( ; j + NB &lt;= n; j += NB ) {
+    __m256d y0 = simd::avx::loadu_f64(y + j + 0);
+    __m256d y1 = simd::avx::loadu_f64(y + j + 4);
+    __m256d y2 = simd::avx::loadu_f64(y + j + 8);
+    __m256d y3 = simd::avx::loadu_f64(y + j + 12);
+
+    for ( usize ic = 0; ic &lt; m; ic += MC ) {
+      const usize mc = (m - ic &lt; MC) ? (m - ic) : MC;
+
+      for ( usize i = 0; i &lt; mc; ++i ) {
+        const __packed_f64 *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
+        // Prefetch the next row 8 ahead
+        if ( i + 8 &lt; mc ) {
+          __builtin_prefetch(A + ssize_t(ic + i + 8) * rs_A + ssize_t(j), 0, 1);
+        }
+        simd::avx::store_f64(Ap + i * NB + 0, simd::avx::loadu_f64(src + 0));
+        simd::avx::store_f64(Ap + i * NB + 4, simd::avx::loadu_f64(src + 4));
+        simd::avx::store_f64(Ap + i * NB + 8, simd::avx::loadu_f64(src + 8));
+        simd::avx::store_f64(Ap + i * NB + 12, simd::avx::loadu_f64(src + 12));
+      }
+
+      for ( usize i = 0; i &lt; mc; ++i ) {
+        const __m256d ax = simd::avx::splat_f64(alpha * x[ic + i]);
+        const __packed_f64 *ap = Ap + i * NB;
+        y0 = simd::fma::fma_f64(ax, simd::avx::load_f64(ap + 0), y0);
+        y1 = simd::fma::fma_f64(ax, simd::avx::load_f64(ap + 4), y1);
+        y2 = simd::fma::fma_f64(ax, simd::avx::load_f64(ap + 8), y2);
+        y3 = simd::fma::fma_f64(ax, simd::avx::load_f64(ap + 12), y3);
+      }
+    }
+
+    simd::avx::storeu_f64(y + j + 0, y0);
+    simd::avx::storeu_f64(y + j + 4, y1);
+    simd::avx::storeu_f64(y + j + 8, y2);
+    simd::avx::storeu_f64(y + j + 12, y3);
+  }
+
+  // tail
+  for ( ; j &lt; n; ++j ) {
+    double acc = 0.0;
+    for ( usize i = 0; i &lt; m; ++i ) acc = math::fma&lt;double&gt;(A[ssize_t(i) * rs_A + ssize_t(j)], x[i], acc);
+    y[j] = math::fma&lt;double&gt;(alpha, acc, y[j]);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../simd/aliases/avx.hpp.html#f-1bbef7ccde3bd8e3">simd::avx::zero_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-0985bad31a5e9b37">simd::avx::storeu_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-5f532602589de650">simd::avx::splat_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2605ffbee71492bd">simd::avx::mul_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-a016f230dba616d5">simd::avx::loadu_f64</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../../../simd/aliases/avx.hpp.html#f-edd9b4daadd92b1a">simd::avx::store_f64</a>, <a href="../../../simd/aliases/fma.hpp.html#f-47a063f82f2a4521">simd::fma::fma_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2e369b18a43856c5">simd::avx::load_f64</a>, <a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;double&gt;</a>.</p></section><section class="function-entry" id="f-bb609a9f8c9b4540"><h3><code>micron::math::blas::bits::gemv_t_panel_avx2_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L277">line 277</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline void
+gemv_t_panel_avx2_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>float alpha</code></li><li><code>const __packed_f32 *A</code></li><li><code>ssize_t rs_A</code></li><li><code>const __packed_f32 *x</code></li><li><code>float beta</code></li><li><code>__packed_f32 *y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline void
+gemv_t_panel_avx2_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept
+{
+  constexpr usize NB = 32;       // 4 ymm of 8 floats each
+  constexpr usize MC = 128;      // pack 32 * 128 * 4 = 16 KiB
+  alignas(32) float Ap[NB * MC];
+
+  if ( beta == 0.0f ) {
+    const __m256 z = simd::avx::zero_f32();
+    usize j = 0;
+    for ( ; j + 8 &lt;= n; j += 8 ) simd::avx::storeu_f32(y + j, z);
+    for ( ; j &lt; n; ++j ) y[j] = 0.0f;
+  } else if ( beta != 1.0f ) {
+    const __m256 vbeta = simd::avx::splat_f32(beta);
+    usize j = 0;
+    for ( ; j + 8 &lt;= n; j += 8 ) simd::avx::storeu_f32(y + j, simd::avx::mul_f32(vbeta, simd::avx::loadu_f32(y + j)));
+    for ( ; j &lt; n; ++j ) y[j] *= beta;
+  }
+
+  usize j = 0;
+  for ( ; j + NB &lt;= n; j += NB ) {
+    __m256 y0 = simd::avx::loadu_f32(y + j + 0);
+    __m256 y1 = simd::avx::loadu_f32(y + j + 8);
+    __m256 y2 = simd::avx::loadu_f32(y + j + 16);
+    __m256 y3 = simd::avx::loadu_f32(y + j + 24);
+
+    for ( usize ic = 0; ic &lt; m; ic += MC ) {
+      const usize mc = (m - ic &lt; MC) ? (m - ic) : MC;
+      for ( usize i = 0; i &lt; mc; ++i ) {
+        const __packed_f32 *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
+        simd::avx::store_f32(Ap + i * NB + 0, simd::avx::loadu_f32(src + 0));
+        simd::avx::store_f32(Ap + i * NB + 8, simd::avx::loadu_f32(src + 8));
+        simd::avx::store_f32(Ap + i * NB + 16, simd::avx::loadu_f32(src + 16));
+        simd::avx::store_f32(Ap + i * NB + 24, simd::avx::loadu_f32(src + 24));
+      }
+      for ( usize i = 0; i &lt; mc; ++i ) {
+        const __m256 ax = simd::avx::splat_f32(alpha * x[ic + i]);
+        const __packed_f32 *ap = Ap + i * NB;
+        y0 = simd::fma::fma_f32(ax, simd::avx::load_f32(ap + 0), y0);
+        y1 = simd::fma::fma_f32(ax, simd::avx::load_f32(ap + 8), y1);
+        y2 = simd::fma::fma_f32(ax, simd::avx::load_f32(ap + 16), y2);
+        y3 = simd::fma::fma_f32(ax, simd::avx::load_f32(ap + 24), y3);
+      }
+    }
+
+    simd::avx::storeu_f32(y + j + 0, y0);
+    simd::avx::storeu_f32(y + j + 8, y1);
+    simd::avx::storeu_f32(y + j + 16, y2);
+    simd::avx::storeu_f32(y + j + 24, y3);
+  }
+
+  for ( ; j &lt; n; ++j ) {
+    float acc = 0.0f;
+    for ( usize i = 0; i &lt; m; ++i ) acc = math::fma&lt;float&gt;(A[ssize_t(i) * rs_A + ssize_t(j)], x[i], acc);
+    y[j] = math::fma&lt;float&gt;(alpha, acc, y[j]);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../simd/aliases/avx.hpp.html#f-b42df41c4d68c8cb">simd::avx::zero_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-5d06a8619637679c">simd::avx::storeu_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-bbaf12c28ed15657">simd::avx::splat_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-f10ab2faed74d28b">simd::avx::mul_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-38526ee9d557f57a">simd::avx::loadu_f32</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../../../simd/aliases/avx.hpp.html#f-83004091b581462d">simd::avx::store_f32</a>, <a href="../../../simd/aliases/fma.hpp.html#f-ceab39f17d77ac9c">simd::fma::fma_f32</a>, <a href="../../../simd/aliases/avx.hpp.html#f-94f065a659fceb53">simd::avx::load_f32</a>, <a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;float&gt;</a>.</p></section><section class="function-entry" id="f-2d7803383dd79883"><h3><code>micron::math::blas::bits::gemv_t_panel_neon_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L340">line 340</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline void
+gemv_t_panel_neon_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>double alpha</code></li><li><code>const __packed_f64 *A</code></li><li><code>ssize_t rs_A</code></li><li><code>const __packed_f64 *x</code></li><li><code>double beta</code></li><li><code>__packed_f64 *y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline void
+gemv_t_panel_neon_f64(usize m, usize n, double alpha, const __packed_f64 *A, ssize_t rs_A, const __packed_f64 *x, double beta,
+                      __packed_f64 *y) noexcept
+{
+  constexpr usize NB = 8;      // 4 q-regs of 2 doubles each
+  constexpr usize MC = 256;
+  alignas(16) double Ap[NB * MC];
+
+  if ( beta == 0.0 ) {
+    for ( usize j = 0; j &lt; n; ++j ) y[j] = 0.0;
+  } else if ( beta != 1.0 ) {
+    const float64x2_t vbeta = simd::neon::splat_f64(beta);
+    usize j = 0;
+    for ( ; j + 2 &lt;= n; j += 2 ) simd::neon::store_f64(y + j, simd::neon::mul(vbeta, simd::neon::load_f64(y + j)));
+    for ( ; j &lt; n; ++j ) y[j] *= beta;
+  }
+
+  usize j = 0;
+  for ( ; j + NB &lt;= n; j += NB ) {
+    float64x2_t y0 = simd::neon::load_f64(y + j + 0);
+    float64x2_t y1 = simd::neon::load_f64(y + j + 2);
+    float64x2_t y2 = simd::neon::load_f64(y + j + 4);
+    float64x2_t y3 = simd::neon::load_f64(y + j + 6);
+
+    for ( usize ic = 0; ic &lt; m; ic += MC ) {
+      const usize mc = (m - ic &lt; MC) ? (m - ic) : MC;
+      for ( usize i = 0; i &lt; mc; ++i ) {
+        const __packed_f64 *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
+        simd::neon::store_f64(Ap + i * NB + 0, simd::neon::load_f64(src + 0));
+        simd::neon::store_f64(Ap + i * NB + 2, simd::neon::load_f64(src + 2));
+        simd::neon::store_f64(Ap + i * NB + 4, simd::neon::load_f64(src + 4));
+        simd::neon::store_f64(Ap + i * NB + 6, simd::neon::load_f64(src + 6));
+      }
+      for ( usize i = 0; i &lt; mc; ++i ) {
+        const float64x2_t ax = simd::neon::splat_f64(alpha * x[ic + i]);
+        const __packed_f64 *ap = Ap + i * NB;
+        y0 = simd::neon::fma_f64(y0, ax, simd::neon::load_f64(ap + 0));
+        y1 = simd::neon::fma_f64(y1, ax, simd::neon::load_f64(ap + 2));
+        y2 = simd::neon::fma_f64(y2, ax, simd::neon::load_f64(ap + 4));
+        y3 = simd::neon::fma_f64(y3, ax, simd::neon::load_f64(ap + 6));
+      }
+    }
+
+    simd::neon::store_f64(y + j + 0, y0);
+    simd::neon::store_f64(y + j + 2, y1);
+    simd::neon::store_f64(y + j + 4, y2);
+    simd::neon::store_f64(y + j + 6, y3);
+  }
+
+  for ( ; j &lt; n; ++j ) {
+    double acc = 0.0;
+    for ( usize i = 0; i &lt; m; ++i ) acc = math::fma&lt;double&gt;(A[ssize_t(i) * rs_A + ssize_t(j)], x[i], acc);
+    y[j] = math::fma&lt;double&gt;(alpha, acc, y[j]);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../simd/aliases/neon.hpp.html#f-16792ec8f7dd3e5f">simd::neon::splat_f64</a>, <a href="../../../simd/aliases/neon.hpp.html#f-155c7a5d5e5214f7">simd::neon::store_f64</a>, <a href="../../../simd/aliases/neon.hpp.html#f-ab4be90efdab0c2a">simd::neon::mul</a>, <a href="../../../simd/aliases/neon.hpp.html#f-d8226bad14b85e4f">simd::neon::load_f64</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../../../simd/aliases/neon.hpp.html#f-82da0ebc65608c34">simd::neon::fma_f64</a>, <a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;double&gt;</a>.</p></section><section class="function-entry" id="f-9be8bfbb411c609d"><h3><code>micron::math::blas::bits::gemv_t_panel_neon_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L400">line 400</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline void
+gemv_t_panel_neon_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_arm_any) &amp;&amp; defined(__micron_arm_neon)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>float alpha</code></li><li><code>const __packed_f32 *A</code></li><li><code>ssize_t rs_A</code></li><li><code>const __packed_f32 *x</code></li><li><code>float beta</code></li><li><code>__packed_f32 *y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline void
+gemv_t_panel_neon_f32(usize m, usize n, float alpha, const __packed_f32 *A, ssize_t rs_A, const __packed_f32 *x, float beta,
+                      __packed_f32 *y) noexcept
+{
+  constexpr usize NB = 16;      // 4 q-regs of 4 floats each
+  constexpr usize MC = 256;
+  alignas(16) float Ap[NB * MC];
+
+  if ( beta == 0.0f ) {
+    for ( usize j = 0; j &lt; n; ++j ) y[j] = 0.0f;
+  } else if ( beta != 1.0f ) {
+    const float32x4_t vbeta = simd::neon::splat_f32(beta);
+    usize j = 0;
+    for ( ; j + 4 &lt;= n; j += 4 ) simd::neon::store_f32(y + j, simd::neon::mul(vbeta, simd::neon::load_f32(y + j)));
+    for ( ; j &lt; n; ++j ) y[j] *= beta;
+  }
+
+  usize j = 0;
+  for ( ; j + NB &lt;= n; j += NB ) {
+    float32x4_t y0 = simd::neon::load_f32(y + j + 0);
+    float32x4_t y1 = simd::neon::load_f32(y + j + 4);
+    float32x4_t y2 = simd::neon::load_f32(y + j + 8);
+    float32x4_t y3 = simd::neon::load_f32(y + j + 12);
+
+    for ( usize ic = 0; ic &lt; m; ic += MC ) {
+      const usize mc = (m - ic &lt; MC) ? (m - ic) : MC;
+      for ( usize i = 0; i &lt; mc; ++i ) {
+        const __packed_f32 *src = A + ssize_t(ic + i) * rs_A + ssize_t(j);
+        simd::neon::store_f32(Ap + i * NB + 0, simd::neon::load_f32(src + 0));
+        simd::neon::store_f32(Ap + i * NB + 4, simd::neon::load_f32(src + 4));
+        simd::neon::store_f32(Ap + i * NB + 8, simd::neon::load_f32(src + 8));
+        simd::neon::store_f32(Ap + i * NB + 12, simd::neon::load_f32(src + 12));
+      }
+      for ( usize i = 0; i &lt; mc; ++i ) {
+        const float32x4_t ax = simd::neon::splat_f32(alpha * x[ic + i]);
+        const __packed_f32 *ap = Ap + i * NB;
+#if defined(__micron_arm_fma) || defined(__ARM_FEATURE_FMA)
+        y0 = simd::neon::fma_f32(y0, ax, simd::neon::load_f32(ap + 0));
+        y1 = simd::neon::fma_f32(y1, ax, simd::neon::load_f32(ap + 4));
+        y2 = simd::neon::fma_f32(y2, ax, simd::neon::load_f32(ap + 8));
+        y3 = simd::neon::fma_f32(y3, ax, simd::neon::load_f32(ap + 12));
+#else
+        y0 = simd::neon::mla(y0, ax, simd::neon::load_f32(ap + 0));
+        y1 = simd::neon::mla(y1, ax, simd::neon::load_f32(ap + 4));
+        y2 = simd::neon::mla(y2, ax, simd::neon::load_f32(ap + 8));
+        y3 = simd::neon::mla(y3, ax, simd::neon::load_f32(ap + 12));
+#endif
+      }
+    }
+
+    simd::neon::store_f32(y + j + 0, y0);
+    simd::neon::store_f32(y + j + 4, y1);
+    simd::neon::store_f32(y + j + 8, y2);
+    simd::neon::store_f32(y + j + 12, y3);
+  }
+
+  for ( ; j &lt; n; ++j ) {
+    float acc = 0.0f;
+    for ( usize i = 0; i &lt; m; ++i ) acc = math::fma&lt;float&gt;(A[ssize_t(i) * rs_A + ssize_t(j)], x[i], acc);
+    y[j] = math::fma&lt;float&gt;(alpha, acc, y[j]);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../../simd/aliases/neon.hpp.html#f-b2d69468a29bad57">simd::neon::store_f32</a>, <a href="../../../simd/aliases/neon.hpp.html#f-ab4be90efdab0c2a">simd::neon::mul</a>, <a href="../../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">simd::neon::load_f32</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../../../simd/aliases/neon.hpp.html#f-6c5a9afa68798b38">simd::neon::fma_f32</a>, <a href="../../../simd/aliases/neon.hpp.html#f-3b1bd70b46d834f8">simd::neon::mla</a>, <a href="../../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;float&gt;</a>.</p></section><section class="function-entry" id="f-830597f18da3e578"><h3><code>micron::math::blas::bits::gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
+            ssize_t incy) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L468">line 468</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
+            ssize_t incy) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool tr</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *x</code></li><li><code>ssize_t incx</code></li><li><code>T beta</code></li><li><code>T *y</code></li><li><code>ssize_t incy</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+gemv_kernel(bool tr, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
+            ssize_t incy) noexcept
+{
+  // row-major A panel kernels: tr-case uses axpy fan-out; no-trans uses
+  // dot-product fan-out across 4 consecutive rows.
+  if !consteval {
+    if ( cs_A == 1 &amp;&amp; incx == 1 &amp;&amp; incy == 1 ) {
+      if constexpr ( ieee754_floating&lt;T&gt; ) {
+#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)
+        if constexpr ( sizeof(T) == 8 ) {
+          if ( tr ) {
+            gemv_t_panel_avx2_f64(m, n, double(alpha), reinterpret_cast&lt;const __packed_f64 *&gt;(A), rs_A,
+                                  reinterpret_cast&lt;const __packed_f64 *&gt;(x), double(beta), reinterpret_cast&lt;__packed_f64 *&gt;(y));
+          } else {
+            gemv_n_panel_avx2_f64(m, n, double(alpha), reinterpret_cast&lt;const __packed_f64 *&gt;(A), rs_A,
+                                  reinterpret_cast&lt;const __packed_f64 *&gt;(x), double(beta), reinterpret_cast&lt;__packed_f64 *&gt;(y));
+          }
+          return;
+        } else if constexpr ( sizeof(T) == 4 ) {
+          if ( tr ) {
+            gemv_t_panel_avx2_f32(m, n, float(alpha), reinterpret_cast&lt;const __packed_f32 *&gt;(A), rs_A,
+                                  reinterpret_cast&lt;const __packed_f32 *&gt;(x), float(beta), reinterpret_cast&lt;__packed_f32 *&gt;(y));
+          } else {
+            gemv_n_panel_avx2_f32(m, n, float(alpha), reinterpret_cast&lt;const __packed_f32 *&gt;(A), rs_A,
+                                  reinterpret_cast&lt;const __packed_f32 *&gt;(x), float(beta), reinterpret_cast&lt;__packed_f32 *&gt;(y));
+          }
+          return;
+        }
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)
+        if ( tr ) {
+          if constexpr ( sizeof(T) == 8 ) {
+            gemv_t_panel_neon_f64(m, n, double(alpha), reinterpret_cast&lt;const __packed_f64 *&gt;(A), rs_A,
+                                  reinterpret_cast&lt;const __packed_f64 *&gt;(x), double(beta), reinterpret_cast&lt;__packed_f64 *&gt;(y));
+            return;
+          } else if constexpr ( sizeof(T) == 4 ) {
+            gemv_t_panel_neon_f32(m, n, float(alpha), reinterpret_cast&lt;const __packed_f32 *&gt;(A), rs_A,
+                                  reinterpret_cast&lt;const __packed_f32 *&gt;(x), float(beta), reinterpret_cast&lt;__packed_f32 *&gt;(y));
+            return;
+          }
+        }
+#elif defined(__micron_arch_arm32) &amp;&amp; defined(__micron_arm_neon)
+        if ( tr ) {
+          if constexpr ( sizeof(T) == 4 ) {
+            gemv_t_panel_neon_f32(m, n, float(alpha), reinterpret_cast&lt;const __packed_f32 *&gt;(A), rs_A,
+                                  reinterpret_cast&lt;const __packed_f32 *&gt;(x), float(beta), reinterpret_cast&lt;__packed_f32 *&gt;(y));
+            return;
+          }
+        }
+#endif
+      }
+    }
+  }
+
+  const usize m_out = tr ? n : m;
+  const usize n_in = tr ? m : n;
+  const ssize_t step_inner = tr ? rs_A : cs_A;
+  const ssize_t step_outer = tr ? cs_A : rs_A;
+  const bool beta_zero = (beta == T(0));
+  const bool beta_one = (beta == T(1));
+  for ( usize i = 0; i &lt; m_out; ++i ) {
+    const T *row = A + ssize_t(i) * step_outer;
+    // four accumulators
+    T s0{}, s1{}, s2{}, s3{};
+    usize j = 0;
+    if ( incx == 1 &amp;&amp; step_inner == 1 ) {
+      for ( ; j + 4 &lt;= n_in; j += 4 ) {
+        s0 = fma_acc&lt;T&gt;(row[j + 0], x[j + 0], s0);
+        s1 = fma_acc&lt;T&gt;(row[j + 1], x[j + 1], s1);
+        s2 = fma_acc&lt;T&gt;(row[j + 2], x[j + 2], s2);
+        s3 = fma_acc&lt;T&gt;(row[j + 3], x[j + 3], s3);
+      }
+    } else {
+      for ( ; j + 4 &lt;= n_in; j += 4 ) {
+        s0 = fma_acc&lt;T&gt;(row[ssize_t(j + 0) * step_inner], x[ssize_t(j + 0) * incx], s0);
+        s1 = fma_acc&lt;T&gt;(row[ssize_t(j + 1) * step_inner], x[ssize_t(j + 1) * incx], s1);
+        s2 = fma_acc&lt;T&gt;(row[ssize_t(j + 2) * step_inner], x[ssize_t(j + 2) * incx], s2);
+        s3 = fma_acc&lt;T&gt;(row[ssize_t(j + 3) * step_inner], x[ssize_t(j + 3) * incx], s3);
+      }
+    }
+    T tail{};
+    for ( ; j &lt; n_in; ++j ) tail = fma_acc&lt;T&gt;(row[ssize_t(j) * step_inner], x[ssize_t(j) * incx], tail);
+    const T acc = ((s0 + s1) + (s2 + s3)) + tail;
+    T &amp;yi = y[ssize_t(i) * incy];
+    if ( beta_zero ) {
+      yi = alpha * acc;
+    } else if ( beta_one ) {
+      yi = fma_acc&lt;T&gt;(alpha, acc, yi);
+    } else {
+      yi = fma_acc&lt;T&gt;(alpha, acc, beta * yi);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L485">line 485</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L494">line 494</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L501">line 501</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L505">line 505</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L513">line 513</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-d543c9bbdc28f4df">gemv_t_panel_avx2_f64</a>, <a href="impl.hpp.html#f-8fecef021c8422b5">gemv_n_panel_avx2_f64</a>, <a href="impl.hpp.html#f-bb609a9f8c9b4540">gemv_t_panel_avx2_f32</a>, <a href="impl.hpp.html#f-fbc8a57818fa455e">gemv_n_panel_avx2_f32</a>, <a href="impl.hpp.html#f-2d7803383dd79883">gemv_t_panel_neon_f64</a>, <a href="impl.hpp.html#f-9be8bfbb411c609d">gemv_t_panel_neon_f32</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-6bbc13908572ccea"><h3><code>micron::math::blas::bits::ger_kernel(usize m, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L565">line 565</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+ger_kernel(usize m, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *x</code></li><li><code>ssize_t incx</code></li><li><code>const T *y</code></li><li><code>ssize_t incy</code></li><li><code>T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+ger_kernel(usize m, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept
+{
+  for ( usize i = 0; i &lt; m; ++i ) {
+    const T axi = alpha * x[ssize_t(i) * incx];
+    for ( usize j = 0; j &lt; n; ++j ) {
+      T &amp;aij = mat_at(A, i, j, rs_A, cs_A);
+      aij = fma_acc&lt;T&gt;(axi, y[ssize_t(j) * incy], aij);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-e477c31c9682e8d6"><h3><code>micron::math::blas::bits::symv_kernel(bool upper, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
+            ssize_t incy) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L580">line 580</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+symv_kernel(bool upper, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
+            ssize_t incy) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *x</code></li><li><code>ssize_t incx</code></li><li><code>T beta</code></li><li><code>T *y</code></li><li><code>ssize_t incy</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+symv_kernel(bool upper, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *x, ssize_t incx, T beta, T *y,
+            ssize_t incy) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) {
+    T acc{};
+    for ( usize j = 0; j &lt; n; ++j ) {
+      const usize r = (upper ? (i &lt;= j ? i : j) : (i &gt;= j ? i : j));
+      const usize c = (upper ? (i &lt;= j ? j : i) : (i &gt;= j ? j : i));
+      acc = fma_acc&lt;T&gt;(mat_at(A, r, c, rs_A, cs_A), x[ssize_t(j) * incx], acc);
+    }
+    T &amp;yi = y[ssize_t(i) * incy];
+    if ( beta == T(0) )
+      yi = alpha * acc;
+    else if ( beta == T(1) )
+      yi = fma_acc&lt;T&gt;(alpha, acc, yi);
+    else
+      yi = fma_acc&lt;T&gt;(alpha, acc, beta * yi);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>, <a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-72fdc90f843f2fd6"><h3><code>micron::math::blas::bits::syr_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L604">line 604</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+syr_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *x</code></li><li><code>ssize_t incx</code></li><li><code>T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+syr_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, T *A, ssize_t rs_A, ssize_t cs_A) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) {
+    const T axi = alpha * x[ssize_t(i) * incx];
+    if ( upper ) {
+      for ( usize j = i; j &lt; n; ++j ) {
+        T &amp;aij = mat_at(A, i, j, rs_A, cs_A);
+        aij = fma_acc&lt;T&gt;(axi, x[ssize_t(j) * incx], aij);
+      }
+    } else {
+      for ( usize j = 0; j &lt;= i; ++j ) {
+        T &amp;aij = mat_at(A, i, j, rs_A, cs_A);
+        aij = fma_acc&lt;T&gt;(axi, x[ssize_t(j) * incx], aij);
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-0f351b7fc338ff2a"><h3><code>micron::math::blas::bits::syr2_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L627">line 627</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+syr2_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *x</code></li><li><code>ssize_t incx</code></li><li><code>const T *y</code></li><li><code>ssize_t incy</code></li><li><code>T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+syr2_kernel(bool upper, usize n, T alpha, const T *x, ssize_t incx, const T *y, ssize_t incy, T *A, ssize_t rs_A, ssize_t cs_A) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) {
+    const T axi = alpha * x[ssize_t(i) * incx];
+    const T ayi = alpha * y[ssize_t(i) * incy];
+    if ( upper ) {
+      for ( usize j = i; j &lt; n; ++j ) {
+        T &amp;aij = mat_at(A, i, j, rs_A, cs_A);
+        aij = fma_acc&lt;T&gt;(axi, y[ssize_t(j) * incy], aij);
+        aij = fma_acc&lt;T&gt;(ayi, x[ssize_t(j) * incx], aij);
+      }
+    } else {
+      for ( usize j = 0; j &lt;= i; ++j ) {
+        T &amp;aij = mat_at(A, i, j, rs_A, cs_A);
+        aij = fma_acc&lt;T&gt;(axi, y[ssize_t(j) * incy], aij);
+        aij = fma_acc&lt;T&gt;(ayi, x[ssize_t(j) * incx], aij);
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-064f181bf53210b3"><h3><code>micron::math::blas::bits::trmv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L653">line 653</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trmv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>bool tr</code></li><li><code>bool unit_diag</code></li><li><code>usize n</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>T *x</code></li><li><code>ssize_t incx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trmv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept
+{
+  if ( !tr ) {
+    if ( upper ) {
+      for ( usize i = 0; i &lt; n; ++i ) {
+        T s{};
+        const T diag = unit_diag ? T(1) : mat_at(A, i, i, rs_A, cs_A);
+        s = diag * x[ssize_t(i) * incx];
+        for ( usize j = i + 1; j &lt; n; ++j ) s = fma_acc&lt;T&gt;(mat_at(A, i, j, rs_A, cs_A), x[ssize_t(j) * incx], s);
+        x[ssize_t(i) * incx] = s;
+      }
+    } else {
+      for ( usize ii = n; ii-- &gt; 0; ) {
+        T s{};
+        const T diag = unit_diag ? T(1) : mat_at(A, ii, ii, rs_A, cs_A);
+        s = diag * x[ssize_t(ii) * incx];
+        for ( usize j = 0; j &lt; ii; ++j ) s = fma_acc&lt;T&gt;(mat_at(A, ii, j, rs_A, cs_A), x[ssize_t(j) * incx], s);
+        x[ssize_t(ii) * incx] = s;
+      }
+    }
+  } else {
+    if ( upper ) {
+      for ( usize ii = n; ii-- &gt; 0; ) {
+        T s{};
+        const T diag = unit_diag ? T(1) : mat_at(A, ii, ii, rs_A, cs_A);
+        s = diag * x[ssize_t(ii) * incx];
+        for ( usize j = 0; j &lt; ii; ++j ) s = fma_acc&lt;T&gt;(mat_at(A, j, ii, rs_A, cs_A), x[ssize_t(j) * incx], s);
+        x[ssize_t(ii) * incx] = s;
+      }
+    } else {
+      for ( usize i = 0; i &lt; n; ++i ) {
+        T s{};
+        const T diag = unit_diag ? T(1) : mat_at(A, i, i, rs_A, cs_A);
+        s = diag * x[ssize_t(i) * incx];
+        for ( usize j = i + 1; j &lt; n; ++j ) s = fma_acc&lt;T&gt;(mat_at(A, j, i, rs_A, cs_A), x[ssize_t(j) * incx], s);
+        x[ssize_t(i) * incx] = s;
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-6711804721dcbe46"><h3><code>micron::math::blas::bits::trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L698">line 698</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>bool tr</code></li><li><code>bool unit_diag</code></li><li><code>usize n</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>T *x</code></li><li><code>ssize_t incx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trsv_kernel(bool upper, bool tr, bool unit_diag, usize n, const T *A, ssize_t rs_A, ssize_t cs_A, T *x, ssize_t incx) noexcept
+{
+  if ( !tr ) {
+    if ( upper ) {
+      for ( usize ii = n; ii-- &gt; 0; ) {
+        T s = x[ssize_t(ii) * incx];
+        for ( usize j = ii + 1; j &lt; n; ++j ) s -= mat_at(A, ii, j, rs_A, cs_A) * x[ssize_t(j) * incx];
+        if ( !unit_diag ) s /= mat_at(A, ii, ii, rs_A, cs_A);
+        x[ssize_t(ii) * incx] = s;
+      }
+    } else {
+      for ( usize i = 0; i &lt; n; ++i ) {
+        T s = x[ssize_t(i) * incx];
+        for ( usize j = 0; j &lt; i; ++j ) s -= mat_at(A, i, j, rs_A, cs_A) * x[ssize_t(j) * incx];
+        if ( !unit_diag ) s /= mat_at(A, i, i, rs_A, cs_A);
+        x[ssize_t(i) * incx] = s;
+      }
+    }
+  } else {
+    if ( upper ) {
+      for ( usize i = 0; i &lt; n; ++i ) {
+        T s = x[ssize_t(i) * incx];
+        for ( usize j = 0; j &lt; i; ++j ) s -= mat_at(A, j, i, rs_A, cs_A) * x[ssize_t(j) * incx];
+        if ( !unit_diag ) s /= mat_at(A, i, i, rs_A, cs_A);
+        x[ssize_t(i) * incx] = s;
+      }
+    } else {
+      for ( usize ii = n; ii-- &gt; 0; ) {
+        T s = x[ssize_t(ii) * incx];
+        for ( usize j = ii + 1; j &lt; n; ++j ) s -= mat_at(A, j, ii, rs_A, cs_A) * x[ssize_t(j) * incx];
+        if ( !unit_diag ) s /= mat_at(A, ii, ii, rs_A, cs_A);
+        x[ssize_t(ii) * incx] = s;
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>.</p></section><section class="function-entry" id="f-c0492d7e16092436"><h3><code>micron::math::blas::bits::gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const __packed_f64 *A, ssize_t a_rs, ssize_t a_cs, const __packed_f64 *B,
+                  ssize_t b_rs, ssize_t b_cs, double beta, __packed_f64 *C, ssize_t rs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L740">line 740</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline void
+gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const __packed_f64 *A, ssize_t a_rs, ssize_t a_cs, const __packed_f64 *B,
+                  ssize_t b_rs, ssize_t b_cs, double beta, __packed_f64 *C, ssize_t rs_C) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>double alpha</code></li><li><code>const __packed_f64 *A</code></li><li><code>ssize_t a_rs</code></li><li><code>ssize_t a_cs</code></li><li><code>const __packed_f64 *B</code></li><li><code>ssize_t b_rs</code></li><li><code>ssize_t b_cs</code></li><li><code>double beta</code></li><li><code>__packed_f64 *C</code></li><li><code>ssize_t rs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline void
+gemm_4x8_avx2_f64(usize m, usize n, usize k, double alpha, const __packed_f64 *A, ssize_t a_rs, ssize_t a_cs, const __packed_f64 *B,
+                  ssize_t b_rs, ssize_t b_cs, double beta, __packed_f64 *C, ssize_t rs_C) noexcept
+{
+  alignas(32) double Bp[8 * 1024];      // stack panel for one 8-col B strip
+  const __m256d valpha = simd::avx::splat_f64(alpha);
+  const bool beta_zero = (beta == 0.0);
+  const bool beta_one = (beta == 1.0);
+  const __m256d vbeta = simd::avx::splat_f64(beta);
+
+  for ( usize j = 0; j + 8 &lt;= n; j += 8 ) {
+    // pack B[0:k, j:j+8] into Bp
+    if ( b_cs == 1 ) {
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const __packed_f64 *src = B + ssize_t(p) * b_rs + ssize_t(j);
+        simd::avx::store_f64(Bp + p * 8 + 0, simd::avx::loadu_f64(src + 0));
+        simd::avx::store_f64(Bp + p * 8 + 4, simd::avx::loadu_f64(src + 4));
+      }
+    } else {
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const __packed_f64 *base = B + ssize_t(p) * b_rs + ssize_t(j) * b_cs;
+        Bp[p * 8 + 0] = base[0 * b_cs];
+        Bp[p * 8 + 1] = base[1 * b_cs];
+        Bp[p * 8 + 2] = base[2 * b_cs];
+        Bp[p * 8 + 3] = base[3 * b_cs];
+        Bp[p * 8 + 4] = base[4 * b_cs];
+        Bp[p * 8 + 5] = base[5 * b_cs];
+        Bp[p * 8 + 6] = base[6 * b_cs];
+        Bp[p * 8 + 7] = base[7 * b_cs];
+      }
+    }
+
+    for ( usize i = 0; i + 4 &lt;= m; i += 4 ) {
+      const __packed_f64 *a0p = A + ssize_t(i + 0) * a_rs;
+      const __packed_f64 *a1p = A + ssize_t(i + 1) * a_rs;
+      const __packed_f64 *a2p = A + ssize_t(i + 2) * a_rs;
+      const __packed_f64 *a3p = A + ssize_t(i + 3) * a_rs;
+
+      __m256d c00 = simd::avx::zero_f64(), c01 = simd::avx::zero_f64();
+      __m256d c10 = simd::avx::zero_f64(), c11 = simd::avx::zero_f64();
+      __m256d c20 = simd::avx::zero_f64(), c21 = simd::avx::zero_f64();
+      __m256d c30 = simd::avx::zero_f64(), c31 = simd::avx::zero_f64();
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const __m256d b0 = simd::avx::load_f64(Bp + p * 8 + 0);
+        const __m256d b1 = simd::avx::load_f64(Bp + p * 8 + 4);
+        const __m256d a0 = simd::avx::splat_f64(a0p[ssize_t(p) * a_cs]);
+        const __m256d a1 = simd::avx::splat_f64(a1p[ssize_t(p) * a_cs]);
+        c00 = simd::fma::fma_f64(a0, b0, c00);
+        c01 = simd::fma::fma_f64(a0, b1, c01);
+        c10 = simd::fma::fma_f64(a1, b0, c10);
+        c11 = simd::fma::fma_f64(a1, b1, c11);
+        const __m256d a2 = simd::avx::splat_f64(a2p[ssize_t(p) * a_cs]);
+        const __m256d a3 = simd::avx::splat_f64(a3p[ssize_t(p) * a_cs]);
+        c20 = simd::fma::fma_f64(a2, b0, c20);
+        c21 = simd::fma::fma_f64(a2, b1, c21);
+        c30 = simd::fma::fma_f64(a3, b0, c30);
+        c31 = simd::fma::fma_f64(a3, b1, c31);
+      }
+      __packed_f64 *r0 = C + ssize_t(i + 0) * rs_C + ssize_t(j);
+      __packed_f64 *r1 = C + ssize_t(i + 1) * rs_C + ssize_t(j);
+      __packed_f64 *r2 = C + ssize_t(i + 2) * rs_C + ssize_t(j);
+      __packed_f64 *r3 = C + ssize_t(i + 3) * rs_C + ssize_t(j);
+      if ( beta_zero ) {
+        simd::avx::storeu_f64(r0 + 0, simd::avx::mul_f64(valpha, c00));
+        simd::avx::storeu_f64(r0 + 4, simd::avx::mul_f64(valpha, c01));
+        simd::avx::storeu_f64(r1 + 0, simd::avx::mul_f64(valpha, c10));
+        simd::avx::storeu_f64(r1 + 4, simd::avx::mul_f64(valpha, c11));
+        simd::avx::storeu_f64(r2 + 0, simd::avx::mul_f64(valpha, c20));
+        simd::avx::storeu_f64(r2 + 4, simd::avx::mul_f64(valpha, c21));
+        simd::avx::storeu_f64(r3 + 0, simd::avx::mul_f64(valpha, c30));
+        simd::avx::storeu_f64(r3 + 4, simd::avx::mul_f64(valpha, c31));
+      } else if ( beta_one ) {
+        simd::avx::storeu_f64(r0 + 0, simd::fma::fma_f64(valpha, c00, simd::avx::loadu_f64(r0 + 0)));
+        simd::avx::storeu_f64(r0 + 4, simd::fma::fma_f64(valpha, c01, simd::avx::loadu_f64(r0 + 4)));
+        simd::avx::storeu_f64(r1 + 0, simd::fma::fma_f64(valpha, c10, simd::avx::loadu_f64(r1 + 0)));
+        simd::avx::storeu_f64(r1 + 4, simd::fma::fma_f64(valpha, c11, simd::avx::loadu_f64(r1 + 4)));
+        simd::avx::storeu_f64(r2 + 0, simd::fma::fma_f64(valpha, c20, simd::avx::loadu_f64(r2 + 0)));
+        simd::avx::storeu_f64(r2 + 4, simd::fma::fma_f64(valpha, c21, simd::avx::loadu_f64(r2 + 4)));
+        simd::avx::storeu_f64(r3 + 0, simd::fma::fma_f64(valpha, c30, simd::avx::loadu_f64(r3 + 0)));
+        simd::avx::storeu_f64(r3 + 4, simd::fma::fma_f64(valpha, c31, simd::avx::loadu_f64(r3 + 4)));
+      } else {
+        simd::avx::storeu_f64(r0 + 0, simd::fma::fma_f64(valpha, c00, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r0 + 0))));
+        simd::avx::storeu_f64(r0 + 4, simd::fma::fma_f64(valpha, c01, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r0 + 4))));
+        simd::avx::storeu_f64(r1 + 0, simd::fma::fma_f64(valpha, c10, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r1 + 0))));
+        simd::avx::storeu_f64(r1 + 4, simd::fma::fma_f64(valpha, c11, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r1 + 4))));
+        simd::avx::storeu_f64(r2 + 0, simd::fma::fma_f64(valpha, c20, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r2 + 0))));
+        simd::avx::storeu_f64(r2 + 4, simd::fma::fma_f64(valpha, c21, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r2 + 4))));
+        simd::avx::storeu_f64(r3 + 0, simd::fma::fma_f64(valpha, c30, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r3 + 0))));
+        simd::avx::storeu_f64(r3 + 4, simd::fma::fma_f64(valpha, c31, simd::avx::mul_f64(vbeta, simd::avx::loadu_f64(r3 + 4))));
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../simd/aliases/avx.hpp.html#f-5f532602589de650">simd::avx::splat_f64</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../../../simd/aliases/avx.hpp.html#f-edd9b4daadd92b1a">simd::avx::store_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-a016f230dba616d5">simd::avx::loadu_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-1bbef7ccde3bd8e3">simd::avx::zero_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2e369b18a43856c5">simd::avx::load_f64</a>, <a href="../../../simd/aliases/fma.hpp.html#f-47a063f82f2a4521">simd::fma::fma_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-0985bad31a5e9b37">simd::avx::storeu_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2605ffbee71492bd">simd::avx::mul_f64</a>.</p></section><section class="function-entry" id="f-4980dc03f8c05a8e"><h3><code>micron::math::blas::bits::gemm_4x8_avx2_f64_aligned(usize m, usize n, usize k, double alpha, const __packed_f64 *A, ssize_t a_rs, ssize_t a_cs, const __packed_f64 *B,
+                          ssize_t b_rs, ssize_t b_cs, double beta, __packed_f64 *C, ssize_t rs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L834">line 834</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline void
+gemm_4x8_avx2_f64_aligned(usize m, usize n, usize k, double alpha, const __packed_f64 *A, ssize_t a_rs, ssize_t a_cs, const __packed_f64 *B,
+                          ssize_t b_rs, ssize_t b_cs, double beta, __packed_f64 *C, ssize_t rs_C) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>double alpha</code></li><li><code>const __packed_f64 *A</code></li><li><code>ssize_t a_rs</code></li><li><code>ssize_t a_cs</code></li><li><code>const __packed_f64 *B</code></li><li><code>ssize_t b_rs</code></li><li><code>ssize_t b_cs</code></li><li><code>double beta</code></li><li><code>__packed_f64 *C</code></li><li><code>ssize_t rs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline void
+gemm_4x8_avx2_f64_aligned(usize m, usize n, usize k, double alpha, const __packed_f64 *A, ssize_t a_rs, ssize_t a_cs, const __packed_f64 *B,
+                          ssize_t b_rs, ssize_t b_cs, double beta, __packed_f64 *C, ssize_t rs_C) noexcept
+{
+  alignas(32) double Bp[8 * 1024];
+  const __m256d valpha = simd::avx::splat_f64(alpha);
+  const bool beta_zero = (beta == 0.0);
+  const bool beta_one = (beta == 1.0);
+  const __m256d vbeta = simd::avx::splat_f64(beta);
+
+  for ( usize j = 0; j + 8 &lt;= n; j += 8 ) {
+    if ( b_cs == 1 ) {
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const __packed_f64 *src = B + ssize_t(p) * b_rs + ssize_t(j);
+        simd::avx::store_f64(Bp + p * 8 + 0, simd::avx::loadu_f64(src + 0));
+        simd::avx::store_f64(Bp + p * 8 + 4, simd::avx::loadu_f64(src + 4));
+      }
+    } else {
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const __packed_f64 *base = B + ssize_t(p) * b_rs + ssize_t(j) * b_cs;
+        Bp[p * 8 + 0] = base[0 * b_cs];
+        Bp[p * 8 + 1] = base[1 * b_cs];
+        Bp[p * 8 + 2] = base[2 * b_cs];
+        Bp[p * 8 + 3] = base[3 * b_cs];
+        Bp[p * 8 + 4] = base[4 * b_cs];
+        Bp[p * 8 + 5] = base[5 * b_cs];
+        Bp[p * 8 + 6] = base[6 * b_cs];
+        Bp[p * 8 + 7] = base[7 * b_cs];
+      }
+    }
+
+    for ( usize i = 0; i + 4 &lt;= m; i += 4 ) {
+      const __packed_f64 *a0p = A + ssize_t(i + 0) * a_rs;
+      const __packed_f64 *a1p = A + ssize_t(i + 1) * a_rs;
+      const __packed_f64 *a2p = A + ssize_t(i + 2) * a_rs;
+      const __packed_f64 *a3p = A + ssize_t(i + 3) * a_rs;
+
+      __m256d c00 = simd::avx::zero_f64(), c01 = simd::avx::zero_f64();
+      __m256d c10 = simd::avx::zero_f64(), c11 = simd::avx::zero_f64();
+      __m256d c20 = simd::avx::zero_f64(), c21 = simd::avx::zero_f64();
+      __m256d c30 = simd::avx::zero_f64(), c31 = simd::avx::zero_f64();
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const __m256d b0 = simd::avx::load_f64(Bp + p * 8 + 0);
+        const __m256d b1 = simd::avx::load_f64(Bp + p * 8 + 4);
+        const __m256d a0 = simd::avx::splat_f64(a0p[ssize_t(p) * a_cs]);
+        const __m256d a1 = simd::avx::splat_f64(a1p[ssize_t(p) * a_cs]);
+        c00 = simd::fma::fma_f64(a0, b0, c00);
+        c01 = simd::fma::fma_f64(a0, b1, c01);
+        c10 = simd::fma::fma_f64(a1, b0, c10);
+        c11 = simd::fma::fma_f64(a1, b1, c11);
+        const __m256d a2 = simd::avx::splat_f64(a2p[ssize_t(p) * a_cs]);
+        const __m256d a3 = simd::avx::splat_f64(a3p[ssize_t(p) * a_cs]);
+        c20 = simd::fma::fma_f64(a2, b0, c20);
+        c21 = simd::fma::fma_f64(a2, b1, c21);
+        c30 = simd::fma::fma_f64(a3, b0, c30);
+        c31 = simd::fma::fma_f64(a3, b1, c31);
+      }
+      __packed_f64 *r0 = C + ssize_t(i + 0) * rs_C + ssize_t(j);
+      __packed_f64 *r1 = C + ssize_t(i + 1) * rs_C + ssize_t(j);
+      __packed_f64 *r2 = C + ssize_t(i + 2) * rs_C + ssize_t(j);
+      __packed_f64 *r3 = C + ssize_t(i + 3) * rs_C + ssize_t(j);
+      if ( beta_zero ) {
+        simd::avx::store_f64(r0 + 0, simd::avx::mul_f64(valpha, c00));
+        simd::avx::store_f64(r0 + 4, simd::avx::mul_f64(valpha, c01));
+        simd::avx::store_f64(r1 + 0, simd::avx::mul_f64(valpha, c10));
+        simd::avx::store_f64(r1 + 4, simd::avx::mul_f64(valpha, c11));
+        simd::avx::store_f64(r2 + 0, simd::avx::mul_f64(valpha, c20));
+        simd::avx::store_f64(r2 + 4, simd::avx::mul_f64(valpha, c21));
+        simd::avx::store_f64(r3 + 0, simd::avx::mul_f64(valpha, c30));
+        simd::avx::store_f64(r3 + 4, simd::avx::mul_f64(valpha, c31));
+      } else if ( beta_one ) {
+        simd::avx::store_f64(r0 + 0, simd::fma::fma_f64(valpha, c00, simd::avx::load_f64(r0 + 0)));
+        simd::avx::store_f64(r0 + 4, simd::fma::fma_f64(valpha, c01, simd::avx::load_f64(r0 + 4)));
+        simd::avx::store_f64(r1 + 0, simd::fma::fma_f64(valpha, c10, simd::avx::load_f64(r1 + 0)));
+        simd::avx::store_f64(r1 + 4, simd::fma::fma_f64(valpha, c11, simd::avx::load_f64(r1 + 4)));
+        simd::avx::store_f64(r2 + 0, simd::fma::fma_f64(valpha, c20, simd::avx::load_f64(r2 + 0)));
+        simd::avx::store_f64(r2 + 4, simd::fma::fma_f64(valpha, c21, simd::avx::load_f64(r2 + 4)));
+        simd::avx::store_f64(r3 + 0, simd::fma::fma_f64(valpha, c30, simd::avx::load_f64(r3 + 0)));
+        simd::avx::store_f64(r3 + 4, simd::fma::fma_f64(valpha, c31, simd::avx::load_f64(r3 + 4)));
+      } else {
+        simd::avx::store_f64(r0 + 0, simd::fma::fma_f64(valpha, c00, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r0 + 0))));
+        simd::avx::store_f64(r0 + 4, simd::fma::fma_f64(valpha, c01, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r0 + 4))));
+        simd::avx::store_f64(r1 + 0, simd::fma::fma_f64(valpha, c10, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r1 + 0))));
+        simd::avx::store_f64(r1 + 4, simd::fma::fma_f64(valpha, c11, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r1 + 4))));
+        simd::avx::store_f64(r2 + 0, simd::fma::fma_f64(valpha, c20, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r2 + 0))));
+        simd::avx::store_f64(r2 + 4, simd::fma::fma_f64(valpha, c21, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r2 + 4))));
+        simd::avx::store_f64(r3 + 0, simd::fma::fma_f64(valpha, c30, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r3 + 0))));
+        simd::avx::store_f64(r3 + 4, simd::fma::fma_f64(valpha, c31, simd::avx::mul_f64(vbeta, simd::avx::load_f64(r3 + 4))));
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../simd/aliases/avx.hpp.html#f-5f532602589de650">simd::avx::splat_f64</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="../../../simd/aliases/avx.hpp.html#f-edd9b4daadd92b1a">simd::avx::store_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-a016f230dba616d5">simd::avx::loadu_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-1bbef7ccde3bd8e3">simd::avx::zero_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2e369b18a43856c5">simd::avx::load_f64</a>, <a href="../../../simd/aliases/fma.hpp.html#f-47a063f82f2a4521">simd::fma::fma_f64</a>, <a href="../../../simd/aliases/avx.hpp.html#f-2605ffbee71492bd">simd::avx::mul_f64</a>.</p></section><section class="function-entry" id="f-1b2426c09d278e36"><h3><code>micron::math::blas::bits::gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B,
+            ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L932">line 932</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B,
+            ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_kernel(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B,
+            ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+
+  const bool beta_zero = (beta == T(0));
+  const bool beta_one = (beta == T(1));
+
+  // inline 4x8 kernel with no panel packing
+#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)
+  if !consteval {
+    if constexpr ( sizeof(T) == 8 &amp;&amp; ieee754_floating&lt;T&gt; ) {
+      const u64 nflops = u64(m) * u64(n) * u64(k);
+      const bool size_ok = (a_cs == 1) ? (nflops &lt; (256ull * 256ull * 256ull)) : (nflops &lt; (64ull * 64ull * 64ull));
+      if ( size_ok &amp;&amp; cs_C == 1 &amp;&amp; (m % 4u) == 0 &amp;&amp; (n % 8u) == 0 &amp;&amp; k &gt; 0 &amp;&amp; k &lt;= 1024 ) {
+        gemm_4x8_avx2_f64(m, n, k, double(alpha), reinterpret_cast&lt;const __packed_f64 *&gt;(A), a_rs, a_cs,
+                          reinterpret_cast&lt;const __packed_f64 *&gt;(B), b_rs, b_cs, double(beta), reinterpret_cast&lt;__packed_f64 *&gt;(C), rs_C);
+        return;
+      }
+    }
+  }
+#endif
+
+  // packed/blocked path for everything the inline kernel can&#x27;t take or for problems large enough that pack overhead amortizes
+  if !consteval {
+    if ( micron::math::matrix::pack::gemm_should_block_for_layout&lt;T&gt;(m, n, k, b_cs, cs_C) ) {
+      micron::math::matrix::pack::gemm_blocked&lt;T&gt;(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+      return;
+    }
+  }
+
+  // scalar fallback path (very small problems and consteval)
+  for ( usize i = 0; i &lt; m; ++i ) {
+    T *c_row = C + ssize_t(i) * rs_C;
+    const T *a_row = A + ssize_t(i) * a_rs;
+
+    if ( beta_zero ) {
+      if ( cs_C == 1 ) {
+        for ( usize j = 0; j &lt; n; ++j ) c_row[j] = T(0);
+      } else {
+        for ( usize j = 0; j &lt; n; ++j ) c_row[ssize_t(j) * cs_C] = T(0);
+      }
+    } else if ( !beta_one ) {
+      if ( cs_C == 1 ) {
+        for ( usize j = 0; j &lt; n; ++j ) c_row[j] *= beta;
+      } else {
+        for ( usize j = 0; j &lt; n; ++j ) c_row[ssize_t(j) * cs_C] *= beta;
+      }
+    }
+
+    for ( usize p = 0; p &lt; k; ++p ) {
+      const T a = alpha * a_row[ssize_t(p) * a_cs];
+      const T *b_row = B + ssize_t(p) * b_rs;
+      usize j = 0;
+      if ( b_cs == 1 &amp;&amp; cs_C == 1 ) {
+        for ( ; j + 4 &lt;= n; j += 4 ) {
+          c_row[j + 0] = fma_acc&lt;T&gt;(a, b_row[j + 0], c_row[j + 0]);
+          c_row[j + 1] = fma_acc&lt;T&gt;(a, b_row[j + 1], c_row[j + 1]);
+          c_row[j + 2] = fma_acc&lt;T&gt;(a, b_row[j + 2], c_row[j + 2]);
+          c_row[j + 3] = fma_acc&lt;T&gt;(a, b_row[j + 3], c_row[j + 3]);
+        }
+        for ( ; j &lt; n; ++j ) c_row[j] = fma_acc&lt;T&gt;(a, b_row[j], c_row[j]);
+      } else {
+        for ( ; j + 4 &lt;= n; j += 4 ) {
+          T &amp;c0 = c_row[ssize_t(j + 0) * cs_C];
+          T &amp;c1 = c_row[ssize_t(j + 1) * cs_C];
+          T &amp;c2 = c_row[ssize_t(j + 2) * cs_C];
+          T &amp;c3 = c_row[ssize_t(j + 3) * cs_C];
+          c0 = fma_acc&lt;T&gt;(a, b_row[ssize_t(j + 0) * b_cs], c0);
+          c1 = fma_acc&lt;T&gt;(a, b_row[ssize_t(j + 1) * b_cs], c1);
+          c2 = fma_acc&lt;T&gt;(a, b_row[ssize_t(j + 2) * b_cs], c2);
+          c3 = fma_acc&lt;T&gt;(a, b_row[ssize_t(j + 3) * b_cs], c3);
+        }
+        for ( ; j &lt; n; ++j ) {
+          T &amp;cj = c_row[ssize_t(j) * cs_C];
+          cj = fma_acc&lt;T&gt;(a, b_row[ssize_t(j) * b_cs], cj);
+        }
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L952">line 952</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L962">line 962</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="impl.hpp.html#f-c0492d7e16092436">gemm_4x8_avx2_f64</a>, <a href="../../matrix/pack.hpp.html#f-da4af9750c24e630">micron::math::matrix::pack::gemm_should_block_for_layout&lt;T&gt;</a>, <a href="../../matrix/pack.hpp.html#f-88612a64e258adcf">micron::math::matrix::pack::gemm_blocked&lt;T&gt;</a>, <a href="../../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-c9a20d0873e1863a"><h3><code>micron::math::blas::bits::gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                    ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1021">line 1021</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                    ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_kernel_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                    ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+
+#if defined(__micron_x86_avx2) &amp;&amp; defined(__micron_x86_fma)
+  if !consteval {
+    if constexpr ( sizeof(T) == 8 &amp;&amp; ieee754_floating&lt;T&gt; ) {
+      const u64 nflops = u64(m) * u64(n) * u64(k);
+      const bool size_ok = (a_cs == 1) ? (nflops &lt; (256ull * 256ull * 256ull)) : (nflops &lt; (64ull * 64ull * 64ull));
+      if ( size_ok &amp;&amp; cs_C == 1 &amp;&amp; (m % 4u) == 0 &amp;&amp; (n % 8u) == 0 &amp;&amp; k &gt; 0 &amp;&amp; k &lt;= 1024 ) {
+        gemm_4x8_avx2_f64_aligned(m, n, k, double(alpha), reinterpret_cast&lt;const __packed_f64 *&gt;(A), a_rs, a_cs,
+                                  reinterpret_cast&lt;const __packed_f64 *&gt;(B), b_rs, b_cs, double(beta), reinterpret_cast&lt;__packed_f64 *&gt;(C),
+                                  rs_C);
+        return;
+      }
+    }
+  }
+#endif
+
+  if !consteval {
+    if ( micron::math::matrix::pack::gemm_should_block_for_layout&lt;T&gt;(m, n, k, b_cs, cs_C) ) {
+      micron::math::matrix::pack::gemm_blocked_aligned&lt;T&gt;(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+      return;
+    }
+  }
+
+  // Fall back to the unaligned dispatch
+  gemm_kernel&lt;T&gt;(trA, trB, m, n, k, alpha, A, rs_A, cs_A, B, rs_B, cs_B, beta, C, rs_C, cs_C);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L1038">line 1038</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/math/blas/bits/impl.hpp.html#L1047">line 1047</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="impl.hpp.html#f-4980dc03f8c05a8e">gemm_4x8_avx2_f64_aligned</a>, <a href="../../matrix/pack.hpp.html#f-da4af9750c24e630">micron::math::matrix::pack::gemm_should_block_for_layout&lt;T&gt;</a>, <a href="../../matrix/pack.hpp.html#f-54add16aeef207c5">micron::math::matrix::pack::gemm_blocked_aligned&lt;T&gt;</a>, <a href="impl.hpp.html#f-1b2426c09d278e36">gemm_kernel&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-c5371b79627ceb23"><h3><code>micron::math::blas::bits::gemm_kernel_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1059">line 1059</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+  micron::math::matrix::pack::gemm_blocked_aligned_exp_a&lt;T&gt;(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../matrix/pack.hpp.html#f-34482952d4938e0d">micron::math::matrix::pack::gemm_blocked_aligned_exp_a&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-da6b808ea2f1698a"><h3><code>micron::math::blas::bits::gemm_kernel_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1071">line 1071</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+  micron::math::matrix::pack::gemm_blocked_aligned_exp_b&lt;T&gt;(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../matrix/pack.hpp.html#f-997b504422fe88a7">micron::math::matrix::pack::gemm_blocked_aligned_exp_b&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-8df957f39758eedb"><h3><code>micron::math::blas::bits::gemm_kernel_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1083">line 1083</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline void
+gemm_kernel_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B,
+                          ssize_t rs_B, ssize_t cs_B, T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  const ssize_t a_rs = trA ? cs_A : rs_A;
+  const ssize_t a_cs = trA ? rs_A : cs_A;
+  const ssize_t b_rs = trB ? cs_B : rs_B;
+  const ssize_t b_cs = trB ? rs_B : cs_B;
+  micron::math::matrix::pack::gemm_blocked_aligned_exp_c&lt;T&gt;(m, n, k, alpha, A, a_rs, a_cs, B, b_rs, b_cs, beta, C, rs_C, cs_C);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../matrix/pack.hpp.html#f-23aebbf5a17dbd6b">micron::math::matrix::pack::gemm_blocked_aligned_exp_c&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-a5fcfe932cdc017a"><h3><code>micron::math::blas::bits::trsm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
+                 ssize_t cs_B) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1097">line 1097</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trsm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
+                 ssize_t cs_B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>bool tr</code></li><li><code>bool unit_diag</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trsm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
+                 ssize_t cs_B) noexcept
+{
+  // pre-scale B by alpha
+  if ( alpha != T(1) ) {
+    for ( usize i = 0; i &lt; m; ++i )
+      for ( usize j = 0; j &lt; n; ++j ) mat_at(B, i, j, rs_B, cs_B) *= alpha;
+  }
+  // solve column by column
+  for ( usize j = 0; j &lt; n; ++j ) {
+    if ( !tr ) {
+      if ( upper ) {
+        for ( usize ii = m; ii-- &gt; 0; ) {
+          T s = mat_at(B, ii, j, rs_B, cs_B);
+          for ( usize p = ii + 1; p &lt; m; ++p ) s -= mat_at(A, ii, p, rs_A, cs_A) * mat_at(B, p, j, rs_B, cs_B);
+          if ( !unit_diag ) s /= mat_at(A, ii, ii, rs_A, cs_A);
+          mat_at(B, ii, j, rs_B, cs_B) = s;
+        }
+      } else {
+        for ( usize i = 0; i &lt; m; ++i ) {
+          T s = mat_at(B, i, j, rs_B, cs_B);
+          for ( usize p = 0; p &lt; i; ++p ) s -= mat_at(A, i, p, rs_A, cs_A) * mat_at(B, p, j, rs_B, cs_B);
+          if ( !unit_diag ) s /= mat_at(A, i, i, rs_A, cs_A);
+          mat_at(B, i, j, rs_B, cs_B) = s;
+        }
+      }
+    } else {
+      if ( upper ) {
+        for ( usize i = 0; i &lt; m; ++i ) {
+          T s = mat_at(B, i, j, rs_B, cs_B);
+          for ( usize p = 0; p &lt; i; ++p ) s -= mat_at(A, p, i, rs_A, cs_A) * mat_at(B, p, j, rs_B, cs_B);
+          if ( !unit_diag ) s /= mat_at(A, i, i, rs_A, cs_A);
+          mat_at(B, i, j, rs_B, cs_B) = s;
+        }
+      } else {
+        for ( usize ii = m; ii-- &gt; 0; ) {
+          T s = mat_at(B, ii, j, rs_B, cs_B);
+          for ( usize p = ii + 1; p &lt; m; ++p ) s -= mat_at(A, p, ii, rs_A, cs_A) * mat_at(B, p, j, rs_B, cs_B);
+          if ( !unit_diag ) s /= mat_at(A, ii, ii, rs_A, cs_A);
+          mat_at(B, ii, j, rs_B, cs_B) = s;
+        }
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>.</p></section><section class="function-entry" id="f-ac05794323b11ffd"><h3><code>micron::math::blas::bits::trsm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
+                  ssize_t rs_B, ssize_t cs_B) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1145">line 1145</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trsm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
+                  ssize_t rs_B, ssize_t cs_B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>bool tr</code></li><li><code>bool unit_diag</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trsm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
+                  ssize_t rs_B, ssize_t cs_B) noexcept
+{
+  if ( alpha != T(1) ) {
+    for ( usize i = 0; i &lt; m; ++i )
+      for ( usize j = 0; j &lt; n; ++j ) mat_at(B, i, j, rs_B, cs_B) *= alpha;
+  }
+  // solve row by row
+  for ( usize i = 0; i &lt; m; ++i ) {
+    if ( !tr ) {
+      if ( upper ) {
+        for ( usize j = 0; j &lt; n; ++j ) {
+          T s = mat_at(B, i, j, rs_B, cs_B);
+          for ( usize p = 0; p &lt; j; ++p ) s -= mat_at(B, i, p, rs_B, cs_B) * mat_at(A, p, j, rs_A, cs_A);
+          if ( !unit_diag ) s /= mat_at(A, j, j, rs_A, cs_A);
+          mat_at(B, i, j, rs_B, cs_B) = s;
+        }
+      } else {
+        for ( usize jj = n; jj-- &gt; 0; ) {
+          T s = mat_at(B, i, jj, rs_B, cs_B);
+          for ( usize p = jj + 1; p &lt; n; ++p ) s -= mat_at(B, i, p, rs_B, cs_B) * mat_at(A, p, jj, rs_A, cs_A);
+          if ( !unit_diag ) s /= mat_at(A, jj, jj, rs_A, cs_A);
+          mat_at(B, i, jj, rs_B, cs_B) = s;
+        }
+      }
+    } else {
+      if ( upper ) {
+        for ( usize jj = n; jj-- &gt; 0; ) {
+          T s = mat_at(B, i, jj, rs_B, cs_B);
+          for ( usize p = jj + 1; p &lt; n; ++p ) s -= mat_at(B, i, p, rs_B, cs_B) * mat_at(A, jj, p, rs_A, cs_A);
+          if ( !unit_diag ) s /= mat_at(A, jj, jj, rs_A, cs_A);
+          mat_at(B, i, jj, rs_B, cs_B) = s;
+        }
+      } else {
+        for ( usize j = 0; j &lt; n; ++j ) {
+          T s = mat_at(B, i, j, rs_B, cs_B);
+          for ( usize p = 0; p &lt; j; ++p ) s -= mat_at(B, i, p, rs_B, cs_B) * mat_at(A, j, p, rs_A, cs_A);
+          if ( !unit_diag ) s /= mat_at(A, j, j, rs_A, cs_A);
+          mat_at(B, i, j, rs_B, cs_B) = s;
+        }
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>.</p></section><section class="function-entry" id="f-f29e8867d6c0ed6a"><h3><code>micron::math::blas::bits::trmm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
+                 ssize_t cs_B) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1195">line 1195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trmm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
+                 ssize_t cs_B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>bool tr</code></li><li><code>bool unit_diag</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trmm_left_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B, ssize_t rs_B,
+                 ssize_t cs_B) noexcept
+{
+  for ( usize j = 0; j &lt; n; ++j ) {
+    if ( !tr ) {
+      if ( upper ) {
+        for ( usize i = 0; i &lt; m; ++i ) {
+          T s{};
+          const T diag = unit_diag ? T(1) : mat_at(A, i, i, rs_A, cs_A);
+          s = diag * mat_at(B, i, j, rs_B, cs_B);
+          for ( usize p = i + 1; p &lt; m; ++p ) s = fma_acc&lt;T&gt;(mat_at(A, i, p, rs_A, cs_A), mat_at(B, p, j, rs_B, cs_B), s);
+          mat_at(B, i, j, rs_B, cs_B) = alpha * s;
+        }
+      } else {
+        for ( usize ii = m; ii-- &gt; 0; ) {
+          T s{};
+          const T diag = unit_diag ? T(1) : mat_at(A, ii, ii, rs_A, cs_A);
+          s = diag * mat_at(B, ii, j, rs_B, cs_B);
+          for ( usize p = 0; p &lt; ii; ++p ) s = fma_acc&lt;T&gt;(mat_at(A, ii, p, rs_A, cs_A), mat_at(B, p, j, rs_B, cs_B), s);
+          mat_at(B, ii, j, rs_B, cs_B) = alpha * s;
+        }
+      }
+    } else {
+      if ( upper ) {
+        for ( usize ii = m; ii-- &gt; 0; ) {
+          T s{};
+          const T diag = unit_diag ? T(1) : mat_at(A, ii, ii, rs_A, cs_A);
+          s = diag * mat_at(B, ii, j, rs_B, cs_B);
+          for ( usize p = 0; p &lt; ii; ++p ) s = fma_acc&lt;T&gt;(mat_at(A, p, ii, rs_A, cs_A), mat_at(B, p, j, rs_B, cs_B), s);
+          mat_at(B, ii, j, rs_B, cs_B) = alpha * s;
+        }
+      } else {
+        for ( usize i = 0; i &lt; m; ++i ) {
+          T s{};
+          const T diag = unit_diag ? T(1) : mat_at(A, i, i, rs_A, cs_A);
+          s = diag * mat_at(B, i, j, rs_B, cs_B);
+          for ( usize p = i + 1; p &lt; m; ++p ) s = fma_acc&lt;T&gt;(mat_at(A, p, i, rs_A, cs_A), mat_at(B, p, j, rs_B, cs_B), s);
+          mat_at(B, i, j, rs_B, cs_B) = alpha * s;
+        }
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-04bd15862fe2877e"><h3><code>micron::math::blas::bits::trmm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
+                  ssize_t rs_B, ssize_t cs_B) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1241">line 1241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trmm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
+                  ssize_t rs_B, ssize_t cs_B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>bool tr</code></li><li><code>bool unit_diag</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+trmm_right_kernel(bool upper, bool tr, bool unit_diag, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T *B,
+                  ssize_t rs_B, ssize_t cs_B) noexcept
+{
+  for ( usize i = 0; i &lt; m; ++i ) {
+    if ( !tr ) {
+      if ( upper ) {
+        for ( usize jj = n; jj-- &gt; 0; ) {
+          T s{};
+          const T diag = unit_diag ? T(1) : mat_at(A, jj, jj, rs_A, cs_A);
+          s = mat_at(B, i, jj, rs_B, cs_B) * diag;
+          for ( usize p = 0; p &lt; jj; ++p ) s = fma_acc&lt;T&gt;(mat_at(B, i, p, rs_B, cs_B), mat_at(A, p, jj, rs_A, cs_A), s);
+          mat_at(B, i, jj, rs_B, cs_B) = alpha * s;
+        }
+      } else {
+        for ( usize j = 0; j &lt; n; ++j ) {
+          T s{};
+          const T diag = unit_diag ? T(1) : mat_at(A, j, j, rs_A, cs_A);
+          s = mat_at(B, i, j, rs_B, cs_B) * diag;
+          for ( usize p = j + 1; p &lt; n; ++p ) s = fma_acc&lt;T&gt;(mat_at(B, i, p, rs_B, cs_B), mat_at(A, p, j, rs_A, cs_A), s);
+          mat_at(B, i, j, rs_B, cs_B) = alpha * s;
+        }
+      }
+    } else {
+      if ( upper ) {
+        for ( usize j = 0; j &lt; n; ++j ) {
+          T s{};
+          const T diag = unit_diag ? T(1) : mat_at(A, j, j, rs_A, cs_A);
+          s = mat_at(B, i, j, rs_B, cs_B) * diag;
+          for ( usize p = j + 1; p &lt; n; ++p ) s = fma_acc&lt;T&gt;(mat_at(B, i, p, rs_B, cs_B), mat_at(A, j, p, rs_A, cs_A), s);
+          mat_at(B, i, j, rs_B, cs_B) = alpha * s;
+        }
+      } else {
+        for ( usize jj = n; jj-- &gt; 0; ) {
+          T s{};
+          const T diag = unit_diag ? T(1) : mat_at(A, jj, jj, rs_A, cs_A);
+          s = mat_at(B, i, jj, rs_B, cs_B) * diag;
+          for ( usize p = 0; p &lt; jj; ++p ) s = fma_acc&lt;T&gt;(mat_at(B, i, p, rs_B, cs_B), mat_at(A, jj, p, rs_A, cs_A), s);
+          mat_at(B, i, jj, rs_B, cs_B) = alpha * s;
+        }
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-7fca1bc75e421f60"><h3><code>micron::math::blas::bits::syrk_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T beta, T *C, ssize_t rs_C,
+            ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1289">line 1289</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+syrk_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T beta, T *C, ssize_t rs_C,
+            ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>bool tr</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+syrk_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, T beta, T *C, ssize_t rs_C,
+            ssize_t cs_C) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) {
+    const usize j_lo = upper ? i : 0;
+    const usize j_hi = upper ? n : (i + 1);
+    for ( usize j = j_lo; j &lt; j_hi; ++j ) {
+      T acc{};
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const T a = tr ? mat_at(A, p, i, rs_A, cs_A) : mat_at(A, i, p, rs_A, cs_A);
+        const T b = tr ? mat_at(A, p, j, rs_A, cs_A) : mat_at(A, j, p, rs_A, cs_A);
+        acc = fma_acc&lt;T&gt;(a, b, acc);
+      }
+      T &amp;cij = mat_at(C, i, j, rs_C, cs_C);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = fma_acc&lt;T&gt;(alpha, acc, cij);
+      else
+        cij = fma_acc&lt;T&gt;(alpha, acc, beta * cij);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-ad00034a9ae5e828"><h3><code>micron::math::blas::bits::syr2k_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+             T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1317">line 1317</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+syr2k_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+             T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>bool tr</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+syr2k_kernel(bool upper, bool tr, usize n, usize k, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+             T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) {
+    const usize j_lo = upper ? i : 0;
+    const usize j_hi = upper ? n : (i + 1);
+    for ( usize j = j_lo; j &lt; j_hi; ++j ) {
+      T acc{};
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const T ai = tr ? mat_at(A, p, i, rs_A, cs_A) : mat_at(A, i, p, rs_A, cs_A);
+        const T bj = tr ? mat_at(B, p, j, rs_B, cs_B) : mat_at(B, j, p, rs_B, cs_B);
+        const T aj = tr ? mat_at(A, p, j, rs_A, cs_A) : mat_at(A, j, p, rs_A, cs_A);
+        const T bi = tr ? mat_at(B, p, i, rs_B, cs_B) : mat_at(B, i, p, rs_B, cs_B);
+        acc = fma_acc&lt;T&gt;(ai, bj, acc);
+        acc = fma_acc&lt;T&gt;(aj, bi, acc);
+      }
+      T &amp;cij = mat_at(C, i, j, rs_C, cs_C);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = fma_acc&lt;T&gt;(alpha, acc, cij);
+      else
+        cij = fma_acc&lt;T&gt;(alpha, acc, beta * cij);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>, <a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-f898f9f09d0e120e"><h3><code>micron::math::blas::bits::symm_left_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+                 T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1346">line 1346</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+symm_left_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+                 T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+symm_left_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+                 T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  for ( usize i = 0; i &lt; m; ++i ) {
+    for ( usize j = 0; j &lt; n; ++j ) {
+      T acc{};
+      for ( usize p = 0; p &lt; m; ++p ) {
+        const usize r = (upper ? (i &lt;= p ? i : p) : (i &gt;= p ? i : p));
+        const usize c = (upper ? (i &lt;= p ? p : i) : (i &gt;= p ? p : i));
+        acc = fma_acc&lt;T&gt;(mat_at(A, r, c, rs_A, cs_A), mat_at(B, p, j, rs_B, cs_B), acc);
+      }
+      T &amp;cij = mat_at(C, i, j, rs_C, cs_C);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = fma_acc&lt;T&gt;(alpha, acc, cij);
+      else
+        cij = fma_acc&lt;T&gt;(alpha, acc, beta * cij);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>, <a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>.</p></section><section class="function-entry" id="f-156f45b95eac2582"><h3><code>micron::math::blas::bits::symm_right_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+                  T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</code></h3><p>Defined in <code>math/blas/bits/impl.hpp</code>, <a href="../../../../source/math/blas/bits/impl.hpp.html#L1370">line 1370</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+symm_right_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+                  T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool upper</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>ssize_t rs_A</code></li><li><code>ssize_t cs_A</code></li><li><code>const T *B</code></li><li><code>ssize_t rs_B</code></li><li><code>ssize_t cs_B</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>ssize_t rs_C</code></li><li><code>ssize_t cs_C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[gnu::flatten]] inline constexpr void
+symm_right_kernel(bool upper, usize m, usize n, T alpha, const T *A, ssize_t rs_A, ssize_t cs_A, const T *B, ssize_t rs_B, ssize_t cs_B,
+                  T beta, T *C, ssize_t rs_C, ssize_t cs_C) noexcept
+{
+  for ( usize i = 0; i &lt; m; ++i ) {
+    for ( usize j = 0; j &lt; n; ++j ) {
+      T acc{};
+      for ( usize p = 0; p &lt; n; ++p ) {
+        const usize r = (upper ? (p &lt;= j ? p : j) : (p &gt;= j ? p : j));
+        const usize c = (upper ? (p &lt;= j ? j : p) : (p &gt;= j ? j : p));
+        acc = fma_acc&lt;T&gt;(mat_at(B, i, p, rs_B, cs_B), mat_at(A, r, c, rs_A, cs_A), acc);
+      }
+      T &amp;cij = mat_at(C, i, j, rs_C, cs_C);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = fma_acc&lt;T&gt;(alpha, acc, cij);
+      else
+        cij = fma_acc&lt;T&gt;(alpha, acc, beta * cij);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="impl.hpp.html#f-53d7e867428ab4f6">fma_acc&lt;T&gt;</a>, <a href="impl.hpp.html#f-1e79a4e118d9d07d">mat_at</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

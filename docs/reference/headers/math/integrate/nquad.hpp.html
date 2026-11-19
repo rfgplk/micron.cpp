@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/integrate/nquad.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/integrate/nquad.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/integrate.html">Integration</a></div><p>Defined in header <code>&lt;micron/math/integrate/nquad.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/integrate/nquad.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-c7a70188707bf221">micron::math::integrate::nquad(Fn f, const F (&amp;lo)[D], const F (&amp;hi)[D], F atol, F rtol, usize max_depth = 30) noexcept</a></td><td>function; line 54</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-c7a70188707bf221"><h3><code>micron::math::integrate::nquad(Fn f, const F (&amp;lo)[D], const F (&amp;hi)[D], F atol, F rtol, usize max_depth = 30) noexcept</code></h3><p>Defined in <code>math/integrate/nquad.hpp</code>, <a href="../../../source/math/integrate/nquad.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize D, ieee754_floating F, typename Fn&gt;
+  requires(D &gt;= 1)
+[[nodiscard]] inline quad_result&lt;F&gt;
+nquad(Fn f, const F (&amp;lo)[D], const F (&amp;hi)[D], F atol, F rtol, usize max_depth = 30) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn f</code></li><li><code>const F (&amp;lo)[D]</code></li><li><code>const F (&amp;hi)[D]</code></li><li><code>F atol</code></li><li><code>F rtol</code></li><li><code>usize max_depth = 30</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize D, ieee754_floating F, typename Fn&gt;
+  requires(D &gt;= 1)
+[[nodiscard]] inline quad_result&lt;F&gt;
+nquad(Fn f, const F (&amp;lo)[D], const F (&amp;hi)[D], F atol, F rtol, usize max_depth = 30) noexcept
+{
+  quad_result&lt;F&gt; total{};
+  const F per_atol = atol / F(D);
+  const F per_rtol = rtol / F(D);
+
+  if constexpr ( D == 1 ) {
+    auto fn1 = [&amp;](F xi) noexcept -&gt; F {
+      F xs[1] = { xi };
+      return f(xs);
+    };
+    return quad&lt;F&gt;(fn1, lo[0], hi[0], atol, rtol, max_depth);
+  } else {
+    F x[D]{};
+    quad_result&lt;F&gt; q = __impl_nquad::nquad_impl&lt;D, 0, F&gt;(f, x, lo, hi, per_atol, per_rtol, max_depth, total);
+    total.value = q.value;
+    total.abs_err = q.abs_err;
+    total.n_evals += q.n_evals;
+    if ( q.status != quad_status::ok ) total.status = q.status;
+    return total;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quad&lt;F&gt;(fn1, lo[0], hi[0], atol, rtol, max_depth)</code></td><td><a href="../../../source/math/integrate/nquad.hpp.html#L65">line 65</a></td></tr><tr class="t-dsc"><td><code>total</code></td><td><a href="../../../source/math/integrate/nquad.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quad.hpp.html#f-d4f7dd11c56e7017">quad&lt;F&gt;</a>, <a href="nquad.hpp.html#f-e873dcaaca7a7eac">__impl_nquad::nquad_impl&lt;D, 0, F&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e873dcaaca7a7eac"><h3><code>micron::math::integrate::__impl_nquad::nquad_impl(Fn &amp;f, F (&amp;x)[D], const F (&amp;lo)[D], const F (&amp;hi)[D], F atol, F rtol, usize max_depth, quad_result&lt;F&gt; &amp;acc) noexcept</code></h3><p>Defined in <code>math/integrate/nquad.hpp</code>, <a href="../../../source/math/integrate/nquad.hpp.html#L27">line 27</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize D, usize Fixed, ieee754_floating F, typename Fn&gt;
+inline quad_result&lt;F&gt;
+nquad_impl(Fn &amp;f, F (&amp;x)[D], const F (&amp;lo)[D], const F (&amp;hi)[D], F atol, F rtol, usize max_depth, quad_result&lt;F&gt; &amp;acc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;f</code></li><li><code>F (&amp;x)[D]</code></li><li><code>const F (&amp;lo)[D]</code></li><li><code>const F (&amp;hi)[D]</code></li><li><code>F atol</code></li><li><code>F rtol</code></li><li><code>usize max_depth</code></li><li><code>quad_result&lt;F&gt; &amp;acc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize D, usize Fixed, ieee754_floating F, typename Fn&gt;
+inline quad_result&lt;F&gt;
+nquad_impl(Fn &amp;f, F (&amp;x)[D], const F (&amp;lo)[D], const F (&amp;hi)[D], F atol, F rtol, usize max_depth, quad_result&lt;F&gt; &amp;acc) noexcept
+{
+  if constexpr ( Fixed == D ) {
+    quad_result&lt;F&gt; r{};
+    r.value = f(x);
+    return r;
+  } else {
+    auto outer_fn = [&amp;](F xi) noexcept -&gt; F {
+      x[Fixed] = xi;
+      if constexpr ( Fixed + 1 == D ) {
+        return f(x);
+      } else {
+        quad_result&lt;F&gt; inner = nquad_impl&lt;D, Fixed + 1, F&gt;(f, x, lo, hi, atol, rtol, max_depth, acc);
+        acc.n_evals += inner.n_evals;
+        if ( inner.status != quad_status::ok ) acc.status = inner.status;
+        return inner.value;
+      }
+    };
+    return quad&lt;F&gt;(outer_fn, lo[Fixed], hi[Fixed], atol, rtol, max_depth);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/integrate/nquad.hpp.html#L32">line 32</a></td></tr><tr class="t-dsc"><td><code>quad&lt;F&gt;(outer_fn, lo[Fixed], hi[Fixed], atol, rtol, max_depth)</code></td><td><a href="../../../source/math/integrate/nquad.hpp.html#L45">line 45</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="quad.hpp.html#f-d4f7dd11c56e7017">quad&lt;F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

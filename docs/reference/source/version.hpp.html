@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>version.hpp source - micron reference</title>
+<link rel="stylesheet" href="../assets/cppreference2/screen.css"><link rel="stylesheet" href="../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../index.html">Reference</a> <a href="../headers/index.html">Headers</a> <a href="../functions/index.html">Functions</a> <a href="../symbols/index.html">Symbols</a> <a href="index.html">Source</a> <a href="../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">version.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../headers/version.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #ifndef __MICRON</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #define __MICRON</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #define __MICRONTL</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #endif</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> // reference this for exact ABI compatibility rather than the VERSIONs below</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> constexpr static const int MICRON_ABI = 9;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> // not bumping the abi even though large mutex changes have been applied, they are generally backwards compatible(ish)</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> </span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> constexpr static const int MICRON_VERSION_MAJOR = 0x1000;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> constexpr static const int MICRON_VERSION_MINOR = 0x0A00;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> constexpr static const int MICRON_VERSION_PATCH = 0x0020;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> constexpr static const int MICRON_VERSION_HOTFIX = 0x0000;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> </span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> enum kernel_support : int { kernel_linux = 0, kernel_darwin = 1, kernel_obsd, kernel_netbsd, kernel_freebsd, kernel_none };</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> </span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> constexpr static const int MICRON_KERNEL_TYPE = kernel_linux;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> </span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> template&lt;int __major, int __minor, int __patch&gt;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> constexpr bool</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> is_version()</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> {</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>   if constexpr ( __major == MICRON_VERSION_MAJOR and __minor == MICRON_VERSION_MINOR and __patch == MICRON_VERSION_PATCH ) return true;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   return false;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> }</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> </span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> template&lt;int __hotfix&gt;</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> constexpr bool</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> is_hotfix()</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> {</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   if constexpr ( __hotfix == MICRON_VERSION_HOTFIX ) return true;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   return false;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> }</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> </span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> constexpr int</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> get_version(void)</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> {</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>   return MICRON_VERSION_MAJOR | MICRON_VERSION_MINOR | MICRON_VERSION_PATCH | MICRON_VERSION_HOTFIX;</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> }</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../about.html">Attribution and licenses</a> · <a href="../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/uxin/virtual.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/uxin/virtual.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/input.html">Input devices</a></div><p>Defined in header <code>&lt;micron/io/uxin/virtual.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/io/uxin/virtual.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-21e800a172a2136f">micron::uxin::make_uinput(void)</a></td><td>function; line 23</td></tr><tr class="t-dsc"><td><a href="#f-7508d06798ec1723">micron::uxin::set_events(const io::fd_t &amp;handle, Args... args)</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-a42e5bcdc15e9ed2">micron::uxin::set_keys(const io::fd_t &amp;handle, Args... args)</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-f54a3fc134e20ad2">micron::uxin::start_device(const io::fd_t &amp;handle, const posix::uinput_setup_t &amp;usetup)</a></td><td>function; line 52</td></tr><tr class="t-dsc"><td><a href="#f-ddc95e64975759a9">micron::uxin::start_device(const io::fd_t &amp;handle, const char *name, u16 vendor, u16 product, u16 version)</a></td><td>function; line 64</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-21e800a172a2136f"><h3><code>micron::uxin::make_uinput(void)</code></h3><p>Defined in <code>io/uxin/virtual.hpp</code>, <a href="../../../source/io/uxin/virtual.hpp.html#L23">line 23</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>io::fd_t
+make_uinput(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">io::fd_t
+make_uinput(void)
+{
+  int r = 0;
+  io::fd_t handle(posix::open(&quot;/dev/uinput&quot;, posix::o_nonblock | posix::o_wronly));
+  if ( handle.has_error() ) set_errno(5);
+  return handle;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>handle</code></td><td><a href="../../../source/io/uxin/virtual.hpp.html#L28">line 28</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/io/sys.hpp.html#f-4489c173fc28797e">posix::open</a>, <a href="../../errno.hpp.html#f-69a7ea7a8abec08b">set_errno</a>.</p></section><section class="function-entry" id="f-7508d06798ec1723"><h3><code>micron::uxin::set_events(const io::fd_t &amp;handle, Args... args)</code></h3><p>Defined in <code>io/uxin/virtual.hpp</code>, <a href="../../../source/io/uxin/virtual.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  requires((micron::is_same_v&lt;Args, byte&gt; &amp;&amp; ...))
+void
+set_events(const io::fd_t &amp;handle, Args... args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const io::fd_t &amp;handle</code></li><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  requires((micron::is_same_v&lt;Args, byte&gt; &amp;&amp; ...))
+void
+set_events(const io::fd_t &amp;handle, Args... args)
+{
+  int r = 0;
+  if ( r = (micron::posix::ioctl(handle.fd, posix::ui_set_evbit(), args), ...); r != 0 ) {
+    set_errno(-r);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../linux/sys/ioctl.hpp.html#f-397124643b12b337">micron::posix::ioctl</a>, <a href="../../linux/sys/input.hpp.html#f-d6eff9de27a41985">posix::ui_set_evbit</a>, <a href="../../errno.hpp.html#f-69a7ea7a8abec08b">set_errno</a>.</p></section><section class="function-entry" id="f-a42e5bcdc15e9ed2"><h3><code>micron::uxin::set_keys(const io::fd_t &amp;handle, Args... args)</code></h3><p>Defined in <code>io/uxin/virtual.hpp</code>, <a href="../../../source/io/uxin/virtual.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  requires((micron::is_same_v&lt;Args, byte&gt; &amp;&amp; ...))
+void
+set_keys(const io::fd_t &amp;handle, Args... args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const io::fd_t &amp;handle</code></li><li><code>Args... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  requires((micron::is_same_v&lt;Args, byte&gt; &amp;&amp; ...))
+void
+set_keys(const io::fd_t &amp;handle, Args... args)
+{
+  int r = 0;
+  if ( r = (micron::posix::ioctl(handle.fd, posix::ui_set_keybit(), args), ...); r != 0 ) set_errno(-r);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../linux/sys/ioctl.hpp.html#f-397124643b12b337">micron::posix::ioctl</a>, <a href="../../linux/sys/input.hpp.html#f-e7375f3d7e9e9c25">posix::ui_set_keybit</a>, <a href="../../errno.hpp.html#f-69a7ea7a8abec08b">set_errno</a>.</p></section><section class="function-entry" id="f-f54a3fc134e20ad2"><h3><code>micron::uxin::start_device(const io::fd_t &amp;handle, const posix::uinput_setup_t &amp;usetup)</code></h3><p>Defined in <code>io/uxin/virtual.hpp</code>, <a href="../../../source/io/uxin/virtual.hpp.html#L52">line 52</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+start_device(const io::fd_t &amp;handle, const posix::uinput_setup_t &amp;usetup)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const io::fd_t &amp;handle</code></li><li><code>const posix::uinput_setup_t &amp;usetup</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+start_device(const io::fd_t &amp;handle, const posix::uinput_setup_t &amp;usetup)
+{
+  int r = 0;
+  if ( r = micron::posix::ioctl(handle.fd, posix::ui_dev_setup(), &amp;usetup); r != 0 ) {
+    set_errno(-r);
+  }
+  if ( r = micron::posix::ioctl(handle.fd, posix::ui_dev_create()); r != 0 ) {
+    set_errno(-r);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../linux/sys/ioctl.hpp.html#f-397124643b12b337">micron::posix::ioctl</a>, <a href="../../linux/sys/input.hpp.html#f-dbe10454752436d7">posix::ui_dev_setup</a>, <a href="../../errno.hpp.html#f-69a7ea7a8abec08b">set_errno</a>, <a href="../../linux/sys/input.hpp.html#f-0566f9f8edbdb902">posix::ui_dev_create</a>.</p></section><section class="function-entry" id="f-ddc95e64975759a9"><h3><code>micron::uxin::start_device(const io::fd_t &amp;handle, const char *name, u16 vendor, u16 product, u16 version)</code></h3><p>Defined in <code>io/uxin/virtual.hpp</code>, <a href="../../../source/io/uxin/virtual.hpp.html#L64">line 64</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+start_device(const io::fd_t &amp;handle, const char *name, u16 vendor, u16 product, u16 version)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const io::fd_t &amp;handle</code></li><li><code>const char *name</code></li><li><code>u16 vendor</code></li><li><code>u16 product</code></li><li><code>u16 version</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+start_device(const io::fd_t &amp;handle, const char *name, u16 vendor, u16 product, u16 version)
+{
+  int r = 0;
+  posix::uinput_setup_t usetup{ .id = { .bustype = posix::bus_usb, .vendor = vendor, .product = product, .version = version },
+                                .name = {},
+                                .ff_effects_max = 0 };
+  for ( usize __i = 0; name[__i] &amp;&amp; __i + 1 &lt; sizeof(usetup.name); ++__i ) usetup.name[__i] = static_cast&lt;u8&gt;(name[__i]);
+  if ( r = micron::posix::ioctl(handle.fd, posix::ui_dev_setup(), &amp;usetup); r != 0 ) {
+    set_errno(-r);
+  }
+  if ( r = micron::posix::ioctl(handle.fd, posix::ui_dev_create()); r != 0 ) {
+    set_errno(-r);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../linux/sys/ioctl.hpp.html#f-397124643b12b337">micron::posix::ioctl</a>, <a href="../../linux/sys/input.hpp.html#f-dbe10454752436d7">posix::ui_dev_setup</a>, <a href="../../errno.hpp.html#f-69a7ea7a8abec08b">set_errno</a>, <a href="../../linux/sys/input.hpp.html#f-0566f9f8edbdb902">posix::ui_dev_create</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

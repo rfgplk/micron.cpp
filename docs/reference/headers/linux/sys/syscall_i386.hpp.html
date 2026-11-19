@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/sys/syscall_i386.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/sys/syscall_i386.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/sys/syscall_i386.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/sys/syscall_i386.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-3df41d8fa3e27ef5">micron::syscall(long int __n, Args... __args) noexcept</a></td><td>function; line 219</td></tr><tr class="t-dsc"><td><a href="#f-0fcdda504c9eb941">micron::syscall_failed(long int __r) noexcept</a></td><td>function; line 227</td></tr><tr class="t-dsc"><td><a href="#f-977d917afabf0736">micron::syscall_errno(long int __r) noexcept</a></td><td>function; line 233</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-3df41d8fa3e27ef5"><h3><code>micron::syscall(long int __n, Args... __args) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L219">line 219</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__impl::__syscall_arg... Args&gt;
+  requires(__impl::__count_slots&lt;0, Args...&gt;() &lt;= 6)
+inline __attribute__((always_inline)) long int
+syscall(long int __n, Args... __args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>Args... __args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__impl::__syscall_arg... Args&gt;
+  requires(__impl::__count_slots&lt;0, Args...&gt;() &lt;= 6)
+inline __attribute__((always_inline)) long int
+syscall(long int __n, Args... __args) noexcept
+{
+  long int __slots[6] = { 0, 0, 0, 0, 0, 0 };
+  __impl::__fill&lt;0&gt;(__slots, __args...);
+  return __impl::__dispatch&lt;__impl::__count_slots&lt;0, Args...&gt;()&gt;(__n, __slots);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__dispatch&lt;__impl::__count_slots&lt;0, Args...&gt;()&gt;(__n, __slots)</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L223">line 223</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-aeffff22aedb6a3d">__impl::__fill&lt;0&gt;</a>.</p></section><section class="function-entry" id="f-0fcdda504c9eb941"><h3><code>micron::syscall_failed(long int __r) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L227">line 227</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) bool
+syscall_failed(long int __r) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __r</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;unsigned long int&gt;(__r) &gt;= static_cast&lt;unsigned long int&gt;(-4095L)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) bool
+syscall_failed(long int __r) noexcept
+{
+  return static_cast&lt;unsigned long int&gt;(__r) &gt;= static_cast&lt;unsigned long int&gt;(-4095L);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;unsigned long int&gt;(__r) &gt;= static_cast&lt;unsigned long int&gt;(-4095L)</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L229">line 229</a></td></tr></tbody></table></section><section class="function-entry" id="f-977d917afabf0736"><h3><code>micron::syscall_errno(long int __r) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L233">line 233</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) int
+syscall_errno(long int __r) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __r</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;int&gt;(-__r)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) int
+syscall_errno(long int __r) noexcept
+{
+  return static_cast&lt;int&gt;(-__r);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(-__r)</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L235">line 235</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-715605a2340da723"><h3><code>micron::__impl::__coerce(T __v) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L35">line 35</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__syscall_arg T&gt;
+inline __attribute__((always_inline)) long int
+__coerce(T __v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T __v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__syscall_arg T&gt;
+inline __attribute__((always_inline)) long int
+__coerce(T __v) noexcept
+{
+  if constexpr ( micron::is_null_pointer_v&lt;T&gt; )
+    return 0L;
+  else if constexpr ( micron::is_pointer_v&lt;T&gt; )
+    return static_cast&lt;long int&gt;(reinterpret_cast&lt;__tt_size_t&gt;(__v));
+  else
+    return static_cast&lt;long int&gt;(__v);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0L</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L38">line 38</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;long int&gt;(reinterpret_cast&lt;__tt_size_t&gt;(__v))</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L40">line 40</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;long int&gt;(__v)</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L42">line 42</a></td></tr></tbody></table></section><section class="function-entry" id="f-13b234f3a263e112"><h3><code>micron::__impl::__count_slots() noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L47">line 47</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__tt_size_t Slot&gt;
+consteval __tt_size_t
+__count_slots() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>Slot</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__tt_size_t Slot&gt;
+consteval __tt_size_t
+__count_slots() noexcept
+{
+  return Slot;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>Slot</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L49">line 49</a></td></tr></tbody></table></section><section class="function-entry" id="f-cc1ca662a3e555a3"><h3><code>micron::__impl::__count_slots() noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L54">line 54</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__tt_size_t Slot, typename A0, typename... Rest&gt;
+consteval __tt_size_t
+__count_slots() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__tt_size_t Slot, typename A0, typename... Rest&gt;
+consteval __tt_size_t
+__count_slots() noexcept
+{
+  if constexpr ( sizeof(A0) &lt;= sizeof(long int) ) {
+    return __count_slots&lt;Slot + 1, Rest...&gt;();
+  } else {
+    return __count_slots&lt;Slot + 2, Rest...&gt;();
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__count_slots&lt;Slot + 1, Rest...&gt;()</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L57">line 57</a></td></tr><tr class="t-dsc"><td><code>__count_slots&lt;Slot + 2, Rest...&gt;()</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L59">line 59</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-77cd1844c83a10f5">__count_slots&lt;Slot + 1, Rest...&gt;</a>, <a href="syscall_arm32.hpp.html#f-77cd1844c83a10f5">__count_slots&lt;Slot + 2, Rest...&gt;</a>.</p></section><section class="function-entry" id="f-92bc3b0a40502a6f"><h3><code>micron::__impl::__fill(long int *) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L65">line 65</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__tt_size_t Slot&gt;
+constexpr void
+__fill(long int *) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int *</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__tt_size_t Slot&gt;
+constexpr void
+__fill(long int *) noexcept
+{
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-75f25c5aa1f06953"><h3><code>micron::__impl::__fill(long int *__slots, A0 __a0, Rest... __rest) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__tt_size_t Slot, typename A0, typename... Rest&gt;
+constexpr void
+__fill(long int *__slots, A0 __a0, Rest... __rest) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int *__slots</code></li><li><code>A0 __a0</code></li><li><code>Rest... __rest</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__tt_size_t Slot, typename A0, typename... Rest&gt;
+constexpr void
+__fill(long int *__slots, A0 __a0, Rest... __rest) noexcept
+{
+  if constexpr ( sizeof(A0) &lt;= sizeof(long int) ) {
+    __slots[Slot] = __coerce(__a0);
+    __fill&lt;Slot + 1&gt;(__slots, __rest...);
+  } else {
+    unsigned long long __v = static_cast&lt;unsigned long long&gt;(__a0);
+    __slots[Slot] = static_cast&lt;long int&gt;(__v &amp; 0xFFFFFFFFull);
+    __slots[Slot + 1] = static_cast&lt;long int&gt;(__v &gt;&gt; 32);
+    __fill&lt;Slot + 2&gt;(__slots, __rest...);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-ed934d8d32d69a8d">__coerce</a>, <a href="syscall_arm32.hpp.html#f-aeffff22aedb6a3d">__fill&lt;Slot + 1&gt;</a>, <a href="syscall_arm32.hpp.html#f-aeffff22aedb6a3d">__fill&lt;Slot + 2&gt;</a>.</p></section><section class="function-entry" id="f-49b1dca683cf715b"><h3><code>micron::__do_syscall(long int __n) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L87">line 87</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) long int
+__do_syscall(long int __n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) long int
+__do_syscall(long int __n) noexcept
+{
+  long int __r;
+  asm volatile(&quot;int $0x80&quot; : &quot;=a&quot;(__r) : &quot;0&quot;(__n) : &quot;memory&quot;, &quot;cc&quot;);
+  return __r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__r</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L91">line 91</a></td></tr></tbody></table></section><section class="function-entry" id="f-5a8d4fddd1cf9c5e"><h3><code>micron::__do_syscall(long int __n, long int __a1) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L95">line 95</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>long int __a1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1) noexcept
+{
+  long int __r;
+  asm volatile(&quot;xchgl %%ebx, %[a1]\n\t&quot;
+               &quot;int   $0x80\n\t&quot;
+               &quot;xchgl %%ebx, %[a1]&quot;
+               : &quot;=a&quot;(__r), [a1] &quot;+r&quot;(__a1)
+               : &quot;0&quot;(__n)
+               : &quot;memory&quot;, &quot;cc&quot;);
+  return __r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__r</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L104">line 104</a></td></tr></tbody></table></section><section class="function-entry" id="f-8d2b0949d31ba58f"><h3><code>micron::__do_syscall(long int __n, long int __a1, long int __a2) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L108">line 108</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>long int __a1</code></li><li><code>long int __a2</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2) noexcept
+{
+  long int __r;
+  register long int __r2 asm(&quot;ecx&quot;) = __a2;
+  asm volatile(&quot;xchgl %%ebx, %[a1]\n\t&quot;
+               &quot;int   $0x80\n\t&quot;
+               &quot;xchgl %%ebx, %[a1]&quot;
+               : &quot;=a&quot;(__r), [a1] &quot;+r&quot;(__a1)
+               : &quot;0&quot;(__n), &quot;r&quot;(__r2)
+               : &quot;memory&quot;, &quot;cc&quot;);
+  return __r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__r</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L118">line 118</a></td></tr></tbody></table></section><section class="function-entry" id="f-6b9975722330122a"><h3><code>micron::__do_syscall(long int __n, long int __a1, long int __a2, long int __a3) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L122">line 122</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2, long int __a3) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>long int __a1</code></li><li><code>long int __a2</code></li><li><code>long int __a3</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2, long int __a3) noexcept
+{
+  long int __r;
+  register long int __r2 asm(&quot;ecx&quot;) = __a2;
+  register long int __r3 asm(&quot;edx&quot;) = __a3;
+  asm volatile(&quot;xchgl %%ebx, %[a1]\n\t&quot;
+               &quot;int   $0x80\n\t&quot;
+               &quot;xchgl %%ebx, %[a1]&quot;
+               : &quot;=a&quot;(__r), [a1] &quot;+r&quot;(__a1)
+               : &quot;0&quot;(__n), &quot;r&quot;(__r2), &quot;r&quot;(__r3)
+               : &quot;memory&quot;, &quot;cc&quot;);
+  return __r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__r</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L133">line 133</a></td></tr></tbody></table></section><section class="function-entry" id="f-a600a46bc9225af0"><h3><code>micron::__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L137">line 137</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>long int __a1</code></li><li><code>long int __a2</code></li><li><code>long int __a3</code></li><li><code>long int __a4</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4) noexcept
+{
+  long int __r;
+  register long int __r2 asm(&quot;ecx&quot;) = __a2;
+  register long int __r3 asm(&quot;edx&quot;) = __a3;
+  register long int __r4 asm(&quot;esi&quot;) = __a4;
+  asm volatile(&quot;xchgl %%ebx, %[a1]\n\t&quot;
+               &quot;int   $0x80\n\t&quot;
+               &quot;xchgl %%ebx, %[a1]&quot;
+               : &quot;=a&quot;(__r), [a1] &quot;+r&quot;(__a1)
+               : &quot;0&quot;(__n), &quot;r&quot;(__r2), &quot;r&quot;(__r3), &quot;r&quot;(__r4)
+               : &quot;memory&quot;, &quot;cc&quot;);
+  return __r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__r</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L149">line 149</a></td></tr></tbody></table></section><section class="function-entry" id="f-4ed24a6d3be379cf"><h3><code>micron::__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4, long int __a5) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L153">line 153</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4, long int __a5) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>long int __a1</code></li><li><code>long int __a2</code></li><li><code>long int __a3</code></li><li><code>long int __a4</code></li><li><code>long int __a5</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4, long int __a5) noexcept
+{
+  long int __r;
+  register long int __r2 asm(&quot;ecx&quot;) = __a2;
+  register long int __r3 asm(&quot;edx&quot;) = __a3;
+  register long int __r4 asm(&quot;esi&quot;) = __a4;
+  register long int __r5 asm(&quot;edi&quot;) = __a5;
+  asm volatile(&quot;xchgl %%ebx, %[a1]\n\t&quot;
+               &quot;int   $0x80\n\t&quot;
+               &quot;xchgl %%ebx, %[a1]&quot;
+               : &quot;=a&quot;(__r), [a1] &quot;+r&quot;(__a1)
+               : &quot;0&quot;(__n), &quot;r&quot;(__r2), &quot;r&quot;(__r3), &quot;r&quot;(__r4), &quot;r&quot;(__r5)
+               : &quot;memory&quot;, &quot;cc&quot;);
+  return __r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__r</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L166">line 166</a></td></tr></tbody></table></section><section class="function-entry" id="f-1175b5051de72be3"><h3><code>micron::__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4, long int __a5, long int __a6) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L170">line 170</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4, long int __a5, long int __a6) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>long int __a1</code></li><li><code>long int __a2</code></li><li><code>long int __a3</code></li><li><code>long int __a4</code></li><li><code>long int __a5</code></li><li><code>long int __a6</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) long int
+__do_syscall(long int __n, long int __a1, long int __a2, long int __a3, long int __a4, long int __a5, long int __a6) noexcept
+{
+  struct __args_t {
+    long int a1, a6;
+  };
+
+  __args_t __s = { __a1, __a6 };
+  long int __r;
+  register long int __r2 asm(&quot;ecx&quot;) = __a2;
+  register long int __r3 asm(&quot;edx&quot;) = __a3;
+  register long int __r4 asm(&quot;esi&quot;) = __a4;
+  register long int __r5 asm(&quot;edi&quot;) = __a5;
+  asm volatile(&quot;pushl %%ebp\n\t&quot;
+               &quot;pushl %%ebx\n\t&quot;
+               &quot;pushl  (%[s])\n\t&quot;      // push a1
+               &quot;pushl 4(%[s])\n\t&quot;      // push a6
+               &quot;popl  %%ebp\n\t&quot;        // ebp = a6
+               &quot;popl  %%ebx\n\t&quot;        // ebx = a1
+               &quot;int   $0x80\n\t&quot;
+               &quot;popl  %%ebx\n\t&quot;
+               &quot;popl  %%ebp&quot;
+               : &quot;=a&quot;(__r)
+               : &quot;0&quot;(__n), [s] &quot;r&quot;(&amp;__s), &quot;r&quot;(__r2), &quot;r&quot;(__r3), &quot;r&quot;(__r4), &quot;r&quot;(__r5)
+               : &quot;memory&quot;, &quot;cc&quot;);
+  return __r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__r</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L194">line 194</a></td></tr></tbody></table></section><section class="function-entry" id="f-4c1bbf9b84bb466a"><h3><code>micron::__impl::__dispatch_impl(long int __n, const long int *__s, micron::index_sequence&lt;Is...&gt;) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L202">line 202</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__tt_size_t... Is&gt;
+inline __attribute__((always_inline)) long int
+__dispatch_impl(long int __n, const long int *__s, micron::index_sequence&lt;Is...&gt;) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>const long int *__s</code></li><li><code>micron::index_sequence&lt;Is...&gt;</code></li></ul><h4>Effects</h4><p>Returns <code>__do_syscall(__n, __s[Is]...)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__tt_size_t... Is&gt;
+inline __attribute__((always_inline)) long int
+__dispatch_impl(long int __n, const long int *__s, micron::index_sequence&lt;Is...&gt;) noexcept
+{
+  return __do_syscall(__n, __s[Is]...);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__do_syscall(__n, __s[Is]...)</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L204">line 204</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-59732cd35ffa7fec">__do_syscall</a>.</p></section><section class="function-entry" id="f-18436b89f20fdba0"><h3><code>micron::__impl::__dispatch(long int __n, const long int *__s) noexcept</code></h3><p>Defined in <code>linux/sys/syscall_i386.hpp</code>, <a href="../../../source/linux/sys/syscall_i386.hpp.html#L209">line 209</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;__tt_size_t N&gt;
+inline __attribute__((always_inline)) long int
+__dispatch(long int __n, const long int *__s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>long int __n</code></li><li><code>const long int *__s</code></li></ul><h4>Effects</h4><p>Returns <code>__dispatch_impl(__n, __s, micron::make_index_sequence&lt;N&gt;{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;__tt_size_t N&gt;
+inline __attribute__((always_inline)) long int
+__dispatch(long int __n, const long int *__s) noexcept
+{
+  return __dispatch_impl(__n, __s, micron::make_index_sequence&lt;N&gt;{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__dispatch_impl(__n, __s, micron::make_index_sequence&lt;N&gt;{})</code></td><td><a href="../../../source/linux/sys/syscall_i386.hpp.html#L211">line 211</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="syscall_arm32.hpp.html#f-fbeb174493a611c3">__dispatch_impl</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

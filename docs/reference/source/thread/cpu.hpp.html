@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>thread/cpu.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">thread/cpu.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/thread/cpu.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // technically not needed anymore</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> // i have no idea why this is here</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> </span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #ifndef _GNU_SOURCE</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #define _GNU_SOURCE</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #endif</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../io/console.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../io/filesystem.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;../linux/process/system.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../linux/sys/cpu.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;../linux/sys/limits.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;../linux/sys/resource.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #include &quot;../linux/sys/sysfs.hpp&quot;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #include &quot;../slice.hpp&quot;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> #include &quot;../string/strings.hpp&quot;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> #include &quot;../string/unistring.hpp&quot;</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> #include &quot;../types.hpp&quot;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> #include &quot;scheduling.hpp&quot;</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> </span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> #include &quot;../../external/x86/cpuid.h&quot;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> #include &quot;../../external/x86/x86.h&quot;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> #elif defined(__micron_arch_arm_any)</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> #include &quot;../../external/arm/arm.h&quot;</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> #include &quot;../../external/arm/sysreg.h&quot;</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> #endif</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> </span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> namespace micron</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> {</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> </span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> // WARNING: never returns 0, NEVER CHANGE IT BACK TO ZERO NEEDED TO DIFFERENTIATE FAILURE STATES</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> inline unsigned</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> cpu_count(void)</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> {</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>   const unsigned n = posix::sysfs::cpu::online_count();</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> #elif defined(__micron_arch_arm_any)</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>   const unsigned n = posix::sysfs::cpu::present_count();</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> #else</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> #error &quot;micron: no cpu_count() backend for this architecture. falling off a non-void function is UB; add the /sys node read for this arch.&quot;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> #endif</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   return n ? n : 1u;</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> }</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> </span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> inline unsigned</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> which_cpu(void)</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> {</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   return posix::getcpu();</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> }</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> </span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> inline void</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> set_priority(int prio, int pid = posix::getpid())</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> {</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>   posix::set_priority(posix::prio_process, pid, prio);</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> }</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> </span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> inline unsigned</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> park_cpu(unsigned c = 0xFFFFFFFF)</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> {</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   if ( c == 0xFFFFFFFF ) {</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>     c = posix::getcpu();</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>   }</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>   posix::cpu_set_t set(c);</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   posix::sched_setaffinity(0, sizeof(set), set);</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   return c;</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> }</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> </span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> inline unsigned</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> park_cpu_pid(pid_t pid, unsigned c = 0xFFFFFFFF)</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> {</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>   if ( c == 0xFFFFFFFF ) {</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>     c = posix::getcpu();</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>   }</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>   posix::cpu_set_t set(c);</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   posix::sched_setaffinity(pid, sizeof(set), set);</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>   return c;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> }</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> </span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> inline void</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> park_cpu(pid_t pid, posix::cpu_set_t &amp;set)</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> {</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>   posix::sched_setaffinity(pid, sizeof(set), set);</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> }</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> </span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> inline void</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> enable_all_cores(pid_t pid = 0)</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> {</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   posix::cpu_set_t set;</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   auto count = cpu_count();</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   for ( usize i = 0; i &lt; count &amp;&amp; i &lt; 1024; i++ ) set.cpu_set(i);      // cpu_set_t mask is 1024 bits; never index past it</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   posix::sched_setaffinity(pid, sizeof(set), set);</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> }</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> </span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> struct cpu_freq_t {</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   u64 cur_hz;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   u64 min_hz;</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   u64 max_hz;</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   micron::sstring&lt;32, char&gt; governor;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> };</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> </span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> inline cpu_freq_t</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> cpu_freq(unsigned cpu_id = 0)</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> {</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>   cpu_freq_t f;</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>   f.cur_hz = posix::sysfs::cpu::cur_freq_hz(cpu_id);</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>   f.min_hz = posix::sysfs::cpu::min_freq_hz(cpu_id);</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   f.max_hz = posix::sysfs::cpu::max_freq_hz(cpu_id);</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>   f.governor = posix::sysfs::cpu::scaling_governor(cpu_id);</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>   return f;</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> }</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> </span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> inline bool</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> cpu_set_freq_max(unsigned cpu_id, u64 hz)</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> {</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>   return posix::sysfs::cpu::set_max_freq_hz(cpu_id, hz);</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> }</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> </span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> inline bool</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> cpu_set_freq_min(unsigned cpu_id, u64 hz)</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> {</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   return posix::sysfs::cpu::set_min_freq_hz(cpu_id, hz);</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> }</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a> </span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> inline bool</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> cpu_set_governor(unsigned cpu_id, const char *gov)</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> {</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>   return posix::sysfs::cpu::set_scaling_governor(cpu_id, gov);</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> }</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> </span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> inline bool</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> cpu_set_governor_all(const char *gov)</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> {</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>   return posix::sysfs::cpu::set_governor_all(gov, cpu_count());</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> }</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> </span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> inline bool</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> cpu_set_performance_all()</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a> {</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>   return posix::sysfs::cpu::set_performance_all(cpu_count());</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> }</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> </span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> template&lt;bool D = false&gt; class cpu_t: public scheduler_t</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> {</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   pid_t pid;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   posix::cpu_set_t procs;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>   unsigned count;</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a> </span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> public:</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   cpu_t(void) : scheduler_t(posix::getpid()), pid(posix::getpid()), procs(), count(cpu_count())</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>   {</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     if constexpr ( D ) {</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>       for ( usize i = 0; i &lt; count &amp;&amp; i &lt; 1024; i++ ) procs.cpu_set(i);      // clamp to the 1024-bit cpu_set_t mask</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     }      // default to all threads</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>   }</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a> </span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>   bool</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>   operator[](const usize n) const</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>   {</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>     if ( n &gt;= count ) exc&lt;except::library_error&gt;(&quot;micron cpu_t::operator[] out of range&quot;);</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     return procs.cpu_isset(n);</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   }</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> </span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>   void</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>   clear(void)</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   {</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     procs.cpu_zero();</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>   }</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a> </span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>   auto &amp;</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>   get()</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>   {</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>     return procs;</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>   }</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> </span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   const auto &amp;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   get() const</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>   {</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>     return procs;</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>   }</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a> </span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   bool</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>   at(const usize n) const</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   {</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>     if ( n &gt;= count ) exc&lt;except::library_error&gt;(&quot;micron cpu_t::at out of range&quot;);</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>     return procs.cpu_isset(n);</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   }</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> </span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>   void</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   set_core(const usize n)</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>   {</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>     if ( n &gt;= count ) exc&lt;except::library_error&gt;(&quot;micron cpu_t::set_core out of range&quot;);</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>     procs.cpu_set(n);</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>   }</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> </span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   void</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>   update_cores(void)</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>   {</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>     posix::set_affinity(pid, procs);</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>   }</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a> </span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>   void</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>   update(void)</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   {</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>     enable_all_cores(pid);</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>     load_scheduler(pid);</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>     posix::set_affinity(pid, procs);</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   }</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a> </span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>   unsigned</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>   core_count() const</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>   {</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>     return count;</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>   }</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> </span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>   void</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>   clear_core(const usize n)</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>   {</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>     if ( n &gt;= count ) exc&lt;except::library_error&gt;(&quot;micron cpu_t::clear_core out of range&quot;);</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>     procs.cpu_clr(n);</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>   }</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a> </span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>   void</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>   set_all()</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>   {</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>     for ( usize i = 0; i &lt; count; i++ ) procs.cpu_set(i);</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>   }</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> </span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   usize</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>   active_count() const</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>   {</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>     return procs.cpu_count();</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   }</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a> </span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>   unsigned</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>   pin(unsigned c = 0xFFFFFFFF)</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>   {</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>     if ( c == 0xFFFFFFFF ) c = posix::getcpu();</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>     procs.cpu_zero();</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>     procs.cpu_set(c);</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>     posix::sched_setaffinity(pid, sizeof(procs), procs);</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>     return c;</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>   }</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> </span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>   cpu_freq_t</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>   freq(unsigned cpu_id = 0) const</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>   {</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>     return cpu_freq(cpu_id);</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>   }</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> </span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>   bool</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>   set_freq_max(unsigned cpu_id, u64 hz)</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>   {</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>     return cpu_set_freq_max(cpu_id, hz);</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>   }</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a> </span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>   bool</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>   set_freq_min(unsigned cpu_id, u64 hz)</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>   {</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>     return cpu_set_freq_min(cpu_id, hz);</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>   }</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> </span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>   bool</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>   set_governor(const char *gov, unsigned cpu_id)</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>   {</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>     return micron::cpu_set_governor(cpu_id, gov);</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>   }</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> </span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>   bool</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>   set_governor_all(const char *gov)</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>   {</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>     return micron::cpu_set_governor_all(gov);</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>   }</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> </span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>   bool</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>   performance_mode()</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>   {</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>     return micron::cpu_set_performance_all();</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>   }</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> </span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>   bool</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>   is_online(unsigned cpu_id) const</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>   {</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>     return posix::sysfs::cpu::is_online(cpu_id);</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a>   }</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a> </span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>   bool</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>   set_online(unsigned cpu_id, bool on)</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>   {</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>     return posix::sysfs::cpu::set_online(cpu_id, on);</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>   }</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a> </span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a>   void</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>   set_priority(int prio)</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>   {</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>     micron::set_priority(prio, pid);</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a>   }</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> </span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a>   u32</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a>   cache_line_size(unsigned core_id = 0) const</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a>   {</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a>     return posix::sysfs::cpu::cache::l1d_line_size(core_id);</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a>   }</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a> };</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a> </span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a> enum class cpu_vendor : u8 {</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>   unknown = 0,</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>   intel,</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>   amd,</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>   arm_ltd,</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>   broadcom,</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>   cavium,</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>   fujitsu,</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>   hisilicon,</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>   nvidia,</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a>   qualcomm,</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>   samsung,</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a>   apple,</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>   marvell,</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>   ampere,</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>   microsoft,</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>   phytium,</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>   centaur,</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>   cyrix,</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>   transmeta,</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>   via,</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a> };</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a> </span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a> struct cache_info_t {</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>   u16 type;</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>   u16 level;</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>   u32 line_size;</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>   u32 associativity;</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>   u32 sets;</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>   u64 size;</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a> };</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a> </span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a> struct core_info_t {</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>   u8 type;</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>   u8 cluster;</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>   u64 freq;</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>   cache_info_t caches[5];</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a> };</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a> </span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a> // unified cpu features across x86 arm</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a> // NOTE: if we add support for more uarches, consider refactoring this out</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a> struct cpu_features_t {</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>   char fp;</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>   char simd;</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>   char aes;</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a>   char sha1;</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>   char sha2;</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a>   char sha3;</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>   char sha512;</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a>   char sm3;</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>   char sm4;</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a>   char crc32;</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>   char popcnt;</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a>   char fma;</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>   char f16c;</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>   char bf16;</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>   char i8mm;</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a>   char rdrand;</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a>   char atomics;</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a> </span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a>   // 8086</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>   char sse;</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>   char sse2;</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>   char sse3;</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a>   char ssse3;</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>   char sse4_1;</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>   char sse4_2;</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>   char avx;</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a>   char avx2;</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>   char avx512f;</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>   char avx512cd;</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>   char avx512bw;</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>   char avx512dq;</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a>   char avx512vl;</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>   char avx512vnni;</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>   char avx512bf16;</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>   char avx512fp16;</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>   char avx512ifma;</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>   char avx512vbmi;</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a>   char avx512vbmi2;</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>   char avx512bitalg;</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a>   char avx512vpopcntdq;</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a>   char avx_vnni;</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>   char avx_ifma;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a>   char avx10;</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a>   char amx_tile;</span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a>   char amx_int8;</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>   char amx_bf16;</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>   char amx_fp16;</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>   char gfni;</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>   char vaes;</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a>   char vpclmulqdq;</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>   char bmi1;</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a>   char bmi2;</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a>   char adx;</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>   char movbe;</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>   char serialize;</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a>   char hle;</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>   char rtm;</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>   char sgx;</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>   char mpx;</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>   char spec_ctrl;</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>   char erms;</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>   char fsgsbase;</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a>   char rdseed;</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a>   char clflushopt;</span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a>   char clwb;</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>   char pclmulqdq;</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>   char xsave;</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>   char osxsave;</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>   char hypervisor;</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>   char tsc;</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>   char mmx;</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>   char cmov;</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>   char htt;</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>   char fpu;</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>   char nx;</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>   char syscall_x86;</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>   char amd_3dnow;</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a>   char amd_3dnowext;</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a>   char fma4;</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>   char xop;</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>   char tbm;</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a>   char sse4a;</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a>   char apx_f;</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a> </span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a>   // arm</span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>   char asimd;</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>   char pmull;</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>   char sve;</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>   char sve2;</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>   char sve2p1;</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>   char sve_aes;</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>   char sve_bitperm;</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>   char sve_bf16;</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>   char sve_i8mm;</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>   char sve_f32mm;</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a>   char sve_f64mm;</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>   char sme;</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a>   char sme2;</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>   char sme2p1;</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>   char lse128;</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>   char dotprod;</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>   char fphp;</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>   char asimdhp;</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a>   char asimdrdm;</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a>   char jscvt;</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>   char fcma;</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>   char flagm;</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>   char flagm2;</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>   char lrcpc;</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>   char ilrcpc;</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a>   char lrcpc3;</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>   char dcpop;</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>   char dcpodp;</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>   char dit;</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>   char mte;</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>   char mte3;</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a>   char bti;</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a>   char paca;</span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a>   char pacg;</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>   char ssbs;</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>   char sb;</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>   char mops;</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a>   char hbc;</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a>   char cssc;</span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>   char frint;</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a>   char wfxt;</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a>   char rng;</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>   char ecv;</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>   char fpmr;</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>   char lut;</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>   char faminmax;</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a> };</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a> </span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a> inline constexpr unsigned</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a> simd_width()</span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a> {</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a>   return __micron_x86_simd_width;</span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a> #elif defined(__micron_arch_arm_any)</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a> #if defined(__micron_arm_sve2)</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a>   return 0; /* SVE is VL-agnostic */</span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a> #elif defined(__micron_arm_sve)</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a>   return 0;</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a> #elif defined(__micron_arm_neon)</span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a>   return 128;</span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a> #else</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a>   return 0;</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a> #endif</span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a> #else</span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a>   return 0;</span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a> #endif</span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a> }</span>
+<span id="L508" class="source-line"><a class="line-number" href="#L508">508</a> </span>
+<span id="L509" class="source-line"><a class="line-number" href="#L509">509</a> namespace __impl</span>
+<span id="L510" class="source-line"><a class="line-number" href="#L510">510</a> {</span>
+<span id="L511" class="source-line"><a class="line-number" href="#L511">511</a> </span>
+<span id="L512" class="source-line"><a class="line-number" href="#L512">512</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L513" class="source-line"><a class="line-number" href="#L513">513</a> </span>
+<span id="L514" class="source-line"><a class="line-number" href="#L514">514</a> inline bool</span>
+<span id="L515" class="source-line"><a class="line-number" href="#L515">515</a> __have_cpuid()</span>
+<span id="L516" class="source-line"><a class="line-number" href="#L516">516</a> {</span>
+<span id="L517" class="source-line"><a class="line-number" href="#L517">517</a>   return have_cpuid() != 0;</span>
+<span id="L518" class="source-line"><a class="line-number" href="#L518">518</a> }</span>
+<span id="L519" class="source-line"><a class="line-number" href="#L519">519</a> </span>
+<span id="L520" class="source-line"><a class="line-number" href="#L520">520</a> inline int</span>
+<span id="L521" class="source-line"><a class="line-number" href="#L521">521</a> __max_leaf()</span>
+<span id="L522" class="source-line"><a class="line-number" href="#L522">522</a> {</span>
+<span id="L523" class="source-line"><a class="line-number" href="#L523">523</a>   return maximum_leaf();</span>
+<span id="L524" class="source-line"><a class="line-number" href="#L524">524</a> }</span>
+<span id="L525" class="source-line"><a class="line-number" href="#L525">525</a> </span>
+<span id="L526" class="source-line"><a class="line-number" href="#L526">526</a> inline void</span>
+<span id="L527" class="source-line"><a class="line-number" href="#L527">527</a> __fill_features(const processor_t &amp;raw, cpu_features_t &amp;f)</span>
+<span id="L528" class="source-line"><a class="line-number" href="#L528">528</a> {</span>
+<span id="L529" class="source-line"><a class="line-number" href="#L529">529</a>   micron::memset(&amp;f, 0, sizeof(cpu_features_t));</span>
+<span id="L530" class="source-line"><a class="line-number" href="#L530">530</a>   const auto &amp;r = raw.features;</span>
+<span id="L531" class="source-line"><a class="line-number" href="#L531">531</a> </span>
+<span id="L532" class="source-line"><a class="line-number" href="#L532">532</a>   f.fp = r.fpu;</span>
+<span id="L533" class="source-line"><a class="line-number" href="#L533">533</a>   f.simd = r.sse2;</span>
+<span id="L534" class="source-line"><a class="line-number" href="#L534">534</a>   f.aes = r.aes;</span>
+<span id="L535" class="source-line"><a class="line-number" href="#L535">535</a>   f.sha1 = 0;</span>
+<span id="L536" class="source-line"><a class="line-number" href="#L536">536</a>   f.sha2 = r.sha;</span>
+<span id="L537" class="source-line"><a class="line-number" href="#L537">537</a>   f.sha3 = 0;</span>
+<span id="L538" class="source-line"><a class="line-number" href="#L538">538</a>   f.sha512 = 0;</span>
+<span id="L539" class="source-line"><a class="line-number" href="#L539">539</a>   f.sm3 = r.sm3;</span>
+<span id="L540" class="source-line"><a class="line-number" href="#L540">540</a>   f.sm4 = r.sm4;</span>
+<span id="L541" class="source-line"><a class="line-number" href="#L541">541</a>   f.crc32 = 0;</span>
+<span id="L542" class="source-line"><a class="line-number" href="#L542">542</a>   f.popcnt = r.popcnt;</span>
+<span id="L543" class="source-line"><a class="line-number" href="#L543">543</a>   f.fma = r.fma;</span>
+<span id="L544" class="source-line"><a class="line-number" href="#L544">544</a>   f.f16c = r.f16c;</span>
+<span id="L545" class="source-line"><a class="line-number" href="#L545">545</a>   f.bf16 = r.avx512_bf16;</span>
+<span id="L546" class="source-line"><a class="line-number" href="#L546">546</a>   f.i8mm = 0;</span>
+<span id="L547" class="source-line"><a class="line-number" href="#L547">547</a>   f.rdrand = r.rdrand;</span>
+<span id="L548" class="source-line"><a class="line-number" href="#L548">548</a>   f.atomics = 1;</span>
+<span id="L549" class="source-line"><a class="line-number" href="#L549">549</a> </span>
+<span id="L550" class="source-line"><a class="line-number" href="#L550">550</a>   f.sse = r.sse;</span>
+<span id="L551" class="source-line"><a class="line-number" href="#L551">551</a>   f.sse2 = r.sse2;</span>
+<span id="L552" class="source-line"><a class="line-number" href="#L552">552</a>   f.sse3 = r.sse3;</span>
+<span id="L553" class="source-line"><a class="line-number" href="#L553">553</a>   f.ssse3 = r.ssse3;</span>
+<span id="L554" class="source-line"><a class="line-number" href="#L554">554</a>   f.sse4_1 = r.sse4_1;</span>
+<span id="L555" class="source-line"><a class="line-number" href="#L555">555</a>   f.sse4_2 = r.sse4_2;</span>
+<span id="L556" class="source-line"><a class="line-number" href="#L556">556</a>   f.avx = r.avx;</span>
+<span id="L557" class="source-line"><a class="line-number" href="#L557">557</a>   f.avx2 = r.avx2;</span>
+<span id="L558" class="source-line"><a class="line-number" href="#L558">558</a>   f.avx512f = r.avx512f;</span>
+<span id="L559" class="source-line"><a class="line-number" href="#L559">559</a>   f.avx512cd = r.avx512cd;</span>
+<span id="L560" class="source-line"><a class="line-number" href="#L560">560</a>   f.avx512bw = r.avx512bw;</span>
+<span id="L561" class="source-line"><a class="line-number" href="#L561">561</a>   f.avx512dq = r.avx512dq;</span>
+<span id="L562" class="source-line"><a class="line-number" href="#L562">562</a>   f.avx512vl = r.avx512vl;</span>
+<span id="L563" class="source-line"><a class="line-number" href="#L563">563</a>   f.avx512vnni = r.avx512vnni;</span>
+<span id="L564" class="source-line"><a class="line-number" href="#L564">564</a>   f.avx512bf16 = r.avx512_bf16;</span>
+<span id="L565" class="source-line"><a class="line-number" href="#L565">565</a>   f.avx512fp16 = r.avx512_fp16;</span>
+<span id="L566" class="source-line"><a class="line-number" href="#L566">566</a>   f.avx512ifma = r.avx512ifma;</span>
+<span id="L567" class="source-line"><a class="line-number" href="#L567">567</a>   f.avx512vbmi = r.avx512vbmi;</span>
+<span id="L568" class="source-line"><a class="line-number" href="#L568">568</a>   f.avx512vbmi2 = r.avx512vbmi2;</span>
+<span id="L569" class="source-line"><a class="line-number" href="#L569">569</a>   f.avx512bitalg = r.avx512bitalg;</span>
+<span id="L570" class="source-line"><a class="line-number" href="#L570">570</a>   f.avx512vpopcntdq = r.avx512vpopcntdq;</span>
+<span id="L571" class="source-line"><a class="line-number" href="#L571">571</a>   f.avx_vnni = r.avx_vnni;</span>
+<span id="L572" class="source-line"><a class="line-number" href="#L572">572</a>   f.avx_ifma = r.avx_ifma;</span>
+<span id="L573" class="source-line"><a class="line-number" href="#L573">573</a>   f.avx10 = r.avx10;</span>
+<span id="L574" class="source-line"><a class="line-number" href="#L574">574</a>   f.amx_tile = r.amx_tile;</span>
+<span id="L575" class="source-line"><a class="line-number" href="#L575">575</a>   f.amx_int8 = r.amx_int8;</span>
+<span id="L576" class="source-line"><a class="line-number" href="#L576">576</a>   f.amx_bf16 = r.amx_bf16;</span>
+<span id="L577" class="source-line"><a class="line-number" href="#L577">577</a>   f.amx_fp16 = r.amx_fp16;</span>
+<span id="L578" class="source-line"><a class="line-number" href="#L578">578</a>   f.gfni = r.gfni;</span>
+<span id="L579" class="source-line"><a class="line-number" href="#L579">579</a>   f.vaes = r.vaes;</span>
+<span id="L580" class="source-line"><a class="line-number" href="#L580">580</a>   f.vpclmulqdq = r.vpclmulqdq;</span>
+<span id="L581" class="source-line"><a class="line-number" href="#L581">581</a>   f.bmi1 = r.bmi1;</span>
+<span id="L582" class="source-line"><a class="line-number" href="#L582">582</a>   f.bmi2 = r.bmi2;</span>
+<span id="L583" class="source-line"><a class="line-number" href="#L583">583</a>   f.adx = r.adx;</span>
+<span id="L584" class="source-line"><a class="line-number" href="#L584">584</a>   f.movbe = r.movbe;</span>
+<span id="L585" class="source-line"><a class="line-number" href="#L585">585</a>   f.serialize = r.serialize;</span>
+<span id="L586" class="source-line"><a class="line-number" href="#L586">586</a>   f.hle = r.hle;</span>
+<span id="L587" class="source-line"><a class="line-number" href="#L587">587</a>   f.rtm = r.rtm;</span>
+<span id="L588" class="source-line"><a class="line-number" href="#L588">588</a>   f.sgx = r.sgx;</span>
+<span id="L589" class="source-line"><a class="line-number" href="#L589">589</a>   f.mpx = r.mpx;</span>
+<span id="L590" class="source-line"><a class="line-number" href="#L590">590</a>   f.spec_ctrl = r.spec_ctrl;</span>
+<span id="L591" class="source-line"><a class="line-number" href="#L591">591</a>   f.erms = r.erms;</span>
+<span id="L592" class="source-line"><a class="line-number" href="#L592">592</a>   f.fsgsbase = r.fsgsbase;</span>
+<span id="L593" class="source-line"><a class="line-number" href="#L593">593</a>   f.rdseed = r.rdseed;</span>
+<span id="L594" class="source-line"><a class="line-number" href="#L594">594</a>   f.clflushopt = r.clflushopt;</span>
+<span id="L595" class="source-line"><a class="line-number" href="#L595">595</a>   f.clwb = r.clwb;</span>
+<span id="L596" class="source-line"><a class="line-number" href="#L596">596</a>   f.pclmulqdq = r.pclmulqdq;</span>
+<span id="L597" class="source-line"><a class="line-number" href="#L597">597</a>   f.xsave = r.xsave;</span>
+<span id="L598" class="source-line"><a class="line-number" href="#L598">598</a>   f.osxsave = r.osxsave;</span>
+<span id="L599" class="source-line"><a class="line-number" href="#L599">599</a>   f.hypervisor = r.hypervisor;</span>
+<span id="L600" class="source-line"><a class="line-number" href="#L600">600</a>   f.tsc = r.tsc;</span>
+<span id="L601" class="source-line"><a class="line-number" href="#L601">601</a>   f.mmx = r.mmx;</span>
+<span id="L602" class="source-line"><a class="line-number" href="#L602">602</a>   f.cmov = r.cmov;</span>
+<span id="L603" class="source-line"><a class="line-number" href="#L603">603</a>   f.htt = r.htt;</span>
+<span id="L604" class="source-line"><a class="line-number" href="#L604">604</a>   f.fpu = r.fpu;</span>
+<span id="L605" class="source-line"><a class="line-number" href="#L605">605</a>   f.nx = r.nx;</span>
+<span id="L606" class="source-line"><a class="line-number" href="#L606">606</a>   f.syscall_x86 = r.syscall;</span>
+<span id="L607" class="source-line"><a class="line-number" href="#L607">607</a>   f.amd_3dnow = r.amd_3dnow;</span>
+<span id="L608" class="source-line"><a class="line-number" href="#L608">608</a>   f.amd_3dnowext = r.amd_3dnowext;</span>
+<span id="L609" class="source-line"><a class="line-number" href="#L609">609</a>   f.fma4 = r.fma4;</span>
+<span id="L610" class="source-line"><a class="line-number" href="#L610">610</a>   f.xop = r.xop;</span>
+<span id="L611" class="source-line"><a class="line-number" href="#L611">611</a>   f.tbm = r.tbm;</span>
+<span id="L612" class="source-line"><a class="line-number" href="#L612">612</a>   f.sse4a = r.sse4a;</span>
+<span id="L613" class="source-line"><a class="line-number" href="#L613">613</a>   f.apx_f = r.apx_f;</span>
+<span id="L614" class="source-line"><a class="line-number" href="#L614">614</a> }</span>
+<span id="L615" class="source-line"><a class="line-number" href="#L615">615</a> </span>
+<span id="L616" class="source-line"><a class="line-number" href="#L616">616</a> inline cpu_vendor</span>
+<span id="L617" class="source-line"><a class="line-number" href="#L617">617</a> __map_vendor(char v)</span>
+<span id="L618" class="source-line"><a class="line-number" href="#L618">618</a> {</span>
+<span id="L619" class="source-line"><a class="line-number" href="#L619">619</a>   switch ( v ) {</span>
+<span id="L620" class="source-line"><a class="line-number" href="#L620">620</a>   case GenuineIntel:</span>
+<span id="L621" class="source-line"><a class="line-number" href="#L621">621</a>     return cpu_vendor::intel;</span>
+<span id="L622" class="source-line"><a class="line-number" href="#L622">622</a>   case AuthenticAMD:</span>
+<span id="L623" class="source-line"><a class="line-number" href="#L623">623</a>     return cpu_vendor::amd;</span>
+<span id="L624" class="source-line"><a class="line-number" href="#L624">624</a>   case CentaurHauls:</span>
+<span id="L625" class="source-line"><a class="line-number" href="#L625">625</a>     return cpu_vendor::centaur;</span>
+<span id="L626" class="source-line"><a class="line-number" href="#L626">626</a>   case CyrixInstead:</span>
+<span id="L627" class="source-line"><a class="line-number" href="#L627">627</a>     return cpu_vendor::cyrix;</span>
+<span id="L628" class="source-line"><a class="line-number" href="#L628">628</a>   case TransmetaCPU:</span>
+<span id="L629" class="source-line"><a class="line-number" href="#L629">629</a>   case GenuineTMx86:</span>
+<span id="L630" class="source-line"><a class="line-number" href="#L630">630</a>     return cpu_vendor::transmeta;</span>
+<span id="L631" class="source-line"><a class="line-number" href="#L631">631</a>   case VIA_VIA_VIA_:</span>
+<span id="L632" class="source-line"><a class="line-number" href="#L632">632</a>     return cpu_vendor::via;</span>
+<span id="L633" class="source-line"><a class="line-number" href="#L633">633</a>   default:</span>
+<span id="L634" class="source-line"><a class="line-number" href="#L634">634</a>     return cpu_vendor::unknown;</span>
+<span id="L635" class="source-line"><a class="line-number" href="#L635">635</a>   }</span>
+<span id="L636" class="source-line"><a class="line-number" href="#L636">636</a> }</span>
+<span id="L637" class="source-line"><a class="line-number" href="#L637">637</a> </span>
+<span id="L638" class="source-line"><a class="line-number" href="#L638">638</a> inline void</span>
+<span id="L639" class="source-line"><a class="line-number" href="#L639">639</a> __fill_caches(const processor_t &amp;raw, core_info_t *cores, int n)</span>
+<span id="L640" class="source-line"><a class="line-number" href="#L640">640</a> {</span>
+<span id="L641" class="source-line"><a class="line-number" href="#L641">641</a>   for ( int j = 0; j &lt; n; j++ ) {</span>
+<span id="L642" class="source-line"><a class="line-number" href="#L642">642</a>     cores[j].type = raw.core[j].type;</span>
+<span id="L643" class="source-line"><a class="line-number" href="#L643">643</a>     cores[j].cluster = 0;</span>
+<span id="L644" class="source-line"><a class="line-number" href="#L644">644</a>     cores[j].freq = raw.core[j].freq;</span>
+<span id="L645" class="source-line"><a class="line-number" href="#L645">645</a>     for ( int i = 0; i &lt; 5; i++ ) {</span>
+<span id="L646" class="source-line"><a class="line-number" href="#L646">646</a>       const auto &amp;c = raw.core[j].caches[i];</span>
+<span id="L647" class="source-line"><a class="line-number" href="#L647">647</a>       cores[j].caches[i].type = c.type;</span>
+<span id="L648" class="source-line"><a class="line-number" href="#L648">648</a>       cores[j].caches[i].level = c.level;</span>
+<span id="L649" class="source-line"><a class="line-number" href="#L649">649</a>       cores[j].caches[i].line_size = c.coherency;</span>
+<span id="L650" class="source-line"><a class="line-number" href="#L650">650</a>       cores[j].caches[i].associativity = c.associativity;</span>
+<span id="L651" class="source-line"><a class="line-number" href="#L651">651</a>       cores[j].caches[i].sets = c.sets;</span>
+<span id="L652" class="source-line"><a class="line-number" href="#L652">652</a>       cores[j].caches[i].size = c.size;</span>
+<span id="L653" class="source-line"><a class="line-number" href="#L653">653</a>     }</span>
+<span id="L654" class="source-line"><a class="line-number" href="#L654">654</a>   }</span>
+<span id="L655" class="source-line"><a class="line-number" href="#L655">655</a> }</span>
+<span id="L656" class="source-line"><a class="line-number" href="#L656">656</a> </span>
+<span id="L657" class="source-line"><a class="line-number" href="#L657">657</a> #elif defined(__micron_arch_arm_any)</span>
+<span id="L658" class="source-line"><a class="line-number" href="#L658">658</a> </span>
+<span id="L659" class="source-line"><a class="line-number" href="#L659">659</a> inline bool</span>
+<span id="L660" class="source-line"><a class="line-number" href="#L660">660</a> __have_cpuid()</span>
+<span id="L661" class="source-line"><a class="line-number" href="#L661">661</a> {</span>
+<span id="L662" class="source-line"><a class="line-number" href="#L662">662</a>   return have_idreg() != 0;</span>
+<span id="L663" class="source-line"><a class="line-number" href="#L663">663</a> }</span>
+<span id="L664" class="source-line"><a class="line-number" href="#L664">664</a> </span>
+<span id="L665" class="source-line"><a class="line-number" href="#L665">665</a> inline int</span>
+<span id="L666" class="source-line"><a class="line-number" href="#L666">666</a> __max_leaf()</span>
+<span id="L667" class="source-line"><a class="line-number" href="#L667">667</a> {</span>
+<span id="L668" class="source-line"><a class="line-number" href="#L668">668</a>   return maximum_arch();</span>
+<span id="L669" class="source-line"><a class="line-number" href="#L669">669</a> }</span>
+<span id="L670" class="source-line"><a class="line-number" href="#L670">670</a> </span>
+<span id="L671" class="source-line"><a class="line-number" href="#L671">671</a> inline void</span>
+<span id="L672" class="source-line"><a class="line-number" href="#L672">672</a> __fill_features(const processor_t &amp;raw, cpu_features_t &amp;f)</span>
+<span id="L673" class="source-line"><a class="line-number" href="#L673">673</a> {</span>
+<span id="L674" class="source-line"><a class="line-number" href="#L674">674</a>   micron::memset(&amp;f, 0, sizeof(cpu_features_t));</span>
+<span id="L675" class="source-line"><a class="line-number" href="#L675">675</a>   const auto &amp;r = raw.features;</span>
+<span id="L676" class="source-line"><a class="line-number" href="#L676">676</a> </span>
+<span id="L677" class="source-line"><a class="line-number" href="#L677">677</a>   f.fp = r.fp;</span>
+<span id="L678" class="source-line"><a class="line-number" href="#L678">678</a>   f.simd = r.asimd;</span>
+<span id="L679" class="source-line"><a class="line-number" href="#L679">679</a>   f.aes = r.aes;</span>
+<span id="L680" class="source-line"><a class="line-number" href="#L680">680</a>   f.sha1 = r.sha1;</span>
+<span id="L681" class="source-line"><a class="line-number" href="#L681">681</a>   f.sha2 = r.sha2;</span>
+<span id="L682" class="source-line"><a class="line-number" href="#L682">682</a>   f.sha3 = r.sha3;</span>
+<span id="L683" class="source-line"><a class="line-number" href="#L683">683</a>   f.sha512 = r.sha512;</span>
+<span id="L684" class="source-line"><a class="line-number" href="#L684">684</a>   f.sm3 = r.sm3;</span>
+<span id="L685" class="source-line"><a class="line-number" href="#L685">685</a>   f.sm4 = r.sm4;</span>
+<span id="L686" class="source-line"><a class="line-number" href="#L686">686</a>   f.crc32 = r.crc32;</span>
+<span id="L687" class="source-line"><a class="line-number" href="#L687">687</a>   f.popcnt = r.asimd;</span>
+<span id="L688" class="source-line"><a class="line-number" href="#L688">688</a>   f.fma = r.fp;</span>
+<span id="L689" class="source-line"><a class="line-number" href="#L689">689</a>   f.f16c = r.f16c;</span>
+<span id="L690" class="source-line"><a class="line-number" href="#L690">690</a>   f.bf16 = r.bf16;</span>
+<span id="L691" class="source-line"><a class="line-number" href="#L691">691</a>   f.i8mm = r.i8mm;</span>
+<span id="L692" class="source-line"><a class="line-number" href="#L692">692</a>   f.rdrand = r.rng;</span>
+<span id="L693" class="source-line"><a class="line-number" href="#L693">693</a>   f.atomics = r.atomics;</span>
+<span id="L694" class="source-line"><a class="line-number" href="#L694">694</a> </span>
+<span id="L695" class="source-line"><a class="line-number" href="#L695">695</a>   f.asimd = r.asimd;</span>
+<span id="L696" class="source-line"><a class="line-number" href="#L696">696</a>   f.pmull = r.pmull;</span>
+<span id="L697" class="source-line"><a class="line-number" href="#L697">697</a>   f.sve = r.sve;</span>
+<span id="L698" class="source-line"><a class="line-number" href="#L698">698</a>   f.sve2 = r.sve2;</span>
+<span id="L699" class="source-line"><a class="line-number" href="#L699">699</a>   f.sve2p1 = r.sve2p1;</span>
+<span id="L700" class="source-line"><a class="line-number" href="#L700">700</a>   f.sve_aes = r.sve_aes;</span>
+<span id="L701" class="source-line"><a class="line-number" href="#L701">701</a>   f.sve_bitperm = r.sve_bitperm;</span>
+<span id="L702" class="source-line"><a class="line-number" href="#L702">702</a>   f.sve_bf16 = r.sve_bf16;</span>
+<span id="L703" class="source-line"><a class="line-number" href="#L703">703</a>   f.sve_i8mm = r.sve_i8mm;</span>
+<span id="L704" class="source-line"><a class="line-number" href="#L704">704</a>   f.sve_f32mm = r.sve_f32mm;</span>
+<span id="L705" class="source-line"><a class="line-number" href="#L705">705</a>   f.sve_f64mm = r.sve_f64mm;</span>
+<span id="L706" class="source-line"><a class="line-number" href="#L706">706</a>   f.sme = r.sme;</span>
+<span id="L707" class="source-line"><a class="line-number" href="#L707">707</a>   f.sme2 = r.sme2;</span>
+<span id="L708" class="source-line"><a class="line-number" href="#L708">708</a>   f.sme2p1 = r.sme2p1;</span>
+<span id="L709" class="source-line"><a class="line-number" href="#L709">709</a>   f.lse128 = r.lse128;</span>
+<span id="L710" class="source-line"><a class="line-number" href="#L710">710</a>   f.dotprod = r.asimddp;</span>
+<span id="L711" class="source-line"><a class="line-number" href="#L711">711</a>   f.fphp = r.fphp;</span>
+<span id="L712" class="source-line"><a class="line-number" href="#L712">712</a>   f.asimdhp = r.asimdhp;</span>
+<span id="L713" class="source-line"><a class="line-number" href="#L713">713</a>   f.asimdrdm = r.asimdrdm;</span>
+<span id="L714" class="source-line"><a class="line-number" href="#L714">714</a>   f.jscvt = r.jscvt;</span>
+<span id="L715" class="source-line"><a class="line-number" href="#L715">715</a>   f.fcma = r.fcma;</span>
+<span id="L716" class="source-line"><a class="line-number" href="#L716">716</a>   f.flagm = r.flagm;</span>
+<span id="L717" class="source-line"><a class="line-number" href="#L717">717</a>   f.flagm2 = r.flagm2;</span>
+<span id="L718" class="source-line"><a class="line-number" href="#L718">718</a>   f.lrcpc = r.lrcpc;</span>
+<span id="L719" class="source-line"><a class="line-number" href="#L719">719</a>   f.ilrcpc = r.ilrcpc;</span>
+<span id="L720" class="source-line"><a class="line-number" href="#L720">720</a>   f.lrcpc3 = r.lrcpc3;</span>
+<span id="L721" class="source-line"><a class="line-number" href="#L721">721</a>   f.dcpop = r.dcpop;</span>
+<span id="L722" class="source-line"><a class="line-number" href="#L722">722</a>   f.dcpodp = r.dcpodp;</span>
+<span id="L723" class="source-line"><a class="line-number" href="#L723">723</a>   f.dit = r.dit;</span>
+<span id="L724" class="source-line"><a class="line-number" href="#L724">724</a>   f.mte = r.mte;</span>
+<span id="L725" class="source-line"><a class="line-number" href="#L725">725</a>   f.mte3 = r.mte3;</span>
+<span id="L726" class="source-line"><a class="line-number" href="#L726">726</a>   f.bti = r.bti;</span>
+<span id="L727" class="source-line"><a class="line-number" href="#L727">727</a>   f.paca = r.paca;</span>
+<span id="L728" class="source-line"><a class="line-number" href="#L728">728</a>   f.pacg = r.pacg;</span>
+<span id="L729" class="source-line"><a class="line-number" href="#L729">729</a>   f.ssbs = r.ssbs;</span>
+<span id="L730" class="source-line"><a class="line-number" href="#L730">730</a>   f.sb = r.sb;</span>
+<span id="L731" class="source-line"><a class="line-number" href="#L731">731</a>   f.mops = r.mops;</span>
+<span id="L732" class="source-line"><a class="line-number" href="#L732">732</a>   f.hbc = r.hbc;</span>
+<span id="L733" class="source-line"><a class="line-number" href="#L733">733</a>   f.cssc = r.cssc;</span>
+<span id="L734" class="source-line"><a class="line-number" href="#L734">734</a>   f.frint = r.frint;</span>
+<span id="L735" class="source-line"><a class="line-number" href="#L735">735</a>   f.wfxt = r.wfxt;</span>
+<span id="L736" class="source-line"><a class="line-number" href="#L736">736</a>   f.rng = r.rng;</span>
+<span id="L737" class="source-line"><a class="line-number" href="#L737">737</a>   f.ecv = r.ecv;</span>
+<span id="L738" class="source-line"><a class="line-number" href="#L738">738</a>   f.fpmr = r.fpmr;</span>
+<span id="L739" class="source-line"><a class="line-number" href="#L739">739</a>   f.lut = r.lut;</span>
+<span id="L740" class="source-line"><a class="line-number" href="#L740">740</a>   f.faminmax = r.faminmax;</span>
+<span id="L741" class="source-line"><a class="line-number" href="#L741">741</a> }</span>
+<span id="L742" class="source-line"><a class="line-number" href="#L742">742</a> </span>
+<span id="L743" class="source-line"><a class="line-number" href="#L743">743</a> inline cpu_vendor</span>
+<span id="L744" class="source-line"><a class="line-number" href="#L744">744</a> __map_vendor(char v)</span>
+<span id="L745" class="source-line"><a class="line-number" href="#L745">745</a> {</span>
+<span id="L746" class="source-line"><a class="line-number" href="#L746">746</a>   switch ( (unsigned char)v ) {</span>
+<span id="L747" class="source-line"><a class="line-number" href="#L747">747</a>   case IMPL_ARM:</span>
+<span id="L748" class="source-line"><a class="line-number" href="#L748">748</a>     return cpu_vendor::arm_ltd;</span>
+<span id="L749" class="source-line"><a class="line-number" href="#L749">749</a>   case IMPL_BROADCOM:</span>
+<span id="L750" class="source-line"><a class="line-number" href="#L750">750</a>     return cpu_vendor::broadcom;</span>
+<span id="L751" class="source-line"><a class="line-number" href="#L751">751</a>   case IMPL_CAVIUM:</span>
+<span id="L752" class="source-line"><a class="line-number" href="#L752">752</a>     return cpu_vendor::cavium;</span>
+<span id="L753" class="source-line"><a class="line-number" href="#L753">753</a>   case IMPL_FUJITSU:</span>
+<span id="L754" class="source-line"><a class="line-number" href="#L754">754</a>     return cpu_vendor::fujitsu;</span>
+<span id="L755" class="source-line"><a class="line-number" href="#L755">755</a>   case IMPL_HISILICON:</span>
+<span id="L756" class="source-line"><a class="line-number" href="#L756">756</a>     return cpu_vendor::hisilicon;</span>
+<span id="L757" class="source-line"><a class="line-number" href="#L757">757</a>   case IMPL_NVIDIA:</span>
+<span id="L758" class="source-line"><a class="line-number" href="#L758">758</a>     return cpu_vendor::nvidia;</span>
+<span id="L759" class="source-line"><a class="line-number" href="#L759">759</a>   case IMPL_QUALCOMM:</span>
+<span id="L760" class="source-line"><a class="line-number" href="#L760">760</a>     return cpu_vendor::qualcomm;</span>
+<span id="L761" class="source-line"><a class="line-number" href="#L761">761</a>   case IMPL_SAMSUNG:</span>
+<span id="L762" class="source-line"><a class="line-number" href="#L762">762</a>     return cpu_vendor::samsung;</span>
+<span id="L763" class="source-line"><a class="line-number" href="#L763">763</a>   case IMPL_APPLE:</span>
+<span id="L764" class="source-line"><a class="line-number" href="#L764">764</a>     return cpu_vendor::apple;</span>
+<span id="L765" class="source-line"><a class="line-number" href="#L765">765</a>   case IMPL_MARVELL:</span>
+<span id="L766" class="source-line"><a class="line-number" href="#L766">766</a>     return cpu_vendor::marvell;</span>
+<span id="L767" class="source-line"><a class="line-number" href="#L767">767</a>   case IMPL_AMPERE:</span>
+<span id="L768" class="source-line"><a class="line-number" href="#L768">768</a>     return cpu_vendor::ampere;</span>
+<span id="L769" class="source-line"><a class="line-number" href="#L769">769</a>   case IMPL_MICROSOFT:</span>
+<span id="L770" class="source-line"><a class="line-number" href="#L770">770</a>     return cpu_vendor::microsoft;</span>
+<span id="L771" class="source-line"><a class="line-number" href="#L771">771</a>   case IMPL_PHYTIUM:</span>
+<span id="L772" class="source-line"><a class="line-number" href="#L772">772</a>     return cpu_vendor::phytium;</span>
+<span id="L773" class="source-line"><a class="line-number" href="#L773">773</a>   default:</span>
+<span id="L774" class="source-line"><a class="line-number" href="#L774">774</a>     return cpu_vendor::unknown;</span>
+<span id="L775" class="source-line"><a class="line-number" href="#L775">775</a>   }</span>
+<span id="L776" class="source-line"><a class="line-number" href="#L776">776</a> }</span>
+<span id="L777" class="source-line"><a class="line-number" href="#L777">777</a> </span>
+<span id="L778" class="source-line"><a class="line-number" href="#L778">778</a> inline void</span>
+<span id="L779" class="source-line"><a class="line-number" href="#L779">779</a> __fill_caches(const processor_t &amp;raw, core_info_t *cores, int n)</span>
+<span id="L780" class="source-line"><a class="line-number" href="#L780">780</a> {</span>
+<span id="L781" class="source-line"><a class="line-number" href="#L781">781</a>   for ( int j = 0; j &lt; n; j++ ) {</span>
+<span id="L782" class="source-line"><a class="line-number" href="#L782">782</a>     cores[j].type = CORE_TYPE_CORE;</span>
+<span id="L783" class="source-line"><a class="line-number" href="#L783">783</a>     cores[j].cluster = raw.core[j].cluster;</span>
+<span id="L784" class="source-line"><a class="line-number" href="#L784">784</a>     cores[j].freq = raw.core[j].timer_freq;</span>
+<span id="L785" class="source-line"><a class="line-number" href="#L785">785</a>     for ( int i = 0; i &lt; 4; i++ ) {</span>
+<span id="L786" class="source-line"><a class="line-number" href="#L786">786</a>       const auto &amp;c = raw.core[j].caches[i];</span>
+<span id="L787" class="source-line"><a class="line-number" href="#L787">787</a>       cores[j].caches[i].type = c.type;</span>
+<span id="L788" class="source-line"><a class="line-number" href="#L788">788</a>       cores[j].caches[i].level = c.level;</span>
+<span id="L789" class="source-line"><a class="line-number" href="#L789">789</a>       cores[j].caches[i].line_size = c.line_size;</span>
+<span id="L790" class="source-line"><a class="line-number" href="#L790">790</a>       cores[j].caches[i].associativity = c.associativity;</span>
+<span id="L791" class="source-line"><a class="line-number" href="#L791">791</a>       cores[j].caches[i].sets = c.sets;</span>
+<span id="L792" class="source-line"><a class="line-number" href="#L792">792</a>       cores[j].caches[i].size = c.size;</span>
+<span id="L793" class="source-line"><a class="line-number" href="#L793">793</a>     }</span>
+<span id="L794" class="source-line"><a class="line-number" href="#L794">794</a>     cores[j].caches[4] = {};</span>
+<span id="L795" class="source-line"><a class="line-number" href="#L795">795</a>   }</span>
+<span id="L796" class="source-line"><a class="line-number" href="#L796">796</a> }</span>
+<span id="L797" class="source-line"><a class="line-number" href="#L797">797</a> </span>
+<span id="L798" class="source-line"><a class="line-number" href="#L798">798</a> #endif</span>
+<span id="L799" class="source-line"><a class="line-number" href="#L799">799</a> </span>
+<span id="L800" class="source-line"><a class="line-number" href="#L800">800</a> };      // namespace __impl</span>
+<span id="L801" class="source-line"><a class="line-number" href="#L801">801</a> </span>
+<span id="L802" class="source-line"><a class="line-number" href="#L802">802</a> // NOTE: this class is huge (70KB roughly)</span>
+<span id="L803" class="source-line"><a class="line-number" href="#L803">803</a> // use with caution</span>
+<span id="L804" class="source-line"><a class="line-number" href="#L804">804</a> class proc_t</span>
+<span id="L805" class="source-line"><a class="line-number" href="#L805">805</a> {</span>
+<span id="L806" class="source-line"><a class="line-number" href="#L806">806</a>   struct __data {</span>
+<span id="L807" class="source-line"><a class="line-number" href="#L807">807</a>     processor_t raw;</span>
+<span id="L808" class="source-line"><a class="line-number" href="#L808">808</a>     core_info_t cores[256];</span>
+<span id="L809" class="source-line"><a class="line-number" href="#L809">809</a>   };</span>
+<span id="L810" class="source-line"><a class="line-number" href="#L810">810</a> </span>
+<span id="L811" class="source-line"><a class="line-number" href="#L811">811</a>   __data *data_;</span>
+<span id="L812" class="source-line"><a class="line-number" href="#L812">812</a>   cpu_features_t features_;</span>
+<span id="L813" class="source-line"><a class="line-number" href="#L813">813</a>   cpu_vendor vendor_;</span>
+<span id="L814" class="source-line"><a class="line-number" href="#L814">814</a>   unsigned count_;</span>
+<span id="L815" class="source-line"><a class="line-number" href="#L815">815</a>   int arch_level_;</span>
+<span id="L816" class="source-line"><a class="line-number" href="#L816">816</a>   atomic_token&lt;u8&gt; probed_;</span>
+<span id="L817" class="source-line"><a class="line-number" href="#L817">817</a>   atomic_token&lt;u8&gt; probed_full_;</span>
+<span id="L818" class="source-line"><a class="line-number" href="#L818">818</a> </span>
+<span id="L819" class="source-line"><a class="line-number" href="#L819">819</a> public:</span>
+<span id="L820" class="source-line"><a class="line-number" href="#L820">820</a>   ~proc_t()</span>
+<span id="L821" class="source-line"><a class="line-number" href="#L821">821</a>   {</span>
+<span id="L822" class="source-line"><a class="line-number" href="#L822">822</a>     if ( data_ ) {</span>
+<span id="L823" class="source-line"><a class="line-number" href="#L823">823</a>       micron::syscall(SYS_munmap, data_, sizeof(__data));</span>
+<span id="L824" class="source-line"><a class="line-number" href="#L824">824</a>       data_ = nullptr;</span>
+<span id="L825" class="source-line"><a class="line-number" href="#L825">825</a>     }</span>
+<span id="L826" class="source-line"><a class="line-number" href="#L826">826</a>   }</span>
+<span id="L827" class="source-line"><a class="line-number" href="#L827">827</a> </span>
+<span id="L828" class="source-line"><a class="line-number" href="#L828">828</a>   proc_t() : data_(nullptr), vendor_(cpu_vendor::unknown), count_(cpu_count()), arch_level_(0), probed_(0), probed_full_(0)</span>
+<span id="L829" class="source-line"><a class="line-number" href="#L829">829</a>   {</span>
+<span id="L830" class="source-line"><a class="line-number" href="#L830">830</a>     micron::memset(&amp;features_, 0, sizeof(cpu_features_t));</span>
+<span id="L831" class="source-line"><a class="line-number" href="#L831">831</a>   }</span>
+<span id="L832" class="source-line"><a class="line-number" href="#L832">832</a> </span>
+<span id="L833" class="source-line"><a class="line-number" href="#L833">833</a>   proc_t(const proc_t &amp;) = delete;</span>
+<span id="L834" class="source-line"><a class="line-number" href="#L834">834</a>   proc_t &amp;operator=(const proc_t &amp;) = delete;</span>
+<span id="L835" class="source-line"><a class="line-number" href="#L835">835</a>   proc_t(proc_t &amp;&amp;) = delete;</span>
+<span id="L836" class="source-line"><a class="line-number" href="#L836">836</a>   proc_t &amp;operator=(proc_t &amp;&amp;) = delete;</span>
+<span id="L837" class="source-line"><a class="line-number" href="#L837">837</a> </span>
+<span id="L838" class="source-line"><a class="line-number" href="#L838">838</a>   static proc_t &amp;</span>
+<span id="L839" class="source-line"><a class="line-number" href="#L839">839</a>   instance()</span>
+<span id="L840" class="source-line"><a class="line-number" href="#L840">840</a>   {</span>
+<span id="L841" class="source-line"><a class="line-number" href="#L841">841</a>     static proc_t inst;</span>
+<span id="L842" class="source-line"><a class="line-number" href="#L842">842</a>     return inst;</span>
+<span id="L843" class="source-line"><a class="line-number" href="#L843">843</a>   }</span>
+<span id="L844" class="source-line"><a class="line-number" href="#L844">844</a> </span>
+<span id="L845" class="source-line"><a class="line-number" href="#L845">845</a>   void</span>
+<span id="L846" class="source-line"><a class="line-number" href="#L846">846</a>   __ensure_data()</span>
+<span id="L847" class="source-line"><a class="line-number" href="#L847">847</a>   {</span>
+<span id="L848" class="source-line"><a class="line-number" href="#L848">848</a>     if ( !data_ ) {</span>
+<span id="L849" class="source-line"><a class="line-number" href="#L849">849</a>       // don&#x27;t include mman due to spaghetti</span>
+<span id="L850" class="source-line"><a class="line-number" href="#L850">850</a> #if defined(__micron_arch_width_32)</span>
+<span id="L851" class="source-line"><a class="line-number" href="#L851">851</a>       max_t __m = micron::syscall(SYS_mmap2, nullptr, sizeof(__data), 0x3, 0x22, -1, 0);</span>
+<span id="L852" class="source-line"><a class="line-number" href="#L852">852</a> #else</span>
+<span id="L853" class="source-line"><a class="line-number" href="#L853">853</a>       max_t __m = micron::syscall(SYS_mmap, nullptr, sizeof(__data), 0x3, 0x22, -1, 0);</span>
+<span id="L854" class="source-line"><a class="line-number" href="#L854">854</a> #endif</span>
+<span id="L855" class="source-line"><a class="line-number" href="#L855">855</a>       if ( micron::syscall_failed(static_cast&lt;long&gt;(__m)) ) return;</span>
+<span id="L856" class="source-line"><a class="line-number" href="#L856">856</a>       data_ = reinterpret_cast&lt;__data *&gt;(__m);</span>
+<span id="L857" class="source-line"><a class="line-number" href="#L857">857</a>       micron::memset(data_, 0, sizeof(__data));</span>
+<span id="L858" class="source-line"><a class="line-number" href="#L858">858</a>     }</span>
+<span id="L859" class="source-line"><a class="line-number" href="#L859">859</a>   }</span>
+<span id="L860" class="source-line"><a class="line-number" href="#L860">860</a> </span>
+<span id="L861" class="source-line"><a class="line-number" href="#L861">861</a>   void</span>
+<span id="L862" class="source-line"><a class="line-number" href="#L862">862</a>   probe()</span>
+<span id="L863" class="source-line"><a class="line-number" href="#L863">863</a>   {</span>
+<span id="L864" class="source-line"><a class="line-number" href="#L864">864</a>     if ( probed_.get(memory_order_acquire) == 2 ) return;</span>
+<span id="L865" class="source-line"><a class="line-number" href="#L865">865</a>     u8 expected = 0;</span>
+<span id="L866" class="source-line"><a class="line-number" href="#L866">866</a>     if ( !probed_.compare_exchange_strong(expected, 1, memory_order_acq_rel, memory_order_acquire) ) {</span>
+<span id="L867" class="source-line"><a class="line-number" href="#L867">867</a>       while ( probed_.get(memory_order_acquire) != 2 ) __cpu_pause();</span>
+<span id="L868" class="source-line"><a class="line-number" href="#L868">868</a>       return;</span>
+<span id="L869" class="source-line"><a class="line-number" href="#L869">869</a>     }</span>
+<span id="L870" class="source-line"><a class="line-number" href="#L870">870</a> </span>
+<span id="L871" class="source-line"><a class="line-number" href="#L871">871</a>     if ( !__impl::__have_cpuid() ) {</span>
+<span id="L872" class="source-line"><a class="line-number" href="#L872">872</a>       probed_.store(2, memory_order_release);</span>
+<span id="L873" class="source-line"><a class="line-number" href="#L873">873</a>       return;</span>
+<span id="L874" class="source-line"><a class="line-number" href="#L874">874</a>     }</span>
+<span id="L875" class="source-line"><a class="line-number" href="#L875">875</a> </span>
+<span id="L876" class="source-line"><a class="line-number" href="#L876">876</a>     __ensure_data();</span>
+<span id="L877" class="source-line"><a class="line-number" href="#L877">877</a>     if ( !data_ ) {</span>
+<span id="L878" class="source-line"><a class="line-number" href="#L878">878</a>       probed_.store(2, memory_order_release);</span>
+<span id="L879" class="source-line"><a class="line-number" href="#L879">879</a>       return;</span>
+<span id="L880" class="source-line"><a class="line-number" href="#L880">880</a>     }</span>
+<span id="L881" class="source-line"><a class="line-number" href="#L881">881</a>     info(&amp;data_-&gt;raw);</span>
+<span id="L882" class="source-line"><a class="line-number" href="#L882">882</a> </span>
+<span id="L883" class="source-line"><a class="line-number" href="#L883">883</a>     arch_level_ = __impl::__max_leaf();</span>
+<span id="L884" class="source-line"><a class="line-number" href="#L884">884</a>     vendor_ = __impl::__map_vendor(data_-&gt;raw.vendor);</span>
+<span id="L885" class="source-line"><a class="line-number" href="#L885">885</a>     __impl::__fill_features(data_-&gt;raw, features_);</span>
+<span id="L886" class="source-line"><a class="line-number" href="#L886">886</a> </span>
+<span id="L887" class="source-line"><a class="line-number" href="#L887">887</a>     probed_.store(2, memory_order_release);</span>
+<span id="L888" class="source-line"><a class="line-number" href="#L888">888</a>   }</span>
+<span id="L889" class="source-line"><a class="line-number" href="#L889">889</a> </span>
+<span id="L890" class="source-line"><a class="line-number" href="#L890">890</a>   void</span>
+<span id="L891" class="source-line"><a class="line-number" href="#L891">891</a>   probe_full()</span>
+<span id="L892" class="source-line"><a class="line-number" href="#L892">892</a>   {</span>
+<span id="L893" class="source-line"><a class="line-number" href="#L893">893</a>     if ( probed_.get(memory_order_acquire) != 2 ) probe();</span>
+<span id="L894" class="source-line"><a class="line-number" href="#L894">894</a>     if ( probed_full_.get(memory_order_acquire) == 2 || !data_ ) return;</span>
+<span id="L895" class="source-line"><a class="line-number" href="#L895">895</a>     u8 expected = 0;</span>
+<span id="L896" class="source-line"><a class="line-number" href="#L896">896</a>     if ( !probed_full_.compare_exchange_strong(expected, 1, memory_order_acq_rel, memory_order_acquire) ) {</span>
+<span id="L897" class="source-line"><a class="line-number" href="#L897">897</a>       while ( probed_full_.get(memory_order_acquire) != 2 ) __cpu_pause();</span>
+<span id="L898" class="source-line"><a class="line-number" href="#L898">898</a>       return;</span>
+<span id="L899" class="source-line"><a class="line-number" href="#L899">899</a>     }</span>
+<span id="L900" class="source-line"><a class="line-number" href="#L900">900</a> </span>
+<span id="L901" class="source-line"><a class="line-number" href="#L901">901</a>     spec(&amp;data_-&gt;raw);</span>
+<span id="L902" class="source-line"><a class="line-number" href="#L902">902</a> </span>
+<span id="L903" class="source-line"><a class="line-number" href="#L903">903</a>     int n = static_cast&lt;int&gt;(count_);</span>
+<span id="L904" class="source-line"><a class="line-number" href="#L904">904</a>     if ( n &gt; 256 ) n = 256;</span>
+<span id="L905" class="source-line"><a class="line-number" href="#L905">905</a>     __impl::__fill_caches(data_-&gt;raw, data_-&gt;cores, n);</span>
+<span id="L906" class="source-line"><a class="line-number" href="#L906">906</a> </span>
+<span id="L907" class="source-line"><a class="line-number" href="#L907">907</a>     probed_full_.store(2, memory_order_release);</span>
+<span id="L908" class="source-line"><a class="line-number" href="#L908">908</a>   }</span>
+<span id="L909" class="source-line"><a class="line-number" href="#L909">909</a> </span>
+<span id="L910" class="source-line"><a class="line-number" href="#L910">910</a>   bool</span>
+<span id="L911" class="source-line"><a class="line-number" href="#L911">911</a>   is_probed() const</span>
+<span id="L912" class="source-line"><a class="line-number" href="#L912">912</a>   {</span>
+<span id="L913" class="source-line"><a class="line-number" href="#L913">913</a>     return probed_.get(memory_order_acquire) == 2;</span>
+<span id="L914" class="source-line"><a class="line-number" href="#L914">914</a>   }</span>
+<span id="L915" class="source-line"><a class="line-number" href="#L915">915</a> </span>
+<span id="L916" class="source-line"><a class="line-number" href="#L916">916</a>   bool</span>
+<span id="L917" class="source-line"><a class="line-number" href="#L917">917</a>   is_probed_full() const</span>
+<span id="L918" class="source-line"><a class="line-number" href="#L918">918</a>   {</span>
+<span id="L919" class="source-line"><a class="line-number" href="#L919">919</a>     return probed_full_.get(memory_order_acquire) == 2;</span>
+<span id="L920" class="source-line"><a class="line-number" href="#L920">920</a>   }</span>
+<span id="L921" class="source-line"><a class="line-number" href="#L921">921</a> </span>
+<span id="L922" class="source-line"><a class="line-number" href="#L922">922</a>   void</span>
+<span id="L923" class="source-line"><a class="line-number" href="#L923">923</a>   __ensure_probed() const</span>
+<span id="L924" class="source-line"><a class="line-number" href="#L924">924</a>   {</span>
+<span id="L925" class="source-line"><a class="line-number" href="#L925">925</a>     const_cast&lt;proc_t *&gt;(this)-&gt;probe();</span>
+<span id="L926" class="source-line"><a class="line-number" href="#L926">926</a>   }</span>
+<span id="L927" class="source-line"><a class="line-number" href="#L927">927</a> </span>
+<span id="L928" class="source-line"><a class="line-number" href="#L928">928</a>   void</span>
+<span id="L929" class="source-line"><a class="line-number" href="#L929">929</a>   __ensure_probed_full() const</span>
+<span id="L930" class="source-line"><a class="line-number" href="#L930">930</a>   {</span>
+<span id="L931" class="source-line"><a class="line-number" href="#L931">931</a>     const_cast&lt;proc_t *&gt;(this)-&gt;probe_full();</span>
+<span id="L932" class="source-line"><a class="line-number" href="#L932">932</a>   }</span>
+<span id="L933" class="source-line"><a class="line-number" href="#L933">933</a> </span>
+<span id="L934" class="source-line"><a class="line-number" href="#L934">934</a>   unsigned</span>
+<span id="L935" class="source-line"><a class="line-number" href="#L935">935</a>   core_count() const</span>
+<span id="L936" class="source-line"><a class="line-number" href="#L936">936</a>   {</span>
+<span id="L937" class="source-line"><a class="line-number" href="#L937">937</a>     return count_;</span>
+<span id="L938" class="source-line"><a class="line-number" href="#L938">938</a>   }</span>
+<span id="L939" class="source-line"><a class="line-number" href="#L939">939</a> </span>
+<span id="L940" class="source-line"><a class="line-number" href="#L940">940</a>   cpu_vendor</span>
+<span id="L941" class="source-line"><a class="line-number" href="#L941">941</a>   vendor() const</span>
+<span id="L942" class="source-line"><a class="line-number" href="#L942">942</a>   {</span>
+<span id="L943" class="source-line"><a class="line-number" href="#L943">943</a>     __ensure_probed();</span>
+<span id="L944" class="source-line"><a class="line-number" href="#L944">944</a>     return vendor_;</span>
+<span id="L945" class="source-line"><a class="line-number" href="#L945">945</a>   }</span>
+<span id="L946" class="source-line"><a class="line-number" href="#L946">946</a> </span>
+<span id="L947" class="source-line"><a class="line-number" href="#L947">947</a>   int</span>
+<span id="L948" class="source-line"><a class="line-number" href="#L948">948</a>   arch_level() const</span>
+<span id="L949" class="source-line"><a class="line-number" href="#L949">949</a>   {</span>
+<span id="L950" class="source-line"><a class="line-number" href="#L950">950</a>     __ensure_probed();</span>
+<span id="L951" class="source-line"><a class="line-number" href="#L951">951</a>     return arch_level_;</span>
+<span id="L952" class="source-line"><a class="line-number" href="#L952">952</a>   }</span>
+<span id="L953" class="source-line"><a class="line-number" href="#L953">953</a> </span>
+<span id="L954" class="source-line"><a class="line-number" href="#L954">954</a>   const cpu_features_t &amp;</span>
+<span id="L955" class="source-line"><a class="line-number" href="#L955">955</a>   features() const</span>
+<span id="L956" class="source-line"><a class="line-number" href="#L956">956</a>   {</span>
+<span id="L957" class="source-line"><a class="line-number" href="#L957">957</a>     __ensure_probed();</span>
+<span id="L958" class="source-line"><a class="line-number" href="#L958">958</a>     return features_;</span>
+<span id="L959" class="source-line"><a class="line-number" href="#L959">959</a>   }</span>
+<span id="L960" class="source-line"><a class="line-number" href="#L960">960</a> </span>
+<span id="L961" class="source-line"><a class="line-number" href="#L961">961</a>   const core_info_t &amp;</span>
+<span id="L962" class="source-line"><a class="line-number" href="#L962">962</a>   core(unsigned n) const</span>
+<span id="L963" class="source-line"><a class="line-number" href="#L963">963</a>   {</span>
+<span id="L964" class="source-line"><a class="line-number" href="#L964">964</a>     __ensure_probed_full();</span>
+<span id="L965" class="source-line"><a class="line-number" href="#L965">965</a>     static const core_info_t __empty_core{};</span>
+<span id="L966" class="source-line"><a class="line-number" href="#L966">966</a>     if ( !data_ || n &gt;= 256 ) return __empty_core;</span>
+<span id="L967" class="source-line"><a class="line-number" href="#L967">967</a>     return data_-&gt;cores[n];</span>
+<span id="L968" class="source-line"><a class="line-number" href="#L968">968</a>   }</span>
+<span id="L969" class="source-line"><a class="line-number" href="#L969">969</a> </span>
+<span id="L970" class="source-line"><a class="line-number" href="#L970">970</a>   bool</span>
+<span id="L971" class="source-line"><a class="line-number" href="#L971">971</a>   has_avx() const</span>
+<span id="L972" class="source-line"><a class="line-number" href="#L972">972</a>   {</span>
+<span id="L973" class="source-line"><a class="line-number" href="#L973">973</a>     return features().avx;</span>
+<span id="L974" class="source-line"><a class="line-number" href="#L974">974</a>   }</span>
+<span id="L975" class="source-line"><a class="line-number" href="#L975">975</a> </span>
+<span id="L976" class="source-line"><a class="line-number" href="#L976">976</a>   bool</span>
+<span id="L977" class="source-line"><a class="line-number" href="#L977">977</a>   has_avx2() const</span>
+<span id="L978" class="source-line"><a class="line-number" href="#L978">978</a>   {</span>
+<span id="L979" class="source-line"><a class="line-number" href="#L979">979</a>     return features().avx2;</span>
+<span id="L980" class="source-line"><a class="line-number" href="#L980">980</a>   }</span>
+<span id="L981" class="source-line"><a class="line-number" href="#L981">981</a> </span>
+<span id="L982" class="source-line"><a class="line-number" href="#L982">982</a>   bool</span>
+<span id="L983" class="source-line"><a class="line-number" href="#L983">983</a>   has_avx512() const</span>
+<span id="L984" class="source-line"><a class="line-number" href="#L984">984</a>   {</span>
+<span id="L985" class="source-line"><a class="line-number" href="#L985">985</a>     return features().avx512f;</span>
+<span id="L986" class="source-line"><a class="line-number" href="#L986">986</a>   }</span>
+<span id="L987" class="source-line"><a class="line-number" href="#L987">987</a> </span>
+<span id="L988" class="source-line"><a class="line-number" href="#L988">988</a>   bool</span>
+<span id="L989" class="source-line"><a class="line-number" href="#L989">989</a>   has_sse42() const</span>
+<span id="L990" class="source-line"><a class="line-number" href="#L990">990</a>   {</span>
+<span id="L991" class="source-line"><a class="line-number" href="#L991">991</a>     return features().sse4_2;</span>
+<span id="L992" class="source-line"><a class="line-number" href="#L992">992</a>   }</span>
+<span id="L993" class="source-line"><a class="line-number" href="#L993">993</a> </span>
+<span id="L994" class="source-line"><a class="line-number" href="#L994">994</a>   bool</span>
+<span id="L995" class="source-line"><a class="line-number" href="#L995">995</a>   has_neon() const</span>
+<span id="L996" class="source-line"><a class="line-number" href="#L996">996</a>   {</span>
+<span id="L997" class="source-line"><a class="line-number" href="#L997">997</a>     return features().asimd;</span>
+<span id="L998" class="source-line"><a class="line-number" href="#L998">998</a>   }</span>
+<span id="L999" class="source-line"><a class="line-number" href="#L999">999</a> </span>
+<span id="L1000" class="source-line"><a class="line-number" href="#L1000">1000</a>   bool</span>
+<span id="L1001" class="source-line"><a class="line-number" href="#L1001">1001</a>   has_sve() const</span>
+<span id="L1002" class="source-line"><a class="line-number" href="#L1002">1002</a>   {</span>
+<span id="L1003" class="source-line"><a class="line-number" href="#L1003">1003</a>     return features().sve;</span>
+<span id="L1004" class="source-line"><a class="line-number" href="#L1004">1004</a>   }</span>
+<span id="L1005" class="source-line"><a class="line-number" href="#L1005">1005</a> </span>
+<span id="L1006" class="source-line"><a class="line-number" href="#L1006">1006</a>   bool</span>
+<span id="L1007" class="source-line"><a class="line-number" href="#L1007">1007</a>   has_sve2() const</span>
+<span id="L1008" class="source-line"><a class="line-number" href="#L1008">1008</a>   {</span>
+<span id="L1009" class="source-line"><a class="line-number" href="#L1009">1009</a>     return features().sve2;</span>
+<span id="L1010" class="source-line"><a class="line-number" href="#L1010">1010</a>   }</span>
+<span id="L1011" class="source-line"><a class="line-number" href="#L1011">1011</a> </span>
+<span id="L1012" class="source-line"><a class="line-number" href="#L1012">1012</a>   bool</span>
+<span id="L1013" class="source-line"><a class="line-number" href="#L1013">1013</a>   has_sme() const</span>
+<span id="L1014" class="source-line"><a class="line-number" href="#L1014">1014</a>   {</span>
+<span id="L1015" class="source-line"><a class="line-number" href="#L1015">1015</a>     return features().sme;</span>
+<span id="L1016" class="source-line"><a class="line-number" href="#L1016">1016</a>   }</span>
+<span id="L1017" class="source-line"><a class="line-number" href="#L1017">1017</a> </span>
+<span id="L1018" class="source-line"><a class="line-number" href="#L1018">1018</a>   bool</span>
+<span id="L1019" class="source-line"><a class="line-number" href="#L1019">1019</a>   has_aes() const</span>
+<span id="L1020" class="source-line"><a class="line-number" href="#L1020">1020</a>   {</span>
+<span id="L1021" class="source-line"><a class="line-number" href="#L1021">1021</a>     return features().aes;</span>
+<span id="L1022" class="source-line"><a class="line-number" href="#L1022">1022</a>   }</span>
+<span id="L1023" class="source-line"><a class="line-number" href="#L1023">1023</a> </span>
+<span id="L1024" class="source-line"><a class="line-number" href="#L1024">1024</a>   bool</span>
+<span id="L1025" class="source-line"><a class="line-number" href="#L1025">1025</a>   has_sha() const</span>
+<span id="L1026" class="source-line"><a class="line-number" href="#L1026">1026</a>   {</span>
+<span id="L1027" class="source-line"><a class="line-number" href="#L1027">1027</a>     return features().sha2;</span>
+<span id="L1028" class="source-line"><a class="line-number" href="#L1028">1028</a>   }</span>
+<span id="L1029" class="source-line"><a class="line-number" href="#L1029">1029</a> </span>
+<span id="L1030" class="source-line"><a class="line-number" href="#L1030">1030</a>   bool</span>
+<span id="L1031" class="source-line"><a class="line-number" href="#L1031">1031</a>   has_crc32() const</span>
+<span id="L1032" class="source-line"><a class="line-number" href="#L1032">1032</a>   {</span>
+<span id="L1033" class="source-line"><a class="line-number" href="#L1033">1033</a>     return features().crc32;</span>
+<span id="L1034" class="source-line"><a class="line-number" href="#L1034">1034</a>   }</span>
+<span id="L1035" class="source-line"><a class="line-number" href="#L1035">1035</a> </span>
+<span id="L1036" class="source-line"><a class="line-number" href="#L1036">1036</a>   bool</span>
+<span id="L1037" class="source-line"><a class="line-number" href="#L1037">1037</a>   has_bf16() const</span>
+<span id="L1038" class="source-line"><a class="line-number" href="#L1038">1038</a>   {</span>
+<span id="L1039" class="source-line"><a class="line-number" href="#L1039">1039</a>     return features().bf16;</span>
+<span id="L1040" class="source-line"><a class="line-number" href="#L1040">1040</a>   }</span>
+<span id="L1041" class="source-line"><a class="line-number" href="#L1041">1041</a> </span>
+<span id="L1042" class="source-line"><a class="line-number" href="#L1042">1042</a>   bool</span>
+<span id="L1043" class="source-line"><a class="line-number" href="#L1043">1043</a>   has_fma() const</span>
+<span id="L1044" class="source-line"><a class="line-number" href="#L1044">1044</a>   {</span>
+<span id="L1045" class="source-line"><a class="line-number" href="#L1045">1045</a>     return features().fma;</span>
+<span id="L1046" class="source-line"><a class="line-number" href="#L1046">1046</a>   }</span>
+<span id="L1047" class="source-line"><a class="line-number" href="#L1047">1047</a> </span>
+<span id="L1048" class="source-line"><a class="line-number" href="#L1048">1048</a>   bool</span>
+<span id="L1049" class="source-line"><a class="line-number" href="#L1049">1049</a>   has_bmi2() const</span>
+<span id="L1050" class="source-line"><a class="line-number" href="#L1050">1050</a>   {</span>
+<span id="L1051" class="source-line"><a class="line-number" href="#L1051">1051</a>     return features().bmi2;</span>
+<span id="L1052" class="source-line"><a class="line-number" href="#L1052">1052</a>   }</span>
+<span id="L1053" class="source-line"><a class="line-number" href="#L1053">1053</a> </span>
+<span id="L1054" class="source-line"><a class="line-number" href="#L1054">1054</a>   bool</span>
+<span id="L1055" class="source-line"><a class="line-number" href="#L1055">1055</a>   has_popcnt() const</span>
+<span id="L1056" class="source-line"><a class="line-number" href="#L1056">1056</a>   {</span>
+<span id="L1057" class="source-line"><a class="line-number" href="#L1057">1057</a>     return features().popcnt;</span>
+<span id="L1058" class="source-line"><a class="line-number" href="#L1058">1058</a>   }</span>
+<span id="L1059" class="source-line"><a class="line-number" href="#L1059">1059</a> </span>
+<span id="L1060" class="source-line"><a class="line-number" href="#L1060">1060</a>   bool</span>
+<span id="L1061" class="source-line"><a class="line-number" href="#L1061">1061</a>   has_atomics() const</span>
+<span id="L1062" class="source-line"><a class="line-number" href="#L1062">1062</a>   {</span>
+<span id="L1063" class="source-line"><a class="line-number" href="#L1063">1063</a>     return features().atomics;</span>
+<span id="L1064" class="source-line"><a class="line-number" href="#L1064">1064</a>   }</span>
+<span id="L1065" class="source-line"><a class="line-number" href="#L1065">1065</a> </span>
+<span id="L1066" class="source-line"><a class="line-number" href="#L1066">1066</a>   bool</span>
+<span id="L1067" class="source-line"><a class="line-number" href="#L1067">1067</a>   has_dotprod() const</span>
+<span id="L1068" class="source-line"><a class="line-number" href="#L1068">1068</a>   {</span>
+<span id="L1069" class="source-line"><a class="line-number" href="#L1069">1069</a>     return features().dotprod;</span>
+<span id="L1070" class="source-line"><a class="line-number" href="#L1070">1070</a>   }</span>
+<span id="L1071" class="source-line"><a class="line-number" href="#L1071">1071</a> </span>
+<span id="L1072" class="source-line"><a class="line-number" href="#L1072">1072</a>   bool</span>
+<span id="L1073" class="source-line"><a class="line-number" href="#L1073">1073</a>   has(const char cpu_features_t::*field) const</span>
+<span id="L1074" class="source-line"><a class="line-number" href="#L1074">1074</a>   {</span>
+<span id="L1075" class="source-line"><a class="line-number" href="#L1075">1075</a>     return features().*field != 0;</span>
+<span id="L1076" class="source-line"><a class="line-number" href="#L1076">1076</a>   }</span>
+<span id="L1077" class="source-line"><a class="line-number" href="#L1077">1077</a> </span>
+<span id="L1078" class="source-line"><a class="line-number" href="#L1078">1078</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L1079" class="source-line"><a class="line-number" href="#L1079">1079</a>   u8</span>
+<span id="L1080" class="source-line"><a class="line-number" href="#L1080">1080</a>   family() const</span>
+<span id="L1081" class="source-line"><a class="line-number" href="#L1081">1081</a>   {</span>
+<span id="L1082" class="source-line"><a class="line-number" href="#L1082">1082</a>     return data_ ? data_-&gt;raw.family : 0;</span>
+<span id="L1083" class="source-line"><a class="line-number" href="#L1083">1083</a>   }</span>
+<span id="L1084" class="source-line"><a class="line-number" href="#L1084">1084</a> </span>
+<span id="L1085" class="source-line"><a class="line-number" href="#L1085">1085</a>   u8</span>
+<span id="L1086" class="source-line"><a class="line-number" href="#L1086">1086</a>   model() const</span>
+<span id="L1087" class="source-line"><a class="line-number" href="#L1087">1087</a>   {</span>
+<span id="L1088" class="source-line"><a class="line-number" href="#L1088">1088</a>     return data_ ? data_-&gt;raw.model : 0;</span>
+<span id="L1089" class="source-line"><a class="line-number" href="#L1089">1089</a>   }</span>
+<span id="L1090" class="source-line"><a class="line-number" href="#L1090">1090</a> </span>
+<span id="L1091" class="source-line"><a class="line-number" href="#L1091">1091</a>   u8</span>
+<span id="L1092" class="source-line"><a class="line-number" href="#L1092">1092</a>   stepping() const</span>
+<span id="L1093" class="source-line"><a class="line-number" href="#L1093">1093</a>   {</span>
+<span id="L1094" class="source-line"><a class="line-number" href="#L1094">1094</a>     return data_ ? data_-&gt;raw.stepping : 0;</span>
+<span id="L1095" class="source-line"><a class="line-number" href="#L1095">1095</a>   }</span>
+<span id="L1096" class="source-line"><a class="line-number" href="#L1096">1096</a> </span>
+<span id="L1097" class="source-line"><a class="line-number" href="#L1097">1097</a>   u8</span>
+<span id="L1098" class="source-line"><a class="line-number" href="#L1098">1098</a>   efamily() const</span>
+<span id="L1099" class="source-line"><a class="line-number" href="#L1099">1099</a>   {</span>
+<span id="L1100" class="source-line"><a class="line-number" href="#L1100">1100</a>     return data_ ? data_-&gt;raw.efamily : 0;</span>
+<span id="L1101" class="source-line"><a class="line-number" href="#L1101">1101</a>   }</span>
+<span id="L1102" class="source-line"><a class="line-number" href="#L1102">1102</a> </span>
+<span id="L1103" class="source-line"><a class="line-number" href="#L1103">1103</a>   u8</span>
+<span id="L1104" class="source-line"><a class="line-number" href="#L1104">1104</a>   emodel() const</span>
+<span id="L1105" class="source-line"><a class="line-number" href="#L1105">1105</a>   {</span>
+<span id="L1106" class="source-line"><a class="line-number" href="#L1106">1106</a>     return data_ ? data_-&gt;raw.emodel : 0;</span>
+<span id="L1107" class="source-line"><a class="line-number" href="#L1107">1107</a>   }</span>
+<span id="L1108" class="source-line"><a class="line-number" href="#L1108">1108</a> #elif defined(__micron_arch_arm_any)</span>
+<span id="L1109" class="source-line"><a class="line-number" href="#L1109">1109</a>   u8</span>
+<span id="L1110" class="source-line"><a class="line-number" href="#L1110">1110</a>   implementer() const</span>
+<span id="L1111" class="source-line"><a class="line-number" href="#L1111">1111</a>   {</span>
+<span id="L1112" class="source-line"><a class="line-number" href="#L1112">1112</a>     return data_ ? data_-&gt;raw.implementer : 0;</span>
+<span id="L1113" class="source-line"><a class="line-number" href="#L1113">1113</a>   }</span>
+<span id="L1114" class="source-line"><a class="line-number" href="#L1114">1114</a> </span>
+<span id="L1115" class="source-line"><a class="line-number" href="#L1115">1115</a>   u16</span>
+<span id="L1116" class="source-line"><a class="line-number" href="#L1116">1116</a>   part() const</span>
+<span id="L1117" class="source-line"><a class="line-number" href="#L1117">1117</a>   {</span>
+<span id="L1118" class="source-line"><a class="line-number" href="#L1118">1118</a>     return data_ ? data_-&gt;raw.part : 0;</span>
+<span id="L1119" class="source-line"><a class="line-number" href="#L1119">1119</a>   }</span>
+<span id="L1120" class="source-line"><a class="line-number" href="#L1120">1120</a> </span>
+<span id="L1121" class="source-line"><a class="line-number" href="#L1121">1121</a>   u8</span>
+<span id="L1122" class="source-line"><a class="line-number" href="#L1122">1122</a>   variant() const</span>
+<span id="L1123" class="source-line"><a class="line-number" href="#L1123">1123</a>   {</span>
+<span id="L1124" class="source-line"><a class="line-number" href="#L1124">1124</a>     return data_ ? data_-&gt;raw.variant : 0;</span>
+<span id="L1125" class="source-line"><a class="line-number" href="#L1125">1125</a>   }</span>
+<span id="L1126" class="source-line"><a class="line-number" href="#L1126">1126</a> </span>
+<span id="L1127" class="source-line"><a class="line-number" href="#L1127">1127</a>   u8</span>
+<span id="L1128" class="source-line"><a class="line-number" href="#L1128">1128</a>   revision() const</span>
+<span id="L1129" class="source-line"><a class="line-number" href="#L1129">1129</a>   {</span>
+<span id="L1130" class="source-line"><a class="line-number" href="#L1130">1130</a>     return data_ ? data_-&gt;raw.revision : 0;</span>
+<span id="L1131" class="source-line"><a class="line-number" href="#L1131">1131</a>   }</span>
+<span id="L1132" class="source-line"><a class="line-number" href="#L1132">1132</a> #endif</span>
+<span id="L1133" class="source-line"><a class="line-number" href="#L1133">1133</a> </span>
+<span id="L1134" class="source-line"><a class="line-number" href="#L1134">1134</a>   const cache_info_t *</span>
+<span id="L1135" class="source-line"><a class="line-number" href="#L1135">1135</a>   l1d(unsigned core_id = 0) const</span>
+<span id="L1136" class="source-line"><a class="line-number" href="#L1136">1136</a>   {</span>
+<span id="L1137" class="source-line"><a class="line-number" href="#L1137">1137</a>     if ( probed_full_.get(memory_order_acquire) != 2 || !data_ ) return nullptr;</span>
+<span id="L1138" class="source-line"><a class="line-number" href="#L1138">1138</a>     for ( int i = 0; i &lt; 5; i++ )</span>
+<span id="L1139" class="source-line"><a class="line-number" href="#L1139">1139</a>       if ( data_-&gt;cores[core_id].caches[i].level == 1 &amp;&amp; data_-&gt;cores[core_id].caches[i].type == DATA_CACHE )</span>
+<span id="L1140" class="source-line"><a class="line-number" href="#L1140">1140</a>         return &amp;data_-&gt;cores[core_id].caches[i];</span>
+<span id="L1141" class="source-line"><a class="line-number" href="#L1141">1141</a>     return nullptr;</span>
+<span id="L1142" class="source-line"><a class="line-number" href="#L1142">1142</a>   }</span>
+<span id="L1143" class="source-line"><a class="line-number" href="#L1143">1143</a> </span>
+<span id="L1144" class="source-line"><a class="line-number" href="#L1144">1144</a>   const cache_info_t *</span>
+<span id="L1145" class="source-line"><a class="line-number" href="#L1145">1145</a>   l1i(unsigned core_id = 0) const</span>
+<span id="L1146" class="source-line"><a class="line-number" href="#L1146">1146</a>   {</span>
+<span id="L1147" class="source-line"><a class="line-number" href="#L1147">1147</a>     if ( probed_full_.get(memory_order_acquire) != 2 || !data_ ) return nullptr;</span>
+<span id="L1148" class="source-line"><a class="line-number" href="#L1148">1148</a>     for ( int i = 0; i &lt; 5; i++ )</span>
+<span id="L1149" class="source-line"><a class="line-number" href="#L1149">1149</a>       if ( data_-&gt;cores[core_id].caches[i].level == 1 &amp;&amp; data_-&gt;cores[core_id].caches[i].type == INSTRUCTION_CACHE )</span>
+<span id="L1150" class="source-line"><a class="line-number" href="#L1150">1150</a>         return &amp;data_-&gt;cores[core_id].caches[i];</span>
+<span id="L1151" class="source-line"><a class="line-number" href="#L1151">1151</a>     return nullptr;</span>
+<span id="L1152" class="source-line"><a class="line-number" href="#L1152">1152</a>   }</span>
+<span id="L1153" class="source-line"><a class="line-number" href="#L1153">1153</a> </span>
+<span id="L1154" class="source-line"><a class="line-number" href="#L1154">1154</a>   const cache_info_t *</span>
+<span id="L1155" class="source-line"><a class="line-number" href="#L1155">1155</a>   l2(unsigned core_id = 0) const</span>
+<span id="L1156" class="source-line"><a class="line-number" href="#L1156">1156</a>   {</span>
+<span id="L1157" class="source-line"><a class="line-number" href="#L1157">1157</a>     if ( probed_full_.get(memory_order_acquire) != 2 || !data_ ) return nullptr;</span>
+<span id="L1158" class="source-line"><a class="line-number" href="#L1158">1158</a>     for ( int i = 0; i &lt; 5; i++ )</span>
+<span id="L1159" class="source-line"><a class="line-number" href="#L1159">1159</a>       if ( data_-&gt;cores[core_id].caches[i].level == 2 ) return &amp;data_-&gt;cores[core_id].caches[i];</span>
+<span id="L1160" class="source-line"><a class="line-number" href="#L1160">1160</a>     return nullptr;</span>
+<span id="L1161" class="source-line"><a class="line-number" href="#L1161">1161</a>   }</span>
+<span id="L1162" class="source-line"><a class="line-number" href="#L1162">1162</a> </span>
+<span id="L1163" class="source-line"><a class="line-number" href="#L1163">1163</a>   const cache_info_t *</span>
+<span id="L1164" class="source-line"><a class="line-number" href="#L1164">1164</a>   l3(unsigned core_id = 0) const</span>
+<span id="L1165" class="source-line"><a class="line-number" href="#L1165">1165</a>   {</span>
+<span id="L1166" class="source-line"><a class="line-number" href="#L1166">1166</a>     if ( probed_full_.get(memory_order_acquire) != 2 || !data_ ) return nullptr;</span>
+<span id="L1167" class="source-line"><a class="line-number" href="#L1167">1167</a>     for ( int i = 0; i &lt; 5; i++ )</span>
+<span id="L1168" class="source-line"><a class="line-number" href="#L1168">1168</a>       if ( data_-&gt;cores[core_id].caches[i].level == 3 ) return &amp;data_-&gt;cores[core_id].caches[i];</span>
+<span id="L1169" class="source-line"><a class="line-number" href="#L1169">1169</a>     return nullptr;</span>
+<span id="L1170" class="source-line"><a class="line-number" href="#L1170">1170</a>   }</span>
+<span id="L1171" class="source-line"><a class="line-number" href="#L1171">1171</a> </span>
+<span id="L1172" class="source-line"><a class="line-number" href="#L1172">1172</a>   u32</span>
+<span id="L1173" class="source-line"><a class="line-number" href="#L1173">1173</a>   cache_line_size(unsigned core_id = 0) const</span>
+<span id="L1174" class="source-line"><a class="line-number" href="#L1174">1174</a>   {</span>
+<span id="L1175" class="source-line"><a class="line-number" href="#L1175">1175</a>     auto *d = l1d(core_id);</span>
+<span id="L1176" class="source-line"><a class="line-number" href="#L1176">1176</a>     return d ? d-&gt;line_size : 64;</span>
+<span id="L1177" class="source-line"><a class="line-number" href="#L1177">1177</a>   }</span>
+<span id="L1178" class="source-line"><a class="line-number" href="#L1178">1178</a> </span>
+<span id="L1179" class="source-line"><a class="line-number" href="#L1179">1179</a>   unsigned</span>
+<span id="L1180" class="source-line"><a class="line-number" href="#L1180">1180</a>   sve_vector_bytes() const</span>
+<span id="L1181" class="source-line"><a class="line-number" href="#L1181">1181</a>   {</span>
+<span id="L1182" class="source-line"><a class="line-number" href="#L1182">1182</a> #if defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_sve)</span>
+<span id="L1183" class="source-line"><a class="line-number" href="#L1183">1183</a>     u64 vl;</span>
+<span id="L1184" class="source-line"><a class="line-number" href="#L1184">1184</a>     __asm__ volatile(&quot;rdvl %0, #1&quot; : &quot;=r&quot;(vl));</span>
+<span id="L1185" class="source-line"><a class="line-number" href="#L1185">1185</a>     return (unsigned)vl;</span>
+<span id="L1186" class="source-line"><a class="line-number" href="#L1186">1186</a> #else</span>
+<span id="L1187" class="source-line"><a class="line-number" href="#L1187">1187</a>     return 0;</span>
+<span id="L1188" class="source-line"><a class="line-number" href="#L1188">1188</a> #endif</span>
+<span id="L1189" class="source-line"><a class="line-number" href="#L1189">1189</a>   }</span>
+<span id="L1190" class="source-line"><a class="line-number" href="#L1190">1190</a> </span>
+<span id="L1191" class="source-line"><a class="line-number" href="#L1191">1191</a>   unsigned</span>
+<span id="L1192" class="source-line"><a class="line-number" href="#L1192">1192</a>   sve_vector_bits() const</span>
+<span id="L1193" class="source-line"><a class="line-number" href="#L1193">1193</a>   {</span>
+<span id="L1194" class="source-line"><a class="line-number" href="#L1194">1194</a>     return sve_vector_bytes() * 8;</span>
+<span id="L1195" class="source-line"><a class="line-number" href="#L1195">1195</a>   }</span>
+<span id="L1196" class="source-line"><a class="line-number" href="#L1196">1196</a> </span>
+<span id="L1197" class="source-line"><a class="line-number" href="#L1197">1197</a>   cpu_freq_t</span>
+<span id="L1198" class="source-line"><a class="line-number" href="#L1198">1198</a>   freq(unsigned cpu_id = 0) const</span>
+<span id="L1199" class="source-line"><a class="line-number" href="#L1199">1199</a>   {</span>
+<span id="L1200" class="source-line"><a class="line-number" href="#L1200">1200</a>     return cpu_freq(cpu_id);</span>
+<span id="L1201" class="source-line"><a class="line-number" href="#L1201">1201</a>   }</span>
+<span id="L1202" class="source-line"><a class="line-number" href="#L1202">1202</a> </span>
+<span id="L1203" class="source-line"><a class="line-number" href="#L1203">1203</a>   const processor_t *</span>
+<span id="L1204" class="source-line"><a class="line-number" href="#L1204">1204</a>   raw() const</span>
+<span id="L1205" class="source-line"><a class="line-number" href="#L1205">1205</a>   {</span>
+<span id="L1206" class="source-line"><a class="line-number" href="#L1206">1206</a>     return data_ ? &amp;data_-&gt;raw : nullptr;</span>
+<span id="L1207" class="source-line"><a class="line-number" href="#L1207">1207</a>   }</span>
+<span id="L1208" class="source-line"><a class="line-number" href="#L1208">1208</a> </span>
+<span id="L1209" class="source-line"><a class="line-number" href="#L1209">1209</a>   processor_t *</span>
+<span id="L1210" class="source-line"><a class="line-number" href="#L1210">1210</a>   raw()</span>
+<span id="L1211" class="source-line"><a class="line-number" href="#L1211">1211</a>   {</span>
+<span id="L1212" class="source-line"><a class="line-number" href="#L1212">1212</a>     probe();</span>
+<span id="L1213" class="source-line"><a class="line-number" href="#L1213">1213</a>     if ( !data_ ) return nullptr;</span>
+<span id="L1214" class="source-line"><a class="line-number" href="#L1214">1214</a>     return &amp;data_-&gt;raw;</span>
+<span id="L1215" class="source-line"><a class="line-number" href="#L1215">1215</a>   }</span>
+<span id="L1216" class="source-line"><a class="line-number" href="#L1216">1216</a> };</span>
+<span id="L1217" class="source-line"><a class="line-number" href="#L1217">1217</a> </span>
+<span id="L1218" class="source-line"><a class="line-number" href="#L1218">1218</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

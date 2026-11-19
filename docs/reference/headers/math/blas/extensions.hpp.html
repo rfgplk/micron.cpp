@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/blas/extensions.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/blas/extensions.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/blas.html">BLAS</a></div><p>Defined in header <code>&lt;micron/math/blas/extensions.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/blas/extensions.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-2e4f3a291f84fa20">micron::math::blas::ext::col_view</code></td><td>name; line 28</td></tr><tr class="t-dsc"><td><code id="s-2e9b8572995102f9">micron::math::blas::ext::row_view</code></td><td>name; line 29</td></tr><tr class="t-dsc"><td><code id="s-44bcdd0916f57bc3">micron::math::blas::ext::vec_view</code></td><td>name; line 30</td></tr><tr class="t-dsc"><td><a href="#f-7a85d7123d1322df">micron::math::blas::ext::omatcopy(T alpha, const VA &amp;A, VB B) noexcept</a></td><td>function; line 35</td></tr><tr class="t-dsc"><td><a href="#f-4f7d799dcd3a971f">micron::math::blas::ext::imatcopy(T alpha, VA A) noexcept</a></td><td>function; line 53</td></tr><tr class="t-dsc"><td><a href="#f-581f7ef8852e6085">micron::math::blas::ext::gemmt(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</a></td><td>function; line 77</td></tr><tr class="t-dsc"><td><a href="#f-1ba2db05aeb6aac9">micron::math::blas::ext::axpby_batched(usize batch_count, T alpha, const vec_view&lt;T&gt; *xs, T beta, vec_view&lt;T&gt; *ys) noexcept</a></td><td>function; line 113</td></tr><tr class="t-dsc"><td><a href="#f-827c0cee7f08e03f">micron::math::blas::ext::dot_batched(usize batch_count, const vec_view&lt;T&gt; *xs, const vec_view&lt;T&gt; *ys, T *out) noexcept</a></td><td>function; line 120</td></tr><tr class="t-dsc"><td><a href="#f-0c6106afe738478c">micron::math::blas::ext::gemm_batched(usize batch_count, T alpha, const VA *As, const VB *Bs, T beta, VC *Cs) noexcept</a></td><td>function; line 128</td></tr><tr class="t-dsc"><td><a href="#f-2e21b983d64ea434">micron::math::blas::ext::ger_batched(usize batch_count, T alpha, const vec_view&lt;T&gt; *xs, const vec_view&lt;T&gt; *ys, VA *As) noexcept</a></td><td>function; line 136</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-7a85d7123d1322df"><h3><code>micron::math::blas::ext::omatcopy(T alpha, const VA &amp;A, VB B) noexcept</code></h3><p>Defined in <code>math/blas/extensions.hpp</code>, <a href="../../../source/math/blas/extensions.hpp.html#L35">line 35</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt;)
+[[gnu::flatten]] inline constexpr void
+omatcopy(T alpha, const VA &amp;A, VB B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>VB B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt;)
+[[gnu::flatten]] inline constexpr void
+omatcopy(T alpha, const VA &amp;A, VB B) noexcept
+{
+  constexpr bool tr = micron::same_as&lt;Op, op::trans&gt; or micron::same_as&lt;Op, op::conj_trans&gt;;
+  const usize m = tr ? A.cols : A.rows;
+  const usize n = tr ? A.rows : A.cols;
+  const ssize_t rs_A = level3::__impl_level3::rs_of(A);
+  const ssize_t cs_A = level3::__impl_level3::cs_of(A);
+  const ssize_t rs_B = level3::__impl_level3::rs_of(B);
+  const ssize_t cs_B = level3::__impl_level3::cs_of(B);
+  for ( usize i = 0; i &lt; m; ++i )
+    for ( usize j = 0; j &lt; n; ++j )
+      bits::mat_at(B.data, i, j, rs_B, cs_B)
+          = alpha * (tr ? bits::mat_at(A.data, j, i, rs_A, cs_A) : bits::mat_at(A.data, i, j, rs_A, cs_A));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-98252a0a1da541e6">level3::__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">level3::__impl_level3::cs_of</a>, <a href="bits/impl.hpp.html#f-1e79a4e118d9d07d">bits::mat_at</a>.</p></section><section class="function-entry" id="f-4f7d799dcd3a971f"><h3><code>micron::math::blas::ext::imatcopy(T alpha, VA A) noexcept</code></h3><p>Defined in <code>math/blas/extensions.hpp</code>, <a href="../../../source/math/blas/extensions.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag Op = op::none, blas_scalar T, typename VA&gt;
+  requires(mat_view_like&lt;VA&gt;)
+[[gnu::flatten]] inline constexpr void
+imatcopy(T alpha, VA A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>VA A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag Op = op::none, blas_scalar T, typename VA&gt;
+  requires(mat_view_like&lt;VA&gt;)
+[[gnu::flatten]] inline constexpr void
+imatcopy(T alpha, VA A) noexcept
+{
+  const ssize_t rs = level3::__impl_level3::rs_of(A);
+  const ssize_t cs = level3::__impl_level3::cs_of(A);
+  if constexpr ( micron::same_as&lt;Op, op::none&gt; ) {
+    for ( usize i = 0; i &lt; A.rows; ++i )
+      for ( usize j = 0; j &lt; A.cols; ++j ) bits::mat_at(A.data, i, j, rs, cs) *= alpha;
+  } else {
+    for ( usize i = 0; i &lt; A.rows; ++i ) {
+      bits::mat_at(A.data, i, i, rs, cs) *= alpha;
+      for ( usize j = i + 1; j &lt; A.cols; ++j ) {
+        T &amp;aij = bits::mat_at(A.data, i, j, rs, cs);
+        T &amp;aji = bits::mat_at(A.data, j, i, rs, cs);
+        const T t = alpha * aji;
+        aji = alpha * aij;
+        aij = t;
+      }
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-98252a0a1da541e6">level3::__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">level3::__impl_level3::cs_of</a>, <a href="bits/impl.hpp.html#f-1e79a4e118d9d07d">bits::mat_at</a>.</p></section><section class="function-entry" id="f-581f7ef8852e6085"><h3><code>micron::math::blas::ext::gemmt(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/extensions.hpp</code>, <a href="../../../source/math/blas/extensions.hpp.html#L77">line 77</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;uplo::uplo_tag U, op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt;)
+[[gnu::flatten]] inline constexpr void
+gemmt(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>const VB &amp;B</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;uplo::uplo_tag U, op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt;)
+[[gnu::flatten]] inline constexpr void
+gemmt(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept
+{
+  constexpr bool trA = micron::same_as&lt;OpA, op::trans&gt; or micron::same_as&lt;OpA, op::conj_trans&gt;;
+  constexpr bool trB = micron::same_as&lt;OpB, op::trans&gt; or micron::same_as&lt;OpB, op::conj_trans&gt;;
+  constexpr bool upper = micron::same_as&lt;U, uplo::upper&gt;;
+  const usize n = trA ? A.cols : A.rows;      // C is n × n
+  const usize k = trA ? A.rows : A.cols;
+  const ssize_t rs_A = level3::__impl_level3::rs_of(A);
+  const ssize_t cs_A = level3::__impl_level3::cs_of(A);
+  const ssize_t rs_B = level3::__impl_level3::rs_of(B);
+  const ssize_t cs_B = level3::__impl_level3::cs_of(B);
+  const ssize_t rs_C = level3::__impl_level3::rs_of(C);
+  const ssize_t cs_C = level3::__impl_level3::cs_of(C);
+  for ( usize i = 0; i &lt; n; ++i ) {
+    const usize j_lo = upper ? i : 0;
+    const usize j_hi = upper ? n : (i + 1);
+    for ( usize j = j_lo; j &lt; j_hi; ++j ) {
+      T acc{};
+      for ( usize p = 0; p &lt; k; ++p ) {
+        const T a = trA ? bits::mat_at(A.data, p, i, rs_A, cs_A) : bits::mat_at(A.data, i, p, rs_A, cs_A);
+        const T b = trB ? bits::mat_at(B.data, j, p, rs_B, cs_B) : bits::mat_at(B.data, p, j, rs_B, cs_B);
+        acc = bits::fma_acc&lt;T&gt;(a, b, acc);
+      }
+      T &amp;cij = bits::mat_at(C.data, i, j, rs_C, cs_C);
+      if ( beta == T(0) )
+        cij = alpha * acc;
+      else if ( beta == T(1) )
+        cij = bits::fma_acc&lt;T&gt;(alpha, acc, cij);
+      else
+        cij = bits::fma_acc&lt;T&gt;(alpha, acc, beta * cij);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-98252a0a1da541e6">level3::__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">level3::__impl_level3::cs_of</a>, <a href="bits/impl.hpp.html#f-1e79a4e118d9d07d">bits::mat_at</a>, <a href="bits/impl.hpp.html#f-53d7e867428ab4f6">bits::fma_acc&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-1ba2db05aeb6aac9"><h3><code>micron::math::blas::ext::axpby_batched(usize batch_count, T alpha, const vec_view&lt;T&gt; *xs, T beta, vec_view&lt;T&gt; *ys) noexcept</code></h3><p>Defined in <code>math/blas/extensions.hpp</code>, <a href="../../../source/math/blas/extensions.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+axpby_batched(usize batch_count, T alpha, const vec_view&lt;T&gt; *xs, T beta, vec_view&lt;T&gt; *ys) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize batch_count</code></li><li><code>T alpha</code></li><li><code>const vec_view&lt;T&gt; *xs</code></li><li><code>T beta</code></li><li><code>vec_view&lt;T&gt; *ys</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+axpby_batched(usize batch_count, T alpha, const vec_view&lt;T&gt; *xs, T beta, vec_view&lt;T&gt; *ys) noexcept
+{
+  for ( usize b = 0; b &lt; batch_count; ++b ) level1::axpby&lt;T&gt;(alpha, xs[b], beta, ys[b]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level1.hpp.html#f-f7cd616cfb4ea4b1">level1::axpby&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-827c0cee7f08e03f"><h3><code>micron::math::blas::ext::dot_batched(usize batch_count, const vec_view&lt;T&gt; *xs, const vec_view&lt;T&gt; *ys, T *out) noexcept</code></h3><p>Defined in <code>math/blas/extensions.hpp</code>, <a href="../../../source/math/blas/extensions.hpp.html#L120">line 120</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+dot_batched(usize batch_count, const vec_view&lt;T&gt; *xs, const vec_view&lt;T&gt; *ys, T *out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize batch_count</code></li><li><code>const vec_view&lt;T&gt; *xs</code></li><li><code>const vec_view&lt;T&gt; *ys</code></li><li><code>T *out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+dot_batched(usize batch_count, const vec_view&lt;T&gt; *xs, const vec_view&lt;T&gt; *ys, T *out) noexcept
+{
+  for ( usize b = 0; b &lt; batch_count; ++b ) out[b] = level1::dot&lt;T&gt;(xs[b], ys[b]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level1.hpp.html#f-4f0ad31ddd5f9219">level1::dot&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-0c6106afe738478c"><h3><code>micron::math::blas::ext::gemm_batched(usize batch_count, T alpha, const VA *As, const VB *Bs, T beta, VC *Cs) noexcept</code></h3><p>Defined in <code>math/blas/extensions.hpp</code>, <a href="../../../source/math/blas/extensions.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt;)
+[[gnu::flatten]] inline void
+gemm_batched(usize batch_count, T alpha, const VA *As, const VB *Bs, T beta, VC *Cs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize batch_count</code></li><li><code>T alpha</code></li><li><code>const VA *As</code></li><li><code>const VB *Bs</code></li><li><code>T beta</code></li><li><code>VC *Cs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt;)
+[[gnu::flatten]] inline void
+gemm_batched(usize batch_count, T alpha, const VA *As, const VB *Bs, T beta, VC *Cs) noexcept
+{
+  for ( usize b = 0; b &lt; batch_count; ++b ) level3::gemm&lt;OpA, OpB, T&gt;(alpha, As[b], Bs[b], beta, Cs[b]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-e95bcab4d69639eb">level3::gemm&lt;OpA, OpB, T&gt;</a>.</p></section><section class="function-entry" id="f-2e21b983d64ea434"><h3><code>micron::math::blas::ext::ger_batched(usize batch_count, T alpha, const vec_view&lt;T&gt; *xs, const vec_view&lt;T&gt; *ys, VA *As) noexcept</code></h3><p>Defined in <code>math/blas/extensions.hpp</code>, <a href="../../../source/math/blas/extensions.hpp.html#L136">line 136</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T, typename VA&gt;
+  requires(mat_view_like&lt;VA&gt;)
+[[gnu::flatten]] inline void
+ger_batched(usize batch_count, T alpha, const vec_view&lt;T&gt; *xs, const vec_view&lt;T&gt; *ys, VA *As) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize batch_count</code></li><li><code>T alpha</code></li><li><code>const vec_view&lt;T&gt; *xs</code></li><li><code>const vec_view&lt;T&gt; *ys</code></li><li><code>VA *As</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T, typename VA&gt;
+  requires(mat_view_like&lt;VA&gt;)
+[[gnu::flatten]] inline void
+ger_batched(usize batch_count, T alpha, const vec_view&lt;T&gt; *xs, const vec_view&lt;T&gt; *ys, VA *As) noexcept
+{
+  for ( usize b = 0; b &lt; batch_count; ++b ) level2::ger&lt;T&gt;(alpha, xs[b], ys[b], As[b]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level2.hpp.html#f-e8208ef2493c7a94">level2::ger&lt;T&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

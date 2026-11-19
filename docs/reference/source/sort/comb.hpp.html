@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sort/comb.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">sort/comb.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/sort/comb.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> // comb sort</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> //   time:  ~O(n log n) average  /  O(n^2) worst</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> //   space: O(1) in-place</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> //   stable: no</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> //</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> //   use: simple cache-friendly improvement over bubble; not a primary sort</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../algorithm/memory.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../concepts.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;../types.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> </span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> namespace micron</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> {</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> namespace sort</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> {</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> template&lt;is_iterable_container T, typename Cmp&gt;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> T &amp;</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> __comb(T &amp;arr, Cmp comp)</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> {</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a>   const max_t n = static_cast&lt;max_t&gt;(arr.size());</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>   if ( n &lt; 2 ) return arr;</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> </span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   max_t gap = n;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a>   bool swapped = true;</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>   while ( gap &gt; 1 || swapped ) {</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>     gap = (gap * 10) / 13;      // shrink by ~1.3</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>     if ( gap == 9 || gap == 10 ) gap = 11;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>     if ( gap &lt; 1 ) gap = 1;</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> </span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>     swapped = false;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>     for ( max_t i = 0; i + gap &lt; n; ++i ) {</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>       if ( comp(arr[i + gap], arr[i]) ) {</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>         micron::swap(arr[i], arr[i + gap]);</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>         swapped = true;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>       }</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>     }</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>   }</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>   return arr;</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> }</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> </span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> template&lt;is_iterable_container T&gt;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> T &amp;</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> comb(T &amp;arr)</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> {</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   return __comb(arr, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; });</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> }</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> </span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> T &amp;</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> comb(T &amp;arr, Cmp comp)</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> {</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   return __comb(arr, comp);</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> }</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> };      // namespace sort</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

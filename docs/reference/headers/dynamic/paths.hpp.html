@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/dynamic/paths.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/dynamic/paths.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/dynamic.html">Dynamic loading</a></div><p>Defined in header <code>&lt;micron/dynamic/paths.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/dynamic/paths.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-a396f1ef18bafbcb">micron::elf::dl::is_secure_exec() noexcept</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-9293ce5fade7999a">micron::elf::dl::resolve_dependency(const char *soname, const char *rpath, const char *runpath, const char *origin) noexcept</a></td><td>function; line 132</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a396f1ef18bafbcb"><h3><code>micron::elf::dl::is_secure_exec() noexcept</code></h3><p>Defined in <code>dynamic/paths.hpp</code>, <a href="../../source/dynamic/paths.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+is_secure_exec() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+is_secure_exec() noexcept
+{
+  u32 st = __atomic_load_n(&amp;__secure_exec_state, __ATOMIC_ACQUIRE);
+  if ( st == 0 ) [[unlikely]] {
+    st = __secure_exec_probe() ? 2u : 1u;
+    __atomic_store_n(&amp;__secure_exec_state, st, __ATOMIC_RELEASE);
+  }
+  return st == 2u;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>st == 2u</code></td><td><a href="../../source/dynamic/paths.hpp.html#L41">line 41</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-0c01064cfe80ec93">__secure_exec_probe</a>.</p></section><section class="function-entry" id="f-9293ce5fade7999a"><h3><code>micron::elf::dl::resolve_dependency(const char *soname, const char *rpath, const char *runpath, const char *origin) noexcept</code></h3><p>Defined in <code>dynamic/paths.hpp</code>, <a href="../../source/dynamic/paths.hpp.html#L132">line 132</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline path_str_t
+resolve_dependency(const char *soname, const char *rpath, const char *runpath, const char *origin) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *soname</code></li><li><code>const char *rpath</code></li><li><code>const char *runpath</code></li><li><code>const char *origin</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline path_str_t
+resolve_dependency(const char *soname, const char *rpath, const char *runpath, const char *origin) noexcept
+{
+  path_str_t out;
+  if ( !soname || !soname[0] ) return out;
+
+  const bool secure = is_secure_exec();
+
+  if ( micron::format::find(soname, micron::strlen(soname), &#x27;/&#x27;) ) {
+    if ( secure &amp;&amp; soname[0] != &#x27;/&#x27; ) return out;      // relative path, attacker-chosen cwd
+    const usize sn = micron::strlen(soname);
+    if ( sn &gt;= out.max_size() ) return path_str_t{};
+    for ( usize i = 0; i &lt; sn; ++i ) out += soname[i];
+    out.null_term();
+    return __file_is_native_elf(out.c_str()) ? out : path_str_t{};
+  }
+
+  if ( path_str_t h = __try_path_list(rpath, soname, origin, secure); !h.empty() ) return h;
+  if ( !secure )
+    if ( path_str_t h = __try_path_list(env_get(&quot;LD_LIBRARY_PATH&quot;), soname, origin, secure); !h.empty() ) return h;
+  if ( path_str_t h = __try_path_list(runpath, soname, origin, secure); !h.empty() ) return h;
+
+  for ( usize i = 0; i &lt; default_search_path_count; ++i ) {
+    path_str_t cand = __join_path(default_search_paths[i], soname);
+    if ( !cand.empty() &amp;&amp; __file_is_native_elf(cand.c_str()) ) return cand;
+  }
+  return path_str_t{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/dynamic/paths.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/dynamic/paths.hpp.html#L140">line 140</a></td></tr><tr class="t-dsc"><td><code>path_str_t{}</code></td><td><a href="../../source/dynamic/paths.hpp.html#L142">line 142</a></td></tr><tr class="t-dsc"><td><code>__file_is_native_elf(out.c_str()) ? out : path_str_t{}</code></td><td><a href="../../source/dynamic/paths.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>h</code></td><td><a href="../../source/dynamic/paths.hpp.html#L148">line 148</a></td></tr><tr class="t-dsc"><td><code>h</code></td><td><a href="../../source/dynamic/paths.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td><code>h</code></td><td><a href="../../source/dynamic/paths.hpp.html#L151">line 151</a></td></tr><tr class="t-dsc"><td><code>cand</code></td><td><a href="../../source/dynamic/paths.hpp.html#L155">line 155</a></td></tr><tr class="t-dsc"><td><code>path_str_t{}</code></td><td><a href="../../source/dynamic/paths.hpp.html#L157">line 157</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-a396f1ef18bafbcb">is_secure_exec</a>, <a href="../string/format.hpp.html#f-fba19553b3bcec33">micron::format::find</a>, <a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="../linux/elf/search.hpp.html#f-89088bf46d513e3f">__file_is_native_elf</a>, <a href="paths.hpp.html#f-019eff53d2fc98c3">__try_path_list</a>, <a href="../linux/process/environ.hpp.html#f-422fa9c97f629279">env_get</a>, <a href="../linux/elf/search.hpp.html#f-cce6feb855a6b949">__join_path</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-0c01064cfe80ec93"><h3><code>micron::elf::dl::__secure_exec_probe() noexcept</code></h3><p>Defined in <code>dynamic/paths.hpp</code>, <a href="../../source/dynamic/paths.hpp.html#L26">line 26</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold, gnu::noinline]] inline bool
+__secure_exec_probe() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold, gnu::noinline]] inline bool
+__secure_exec_probe() noexcept
+{
+  if ( micron::auxval_has(micron::at_secure) ) return micron::getauxval(micron::at_secure) != 0;
+  // auxv unreadable (no /proc)
+  return posix::getuid() != posix::geteuid() || posix::getgid() != posix::getegid();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::getauxval(micron::at_secure) != 0</code></td><td><a href="../../source/dynamic/paths.hpp.html#L28">line 28</a></td></tr><tr class="t-dsc"><td><code>posix::getuid() != posix::geteuid() || posix::getgid() != posix::getegid()</code></td><td><a href="../../source/dynamic/paths.hpp.html#L30">line 30</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/elf/auxval.hpp.html#f-9aa001ac63826823">micron::auxval_has</a>, <a href="../linux/elf/auxval.hpp.html#f-85445bdc43919f42">micron::getauxval</a>, <a href="../linux/sys/system.hpp.html#f-bbe286bc2fb50331">posix::getuid</a>, <a href="../linux/sys/system.hpp.html#f-de646bdd018766b5">posix::geteuid</a>, <a href="../linux/sys/system.hpp.html#f-742583b379beb58a">posix::getgid</a>, <a href="../linux/sys/system.hpp.html#f-7f33dc523a25d292">posix::getegid</a>.</p></section><section class="function-entry" id="f-a0fbc138e160310f"><h3><code>micron::elf::dl::__segment_is_trusted(const char *seg, usize len) noexcept</code></h3><p>Defined in <code>dynamic/paths.hpp</code>, <a href="../../source/dynamic/paths.hpp.html#L45">line 45</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__segment_is_trusted(const char *seg, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *seg</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__segment_is_trusted(const char *seg, usize len) noexcept
+{
+  if ( len == 0 || seg[0] != &#x27;/&#x27; ) return false;
+  for ( usize i = 0; i &lt; len; ++i )
+    if ( seg[i] == &#x27;$&#x27; ) return false;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/paths.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/paths.hpp.html#L49">line 49</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/dynamic/paths.hpp.html#L50">line 50</a></td></tr></tbody></table></section><section class="function-entry" id="f-093d78c76b19ab7e"><h3><code>micron::elf::dl::__dirname_of(const char *path) noexcept</code></h3><p>Defined in <code>dynamic/paths.hpp</code>, <a href="../../source/dynamic/paths.hpp.html#L54">line 54</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline path_str_t
+__dirname_of(const char *path) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *path</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline path_str_t
+__dirname_of(const char *path) noexcept
+{
+  path_str_t out;
+  if ( !path ) return out;
+  const usize n = micron::strlen(path);
+  usize cut = 0;
+  for ( usize i = n; i-- &gt; 0; ) {
+    if ( path[i] == &#x27;/&#x27; ) {
+      cut = i;
+      break;
+    }
+  }
+  if ( cut == 0 ) return out;
+  for ( usize i = 0; i &lt; cut &amp;&amp; out.size() + 1 &lt; out.max_size(); ++i ) out += path[i];
+  out.null_term();
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/dynamic/paths.hpp.html#L57">line 57</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/dynamic/paths.hpp.html#L66">line 66</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/dynamic/paths.hpp.html#L69">line 69</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>.</p></section><section class="function-entry" id="f-5ce8d5937c2c0af7"><h3><code>micron::elf::dl::__expand_origin(const char *spec, usize len, const char *origin) noexcept</code></h3><p>Defined in <code>dynamic/paths.hpp</code>, <a href="../../source/dynamic/paths.hpp.html#L73">line 73</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline path_str_t
+__expand_origin(const char *spec, usize len, const char *origin) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *spec</code></li><li><code>usize len</code></li><li><code>const char *origin</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline path_str_t
+__expand_origin(const char *spec, usize len, const char *origin) noexcept
+{
+  path_str_t out;
+  for ( usize i = 0; i &lt; len &amp;&amp; out.size() + 1 &lt; out.max_size(); ) {
+    if ( spec[i] != &#x27;$&#x27; ) {
+      out += spec[i++];
+      continue;
+    }
+    const bool braced = (i + 1 &lt; len &amp;&amp; spec[i + 1] == &#x27;{&#x27;);
+    const usize name_at = i + (braced ? 2 : 1);
+    auto starts = [&amp;](const char *w) {
+      const usize wl = micron::strlen(w);
+      if ( name_at + wl &gt; len ) return false;
+      for ( usize k = 0; k &lt; wl; ++k )
+        if ( spec[name_at + k] != w[k] ) return false;
+      return true;
+    };
+    if ( starts(&quot;ORIGIN&quot;) ) {
+      if ( origin )
+        for ( usize k = 0; origin[k] &amp;&amp; out.size() + 1 &lt; out.max_size(); ++k ) out += origin[k];
+      i = name_at + 6 + (braced ? 1 : 0);
+    } else if ( starts(&quot;LIB&quot;) ) {
+
+      i = name_at + 3 + (braced ? 1 : 0);
+    } else if ( starts(&quot;PLATFORM&quot;) ) {
+      i = name_at + 8 + (braced ? 1 : 0);
+    } else {
+      out += spec[i++];
+    }
+  }
+  out.null_term();
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/dynamic/paths.hpp.html#L104">line 104</a></td></tr></tbody></table></section><section class="function-entry" id="f-019eff53d2fc98c3"><h3><code>micron::elf::dl::__try_path_list(const char *list, const char *leaf, const char *origin, bool secure = is_secure_exec()) noexcept</code></h3><p>Defined in <code>dynamic/paths.hpp</code>, <a href="../../source/dynamic/paths.hpp.html#L108">line 108</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline path_str_t
+__try_path_list(const char *list, const char *leaf, const char *origin, bool secure = is_secure_exec()) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *list</code></li><li><code>const char *leaf</code></li><li><code>const char *origin</code></li><li><code>bool secure = is_secure_exec()</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline path_str_t
+__try_path_list(const char *list, const char *leaf, const char *origin, bool secure = is_secure_exec()) noexcept
+{
+  path_str_t hit;
+  if ( !list || !*list ) return hit;
+
+  const usize n = micron::strlen(list);
+  usize start = 0;
+  while ( start &lt;= n ) {
+    const char *seg_end = micron::format::find(list + start, n - start, &#x27;:&#x27;);
+    const usize end = seg_end ? static_cast&lt;usize&gt;(seg_end - list) : n;
+    if ( end &gt; start &amp;&amp; (!secure || __segment_is_trusted(list + start, end - start)) ) {
+      path_str_t dir = __expand_origin(list + start, end - start, origin);
+      if ( !dir.empty() ) {
+        path_str_t cand = __join_path(dir.c_str(), leaf);
+        if ( !cand.empty() &amp;&amp; __file_is_native_elf(cand.c_str()) ) return cand;
+      }
+    }
+    if ( !seg_end ) break;
+    start = end + 1;
+  }
+  return hit;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>hit</code></td><td><a href="../../source/dynamic/paths.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>cand</code></td><td><a href="../../source/dynamic/paths.hpp.html#L122">line 122</a></td></tr><tr class="t-dsc"><td><code>hit</code></td><td><a href="../../source/dynamic/paths.hpp.html#L128">line 128</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="../string/format.hpp.html#f-fba19553b3bcec33">micron::format::find</a>, <a href="paths.hpp.html#f-a0fbc138e160310f">__segment_is_trusted</a>, <a href="paths.hpp.html#f-5ce8d5937c2c0af7">__expand_origin</a>, <a href="../linux/elf/search.hpp.html#f-cce6feb855a6b949">__join_path</a>, <a href="../linux/elf/search.hpp.html#f-89088bf46d513e3f">__file_is_native_elf</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

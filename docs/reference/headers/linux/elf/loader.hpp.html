@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/elf/loader.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/elf/loader.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/elf/loader.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/elf/loader.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-e40f240fcd496b0f">micron::elf::page_size</code></td><td>variable; line 35</td></tr><tr class="t-dsc"><td><code id="s-f9b5749f83c0a321">micron::elf::max_phdrs</code></td><td>variable; line 43</td></tr><tr class="t-dsc"><td><code id="s-74acc9bc8394a25e">micron::elf::module_t</code></td><td>struct; line 69</td></tr><tr class="t-dsc"><td><code id="s-bf4bfe2e0649e1eb">micron::elf::module_t::load_base</code></td><td>member; line 70</td></tr><tr class="t-dsc"><td><code id="s-edaf810acb16d078">micron::elf::module_t::load_span</code></td><td>member; line 71</td></tr><tr class="t-dsc"><td><code id="s-e46f92e56b1399cc">micron::elf::module_t::dyn</code></td><td>member; line 72</td></tr><tr class="t-dsc"><td><code id="s-c0eabb8adece8e70">micron::elf::module_t::tls_modid</code></td><td>member; line 73</td></tr><tr class="t-dsc"><td><code id="s-ab6ac1637135f4a1">micron::elf::module_t::relro_start</code></td><td>member; line 74</td></tr><tr class="t-dsc"><td><code id="s-f2fab4cbd8c3d575">micron::elf::module_t::relro_len</code></td><td>member; line 75</td></tr><tr class="t-dsc"><td><code id="s-5b57e166221a4c43">micron::elf::module_t::phdrs</code></td><td>member; line 76</td></tr><tr class="t-dsc"><td><code id="s-78744cac13c8de19">micron::elf::module_t::phnum</code></td><td>member; line 77</td></tr><tr class="t-dsc"><td><code id="s-32080f732a6d8afb">micron::elf::module_t::path</code></td><td>member; line 78</td></tr><tr class="t-dsc"><td><code id="s-9c22e43971b6cd33">micron::elf::module_t::next</code></td><td>member; line 79</td></tr><tr class="t-dsc"><td><code id="s-9cf05f3db1eb1b4d">micron::elf::reloc_mode_t</code></td><td>enum; line 306</td></tr><tr class="t-dsc"><td><code id="s-5931faa68d0518ae">micron::elf::reloc_mode_t::defer</code></td><td>enumerator; line 308</td></tr><tr class="t-dsc"><td><code id="s-6838a3e79f5dc802">micron::elf::reloc_mode_t::relative_only</code></td><td>enumerator; line 310</td></tr><tr class="t-dsc"><td><code id="s-0993b4788b7221c6">micron::elf::reloc_mode_t::best_effort</code></td><td>enumerator; line 312</td></tr><tr class="t-dsc"><td><code id="s-db86f781204960de">micron::elf::reloc_mode_t::strict</code></td><td>enumerator; line 314</td></tr><tr class="t-dsc"><td><code id="s-db8f9253c0c257a1">micron::elf::load_opts_t</code></td><td>struct; line 479</td></tr><tr class="t-dsc"><td><code id="s-5170f62a3c574b74">micron::elf::load_opts_t::reloc</code></td><td>member; line 480</td></tr><tr class="t-dsc"><td><code id="s-1cedcbdea1d06a1d">micron::elf::load_opts_t::run_init</code></td><td>member; line 481</td></tr><tr class="t-dsc"><td><code id="s-942df4582352e3e1">micron::elf::load_opts_t::apply_relro</code></td><td>member; line 482</td></tr><tr class="t-dsc"><td><code id="s-90215ebd25cc7de0">micron::elf::load_opts_t::resolve</code></td><td>member; line 483</td></tr><tr class="t-dsc"><td><code id="s-590cbd1c480e938b">micron::elf::load_opts_t::resolve_user</code></td><td>member; line 484</td></tr><tr class="t-dsc"><td><a href="#f-15ff225345646d75">micron::elf::module_t::~module_t()</a></td><td>function; line 81</td></tr><tr class="t-dsc"><td><a href="#f-f89cf5296ad1e622">micron::elf::module_t::module_t()</a></td><td>function; line 83</td></tr><tr class="t-dsc"><td><a href="#f-87df2e0ccbd0d26c">micron::elf::module_t::module_t(const module_t &amp;)</a></td><td>function; line 84</td></tr><tr class="t-dsc"><td><a href="#f-1c6a50c787c3d674">micron::elf::module_t::operator=(const module_t &amp;)</a></td><td>function; line 85</td></tr><tr class="t-dsc"><td><a href="#f-540911356d4e8712">micron::elf::module_t::module_t(module_t &amp;&amp;o) noexcept</a></td><td>function; line 87</td></tr><tr class="t-dsc"><td><a href="#f-82b05d094d5022b1">micron::elf::module_t::operator=(module_t &amp;&amp;o) noexcept</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-06d2be7fbefed9ff">micron::elf::module_t::reset() noexcept</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-f510295404146b90">micron::elf::load(const char *soname, const char *runpath = nullptr, const load_opts_t &amp;opts = {})</a></td><td>function; line 684</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-15ff225345646d75"><h3><code>micron::elf::module_t::~module_t()</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L81">line 81</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~module_t()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~module_t() { reset(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-06d2be7fbefed9ff">reset</a>.</p></section><section class="function-entry" id="f-f89cf5296ad1e622"><h3><code>micron::elf::module_t::module_t()</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>module_t() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-87df2e0ccbd0d26c"><h3><code>micron::elf::module_t::module_t(const module_t &amp;)</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L84">line 84</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>module_t(const module_t &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const module_t &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-1c6a50c787c3d674"><h3><code>micron::elf::module_t::operator=(const module_t &amp;)</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L85">line 85</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>module_t &amp;operator=(const module_t &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const module_t &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-540911356d4e8712"><h3><code>micron::elf::module_t::module_t(module_t &amp;&amp;o) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L87">line 87</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>module_t(module_t &amp;&amp;o) noexcept
+      : load_base(o.load_base), load_span(o.load_span), dyn(o.dyn), tls_modid(o.tls_modid), relro_start(o.relro_start),
+        relro_len(o.relro_len), phdrs(o.phdrs), phnum(o.phnum), path(static_cast&lt;micron::sstring&lt;512&gt; &amp;&amp;&gt;(o.path)), next(o.next)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">module_t(module_t &amp;&amp;o) noexcept
+      : load_base(o.load_base), load_span(o.load_span), dyn(o.dyn), tls_modid(o.tls_modid), relro_start(o.relro_start),
+        relro_len(o.relro_len), phdrs(o.phdrs), phnum(o.phnum), path(static_cast&lt;micron::sstring&lt;512&gt; &amp;&amp;&gt;(o.path)), next(o.next)
+  {
+    o.load_base = nullptr;
+    o.load_span = 0;
+    o.dyn = {};
+    o.tls_modid = 0;
+    o.relro_start = 0;
+    o.relro_len = 0;
+    o.phdrs = nullptr;
+    o.phnum = 0;
+    o.next = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-82b05d094d5022b1"><h3><code>micron::elf::module_t::operator=(module_t &amp;&amp;o) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>module_t &amp;
+  operator=(module_t &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">module_t &amp;
+  operator=(module_t &amp;&amp;o) noexcept
+  {
+    if ( this != &amp;o ) {
+      reset();
+      load_base = o.load_base;
+      load_span = o.load_span;
+      dyn = o.dyn;
+      tls_modid = o.tls_modid;
+      relro_start = o.relro_start;
+      relro_len = o.relro_len;
+      phdrs = o.phdrs;
+      phnum = o.phnum;
+      path = static_cast&lt;micron::sstring&lt;512&gt; &amp;&amp;&gt;(o.path);
+      next = o.next;
+      o.load_base = nullptr;
+      o.load_span = 0;
+      o.dyn = {};
+      o.tls_modid = 0;
+      o.relro_start = 0;
+      o.relro_len = 0;
+      o.phdrs = nullptr;
+      o.phnum = 0;
+      o.next = nullptr;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L127">line 127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-06d2be7fbefed9ff">reset</a>.</p></section><section class="function-entry" id="f-06d2be7fbefed9ff"><h3><code>micron::elf::module_t::reset() noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reset() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reset() noexcept
+  {
+    if ( tls_modid ) tls_unregister(tls_modid);
+    if ( load_base &amp;&amp; load_span ) {
+      micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(load_base), load_span);
+      invalidate_host_modules();
+    }
+    load_base = nullptr;
+    load_span = 0;
+    dyn = {};
+    tls_modid = 0;
+    relro_start = 0;
+    relro_len = 0;
+    phdrs = nullptr;
+    phnum = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-114eac2c7f5be5ed">tls_unregister</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>, <a href="host_modules.hpp.html#f-7a8ad9ef3eb3b754">invalidate_host_modules</a>.</p></section><section class="function-entry" id="f-f510295404146b90"><h3><code>micron::elf::load(const char *soname, const char *runpath = nullptr, const load_opts_t &amp;opts = {})</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L684">line 684</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline module_t
+load(const char *soname, const char *runpath = nullptr, const load_opts_t &amp;opts = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *soname</code></li><li><code>const char *runpath = nullptr</code></li><li><code>const load_opts_t &amp;opts = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline module_t
+load(const char *soname, const char *runpath = nullptr, const load_opts_t &amp;opts = {})
+{
+  path_str_t resolved = resolve_soname(soname, runpath);
+  if ( resolved.empty() ) {
+    exc&lt;except::library_error&gt;(&quot;elf: soname not found in search paths&quot;);
+  }
+  return __load_module_from_path(resolved.c_str(), opts);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__load_module_from_path(resolved.c_str(), opts)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L690">line 690</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: soname not found in search paths&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L688">line 688</a><br>Within <code>( resolved.empty() )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="search.hpp.html#f-d3824dfd51c60540">resolve_soname</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="loader.hpp.html#f-0a70aa4f351803a4">__load_module_from_path</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-1d2fecad91887a19"><h3><code>micron::elf::__runtime_page_size() noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L38">line 38</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__runtime_page_size() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::getpagesizelive()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__runtime_page_size() noexcept
+{
+  return micron::getpagesizelive();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::getpagesizelive()</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L40">line 40</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sys/sysinfo.hpp.html#f-ffe324d1fbd7978e">micron::getpagesizelive</a>.</p></section><section class="function-entry" id="f-c8eec50dc4dcfc4d"><h3><code>micron::elf::__page_floor(usize v) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L46">line 46</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__page_floor(usize v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__page_floor(usize v) noexcept
+{
+  const usize ps = __runtime_page_size();
+  return v &amp; ~(ps - 1);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v &amp; ~(ps - 1)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L49">line 49</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-1d2fecad91887a19">__runtime_page_size</a>.</p></section><section class="function-entry" id="f-897d7d5985fb61ce"><h3><code>micron::elf::__page_ceil(usize v) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L53">line 53</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__page_ceil(usize v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__page_ceil(usize v) noexcept
+{
+  const usize ps = __runtime_page_size();
+  return (v + ps - 1) &amp; ~(ps - 1);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(v + ps - 1) &amp; ~(ps - 1)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L56">line 56</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-1d2fecad91887a19">__runtime_page_size</a>.</p></section><section class="function-entry" id="f-321b47c12c48e7bc"><h3><code>micron::elf::__prot_from_phdr(word p_flags) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L60">line 60</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline i32
+__prot_from_phdr(word p_flags) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>word p_flags</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline i32
+__prot_from_phdr(word p_flags) noexcept
+{
+  i32 p = 0;
+  if ( p_flags &amp; pf_r ) p |= prot_read;
+  if ( p_flags &amp; pf_w ) p |= prot_write;
+  if ( p_flags &amp; pf_x ) p |= prot_exec;
+  return p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L66">line 66</a></td></tr></tbody></table></section><section class="function-entry" id="f-57a96a973143f103"><h3><code>micron::elf::__resolve_across_loaded(void *user, const char *name, u32 sym_index) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L153">line 153</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void *
+__resolve_across_loaded(void *user, const char *name, u32 sym_index) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *user</code></li><li><code>const char *name</code></li><li><code>u32 sym_index</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void *
+__resolve_across_loaded(void *user, const char *name, u32 sym_index) noexcept
+{
+  (void)user;
+  (void)sym_index;
+  for ( module_t *m = __loaded_modules; m; m = m-&gt;next ) {
+    const nsym_t *s = lookup_sym(m-&gt;dyn, name);
+    if ( s &amp;&amp; s-&gt;shndx != shn_undef ) {
+      void *a = reinterpret_cast&lt;void *&gt;(m-&gt;load_base + s-&gt;value);
+      if ( elf_st_type(s-&gt;info) == stt_gnu_ifunc ) {
+        using ifn = void *(*)();
+        a = reinterpret_cast&lt;ifn&gt;(a)();
+      }
+      return a;
+    }
+  }
+  return host_resolve_sym(name);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>host_resolve_sym(name)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L168">line 168</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hash.hpp.html#f-607cfcdb980d22e8">lookup_sym</a>, <a href="consts.hpp.html#f-4d024459ff0565fa">elf_st_type</a>, <a href="host_modules.hpp.html#f-e670da3164496999">host_resolve_sym</a>.</p></section><section class="function-entry" id="f-ff38e1eff6ffe8d2"><h3><code>micron::elf::__build_dyn_info(dyn_info_t &amp;out, u8 *base, const ndyn_t *dyn) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L172">line 172</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__build_dyn_info(dyn_info_t &amp;out, u8 *base, const ndyn_t *dyn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dyn_info_t &amp;out</code></li><li><code>u8 *base</code></li><li><code>const ndyn_t *dyn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__build_dyn_info(dyn_info_t &amp;out, u8 *base, const ndyn_t *dyn) noexcept
+{
+  for ( const ndyn_t *d = dyn; d-&gt;tag != dt_null; ++d ) {
+    if ( d-&gt;tag == dt_strtab )
+      out.strtab = reinterpret_cast&lt;const char *&gt;(base + d-&gt;un.ptr);
+    else if ( d-&gt;tag == dt_strsz )
+      out.strsz = d-&gt;un.val;
+  }
+
+  for ( const ndyn_t *d = dyn; d-&gt;tag != dt_null; ++d ) {
+    switch ( d-&gt;tag ) {
+    case dt_symtab:
+      out.symtab = micron::ptr_cast&lt;const nsym_t *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_syment:
+      out.syment = d-&gt;un.val;
+      break;
+    case dt_needed:
+      // kept as .dynstr offsets
+      if ( out.needed_count &lt; dyn_info_t::max_needed )
+        out.needed[out.needed_count++] = static_cast&lt;word&gt;(d-&gt;un.val);
+      else
+        out.needed_truncated = true;
+      break;
+    case dt_hash:
+      out.hash = micron::ptr_cast&lt;const word *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_gnu_hash:
+      out.gnu_hash = micron::ptr_cast&lt;const word *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_rela:
+      out.rela = micron::ptr_cast&lt;const nrela_t *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_rel:
+      out.rel = micron::ptr_cast&lt;const nrel_t *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_relsz:
+      out.relsz = d-&gt;un.val;
+      break;
+    case dt_relent:
+      out.relent = d-&gt;un.val;
+      break;
+    case dt_relcount:
+      out.rel_count = d-&gt;un.val;
+      break;
+    case dt_pltgot:
+      out.pltgot = micron::ptr_cast&lt;naddr_t *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_relasz:
+      out.relasz = d-&gt;un.val;
+      break;
+    case dt_relaent:
+      out.relaent = d-&gt;un.val;
+      break;
+    case dt_relacount:
+      out.rela_count = d-&gt;un.val;
+      break;
+    case dt_relr:
+      out.relr = micron::ptr_cast&lt;const nword_t *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_relrsz:
+      out.relrsz = d-&gt;un.val;
+      break;
+    case dt_jmprel:
+      out.jmprel = reinterpret_cast&lt;const void *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_pltrelsz:
+      out.pltrelsz = d-&gt;un.val;
+      break;
+    case dt_pltrel:
+      out.pltrel = static_cast&lt;sxword&gt;(d-&gt;un.val);
+      break;
+    case dt_init:
+      out.init = reinterpret_cast&lt;void (*)()&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_fini:
+      out.fini = reinterpret_cast&lt;void (*)()&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_init_array:
+      out.init_array = micron::ptr_cast&lt;void (*const *)()&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_init_arraysz:
+      out.init_arraysz = d-&gt;un.val;
+      break;
+    case dt_fini_array:
+      out.fini_array = micron::ptr_cast&lt;void (*const *)()&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_fini_arraysz:
+      out.fini_arraysz = d-&gt;un.val;
+      break;
+    case dt_preinit_array:
+      out.preinit_array = micron::ptr_cast&lt;void (*const *)()&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_preinit_arraysz:
+      out.preinit_arraysz = d-&gt;un.val;
+      break;
+    case dt_versym:
+      out.versym = micron::ptr_cast&lt;const half *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_verdef:
+      out.verdef = micron::ptr_cast&lt;const verdef_t *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_verdefnum:
+      out.verdefnum = static_cast&lt;word&gt;(d-&gt;un.val);
+      break;
+    case dt_verneed:
+      out.verneed = micron::ptr_cast&lt;const verneed_t *&gt;(base + d-&gt;un.ptr);
+      break;
+    case dt_verneednum:
+      out.verneednum = static_cast&lt;word&gt;(d-&gt;un.val);
+      break;
+    case dt_flags:
+      out.flags = d-&gt;un.val;
+      break;
+    case dt_flags_1:
+      out.flags1 = d-&gt;un.val;
+      break;
+    case dt_soname:
+      if ( out.strtab ) out.soname = out.strtab + d-&gt;un.val;
+      break;
+    case dt_rpath:
+      if ( out.strtab ) out.rpath = out.strtab + d-&gt;un.val;
+      break;
+    case dt_runpath:
+      if ( out.strtab ) out.runpath = out.strtab + d-&gt;un.val;
+      break;
+    default:
+      break;
+    }
+  }
+
+  out.symcount = count_dynsyms(out);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const nsym_t *&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const word *&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const nrela_t *&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const nrel_t *&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;naddr_t *&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const nword_t *&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;void (*const *)()&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const half *&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const verdef_t *&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const verneed_t *&gt;</a>, <a href="hash.hpp.html#f-d0994343c13cf149">count_dynsyms</a>.</p></section><section class="function-entry" id="f-1e1e70a91096f061"><h3><code>micron::elf::__reloc_is_relative(u32 t) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L324">line 324</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__reloc_is_relative(u32 t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__reloc_is_relative(u32 t) noexcept
+{
+#if defined(__micron_arch_amd64)
+  return t == r_x86_64_relative || t == r_x86_64_irelative;
+#elif defined(__micron_arch_arm64)
+  return t == r_aarch64_relative || t == r_aarch64_irelative;
+#elif defined(__micron_arch_x86)
+  return t == r_386_relative || t == r_386_irelative;
+#elif defined(__micron_arch_arm32)
+  return t == r_arm_relative || t == r_arm_irelative;
+#else
+  return false;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t == r_x86_64_relative || t == r_x86_64_irelative</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L327">line 327</a></td></tr><tr class="t-dsc"><td><code>t == r_aarch64_relative || t == r_aarch64_irelative</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L329">line 329</a></td></tr><tr class="t-dsc"><td><code>t == r_386_relative || t == r_386_irelative</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L331">line 331</a></td></tr><tr class="t-dsc"><td><code>t == r_arm_relative || t == r_arm_irelative</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L333">line 333</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L335">line 335</a></td></tr></tbody></table></section><section class="function-entry" id="f-954aa8fa06fd0285"><h3><code>micron::elf::__reloc_ctx_for(module_t &amp;m, resolve_fn resolve = nullptr, void *user = nullptr) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L340">line 340</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline reloc_ctx_t
+__reloc_ctx_for(module_t &amp;m, resolve_fn resolve = nullptr, void *user = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li><li><code>resolve_fn resolve = nullptr</code></li><li><code>void *user = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline reloc_ctx_t
+__reloc_ctx_for(module_t &amp;m, resolve_fn resolve = nullptr, void *user = nullptr) noexcept
+{
+  reloc_ctx_t ctx;
+  ctx.load_base = m.load_base;
+  ctx.d = &amp;m.dyn;
+  ctx.resolve = resolve ? resolve : &amp;__resolve_across_loaded;
+  ctx.user = user;
+  ctx.tls_modid = m.tls_modid;
+  ctx.tls_offset = 0;
+  return ctx;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ctx</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L349">line 349</a></td></tr></tbody></table></section><section class="function-entry" id="f-5f91a2b5ac78d5ed"><h3><code>micron::elf::__apply_reloc_table(module_t &amp;m, const Rec *tbl, usize count_bytes, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L354">line 354</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Rec&gt;
+inline bool
+__apply_reloc_table(module_t &amp;m, const Rec *tbl, usize count_bytes, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li><li><code>const Rec *tbl</code></li><li><code>usize count_bytes</code></li><li><code>reloc_mode_t mode</code></li><li><code>resolve_fn resolve = nullptr</code></li><li><code>void *user = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Rec&gt;
+inline bool
+__apply_reloc_table(module_t &amp;m, const Rec *tbl, usize count_bytes, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)
+{
+  if ( !tbl || count_bytes == 0 ) return true;
+  const usize n = count_bytes / sizeof(Rec);
+  const reloc_ctx_t ctx = __reloc_ctx_for(m, resolve, user);
+  for ( usize i = 0; i &lt; n; ++i ) {
+    const reloc_view v = reloc_view_of&lt;native_class&gt;(tbl[i]);
+    if ( mode == reloc_mode_t::relative_only &amp;&amp; !__reloc_is_relative(v.type) ) continue;
+    const reloc_result r = apply_reloc(ctx, v);
+    if ( r == reloc_result::unsupported ) return false;
+    if ( r == reloc_result::unresolved &amp;&amp; mode == reloc_mode_t::strict ) return false;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L356">line 356</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L363">line 363</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L366">line 366</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-954aa8fa06fd0285">__reloc_ctx_for</a>, <a href="reloc.hpp.html#f-9b2581b9e65819c3">reloc_view_of&lt;native_class&gt;</a>, <a href="loader.hpp.html#f-1e1e70a91096f061">__reloc_is_relative</a>, <a href="reloc.hpp.html#f-4bda03ced08f981f">apply_reloc</a>.</p></section><section class="function-entry" id="f-7ebf9a3c19304fc3"><h3><code>micron::elf::__apply_plt_table(module_t &amp;m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L370">line 370</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__apply_plt_table(module_t &amp;m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li><li><code>reloc_mode_t mode</code></li><li><code>resolve_fn resolve = nullptr</code></li><li><code>void *user = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__apply_plt_table(module_t &amp;m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)
+{
+  if ( !m.dyn.jmprel || m.dyn.pltrelsz == 0 ) return true;
+  if ( m.dyn.pltrel == dt_rela )
+    return __apply_reloc_table(m, reinterpret_cast&lt;const nrela_t *&gt;(m.dyn.jmprel), static_cast&lt;usize&gt;(m.dyn.pltrelsz), mode, resolve, user);
+  if ( m.dyn.pltrel == dt_rel )
+    return __apply_reloc_table(m, reinterpret_cast&lt;const nrel_t *&gt;(m.dyn.jmprel), static_cast&lt;usize&gt;(m.dyn.pltrelsz), mode, resolve, user);
+  if constexpr ( arch_uses_rel )
+    return __apply_reloc_table(m, reinterpret_cast&lt;const nrel_t *&gt;(m.dyn.jmprel), static_cast&lt;usize&gt;(m.dyn.pltrelsz), mode, resolve, user);
+  else
+    return __apply_reloc_table(m, reinterpret_cast&lt;const nrela_t *&gt;(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L372">line 372</a></td></tr><tr class="t-dsc"><td><code>__apply_reloc_table(m, reinterpret_cast&lt;const nrela_t *&gt;(m.dyn.jmprel), static_cast&lt;usize&gt;(m.dyn.pltrelsz), mode, resolve, user)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L374">line 374</a></td></tr><tr class="t-dsc"><td><code>__apply_reloc_table(m, reinterpret_cast&lt;const nrel_t *&gt;(m.dyn.jmprel), static_cast&lt;usize&gt;(m.dyn.pltrelsz), mode, resolve, user)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L376">line 376</a></td></tr><tr class="t-dsc"><td><code>__apply_reloc_table(m, reinterpret_cast&lt;const nrel_t *&gt;(m.dyn.jmprel), static_cast&lt;usize&gt;(m.dyn.pltrelsz), mode, resolve, user)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L378">line 378</a></td></tr><tr class="t-dsc"><td><code>__apply_reloc_table(m, reinterpret_cast&lt;const nrela_t *&gt;(m.dyn.jmprel), m.dyn.pltrelsz, mode, resolve, user)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L380">line 380</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-5f91a2b5ac78d5ed">__apply_reloc_table</a>.</p></section><section class="function-entry" id="f-4d4dfb053bd91f43"><h3><code>micron::elf::__apply_all_relocs(module_t &amp;m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L384">line 384</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__apply_all_relocs(module_t &amp;m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li><li><code>reloc_mode_t mode</code></li><li><code>resolve_fn resolve = nullptr</code></li><li><code>void *user = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__apply_all_relocs(module_t &amp;m, reloc_mode_t mode, resolve_fn resolve = nullptr, void *user = nullptr)
+{
+  if ( mode == reloc_mode_t::defer ) return true;
+  if ( !__apply_reloc_table(m, m.dyn.rela, static_cast&lt;usize&gt;(m.dyn.relasz), mode, resolve, user) ) return false;
+  if ( !__apply_reloc_table(m, m.dyn.rel, static_cast&lt;usize&gt;(m.dyn.relsz), mode, resolve, user) ) return false;
+  return __apply_plt_table(m, mode, resolve, user);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L386">line 386</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L387">line 387</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L388">line 388</a></td></tr><tr class="t-dsc"><td><code>__apply_plt_table(m, mode, resolve, user)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L389">line 389</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-5f91a2b5ac78d5ed">__apply_reloc_table</a>, <a href="loader.hpp.html#f-7ebf9a3c19304fc3">__apply_plt_table</a>.</p></section><section class="function-entry" id="f-2203c66e23e159a2"><h3><code>micron::elf::__apply_relr(module_t &amp;m) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L393">line 393</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__apply_relr(module_t &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__apply_relr(module_t &amp;m) noexcept
+{
+  using tr = native_traits;
+  using rw = tr::uword;
+
+  if ( !m.dyn.relr || m.dyn.relrsz == 0 ) return;
+  const uintptr_t l_addr = reinterpret_cast&lt;uintptr_t&gt;(m.load_base);
+  const usize n = static_cast&lt;usize&gt;(m.dyn.relrsz / sizeof(rw));
+  uintptr_t *where = nullptr;
+  for ( usize k = 0; k &lt; n; ++k ) {
+    rw entry = m.dyn.relr[k];
+    if ( (entry &amp; 1) == 0 ) {
+      where = reinterpret_cast&lt;uintptr_t *&gt;(l_addr + entry);
+      *where += l_addr;
+      ++where;
+    } else {
+      for ( usize i = 0; (entry &gt;&gt;= 1) != 0; ++i )
+        if ( (entry &amp; 1) != 0 ) where[i] += l_addr;
+      where += tr::relr_bits;
+    }
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/loader.hpp.html#L398">line 398</a></td></tr></tbody></table></section><section class="function-entry" id="f-b1a756f814e13b68"><h3><code>micron::elf::__run_initializers(module_t &amp;m) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L417">line 417</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__run_initializers(module_t &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__run_initializers(module_t &amp;m) noexcept
+{
+  // DT_PREINIT_ARRAY is legal exclusively in actual executables
+  if ( m.dyn.preinit_array &amp;&amp; m.dyn.preinit_arraysz ) {
+    const usize n = static_cast&lt;usize&gt;(m.dyn.preinit_arraysz / sizeof(void *));
+    for ( usize i = 0; i &lt; n; ++i ) {
+      if ( m.dyn.preinit_array[i] ) m.dyn.preinit_array[i]();
+    }
+  }
+  if ( m.dyn.init ) m.dyn.init();
+  if ( m.dyn.init_array &amp;&amp; m.dyn.init_arraysz ) {
+    const usize n = static_cast&lt;usize&gt;(m.dyn.init_arraysz / sizeof(void *));
+    for ( usize i = 0; i &lt; n; ++i ) {
+      if ( m.dyn.init_array[i] ) m.dyn.init_array[i]();
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a3371e4545a24d2b"><h3><code>micron::elf::__run_finalizers(module_t &amp;m) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L436">line 436</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__run_finalizers(module_t &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__run_finalizers(module_t &amp;m) noexcept
+{
+  if ( m.dyn.fini_array &amp;&amp; m.dyn.fini_arraysz ) {
+    usize n = static_cast&lt;usize&gt;(m.dyn.fini_arraysz / sizeof(void *));
+    while ( n-- ) {
+      if ( m.dyn.fini_array[n] ) m.dyn.fini_array[n]();
+    }
+  }
+  if ( m.dyn.fini ) m.dyn.fini();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7c6c47b6b21ef748"><h3><code>micron::elf::__record_relro(module_t &amp;m, const nphdr_t *phdrs, half phnum) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L448">line 448</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__record_relro(module_t &amp;m, const nphdr_t *phdrs, half phnum) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li><li><code>const nphdr_t *phdrs</code></li><li><code>half phnum</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__record_relro(module_t &amp;m, const nphdr_t *phdrs, half phnum) noexcept
+{
+  for ( half i = 0; i &lt; phnum; ++i ) {
+    if ( phdrs[i].type != pt_gnu_relro ) continue;
+    const usize start = __page_floor(phdrs[i].vaddr);
+    const usize end = __page_floor(phdrs[i].vaddr + phdrs[i].memsz);
+    if ( end &lt;= start ) continue;
+    m.relro_start = start;
+    m.relro_len = end - start;
+    return;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/loader.hpp.html#L457">line 457</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-c8eec50dc4dcfc4d">__page_floor</a>.</p></section><section class="function-entry" id="f-f56fb65c821f1d11"><h3><code>micron::elf::__apply_relro_now(module_t &amp;m) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L462">line 462</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__apply_relro_now(module_t &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>module_t &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__apply_relro_now(module_t &amp;m) noexcept
+{
+  if ( !m.relro_len || !m.load_base ) return;
+  micron::mprotect(micron::ptr_cast&lt;addr_t *&gt;(m.load_base + m.relro_start), m.relro_len, prot_read);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/loader.hpp.html#L464">line 464</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/mman.hpp.html#f-6285349af4d8d7c9">micron::mprotect</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>.</p></section><section class="function-entry" id="f-6a7993322ecc2de4"><h3><code>micron::elf::__apply_relro(const u8 *base, const nphdr_t *phdrs, half phnum) noexcept</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L469">line 469</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__apply_relro(const u8 *base, const nphdr_t *phdrs, half phnum) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *base</code></li><li><code>const nphdr_t *phdrs</code></li><li><code>half phnum</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__apply_relro(const u8 *base, const nphdr_t *phdrs, half phnum) noexcept
+{
+  for ( half i = 0; i &lt; phnum; ++i ) {
+    if ( phdrs[i].type != pt_gnu_relro ) continue;
+    const usize start = __page_floor(phdrs[i].vaddr);
+    const usize end = __page_ceil(phdrs[i].vaddr + phdrs[i].memsz);
+    micron::mprotect(const_cast&lt;addr_t *&gt;(micron::ptr_cast&lt;const addr_t *&gt;(base + start)), end - start, prot_read);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="loader.hpp.html#f-c8eec50dc4dcfc4d">__page_floor</a>, <a href="loader.hpp.html#f-897d7d5985fb61ce">__page_ceil</a>, <a href="../../memory/mman.hpp.html#f-6285349af4d8d7c9">micron::mprotect</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const addr_t *&gt;</a>.</p></section><section class="function-entry" id="f-0a70aa4f351803a4"><h3><code>micron::elf::__load_module_from_path(const char *path, const load_opts_t &amp;opts = {})</code></h3><p>Defined in <code>linux/elf/loader.hpp</code>, <a href="../../../source/linux/elf/loader.hpp.html#L492">line 492</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline module_t
+__load_module_from_path(const char *path, const load_opts_t &amp;opts = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *path</code></li><li><code>const load_opts_t &amp;opts = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline module_t
+__load_module_from_path(const char *path, const load_opts_t &amp;opts = {})
+{
+  i32 fd = posix::open(path, posix::o_rdonly);
+  if ( fd &lt; 0 ) exc&lt;except::library_error&gt;(&quot;elf: open failed&quot;);
+
+  nehdr_t eh;
+  if ( posix::pread(fd, &amp;eh, sizeof(eh), 0) != static_cast&lt;max_t&gt;(sizeof(eh)) ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: short ehdr read&quot;);
+  }
+  if ( eh.ident[ei_mag0] != mag0 || eh.ident[ei_mag1] != mag1 || eh.ident[ei_mag2] != mag2 || eh.ident[ei_mag3] != mag3 ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: bad magic&quot;);
+  }
+  if ( eh.ident[ei_class] != native_traits::ident_class ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: wrong ELF class for this target (32/64-bit mismatch)&quot;);
+  }
+  if ( eh.ident[ei_data] != (native_data == fmt_data::msb ? elfdata2msb : elfdata2lsb) ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: wrong byte order&quot;);
+  }
+  if ( eh.machine != expected_machine ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: wrong machine&quot;);
+  }
+  if ( eh.type != et_dyn ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: not a shared object&quot;);
+  }
+
+  if ( eh.phentsize != sizeof(nphdr_t) || eh.phnum == 0 ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: bad phdr table&quot;);
+  }
+
+  nphdr_t phdrs[max_phdrs];
+  if ( eh.phnum &gt; max_phdrs ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: too many phdrs&quot;);
+  }
+  if ( posix::pread(fd, phdrs, sizeof(nphdr_t) * eh.phnum, eh.phoff) != static_cast&lt;max_t&gt;(sizeof(nphdr_t) * eh.phnum) ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: short phdr read&quot;);
+  }
+
+  usize vaddr_min = ~usize(0);
+  usize vaddr_max = 0;
+  const nphdr_t *dyn_ph = nullptr;
+  const nphdr_t *tls_ph = nullptr;
+  for ( half i = 0; i &lt; eh.phnum; ++i ) {
+    if ( phdrs[i].type == pt_load ) {
+      if ( phdrs[i].vaddr &lt; vaddr_min ) vaddr_min = phdrs[i].vaddr;
+      const usize end = phdrs[i].vaddr + phdrs[i].memsz;
+      if ( end &lt; phdrs[i].vaddr ) {      // vaddr + memsz overflow on a crafted/corrupt phdr
+        posix::close(fd);
+        exc&lt;except::library_error&gt;(&quot;elf: PT_LOAD vaddr+memsz overflow&quot;);
+      }
+      if ( end &gt; vaddr_max ) vaddr_max = end;
+    } else if ( phdrs[i].type == pt_dynamic ) {
+      dyn_ph = &amp;phdrs[i];
+    } else if ( phdrs[i].type == pt_tls ) {
+      tls_ph = &amp;phdrs[i];
+    }
+  }
+  if ( vaddr_min == ~usize(0) || !dyn_ph ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: no PT_LOAD / PT_DYNAMIC&quot;);
+  }
+  vaddr_min = __page_floor(vaddr_min);
+  vaddr_max = __page_ceil(vaddr_max);
+  const usize span = vaddr_max - vaddr_min;
+
+  u8 *base = reinterpret_cast&lt;u8 *&gt;(micron::mmap(nullptr, span, prot_none, map_private | map_anonymous, -1, 0));
+  if ( mmap_failed(base) ) {
+    posix::close(fd);
+    exc&lt;except::library_error&gt;(&quot;elf: reserve mmap failed&quot;);
+  }
+
+  for ( half i = 0; i &lt; eh.phnum; ++i ) {
+    if ( phdrs[i].type != pt_load ) continue;
+    const usize vstart = __page_floor(phdrs[i].vaddr);
+    const usize vend = __page_ceil(phdrs[i].vaddr + phdrs[i].memsz);
+    const usize fstart = __page_floor(phdrs[i].offset);
+
+    if constexpr ( native_class == fmt_class::elf32 ) {
+      if ( (fstart &amp; 0xfffu) != 0 ) {
+        micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(base), span);
+        posix::close(fd);
+        exc&lt;except::library_error&gt;(&quot;elf: PT_LOAD file offset is not a multiple of 4096 (mmap2 cannot express it)&quot;);
+      }
+    }
+    const usize segoff = phdrs[i].vaddr - vstart;
+    u8 *target = base + (vstart - vaddr_min);
+
+    const i32 prot = __prot_from_phdr(phdrs[i].flags);
+
+    if ( ((phdrs[i].vaddr - phdrs[i].offset) &amp; (__runtime_page_size() - 1)) != 0 ) {
+      micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(base), span);
+      posix::close(fd);
+      exc&lt;except::library_error&gt;(&quot;elf: PT_LOAD vaddr/offset not page-congruent (rebuild with max-page-size)&quot;);
+    }
+
+    if ( phdrs[i].filesz ) {
+      const usize file_end = __page_ceil(phdrs[i].filesz + segoff);
+      const usize mem_end = __page_ceil(phdrs[i].memsz + segoff);
+      u8 *got = reinterpret_cast&lt;u8 *&gt;(
+          micron::mmap(micron::ptr_cast&lt;addr_t *&gt;(target), file_end, prot_read | prot_write, map_private | map_fixed, fd, fstart));
+      if ( mmap_failed(got) ) {
+        micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(base), span);
+        posix::close(fd);
+        exc&lt;except::library_error&gt;(&quot;elf: segment mmap failed&quot;);
+      }
+      if ( mem_end &gt; file_end ) {
+        u8 *bgot = reinterpret_cast&lt;u8 *&gt;(micron::mmap(micron::ptr_cast&lt;addr_t *&gt;(target + file_end), mem_end - file_end,
+                                                       prot_read | prot_write, map_private | map_anonymous | map_fixed, -1, 0));
+        if ( mmap_failed(bgot) ) {
+          micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(base), span);
+          posix::close(fd);
+          exc&lt;except::library_error&gt;(&quot;elf: bss tail mmap failed&quot;);
+        }
+      }
+      const usize bss_start = segoff + phdrs[i].filesz;
+      const usize bss_end = segoff + phdrs[i].memsz;
+      if ( bss_end &gt; bss_start ) {
+        micron::memset(target + bss_start, byte{ 0 }, bss_end - bss_start);
+      }
+      micron::mprotect(micron::ptr_cast&lt;addr_t *&gt;(target), mem_end, prot);
+    } else {
+      u8 *got = reinterpret_cast&lt;u8 *&gt;(
+          micron::mmap(micron::ptr_cast&lt;addr_t *&gt;(target), vend - vstart, prot, map_private | map_anonymous | map_fixed, -1, 0));
+      if ( mmap_failed(got) ) {
+        micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(base), span);
+        posix::close(fd);
+        exc&lt;except::library_error&gt;(&quot;elf: bss mmap failed&quot;);
+      }
+    }
+  }
+
+  posix::close(fd);
+
+  module_t m;
+  m.load_base = base - vaddr_min;      // bias so load_base + vaddr == actual VA
+  m.load_span = span;
+  for ( usize i = 0; path[i] &amp;&amp; m.path.size() + 1 &lt; m.path.max_size(); ++i ) m.path += path[i];
+  m.path.null_term();
+
+  const ndyn_t *dyn = micron::ptr_cast&lt;const ndyn_t *&gt;(m.load_base + dyn_ph-&gt;vaddr);
+  __build_dyn_info(m.dyn, m.load_base, dyn);
+
+  if ( tls_ph ) {
+    m.tls_modid = tls_register(m.load_base + tls_ph-&gt;vaddr, tls_ph-&gt;filesz, tls_ph-&gt;memsz, tls_ph-&gt;align);
+  }
+
+  __record_relro(m, phdrs, eh.phnum);
+
+  // point at the phdr table inside the mapping itself
+  {
+    const usize ph_end = static_cast&lt;usize&gt;(eh.phoff) + static_cast&lt;usize&gt;(eh.phnum) * sizeof(nphdr_t);
+    for ( half i = 0; i &lt; eh.phnum; ++i ) {
+      if ( phdrs[i].type != pt_load ) continue;
+      if ( eh.phoff &gt;= phdrs[i].offset &amp;&amp; ph_end &lt;= phdrs[i].offset + phdrs[i].filesz ) {
+        m.phdrs = micron::ptr_cast&lt;const nphdr_t *&gt;(m.load_base + phdrs[i].vaddr + (eh.phoff - phdrs[i].offset));
+        m.phnum = eh.phnum;
+        break;
+      }
+    }
+  }
+
+  if ( opts.reloc == reloc_mode_t::defer ) return m;
+
+  micron::lock_guard __ll(__loaded_modules_mtx);      // held through reloc + unlink (line below) until return
+  m.next = __loaded_modules;
+  __loaded_modules = &amp;m;
+
+  if ( !__apply_all_relocs(m, opts.reloc, opts.resolve, opts.resolve_user) ) {
+    __loaded_modules = m.next;      // unlink the partially-relocated module before unwinding
+    micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(base), span);
+    exc&lt;except::library_error&gt;(&quot;elf: unsupported relocation (static TLS / TLSDESC / COPY) — refusing to load module with corrupt TLS&quot;);
+  }
+
+  __apply_relr(m);
+
+  if ( opts.apply_relro ) __apply_relro_now(m);
+  if ( opts.run_init ) __run_initializers(m);
+
+  __loaded_modules = m.next;
+  m.next = nullptr;
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L661">line 661</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L680">line 680</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: open failed&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L495">line 495</a><br>Within <code>( fd &lt; 0 )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: short ehdr read&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L500">line 500</a><br>Within <code>( posix::pread(fd, &amp;eh, sizeof(eh), 0) != static_cast&lt;max_t&gt;(sizeof(eh)) )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: bad magic&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L504">line 504</a><br>Within <code>( eh.ident[ei_mag0] != mag0 || eh.ident[ei_mag1] != mag1 || eh.ident[ei_mag2] != mag2 || eh.ident[ei_mag3] != mag3 )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: wrong ELF class for this target (32/64-bit mismatch)&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L508">line 508</a><br>Within <code>( eh.ident[ei_class] != native_traits::ident_class )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: wrong byte order&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L512">line 512</a><br>Within <code>( eh.ident[ei_data] != (native_data == fmt_data::msb ? elfdata2msb : elfdata2lsb) )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: wrong machine&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L516">line 516</a><br>Within <code>( eh.machine != expected_machine )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: not a shared object&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L520">line 520</a><br>Within <code>( eh.type != et_dyn )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: bad phdr table&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L525">line 525</a><br>Within <code>( eh.phentsize != sizeof(nphdr_t) || eh.phnum == 0 )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: too many phdrs&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L531">line 531</a><br>Within <code>( eh.phnum &gt; max_phdrs )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: short phdr read&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L535">line 535</a><br>Within <code>( posix::pread(fd, phdrs, sizeof(nphdr_t) * eh.phnum, eh.phoff) != static_cast&lt;max_t&gt;(sizeof(nphdr_t) * eh.phnum) )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: PT_LOAD vaddr+memsz overflow&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L548">line 548</a><br>Within <code>i &lt; eh.phnum</code>, <code>( phdrs[i].type == pt_load )</code>, <code>( end &lt; phdrs[i].vaddr )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: no PT_LOAD / PT_DYNAMIC&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L559">line 559</a><br>Within <code>( vaddr_min == ~usize(0) || !dyn_ph )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: reserve mmap failed&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L568">line 568</a><br>Within <code>( mmap_failed(base) )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: PT_LOAD file offset is not a multiple of 4096 (mmap2 cannot express it)&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L581">line 581</a><br>Within <code>i &lt; eh.phnum</code>, <code>( native_class == fmt_class::elf32 )</code>, <code>( (fstart &amp; 0xfffu) != 0 )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: PT_LOAD vaddr/offset not page-congruent (rebuild with max-page-size)&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L592">line 592</a><br>Within <code>i &lt; eh.phnum</code>, <code>( ((phdrs[i].vaddr - phdrs[i].offset) &amp; (__runtime_page_size() - 1)) != 0 )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: segment mmap failed&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L603">line 603</a><br>Within <code>i &lt; eh.phnum</code>, <code>( phdrs[i].filesz )</code>, <code>( mmap_failed(got) )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: bss tail mmap failed&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L611">line 611</a><br>Within <code>i &lt; eh.phnum</code>, <code>( phdrs[i].filesz )</code>, <code>( mem_end &gt; file_end )</code>, <code>( mmap_failed(bgot) )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: bss mmap failed&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L626">line 626</a><br>Within <code>i &lt; eh.phnum</code>, <code>else of ( phdrs[i].filesz )</code>, <code>( mmap_failed(got) )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;elf: unsupported relocation (static TLS / TLSDESC / COPY) — refusing to load module with corrupt TLS&quot;)</code></td><td><a href="../../../source/linux/elf/loader.hpp.html#L670">line 670</a><br>Within <code>( !__apply_all_relocs(m, opts.reloc, opts.resolve, opts.resolve_user) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../io/sys.hpp.html#f-4489c173fc28797e">posix::open</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>, <a href="../io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="loader.hpp.html#f-c8eec50dc4dcfc4d">__page_floor</a>, <a href="loader.hpp.html#f-897d7d5985fb61ce">__page_ceil</a>, <a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">mmap_failed</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>, <a href="loader.hpp.html#f-321b47c12c48e7bc">__prot_from_phdr</a>, <a href="loader.hpp.html#f-1d2fecad91887a19">__runtime_page_size</a>, <a href="../../memory/cmemory/memset.hpp.html#f-8464e1a1f787e9d0">micron::memset</a>, <a href="../../memory/mman.hpp.html#f-6285349af4d8d7c9">micron::mprotect</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const ndyn_t *&gt;</a>, <a href="loader.hpp.html#f-ff38e1eff6ffe8d2">__build_dyn_info</a>, <a href="tls.hpp.html#f-a9b9d86bf3fc29f5">tls_register</a>, <a href="loader.hpp.html#f-7c6c47b6b21ef748">__record_relro</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const nphdr_t *&gt;</a>, <a href="loader.hpp.html#f-4d4dfb053bd91f43">__apply_all_relocs</a>, <a href="loader.hpp.html#f-2203c66e23e159a2">__apply_relr</a>, <a href="loader.hpp.html#f-f56fb65c821f1d11">__apply_relro_now</a>, <a href="loader.hpp.html#f-b1a756f814e13b68">__run_initializers</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/trees/__subdiv_tree.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/trees/__subdiv_tree.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/trees/__subdiv_tree.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/trees/__subdiv_tree.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-2b0537944982ae7b"><h3><code>micron::__subdiv::pr_tree::internal_node::internal_node() noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L48">line 48</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>internal_node() noexcept : leaf(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">internal_node() noexcept : leaf(0)
+    {
+      for ( usize i = 0; i &lt; NCHILD; ++i ) kids[i] = nil;
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a56d9ef3bf66e4d7"><h3><code>micron::__subdiv::pr_tree::leaf_node::leaf_node() noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>leaf_node() noexcept : leaf(1), _pad(0), count(0), overflow(nil)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">leaf_node() noexcept : leaf(1), _pad(0), count(0), overflow(nil) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-110d5fb3de814688"><h3><code>micron::__subdiv::pr_tree::leaf_node::~leaf_node()</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L64">line 64</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~leaf_node()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~leaf_node()
+    {
+      Value *v = vals();
+      for ( u16 i = 0; i &lt; count; ++i ) v[i].~Value();
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-47cddedf5087d326">vals</a>.</p></section><section class="function-entry" id="f-47cddedf5087d326"><h3><code>micron::__subdiv::pr_tree::leaf_node::vals() noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>Value *
+    vals() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>static_cast&lt;Value *&gt;(static_cast&lt;void *&gt;(vals_raw))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">Value *
+    vals() noexcept
+    {
+      return static_cast&lt;Value *&gt;(static_cast&lt;void *&gt;(vals_raw));
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;Value *&gt;(static_cast&lt;void *&gt;(vals_raw))</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L73">line 73</a></td></tr></tbody></table></section><section class="function-entry" id="f-238fd0006ec5d87f"><h3><code>micron::__subdiv::pr_tree::leaf_node::vals() const noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L77">line 77</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const Value *
+    vals() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>static_cast&lt;const Value *&gt;(static_cast&lt;const void *&gt;(vals_raw))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const Value *
+    vals() const noexcept
+    {
+      return static_cast&lt;const Value *&gt;(static_cast&lt;const void *&gt;(vals_raw));
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;const Value *&gt;(static_cast&lt;const void *&gt;(vals_raw))</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L79">line 79</a></td></tr></tbody></table></section><section class="function-entry" id="f-82aa9ad925790eb4"><h3><code>micron::__subdiv::pr_tree::lnode(node_idx i) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L91">line 91</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] leaf_node &amp;
+  lnode(node_idx i) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx i</code></li></ul><h4>Effects</h4><p>Returns <code>*reinterpret_cast&lt;leaf_node *&gt;(__arena.raw(i))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] leaf_node &amp;
+  lnode(node_idx i) noexcept
+  {
+    return *reinterpret_cast&lt;leaf_node *&gt;(__arena.raw(i));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*reinterpret_cast&lt;leaf_node *&gt;(__arena.raw(i))</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L93">line 93</a></td></tr></tbody></table></section><section class="function-entry" id="f-b8a384e9aaa5b57f"><h3><code>micron::__subdiv::pr_tree::inode(node_idx i) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L97">line 97</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] internal_node &amp;
+  inode(node_idx i) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx i</code></li></ul><h4>Effects</h4><p>Returns <code>*reinterpret_cast&lt;internal_node *&gt;(__arena.raw(i))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] internal_node &amp;
+  inode(node_idx i) noexcept
+  {
+    return *reinterpret_cast&lt;internal_node *&gt;(__arena.raw(i));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*reinterpret_cast&lt;internal_node *&gt;(__arena.raw(i))</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L99">line 99</a></td></tr></tbody></table></section><section class="function-entry" id="f-949f09827bf919a4"><h3><code>micron::__subdiv::pr_tree::is_leaf(node_idx i) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] bool
+  is_leaf(node_idx i) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx i</code></li></ul><h4>Effects</h4><p>Returns <code>__arena.raw(i)[0] != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] bool
+  is_leaf(node_idx i) noexcept
+  {
+    return __arena.raw(i)[0] != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__arena.raw(i)[0] != 0</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L105">line 105</a></td></tr></tbody></table></section><section class="function-entry" id="f-e55b0ce271fdd234"><h3><code>micron::__subdiv::pr_tree::octant_at(const point_type &amp;c, const point_type &amp;p) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L110">line 110</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static usize
+  octant_at(const point_type &amp;c, const point_type &amp;p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const point_type &amp;c</code></li><li><code>const point_type &amp;p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static usize
+  octant_at(const point_type &amp;c, const point_type &amp;p) noexcept
+  {
+    usize oc = 0;
+    for ( usize d = 0; d &lt; Dim; ++d ) oc |= static_cast&lt;usize&gt;(p.data[d] &gt;= c.data[d]) &lt;&lt; d;
+    return oc;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>oc</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L114">line 114</a></td></tr></tbody></table></section><section class="function-entry" id="f-d2fb185ad4e2e2d5"><h3><code>micron::__subdiv::pr_tree::octant(const box_type &amp;nb, const point_type &amp;p) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L118">line 118</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static usize
+  octant(const box_type &amp;nb, const point_type &amp;p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const box_type &amp;nb</code></li><li><code>const point_type &amp;p</code></li></ul><h4>Effects</h4><p>Returns <code>octant_at(nb.center(), p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static usize
+  octant(const box_type &amp;nb, const point_type &amp;p) noexcept
+  {
+    return octant_at(nb.center(), p);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>octant_at(nb.center(), p)</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L120">line 120</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-e55b0ce271fdd234">octant_at</a>.</p></section><section class="function-entry" id="f-44829d4460f31069"><h3><code>micron::__subdiv::pr_tree::child_box_at(const box_type &amp;nb, const point_type &amp;c, usize oc) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L127">line 127</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static box_type
+  child_box_at(const box_type &amp;nb, const point_type &amp;c, usize oc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const box_type &amp;nb</code></li><li><code>const point_type &amp;c</code></li><li><code>usize oc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static box_type
+  child_box_at(const box_type &amp;nb, const point_type &amp;c, usize oc) noexcept
+  {
+    box_type cb;
+    for ( usize d = 0; d &lt; Dim; ++d ) {
+      if ( oc &amp; (usize(1) &lt;&lt; d) ) {
+        cb.min_corner.data[d] = c.data[d];
+        cb.max_corner.data[d] = nb.max_corner.data[d];
+      } else {
+        cb.min_corner.data[d] = nb.min_corner.data[d];
+        cb.max_corner.data[d] = c.data[d];
+      }
+    }
+    return cb;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cb</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L139">line 139</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><section class="function-entry" id="f-69db91e24dde7522"><h3><code>micron::__subdiv::pr_tree::child_box(const box_type &amp;nb, usize oc) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L143">line 143</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static box_type
+  child_box(const box_type &amp;nb, usize oc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const box_type &amp;nb</code></li><li><code>usize oc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static box_type
+  child_box(const box_type &amp;nb, usize oc) noexcept
+  {
+    point_type c = nb.center();
+    box_type cb;
+    for ( usize d = 0; d &lt; Dim; ++d ) {
+      if ( oc &amp; (usize(1) &lt;&lt; d) ) {
+        cb.min_corner.data[d] = c.data[d];
+        cb.max_corner.data[d] = nb.max_corner.data[d];
+      } else {
+        cb.min_corner.data[d] = nb.min_corner.data[d];
+        cb.max_corner.data[d] = c.data[d];
+      }
+    }
+    return cb;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cb</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L156">line 156</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><section class="function-entry" id="f-ad1f465ec904067a"><h3><code>micron::__subdiv::pr_tree::mindist2(const point_type &amp;p, const box_type &amp;b) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L160">line 160</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static F
+  mindist2(const point_type &amp;p, const box_type &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const point_type &amp;p</code></li><li><code>const box_type &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static F
+  mindist2(const point_type &amp;p, const box_type &amp;b) noexcept
+  {
+    // at most one of (lo-v) and (v-hi) can be positive, so their max clamped at zero is the axis distance
+    F s = F(0);
+    for ( usize d = 0; d &lt; Dim; ++d ) {
+      const F v = p.data[d];
+      const F a = b.min_corner.data[d] - v;
+      const F c = v - b.max_corner.data[d];
+      F dd = a &gt; c ? a : c;
+      dd = dd &gt; F(0) ? dd : F(0);
+      s += dd * dd;
+    }
+    return s;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L172">line 172</a></td></tr></tbody></table></section><section class="function-entry" id="f-67d704f0bb8b9ed9"><h3><code>micron::__subdiv::pr_tree::dist2(const point_type &amp;a, const point_type &amp;b) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L176">line 176</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static F
+  dist2(const point_type &amp;a, const point_type &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const point_type &amp;a</code></li><li><code>const point_type &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static F
+  dist2(const point_type &amp;a, const point_type &amp;b) noexcept
+  {
+    F s = F(0);
+    for ( usize d = 0; d &lt; Dim; ++d ) {
+      F dd = a.data[d] - b.data[d];
+      s += dd * dd;
+    }
+    return s;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L183">line 183</a></td></tr></tbody></table></section><section class="function-entry" id="f-ce53309874134b78"><h3><code>micron::__subdiv::pr_tree::alloc_leaf()</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L187">line 187</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>node_idx
+  alloc_leaf()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">node_idx
+  alloc_leaf()
+  {
+    node_idx i = __arena.allocate();
+    new (__arena.raw(i)) leaf_node();
+    return i;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>i</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L191">line 191</a></td></tr></tbody></table></section><section class="function-entry" id="f-7d69bc1966809690"><h3><code>micron::__subdiv::pr_tree::alloc_internal()</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L195">line 195</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>node_idx
+  alloc_internal()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">node_idx
+  alloc_internal()
+  {
+    node_idx i = __arena.allocate();
+    new (__arena.raw(i)) internal_node();
+    return i;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>i</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L199">line 199</a></td></tr></tbody></table></section><section class="function-entry" id="f-ea044b9cf943b711"><h3><code>micron::__subdiv::pr_tree::destroy_node(node_idx i) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L203">line 203</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  destroy_node(node_idx i) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  destroy_node(node_idx i) noexcept
+  {
+    if ( is_leaf(i) )
+      lnode(i).~leaf_node();
+    else
+      inode(i).~internal_node();
+    __arena.deallocate(i);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>.</p></section><section class="function-entry" id="f-5f1f0cdd6e268441"><h3><code>micron::__subdiv::pr_tree::free_subtree(node_idx i) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L213">line 213</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  free_subtree(node_idx i) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  free_subtree(node_idx i) noexcept
+  {
+    if ( i == nil ) return;
+    if ( is_leaf(i) ) {
+      // free the overflow chain iteratively (could be long for coincident points)
+      node_idx o = lnode(i).overflow;
+      destroy_node(i);
+      while ( o != nil ) {
+        node_idx nx = lnode(o).overflow;
+        destroy_node(o);
+        o = nx;
+      }
+      return;
+    }
+    internal_node &amp;I = inode(i);
+    node_idx kids[NCHILD];
+    for ( usize c = 0; c &lt; NCHILD; ++c ) kids[c] = I.kids[c];
+    for ( usize c = 0; c &lt; NCHILD; ++c ) free_subtree(kids[c]);
+    destroy_node(i);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L215">line 215</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L225">line 225</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="__subdiv_tree.hpp.html#f-ea044b9cf943b711">destroy_node</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>.</p></section><section class="function-entry" id="f-9913c0dcecdebf20"><h3><code>micron::__subdiv::pr_tree::add_to_leaf(node_idx n, const point_type &amp;p, VV &amp;&amp;v)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L237">line 237</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class VV&gt;
+  void
+  add_to_leaf(node_idx n, const point_type &amp;p, VV &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx n</code></li><li><code>const point_type &amp;p</code></li><li><code>VV &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class VV&gt;
+  void
+  add_to_leaf(node_idx n, const point_type &amp;p, VV &amp;&amp;v)
+  {
+    while ( true ) {
+      leaf_node &amp;L = lnode(n);
+      if ( L.count &lt; B ) {
+        L.pts[L.count] = p;
+        new (micron::addr(L.vals()[L.count])) Value(micron::forward&lt;VV&gt;(v));
+        ++L.count;
+        return;
+      }
+      if ( L.overflow == nil ) {
+        node_idx o = alloc_leaf();      // may move slab
+        lnode(n).overflow = o;
+      }
+      n = lnode(n).overflow;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L245">line 245</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;VV&gt;</a>, <a href="__subdiv_tree.hpp.html#f-ce53309874134b78">alloc_leaf</a>.</p></section><section class="function-entry" id="f-6fe05a194650cf06"><h3><code>micron::__subdiv::pr_tree::insert_rec(node_idx n, const box_type &amp;nb, const point_type &amp;p, VV &amp;&amp;v, usize depth, bool &amp;added)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L257">line 257</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class VV&gt;
+  node_idx
+  insert_rec(node_idx n, const box_type &amp;nb, const point_type &amp;p, VV &amp;&amp;v, usize depth, bool &amp;added)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx n</code></li><li><code>const box_type &amp;nb</code></li><li><code>const point_type &amp;p</code></li><li><code>VV &amp;&amp;v</code></li><li><code>usize depth</code></li><li><code>bool &amp;added</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class VV&gt;
+  node_idx
+  insert_rec(node_idx n, const box_type &amp;nb, const point_type &amp;p, VV &amp;&amp;v, usize depth, bool &amp;added)
+  {
+    if ( is_leaf(n) ) {
+      if ( lnode(n).count &lt; B || depth &gt;= MaxDepth ) {
+        add_to_leaf(n, p, micron::forward&lt;VV&gt;(v));
+        added = true;
+        return n;
+      }
+      // full and can subdivide: snapshot, free, rebuild as internal, reinsert
+      const u16 cnt = lnode(n).count;
+      point_type opts[B];
+      alignas(Value) byte oraw[sizeof(Value) * B];
+      Value *ov = static_cast&lt;Value *&gt;(static_cast&lt;void *&gt;(oraw));
+      {
+        leaf_node &amp;L = lnode(n);
+        for ( u16 i = 0; i &lt; cnt; ++i ) {
+          opts[i] = L.pts[i];
+          new (micron::addr(ov[i])) Value(micron::move(L.vals()[i]));
+        }
+      }
+      destroy_node(n);
+      node_idx in = alloc_internal();
+      bool a;
+      for ( u16 i = 0; i &lt; cnt; ++i ) in = insert_rec(in, nb, opts[i], micron::move(ov[i]), depth, a);
+      in = insert_rec(in, nb, p, micron::forward&lt;VV&gt;(v), depth, added);
+      for ( u16 i = 0; i &lt; cnt; ++i ) ov[i].~Value();
+      return in;
+    }
+    const point_type ctr = nb.center();
+    const usize oc = octant_at(ctr, p);
+    const box_type cb = child_box_at(nb, ctr, oc);
+    node_idx child = inode(n).kids[oc];
+    if ( child == nil ) child = alloc_leaf();      // may move slab; re-fetch below
+    node_idx nc = insert_rec(child, cb, p, v, depth + 1, added);
+    inode(n).kids[oc] = nc;
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L263">line 263</a></td></tr><tr class="t-dsc"><td><code>in</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L283">line 283</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L292">line 292</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="__subdiv_tree.hpp.html#f-9913c0dcecdebf20">add_to_leaf</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;VV&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="__subdiv_tree.hpp.html#f-ea044b9cf943b711">destroy_node</a>, <a href="__subdiv_tree.hpp.html#f-7d69bc1966809690">alloc_internal</a>, <a href="__subdiv_tree.hpp.html#f-e55b0ce271fdd234">octant_at</a>, <a href="__subdiv_tree.hpp.html#f-44829d4460f31069">child_box_at</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>, <a href="__subdiv_tree.hpp.html#f-ce53309874134b78">alloc_leaf</a>.</p></section><section class="function-entry" id="f-601f2dff279aad35"><h3><code>micron::__subdiv::pr_tree::query_rec(node_idx n, const box_type &amp;nb, const box_type &amp;q, Fn &amp;fn) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L297">line 297</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  query_rec(node_idx n, const box_type &amp;nb, const box_type &amp;q, Fn &amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx n</code></li><li><code>const box_type &amp;nb</code></li><li><code>const box_type &amp;q</code></li><li><code>Fn &amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  query_rec(node_idx n, const box_type &amp;nb, const box_type &amp;q, Fn &amp;fn) noexcept
+  {
+    if ( is_leaf(n) ) {
+      node_idx c = n;
+      while ( c != nil ) {
+        leaf_node &amp;L = lnode(c);
+        for ( u16 i = 0; i &lt; L.count; ++i )
+          if ( q.contains(L.pts[i]) ) fn(static_cast&lt;const point_type &amp;&gt;(L.pts[i]), L.vals()[i]);
+        c = L.overflow;
+      }
+      return;
+    }
+    internal_node &amp;I = inode(n);
+    const point_type ctr = nb.center();
+    for ( usize oc = 0; oc &lt; NCHILD; ++oc ) {
+      if ( I.kids[oc] == nil ) continue;
+      const box_type cb = child_box_at(nb, ctr, oc);
+      if ( cb.intersects(q) ) query_rec(I.kids[oc], cb, q, fn);
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L307">line 307</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>, <a href="__subdiv_tree.hpp.html#f-44829d4460f31069">child_box_at</a>.</p></section><section class="function-entry" id="f-6de47a95e4ac7ee6"><h3><code>micron::__subdiv::pr_tree::radius_rec(node_idx n, const box_type &amp;nb, const point_type &amp;c, F r2, Fn &amp;fn) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L320">line 320</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  radius_rec(node_idx n, const box_type &amp;nb, const point_type &amp;c, F r2, Fn &amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx n</code></li><li><code>const box_type &amp;nb</code></li><li><code>const point_type &amp;c</code></li><li><code>F r2</code></li><li><code>Fn &amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  radius_rec(node_idx n, const box_type &amp;nb, const point_type &amp;c, F r2, Fn &amp;fn) noexcept
+  {
+    if ( is_leaf(n) ) {
+      node_idx cc = n;
+      while ( cc != nil ) {
+        leaf_node &amp;L = lnode(cc);
+        for ( u16 i = 0; i &lt; L.count; ++i )
+          if ( dist2(c, L.pts[i]) &lt;= r2 ) fn(static_cast&lt;const point_type &amp;&gt;(L.pts[i]), L.vals()[i]);
+        cc = L.overflow;
+      }
+      return;
+    }
+    internal_node &amp;I = inode(n);
+    const point_type ctr = nb.center();
+    for ( usize oc = 0; oc &lt; NCHILD; ++oc ) {
+      if ( I.kids[oc] == nil ) continue;
+      const box_type cb = child_box_at(nb, ctr, oc);
+      if ( mindist2(c, cb) &lt;= r2 ) radius_rec(I.kids[oc], cb, c, r2, fn);
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L330">line 330</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="__subdiv_tree.hpp.html#f-67d704f0bb8b9ed9">dist2</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>, <a href="__subdiv_tree.hpp.html#f-44829d4460f31069">child_box_at</a>, <a href="__subdiv_tree.hpp.html#f-ad1f465ec904067a">mindist2</a>.</p></section><section class="function-entry" id="f-82bef4e1912c0b9b"><h3><code>micron::__subdiv::pr_tree::full_rec(node_idx n, Fn &amp;fn) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L343">line 343</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  full_rec(node_idx n, Fn &amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx n</code></li><li><code>Fn &amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  full_rec(node_idx n, Fn &amp;fn) noexcept
+  {
+    if ( is_leaf(n) ) {
+      node_idx c = n;
+      while ( c != nil ) {
+        leaf_node &amp;L = lnode(c);
+        for ( u16 i = 0; i &lt; L.count; ++i ) fn(static_cast&lt;const point_type &amp;&gt;(L.pts[i]), L.vals()[i]);
+        c = L.overflow;
+      }
+      return;
+    }
+    internal_node &amp;I = inode(n);
+    for ( usize oc = 0; oc &lt; NCHILD; ++oc )
+      if ( I.kids[oc] != nil ) full_rec(I.kids[oc], fn);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L352">line 352</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>.</p></section><section class="function-entry" id="f-9265d3aef70e2c7f"><h3><code>micron::__subdiv::pr_tree::knn_insert(fvector&lt;knn_item&gt; &amp;best, usize k, const knn_item &amp;it)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L366">line 366</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  knn_insert(fvector&lt;knn_item&gt; &amp;best, usize k, const knn_item &amp;it)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fvector&lt;knn_item&gt; &amp;best</code></li><li><code>usize k</code></li><li><code>const knn_item &amp;it</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  knn_insert(fvector&lt;knn_item&gt; &amp;best, usize k, const knn_item &amp;it)
+  {
+    usize pos = best.size();
+    best.push_back(it);
+    while ( pos &gt; 0 &amp;&amp; best[pos - 1].d &gt; best[pos].d ) {
+      knn_item tmp = best[pos - 1];
+      best[pos - 1] = best[pos];
+      best[pos] = tmp;
+      --pos;
+    }
+    if ( best.size() &gt; k ) best.pop_back();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-aa4e58f7ca0e1226"><h3><code>micron::__subdiv::pr_tree::knn_rec(node_idx n, const box_type &amp;nb, const point_type &amp;p, usize k, fvector&lt;knn_item&gt; &amp;best) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L380">line 380</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  knn_rec(node_idx n, const box_type &amp;nb, const point_type &amp;p, usize k, fvector&lt;knn_item&gt; &amp;best) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx n</code></li><li><code>const box_type &amp;nb</code></li><li><code>const point_type &amp;p</code></li><li><code>usize k</code></li><li><code>fvector&lt;knn_item&gt; &amp;best</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  knn_rec(node_idx n, const box_type &amp;nb, const point_type &amp;p, usize k, fvector&lt;knn_item&gt; &amp;best) noexcept
+  {
+    if ( is_leaf(n) ) {
+      node_idx c = n;
+      while ( c != nil ) {
+        leaf_node &amp;L = lnode(c);
+        for ( u16 i = 0; i &lt; L.count; ++i ) {
+          F d = dist2(p, L.pts[i]);
+          if ( best.size() &lt; k || d &lt; best[best.size() - 1].d ) knn_insert(best, k, knn_item{ d, L.pts[i], micron::addr(L.vals()[i]) });
+        }
+        c = L.overflow;
+      }
+      return;
+    }
+    internal_node &amp;I = inode(n);
+    const point_type ctr = nb.center();
+    usize order[NCHILD];
+    F od[NCHILD];
+    box_type cbx[NCHILD];
+    usize m = 0;
+    for ( usize oc = 0; oc &lt; NCHILD; ++oc ) {
+      if ( I.kids[oc] == nil ) continue;
+      order[m] = oc;
+      cbx[oc] = child_box_at(nb, ctr, oc);
+      od[m] = mindist2(p, cbx[oc]);
+      ++m;
+    }
+    for ( usize i = 1; i &lt; m; ++i ) {
+      usize co = order[i];
+      F key = od[i];
+      usize j = i;
+      while ( j &gt; 0 &amp;&amp; od[j - 1] &gt; key ) {
+        od[j] = od[j - 1];
+        order[j] = order[j - 1];
+        --j;
+      }
+      od[j] = key;
+      order[j] = co;
+    }
+    for ( usize t = 0; t &lt; m; ++t ) {
+      if ( best.size() &gt;= k &amp;&amp; od[t] &gt;= best[best.size() - 1].d ) break;
+      knn_rec(I.kids[order[t]], cbx[order[t]], p, k, best);
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L392">line 392</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="__subdiv_tree.hpp.html#f-67d704f0bb8b9ed9">dist2</a>, <a href="__subdiv_tree.hpp.html#f-9265d3aef70e2c7f">knn_insert</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>, <a href="__subdiv_tree.hpp.html#f-44829d4460f31069">child_box_at</a>, <a href="__subdiv_tree.hpp.html#f-ad1f465ec904067a">mindist2</a>.</p></section><section class="function-entry" id="f-895dd45a2e128ea2"><h3><code>micron::__subdiv::pr_tree::~pr_tree()</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L431">line 431</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~pr_tree()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~pr_tree()
+  {
+    if ( __root != nil ) free_subtree(__root);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-5f1f0cdd6e268441">free_subtree</a>.</p></section><section class="function-entry" id="f-4b68b28bae32967d"><h3><code>micron::__subdiv::pr_tree::pr_tree(const box_type &amp;universe)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L436">line 436</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit pr_tree(const box_type &amp;universe) : __arena(), __root(nil), __size(0), __universe(universe)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const box_type &amp;universe</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit pr_tree(const box_type &amp;universe) : __arena(), __root(nil), __size(0), __universe(universe) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b76c7d42b4f04d64"><h3><code>micron::__subdiv::pr_tree::pr_tree(const box_type &amp;universe, Fn build)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L440">line 440</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, pr_tree &amp;&gt;)
+  pr_tree(const box_type &amp;universe, Fn build) : pr_tree(universe)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const box_type &amp;universe</code></li><li><code>Fn build</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, pr_tree &amp;&gt;)
+  pr_tree(const box_type &amp;universe, Fn build) : pr_tree(universe)
+  {
+    build(*this);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-07fed82c9955bb3d"><h3><code>micron::__subdiv::pr_tree::pr_tree()</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L445">line 445</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pr_tree() : __arena(), __root(nil), __size(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pr_tree() : __arena(), __root(nil), __size(0)
+  {
+    for ( usize d = 0; d &lt; Dim; ++d ) {
+      __universe.min_corner.data[d] = F(-1048576);
+      __universe.max_corner.data[d] = F(1048576);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-55607d9928d56f7e"><h3><code>micron::__subdiv::pr_tree::pr_tree(const pr_tree &amp;)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L453">line 453</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pr_tree(const pr_tree &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const pr_tree &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-f30e0a28fc06e553"><h3><code>micron::__subdiv::pr_tree::operator=(const pr_tree &amp;)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L454">line 454</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pr_tree &amp;operator=(const pr_tree &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const pr_tree &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-a98dbb247827f154"><h3><code>micron::__subdiv::pr_tree::pr_tree(pr_tree &amp;&amp;o) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L456">line 456</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pr_tree(pr_tree &amp;&amp;o) noexcept : __arena(micron::move(o.__arena)), __root(o.__root), __size(o.__size), __universe(o.__universe)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pr_tree &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pr_tree(pr_tree &amp;&amp;o) noexcept : __arena(micron::move(o.__arena)), __root(o.__root), __size(o.__size), __universe(o.__universe)
+  {
+    o.__root = nil;
+    o.__size = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-085afe33636b968f"><h3><code>micron::__subdiv::pr_tree::operator=(pr_tree &amp;&amp;o) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L463">line 463</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pr_tree &amp;
+  operator=(pr_tree &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pr_tree &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pr_tree &amp;
+  operator=(pr_tree &amp;&amp;o) noexcept
+  {
+    if ( this != &amp;o ) {
+      if ( __root != nil ) free_subtree(__root);
+      __arena = micron::move(o.__arena);
+      __root = o.__root;
+      __size = o.__size;
+      __universe = o.__universe;
+      o.__root = nil;
+      o.__size = 0;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L474">line 474</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-5f1f0cdd6e268441">free_subtree</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-0cc688620d27edba"><h3><code>micron::__subdiv::pr_tree::size() const noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L478">line 478</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__size</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return __size;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__size</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L480">line 480</a></td></tr></tbody></table></section><section class="function-entry" id="f-bc0b5c7299650050"><h3><code>micron::__subdiv::pr_tree::empty() const noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L484">line 484</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__size == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const noexcept
+  {
+    return __size == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__size == 0</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L486">line 486</a></td></tr></tbody></table></section><section class="function-entry" id="f-fe1e06711fbebcbb"><h3><code>micron::__subdiv::pr_tree::bounds() const noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L490">line 490</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const box_type &amp;
+  bounds() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__universe</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const box_type &amp;
+  bounds() const noexcept
+  {
+    return __universe;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__universe</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L492">line 492</a></td></tr></tbody></table></section><section class="function-entry" id="f-3047f132e802cc83"><h3><code>micron::__subdiv::pr_tree::clear()</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L496">line 496</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear()
+  {
+    if ( __root != nil ) free_subtree(__root);
+    __root = nil;
+    __size = 0;
+    __arena.reset();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-5f1f0cdd6e268441">free_subtree</a>.</p></section><section class="function-entry" id="f-565093e73d2774e9"><h3><code>micron::__subdiv::pr_tree::reserve_nodes(usize n)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L507">line 507</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reserve_nodes(usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reserve_nodes(usize n)
+  {
+    __arena.reserve(n);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8005d7c2c0c46c7f"><h3><code>micron::__subdiv::pr_tree::nodes_used() const noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L516">line 516</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] usize
+  // LIVE nodes, not the high-water mark. This used to return slots_used(), which never falls --
+  // so it reported the same number whether or not erase() reclaimed anything, and could not have
+  // shown the leak it was the natural metric for. nodes_high_water() keeps the old meaning.
+  nodes_used() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__arena.slots_live()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] usize
+  // LIVE nodes, not the high-water mark. This used to return slots_used(), which never falls --
+  // so it reported the same number whether or not erase() reclaimed anything, and could not have
+  // shown the leak it was the natural metric for. nodes_high_water() keeps the old meaning.
+  nodes_used() const noexcept
+  {
+    return __arena.slots_live();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__arena.slots_live()</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L518">line 518</a></td></tr></tbody></table></section><section class="function-entry" id="f-a61004964ed0ede2"><h3><code>micron::__subdiv::pr_tree::nodes_high_water() const noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L522">line 522</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] usize
+  nodes_high_water() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__arena.slots_used()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] usize
+  nodes_high_water() const noexcept
+  {
+    return __arena.slots_used();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__arena.slots_used()</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L524">line 524</a></td></tr></tbody></table></section><section class="function-entry" id="f-93ef2bfc2b730222"><h3><code>micron::__subdiv::pr_tree::node_bytes() noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L528">line 528</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static constexpr usize
+  node_bytes() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__slot_bytes</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static constexpr usize
+  node_bytes() noexcept
+  {
+    return __slot_bytes;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__slot_bytes</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L530">line 530</a></td></tr></tbody></table></section><section class="function-entry" id="f-cb0200e7fc64c224"><h3><code>micron::__subdiv::pr_tree::nodes_reserved() const noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L534">line 534</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] usize
+  nodes_reserved() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__arena.slots_reserved()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] usize
+  nodes_reserved() const noexcept
+  {
+    return __arena.slots_reserved();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__arena.slots_reserved()</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L536">line 536</a></td></tr></tbody></table></section><section class="function-entry" id="f-c5d5bbc20e0a58c1"><h3><code>micron::__subdiv::pr_tree::insert(const point_type &amp;p, const Value &amp;v)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L540">line 540</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  insert(const point_type &amp;p, const Value &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const point_type &amp;p</code></li><li><code>const Value &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  insert(const point_type &amp;p, const Value &amp;v)
+  {
+    if ( !__universe.contains(p) ) return false;
+    if ( __root == nil ) __root = alloc_leaf();
+    bool added = false;
+    __root = insert_rec(__root, __universe, p, v, 0, added);
+    if ( added ) ++__size;
+    return added;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L542">line 542</a></td></tr><tr class="t-dsc"><td><code>added</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L547">line 547</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-ce53309874134b78">alloc_leaf</a>, <a href="__subdiv_tree.hpp.html#f-6fe05a194650cf06">insert_rec</a>.</p></section><section class="function-entry" id="f-1605c6d66f183514"><h3><code>micron::__subdiv::pr_tree::erase(const point_type &amp;p, const Value &amp;v)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L552">line 552</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  erase(const point_type &amp;p, const Value &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const point_type &amp;p</code></li><li><code>const Value &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  erase(const point_type &amp;p, const Value &amp;v)
+  {
+    if ( __root == nil || !__universe.contains(p) ) return false;
+
+    // remember the descent so an emptied subtree can be unlinked on the way back up
+    node_idx path[MaxDepth + 2];
+    usize slot[MaxDepth + 2];
+    usize depth = 0;
+
+    node_idx n = __root;
+    box_type nb = __universe;
+    while ( !is_leaf(n) ) {
+      const point_type ctr = nb.center();
+      const usize oc = octant_at(ctr, p);
+      const node_idx c = inode(n).kids[oc];
+      if ( c == nil ) return false;
+      if ( depth &lt; MaxDepth + 2 ) {
+        path[depth] = n;
+        slot[depth] = oc;
+        ++depth;
+      }
+      nb = child_box_at(nb, ctr, oc);
+      n = c;
+    }
+
+    // walk the overflow chain, keeping the predecessor so an emptied chain node can be spliced out
+    node_idx prev = nil;
+    node_idx cc = n;
+    bool removed = false;
+    while ( cc != nil ) {
+      leaf_node &amp;L = lnode(cc);
+      for ( u16 i = 0; i &lt; L.count; ++i ) {
+        if ( L.pts[i] == p &amp;&amp; L.vals()[i] == v ) {
+          L.vals()[i].~Value();
+          for ( u16 j = i; j + 1 &lt; L.count; ++j ) {
+            L.pts[j] = L.pts[j + 1];
+            new (micron::addr(L.vals()[j])) Value(micron::move(L.vals()[j + 1]));
+            L.vals()[j + 1].~Value();
+          }
+          --L.count;
+          removed = true;
+          break;
+        }
+      }
+      if ( removed ) break;
+      prev = cc;
+      cc = lnode(cc).overflow;
+    }
+    if ( !removed ) return false;
+    --__size;
+
+    // read everything out of the node before any destroy_node recycles its storage
+    const u16 left = lnode(cc).count;
+    const node_idx chained = lnode(cc).overflow;
+    if ( left != 0 ) return true;
+
+    if ( prev != nil ) {
+      // an overflow node emptied: splice it out of the chain and reclaim it
+      lnode(prev).overflow = chained;
+      destroy_node(cc);
+      return true;
+    }
+    // the head leaf emptied. If a chain still hangs off it the head has to stay as the anchor;
+    // it becomes reclaimable once the last chain node goes.
+    if ( chained != nil ) return true;
+
+    destroy_node(cc);
+    if ( depth == 0 ) {
+      __root = nil;
+      return true;
+    }
+    inode(path[depth - 1]).kids[slot[depth - 1]] = nil;
+
+    // collapse internal nodes that just lost their last child
+    while ( depth &gt; 0 ) {
+      const node_idx in = path[depth - 1];
+      bool any = false;
+      for ( usize c = 0; c &lt; NCHILD; ++c )
+        if ( inode(in).kids[c] != nil ) {
+          any = true;
+          break;
+        }
+      if ( any ) break;
+      destroy_node(in);
+      --depth;
+      if ( depth == 0 ) {
+        __root = nil;
+        break;
+      }
+      inode(path[depth - 1]).kids[slot[depth - 1]] = nil;
+    }
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L554">line 554</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L567">line 567</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L600">line 600</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L606">line 606</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L612">line 612</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L616">line 616</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L621">line 621</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L643">line 643</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-e55b0ce271fdd234">octant_at</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>, <a href="__subdiv_tree.hpp.html#f-44829d4460f31069">child_box_at</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="__subdiv_tree.hpp.html#f-ea044b9cf943b711">destroy_node</a>.</p></section><section class="function-entry" id="f-01732fd13569b9b4"><h3><code>micron::__subdiv::pr_tree::query(const box_type &amp;q, Fn &amp;&amp;fn) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L648">line 648</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  query(const box_type &amp;q, Fn &amp;&amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const box_type &amp;q</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  query(const box_type &amp;q, Fn &amp;&amp;fn) noexcept
+  {
+    if ( __root != nil ) query_rec(__root, __universe, q, fn);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-601f2dff279aad35">query_rec</a>.</p></section><section class="function-entry" id="f-c6cdb55f06a5b1e3"><h3><code>micron::__subdiv::pr_tree::query_radius(const point_type &amp;c, F r, Fn &amp;&amp;fn) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L655">line 655</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  query_radius(const point_type &amp;c, F r, Fn &amp;&amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const point_type &amp;c</code></li><li><code>F r</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  query_radius(const point_type &amp;c, F r, Fn &amp;&amp;fn) noexcept
+  {
+    if ( __root != nil ) radius_rec(__root, __universe, c, r * r, fn);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-6de47a95e4ac7ee6">radius_rec</a>.</p></section><section class="function-entry" id="f-d1f0ef294885f01e"><h3><code>micron::__subdiv::pr_tree::query(const box_type &amp;q, Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L662">line 662</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  query(const box_type &amp;q, Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const box_type &amp;q</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  query(const box_type &amp;q, Fn &amp;&amp;fn) const
+  {
+    const_cast&lt;pr_tree *&gt;(this)-&gt;query(q, [&amp;](const point_type &amp;p, Value &amp;v) { fn(p, static_cast&lt;const Value &amp;&gt;(v)); });
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-2cc32a01a266f139"><h3><code>micron::__subdiv::pr_tree::query_radius(const point_type &amp;c, F r, Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L669">line 669</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  query_radius(const point_type &amp;c, F r, Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const point_type &amp;c</code></li><li><code>F r</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  query_radius(const point_type &amp;c, F r, Fn &amp;&amp;fn) const
+  {
+    const_cast&lt;pr_tree *&gt;(this)-&gt;query_radius(c, r, [&amp;](const point_type &amp;p, Value &amp;v) { fn(p, static_cast&lt;const Value &amp;&gt;(v)); });
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-85ab8fcaa170ad12"><h3><code>micron::__subdiv::pr_tree::nearest(const point_type &amp;p, usize k, Fn &amp;&amp;fn) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L676">line 676</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  nearest(const point_type &amp;p, usize k, Fn &amp;&amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const point_type &amp;p</code></li><li><code>usize k</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  nearest(const point_type &amp;p, usize k, Fn &amp;&amp;fn) noexcept
+  {
+    if ( __root == nil || k == 0 ) return;
+    fvector&lt;knn_item&gt; best;
+    best.reserve(k + 1);
+    knn_rec(__root, __universe, p, k, best);
+    for ( usize i = 0; i &lt; best.size(); ++i ) fn(static_cast&lt;const point_type &amp;&gt;(best[i].p), *best[i].v, best[i].d);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L678">line 678</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-aa4e58f7ca0e1226">knn_rec</a>.</p></section><section class="function-entry" id="f-986f73af1dca53bc"><h3><code>micron::__subdiv::pr_tree::for_each(Fn &amp;&amp;fn) noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L687">line 687</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) noexcept
+  {
+    if ( __root != nil ) full_rec(__root, fn);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-82bef4e1912c0b9b">full_rec</a>.</p></section><section class="function-entry" id="f-0f87648bd5ad8339"><h3><code>micron::__subdiv::pr_tree::for_each(Fn &amp;&amp;fn) const noexcept</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L694">line 694</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const noexcept
+  {
+    const_cast&lt;pr_tree *&gt;(this)-&gt;for_each([&amp;](const point_type &amp;p, Value &amp;v) { fn(p, static_cast&lt;const Value &amp;&gt;(v)); });
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6a56d128c7ed4b48"><h3><code>micron::__subdiv::pr_tree::map(Fn fn) const</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L701">line 701</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  auto
+  map(Fn fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  auto
+  map(Fn fn) const
+  {
+    if constexpr ( micron::is_invocable_v&lt;Fn, const point_type &amp;, const Value &amp;&gt; ) {
+      using V2 = micron::remove_cvref_t&lt;micron::invoke_result_t&lt;Fn, const point_type &amp;, const Value &amp;&gt;&gt;;
+      pr_tree&lt;V2, F, Dim, Capacity, MaxDepth&gt; out(this-&gt;bounds());
+      for_each([&amp;](const point_type &amp;p, const Value &amp;v) { out.insert(p, fn(p, v)); });
+      return out;
+    } else {
+      using V2 = micron::remove_cvref_t&lt;micron::invoke_result_t&lt;Fn, const Value &amp;&gt;&gt;;
+      pr_tree&lt;V2, F, Dim, Capacity, MaxDepth&gt; out(this-&gt;bounds());
+      for_each([&amp;](const point_type &amp;p, const Value &amp;v) { out.insert(p, fn(v)); });
+      return out;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L707">line 707</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L712">line 712</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-986f73af1dca53bc">for_each</a>.</p></section><section class="function-entry" id="f-b7c181f2280bb6e7"><h3><code>micron::__subdiv::pr_tree::cata(const Acc &amp;empty, LeafElemFn leaf_elem, InnerFn inner) const</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L718">line 718</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Acc, class LeafElemFn, class InnerFn&gt;
+  Acc
+  cata(const Acc &amp;empty, LeafElemFn leaf_elem, InnerFn inner) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Acc &amp;empty</code></li><li><code>LeafElemFn leaf_elem</code></li><li><code>InnerFn inner</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Acc, class LeafElemFn, class InnerFn&gt;
+  Acc
+  cata(const Acc &amp;empty, LeafElemFn leaf_elem, InnerFn inner) const
+  {
+    if ( __root == nil ) return empty;
+    return const_cast&lt;pr_tree *&gt;(this)-&gt;template __cata_rec&lt;Acc&gt;(__root, empty, leaf_elem, inner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>empty</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L720">line 720</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;pr_tree *&gt;(this)-&gt;template __cata_rec&lt;Acc&gt;(__root, empty, leaf_elem, inner)</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L721">line 721</a></td></tr></tbody></table></section><section class="function-entry" id="f-2c01a0f677561e08"><h3><code>micron::__subdiv::pr_tree::__cata_rec(node_idx n, const Acc &amp;empty, LeafElemFn &amp;leaf_elem, InnerFn &amp;inner)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L726">line 726</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Acc, class LeafElemFn, class InnerFn&gt;
+  Acc
+  __cata_rec(node_idx n, const Acc &amp;empty, LeafElemFn &amp;leaf_elem, InnerFn &amp;inner)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx n</code></li><li><code>const Acc &amp;empty</code></li><li><code>LeafElemFn &amp;leaf_elem</code></li><li><code>InnerFn &amp;inner</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Acc, class LeafElemFn, class InnerFn&gt;
+  Acc
+  __cata_rec(node_idx n, const Acc &amp;empty, LeafElemFn &amp;leaf_elem, InnerFn &amp;inner)
+  {
+    if ( is_leaf(n) ) {
+      Acc acc = empty;
+      node_idx c = n;
+      while ( c != nil ) {
+        leaf_node &amp;L = lnode(c);
+        for ( u16 i = 0; i &lt; L.count; ++i )
+          acc = leaf_elem(micron::move(acc), static_cast&lt;const point_type &amp;&gt;(L.pts[i]), static_cast&lt;const Value &amp;&gt;(L.vals()[i]));
+        c = L.overflow;
+      }
+      return acc;
+    }
+    internal_node &amp;I = inode(n);
+    Acc kids[NCHILD];
+    for ( usize c = 0; c &lt; NCHILD; ++c ) kids[c] = (I.kids[c] != nil) ? __cata_rec&lt;Acc&gt;(I.kids[c], empty, leaf_elem, inner) : empty;
+    return inner(kids, NCHILD);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>acc</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L737">line 737</a></td></tr><tr class="t-dsc"><td><code>inner(kids, NCHILD)</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L742">line 742</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>.</p></section><section class="function-entry" id="f-aed46f0955ad985f"><h3><code>micron::__subdiv::pr_tree::traverse(Fn fn) const</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L747">line 747</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  walk_ctl
+  traverse(Fn fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  walk_ctl
+  traverse(Fn fn) const
+  {
+    pr_tree *self = const_cast&lt;pr_tree *&gt;(this);
+    if ( self-&gt;__root == nil ) return walk_ctl::continue_;
+    return self-&gt;__traverse_rec(self-&gt;__root, fn);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>walk_ctl::continue_</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L750">line 750</a></td></tr><tr class="t-dsc"><td><code>self-&gt;__traverse_rec(self-&gt;__root, fn)</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L751">line 751</a></td></tr></tbody></table></section><section class="function-entry" id="f-eec32f3174753b76"><h3><code>micron::__subdiv::pr_tree::__traverse_rec(node_idx n, Fn &amp;fn)</code></h3><p>Defined in <code>trees/__subdiv_tree.hpp</code>, <a href="../../source/trees/__subdiv_tree.hpp.html#L756">line 756</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  walk_ctl
+  __traverse_rec(node_idx n, Fn &amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_idx n</code></li><li><code>Fn &amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  walk_ctl
+  __traverse_rec(node_idx n, Fn &amp;fn)
+  {
+    if ( is_leaf(n) ) {
+      node_idx c = n;
+      while ( c != nil ) {
+        leaf_node &amp;L = lnode(c);
+        for ( u16 i = 0; i &lt; L.count; ++i )
+          if ( micron::__impl::invoke_walk(fn, static_cast&lt;const point_type &amp;&gt;(L.pts[i]), static_cast&lt;const Value &amp;&gt;(L.vals()[i]))
+               == walk_ctl::stop )
+            return walk_ctl::stop;
+        c = L.overflow;
+      }
+      return walk_ctl::continue_;
+    }
+    internal_node &amp;I = inode(n);
+    for ( usize oc = 0; oc &lt; NCHILD; ++oc )
+      if ( I.kids[oc] != nil )
+        if ( __traverse_rec(I.kids[oc], fn) == walk_ctl::stop ) return walk_ctl::stop;
+    return walk_ctl::continue_;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>walk_ctl::stop</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L765">line 765</a></td></tr><tr class="t-dsc"><td><code>walk_ctl::continue_</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L768">line 768</a></td></tr><tr class="t-dsc"><td><code>walk_ctl::stop</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L773">line 773</a></td></tr><tr class="t-dsc"><td><code>walk_ctl::continue_</code></td><td><a href="../../source/trees/__subdiv_tree.hpp.html#L774">line 774</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__subdiv_tree.hpp.html#f-949f09827bf919a4">is_leaf</a>, <a href="__subdiv_tree.hpp.html#f-82aa9ad925790eb4">lnode</a>, <a href="__tree_walk.hpp.html#f-9ff44589d0545f6b">micron::__impl::invoke_walk</a>, <a href="__subdiv_tree.hpp.html#f-b8a384e9aaa5b57f">inode</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

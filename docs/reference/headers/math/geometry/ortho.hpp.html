@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/geometry/ortho.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/geometry/ortho.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/geometry.html">Geometry</a></div><p>Defined in header <code>&lt;micron/math/geometry/ortho.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/geometry/ortho.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-2eee64c9a13cf5b0">micron::math::geometry::unit_orthogonal(const vec&lt;F, N&gt; &amp;v) noexcept</a></td><td>function; line 31</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-2eee64c9a13cf5b0"><h3><code>micron::math::geometry::unit_orthogonal(const vec&lt;F, N&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/geometry/ortho.hpp</code>, <a href="../../../source/math/geometry/ortho.hpp.html#L31">line 31</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+  requires(N &gt;= 2 &amp;&amp; N &lt;= 16)
+[[nodiscard]] inline constexpr vec&lt;F, N&gt;
+unit_orthogonal(const vec&lt;F, N&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+  requires(N &gt;= 2 &amp;&amp; N &lt;= 16)
+[[nodiscard]] inline constexpr vec&lt;F, N&gt;
+unit_orthogonal(const vec&lt;F, N&gt; &amp;v) noexcept
+{
+  if constexpr ( N == 3 ) {
+    F ax = math::fabs(v.data[0]);
+    F ay = math::fabs(v.data[1]);
+    F az = math::fabs(v.data[2]);
+    vec&lt;F, 3&gt; axis{};
+    if ( ax &lt;= ay &amp;&amp; ax &lt;= az ) {
+      axis.data[0] = F(1);
+    } else if ( ay &lt;= az ) {
+      axis.data[1] = F(1);
+    } else {
+      axis.data[2] = F(1);
+    }
+    auto c = linalg::ops::cross&lt;F&gt;(v, axis);
+    F nrm = math::fsqrt(c.data[0] * c.data[0] + c.data[1] * c.data[1] + c.data[2] * c.data[2]);
+    if ( nrm &gt; F(0) ) {
+      F inv = F(1) / nrm;
+      for ( usize i = 0; i &lt; 3; ++i ) c.data[i] *= inv;
+    }
+    return c;
+  } else {
+    usize idx_max = 0;
+    F amax = math::fabs(v.data[0]);
+    for ( usize i = 1; i &lt; N; ++i ) {
+      F a = math::fabs(v.data[i]);
+      if ( a &gt; amax ) {
+        amax = a;
+        idx_max = i;
+      }
+    }
+    usize idx_a = idx_max;
+    usize idx_b = (idx_max + 1) % N;
+    vec&lt;F, N&gt; u{};
+    for ( usize i = 0; i &lt; N; ++i ) u.data[i] = F(0);
+    u.data[idx_a] = -v.data[idx_b];
+    u.data[idx_b] = v.data[idx_a];
+    F nrm_sq = u.data[idx_a] * u.data[idx_a] + u.data[idx_b] * u.data[idx_b];
+    F nrm = math::fsqrt(nrm_sq);
+    if ( nrm &gt; F(0) ) {
+      F inv = F(1) / nrm;
+      for ( usize i = 0; i &lt; N; ++i ) u.data[i] *= inv;
+    }
+    return u;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../../source/math/geometry/ortho.hpp.html#L51">line 51</a></td></tr><tr class="t-dsc"><td><code>u</code></td><td><a href="../../../source/math/geometry/ortho.hpp.html#L74">line 74</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../linalg/ops.hpp.html#f-f44233de36210ce3">linalg::ops::cross&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/coroutine/reactor.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/coroutine/reactor.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/coroutine/reactor.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/tasks/coroutine/reactor.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-65e7a825f93e745c">MICRON_CORO_URING_ENTRIES</code></td><td>macro; line 40<br><small><code>#if defined(MICRON_CORO_URING)</code><br><code>#ifndef MICRON_CORO_URING_ENTRIES</code></small></td></tr><tr class="t-dsc"><td><code id="s-ff92684a3d417445">MICRON_CORO_FILE_SLOTS</code></td><td>macro; line 47<br><small><code>#if defined(MICRON_CORO_URING)</code><br><code>#ifndef MICRON_CORO_FILE_SLOTS</code></small></td></tr><tr class="t-dsc"><td><code id="s-ea7c1cd33cc23ae3">MICRON_CORO_PBUF_ENTRIES</code></td><td>macro; line 115<br><small><code>#if defined(MICRON_CORO_URING)</code><br><code>#ifndef MICRON_CORO_PBUF_ENTRIES</code></small></td></tr><tr class="t-dsc"><td><code id="s-b52d84d1a1d3aa12">MICRON_CORO_PBUF_SZ</code></td><td>macro; line 118<br><small><code>#if defined(MICRON_CORO_URING)</code><br><code>#ifndef MICRON_CORO_PBUF_SZ</code></small></td></tr><tr class="t-dsc"><td><code id="s-d6741daa11814665">micron::coro::io_stats_t</code></td><td>struct; line 878<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-835488330bcd29fb">micron::coro::io_stats_t::submits</code></td><td>member; line 879<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-06d9f0a07f05df83">micron::coro::io_stats_t::enters</code></td><td>member; line 880<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-0675ea6d8df88ba7">micron::coro::io_stats_t::inline_completions</code></td><td>member; line 881<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-3c0af3aa82364aba">micron::coro::io_stats_t::sqe_full_flushes</code></td><td>member; line 882<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-90ba9eda16366d3e">micron::coro::io_stats_t::parks</code></td><td>member; line 883<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-fa08de8a90b6525a">micron::coro::io_stats_t::wakes</code></td><td>member; line 884<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-9e0b20f41898f138">micron::coro::io_stats_t::cancels</code></td><td>member; line 885<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-480dc94c40379e4e">micron::coro::acquire_fixed() noexcept</a></td><td>function; line 822<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-89942396d5697a9d">micron::coro::release_fixed(i32 __slot) noexcept</a></td><td>function; line 835<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-be82add96a41754a">micron::coro::fixed_ptr(i32 __slot) noexcept</a></td><td>function; line 842<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-167d087f04671dec">micron::coro::fixed_size() noexcept</a></td><td>function; line 849<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-b1fa6248285324af">micron::coro::io_pending() noexcept</a></td><td>function; line 873<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-4149e6c97df138ae">micron::coro::io_stats() noexcept</a></td><td>function; line 889<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-480dc94c40379e4e"><h3><code>micron::coro::acquire_fixed() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L822">line 822</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline i32
+acquire_fixed() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline i32
+acquire_fixed() noexcept
+{
+  if ( !__io_fixed_ensure() ) return -1;
+  for ( ;; ) {
+    u32 __m = __io_fixed.__map.get(micron::memory_order_acquire);
+    if ( __m == (1u &lt;&lt; __io_fixed_slots) - 1u ) return -1;      // exhausted
+    const u32 __i = static_cast&lt;u32&gt;(__builtin_ctz(~__m));
+    if ( __io_fixed.__map.compare_exchange_weak(__m, __m | (1u &lt;&lt; __i), micron::memory_order_acq_rel, micron::memory_order_acquire) )
+      return static_cast&lt;i32&gt;(__i);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L824">line 824</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L827">line 827</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(__i)</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L830">line 830</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-d389f464a896e758">__io_fixed_ensure</a>.</p></section><section class="function-entry" id="f-89942396d5697a9d"><h3><code>micron::coro::release_fixed(i32 __slot) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L835">line 835</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+release_fixed(i32 __slot) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 __slot</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+release_fixed(i32 __slot) noexcept
+{
+  if ( __slot &lt; 0 || static_cast&lt;u32&gt;(__slot) &gt;= __io_fixed_slots ) return;
+  __io_fixed.__map.fetch_and(~(1u &lt;&lt; static_cast&lt;u32&gt;(__slot)), micron::memory_order_acq_rel);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L837">line 837</a></td></tr></tbody></table></section><section class="function-entry" id="f-be82add96a41754a"><h3><code>micron::coro::fixed_ptr(i32 __slot) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L842">line 842</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline byte *
+fixed_ptr(i32 __slot) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 __slot</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline byte *
+fixed_ptr(i32 __slot) noexcept
+{
+  if ( __slot &lt; 0 || static_cast&lt;u32&gt;(__slot) &gt;= __io_fixed_slots || __io_fixed.__base == nullptr ) return nullptr;
+  return __io_fixed.__base + static_cast&lt;usize&gt;(__slot) * __io_fixed_sz;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L844">line 844</a></td></tr><tr class="t-dsc"><td><code>__io_fixed.__base + static_cast&lt;usize&gt;(__slot) * __io_fixed_sz</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L845">line 845</a></td></tr></tbody></table></section><section class="function-entry" id="f-167d087f04671dec"><h3><code>micron::coro::fixed_size() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L849">line 849</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+fixed_size() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__io_fixed_sz</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+fixed_size() noexcept
+{
+  return __io_fixed_sz;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__io_fixed_sz</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L851">line 851</a></td></tr></tbody></table></section><section class="function-entry" id="f-b1fa6248285324af"><h3><code>micron::coro::io_pending() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L873">line 873</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline u64
+io_pending() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__io_pending_total()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline u64
+io_pending() noexcept
+{
+  return __io_pending_total();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__io_pending_total()</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L875">line 875</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-a94324c2a23edc17">__io_pending_total</a>.</p></section><section class="function-entry" id="f-4149e6c97df138ae"><h3><code>micron::coro::io_stats() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L889">line 889</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline io_stats_t
+io_stats() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline io_stats_t
+io_stats() noexcept
+{
+  io_stats_t __o{};
+#if defined(MICRON_CORO_STATS)
+  auto __add = [&amp;__o](const __wring &amp;__wr) {
+    __o.submits += __wr.__stat.submits.get(micron::memory_order_relaxed);
+    __o.enters += __wr.__stat.enters.get(micron::memory_order_relaxed);
+    __o.inline_completions += __wr.__stat.inline_completions.get(micron::memory_order_relaxed);
+    __o.sqe_full_flushes += __wr.__stat.sqe_full_flushes.get(micron::memory_order_relaxed);
+    __o.parks += __wr.__stat.parks.get(micron::memory_order_relaxed);
+    __o.wakes += __wr.__stat.wakes.get(micron::memory_order_relaxed);
+    __o.cancels += __wr.__stat.cancels.get(micron::memory_order_relaxed);
+  };
+  for ( u32 __i = 0; __i &lt; 32u; ++__i ) __add(__io_rings[__i]);
+  __add(__io_fb);
+#endif
+  return __o;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__o</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L905">line 905</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-01c86b26a9ac5617"><h3><code>micron::coro::__io_ud_payload(u64 __ud) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L65">line 65</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline constexpr u64
+__io_ud_payload(u64 __ud) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 __ud</code></li></ul><h4>Effects</h4><p>Returns <code>__ud &amp; ((1ull &lt;&lt; __io_ud_tag_shift) - 1ull)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline constexpr u64
+__io_ud_payload(u64 __ud) noexcept
+{
+  return __ud &amp; ((1ull &lt;&lt; __io_ud_tag_shift) - 1ull);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ud &amp; ((1ull &lt;&lt; __io_ud_tag_shift) - 1ull)</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L67">line 67</a></td></tr></tbody></table></section><section class="function-entry" id="f-9695a84578c4e768"><h3><code>micron::coro::__io_ud_make(u8 __tag, u64 __payload) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L71">line 71</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline constexpr u64
+__io_ud_make(u8 __tag, u64 __payload) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 __tag</code></li><li><code>u64 __payload</code></li></ul><h4>Effects</h4><p>Returns <code>(static_cast&lt;u64&gt;(__tag) &lt;&lt; __io_ud_tag_shift) | __payload</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline constexpr u64
+__io_ud_make(u8 __tag, u64 __payload) noexcept
+{
+  return (static_cast&lt;u64&gt;(__tag) &lt;&lt; __io_ud_tag_shift) | __payload;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(static_cast&lt;u64&gt;(__tag) &lt;&lt; __io_ud_tag_shift) | __payload</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L73">line 73</a></td></tr></tbody></table></section><section class="function-entry" id="f-8b14b899ff051ce9"><h3><code>micron::coro::__io_ud_tag(u64 __ud) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L77">line 77</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline constexpr u8
+__io_ud_tag(u64 __ud) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 __ud</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;u8&gt;(__ud &gt;&gt; __io_ud_tag_shift)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline constexpr u8
+__io_ud_tag(u64 __ud) noexcept
+{
+  return static_cast&lt;u8&gt;(__ud &gt;&gt; __io_ud_tag_shift);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u8&gt;(__ud &gt;&gt; __io_ud_tag_shift)</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L79">line 79</a></td></tr></tbody></table></section><section class="function-entry" id="f-56186a28dd2aad7e"><h3><code>micron::coro::__io_mop::__pop(__io_mev &amp;__out) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L162">line 162</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  __pop(__io_mev &amp;__out) noexcept      // single consumer</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__io_mev &amp;__out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  __pop(__io_mev &amp;__out) noexcept      // single consumer
+  {
+    const u32 __h = __qh.get(micron::memory_order_relaxed);
+    if ( __qt.get(micron::memory_order_acquire) == __h ) return false;
+    __out = __q[__h &amp; (__io_mop_qcap - 1u)];
+    __qh.store(__h + 1u, micron::memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L168">line 168</a></td></tr></tbody></table></section><section class="function-entry" id="f-d02437e9f6c16726"><h3><code>micron::coro::__io_mop::__push(const __io_mev &amp;__e) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L172">line 172</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __push(const __io_mev &amp;__e) noexcept      // dispatcher only; serialized by the ring&#x27;s __cq_lk</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __io_mev &amp;__e</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __push(const __io_mev &amp;__e) noexcept      // dispatcher only; serialized by the ring&#x27;s __cq_lk
+  {
+    const u32 __t = __qt.get(micron::memory_order_relaxed);
+    if ( __t - __qh.get(micron::memory_order_acquire) &gt;= __io_mop_qcap ) [[unlikely]]
+      __builtin_trap();      // see the capacity note above
+    __q[__t &amp; (__io_mop_qcap - 1u)] = __e;
+    // WARNING: must be seq_cst, not release; will cause cross read deadlocks otherwise
+    __qt.store(__t + 1u, micron::memory_order_seq_cst);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6600757139956f0a"><h3><code>micron::coro::__io_lock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L238">line 238</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__io_lock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::atomic_token&lt;u32&gt; &amp;__l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__io_lock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept
+{
+  u32 __e = 0;
+  while ( !__l.compare_exchange_weak(__e, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {
+    __e = 0;
+    micron::cpu_pause&lt;1&gt;();
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../sync/pause.hpp.html#f-d4ab0415b16f2d48">micron::cpu_pause&lt;1&gt;</a>.</p></section><section class="function-entry" id="f-6b77e718863d34b6"><h3><code>micron::coro::__io_trylock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L248">line 248</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+__io_trylock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::atomic_token&lt;u32&gt; &amp;__l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+__io_trylock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept
+{
+  u32 __e = 0;
+  return __l.compare_exchange_strong(__e, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__l.compare_exchange_strong(__e, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire)</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L251">line 251</a></td></tr></tbody></table></section><section class="function-entry" id="f-817143b046990667"><h3><code>micron::coro::__io_unlock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L255">line 255</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__io_unlock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::atomic_token&lt;u32&gt; &amp;__l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__io_unlock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept
+{
+  __l.store(0u, micron::memory_order_release);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-786c6081d9205278"><h3><code>micron::coro::__io_cq_acquire(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L261">line 261</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+__io_cq_acquire(__wring &amp;__wr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+__io_cq_acquire(__wring &amp;__wr) noexcept
+{
+  if ( __wr.__live.get(micron::memory_order_acquire) == 0 ) return false;
+  if ( !__io_trylock(__wr.__cq_lk) ) return false;
+  if ( __wr.__live.get(micron::memory_order_acquire) == 0 ) [[unlikely]] {      // died between the test and the lock
+    __io_unlock(__wr.__cq_lk);
+    return false;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L263">line 263</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L264">line 264</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L267">line 267</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L269">line 269</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6b77e718863d34b6">__io_trylock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-b13d47e4d3c8c086"><h3><code>micron::coro::__io_own_ring() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L273">line 273</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline __wring *
+__io_own_ring() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline __wring *
+__io_own_ring() noexcept
+{
+  worker *__w = current_worker();
+  if ( __w == nullptr ) return nullptr;
+  __wring &amp;__wr = __io_rings[__w-&gt;id];
+  return __wr.__live.get(micron::memory_order_acquire) != 0 ? &amp;__wr : nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L276">line 276</a></td></tr><tr class="t-dsc"><td><code>__wr.__live.get(micron::memory_order_acquire) != 0 ? &amp;__wr : nullptr</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L278">line 278</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../coro_core.hpp.html#f-9498d62c9a1e8e2c">current_worker</a>.</p></section><section class="function-entry" id="f-436877d07d9f268b"><h3><code>micron::coro::__io_flush_staged(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L289">line 289</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__io_flush_staged(__wring &amp;__wr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__io_flush_staged(__wring &amp;__wr) noexcept
+{
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+  if ( __wr.__staged != 0 ) {
+    __wr.__staged = 0;
+    (void)__wr.__r.enter(0);
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);
+#endif
+  }
+#else
+  (void)__wr;
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5d85bd1d7df8dd27"><h3><code>micron::coro::__io_flush_own_staged() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L305">line 305</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__io_flush_own_staged() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__io_flush_own_staged() noexcept
+{
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+  __wring *__r = __io_own_ring();
+  if ( __r != nullptr ) __io_flush_staged(*__r);
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-b13d47e4d3c8c086">__io_own_ring</a>, <a href="reactor.hpp.html#f-436877d07d9f268b">__io_flush_staged</a>.</p></section><section class="function-entry" id="f-6e9c98ca1422d21f"><h3><code>micron::coro::__io_pb_init(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L317">line 317</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline i32
+__io_pb_init(__wring &amp;__wr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline i32
+__io_pb_init(__wring &amp;__wr) noexcept
+{
+  const u32 __st = __wr.__pb.__state.get(micron::memory_order_acquire);
+  if ( __st == 1u ) return 0;
+  if ( __st == 2u ) return -95;      // EOPNOTSUPP: refused earlier
+  const usize __rb = static_cast&lt;usize&gt;(__io_pb_entries) * sizeof(micron::uring::buf);
+  auto *__br = micron::ptr_cast&lt;micron::uring::buf_ring *&gt;(
+      micron::mmap(nullptr, __rb, micron::prot_read | micron::prot_write, micron::map_private | micron::map_anonymous, -1, 0));
+  if ( micron::mmap_failed(reinterpret_cast&lt;addr_t *&gt;(__br)) ) {
+    __wr.__pb.__state.store(2u, micron::memory_order_release);
+    return -95;
+  }
+  byte *__ar
+      = reinterpret_cast&lt;byte *&gt;(micron::mmap(nullptr, static_cast&lt;usize&gt;(__io_pb_entries) * __io_pb_sz,
+                                              micron::prot_read | micron::prot_write, micron::map_private | micron::map_anonymous, -1, 0));
+  if ( micron::mmap_failed(micron::ptr_cast&lt;addr_t *&gt;(__ar)) ) {
+    micron::munmap(reinterpret_cast&lt;addr_t *&gt;(__br), __rb);
+    __wr.__pb.__state.store(2u, micron::memory_order_release);
+    return -95;
+  }
+  micron::uring::buf_reg __reg{};
+  __reg.ring_addr = reinterpret_cast&lt;u64&gt;(__br);
+  __reg.ring_entries = __io_pb_entries;
+  __reg.bgid = __io_pb_bgid;
+  if ( __wr.__r.register_pbuf_ring(__reg) &lt; 0 ) {
+    micron::munmap(reinterpret_cast&lt;addr_t *&gt;(__br), __rb);
+    micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(__ar), static_cast&lt;usize&gt;(__io_pb_entries) * __io_pb_sz);
+    __wr.__pb.__state.store(2u, micron::memory_order_release);
+    return -95;
+  }
+  for ( u32 __i = 0; __i &lt; __io_pb_entries; ++__i ) {
+    micron::uring::buf *__b = &amp;__br-&gt;bufs()[__i];
+    __b-&gt;addr = reinterpret_cast&lt;u64&gt;(__ar + static_cast&lt;usize&gt;(__i) * __io_pb_sz);
+    __b-&gt;len = __io_pb_sz;
+    __b-&gt;bid = static_cast&lt;u16&gt;(__i);
+  }
+  __wr.__pb.__br = __br;
+  __wr.__pb.__arena = __ar;
+  __wr.__pb.__tail_shadow = __io_pb_entries;
+  micron::atom::store(&amp;__br-&gt;tail, static_cast&lt;u16&gt;(__io_pb_entries), __ATOMIC_RELEASE);
+  __wr.__pb.__state.store(1u, micron::memory_order_release);      // publishes __br/__arena
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L320">line 320</a></td></tr><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L321">line 321</a></td></tr><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L327">line 327</a></td></tr><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L335">line 335</a></td></tr><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L345">line 345</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L358">line 358</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;micron::uring::buf_ring *&gt;</a>, <a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">micron::mmap_failed</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="../../atomic/intrin.hpp.html#f-764f1c8f4bb9439d">micron::atom::store</a>.</p></section><section class="function-entry" id="f-b4020d7ed74e06e6"><h3><code>micron::coro::__io_pb_data(u8 __ring, u16 __bid) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L365">line 365</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline byte *
+__io_pb_data(u8 __ring, u16 __bid) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 __ring</code></li><li><code>u16 __bid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline byte *
+__io_pb_data(u8 __ring, u16 __bid) noexcept
+{
+  if ( __ring &gt;= __io_ring_cap || __bid &gt;= __io_pb_entries ) [[unlikely]]
+    return nullptr;
+  byte *__a = __io_rings[__ring].__pb.__arena;
+  return __a == nullptr ? nullptr : __a + static_cast&lt;usize&gt;(__bid) * __io_pb_sz;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L368">line 368</a></td></tr><tr class="t-dsc"><td><code>__a == nullptr ? nullptr : __a + static_cast&lt;usize&gt;(__bid) * __io_pb_sz</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L370">line 370</a></td></tr></tbody></table></section><section class="function-entry" id="f-1d777e7afe060650"><h3><code>micron::coro::__io_pb_recycle(u8 __ring, u16 __bid) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L374">line 374</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_pb_recycle(u8 __ring, u16 __bid) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 __ring</code></li><li><code>u16 __bid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_pb_recycle(u8 __ring, u16 __bid) noexcept
+{
+  if ( __ring &gt;= __io_ring_cap || __bid &gt;= __io_pb_entries ) [[unlikely]]
+    return;
+  __wring &amp;__wr = __io_rings[__ring];
+  if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) return;
+  __io_lock(__wr.__pb.__lk);
+  if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) [[unlikely]] {      // died between the test and the lock
+    __io_unlock(__wr.__pb.__lk);
+    return;
+  }
+  micron::uring::buf *__b = &amp;__wr.__pb.__br-&gt;bufs()[__wr.__pb.__tail_shadow &amp; (__io_pb_entries - 1u)];
+  __b-&gt;addr = reinterpret_cast&lt;u64&gt;(__wr.__pb.__arena + static_cast&lt;usize&gt;(__bid) * __io_pb_sz);
+  __b-&gt;len = __io_pb_sz;
+  __b-&gt;bid = __bid;
+  ++__wr.__pb.__tail_shadow;
+  micron::atom::store(&amp;__wr.__pb.__br-&gt;tail, static_cast&lt;u16&gt;(__wr.__pb.__tail_shadow), __ATOMIC_RELEASE);
+  __io_unlock(__wr.__pb.__lk);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L377">line 377</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L379">line 379</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L383">line 383</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>, <a href="../../atomic/intrin.hpp.html#f-764f1c8f4bb9439d">micron::atom::store</a>.</p></section><section class="function-entry" id="f-cd16abe6b7812d89"><h3><code>micron::coro::__io_pb_shutdown(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L395">line 395</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_pb_shutdown(__wring &amp;__wr) noexcept      // owner thread, before the ring fd closes</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_pb_shutdown(__wring &amp;__wr) noexcept      // owner thread, before the ring fd closes
+{
+  if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) return;
+  __wr.__pb.__state.store(0u, micron::memory_order_release);
+  __io_lock(__wr.__pb.__lk);
+  __io_unlock(__wr.__pb.__lk);
+  (void)__wr.__r.unregister_pbuf_ring(__io_pb_bgid);
+  micron::munmap(reinterpret_cast&lt;addr_t *&gt;(__wr.__pb.__br), static_cast&lt;usize&gt;(__io_pb_entries) * sizeof(micron::uring::buf));
+  micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(__wr.__pb.__arena), static_cast&lt;usize&gt;(__io_pb_entries) * __io_pb_sz);
+  __wr.__pb.__br = nullptr;
+  __wr.__pb.__arena = nullptr;
+  __wr.__pb.__tail_shadow = 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L397">line 397</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>.</p></section><section class="function-entry" id="f-e9cfd7f84e6e5acb"><h3><code>micron::coro::__io_ring_flags(u32 __nworkers) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L410">line 410</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u32
+__io_ring_flags(u32 __nworkers) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 __nworkers</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u32
+__io_ring_flags(u32 __nworkers) noexcept
+{
+  // NOTE: we don&#x27;t do setup_single_issuer/defer_taskrun
+  // kernel rejects io_uring_register from any other task on such rings;
+  // would break crossthread SYNC_CANCELLing
+  // submission must stay single producer
+  (void)__nworkers;
+  return micron::uring::setup_no_sqarray;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::uring::setup_no_sqarray</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L417">line 417</a></td></tr></tbody></table></section><section class="function-entry" id="f-d3a39a794d1b9624"><h3><code>micron::coro::__io_worker_ring_init(u32 __id, u32 __nworkers) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L421">line 421</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_worker_ring_init(u32 __id, u32 __nworkers) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 __id</code></li><li><code>u32 __nworkers</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_worker_ring_init(u32 __id, u32 __nworkers) noexcept
+{
+  __wring &amp;__wr = __io_rings[__id];
+  if ( __wr.__r.init_best(__io_sq_entries, __io_ring_flags(__nworkers)) != 0 ) return;
+  __wr.__defer = (__wr.__r.setup_flags &amp; micron::uring::setup_defer_taskrun) != 0 ? 1 : 0;
+  (void)__wr.__r.register_ring_fd();
+  __wr.__pending.store(0, micron::memory_order_relaxed);
+  __wr.__park_fired.store(0, micron::memory_order_relaxed);
+  __wr.__live.store(1, micron::memory_order_release);
+  __io.any_live.store(1, micron::memory_order_release);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L424">line 424</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-e9cfd7f84e6e5acb">__io_ring_flags</a>.</p></section><section class="function-entry" id="f-e985939784a4aeaf"><h3><code>micron::coro::__io_worker_ring_shutdown(u32 __id) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L434">line 434</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_worker_ring_shutdown(u32 __id) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 __id</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_worker_ring_shutdown(u32 __id) noexcept
+{
+  __wring &amp;__wr = __io_rings[__id];
+  if ( __wr.__live.get(micron::memory_order_acquire) == 0 ) return;
+  __io_flush_staged(__wr);
+  __io_pb_shutdown(__wr);      // unregister before the ring fd closes
+
+  __wr.__live.store(0, micron::memory_order_release);
+  __io_lock(__wr.__cq_lk);
+  __wr.__r.shutdown();
+  __wr.__defer = 0;
+  __wr.__bufs_reg.store(0, micron::memory_order_relaxed);
+  __wr.__files_reg.store(0, micron::memory_order_relaxed);
+  for ( u32 __i = 0; __i &lt; __io_file_slots / 64; ++__i ) __wr.__file_free[__i] = 0;
+  __io_unlock(__wr.__cq_lk);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L437">line 437</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-436877d07d9f268b">__io_flush_staged</a>, <a href="reactor.hpp.html#f-cd16abe6b7812d89">__io_pb_shutdown</a>, <a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-2f0db10ccc7daf52"><h3><code>micron::coro::__io_fb_init() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L452">line 452</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_fb_init() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_fb_init() noexcept
+{
+  if ( __io_fb.__r.init_best(__io_fb_entries, 0) != 0 ) return;
+  __io_fb.__pending.store(0, micron::memory_order_relaxed);
+  __io_fb.__live.store(1, micron::memory_order_release);
+  __io.any_live.store(1, micron::memory_order_release);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L454">line 454</a></td></tr></tbody></table></section><section class="function-entry" id="f-85deb35329e69177"><h3><code>micron::coro::__io_fb_shutdown() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L461">line 461</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_fb_shutdown() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_fb_shutdown() noexcept
+{
+  if ( __io_fb.__live.get(micron::memory_order_acquire) == 0 ) return;
+  __io_fb.__live.store(0, micron::memory_order_release);
+  __io_lock(__io_fb.__sq_lk);
+  __io_lock(__io_fb.__cq_lk);
+  __io_fb.__r.shutdown();
+  __io_fb.__defer = 0;
+  __io_fb.__bufs_reg.store(0, micron::memory_order_relaxed);
+  __io_unlock(__io_fb.__cq_lk);
+  __io_unlock(__io_fb.__sq_lk);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L463">line 463</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-43459964fdc93542"><h3><code>micron::coro::__io_submit_own(__wring &amp;__wr, const micron::uring::sqe &amp;__q, u64 __ud) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L475">line 475</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__io_submit_own(__wring &amp;__wr, const micron::uring::sqe &amp;__q, u64 __ud) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li><li><code>const micron::uring::sqe &amp;__q</code></li><li><code>u64 __ud</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__io_submit_own(__wring &amp;__wr, const micron::uring::sqe &amp;__q, u64 __ud) noexcept
+{
+  micron::uring::sqe *__s = __wr.__r.get_sqe();
+  if ( __s == nullptr ) [[unlikely]] {
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    __wr.__staged = 0;
+    (void)__wr.__r.enter(0);
+    __s = __wr.__r.get_sqe();
+    if ( __s == nullptr ) return false;
+  }
+  *__s = __q;
+  __s-&gt;user_data = __ud;
+  __wr.__r.advance_sq();
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+  if ( ++__wr.__staged &lt; __io_stage_max ) {
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.submits.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    return true;
+  }
+  __wr.__staged = 0;
+#endif
+  (void)__wr.__r.enter(0);
+#if defined(MICRON_CORO_STATS)
+  __wr.__stat.submits.fetch_add(1, micron::memory_order_relaxed);
+  __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);
+#endif
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L485">line 485</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L495">line 495</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L504">line 504</a></td></tr></tbody></table></section><section class="function-entry" id="f-e91d52de75a894f3"><h3><code>micron::coro::__io_submit_fb(const micron::uring::sqe &amp;__q, u64 __ud) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L508">line 508</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__io_submit_fb(const micron::uring::sqe &amp;__q, u64 __ud) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::uring::sqe &amp;__q</code></li><li><code>u64 __ud</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__io_submit_fb(const micron::uring::sqe &amp;__q, u64 __ud) noexcept
+{
+  // spinlocked
+  __io_lock(__io_fb.__sq_lk);
+  if ( __io_fb.__live.get(micron::memory_order_acquire) == 0 ) [[unlikely]] {      // torn down under us
+    __io_unlock(__io_fb.__sq_lk);
+    return false;
+  }
+  micron::uring::sqe *__s = __io_fb.__r.get_sqe();
+  if ( __s == nullptr ) [[unlikely]] {
+#if defined(MICRON_CORO_STATS)
+    __io_fb.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    (void)__io_fb.__r.enter(0);
+    __s = __io_fb.__r.get_sqe();
+    if ( __s == nullptr ) {
+      __io_unlock(__io_fb.__sq_lk);
+      return false;
+    }
+  }
+  *__s = __q;
+  __s-&gt;user_data = __ud;
+  __io_fb.__r.advance_sq();
+  (void)__io_fb.__r.enter(0);
+#if defined(MICRON_CORO_STATS)
+  __io_fb.__stat.submits.fetch_add(1, micron::memory_order_relaxed);
+  __io_fb.__stat.enters.fetch_add(1, micron::memory_order_relaxed);
+#endif
+  __io_unlock(__io_fb.__sq_lk);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L514">line 514</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L525">line 525</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L537">line 537</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-5004a878cd993f43"><h3><code>micron::coro::__io_submit_own2(__wring &amp;__wr, const micron::uring::sqe &amp;__a, u64 __ud_a, const micron::uring::sqe &amp;__b, u64 __ud_b) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L541">line 541</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__io_submit_own2(__wring &amp;__wr, const micron::uring::sqe &amp;__a, u64 __ud_a, const micron::uring::sqe &amp;__b, u64 __ud_b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li><li><code>const micron::uring::sqe &amp;__a</code></li><li><code>u64 __ud_a</code></li><li><code>const micron::uring::sqe &amp;__b</code></li><li><code>u64 __ud_b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__io_submit_own2(__wring &amp;__wr, const micron::uring::sqe &amp;__a, u64 __ud_a, const micron::uring::sqe &amp;__b, u64 __ud_b) noexcept
+{
+  micron::uring::sqe *__s0 = __wr.__r.peek_sqe(0);
+  micron::uring::sqe *__s1 = __wr.__r.peek_sqe(1);
+  if ( __s0 == nullptr || __s1 == nullptr ) [[unlikely]] {
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    __wr.__staged = 0;
+    (void)__wr.__r.enter(0);
+    __s0 = __wr.__r.peek_sqe(0);
+    __s1 = __wr.__r.peek_sqe(1);
+    if ( __s0 == nullptr || __s1 == nullptr ) return false;      // never silently submit untimed
+  }
+  *__s0 = __a;
+  __s0-&gt;user_data = __ud_a;
+  *__s1 = __b;
+  __s1-&gt;user_data = __ud_b;
+  __wr.__r.advance_sq(2);
+#if defined(MICRON_CORO_STAGED_SUBMIT)
+  __wr.__staged += 2;
+  if ( __wr.__staged &lt; __io_stage_max ) {
+#if defined(MICRON_CORO_STATS)
+    __wr.__stat.submits.fetch_add(2, micron::memory_order_relaxed);
+#endif
+    return true;
+  }
+  __wr.__staged = 0;
+#endif
+  (void)__wr.__r.enter(0);
+#if defined(MICRON_CORO_STATS)
+  __wr.__stat.submits.fetch_add(2, micron::memory_order_relaxed);
+  __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);
+#endif
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L553">line 553</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L566">line 566</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L575">line 575</a></td></tr></tbody></table></section><section class="function-entry" id="f-f3fabdabb3c51c29"><h3><code>micron::coro::__io_submit_own_n(__wring &amp;__wr, const micron::uring::sqe *__q, u32 __k) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L579">line 579</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__io_submit_own_n(__wring &amp;__wr, const micron::uring::sqe *__q, u32 __k) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li><li><code>const micron::uring::sqe *__q</code></li><li><code>u32 __k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__io_submit_own_n(__wring &amp;__wr, const micron::uring::sqe *__q, u32 __k) noexcept
+{
+  if ( __k == 0 ) return true;
+  for ( u32 __i = 0; __i &lt; __k; ++__i ) {
+    if ( __wr.__r.peek_sqe(__i) == nullptr ) [[unlikely]] {
+#if defined(MICRON_CORO_STATS)
+      __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);
+#endif
+      __wr.__staged = 0;
+      (void)__wr.__r.enter(0);
+      for ( u32 __j = 0; __j &lt; __k; ++__j )
+        if ( __wr.__r.peek_sqe(__j) == nullptr ) return false;
+      break;
+    }
+  }
+  for ( u32 __i = 0; __i &lt; __k; ++__i ) *__wr.__r.peek_sqe(__i) = __q[__i];
+  __wr.__r.advance_sq(__k);
+  (void)__wr.__r.enter(0);
+#if defined(MICRON_CORO_STATS)
+  __wr.__stat.submits.fetch_add(__k, micron::memory_order_relaxed);
+  __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);
+#endif
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L581">line 581</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L590">line 590</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L601">line 601</a></td></tr></tbody></table></section><section class="function-entry" id="f-682469195f103821"><h3><code>micron::coro::__io_sq_room(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L606">line 606</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline u32
+__io_sq_room(__wring &amp;__wr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline u32
+__io_sq_room(__wring &amp;__wr) noexcept
+{
+  const u32 __free = __wr.__r.sq_space_left();
+  return __free &gt; __io_sq_reserve ? __free - __io_sq_reserve : 0u;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__free &gt; __io_sq_reserve ? __free - __io_sq_reserve : 0u</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L609">line 609</a></td></tr></tbody></table></section><section class="function-entry" id="f-f97bc0cabd7e7198"><h3><code>micron::coro::__io_submit_fb2(const micron::uring::sqe &amp;__a, u64 __ud_a, const micron::uring::sqe &amp;__b, u64 __ud_b) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L613">line 613</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__io_submit_fb2(const micron::uring::sqe &amp;__a, u64 __ud_a, const micron::uring::sqe &amp;__b, u64 __ud_b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::uring::sqe &amp;__a</code></li><li><code>u64 __ud_a</code></li><li><code>const micron::uring::sqe &amp;__b</code></li><li><code>u64 __ud_b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__io_submit_fb2(const micron::uring::sqe &amp;__a, u64 __ud_a, const micron::uring::sqe &amp;__b, u64 __ud_b) noexcept
+{
+  __io_lock(__io_fb.__sq_lk);
+  if ( __io_fb.__live.get(micron::memory_order_acquire) == 0 ) [[unlikely]] {
+    __io_unlock(__io_fb.__sq_lk);
+    return false;
+  }
+  micron::uring::sqe *__s0 = __io_fb.__r.peek_sqe(0);
+  micron::uring::sqe *__s1 = __io_fb.__r.peek_sqe(1);
+  if ( __s0 == nullptr || __s1 == nullptr ) [[unlikely]] {
+    (void)__io_fb.__r.enter(0);
+    __s0 = __io_fb.__r.peek_sqe(0);
+    __s1 = __io_fb.__r.peek_sqe(1);
+    if ( __s0 == nullptr || __s1 == nullptr ) {
+      __io_unlock(__io_fb.__sq_lk);
+      return false;
+    }
+  }
+  *__s0 = __a;
+  __s0-&gt;user_data = __ud_a;
+  *__s1 = __b;
+  __s1-&gt;user_data = __ud_b;
+  __io_fb.__r.advance_sq(2);
+  (void)__io_fb.__r.enter(0);
+  __io_unlock(__io_fb.__sq_lk);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L618">line 618</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L628">line 628</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L638">line 638</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-e08c4b30de6c14a3"><h3><code>micron::coro::__io_cxl_push(__io_cxl_node *__n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L655">line 655</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_cxl_push(__io_cxl_node *__n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__io_cxl_node *__n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_cxl_push(__io_cxl_node *__n) noexcept
+{
+  __io_lock(__io_cxl_lk);
+  __n-&gt;__next = __io_cxl_head;
+  __io_cxl_head = __n;
+  __io_unlock(__io_cxl_lk);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-1cb832e4a0f8108b"><h3><code>micron::coro::__io_cxl_unlink(__io_cxl_node *__n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L664">line 664</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_cxl_unlink(__io_cxl_node *__n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__io_cxl_node *__n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_cxl_unlink(__io_cxl_node *__n) noexcept
+{
+  __io_lock(__io_cxl_lk);
+  __io_cxl_node **__pp = &amp;__io_cxl_head;
+  while ( *__pp != nullptr ) {
+    if ( *__pp == __n ) {
+      *__pp = __n-&gt;__next;
+      break;
+    }
+    __pp = &amp;(*__pp)-&gt;__next;
+  }
+  __io_unlock(__io_cxl_lk);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-25c9cfcfcf0c272f"><h3><code>micron::coro::__io_sync_cancel_ud(i32 __ring_fd, u64 __ud) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L679">line 679</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_sync_cancel_ud(i32 __ring_fd, u64 __ud) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 __ring_fd</code></li><li><code>u64 __ud</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_sync_cancel_ud(i32 __ring_fd, u64 __ud) noexcept
+{
+  micron::uring::sync_cancel_reg __sc{};
+  __sc.addr = __ud;
+  __sc.fd = -1;
+  __sc.flags = 0;
+  (void)micron::uring::__io_uring_register(__ring_fd, micron::uring::reg_register_sync_cancel, &amp;__sc, 1);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../linux/sys/uring.hpp.html#f-6dc20584d9a7b2fd">micron::uring::__io_uring_register</a>.</p></section><section class="function-entry" id="f-ddced5d3e448ef81"><h3><code>micron::coro::__io_cancel_walker(const micron::atomic_token&lt;u32&gt; *__flag) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L689">line 689</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_cancel_walker(const micron::atomic_token&lt;u32&gt; *__flag) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::atomic_token&lt;u32&gt; *__flag</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_cancel_walker(const micron::atomic_token&lt;u32&gt; *__flag) noexcept
+{
+  __io_lock(__io_cxl_lk);
+  for ( __io_cxl_node *__n = __io_cxl_head; __n != nullptr; __n = __n-&gt;__next )
+    if ( __n-&gt;__flag == __flag &amp;&amp; __n-&gt;__ring_fd &gt;= 0 ) {
+      __io_sync_cancel_ud(__n-&gt;__ring_fd, __n-&gt;__ud);
+#if defined(MICRON_CORO_STATS)
+      __io_fb.__stat.cancels.fetch_add(1, micron::memory_order_relaxed);
+#endif
+    }
+  __io_unlock(__io_cxl_lk);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-25c9cfcfcf0c272f">__io_sync_cancel_ud</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-d389f464a896e758"><h3><code>micron::coro::__io_fixed_ensure() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L723">line 723</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__io_fixed_ensure() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__io_fixed_ensure() noexcept
+{
+  if ( __io_fixed.__ready.get(micron::memory_order_acquire) != 0 ) return true;
+  __io_lock(__io_fixed.__lk);
+  if ( __io_fixed.__ready.get(micron::memory_order_acquire) != 0 ) {
+    __io_unlock(__io_fixed.__lk);
+    return true;
+  }
+  void *__p = micron::mmap(nullptr, __io_fixed_slots * __io_fixed_sz, prot_read | prot_write, map_private | map_anonymous, -1, 0);
+  if ( reinterpret_cast&lt;usize&gt;(__p) &gt;= static_cast&lt;usize&gt;(-4095) ) {
+    __io_unlock(__io_fixed.__lk);
+    return false;
+  }
+  __io_fixed.__base = reinterpret_cast&lt;byte *&gt;(__p);
+  __io_fixed.__ready.store(1, micron::memory_order_release);
+  __io_unlock(__io_fixed.__lk);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L725">line 725</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L729">line 729</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L734">line 734</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L739">line 739</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>, <a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>.</p></section><section class="function-entry" id="f-d73f236cb5304a1f"><h3><code>micron::coro::__io_fixed_reg(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L743">line 743</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__io_fixed_reg(__wring &amp;__wr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__io_fixed_reg(__wring &amp;__wr) noexcept
+{
+  const u32 __r0 = __wr.__bufs_reg.get(micron::memory_order_acquire);
+  if ( __r0 == 1 ) return true;
+  if ( __r0 == 2 ) return false;
+  __io_lock(__wr.__sq_lk);
+  const u32 __r1 = __wr.__bufs_reg.get(micron::memory_order_acquire);
+  if ( __r1 != 0 ) [[unlikely]] {      // another thread finished while we waited
+    __io_unlock(__wr.__sq_lk);
+    return __r1 == 1;
+  }
+  if ( !__io_fixed_ensure() ) {
+    __wr.__bufs_reg.store(2, micron::memory_order_release);
+    __io_unlock(__wr.__sq_lk);
+    return false;
+  }
+  micron::uring::iovec __iov[__io_fixed_slots];
+  for ( u32 __i = 0; __i &lt; __io_fixed_slots; ++__i ) {
+    __iov[__i].iov_base = __io_fixed.__base + static_cast&lt;usize&gt;(__i) * __io_fixed_sz;
+    __iov[__i].iov_len = __io_fixed_sz;
+  }
+  // RLIMIT_MEMLOCK or old kernel
+  const u32 __v = __wr.__r.register_buffers(__iov, __io_fixed_slots) != 0 ? 2u : 1u;
+  __wr.__bufs_reg.store(__v, micron::memory_order_release);
+  __io_unlock(__wr.__sq_lk);
+  return __v == 1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L746">line 746</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L747">line 747</a></td></tr><tr class="t-dsc"><td><code>__r1 == 1</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L752">line 752</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L757">line 757</a></td></tr><tr class="t-dsc"><td><code>__v == 1</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L768">line 768</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>, <a href="reactor.hpp.html#f-d389f464a896e758">__io_fixed_ensure</a>.</p></section><section class="function-entry" id="f-62751978aa656edf"><h3><code>micron::coro::__io_files_reg(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L775">line 775</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__io_files_reg(__wring &amp;__wr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__io_files_reg(__wring &amp;__wr) noexcept
+{
+  const u32 __r0 = __wr.__files_reg.get(micron::memory_order_acquire);
+  if ( __r0 == 1 ) return true;
+  if ( __r0 == 2 ) return false;
+  if ( !micron::kernel::has(micron::kernel::feature::uring_files_sparse) ) {
+    __wr.__files_reg.store(2, micron::memory_order_release);
+    return false;
+  }
+  __io_lock(__wr.__file_lk);
+  const u32 __r1 = __wr.__files_reg.get(micron::memory_order_acquire);
+  if ( __r1 != 0 ) [[unlikely]] {
+    __io_unlock(__wr.__file_lk);
+    return __r1 == 1;
+  }
+  const u32 __v = __wr.__r.register_files_sparse(__io_file_slots) != 0 ? 2u : 1u;
+  __wr.__files_reg.store(__v, micron::memory_order_release);
+  __io_unlock(__wr.__file_lk);
+  return __v == 1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L778">line 778</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L779">line 779</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L782">line 782</a></td></tr><tr class="t-dsc"><td><code>__r1 == 1</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L788">line 788</a></td></tr><tr class="t-dsc"><td><code>__v == 1</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L793">line 793</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../kernel.hpp.html#f-2ad2ea87c7c49299">micron::kernel::has</a>, <a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-c9f9b62e037d05a6"><h3><code>micron::coro::__io_slot_acquire(__wring &amp;__wr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L797">line 797</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline i32
+__io_slot_acquire(__wring &amp;__wr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline i32
+__io_slot_acquire(__wring &amp;__wr) noexcept
+{
+  if ( !__io_files_reg(__wr) ) return -1;
+  __io_lock(__wr.__file_lk);
+  for ( u32 __w = 0; __w &lt; __io_file_slots / 64; ++__w ) {
+    if ( __wr.__file_free[__w] == ~0ull ) continue;
+    const u32 __b = static_cast&lt;u32&gt;(__builtin_ctzll(~__wr.__file_free[__w]));
+    __wr.__file_free[__w] |= (1ull &lt;&lt; __b);
+    __io_unlock(__wr.__file_lk);
+    return static_cast&lt;i32&gt;(__w * 64u + __b);
+  }
+  __io_unlock(__wr.__file_lk);
+  return -1;      // exhausted; the caller stops staging and reports the rest unstaged
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L799">line 799</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(__w * 64u + __b)</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L806">line 806</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L809">line 809</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-62751978aa656edf">__io_files_reg</a>, <a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-aecb255d52eda16e"><h3><code>micron::coro::__io_slot_release(__wring &amp;__wr, i32 __slot) noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L813">line 813</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_slot_release(__wring &amp;__wr, i32 __slot) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__wring &amp;__wr</code></li><li><code>i32 __slot</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_slot_release(__wring &amp;__wr, i32 __slot) noexcept
+{
+  if ( __slot &lt; 0 || static_cast&lt;u32&gt;(__slot) &gt;= __io_file_slots ) return;
+  __io_lock(__wr.__file_lk);
+  __wr.__file_free[static_cast&lt;u32&gt;(__slot) / 64u] &amp;= ~(1ull &lt;&lt; (static_cast&lt;u32&gt;(__slot) % 64u));
+  __io_unlock(__wr.__file_lk);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L815">line 815</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reactor.hpp.html#f-6600757139956f0a">__io_lock</a>, <a href="reactor.hpp.html#f-817143b046990667">__io_unlock</a>.</p></section><section class="function-entry" id="f-a14ebe0e666029d9"><h3><code>micron::coro::__io_fixed_shutdown() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L855">line 855</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_fixed_shutdown() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_fixed_shutdown() noexcept
+{
+  if ( __io_fixed.__ready.get(micron::memory_order_acquire) == 0 ) return;
+  __io_fixed.__ready.store(0, micron::memory_order_release);
+  micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(__io_fixed.__base), __io_fixed_slots * __io_fixed_sz);
+  __io_fixed.__base = nullptr;
+  __io_fixed.__map.store(0, micron::memory_order_relaxed);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L857">line 857</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>.</p></section><section class="function-entry" id="f-a94324c2a23edc17"><h3><code>micron::coro::__io_pending_total() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L865">line 865</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+__io_pending_total() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+__io_pending_total() noexcept
+{
+  u64 __t = __io_fb.__pending.get(micron::memory_order_acquire);
+  for ( u32 __i = 0; __i &lt; 32u; ++__i ) __t += __io_rings[__i].__pending.get(micron::memory_order_acquire);
+  return __t;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__t</code></td><td><a href="../../../source/tasks/coroutine/reactor.hpp.html#L869">line 869</a></td></tr></tbody></table></section><section class="function-entry" id="f-c8c3583b774a9be6"><h3><code>micron::coro::__io_stats_reset() noexcept</code></h3><p>Defined in <code>tasks/coroutine/reactor.hpp</code>, <a href="../../../source/tasks/coroutine/reactor.hpp.html#L910">line 910</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__io_stats_reset() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)
+#if defined(MICRON_CORO_STATS)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__io_stats_reset() noexcept
+{
+  auto __z = [](__wring &amp;__wr) {
+    __wr.__stat.submits.store(0, micron::memory_order_relaxed);
+    __wr.__stat.enters.store(0, micron::memory_order_relaxed);
+    __wr.__stat.inline_completions.store(0, micron::memory_order_relaxed);
+    __wr.__stat.sqe_full_flushes.store(0, micron::memory_order_relaxed);
+    __wr.__stat.parks.store(0, micron::memory_order_relaxed);
+    __wr.__stat.wakes.store(0, micron::memory_order_relaxed);
+    __wr.__stat.cancels.store(0, micron::memory_order_relaxed);
+  };
+  for ( u32 __i = 0; __i &lt; 32u; ++__i ) __z(__io_rings[__i]);
+  __z(__io_fb);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

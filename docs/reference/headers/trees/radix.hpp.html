@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/trees/radix.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/trees/radix.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/trees.html">Trees</a></div><p>Defined in header <code>&lt;micron/trees/radix.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/trees/radix.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-12491b33be9f5bc8">micron::radix_tree</code></td><td>class; line 28</td></tr><tr class="t-dsc"><td><code id="s-5db0f2c62efb8366">micron::radix_tree::category_type</code></td><td>typedef; line 31</td></tr><tr class="t-dsc"><td><code id="s-e09785dc7e14f1a6">micron::radix_tree::mutability_type</code></td><td>typedef; line 32</td></tr><tr class="t-dsc"><td><code id="s-3cd82a8182b7ac5f">micron::radix_tree::memory_type</code></td><td>typedef; line 33</td></tr><tr class="t-dsc"><td><code id="s-55e6d91b0b432d37">micron::radix_tree::size_type</code></td><td>typedef; line 34</td></tr><tr class="t-dsc"><td><code id="s-ed2e854d84f2b8ba">micron::radix_tree::key_type</code></td><td>typedef; line 35</td></tr><tr class="t-dsc"><td><code id="s-2665cbf430875ec5">micron::radix_tree::mapped_type</code></td><td>typedef; line 36</td></tr><tr class="t-dsc"><td><code id="s-f7a896ad9e42969c">micron::radix_tree::node::frag</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-59003cde843e71b2">micron::radix_tree::node::value</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-ad80671b0e263eba">micron::radix_tree::node::child</code></td><td>member; line 42</td></tr><tr class="t-dsc"><td><code id="s-c225da42a6a051ae">micron::radix_tree::node::sibling</code></td><td>member; line 43</td></tr><tr class="t-dsc"><td><code id="s-d09774b0cde64196">micron::radix_tree::node::has_value</code></td><td>member; line 44</td></tr><tr class="t-dsc"><td><code id="s-eaf423462f78dde0">micron::radix</code></td><td>typedef; line 497</td></tr><tr class="t-dsc"><td><a href="#f-14e90874307b404c">micron::radix_tree::node::node()</a></td><td>function; line 46</td></tr><tr class="t-dsc"><td><a href="#f-afd5c66ac87ed0f6">micron::radix_tree::radix_tree() noexcept</a></td><td>function; line 179</td></tr><tr class="t-dsc"><td><a href="#f-949e3c1f2584d49a">micron::radix_tree::radix_tree(Fn build)</a></td><td>function; line 183</td></tr><tr class="t-dsc"><td><a href="#f-09bbea6de2f1adbc">micron::radix_tree::radix_tree(const radix_tree &amp;)</a></td><td>function; line 188</td></tr><tr class="t-dsc"><td><a href="#f-5a3bf5990857fdd1">micron::radix_tree::operator=(const radix_tree &amp;)</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-3857334e890938be">micron::radix_tree::radix_tree(radix_tree &amp;&amp;o) noexcept</a></td><td>function; line 191</td></tr><tr class="t-dsc"><td><a href="#f-243efef0a5a57603">micron::radix_tree::operator=(radix_tree &amp;&amp;o) noexcept</a></td><td>function; line 198</td></tr><tr class="t-dsc"><td><a href="#f-b191a375bbf8843a">micron::radix_tree::~radix_tree()</a></td><td>function; line 211</td></tr><tr class="t-dsc"><td><a href="#f-c14aace7e7144008">micron::radix_tree::size() const noexcept</a></td><td>function; line 214</td></tr><tr class="t-dsc"><td><a href="#f-311bc75dc65e8af2">micron::radix_tree::empty() const noexcept</a></td><td>function; line 220</td></tr><tr class="t-dsc"><td><a href="#f-241a1e6ac6e605f3">micron::radix_tree::clear() noexcept</a></td><td>function; line 226</td></tr><tr class="t-dsc"><td><a href="#f-d34f899aea9a43eb">micron::radix_tree::find(const Key &amp;k) noexcept</a></td><td>function; line 232</td></tr><tr class="t-dsc"><td><a href="#f-da2a6a8bfda3f81f">micron::radix_tree::find(const Key &amp;k) const noexcept</a></td><td>function; line 250</td></tr><tr class="t-dsc"><td><a href="#f-bf85564e54915452">micron::radix_tree::contains(const Key &amp;k) const noexcept</a></td><td>function; line 256</td></tr><tr class="t-dsc"><td><a href="#f-083f4e3f58399a60">micron::radix_tree::count(const Key &amp;k) const noexcept</a></td><td>function; line 262</td></tr><tr class="t-dsc"><td><a href="#f-862d2909d88a4049">micron::radix_tree::at(const Key &amp;k)</a></td><td>function; line 268</td></tr><tr class="t-dsc"><td><a href="#f-c5ec0f14d7f31091">micron::radix_tree::at(const Key &amp;k) const</a></td><td>function; line 277</td></tr><tr class="t-dsc"><td><a href="#f-0ce31e679870ee32">micron::radix_tree::longest_prefix_match(const Key &amp;k) noexcept</a></td><td>function; line 286</td></tr><tr class="t-dsc"><td><a href="#f-5e0002ebb32eb78b">micron::radix_tree::longest_prefix_match(const Key &amp;k) const noexcept</a></td><td>function; line 306</td></tr><tr class="t-dsc"><td><a href="#f-375a3d3a0626b7a0">micron::radix_tree::insert_or_assign(const Key &amp;k, VV &amp;&amp;v)</a></td><td>function; line 313</td></tr><tr class="t-dsc"><td><a href="#f-8d29942c971ef7c0">micron::radix_tree::insert(const Key &amp;k, const Value &amp;v)</a></td><td>function; line 375</td></tr><tr class="t-dsc"><td><a href="#f-b457643fde49d83b">micron::radix_tree::insert(const Key &amp;k, Value &amp;&amp;v)</a></td><td>function; line 382</td></tr><tr class="t-dsc"><td><a href="#f-346ee3a432c4a209">micron::radix_tree::operator[](const Key &amp;k)</a></td><td>function; line 389</td></tr><tr class="t-dsc"><td><a href="#f-b8cf9a4ddf654d42">micron::radix_tree::erase(const Key &amp;k)</a></td><td>function; line 398</td></tr><tr class="t-dsc"><td><a href="#f-a621fab51b824f4f">micron::radix_tree::swap(radix_tree &amp;o) noexcept</a></td><td>function; line 444</td></tr><tr class="t-dsc"><td><a href="#f-86cf7faf9ed1c276">micron::radix_tree::for_each(Fn &amp;&amp;fn)</a></td><td>function; line 453</td></tr><tr class="t-dsc"><td><a href="#f-fea90f3219cee409">micron::radix_tree::for_each(Fn &amp;&amp;fn) const</a></td><td>function; line 463</td></tr><tr class="t-dsc"><td><a href="#f-4b110d1163226c92">micron::radix_tree::traverse(Fn fn) const</a></td><td>function; line 470</td></tr><tr class="t-dsc"><td><a href="#f-b971e5a808d1d653">micron::radix_tree::blocks_allocated() const noexcept</a></td><td>function; line 479</td></tr><tr class="t-dsc"><td><a href="#f-0461a24dafcf4d50">micron::radix_tree::pool_bytes() const noexcept</a></td><td>function; line 485</td></tr><tr class="t-dsc"><td><a href="#f-9c9f2345632a28e6">micron::radix_tree::node_bytes() noexcept</a></td><td>function; line 491</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-14e90874307b404c"><h3><code>micron::radix_tree::node::node()</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L46">line 46</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>node() : frag(), value(), child(nullptr), sibling(nullptr), has_value(false)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">node() : frag(), value(), child(nullptr), sibling(nullptr), has_value(false) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-afd5c66ac87ed0f6"><h3><code>micron::radix_tree::radix_tree() noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L179">line 179</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>radix_tree() noexcept : __pool(), __root(nullptr), __size(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">radix_tree() noexcept : __pool(), __root(nullptr), __size(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-949e3c1f2584d49a"><h3><code>micron::radix_tree::radix_tree(Fn build)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L183">line 183</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, radix_tree &amp;&gt;)
+  explicit radix_tree(Fn build) : radix_tree()</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn build</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, radix_tree &amp;&gt;)
+  explicit radix_tree(Fn build) : radix_tree()
+  {
+    build(*this);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-09bbea6de2f1adbc"><h3><code>micron::radix_tree::radix_tree(const radix_tree &amp;)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L188">line 188</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>radix_tree(const radix_tree &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const radix_tree &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-5a3bf5990857fdd1"><h3><code>micron::radix_tree::operator=(const radix_tree &amp;)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>radix_tree &amp;operator=(const radix_tree &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const radix_tree &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-3857334e890938be"><h3><code>micron::radix_tree::radix_tree(radix_tree &amp;&amp;o) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L191">line 191</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>radix_tree(radix_tree &amp;&amp;o) noexcept : __pool(micron::move(o.__pool)), __root(o.__root), __size(o.__size)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>radix_tree &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">radix_tree(radix_tree &amp;&amp;o) noexcept : __pool(micron::move(o.__pool)), __root(o.__root), __size(o.__size)
+  {
+    o.__root = nullptr;
+    o.__size = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-243efef0a5a57603"><h3><code>micron::radix_tree::operator=(radix_tree &amp;&amp;o) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L198">line 198</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>radix_tree &amp;
+  operator=(radix_tree &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>radix_tree &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">radix_tree &amp;
+  operator=(radix_tree &amp;&amp;o) noexcept
+  {
+    if ( this != &amp;o ) {
+      __release_all();
+      __pool = micron::move(o.__pool);
+      __root = o.__root;
+      __size = o.__size;
+      o.__root = nullptr;
+      o.__size = 0;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/trees/radix.hpp.html#L208">line 208</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-529b0d293e39622c">__release_all</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-b191a375bbf8843a"><h3><code>micron::radix_tree::~radix_tree()</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~radix_tree()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~radix_tree() { __release_all(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-529b0d293e39622c">__release_all</a>.</p></section><section class="function-entry" id="f-c14aace7e7144008"><h3><code>micron::radix_tree::size() const noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L214">line 214</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__size</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  size() const noexcept
+  {
+    return __size;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__size</code></td><td><a href="../../source/trees/radix.hpp.html#L216">line 216</a></td></tr></tbody></table></section><section class="function-entry" id="f-311bc75dc65e8af2"><h3><code>micron::radix_tree::empty() const noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L220">line 220</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__size == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  empty() const noexcept
+  {
+    return __size == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__size == 0</code></td><td><a href="../../source/trees/radix.hpp.html#L222">line 222</a></td></tr></tbody></table></section><section class="function-entry" id="f-241a1e6ac6e605f3"><h3><code>micron::radix_tree::clear() noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L226">line 226</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear() noexcept
+  {
+    __release_all();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-529b0d293e39622c">__release_all</a>.</p></section><section class="function-entry" id="f-d34f899aea9a43eb"><h3><code>micron::radix_tree::find(const Key &amp;k) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L232">line 232</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>Value *
+  find(const Key &amp;k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">Value *
+  find(const Key &amp;k) noexcept
+  {
+    if ( !__root || k.size() == 0 ) return nullptr;
+    node *cur = __root;
+    usize off = 0;
+    while ( off &lt; k.size() ) {
+      node *e = __find_edge(cur, k, off);
+      if ( !e ) return nullptr;
+      const usize m = __match_at(e-&gt;frag, k, off);
+      if ( m != e-&gt;frag.size() ) return nullptr;
+      off += m;
+      if ( off == k.size() ) return e-&gt;has_value ? micron::addr(e-&gt;value) : nullptr;
+      cur = e;
+    }
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L234">line 234</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L239">line 239</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L241">line 241</a></td></tr><tr class="t-dsc"><td><code>e-&gt;has_value ? micron::addr(e-&gt;value) : nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L243">line 243</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L246">line 246</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-6b0ce0460089b48e">__find_edge</a>, <a href="radix.hpp.html#f-89ff295935e800f8">__match_at</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-da2a6a8bfda3f81f"><h3><code>micron::radix_tree::find(const Key &amp;k) const noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L250">line 250</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const Value *
+  find(const Key &amp;k) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>const_cast&lt;radix_tree *&gt;(this)-&gt;find(k)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const Value *
+  find(const Key &amp;k) const noexcept
+  {
+    return const_cast&lt;radix_tree *&gt;(this)-&gt;find(k);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;radix_tree *&gt;(this)-&gt;find(k)</code></td><td><a href="../../source/trees/radix.hpp.html#L252">line 252</a></td></tr></tbody></table></section><section class="function-entry" id="f-bf85564e54915452"><h3><code>micron::radix_tree::contains(const Key &amp;k) const noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L256">line 256</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  contains(const Key &amp;k) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>const_cast&lt;radix_tree *&gt;(this)-&gt;find(k) != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  contains(const Key &amp;k) const noexcept
+  {
+    return const_cast&lt;radix_tree *&gt;(this)-&gt;find(k) != nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;radix_tree *&gt;(this)-&gt;find(k) != nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L258">line 258</a></td></tr></tbody></table></section><section class="function-entry" id="f-083f4e3f58399a60"><h3><code>micron::radix_tree::count(const Key &amp;k) const noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L262">line 262</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  count(const Key &amp;k) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>contains(k) ? 1u : 0u</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  count(const Key &amp;k) const noexcept
+  {
+    return contains(k) ? 1u : 0u;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>contains(k) ? 1u : 0u</code></td><td><a href="../../source/trees/radix.hpp.html#L264">line 264</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-bf85564e54915452">contains</a>.</p></section><section class="function-entry" id="f-862d2909d88a4049"><h3><code>micron::radix_tree::at(const Key &amp;k)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L268">line 268</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>Value &amp;
+  at(const Key &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">Value &amp;
+  at(const Key &amp;k)
+  {
+    Value *v = find(k);
+    if ( !v ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;radix_tree::at(): key not found&quot;);
+    return *v;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*v</code></td><td><a href="../../source/trees/radix.hpp.html#L273">line 273</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;radix_tree::at(): key not found&quot;)</code></td><td><a href="../../source/trees/radix.hpp.html#L272">line 272</a><br>Within <code>( !v )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-d34f899aea9a43eb">find</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-c5ec0f14d7f31091"><h3><code>micron::radix_tree::at(const Key &amp;k) const</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L277">line 277</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const Value &amp;
+  at(const Key &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const Value &amp;
+  at(const Key &amp;k) const
+  {
+    const Value *v = find(k);
+    if ( !v ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;radix_tree::at(): key not found&quot;);
+    return *v;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*v</code></td><td><a href="../../source/trees/radix.hpp.html#L282">line 282</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;radix_tree::at(): key not found&quot;)</code></td><td><a href="../../source/trees/radix.hpp.html#L281">line 281</a><br>Within <code>( !v )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-d34f899aea9a43eb">find</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-0ce31e679870ee32"><h3><code>micron::radix_tree::longest_prefix_match(const Key &amp;k) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L286">line 286</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>Value *
+  longest_prefix_match(const Key &amp;k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">Value *
+  longest_prefix_match(const Key &amp;k) noexcept
+  {
+    if ( !__root ) return nullptr;
+    node *best = nullptr;
+    node *cur = __root;
+    usize off = 0;
+    while ( off &lt; k.size() ) {
+      node *e = __find_edge(cur, k, off);
+      if ( !e ) break;
+      const usize m = __match_at(e-&gt;frag, k, off);
+      if ( m != e-&gt;frag.size() ) break;
+      off += m;
+      if ( e-&gt;has_value ) best = e;
+      if ( off == k.size() ) break;
+      cur = e;
+    }
+    return best ? micron::addr(best-&gt;value) : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L288">line 288</a></td></tr><tr class="t-dsc"><td><code>best ? micron::addr(best-&gt;value) : nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L302">line 302</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-6b0ce0460089b48e">__find_edge</a>, <a href="radix.hpp.html#f-89ff295935e800f8">__match_at</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-5e0002ebb32eb78b"><h3><code>micron::radix_tree::longest_prefix_match(const Key &amp;k) const noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L306">line 306</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const Value *
+  longest_prefix_match(const Key &amp;k) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>const_cast&lt;radix_tree *&gt;(this)-&gt;longest_prefix_match(k)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const Value *
+  longest_prefix_match(const Key &amp;k) const noexcept
+  {
+    return const_cast&lt;radix_tree *&gt;(this)-&gt;longest_prefix_match(k);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;radix_tree *&gt;(this)-&gt;longest_prefix_match(k)</code></td><td><a href="../../source/trees/radix.hpp.html#L308">line 308</a></td></tr></tbody></table></section><section class="function-entry" id="f-375a3d3a0626b7a0"><h3><code>micron::radix_tree::insert_or_assign(const Key &amp;k, VV &amp;&amp;v)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L313">line 313</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class VV&gt;
+  bool
+  insert_or_assign(const Key &amp;k, VV &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li><li><code>VV &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class VV&gt;
+  bool
+  insert_or_assign(const Key &amp;k, VV &amp;&amp;v)
+  {
+    if ( k.size() == 0 ) return false;
+    __ensure_root();
+    node *cur = __root;
+    usize off = 0;
+
+    for ( ;; ) {
+      node *e = __find_edge(cur, k, off);
+      if ( !e ) {
+
+        node *n = __mk();
+        n-&gt;frag = k.substr(off);
+        n-&gt;value = micron::forward&lt;VV&gt;(v);
+        n-&gt;has_value = true;
+        __link(cur, n);
+        ++__size;
+        return true;
+      }
+
+      const usize m = __match_at(e-&gt;frag, k, off);
+      if ( m == e-&gt;frag.size() ) {
+        off += m;
+        if ( off == k.size() ) {
+          const bool fresh = !e-&gt;has_value;
+          e-&gt;value = micron::forward&lt;VV&gt;(v);
+          e-&gt;has_value = true;
+          if ( fresh ) ++__size;
+          return fresh;
+        }
+        cur = e;
+        continue;
+      }
+
+      node *tail = __mk();
+      tail-&gt;frag = e-&gt;frag.substr(m);
+      tail-&gt;child = e-&gt;child;
+      tail-&gt;has_value = e-&gt;has_value;
+      if ( e-&gt;has_value ) tail-&gt;value = micron::move(e-&gt;value);
+
+      e-&gt;frag = e-&gt;frag.substr(0, m);
+      e-&gt;child = nullptr;
+      e-&gt;has_value = false;
+      __link(e, tail);
+
+      if ( off + m == k.size() ) {
+
+        e-&gt;value = micron::forward&lt;VV&gt;(v);
+        e-&gt;has_value = true;
+      } else {
+        node *branch = __mk();
+        branch-&gt;frag = k.substr(off + m);
+        branch-&gt;value = micron::forward&lt;VV&gt;(v);
+        branch-&gt;has_value = true;
+        __link(e, branch);
+      }
+      ++__size;
+      return true;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/radix.hpp.html#L315">line 315</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/radix.hpp.html#L330">line 330</a></td></tr><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/trees/radix.hpp.html#L341">line 341</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/radix.hpp.html#L370">line 370</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-4c32604d505e05fb">__ensure_root</a>, <a href="radix.hpp.html#f-6b0ce0460089b48e">__find_edge</a>, <a href="radix.hpp.html#f-7a5133a9907f276a">__mk</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;VV&gt;</a>, <a href="radix.hpp.html#f-3b117c9fbd650dcb">__link</a>, <a href="radix.hpp.html#f-89ff295935e800f8">__match_at</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-8d29942c971ef7c0"><h3><code>micron::radix_tree::insert(const Key &amp;k, const Value &amp;v)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L375">line 375</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  insert(const Key &amp;k, const Value &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li><li><code>const Value &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  insert(const Key &amp;k, const Value &amp;v)
+  {
+    if ( contains(k) ) return false;
+    return insert_or_assign(k, v);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/radix.hpp.html#L377">line 377</a></td></tr><tr class="t-dsc"><td><code>insert_or_assign(k, v)</code></td><td><a href="../../source/trees/radix.hpp.html#L378">line 378</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-bf85564e54915452">contains</a>, <a href="radix.hpp.html#f-375a3d3a0626b7a0">insert_or_assign</a>.</p></section><section class="function-entry" id="f-b457643fde49d83b"><h3><code>micron::radix_tree::insert(const Key &amp;k, Value &amp;&amp;v)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L382">line 382</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  insert(const Key &amp;k, Value &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li><li><code>Value &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  insert(const Key &amp;k, Value &amp;&amp;v)
+  {
+    if ( contains(k) ) return false;
+    return insert_or_assign(k, micron::move(v));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/radix.hpp.html#L384">line 384</a></td></tr><tr class="t-dsc"><td><code>insert_or_assign(k, micron::move(v))</code></td><td><a href="../../source/trees/radix.hpp.html#L385">line 385</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-bf85564e54915452">contains</a>, <a href="radix.hpp.html#f-375a3d3a0626b7a0">insert_or_assign</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-346ee3a432c4a209"><h3><code>micron::radix_tree::operator[](const Key &amp;k)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L389">line 389</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>Value &amp;
+  operator[](const Key &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">Value &amp;
+  operator[](const Key &amp;k)
+  {
+    Value *p = find(k);
+    if ( p ) return *p;
+    insert_or_assign(k, Value());
+    return *find(k);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*p</code></td><td><a href="../../source/trees/radix.hpp.html#L392">line 392</a></td></tr><tr class="t-dsc"><td><code>*find(k)</code></td><td><a href="../../source/trees/radix.hpp.html#L394">line 394</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-d34f899aea9a43eb">find</a>, <a href="radix.hpp.html#f-375a3d3a0626b7a0">insert_or_assign</a>.</p></section><section class="function-entry" id="f-b8cf9a4ddf654d42"><h3><code>micron::radix_tree::erase(const Key &amp;k)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L398">line 398</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  erase(const Key &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  erase(const Key &amp;k)
+  {
+    if ( !__root || k.size() == 0 ) return false;
+
+    node *parent = __root;
+    node *cur = nullptr;
+    usize off = 0;
+    node *path_parent[64];
+    node *path_node[64];
+    usize depth = 0;
+
+    while ( off &lt; k.size() ) {
+      node *e = __find_edge(parent, k, off);
+      if ( !e ) return false;
+      const usize m = __match_at(e-&gt;frag, k, off);
+      if ( m != e-&gt;frag.size() ) return false;
+      off += m;
+      if ( depth &lt; 64 ) {
+        path_parent[depth] = parent;
+        path_node[depth] = e;
+        ++depth;
+      }
+      if ( off == k.size() ) {
+        cur = e;
+        break;
+      }
+      parent = e;
+    }
+    if ( !cur || !cur-&gt;has_value ) return false;
+
+    cur-&gt;has_value = false;
+    cur-&gt;value = Value();
+    --__size;
+
+    while ( depth &gt; 0 ) {
+      node *n = path_node[depth - 1];
+      node *pp = path_parent[depth - 1];
+      if ( n-&gt;has_value || n-&gt;child ) break;
+      __unlink(pp, n);
+      __free(n);
+      --depth;
+    }
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/radix.hpp.html#L400">line 400</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/radix.hpp.html#L411">line 411</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/radix.hpp.html#L413">line 413</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/trees/radix.hpp.html#L426">line 426</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/trees/radix.hpp.html#L440">line 440</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-6b0ce0460089b48e">__find_edge</a>, <a href="radix.hpp.html#f-89ff295935e800f8">__match_at</a>, <a href="radix.hpp.html#f-cc61d28a1fbee190">__unlink</a>, <a href="radix.hpp.html#f-f7c6ee152385647b">__free</a>.</p></section><section class="function-entry" id="f-a621fab51b824f4f"><h3><code>micron::radix_tree::swap(radix_tree &amp;o) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L444">line 444</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  swap(radix_tree &amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>radix_tree &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  swap(radix_tree &amp;o) noexcept
+  {
+    __pool.swap(o.__pool);
+    micron::swap(__root, o.__root);
+    micron::swap(__size, o.__size);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-86cf7faf9ed1c276"><h3><code>micron::radix_tree::for_each(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L453">line 453</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn)
+  {
+    if ( !__root ) return;
+    Key acc;
+    auto wrap = [&amp;](const Key &amp;kk, Value &amp;vv) { fn(kk, vv); };
+    __walk(__root, acc, wrap);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/radix.hpp.html#L455">line 455</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-191b459f4b09f417">__walk</a>.</p></section><section class="function-entry" id="f-fea90f3219cee409"><h3><code>micron::radix_tree::for_each(Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L463">line 463</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const
+  {
+    const_cast&lt;radix_tree *&gt;(this)-&gt;for_each([&amp;](const Key &amp;kk, Value &amp;vv) { fn(kk, static_cast&lt;const Value &amp;&gt;(vv)); });
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4b110d1163226c92"><h3><code>micron::radix_tree::traverse(Fn fn) const</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L470">line 470</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  walk_ctl
+  traverse(Fn fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  walk_ctl
+  traverse(Fn fn) const
+  {
+    radix_tree *self = const_cast&lt;radix_tree *&gt;(this);
+    if ( !self-&gt;__root ) return walk_ctl::continue_;
+    Key acc;
+    return __walk(self-&gt;__root, acc, fn);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>walk_ctl::continue_</code></td><td><a href="../../source/trees/radix.hpp.html#L473">line 473</a></td></tr><tr class="t-dsc"><td><code>__walk(self-&gt;__root, acc, fn)</code></td><td><a href="../../source/trees/radix.hpp.html#L475">line 475</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-191b459f4b09f417">__walk</a>.</p></section><section class="function-entry" id="f-b971e5a808d1d653"><h3><code>micron::radix_tree::blocks_allocated() const noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L479">line 479</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  blocks_allocated() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__pool.blocks()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  blocks_allocated() const noexcept
+  {
+    return __pool.blocks();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pool.blocks()</code></td><td><a href="../../source/trees/radix.hpp.html#L481">line 481</a></td></tr></tbody></table></section><section class="function-entry" id="f-0461a24dafcf4d50"><h3><code>micron::radix_tree::pool_bytes() const noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L485">line 485</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  pool_bytes() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__pool.bytes_held()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  pool_bytes() const noexcept
+  {
+    return __pool.bytes_held();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pool.bytes_held()</code></td><td><a href="../../source/trees/radix.hpp.html#L487">line 487</a></td></tr></tbody></table></section><section class="function-entry" id="f-9c9f2345632a28e6"><h3><code>micron::radix_tree::node_bytes() noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L491">line 491</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static constexpr usize
+  node_bytes() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>sizeof(node)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static constexpr usize
+  node_bytes() noexcept
+  {
+    return sizeof(node);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sizeof(node)</code></td><td><a href="../../source/trees/radix.hpp.html#L493">line 493</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-7a5133a9907f276a"><h3><code>micron::radix_tree::__mk(A &amp;&amp;...a)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class... A&gt;
+  node *
+  __mk(A &amp;&amp;...a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A &amp;&amp;...a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class... A&gt;
+  node *
+  __mk(A &amp;&amp;...a)
+  {
+    node *p = __pool.take();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      return new (static_cast&lt;void *&gt;(p)) node(micron::forward&lt;A&gt;(a)...);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __pool.give(p);
+      throw;
+    }
+#endif
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>new (static_cast&lt;void *&gt;(p)) node(micron::forward&lt;A&gt;(a)...)</code></td><td><a href="../../source/trees/radix.hpp.html#L63">line 63</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/trees/radix.hpp.html#L67">line 67</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;A&gt;</a>.</p></section><section class="function-entry" id="f-f7c6ee152385647b"><h3><code>micron::radix_tree::__free(node *p) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L73">line 73</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __free(node *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __free(node *p) noexcept
+  {
+    p-&gt;~node();
+    __pool.give(p);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-89ff295935e800f8"><h3><code>micron::radix_tree::__match_at(const Key &amp;frag, const Key &amp;k, usize off) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L80">line 80</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static usize
+  __match_at(const Key &amp;frag, const Key &amp;k, usize off) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Key &amp;frag</code></li><li><code>const Key &amp;k</code></li><li><code>usize off</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static usize
+  __match_at(const Key &amp;frag, const Key &amp;k, usize off) noexcept
+  {
+    const usize fn = frag.size();
+    const usize kn = k.size();
+    usize i = 0;
+    while ( i &lt; fn &amp;&amp; off + i &lt; kn &amp;&amp; frag[i] == k[off + i] ) ++i;
+    return i;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>i</code></td><td><a href="../../source/trees/radix.hpp.html#L86">line 86</a></td></tr></tbody></table></section><section class="function-entry" id="f-6b0ce0460089b48e"><h3><code>micron::radix_tree::__find_edge(node *parent, const Key &amp;k, usize off) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L90">line 90</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static node *
+  __find_edge(node *parent, const Key &amp;k, usize off) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *parent</code></li><li><code>const Key &amp;k</code></li><li><code>usize off</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static node *
+  __find_edge(node *parent, const Key &amp;k, usize off) noexcept
+  {
+    const auto c0 = k[off];
+    for ( node *c = parent-&gt;child; c; c = c-&gt;sibling )
+      if ( c-&gt;frag[0] == c0 ) return c;
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../source/trees/radix.hpp.html#L94">line 94</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/trees/radix.hpp.html#L95">line 95</a></td></tr></tbody></table></section><section class="function-entry" id="f-3b117c9fbd650dcb"><h3><code>micron::radix_tree::__link(node *parent, node *c) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L99">line 99</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __link(node *parent, node *c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *parent</code></li><li><code>node *c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __link(node *parent, node *c) noexcept
+  {
+    c-&gt;sibling = parent-&gt;child;
+    parent-&gt;child = c;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-cc61d28a1fbee190"><h3><code>micron::radix_tree::__unlink(node *parent, node *c) noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L106">line 106</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __unlink(node *parent, node *c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *parent</code></li><li><code>node *c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __unlink(node *parent, node *c) noexcept
+  {
+    if ( parent-&gt;child == c ) {
+      parent-&gt;child = c-&gt;sibling;
+      return;
+    }
+    for ( node *p = parent-&gt;child; p; p = p-&gt;sibling )
+      if ( p-&gt;sibling == c ) {
+        p-&gt;sibling = c-&gt;sibling;
+        return;
+      }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/radix.hpp.html#L110">line 110</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/trees/radix.hpp.html#L115">line 115</a></td></tr></tbody></table></section><section class="function-entry" id="f-fd072c758421e10a"><h3><code>micron::radix_tree::__destroy_values() noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L120">line 120</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __destroy_values() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __destroy_values() noexcept
+  {
+    if constexpr ( !(micron::is_trivially_destructible_v&lt;Key&gt; &amp;&amp; micron::is_trivially_destructible_v&lt;Value&gt;)) {
+      node *stack = nullptr;
+      if ( __root ) {
+        for ( node *c = __root-&gt;child; c; ) {
+          node *nx = c-&gt;sibling;
+          c-&gt;sibling = stack;
+          stack = c;
+          c = nx;
+        }
+      }
+      while ( stack ) {
+        node *n = stack;
+        stack = n-&gt;sibling;
+        for ( node *c = n-&gt;child; c; ) {
+          node *nx = c-&gt;sibling;
+          c-&gt;sibling = stack;
+          stack = c;
+          c = nx;
+        }
+        n-&gt;~node();
+      }
+      if ( __root ) __root-&gt;~node();
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-529b0d293e39622c"><h3><code>micron::radix_tree::__release_all() noexcept</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L148">line 148</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __release_all() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __release_all() noexcept
+  {
+    __destroy_values();
+    __pool.release();
+    __root = nullptr;
+    __size = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-fd072c758421e10a">__destroy_values</a>.</p></section><section class="function-entry" id="f-4c32604d505e05fb"><h3><code>micron::radix_tree::__ensure_root()</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L157">line 157</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __ensure_root()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __ensure_root()
+  {
+    if ( !__root ) __root = __mk();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-7a5133a9907f276a">__mk</a>.</p></section><section class="function-entry" id="f-191b459f4b09f417"><h3><code>micron::radix_tree::__walk(node *n, Key &amp;acc, Fn &amp;fn)</code></h3><p>Defined in <code>trees/radix.hpp</code>, <a href="../../source/trees/radix.hpp.html#L164">line 164</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Fn&gt;
+  static walk_ctl
+  __walk(node *n, Key &amp;acc, Fn &amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node *n</code></li><li><code>Key &amp;acc</code></li><li><code>Fn &amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Fn&gt;
+  static walk_ctl
+  __walk(node *n, Key &amp;acc, Fn &amp;fn)
+  {
+    for ( node *c = n-&gt;child; c; c = c-&gt;sibling ) {
+      const usize base = acc.size();
+      acc += c-&gt;frag;
+      if ( c-&gt;has_value ) {
+        if ( micron::__impl::invoke_walk(fn, static_cast&lt;const Key &amp;&gt;(acc), c-&gt;value) == walk_ctl::stop ) return walk_ctl::stop;
+      }
+      if ( __walk(c, acc, fn) == walk_ctl::stop ) return walk_ctl::stop;
+      acc = acc.substr(0, base);
+    }
+    return walk_ctl::continue_;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>walk_ctl::stop</code></td><td><a href="../../source/trees/radix.hpp.html#L170">line 170</a></td></tr><tr class="t-dsc"><td><code>walk_ctl::stop</code></td><td><a href="../../source/trees/radix.hpp.html#L172">line 172</a></td></tr><tr class="t-dsc"><td><code>walk_ctl::continue_</code></td><td><a href="../../source/trees/radix.hpp.html#L175">line 175</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__tree_walk.hpp.html#f-9ff44589d0545f6b">micron::__impl::invoke_walk</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

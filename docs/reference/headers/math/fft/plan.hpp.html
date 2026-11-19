@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/fft/plan.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/fft/plan.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/fft.html">Fourier transforms</a></div><p>Defined in header <code>&lt;micron/math/fft/plan.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/fft/plan.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-0f21faf526050330">micron::math::fft::split_input</code></td><td>struct; line 13</td></tr><tr class="t-dsc"><td><code id="s-3a9ae6cc10338217">micron::math::fft::split_input::imag</code></td><td>member; line 14</td></tr><tr class="t-dsc"><td><code id="s-dbd423fa7e69ce28">micron::math::fft::split_input::real</code></td><td>member; line 14</td></tr><tr class="t-dsc"><td><code id="s-2735e7d29366b145">micron::math::fft::split_output</code></td><td>struct; line 17</td></tr><tr class="t-dsc"><td><code id="s-a6e98c679177a40a">micron::math::fft::split_output::imag</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><code id="s-ba0f074511dcc9b0">micron::math::fft::split_output::real</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><code id="s-f55a75e0532d5059">micron::math::fft::plan</code></td><td>class; line 84</td></tr><tr class="t-dsc"><td><a href="#f-cc2a49cd6e5bfd48">micron::math::fft::plan::plan(usize n, normalization norm = normalization::backward)</a></td><td>function; line 112</td></tr><tr class="t-dsc"><td><a href="#f-af8acf345c897321">micron::math::fft::plan::plan(const descriptor&lt;F&gt; &amp;d)</a></td><td>function; line 121</td></tr><tr class="t-dsc"><td><a href="#f-4998975632f2d2ec">micron::math::fft::plan::configuration() const noexcept</a></td><td>function; line 171</td></tr><tr class="t-dsc"><td><a href="#f-6af309d75895fcfc">micron::math::fft::plan::input_shape() const noexcept</a></td><td>function; line 177</td></tr><tr class="t-dsc"><td><a href="#f-819c0d44ea43ec8d">micron::math::fft::plan::output_shape() const noexcept</a></td><td>function; line 183</td></tr><tr class="t-dsc"><td><a href="#f-1d6fbb3c1a8ccef1">micron::math::fft::plan::input_size() const noexcept</a></td><td>function; line 189</td></tr><tr class="t-dsc"><td><a href="#f-b400950245de7d0a">micron::math::fft::plan::output_size() const noexcept</a></td><td>function; line 195</td></tr><tr class="t-dsc"><td><a href="#f-3c86211221540668">micron::math::fft::plan::workspace_size(usize workers = 1) const</a></td><td>function; line 201</td></tr><tr class="t-dsc"><td><a href="#f-2e0b3b239af41610">micron::math::fft::plan::workspace_bytes(usize workers = 1) const</a></td><td>function; line 208</td></tr><tr class="t-dsc"><td><a href="#f-fc9d03862d3cddb1">micron::math::fft::plan::execute(const complex&lt;F&gt; *in, complex&lt;F&gt; *out, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</a></td><td>function; line 325</td></tr><tr class="t-dsc"><td><a href="#f-c382d37a337fe681">micron::math::fft::plan::execute(split_input&lt;F&gt; in, split_output&lt;F&gt; out, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</a></td><td>function; line 349</td></tr><tr class="t-dsc"><td><a href="#f-0eb7a12bf0315d70">micron::math::fft::plan::execute(const F *in, complex&lt;F&gt; *out, workspace_view&lt;F&gt; work) const noexcept</a></td><td>function; line 362</td></tr><tr class="t-dsc"><td><a href="#f-9c9595ff1510ceff">micron::math::fft::plan::execute(const complex&lt;F&gt; *in, F *out, workspace_view&lt;F&gt; work) const noexcept</a></td><td>function; line 393</td></tr><tr class="t-dsc"><td><a href="#f-3985fb76d647c1cb">micron::math::fft::plan::execute(const F *in, split_output&lt;F&gt; out, workspace_view&lt;F&gt; work) const noexcept</a></td><td>function; line 428</td></tr><tr class="t-dsc"><td><a href="#f-20d14467c77d1931">micron::math::fft::plan::execute(split_input&lt;F&gt; in, F *out, workspace_view&lt;F&gt; work) const noexcept</a></td><td>function; line 441</td></tr><tr class="t-dsc"><td><a href="#f-19bee10f055f518b">micron::math::fft::plan::execute_inplace(F *storage, workspace_view&lt;F&gt; work) const noexcept</a></td><td>function; line 452</td></tr><tr class="t-dsc"><td><a href="#f-b935f7840e638bb6">micron::math::fft::transform(const complex&lt;F&gt; *input, usize n, direction dir = direction::forward, normalization norm = normalization::backward)</a></td><td>function; line 470</td></tr><tr class="t-dsc"><td><a href="#f-1d41fd4ec9a4fb15">micron::math::fft::rfft(const F *input, usize n, normalization norm = normalization::backward)</a></td><td>function; line 481</td></tr><tr class="t-dsc"><td><a href="#f-bf424673b91ef9e2">micron::math::fft::irfft(const complex&lt;F&gt; *input, usize n, normalization norm = normalization::backward)</a></td><td>function; line 495</td></tr><tr class="t-dsc"><td><a href="#f-c8481ccc2302bef8">micron::math::fft::ifft(const complex&lt;F&gt; *input, usize n, normalization norm = normalization::backward)</a></td><td>function; line 509</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-cc2a49cd6e5bfd48"><h3><code>micron::math::fft::plan::plan(usize n, normalization norm = normalization::backward)</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L112">line 112</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit plan(usize n, normalization norm = normalization::backward)
+      : plan([&amp;] {
+          descriptor&lt;F&gt; d(n);
+          d.norm = norm;
+          return d;
+        }())</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>normalization norm = normalization::backward</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit plan(usize n, normalization norm = normalization::backward)
+      : plan([&amp;] {
+          descriptor&lt;F&gt; d(n);
+          d.norm = norm;
+          return d;
+        }())
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-af8acf345c897321"><h3><code>micron::math::fft::plan::plan(const descriptor&lt;F&gt; &amp;d)</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L121">line 121</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit plan(const descriptor&lt;F&gt; &amp;d) : __desc(d), __input_shape(d.shape), __output_shape(d.shape)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const descriptor&lt;F&gt; &amp;d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit plan(const descriptor&lt;F&gt; &amp;d) : __desc(d), __input_shape(d.shape), __output_shape(d.shape)
+  {
+    if ( unsigned(d.kind) &gt; unsigned(domain::real_backward) || unsigned(d.norm) &gt; unsigned(normalization::ortho) )
+      exc&lt;except::invalid_argument&gt;(&quot;fft: invalid transform configuration&quot;);
+    if ( d.shape.empty() ) exc&lt;except::invalid_argument&gt;(&quot;fft: empty rank&quot;);
+    __volume = __impl::__product(d.shape);
+    if ( __desc.axes.empty() )
+      for ( usize i = 0; i &lt; d.shape.size(); ++i ) __desc.axes.push_back(i);
+    __packed_axis = __desc.axes[__desc.axes.size() - 1];
+    for ( usize i = 0; i &lt; __desc.axes.size(); ++i ) {
+      usize axis = __desc.axes[i];
+      if ( axis &gt;= d.shape.size() ) exc&lt;except::invalid_argument&gt;(&quot;fft: axis out of range&quot;);
+      for ( usize j = 0; j &lt; i; ++j )
+        if ( __desc.axes[j] == axis ) exc&lt;except::invalid_argument&gt;(&quot;fft: duplicate axis&quot;);
+      usize n = d.shape[axis];
+      __transform_volume = __impl::__mul(__transform_volume, n);
+      bool half = d.kind != domain::complex &amp;&amp; axis == __packed_axis &amp;&amp; n % 2 == 0;
+      __engines.push_back(__impl::__engine&lt;F&gt;(half ? n / 2 : n));
+      if ( half ) {
+        __real_twiddles.resize(n / 2 + 1);
+        for ( usize k = 0; k &lt;= n / 2; ++k ) __real_twiddles[k] = __impl::__root&lt;F&gt;(k, n);
+      }
+      if ( n &gt; __line_size ) __line_size = n;
+      usize scratch = __engines[i].scratch_size();
+      if ( scratch &gt; __engine_scratch ) __engine_scratch = scratch;
+    }
+    __packed_axis = __desc.axes[__desc.axes.size() - 1];
+    if ( d.kind == domain::real_forward ) __output_shape[__packed_axis] = d.shape[__packed_axis] / 2 + 1;
+    if ( d.kind == domain::real_backward ) __input_shape[__packed_axis] = d.shape[__packed_axis] / 2 + 1;
+    __input_volume = __impl::__product(__input_shape);
+    __output_volume = __impl::__product(__output_shape);
+    __steps.resize(d.shape.size());
+    usize step = 1;
+    for ( usize i = d.shape.size(); i-- &gt; 0; ) {
+      __steps[i] = step;
+      step *= d.shape[i];
+    }
+    __impl::__mul(__impl::__add(__impl::__complete_layout(__desc.input, __input_shape, d.batches), 1),
+                  d.kind == domain::real_forward ? sizeof(F) : sizeof(complex&lt;F&gt;));
+    __impl::__mul(__impl::__add(__impl::__complete_layout(__desc.output, __output_shape, d.batches), 1),
+                  d.kind == domain::real_backward ? sizeof(F) : sizeof(complex&lt;F&gt;));
+    __input_dense = __impl::__dense(__input_shape, __desc.input);
+    __output_dense = __impl::__dense(__output_shape, __desc.output);
+    __data_size = __impl::__mul(__volume, d.batches);
+    __scratch_size = __impl::__add(__impl::__mul(5, __line_size), __engine_scratch);
+    __impl::__mul(workspace_size(), sizeof(complex&lt;F&gt;));
+    __impl::__mul(__impl::__mul(__output_volume, d.batches), d.kind == domain::real_backward ? sizeof(F) : sizeof(complex&lt;F&gt;));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: empty rank&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L125">line 125</a><br>Within <code>( unsigned(d.kind) &gt; unsigned(domain::real_backward) || unsigned(d.norm) &gt; unsigned(normalization::ortho) )
+      exc&lt;except::invalid_argument&gt;(&quot;fft: invalid transform configuration&quot;);
+    if ( d.shape.empty() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: axis out of range&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L132">line 132</a><br>Within <code>i &lt; __desc.axes.size()</code>, <code>( axis &gt;= d.shape.size() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: duplicate axis&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L134">line 134</a><br>Within <code>i &lt; __desc.axes.size()</code>, <code>j &lt; i</code>, <code>( __desc.axes[j] == axis )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>, <a href="common.hpp.html#f-2d3bc7c28d65a7ad">__impl::__product</a>, <a href="common.hpp.html#f-59ec802873cc121f">__impl::__mul</a>, <a href="common.hpp.html#f-9b9d1a1fe2480435">__impl::__root&lt;F&gt;</a>, <a href="common.hpp.html#f-e8c2c09f8863b66a">__impl::__add</a>, <a href="plan.hpp.html#f-46e3acbeadeb1d62">__impl::__complete_layout</a>, <a href="plan.hpp.html#f-2c973fb56a4c1e27">__impl::__dense</a>, <a href="plan.hpp.html#f-3c86211221540668">workspace_size</a>.</p></section><section class="function-entry" id="f-4998975632f2d2ec"><h3><code>micron::math::fft::plan::configuration() const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L171">line 171</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const descriptor&lt;F&gt; &amp;
+  configuration() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__desc</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const descriptor&lt;F&gt; &amp;
+  configuration() const noexcept
+  {
+    return __desc;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__desc</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L173">line 173</a></td></tr></tbody></table></section><section class="function-entry" id="f-6af309d75895fcfc"><h3><code>micron::math::fft::plan::input_shape() const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L177">line 177</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const buffer&lt;usize&gt; &amp;
+  input_shape() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__input_shape</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const buffer&lt;usize&gt; &amp;
+  input_shape() const noexcept
+  {
+    return __input_shape;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__input_shape</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L179">line 179</a></td></tr></tbody></table></section><section class="function-entry" id="f-819c0d44ea43ec8d"><h3><code>micron::math::fft::plan::output_shape() const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L183">line 183</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const buffer&lt;usize&gt; &amp;
+  output_shape() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__output_shape</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const buffer&lt;usize&gt; &amp;
+  output_shape() const noexcept
+  {
+    return __output_shape;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__output_shape</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L185">line 185</a></td></tr></tbody></table></section><section class="function-entry" id="f-1d6fbb3c1a8ccef1"><h3><code>micron::math::fft::plan::input_size() const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L189">line 189</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  input_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__input_volume * __desc.batches</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  input_size() const noexcept
+  {
+    return __input_volume * __desc.batches;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__input_volume * __desc.batches</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L191">line 191</a></td></tr></tbody></table></section><section class="function-entry" id="f-b400950245de7d0a"><h3><code>micron::math::fft::plan::output_size() const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  output_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__output_volume * __desc.batches</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  output_size() const noexcept
+  {
+    return __output_volume * __desc.batches;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__output_volume * __desc.batches</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L197">line 197</a></td></tr></tbody></table></section><section class="function-entry" id="f-3c86211221540668"><h3><code>micron::math::fft::plan::workspace_size(usize workers = 1) const</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L201">line 201</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  workspace_size(usize workers = 1) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize workers = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  workspace_size(usize workers = 1) const
+  {
+    if ( !workers ) exc&lt;except::invalid_argument&gt;(&quot;fft: zero workers&quot;);
+    return __impl::__add(__data_size, __impl::__mul(__scratch_size, workers));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__add(__data_size, __impl::__mul(__scratch_size, workers))</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L204">line 204</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: zero workers&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L203">line 203</a><br>Within <code>( !workers )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>, <a href="common.hpp.html#f-e8c2c09f8863b66a">__impl::__add</a>, <a href="common.hpp.html#f-59ec802873cc121f">__impl::__mul</a>.</p></section><section class="function-entry" id="f-2e0b3b239af41610"><h3><code>micron::math::fft::plan::workspace_bytes(usize workers = 1) const</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L208">line 208</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  workspace_bytes(usize workers = 1) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize workers = 1</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__mul(workspace_size(workers), sizeof(complex&lt;F&gt;))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  workspace_bytes(usize workers = 1) const
+  {
+    return __impl::__mul(workspace_size(workers), sizeof(complex&lt;F&gt;));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__mul(workspace_size(workers), sizeof(complex&lt;F&gt;))</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L210">line 210</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="common.hpp.html#f-59ec802873cc121f">__impl::__mul</a>, <a href="plan.hpp.html#f-3c86211221540668">workspace_size</a>.</p></section><section class="function-entry" id="f-fc9d03862d3cddb1"><h3><code>micron::math::fft::plan::execute(const complex&lt;F&gt; *in, complex&lt;F&gt; *out, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L325">line 325</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  execute(const complex&lt;F&gt; *in, complex&lt;F&gt; *out, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const complex&lt;F&gt; *in</code></li><li><code>complex&lt;F&gt; *out</code></li><li><code>workspace_view&lt;F&gt; work</code></li><li><code>direction dir = direction::forward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  execute(const complex&lt;F&gt; *in, complex&lt;F&gt; *out, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept
+  {
+    if ( __desc.kind != domain::complex || (__desc.batches &amp;&amp; (!in || !out)) ) return -22;
+    if ( dir != direction::forward &amp;&amp; dir != direction::backward ) return -22;
+    if ( __desc.shape.size() == 1 &amp;&amp; __desc.batches == 1 &amp;&amp; __desc.input.offset == 0 &amp;&amp; __desc.output.offset == 0
+         &amp;&amp; __desc.input.strides[0] == 1 &amp;&amp; __desc.output.strides[0] == 1 ) {
+      if ( !work.data || work.size &lt; __data_size + __scratch_size ) return -105;
+      const complex&lt;F&gt; *source = in;
+      if ( in == out ) {
+        for ( usize k = 0; k &lt; __volume; ++k ) work.data[k] = in[k];
+        source = work.data;
+      }
+      __engines[0].execute(source, out, work.data + __volume, dir == direction::backward);
+      F scale = __impl::__scale&lt;F&gt;(__desc.norm, dir, __transform_volume)
+                * (dir == direction::forward ? __desc.forward_scale : __desc.backward_scale);
+      if ( scale != F(1) )
+        for ( usize k = 0; k &lt; __volume; ++k ) out[k] *= scale;
+      return max_t(__volume * sizeof(complex&lt;F&gt;));
+    }
+    __impl::__serial&lt;F&gt; runner;
+    return __execute([&amp;](ssize_t i) { return in[i]; }, [&amp;](ssize_t i, complex&lt;F&gt; z) { out[i] = z; }, work, dir, runner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L327">line 327</a></td></tr><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L328">line 328</a></td></tr><tr class="t-dsc"><td><code>-105</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L331">line 331</a></td></tr><tr class="t-dsc"><td><code>max_t(__volume * sizeof(complex&lt;F&gt;))</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L342">line 342</a></td></tr><tr class="t-dsc"><td><code>__execute([&amp;](ssize_t i) { return in[i]; }, [&amp;](ssize_t i, complex&lt;F&gt; z) { out[i] = z; }, work, dir, runner)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L345">line 345</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="common.hpp.html#f-a2b076dfab87aab7">__impl::__scale&lt;F&gt;</a>, <a href="../../types.hpp.html#s-66025c3768325240">max_t</a>, <a href="plan.hpp.html#f-5162f8c19c05e6c3">__execute</a>.</p></section><section class="function-entry" id="f-c382d37a337fe681"><h3><code>micron::math::fft::plan::execute(split_input&lt;F&gt; in, split_output&lt;F&gt; out, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L349">line 349</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  execute(split_input&lt;F&gt; in, split_output&lt;F&gt; out, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>split_input&lt;F&gt; in</code></li><li><code>split_output&lt;F&gt; out</code></li><li><code>workspace_view&lt;F&gt; work</code></li><li><code>direction dir = direction::forward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  execute(split_input&lt;F&gt; in, split_output&lt;F&gt; out, workspace_view&lt;F&gt; work, direction dir = direction::forward) const noexcept
+  {
+    if ( __desc.kind != domain::complex || (__desc.batches &amp;&amp; (!in.real || !in.imag || !out.real || !out.imag)) ) return -22;
+    __impl::__serial&lt;F&gt; runner;
+    return __execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ in.real[i], in.imag[i] }; },
+                     [&amp;](ssize_t i, complex&lt;F&gt; z) {
+                       out.real[i] = z.real;
+                       out.imag[i] = z.imag;
+                     },
+                     work, dir, runner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L351">line 351</a></td></tr><tr class="t-dsc"><td><code>__execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ in.real[i], in.imag[i] }; },
+                     [&amp;](ssize_t i, complex&lt;F&gt; z) {
+                       out.real[i] = z.real;
+                       out.imag[i] = z.imag;
+                     },
+                     work, dir, runner)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L353">line 353</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="plan.hpp.html#f-5162f8c19c05e6c3">__execute</a>.</p></section><section class="function-entry" id="f-0eb7a12bf0315d70"><h3><code>micron::math::fft::plan::execute(const F *in, complex&lt;F&gt; *out, workspace_view&lt;F&gt; work) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L362">line 362</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  execute(const F *in, complex&lt;F&gt; *out, workspace_view&lt;F&gt; work) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *in</code></li><li><code>complex&lt;F&gt; *out</code></li><li><code>workspace_view&lt;F&gt; work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  execute(const F *in, complex&lt;F&gt; *out, workspace_view&lt;F&gt; work) const noexcept
+  {
+    if ( __desc.kind != domain::real_forward || (__desc.batches &amp;&amp; (!in || !out)) ) return -22;
+    if ( __desc.shape.size() == 1 &amp;&amp; __desc.batches == 1 &amp;&amp; __input_dense &amp;&amp; __output_dense ) {
+      if ( !work.data || work.size &lt; __data_size + __scratch_size ) return -105;
+      in += __desc.input.offset;
+      out += __desc.output.offset;
+      auto *packed = work.data, *spectrum = packed + __volume, *temp = spectrum + __volume;
+      usize n = __volume, h = n / 2;
+      F scale = __impl::__scale&lt;F&gt;(__desc.norm, direction::forward, n) * __desc.forward_scale;
+      if ( n % 2 == 0 ) {
+        for ( usize j = 0; j &lt; h; ++j ) packed[j] = { in[2 * j], in[2 * j + 1] };
+        __engines[0].execute(packed, spectrum, temp, false);
+        for ( usize k = 0; k &lt;= h; ++k ) {
+          auto x = spectrum[k == h ? 0 : k], y = conj(spectrum[k ? h - k : 0]);
+          auto difference = (x - y) * __real_twiddles[k];
+          out[k] = (x + y + complex&lt;F&gt;{ difference.imag, -difference.real }) * (F(0.5) * scale);
+        }
+      } else {
+        for ( usize j = 0; j &lt; n; ++j ) packed[j] = { in[j] };
+        __engines[0].execute(packed, spectrum, temp, false);
+        for ( usize k = 0; k &lt;= h; ++k ) out[k] = spectrum[k] * scale;
+      }
+      return max_t(__output_volume * sizeof(complex&lt;F&gt;));
+    }
+    __impl::__serial&lt;F&gt; runner;
+    return __execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ in[i] }; }, [&amp;](ssize_t i, complex&lt;F&gt; z) { out[i] = z; }, work, direction::forward,
+                     runner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td><code>-105</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L366">line 366</a></td></tr><tr class="t-dsc"><td><code>max_t(__output_volume * sizeof(complex&lt;F&gt;))</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L385">line 385</a></td></tr><tr class="t-dsc"><td><code>__execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ in[i] }; }, [&amp;](ssize_t i, complex&lt;F&gt; z) { out[i] = z; }, work, direction::forward,
+                     runner)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L388">line 388</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="common.hpp.html#f-a2b076dfab87aab7">__impl::__scale&lt;F&gt;</a>, <a href="../complex.hpp.html#f-bd97f2a393288137">conj</a>, <a href="../../types.hpp.html#s-66025c3768325240">max_t</a>, <a href="plan.hpp.html#f-5162f8c19c05e6c3">__execute</a>.</p></section><section class="function-entry" id="f-9c9595ff1510ceff"><h3><code>micron::math::fft::plan::execute(const complex&lt;F&gt; *in, F *out, workspace_view&lt;F&gt; work) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L393">line 393</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  execute(const complex&lt;F&gt; *in, F *out, workspace_view&lt;F&gt; work) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const complex&lt;F&gt; *in</code></li><li><code>F *out</code></li><li><code>workspace_view&lt;F&gt; work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  execute(const complex&lt;F&gt; *in, F *out, workspace_view&lt;F&gt; work) const noexcept
+  {
+    if ( __desc.kind != domain::real_backward || (__desc.batches &amp;&amp; (!in || !out)) ) return -22;
+    if ( __desc.shape.size() == 1 &amp;&amp; __desc.batches == 1 &amp;&amp; __input_dense &amp;&amp; __output_dense ) {
+      if ( !work.data || work.size &lt; __data_size + __scratch_size ) return -105;
+      in += __desc.input.offset;
+      out += __desc.output.offset;
+      auto *packed = work.data, *time = packed + __volume, *temp = time + __volume;
+      usize n = __volume, h = n / 2;
+      F scale = __impl::__scale&lt;F&gt;(__desc.norm, direction::backward, n) * __desc.backward_scale;
+      if ( n % 2 == 0 ) {
+        for ( usize k = 0; k &lt; h; ++k ) {
+          auto x = in[k], y = conj(in[h - k]);
+          auto difference = (x - y) * conj(__real_twiddles[k]);
+          packed[k] = (x + y + complex&lt;F&gt;{ -difference.imag, difference.real }) * F(0.5);
+        }
+        __engines[0].execute(packed, time, temp, true);
+        for ( usize k = 0; k &lt; h; ++k ) {
+          out[2 * k] = time[k].real * (F(2) * scale);
+          out[2 * k + 1] = time[k].imag * (F(2) * scale);
+        }
+      } else {
+        for ( usize k = 0; k &lt;= h; ++k ) packed[k] = in[k];
+        for ( usize k = h + 1; k &lt; n; ++k ) packed[k] = conj(in[n - k]);
+        __engines[0].execute(packed, time, temp, true);
+        for ( usize k = 0; k &lt; n; ++k ) out[k] = time[k].real * scale;
+      }
+      return max_t(__output_volume * sizeof(F));
+    }
+    __impl::__serial&lt;F&gt; runner;
+    return __execute([&amp;](ssize_t i) { return in[i]; }, [&amp;](ssize_t i, complex&lt;F&gt; z) { out[i] = z.real; }, work, direction::backward,
+                     runner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L395">line 395</a></td></tr><tr class="t-dsc"><td><code>-105</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L397">line 397</a></td></tr><tr class="t-dsc"><td><code>max_t(__output_volume * sizeof(F))</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L420">line 420</a></td></tr><tr class="t-dsc"><td><code>__execute([&amp;](ssize_t i) { return in[i]; }, [&amp;](ssize_t i, complex&lt;F&gt; z) { out[i] = z.real; }, work, direction::backward,
+                     runner)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L423">line 423</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="common.hpp.html#f-a2b076dfab87aab7">__impl::__scale&lt;F&gt;</a>, <a href="../complex.hpp.html#f-bd97f2a393288137">conj</a>, <a href="../../types.hpp.html#s-66025c3768325240">max_t</a>, <a href="plan.hpp.html#f-5162f8c19c05e6c3">__execute</a>.</p></section><section class="function-entry" id="f-3985fb76d647c1cb"><h3><code>micron::math::fft::plan::execute(const F *in, split_output&lt;F&gt; out, workspace_view&lt;F&gt; work) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L428">line 428</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  execute(const F *in, split_output&lt;F&gt; out, workspace_view&lt;F&gt; work) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *in</code></li><li><code>split_output&lt;F&gt; out</code></li><li><code>workspace_view&lt;F&gt; work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  execute(const F *in, split_output&lt;F&gt; out, workspace_view&lt;F&gt; work) const noexcept
+  {
+    if ( __desc.kind != domain::real_forward || (__desc.batches &amp;&amp; (!in || !out.real || !out.imag)) ) return -22;
+    __impl::__serial&lt;F&gt; runner;
+    return __execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ in[i] }; },
+                     [&amp;](ssize_t i, complex&lt;F&gt; z) {
+                       out.real[i] = z.real;
+                       out.imag[i] = z.imag;
+                     },
+                     work, direction::forward, runner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L430">line 430</a></td></tr><tr class="t-dsc"><td><code>__execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ in[i] }; },
+                     [&amp;](ssize_t i, complex&lt;F&gt; z) {
+                       out.real[i] = z.real;
+                       out.imag[i] = z.imag;
+                     },
+                     work, direction::forward, runner)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L432">line 432</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="plan.hpp.html#f-5162f8c19c05e6c3">__execute</a>.</p></section><section class="function-entry" id="f-20d14467c77d1931"><h3><code>micron::math::fft::plan::execute(split_input&lt;F&gt; in, F *out, workspace_view&lt;F&gt; work) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L441">line 441</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  execute(split_input&lt;F&gt; in, F *out, workspace_view&lt;F&gt; work) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>split_input&lt;F&gt; in</code></li><li><code>F *out</code></li><li><code>workspace_view&lt;F&gt; work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  execute(split_input&lt;F&gt; in, F *out, workspace_view&lt;F&gt; work) const noexcept
+  {
+    if ( __desc.kind != domain::real_backward || (__desc.batches &amp;&amp; (!in.real || !in.imag || !out)) ) return -22;
+    __impl::__serial&lt;F&gt; runner;
+    return __execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ in.real[i], in.imag[i] }; }, [&amp;](ssize_t i, complex&lt;F&gt; z) { out[i] = z.real; },
+                     work, direction::backward, runner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L443">line 443</a></td></tr><tr class="t-dsc"><td><code>__execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ in.real[i], in.imag[i] }; }, [&amp;](ssize_t i, complex&lt;F&gt; z) { out[i] = z.real; },
+                     work, direction::backward, runner)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L445">line 445</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="plan.hpp.html#f-5162f8c19c05e6c3">__execute</a>.</p></section><section class="function-entry" id="f-19bee10f055f518b"><h3><code>micron::math::fft::plan::execute_inplace(F *storage, workspace_view&lt;F&gt; work) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L452">line 452</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>max_t
+  execute_inplace(F *storage, workspace_view&lt;F&gt; work) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *storage</code></li><li><code>workspace_view&lt;F&gt; work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">max_t
+  execute_inplace(F *storage, workspace_view&lt;F&gt; work) const noexcept
+  {
+    if ( __desc.kind == domain::complex || (__desc.batches &amp;&amp; !storage) ) return -22;
+    __impl::__serial&lt;F&gt; runner;
+    if ( __desc.kind == domain::real_forward )
+      return __execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ storage[i] }; },
+                       [&amp;](ssize_t i, complex&lt;F&gt; z) {
+                         storage[2 * i] = z.real;
+                         storage[2 * i + 1] = z.imag;
+                       },
+                       work, direction::forward, runner);
+    return __execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ storage[2 * i], storage[2 * i + 1] }; },
+                     [&amp;](ssize_t i, complex&lt;F&gt; z) { storage[i] = z.real; }, work, direction::backward, runner);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L454">line 454</a></td></tr><tr class="t-dsc"><td><code>__execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ storage[i] }; },
+                       [&amp;](ssize_t i, complex&lt;F&gt; z) {
+                         storage[2 * i] = z.real;
+                         storage[2 * i + 1] = z.imag;
+                       },
+                       work, direction::forward, runner)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L457">line 457</a></td></tr><tr class="t-dsc"><td><code>__execute([&amp;](ssize_t i) { return complex&lt;F&gt;{ storage[2 * i], storage[2 * i + 1] }; },
+                     [&amp;](ssize_t i, complex&lt;F&gt; z) { storage[i] = z.real; }, work, direction::backward, runner)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L463">line 463</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="plan.hpp.html#f-5162f8c19c05e6c3">__execute</a>.</p></section><section class="function-entry" id="f-b935f7840e638bb6"><h3><code>micron::math::fft::transform(const complex&lt;F&gt; *input, usize n, direction dir = direction::forward, normalization norm = normalization::backward)</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L470">line 470</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F&gt;
+buffer&lt;complex&lt;F&gt;&gt;
+transform(const complex&lt;F&gt; *input, usize n, direction dir = direction::forward, normalization norm = normalization::backward)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const complex&lt;F&gt; *input</code></li><li><code>usize n</code></li><li><code>direction dir = direction::forward</code></li><li><code>normalization norm = normalization::backward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F&gt;
+buffer&lt;complex&lt;F&gt;&gt;
+transform(const complex&lt;F&gt; *input, usize n, direction dir = direction::forward, normalization norm = normalization::backward)
+{
+  plan&lt;F&gt; p(n, norm);
+  workspace&lt;F&gt; work(p);
+  buffer&lt;complex&lt;F&gt;&gt; result(n);
+  if ( p.execute(input, result.data(), work.view(), dir) &lt; 0 ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid input&quot;);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L476">line 476</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid input&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L475">line 475</a><br>Within <code>( p.execute(input, result.data(), work.view(), dir) &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>.</p></section><section class="function-entry" id="f-1d41fd4ec9a4fb15"><h3><code>micron::math::fft::rfft(const F *input, usize n, normalization norm = normalization::backward)</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L481">line 481</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F&gt;
+buffer&lt;complex&lt;F&gt;&gt;
+rfft(const F *input, usize n, normalization norm = normalization::backward)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *input</code></li><li><code>usize n</code></li><li><code>normalization norm = normalization::backward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F&gt;
+buffer&lt;complex&lt;F&gt;&gt;
+rfft(const F *input, usize n, normalization norm = normalization::backward)
+{
+  descriptor&lt;F&gt; d(n);
+  d.kind = domain::real_forward;
+  d.norm = norm;
+  plan&lt;F&gt; p(d);
+  workspace&lt;F&gt; work(p);
+  buffer&lt;complex&lt;F&gt;&gt; result(p.output_size());
+  if ( p.execute(input, result.data(), work.view()) &lt; 0 ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid input&quot;);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L490">line 490</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid input&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L489">line 489</a><br>Within <code>( p.execute(input, result.data(), work.view()) &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>.</p></section><section class="function-entry" id="f-bf424673b91ef9e2"><h3><code>micron::math::fft::irfft(const complex&lt;F&gt; *input, usize n, normalization norm = normalization::backward)</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L495">line 495</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F&gt;
+buffer&lt;F&gt;
+irfft(const complex&lt;F&gt; *input, usize n, normalization norm = normalization::backward)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const complex&lt;F&gt; *input</code></li><li><code>usize n</code></li><li><code>normalization norm = normalization::backward</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F&gt;
+buffer&lt;F&gt;
+irfft(const complex&lt;F&gt; *input, usize n, normalization norm = normalization::backward)
+{
+  descriptor&lt;F&gt; d(n);
+  d.kind = domain::real_backward;
+  d.norm = norm;
+  plan&lt;F&gt; p(d);
+  workspace&lt;F&gt; work(p);
+  buffer&lt;F&gt; result(n);
+  if ( p.execute(input, result.data(), work.view()) &lt; 0 ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid input&quot;);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L504">line 504</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid input&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L503">line 503</a><br>Within <code>( p.execute(input, result.data(), work.view()) &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>.</p></section><section class="function-entry" id="f-c8481ccc2302bef8"><h3><code>micron::math::fft::ifft(const complex&lt;F&gt; *input, usize n, normalization norm = normalization::backward)</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L509">line 509</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;fft_scalar F&gt;
+buffer&lt;complex&lt;F&gt;&gt;
+ifft(const complex&lt;F&gt; *input, usize n, normalization norm = normalization::backward)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const complex&lt;F&gt; *input</code></li><li><code>usize n</code></li><li><code>normalization norm = normalization::backward</code></li></ul><h4>Effects</h4><p>Returns <code>transform(input, n, direction::backward, norm)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;fft_scalar F&gt;
+buffer&lt;complex&lt;F&gt;&gt;
+ifft(const complex&lt;F&gt; *input, usize n, normalization norm = normalization::backward)
+{
+  return transform(input, n, direction::backward, norm);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>transform(input, n, direction::backward, norm)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L511">line 511</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="plan.hpp.html#f-b935f7840e638bb6">transform</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-46e3acbeadeb1d62"><h3><code>micron::math::fft::__impl::__complete_layout(layout &amp;l, const buffer&lt;usize&gt; &amp;shape, usize batches)</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L24">line 24</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+__complete_layout(layout &amp;l, const buffer&lt;usize&gt; &amp;shape, usize batches)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>layout &amp;l</code></li><li><code>const buffer&lt;usize&gt; &amp;shape</code></li><li><code>usize batches</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+__complete_layout(layout &amp;l, const buffer&lt;usize&gt; &amp;shape, usize batches)
+{
+  usize volume = __product(shape);
+  if ( l.strides.empty() ) {
+    l.strides.resize(shape.size());
+    usize stride = 1;
+    for ( usize i = shape.size(); i-- &gt; 0; ) {
+      l.strides[i] = ssize_t(stride);
+      stride = __mul(stride, shape[i]);
+    }
+  }
+  if ( l.strides.size() != shape.size() ) exc&lt;except::invalid_argument&gt;(&quot;fft: stride rank mismatch&quot;);
+  if ( !l.distance ) l.distance = ssize_t(volume);
+  usize extent = 0;
+  for ( usize i = 0; i &lt;= shape.size(); ++i ) {
+    ssize_t s = i == shape.size() ? l.distance : l.strides[i];
+    usize n = i == shape.size() ? batches : shape[i];
+    if ( s == -ssize_t(__limit) - 1 || (!s &amp;&amp; n &gt; 1) ) exc&lt;except::invalid_argument&gt;(&quot;fft: invalid stride&quot;);
+    usize magnitude = usize(s &lt; 0 ? -s : s);
+    extent = __add(extent, __mul(magnitude, n ? n - 1 : 0));
+  }
+  if ( l.offset == -ssize_t(__limit) - 1 ) exc&lt;except::length_error&gt;(&quot;fft: offset overflow&quot;);
+  return __add(extent, usize(l.offset &lt; 0 ? -l.offset : l.offset));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__add(extent, usize(l.offset &lt; 0 ? -l.offset : l.offset))</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L46">line 46</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: stride rank mismatch&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L35">line 35</a><br>Within <code>( l.strides.size() != shape.size() )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::invalid_argument&gt;(&quot;fft: invalid stride&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L41">line 41</a><br>Within <code>i &lt;= shape.size()</code>, <code>( s == -ssize_t(__limit) - 1 || (!s &amp;&amp; n &gt; 1) )</code></td></tr><tr class="t-dsc"><td><code>exc&lt;except::length_error&gt;(&quot;fft: offset overflow&quot;)</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L45">line 45</a><br>Within <code>( l.offset == -ssize_t(__limit) - 1 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="common.hpp.html#f-2d3bc7c28d65a7ad">__product</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="common.hpp.html#f-59ec802873cc121f">__mul</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::invalid_argument&gt;</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="common.hpp.html#f-e8c2c09f8863b66a">__add</a>, <a href="../../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::length_error&gt;</a>.</p></section><section class="function-entry" id="f-153d7eedb223e202"><h3><code>micron::math::fft::__impl::__offset(usize index, const buffer&lt;usize&gt; &amp;shape, const layout &amp;l, usize batch) noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L50">line 50</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline ssize_t
+__offset(usize index, const buffer&lt;usize&gt; &amp;shape, const layout &amp;l, usize batch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize index</code></li><li><code>const buffer&lt;usize&gt; &amp;shape</code></li><li><code>const layout &amp;l</code></li><li><code>usize batch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline ssize_t
+__offset(usize index, const buffer&lt;usize&gt; &amp;shape, const layout &amp;l, usize batch) noexcept
+{
+  ssize_t offset = l.offset + ssize_t(batch) * l.distance;
+  if ( shape.size() == 1 ) return offset + ssize_t(index) * l.strides[0];
+  for ( usize j = shape.size(); j-- &gt; 0; ) {
+    offset += ssize_t(index % shape[j]) * l.strides[j];
+    index /= shape[j];
+  }
+  return offset;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>offset + ssize_t(index) * l.strides[0]</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>offset</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L58">line 58</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-2c973fb56a4c1e27"><h3><code>micron::math::fft::__impl::__dense(const buffer&lt;usize&gt; &amp;shape, const layout &amp;l) noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__dense(const buffer&lt;usize&gt; &amp;shape, const layout &amp;l) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const buffer&lt;usize&gt; &amp;shape</code></li><li><code>const layout &amp;l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__dense(const buffer&lt;usize&gt; &amp;shape, const layout &amp;l) noexcept
+{
+  usize stride = 1;
+  for ( usize j = shape.size(); j-- &gt; 0; ) {
+    if ( l.strides[j] != ssize_t(stride) ) return false;
+    stride *= shape[j];
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L66">line 66</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L69">line 69</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-68ba3645a5b2cf80"><h3><code>micron::math::fft::__impl::__serial::operator()(usize count, complex&lt;F&gt; *scratch, usize, Function &amp;&amp;fn) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L77">line 77</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Function&gt;
+  void
+  operator()(usize count, complex&lt;F&gt; *scratch, usize, Function &amp;&amp;fn) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize count</code></li><li><code>complex&lt;F&gt; *scratch</code></li><li><code>usize</code></li><li><code>Function &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Function&gt;
+  void
+  operator()(usize count, complex&lt;F&gt; *scratch, usize, Function &amp;&amp;fn) const noexcept
+  {
+    for ( usize i = 0; i &lt; count; ++i ) fn(i, scratch);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-119c77ddf43a3250"><h3><code>micron::math::fft::plan::__packed_index(usize index, bool &amp;mirror) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L95">line 95</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  __packed_index(usize index, bool &amp;mirror) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize index</code></li><li><code>bool &amp;mirror</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  __packed_index(usize index, bool &amp;mirror) const noexcept
+  {
+    usize coordinate = (index / __steps[__packed_axis]) % __desc.shape[__packed_axis];
+    mirror = coordinate &gt;= __input_shape[__packed_axis];
+    usize result = 0, step = 1;
+    for ( usize a = __desc.shape.size(); a-- &gt; 0; ) {
+      usize c = (index / __steps[a]) % __desc.shape[a];
+      if ( mirror )
+        for ( usize axis : __desc.axes )
+          if ( a == axis &amp;&amp; c ) c = __desc.shape[a] - c;
+      result += c * step;
+      step *= __input_shape[a];
+    }
+    return result;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L108">line 108</a></td></tr></tbody></table></section><section class="function-entry" id="f-5162f8c19c05e6c3"><h3><code>micron::math::fft::plan::__execute(Load load, Store store, workspace_view&lt;F&gt; work, direction dir, Runner &amp;runner) const noexcept</code></h3><p>Defined in <code>math/fft/plan.hpp</code>, <a href="../../../source/math/fft/plan.hpp.html#L216">line 216</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Load, typename Store, typename Runner&gt;
+  max_t
+  __execute(Load load, Store store, workspace_view&lt;F&gt; work, direction dir, Runner &amp;runner) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Load load</code></li><li><code>Store store</code></li><li><code>workspace_view&lt;F&gt; work</code></li><li><code>direction dir</code></li><li><code>Runner &amp;runner</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Load, typename Store, typename Runner&gt;
+  max_t
+  __execute(Load load, Store store, workspace_view&lt;F&gt; work, direction dir, Runner &amp;runner) const noexcept
+  {
+    if ( dir != direction::forward &amp;&amp; dir != direction::backward ) return -22;
+    if ( !__desc.batches ) return 0;
+    if ( !runner.workers || runner.workers &gt; (__impl::__limit - __data_size) / __scratch_size || !work.data
+         || work.size &lt; __data_size + runner.workers * __scratch_size )
+      return -105;
+    auto *data = work.data;
+    for ( usize b = 0; b &lt; __desc.batches; ++b )
+      for ( usize k = 0; k &lt; __volume; ++k ) {
+        bool mirror = false;
+        usize source = __desc.kind == domain::real_backward ? __packed_index(k, mirror) : k;
+        ssize_t index = __input_dense ? __desc.input.offset + ssize_t(b) * __desc.input.distance + ssize_t(source)
+                                      : __impl::__offset(source, __input_shape, __desc.input, b);
+        auto z = load(index);
+        data[b * __volume + k] = mirror ? conj(z) : z;
+      }
+    for ( usize pass = 0; pass &lt; __desc.axes.size(); ++pass ) {
+      usize a = __desc.kind == domain::real_forward ? (pass ? pass - 1 : __desc.axes.size() - 1) : pass;
+      usize axis = __desc.axes[a], n = __desc.shape[axis], stride = __steps[axis];
+      usize lines = __data_size / n;
+      usize tile = stride &gt;= 4 ? 4 : 1;
+      runner((lines + tile - 1) / tile, data + __data_size, __scratch_size, [&amp;](usize group, complex&lt;F&gt; *scratch) noexcept {
+        if ( __desc.kind == domain::complex &amp;&amp; stride == 1 ) {
+          auto *line = data + group * n;
+          auto *temp = scratch + __line_size;
+          if ( lines == 1 )
+            __engines[a].execute_parallel(line, scratch, temp, dir == direction::backward, runner);
+          else
+            __engines[a].execute(line, scratch, temp, dir == direction::backward);
+          for ( usize j = 0; j &lt; n; ++j ) line[j] = scratch[j];
+          return;
+        }
+        usize count = lines - group * tile &lt; tile ? lines - group * tile : tile;
+        usize bases[4];
+        for ( usize lane = 0; lane &lt; count; ++lane ) {
+          usize line = group * tile + lane;
+          bases[lane] = (line / stride) * (stride * n) + line % stride;
+        }
+        for ( usize j = 0; j &lt; n; ++j )
+          for ( usize lane = 0; lane &lt; count; ++lane ) scratch[lane * __line_size + j] = data[bases[lane] + j * stride];
+        auto *out = scratch + 4 * __line_size, *temp = out + __line_size;
+        for ( usize lane = 0; lane &lt; count; ++lane ) {
+          auto *in = scratch + lane * __line_size;
+          usize base = bases[lane];
+          if ( !__real_twiddles.empty() &amp;&amp; axis == __packed_axis ) {
+            usize h = n / 2;
+            if ( dir == direction::forward ) {
+              for ( usize j = 0; j &lt; h; ++j ) in[j] = { in[2 * j].real, in[2 * j + 1].real };
+              if ( lines == 1 )
+                __engines[a].execute_parallel(in, out, temp, false, runner);
+              else
+                __engines[a].execute(in, out, temp, false);
+              for ( usize k = 0; k &lt;= h; ++k ) {
+                auto x = out[k % h], y = conj(out[(h - k) % h]);
+                auto difference = (x - y) * __real_twiddles[k];
+                auto z = (x + y + complex&lt;F&gt;{ difference.imag, -difference.real }) * F(0.5);
+                in[k] = z;
+                if ( k &amp;&amp; k &lt; h ) in[n - k] = conj(z);
+              }
+            } else {
+              for ( usize k = 0; k &lt; h; ++k ) {
+                auto x = data[base + k * stride], y = conj(data[base + (h - k) * stride]);
+                auto difference = (x - y) * conj(__real_twiddles[k]);
+                in[k] = (x + y + complex&lt;F&gt;{ -difference.imag, difference.real }) * F(0.5);
+              }
+              if ( lines == 1 )
+                __engines[a].execute_parallel(in, out, temp, true, runner);
+              else
+                __engines[a].execute(in, out, temp, true);
+              for ( usize k = 0; k &lt; h; ++k ) {
+                in[2 * k] = { F(2) * out[k].real };
+                in[2 * k + 1] = { F(2) * out[k].imag };
+              }
+            }
+          } else {
+            if ( lines == 1 )
+              __engines[a].execute_parallel(in, out, temp, dir == direction::backward, runner);
+            else
+              __engines[a].execute(in, out, temp, dir == direction::backward);
+            for ( usize j = 0; j &lt; n; ++j ) in[j] = out[j];
+          }
+        }
+        for ( usize j = 0; j &lt; n; ++j )
+          for ( usize lane = 0; lane &lt; count; ++lane ) data[bases[lane] + j * stride] = scratch[lane * __line_size + j];
+      });
+    }
+
+    F scale = __impl::__scale&lt;F&gt;(__desc.norm, dir, __transform_volume)
+              * (dir == direction::forward ? __desc.forward_scale : __desc.backward_scale);
+    for ( usize b = 0; b &lt; __desc.batches; ++b )
+      for ( usize k = 0; k &lt; __output_volume; ++k ) {
+        usize source = k;
+        if ( __desc.kind == domain::real_forward ) {
+          usize t = k;
+          source = 0;
+          for ( usize j = __desc.shape.size(); j-- &gt; 0; ) {
+            source += (t % __output_shape[j]) * __steps[j];
+            t /= __output_shape[j];
+          }
+        }
+        ssize_t index = __output_dense ? __desc.output.offset + ssize_t(b) * __desc.output.distance + ssize_t(k)
+                                       : __impl::__offset(k, __output_shape, __desc.output, b);
+        store(index, data[b * __volume + source] * scale);
+      }
+    return max_t(output_size() * (__desc.kind == domain::real_backward ? sizeof(F) : sizeof(complex&lt;F&gt;)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L218">line 218</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L219">line 219</a></td></tr><tr class="t-dsc"><td><code>-105</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L222">line 222</a></td></tr><tr class="t-dsc"><td><code>max_t(output_size() * (__desc.kind == domain::real_backward ? sizeof(F) : sizeof(complex&lt;F&gt;)))</code></td><td><a href="../../../source/math/fft/plan.hpp.html#L321">line 321</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="plan.hpp.html#f-119c77ddf43a3250">__packed_index</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>, <a href="plan.hpp.html#f-153d7eedb223e202">__impl::__offset</a>, <a href="../complex.hpp.html#f-bd97f2a393288137">conj</a>, <a href="common.hpp.html#f-a2b076dfab87aab7">__impl::__scale&lt;F&gt;</a>, <a href="../../types.hpp.html#s-66025c3768325240">max_t</a>, <a href="plan.hpp.html#f-b400950245de7d0a">output_size</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

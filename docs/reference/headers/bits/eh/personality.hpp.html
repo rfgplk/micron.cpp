@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/bits/eh/personality.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/bits/eh/personality.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/bits/eh/personality.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/bits/eh/personality.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-25fbc5eda4dbd13e">micron::eh::get_ttype_entry(const byte *ttype_base, u8 ttype_enc, u64 index, const decode_ctx &amp;ctx) noexcept</a></td><td>function; line 27<br><small><code>#if defined(__micron_eh_dwarf)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-25fbc5eda4dbd13e"><h3><code>micron::eh::get_ttype_entry(const byte *ttype_base, u8 ttype_enc, u64 index, const decode_ctx &amp;ctx) noexcept</code></h3><p>Defined in <code>bits/eh/personality.hpp</code>, <a href="../../../source/bits/eh/personality.hpp.html#L27">line 27</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline std::type_info *
+get_ttype_entry(const byte *ttype_base, u8 ttype_enc, u64 index, const decode_ctx &amp;ctx) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_eh_dwarf)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *ttype_base</code></li><li><code>u8 ttype_enc</code></li><li><code>u64 index</code></li><li><code>const decode_ctx &amp;ctx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline std::type_info *
+get_ttype_entry(const byte *ttype_base, u8 ttype_enc, u64 index, const decode_ctx &amp;ctx) noexcept
+{
+  if ( ttype_enc == DW_EH_PE_omit ) return nullptr;
+  usize sz = encoded_size(ttype_enc);
+  if ( sz == 0 ) sz = sizeof(void *);      // leb-encoded ttype tables are not emitted by gcc
+  const byte *entry = ttype_base - index * sz;
+  const byte *q = entry;
+  const usize v = read_encoded(ttype_enc, q, ctx);
+  return reinterpret_cast&lt;std::type_info *&gt;(v);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L29">line 29</a></td></tr><tr class="t-dsc"><td><code>reinterpret_cast&lt;std::type_info *&gt;(v)</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L35">line 35</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="dwarf_enc.hpp.html#f-efe244cb55b36402">encoded_size</a>, <a href="dwarf_enc.hpp.html#f-22201c6c90939e2d">read_encoded</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-4ae028623974aec0"><h3><code>__gxx_personality_v0(int version, _Unwind_Action actions, _Unwind_Exception_Class exception_class, _Unwind_Exception *ue,
+                     _Unwind_Context *context)</code></h3><p>Defined in <code>bits/eh/personality.hpp</code>, <a href="../../../source/bits/eh/personality.hpp.html#L41">line 41</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline _Unwind_Reason_Code
+__gxx_personality_v0(int version, _Unwind_Action actions, _Unwind_Exception_Class exception_class, _Unwind_Exception *ue,
+                     _Unwind_Context *context)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_eh_dwarf)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int version</code></li><li><code>_Unwind_Action actions</code></li><li><code>_Unwind_Exception_Class exception_class</code></li><li><code>_Unwind_Exception *ue</code></li><li><code>_Unwind_Context *context</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline _Unwind_Reason_Code
+__gxx_personality_v0(int version, _Unwind_Action actions, _Unwind_Exception_Class exception_class, _Unwind_Exception *ue,
+                     _Unwind_Context *context)
+{
+  using namespace micron::eh;
+  using __cxxabiv1::__cxa_exception;
+
+  if ( version != 1 || ue == nullptr || context == nullptr ) return _URC_FATAL_PHASE1_ERROR;
+
+  __dbg_kv(&quot;[pers] actions=&quot;, static_cast&lt;usize&gt;(actions));
+
+  const byte *lsda = reinterpret_cast&lt;const byte *&gt;(_Unwind_GetLanguageSpecificData(context));
+  if ( !lsda ) return _URC_CONTINUE_UNWIND;      // no actions in this frame
+
+  const usize region_start = _Unwind_GetRegionStart(context);
+  int ip_before = 0;
+  usize ip = _Unwind_GetIPInfo(context, &amp;ip_before);
+  if ( !ip_before &amp;&amp; ip != 0 ) ip -= 1;      // call return address -&gt; step back into the call
+  const usize pc_offset = ip - region_start;
+
+  const decode_ctx dctx{ 0, _Unwind_GetTextRelBase(context), _Unwind_GetDataRelBase(context), region_start };
+
+  // %%% parse the LSDA header %%%
+  const byte *p = lsda;
+  const u8 lpstart_enc = *p++;
+  usize lpstart = region_start;
+  if ( lpstart_enc != DW_EH_PE_omit ) lpstart = read_encoded(lpstart_enc, p, dctx);
+
+  const u8 ttype_enc = *p++;
+  const byte *ttype_base = nullptr;
+  if ( ttype_enc != DW_EH_PE_omit ) {
+    const u64 ttype_off = read_uleb128(p);
+    ttype_base = p + ttype_off;
+  }
+
+  const u8 cs_enc = *p++;
+  const u64 cs_table_len = read_uleb128(p);
+  const byte *cs_ptr = p;
+  const byte *cs_end = p + cs_table_len;
+  const byte *action_table = cs_end;
+
+  // scan the call site table for the entry covering pc_offset
+  usize landing_pad = 0;
+  const byte *action_record = nullptr;
+  bool found_cs = false;
+
+  while ( cs_ptr &lt; cs_end ) {
+    const usize cs_start = read_encoded(cs_enc, cs_ptr, dctx);
+    const usize cs_len = read_encoded(cs_enc, cs_ptr, dctx);
+    const usize cs_lp = read_encoded(cs_enc, cs_ptr, dctx);
+    const u64 cs_action = read_uleb128(cs_ptr);
+
+    if ( pc_offset &lt; cs_start ) break;      // table is sorted; we have passed it
+    if ( pc_offset &lt; cs_start + cs_len ) {
+      if ( cs_lp ) landing_pad = lpstart + cs_lp;
+      if ( cs_action ) action_record = action_table + (cs_action - 1);
+      found_cs = true;
+      break;
+    }
+  }
+
+  __dbg_kv(&quot;[pers] pc_offset=&quot;, pc_offset);
+  __dbg_kv(&quot;  found_cs=&quot;, found_cs);
+  __dbg_kv(&quot;  landing_pad=&quot;, landing_pad);
+  if ( !found_cs ) return _URC_CONTINUE_UNWIND;             // PC has no EH region here
+  if ( landing_pad == 0 ) return _URC_CONTINUE_UNWIND;      // region with no landing pad
+
+  // recover the thrown type / object from the exception header
+  __cxa_exception *xh = __cxxabiv1::__get_exception_header_from_ue(ue);
+  const bool native = (exception_class &amp; 0xffffffffffffff00ULL) == (__cxxabiv1::__gxx_exception_class &amp; 0xffffffffffffff00ULL);
+  std::type_info *throw_type = native ? xh-&gt;exceptionType : nullptr;
+  void *thrown_ptr = __cxxabiv1::__get_object_from_ue(ue);
+
+  // no action chain -&gt; cleanup-only landing pad
+  if ( action_record == nullptr ) {
+    if ( actions &amp; _UA_SEARCH_PHASE ) return _URC_CONTINUE_UNWIND;      // cleanups don&#x27;t stop phase 1
+    _Unwind_SetGR(context, __builtin_eh_return_data_regno(0), reinterpret_cast&lt;_Unwind_Word&gt;(ue));
+    _Unwind_SetGR(context, __builtin_eh_return_data_regno(1), 0);
+    _Unwind_SetIP(context, landing_pad);
+    return _URC_INSTALL_CONTEXT;
+  }
+
+  // walk the action chain looking for a matching catch
+  int handler_switch = 0;
+  bool saw_cleanup = false;
+  bool saw_handler = false;
+  void *handler_ptr = thrown_ptr;
+
+  const byte *a = action_record;
+  for ( ;; ) {
+    const byte *ap = a;
+    const i64 ar_filter = read_sleb128(ap);
+    const byte *next_field = ap;
+    const i64 ar_next = read_sleb128(ap);
+
+    if ( ar_filter == 0 ) {
+      saw_cleanup = true;
+    } else if ( ar_filter &gt; 0 ) {
+      std::type_info *catch_type = get_ttype_entry(ttype_base, ttype_enc, static_cast&lt;u64&gt;(ar_filter), dctx);
+      if ( catch_type == nullptr ) {
+        // catch(...) -- matches anything
+        saw_handler = true;
+        handler_switch = static_cast&lt;int&gt;(ar_filter);
+        handler_ptr = thrown_ptr;
+        break;
+      }
+      if ( throw_type != nullptr ) {
+        void *adj = thrown_ptr;
+        if ( catch_type-&gt;__do_catch(throw_type, &amp;adj, 1) ) {
+          saw_handler = true;
+          handler_switch = static_cast&lt;int&gt;(ar_filter);
+          handler_ptr = adj;
+          break;
+        }
+      }
+    } else {
+      saw_handler = true;
+      handler_switch = static_cast&lt;int&gt;(ar_filter);
+      handler_ptr = thrown_ptr;
+      break;
+    }
+
+    if ( ar_next == 0 ) break;
+    a = next_field + ar_next;      // ar_next is self-relative to its own field
+  }
+
+  if ( actions &amp; _UA_SEARCH_PHASE ) {
+    if ( saw_handler ) {
+      // stash for phase 2 / __cxa_begin_catch
+      xh-&gt;handlerSwitchValue = handler_switch;
+      xh-&gt;actionRecord = reinterpret_cast&lt;const unsigned char *&gt;(action_record);
+      xh-&gt;languageSpecificData = reinterpret_cast&lt;const unsigned char *&gt;(lsda);
+      xh-&gt;catchTemp = landing_pad;
+      xh-&gt;adjustedPtr = handler_ptr;
+      return _URC_HANDLER_FOUND;
+    }
+    return _URC_CONTINUE_UNWIND;      // only cleanups here
+  }
+
+  // phase 2 / cleanup phase
+  const bool is_handler_frame = (actions &amp; _UA_HANDLER_FRAME) != 0;
+  if ( is_handler_frame &amp;&amp; saw_handler ) {
+    xh-&gt;handlerSwitchValue = handler_switch;
+    xh-&gt;adjustedPtr = handler_ptr;
+    _Unwind_SetGR(context, __builtin_eh_return_data_regno(0), reinterpret_cast&lt;_Unwind_Word&gt;(ue));
+    _Unwind_SetGR(context, __builtin_eh_return_data_regno(1), static_cast&lt;_Unwind_Word&gt;(static_cast&lt;intptr_t&gt;(handler_switch)));
+    _Unwind_SetIP(context, landing_pad);
+    return _URC_INSTALL_CONTEXT;
+  }
+  if ( saw_cleanup ) {
+    _Unwind_SetGR(context, __builtin_eh_return_data_regno(0), reinterpret_cast&lt;_Unwind_Word&gt;(ue));
+    _Unwind_SetGR(context, __builtin_eh_return_data_regno(1), 0);
+    _Unwind_SetIP(context, landing_pad);
+    return _URC_INSTALL_CONTEXT;
+  }
+  return _URC_CONTINUE_UNWIND;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_URC_FATAL_PHASE1_ERROR</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>_URC_CONTINUE_UNWIND</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L52">line 52</a></td></tr><tr class="t-dsc"><td><code>_URC_CONTINUE_UNWIND</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>_URC_CONTINUE_UNWIND</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L105">line 105</a></td></tr><tr class="t-dsc"><td><code>_URC_CONTINUE_UNWIND</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L115">line 115</a></td></tr><tr class="t-dsc"><td><code>_URC_INSTALL_CONTEXT</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td><code>_URC_HANDLER_FOUND</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L174">line 174</a></td></tr><tr class="t-dsc"><td><code>_URC_CONTINUE_UNWIND</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td><code>_URC_INSTALL_CONTEXT</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>_URC_INSTALL_CONTEXT</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L193">line 193</a></td></tr><tr class="t-dsc"><td><code>_URC_CONTINUE_UNWIND</code></td><td><a href="../../../source/bits/eh/personality.hpp.html#L195">line 195</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="unwind_dwarf.hpp.html#f-2e909b7f3a696f41">_Unwind_GetLanguageSpecificData</a>, <a href="unwind_dwarf.hpp.html#f-9b212ceca7a50e14">_Unwind_GetRegionStart</a>, <a href="unwind_dwarf.hpp.html#f-15489c1769d3a6fc">_Unwind_GetIPInfo</a>, <a href="unwind_dwarf.hpp.html#f-6762138590f55a22">_Unwind_GetTextRelBase</a>, <a href="unwind_dwarf.hpp.html#f-5eff3029915d55d3">_Unwind_GetDataRelBase</a>, <a href="cxa_exception.hpp.html#f-cb979f2c24a1ecad">__cxxabiv1::__get_exception_header_from_ue</a>, <a href="cxa_exception.hpp.html#f-42a2d3d4d8d1488d">__cxxabiv1::__get_object_from_ue</a>, <a href="unwind_dwarf.hpp.html#f-5dcdf622672a1a48">_Unwind_SetGR</a>, <a href="unwind_dwarf.hpp.html#f-ede6d8907d2693de">_Unwind_SetIP</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/hash/checksum.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/hash/checksum.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/hashing.html">Hashing</a></div><p>Defined in header <code>&lt;micron/hash/checksum.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/hash/checksum.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-5ed790c818200754">micron::adler::divisor</code></td><td>variable; line 43</td></tr><tr class="t-dsc"><td><code id="s-76ac186335eb8876">micron::adler::nmax</code></td><td>variable; line 44</td></tr><tr class="t-dsc"><td><a href="#f-c7685fedc8eafef3">micron::adler32(u32 init, const u8 *buf, usize len) noexcept</a></td><td>function; line 234</td></tr><tr class="t-dsc"><td><a href="#f-a99f8838420b5fe7">micron::adler32(u32 init, const C &amp;src) noexcept</a></td><td>function; line 250</td></tr><tr class="t-dsc"><td><a href="#f-6ffc338e78353b2f">micron::adler32(u32 init, const T &amp;obj) noexcept</a></td><td>function; line 257</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-c7685fedc8eafef3"><h3><code>micron::adler32(u32 init, const u8 *buf, usize len) noexcept</code></h3><p>Defined in <code>hash/checksum.hpp</code>, <a href="../../source/hash/checksum.hpp.html#L234">line 234</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u32
+adler32(u32 init, const u8 *buf, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 init</code></li><li><code>const u8 *buf</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u32
+adler32(u32 init, const u8 *buf, usize len) noexcept
+{
+  if !consteval {
+#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_avx2)
+    if ( len &gt;= 64 ) return adler::__adler32_avx2(buf, len, init);
+#elif defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_ssse3)
+    if ( len &gt;= 64 ) return adler::__adler32_ssse3(buf, len, init);
+#elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) &amp;&amp; defined(__micron_arm_neon)
+    if ( len &gt;= 64 ) return adler::__adler32_neon(buf, len, init);
+#endif
+  }
+  return adler::__adler32_scalar(buf, len, init);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>adler::__adler32_avx2(buf, len, init)</code></td><td><a href="../../source/hash/checksum.hpp.html#L238">line 238</a></td></tr><tr class="t-dsc"><td><code>adler::__adler32_ssse3(buf, len, init)</code></td><td><a href="../../source/hash/checksum.hpp.html#L240">line 240</a></td></tr><tr class="t-dsc"><td><code>adler::__adler32_neon(buf, len, init)</code></td><td><a href="../../source/hash/checksum.hpp.html#L242">line 242</a></td></tr><tr class="t-dsc"><td><code>adler::__adler32_scalar(buf, len, init)</code></td><td><a href="../../source/hash/checksum.hpp.html#L245">line 245</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="checksum.hpp.html#f-131cd17ec350f04c">adler::__adler32_avx2</a>, <a href="checksum.hpp.html#f-9714b8107156c3c6">adler::__adler32_ssse3</a>, <a href="checksum.hpp.html#f-4f40e1a69fa77890">adler::__adler32_neon</a>, <a href="checksum.hpp.html#f-180c991024d886a5">adler::__adler32_scalar</a>.</p></section><section class="function-entry" id="f-a99f8838420b5fe7"><h3><code>micron::adler32(u32 init, const C &amp;src) noexcept</code></h3><p>Defined in <code>hash/checksum.hpp</code>, <a href="../../source/hash/checksum.hpp.html#L250">line 250</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable C&gt;
+constexpr u32
+adler32(u32 init, const C &amp;src) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 init</code></li><li><code>const C &amp;src</code></li></ul><h4>Effects</h4><p>Returns <code>adler32(init, reinterpret_cast&lt;const u8 *&gt;(src.begin()), src.size() * sizeof(typename C::value_type))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable C&gt;
+constexpr u32
+adler32(u32 init, const C &amp;src) noexcept
+{
+  return adler32(init, reinterpret_cast&lt;const u8 *&gt;(src.begin()), src.size() * sizeof(typename C::value_type));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>adler32(init, reinterpret_cast&lt;const u8 *&gt;(src.begin()), src.size() * sizeof(typename C::value_type))</code></td><td><a href="../../source/hash/checksum.hpp.html#L252">line 252</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="checksum.hpp.html#f-c7685fedc8eafef3">adler32</a>.</p></section><section class="function-entry" id="f-6ffc338e78353b2f"><h3><code>micron::adler32(u32 init, const T &amp;obj) noexcept</code></h3><p>Defined in <code>hash/checksum.hpp</code>, <a href="../../source/hash/checksum.hpp.html#L257">line 257</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;addressable T&gt;
+constexpr u32
+adler32(u32 init, const T &amp;obj) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 init</code></li><li><code>const T &amp;obj</code></li></ul><h4>Effects</h4><p>Returns <code>adler32(init, reinterpret_cast&lt;const u8 *&gt;(&amp;obj), sizeof(T))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;addressable T&gt;
+constexpr u32
+adler32(u32 init, const T &amp;obj) noexcept
+{
+  return adler32(init, reinterpret_cast&lt;const u8 *&gt;(&amp;obj), sizeof(T));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>adler32(init, reinterpret_cast&lt;const u8 *&gt;(&amp;obj), sizeof(T))</code></td><td><a href="../../source/hash/checksum.hpp.html#L259">line 259</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="checksum.hpp.html#f-c7685fedc8eafef3">adler32</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-9714b8107156c3c6"><h3><code>micron::adler::__adler32_ssse3(const u8 *p, usize n, u32 init) noexcept</code></h3><p>Defined in <code>hash/checksum.hpp</code>, <a href="../../source/hash/checksum.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::target(&quot;ssse3&quot;)]] inline u32
+__adler32_ssse3(const u8 *p, usize n, u32 init) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_ssse3)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li><li><code>usize n</code></li><li><code>u32 init</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::target(&quot;ssse3&quot;)]] inline u32
+__adler32_ssse3(const u8 *p, usize n, u32 init) noexcept
+{
+  alignas(16) static constexpr u8 wtab[16] = { 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+  alignas(16) static constexpr u16 onetab[8] = { 1, 1, 1, 1, 1, 1, 1, 1 };
+
+  namespace sse = micron::simd::sse;
+  u32 s1 = init &amp; 0xFFFFu;
+  u32 s2 = (init &gt;&gt; 16) &amp; 0xFFFFu;
+  const __m128i zero = sse::zero_i128();
+  const __m128i w = sse::load_i128(reinterpret_cast&lt;const __m128i *&gt;(wtab));
+  const __m128i ones = sse::load_i128(reinterpret_cast&lt;const __m128i *&gt;(onetab));
+
+  usize i = 0;
+  while ( i &lt; n ) {
+    const usize block = (n - i &lt; nmax) ? (n - i) : nmax;
+    const usize kb = block &gt;&gt; 4;
+    u64 s1w = s1, s2w = s2;
+    if ( kb ) {
+      __m128i vs1 = zero, vps = zero, vdot = zero;
+      for ( usize k = 0; k &lt; kb; ++k ) {
+        const __m128i v = sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + i + (k &lt;&lt; 4)));
+        vps = sse::add_i64(vps, vs1);
+        vs1 = sse::add_i64(vs1, sse::sad_u8(v, zero));
+        vdot = sse::add_i32(vdot, sse::madd_i16(sse::madd_u8s8(v, w), ones));
+      }
+      const u64 h_s1 = (u64)sse::extract_low_i64(vs1) + (u64)sse::extract_low_i64(sse::unpack_hi_i64(vs1, vs1));
+      const u64 h_ps = (u64)sse::extract_low_i64(vps) + (u64)sse::extract_low_i64(sse::unpack_hi_i64(vps, vps));
+      __m128i sh = sse::add_i32(vdot, sse::shuffle_i32&lt;0x4E&gt;(vdot));
+      sh = sse::add_i32(sh, sse::shuffle_i32&lt;0xB1&gt;(sh));
+      const u32 h_dot = (u32)sse::extract_low_i32(sh);
+      s2w += 16ull * (u64)kb * s1w + 16ull * h_ps + h_dot;
+      s1w += h_s1;
+    }
+    for ( usize k = i + (kb &lt;&lt; 4), e = i + block; k &lt; e; ++k ) {
+      s1w += p[k];
+      s2w += s1w;
+    }
+    // narrow to u32 before the modulo
+    s1 = static_cast&lt;u32&gt;(s1w) % divisor;
+    s2 = static_cast&lt;u32&gt;(s2w) % divisor;
+    i += block;
+  }
+  return (s2 &lt;&lt; 16) | s1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(s2 &lt;&lt; 16) | s1</code></td><td><a href="../../source/hash/checksum.hpp.html#L91">line 91</a></td></tr></tbody></table></section><section class="function-entry" id="f-131cd17ec350f04c"><h3><code>micron::adler::__adler32_avx2(const u8 *p, usize n, u32 init) noexcept</code></h3><p>Defined in <code>hash/checksum.hpp</code>, <a href="../../source/hash/checksum.hpp.html#L99">line 99</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::target(&quot;avx2&quot;)]] inline u32
+__adler32_avx2(const u8 *p, usize n, u32 init) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li><li><code>usize n</code></li><li><code>u32 init</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::target(&quot;avx2&quot;)]] inline u32
+__adler32_avx2(const u8 *p, usize n, u32 init) noexcept
+{
+  alignas(32) static constexpr u8 wtab[32]
+      = { 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+  alignas(32) static constexpr u16 onetab[16] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+
+  namespace sse = micron::simd::sse;
+  namespace avx = micron::simd::avx;
+  namespace avx2 = micron::simd::avx2;
+  u32 s1 = init &amp; 0xFFFFu;
+  u32 s2 = (init &gt;&gt; 16) &amp; 0xFFFFu;
+  const __m256i zero = avx2::zero_i256();
+  const __m256i w = avx::load_i256(reinterpret_cast&lt;const __m256i *&gt;(wtab));
+  const __m256i ones = avx::load_i256(reinterpret_cast&lt;const __m256i *&gt;(onetab));
+
+  usize i = 0;
+  while ( i &lt; n ) {
+    const usize block = (n - i &lt; nmax) ? (n - i) : nmax;
+    const usize kb = block &gt;&gt; 5;
+    u64 s1w = s1, s2w = s2;
+    if ( kb ) {
+      __m256i vs1 = zero, vps = zero, vdot = zero;
+      for ( usize k = 0; k &lt; kb; ++k ) {
+        const __m256i v = avx2::loadu_i256(reinterpret_cast&lt;const __m256i *&gt;(p + i + (k &lt;&lt; 5)));
+        vps = avx2::add_i64(vps, vs1);
+        vs1 = avx2::add_i64(vs1, avx2::sad_u8(v, zero));
+        vdot = avx2::add_i32(vdot, avx2::madd_i16(avx2::madd_u8s8(v, w), ones));
+      }
+      // extract_f128_i256 is micron&#x27;s name for _mm256_extracti128_si256 -- the integer op, despite the f128
+      const __m128i s1lo = avx::cast_i256_to_lo128(vs1), s1hi = avx::extract_f128_i256&lt;1&gt;(vs1);
+      const __m128i pslo = avx::cast_i256_to_lo128(vps), pshi = avx::extract_f128_i256&lt;1&gt;(vps);
+      const __m128i vs1s = sse::add_i64(s1lo, s1hi);
+      const __m128i vpss = sse::add_i64(pslo, pshi);
+      const u64 h_s1 = (u64)sse::extract_low_i64(vs1s) + (u64)sse::extract_low_i64(sse::unpack_hi_i64(vs1s, vs1s));
+      const u64 h_ps = (u64)sse::extract_low_i64(vpss) + (u64)sse::extract_low_i64(sse::unpack_hi_i64(vpss, vpss));
+      __m128i sh = sse::add_i32(avx::cast_i256_to_lo128(vdot), avx::extract_f128_i256&lt;1&gt;(vdot));
+      sh = sse::add_i32(sh, sse::shuffle_i32&lt;0x4E&gt;(sh));
+      sh = sse::add_i32(sh, sse::shuffle_i32&lt;0xB1&gt;(sh));
+      const u32 h_dot = (u32)sse::extract_low_i32(sh);
+      s2w += 32ull * (u64)kb * s1w + 32ull * h_ps + h_dot;
+      s1w += h_s1;
+    }
+    for ( usize k = i + (kb &lt;&lt; 5), e = i + block; k &lt; e; ++k ) {
+      s1w += p[k];
+      s2w += s1w;
+    }
+    // NOTE: narrow to u32 before the modulo
+    s1 = static_cast&lt;u32&gt;(s1w) % divisor;
+    s2 = static_cast&lt;u32&gt;(s2w) % divisor;
+    i += block;
+  }
+  return (s2 &lt;&lt; 16) | s1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(s2 &lt;&lt; 16) | s1</code></td><td><a href="../../source/hash/checksum.hpp.html#L150">line 150</a></td></tr></tbody></table></section><section class="function-entry" id="f-4f40e1a69fa77890"><h3><code>micron::adler::__adler32_neon(const u8 *p, usize n, u32 init) noexcept</code></h3><p>Defined in <code>hash/checksum.hpp</code>, <a href="../../source/hash/checksum.hpp.html#L158">line 158</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u32
+__adler32_neon(const u8 *p, usize n, u32 init) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if ( defined(__micron_arch_arm64) || defined(__micron_arch_arm32) ) &amp;&amp; defined(__micron_arm_neon)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li><li><code>usize n</code></li><li><code>u32 init</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u32
+__adler32_neon(const u8 *p, usize n, u32 init) noexcept
+{
+  alignas(16) static constexpr u8 wtab[16] = { 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
+
+  namespace neon = micron::simd::neon;
+  u32 s1 = init &amp; 0xFFFFu;
+  u32 s2 = (init &gt;&gt; 16) &amp; 0xFFFFu;
+  const uint8x16_t w = neon::load_u8(wtab);
+  const uint8x8_t wlo = neon::low(w);
+  const uint8x8_t whi = neon::high(w);
+
+  usize i = 0;
+  while ( i &lt; n ) {
+    const usize block = (n - i &lt; nmax) ? (n - i) : nmax;
+    const usize kb = block &gt;&gt; 4;
+    u64 s1w = s1, s2w = s2;
+    if ( kb ) {
+      uint32x4_t vs1 = neon::splat_u32(0), vps = neon::splat_u32(0), vdot = neon::splat_u32(0);
+      for ( usize k = 0; k &lt; kb; ++k ) {
+        const uint8x16_t v = neon::load_u8(p + i + (k &lt;&lt; 4));
+        vps = neon::add(vps, vs1);
+        vs1 = neon::pairwise_add_acc_u16(vs1, neon::pairwise_add_long_u8(v));
+        vdot = neon::pairwise_add_acc_u16(vdot, neon::mul_long(neon::low(v), wlo));
+        vdot = neon::pairwise_add_acc_u16(vdot, neon::mul_long(neon::high(v), whi));
+      }
+      const u64 h_s1
+          = (u64)neon::get_lane_u32&lt;0&gt;(vs1) + neon::get_lane_u32&lt;1&gt;(vs1) + neon::get_lane_u32&lt;2&gt;(vs1) + neon::get_lane_u32&lt;3&gt;(vs1);
+      const u64 h_ps
+          = (u64)neon::get_lane_u32&lt;0&gt;(vps) + neon::get_lane_u32&lt;1&gt;(vps) + neon::get_lane_u32&lt;2&gt;(vps) + neon::get_lane_u32&lt;3&gt;(vps);
+      const u64 h_dot
+          = (u64)neon::get_lane_u32&lt;0&gt;(vdot) + neon::get_lane_u32&lt;1&gt;(vdot) + neon::get_lane_u32&lt;2&gt;(vdot) + neon::get_lane_u32&lt;3&gt;(vdot);
+      s2w += 16ull * (u64)kb * s1w + 16ull * h_ps + h_dot;
+      s1w += h_s1;
+    }
+    for ( usize k = i + (kb &lt;&lt; 4), e = i + block; k &lt; e; ++k ) {
+      s1w += p[k];
+      s2w += s1w;
+    }
+    // NOTE: narrow to u32 before the modulo
+    s1 = (u32)s1w % divisor;
+    s2 = (u32)s2w % divisor;
+    i += block;
+  }
+  return (s2 &lt;&lt; 16) | s1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(s2 &lt;&lt; 16) | s1</code></td><td><a href="../../source/hash/checksum.hpp.html#L201">line 201</a></td></tr></tbody></table></section><section class="function-entry" id="f-180c991024d886a5"><h3><code>micron::adler::__adler32_scalar(const u8 *p, usize n, u32 init) noexcept</code></h3><p>Defined in <code>hash/checksum.hpp</code>, <a href="../../source/hash/checksum.hpp.html#L207">line 207</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u32
+__adler32_scalar(const u8 *p, usize n, u32 init) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li><li><code>usize n</code></li><li><code>u32 init</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u32
+__adler32_scalar(const u8 *p, usize n, u32 init) noexcept
+{
+  u32 s1 = init &amp; 0xFFFFu;
+  u32 s2 = (init &gt;&gt; 16) &amp; 0xFFFFu;
+
+  usize i = 0;
+  while ( i &lt; n ) {
+    const usize block = (n - i &lt; nmax) ? (n - i) : nmax;
+    const usize end4 = i + (block &amp; ~usize(3));
+    for ( ; i &lt; end4; i += 4 ) {
+      const u32 b0 = p[i], b1 = p[i + 1], b2 = p[i + 2], b3 = p[i + 3];
+      s2 += 4 * s1 + 4 * b0 + 3 * b1 + 2 * b2 + b3;
+      s1 += b0 + b1 + b2 + b3;
+    }
+    for ( const usize e = i + (block &amp; 3); i &lt; e; ++i ) {
+      s1 += p[i];
+      s2 += s1;
+    }
+    s1 %= divisor;
+    s2 %= divisor;
+  }
+  return (s2 &lt;&lt; 16) | s1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(s2 &lt;&lt; 16) | s1</code></td><td><a href="../../source/hash/checksum.hpp.html#L228">line 228</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

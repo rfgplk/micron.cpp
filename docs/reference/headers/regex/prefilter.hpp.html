@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/regex/prefilter.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/regex/prefilter.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/regex.html">Regular expressions</a></div><p>Defined in header <code>&lt;micron/regex/prefilter.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/regex/prefilter.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-1d6555592a5df0ac">micron::rgx::first_info</code></td><td>struct; line 16</td></tr><tr class="t-dsc"><td><code id="s-cd44c62df41b800c">micron::rgx::first_info::first</code></td><td>member; line 17</td></tr><tr class="t-dsc"><td><code id="s-93a4b09137570c26">micron::rgx::first_info::nullable</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><a href="#f-70a4ee243a6f12cc">micron::rgx::first_walk(prog_view pv, u32 pc, char *seen, charreach &amp;first, bool &amp;nullable) noexcept</a></td><td>function; line 22</td></tr><tr class="t-dsc"><td><a href="#f-6e4428ca96485694">micron::rgx::compute_first(prog_view pv, char *seen) noexcept</a></td><td>function; line 56</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-70a4ee243a6f12cc"><h3><code>micron::rgx::first_walk(prog_view pv, u32 pc, char *seen, charreach &amp;first, bool &amp;nullable) noexcept</code></h3><p>Defined in <code>regex/prefilter.hpp</code>, <a href="../../source/regex/prefilter.hpp.html#L22">line 22</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+first_walk(prog_view pv, u32 pc, char *seen, charreach &amp;first, bool &amp;nullable) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>prog_view pv</code></li><li><code>u32 pc</code></li><li><code>char *seen</code></li><li><code>charreach &amp;first</code></li><li><code>bool &amp;nullable</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+first_walk(prog_view pv, u32 pc, char *seen, charreach &amp;first, bool &amp;nullable) noexcept
+{
+  if ( pc &gt;= pv.ncode || seen[pc] ) return;
+  seen[pc] = 1;
+  const inst &amp;I = pv.code[pc];
+  switch ( I.code ) {
+  case op::Char:
+    first.set((unsigned char)I.x);
+    break;
+  case op::Class:
+    if ( I.x &lt; pv.ncls ) first |= pv.cls[I.x];
+    break;
+  case op::Any:
+    first.set_all();
+    break;
+  case op::Match:
+    nullable = true;
+    break;
+  case op::Jmp:
+    first_walk(pv, I.x, seen, first, nullable);
+    break;
+  case op::Split:
+    first_walk(pv, I.x, seen, first, nullable);
+    first_walk(pv, I.y, seen, first, nullable);
+    break;
+  case op::Save:
+  case op::Bol:
+  case op::Eol:
+    first_walk(pv, pc + 1, seen, first, nullable);
+    break;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/regex/prefilter.hpp.html#L24">line 24</a></td></tr></tbody></table></section><section class="function-entry" id="f-6e4428ca96485694"><h3><code>micron::rgx::compute_first(prog_view pv, char *seen) noexcept</code></h3><p>Defined in <code>regex/prefilter.hpp</code>, <a href="../../source/regex/prefilter.hpp.html#L56">line 56</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline first_info
+compute_first(prog_view pv, char *seen) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>prog_view pv</code></li><li><code>char *seen</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline first_info
+compute_first(prog_view pv, char *seen) noexcept
+{
+  first_info fi;
+  for ( usize i = 0; i &lt; pv.ncode; ++i ) seen[i] = 0;
+  if ( pv.ncode ) first_walk(pv, 0, seen, fi.first, fi.nullable);
+  return fi;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fi</code></td><td><a href="../../source/regex/prefilter.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="prefilter.hpp.html#f-70a4ee243a6f12cc">first_walk</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/yen.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/yen.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/yen.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/yen.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-61d42df56de0bdde">micron::math::graphs::weighted_path</code></td><td>struct; line 13</td></tr><tr class="t-dsc"><td><code id="s-1e1586c5f25a13d5">micron::math::graphs::weighted_path::vertices</code></td><td>member; line 14</td></tr><tr class="t-dsc"><td><code id="s-042fae52fa94be93">micron::math::graphs::weighted_path::edges</code></td><td>member; line 15</td></tr><tr class="t-dsc"><td><code id="s-316b9e63a6ee2bc7">micron::math::graphs::weighted_path::cost</code></td><td>member; line 16</td></tr><tr class="t-dsc"><td><code id="s-db0b5ed6594989ec">micron::math::graphs::yen_result</code></td><td>struct; line 19</td></tr><tr class="t-dsc"><td><code id="s-7fd06a3eeb9ad4d0">micron::math::graphs::yen_result::status</code></td><td>member; line 20</td></tr><tr class="t-dsc"><td><code id="s-36ecec0f268a44e8">micron::math::graphs::yen_result::paths</code></td><td>member; line 21</td></tr><tr class="t-dsc"><td><code id="s-60c6de46755f0244">micron::math::graphs::yen_workspace</code></td><td>struct; line 24</td></tr><tr class="t-dsc"><td><code id="s-50b95bfdb948d174">micron::math::graphs::yen_workspace::potential</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><code id="s-90462f7ee341f52d">micron::math::graphs::yen_workspace::distance</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-4da05aa615b4bced">micron::math::graphs::yen_workspace::parent</code></td><td>member; line 27</td></tr><tr class="t-dsc"><td><code id="s-be4f13a3ba0e75b4">micron::math::graphs::yen_workspace::parent_edge</code></td><td>member; line 28</td></tr><tr class="t-dsc"><td><code id="s-ab677f62ce392286">micron::math::graphs::yen_workspace::reached</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-20d44ba890bd6eae">micron::math::graphs::yen_workspace::settled</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-6cfbc174876b300f">micron::math::graphs::yen_workspace::excluded_vertex</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-553319d0bcbb074e">micron::math::graphs::yen_workspace::excluded_edge</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-3b2564e058c6add9">micron::math::graphs::yen_workspace::path_vertex</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-fe8b30e9cf5a5904">micron::math::graphs::yen_workspace::reach_seen</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-eac2dbd33380601d">micron::math::graphs::yen_workspace::reach_stack</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-4bf4b21d40e8c50f">micron::math::graphs::yen_workspace::heap_vertex</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-9d0bdfc3d897552c">micron::math::graphs::yen_workspace::heap_distance</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-ecdda2ce76cc8fa8">micron::math::graphs::yen_workspace::candidates</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><a href="#f-25342166c30ed7be">micron::math::graphs::yen_workspace::reserve(usize vertex_slots, usize edge_slots)</a></td><td>function; line 41</td></tr><tr class="t-dsc"><td><a href="#f-50b6f7f28814f3e6">micron::math::graphs::yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count,
+    yen_workspace&lt;typename G::index_type,
+                  micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                 micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace,
+    WeightMap weight_map)</a></td><td>function; line 145</td></tr><tr class="t-dsc"><td><a href="#f-a3fb61dfe6f8727e">micron::math::graphs::yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count, WeightMap weight_map)</a></td><td>function; line 405</td></tr><tr class="t-dsc"><td><a href="#f-f5b6ddb462b0f809">micron::math::graphs::yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count)</a></td><td>function; line 414</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-25342166c30ed7be"><h3><code>micron::math::graphs::yen_workspace::reserve(usize vertex_slots, usize edge_slots)</code></h3><p>Defined in <code>math/graph/yen.hpp</code>, <a href="../../../source/math/graph/yen.hpp.html#L41">line 41</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reserve(usize vertex_slots, usize edge_slots)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertex_slots</code></li><li><code>usize edge_slots</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reserve(usize vertex_slots, usize edge_slots)
+  {
+    potential.reserve(vertex_slots);
+    distance.reserve(vertex_slots);
+    parent.reserve(vertex_slots);
+    parent_edge.reserve(vertex_slots);
+    reached.reserve(vertex_slots);
+    settled.reserve(vertex_slots);
+    excluded_vertex.reserve(vertex_slots);
+    excluded_edge.reserve(edge_slots);
+    path_vertex.reserve(vertex_slots);
+    reach_seen.reserve(vertex_slots);
+    reach_stack.reserve(vertex_slots);
+    heap_vertex.reserve(edge_slots + 1);
+    heap_distance.reserve(edge_slots + 1);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-50b6f7f28814f3e6"><h3><code>micron::math::graphs::yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count,
+    yen_workspace&lt;typename G::index_type,
+                  micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                 micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace,
+    WeightMap weight_map)</code></h3><p>Defined in <code>math/graph/yen.hpp</code>, <a href="../../../source/math/graph/yen.hpp.html#L145">line 145</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count,
+    yen_workspace&lt;typename G::index_type,
+                  micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                 micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace,
+    WeightMap weight_map)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor target</code></li><li><code>usize count</code></li><li><code>yen_workspace&lt;typename G::index_type,
+                  micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                 micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace</code></li><li><code>WeightMap weight_map</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count,
+    yen_workspace&lt;typename G::index_type,
+                  micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;WeightMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                 micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace,
+    WeightMap weight_map)
+{
+  using I = typename G::index_type;
+  using D = micron::remove_cvref_t&lt;decltype(__impl::weight(weight_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+  using vertex_descriptor = typename G::vertex_descriptor;
+  using edge_descriptor = typename G::edge_descriptor;
+  yen_result&lt;I, D&gt; result;
+  if ( count == 0 ) return result;
+  if ( !graph.has_vertex(source) || !graph.has_vertex(target) ) {
+    result.status = algorithm_status::invalid_vertex;
+    return result;
+  }
+  workspace.reserve(graph.vertex_slots(), graph.edge_slots());
+  result.status = __impl::yen_potentials(graph, weight_map, workspace.potential);
+  if ( result.status != algorithm_status::ok ) return result;
+  workspace.candidates.clear();
+  workspace.excluded_vertex.resize(graph.vertex_slots(), u8(0));
+  workspace.excluded_edge.resize(graph.edge_slots(), u8(0));
+
+  auto shortest_filtered = [&amp;](vertex_descriptor start, vertex_descriptor finish, weighted_path&lt;I, D&gt; &amp;path) {
+    const usize slots = graph.vertex_slots();
+    workspace.distance.resize(slots, D{});
+    workspace.distance.fill(D{});
+    workspace.parent.resize(slots, vertex_descriptor::invalid());
+    workspace.parent.fill(vertex_descriptor::invalid());
+    workspace.parent_edge.resize(slots, edge_descriptor::invalid());
+    workspace.parent_edge.fill(edge_descriptor::invalid());
+    workspace.reached.resize(slots, u8(0));
+    workspace.reached.fill(u8(0));
+    workspace.settled.resize(slots, u8(0));
+    workspace.settled.fill(u8(0));
+    workspace.heap_vertex.clear();
+    workspace.heap_distance.clear();
+    if ( workspace.excluded_vertex.data()[static_cast&lt;usize&gt;(start.value)]
+         || workspace.excluded_vertex.data()[static_cast&lt;usize&gt;(finish.value)] )
+      return algorithm_status::unreachable;
+    workspace.reached.data()[static_cast&lt;usize&gt;(start.value)] = 1;
+    workspace.parent.data()[static_cast&lt;usize&gt;(start.value)] = start;
+
+    auto less = [](const D &amp;ad, vertex_descriptor av, const D &amp;bd, vertex_descriptor bv) { return ad &lt; bd || (!(bd &lt; ad) &amp;&amp; av &lt; bv); };
+    auto push = [&amp;](vertex_descriptor vertex, const D &amp;distance) {
+      workspace.heap_vertex.push_back(vertex);
+      workspace.heap_distance.push_back(distance);
+      usize child = workspace.heap_vertex.size() - 1;
+      while ( child ) {
+        const usize parent = (child - 1) / 2;
+        if ( !less(workspace.heap_distance.data()[child], workspace.heap_vertex.data()[child], workspace.heap_distance.data()[parent],
+                   workspace.heap_vertex.data()[parent]) )
+          break;
+        micron::swap(workspace.heap_vertex.data()[child], workspace.heap_vertex.data()[parent]);
+        micron::swap(workspace.heap_distance.data()[child], workspace.heap_distance.data()[parent]);
+        child = parent;
+      }
+    };
+    push(start, D{});
+    while ( !workspace.heap_vertex.empty() ) {
+      const vertex_descriptor selected = workspace.heap_vertex.data()[0];
+      const D selected_distance = workspace.heap_distance.data()[0];
+      const usize last = workspace.heap_vertex.size() - 1;
+      workspace.heap_vertex.data()[0] = workspace.heap_vertex.data()[last];
+      workspace.heap_distance.data()[0] = workspace.heap_distance.data()[last];
+      workspace.heap_vertex.pop_back();
+      workspace.heap_distance.pop_back();
+      usize parent = 0;
+      while ( parent &lt; workspace.heap_vertex.size() ) {
+        const usize left = parent * 2 + 1;
+        if ( left &gt;= workspace.heap_vertex.size() ) break;
+        const usize right = left + 1;
+        usize child = left;
+        if ( right &lt; workspace.heap_vertex.size()
+             &amp;&amp; less(workspace.heap_distance.data()[right], workspace.heap_vertex.data()[right], workspace.heap_distance.data()[left],
+                     workspace.heap_vertex.data()[left]) )
+          child = right;
+        if ( !less(workspace.heap_distance.data()[child], workspace.heap_vertex.data()[child], workspace.heap_distance.data()[parent],
+                   workspace.heap_vertex.data()[parent]) )
+          break;
+        micron::swap(workspace.heap_vertex.data()[child], workspace.heap_vertex.data()[parent]);
+        micron::swap(workspace.heap_distance.data()[child], workspace.heap_distance.data()[parent]);
+        parent = child;
+      }
+      const usize us = static_cast&lt;usize&gt;(selected.value);
+      if ( workspace.settled.data()[us] || selected_distance != workspace.distance.data()[us] ) continue;
+      workspace.settled.data()[us] = 1;
+      if ( selected == finish ) break;
+      for ( auto edge : graph.out_edges(selected) ) {
+        if ( workspace.excluded_edge.data()[static_cast&lt;usize&gt;(edge.value)] ) continue;
+        const vertex_descriptor neighbor = __impl::edge_neighbor(graph, edge, selected);
+        const usize vs = static_cast&lt;usize&gt;(neighbor.value);
+        if ( workspace.excluded_vertex.data()[vs] || workspace.settled.data()[vs] ) continue;
+        const D weight = static_cast&lt;D&gt;(__impl::weight(weight_map, graph, edge));
+        D partial{}, reduced{}, candidate{};
+        if ( !__impl::add_distance(weight, workspace.potential.data()[us], partial)
+             || !__impl::sub_distance(partial, workspace.potential.data()[vs], reduced)
+             || !__impl::add_distance(workspace.distance.data()[us], reduced, candidate) )
+          return algorithm_status::overflow;
+        const bool equal
+            = workspace.reached.data()[vs] &amp;&amp; !(candidate &lt; workspace.distance.data()[vs]) &amp;&amp; !(workspace.distance.data()[vs] &lt; candidate);
+        if ( !workspace.reached.data()[vs] || candidate &lt; workspace.distance.data()[vs]
+             || (equal
+                 &amp;&amp; (selected &lt; workspace.parent.data()[vs]
+                     || (selected == workspace.parent.data()[vs] &amp;&amp; edge &lt; workspace.parent_edge.data()[vs]))) ) {
+          workspace.reached.data()[vs] = 1;
+          workspace.distance.data()[vs] = candidate;
+          workspace.parent.data()[vs] = selected;
+          workspace.parent_edge.data()[vs] = edge;
+          push(neighbor, candidate);
+        }
+      }
+    }
+    if ( !workspace.reached.data()[static_cast&lt;usize&gt;(finish.value)] ) return algorithm_status::unreachable;
+    path.vertices.clear();
+    path.edges.clear();
+    workspace.path_vertex.resize(slots, u8(0));
+    workspace.path_vertex.fill(u8(0));
+    workspace.reach_seen.resize(slots, u8(0));
+    vertex_descriptor current = start;
+    path.vertices.push_back(current);
+    workspace.path_vertex.data()[static_cast&lt;usize&gt;(current.value)] = 1;
+    bool path_overflow = false;
+
+    auto tight = [&amp;](vertex_descriptor u, edge_descriptor edge, vertex_descriptor v) {
+      const usize us = static_cast&lt;usize&gt;(u.value);
+      const usize vs = static_cast&lt;usize&gt;(v.value);
+      const D weight = static_cast&lt;D&gt;(__impl::weight(weight_map, graph, edge));
+      D partial{}, reduced{}, candidate{};
+      if ( !__impl::add_distance(weight, workspace.potential.data()[us], partial)
+           || !__impl::sub_distance(partial, workspace.potential.data()[vs], reduced)
+           || !__impl::add_distance(workspace.distance.data()[us], reduced, candidate) ) {
+        path_overflow = true;
+        return false;
+      }
+      return workspace.reached.data()[us] &amp;&amp; workspace.reached.data()[vs] &amp;&amp; !(candidate &lt; workspace.distance.data()[vs])
+             &amp;&amp; !(workspace.distance.data()[vs] &lt; candidate);
+    };
+
+    auto reaches_finish = [&amp;](vertex_descriptor first) {
+      workspace.reach_seen.fill(u8(0));
+      workspace.reach_stack.clear();
+      workspace.reach_stack.push_back(first);
+      workspace.reach_seen.data()[static_cast&lt;usize&gt;(first.value)] = 1;
+      while ( !workspace.reach_stack.empty() ) {
+        const vertex_descriptor u = workspace.reach_stack.data()[workspace.reach_stack.size() - 1];
+        workspace.reach_stack.pop_back();
+        if ( u == finish ) return true;
+        for ( auto edge : graph.out_edges(u) ) {
+          if ( workspace.excluded_edge.data()[static_cast&lt;usize&gt;(edge.value)] ) continue;
+          const vertex_descriptor v = __impl::edge_neighbor(graph, edge, u);
+          const usize vs = static_cast&lt;usize&gt;(v.value);
+          if ( workspace.excluded_vertex.data()[vs] || workspace.path_vertex.data()[vs] || workspace.reach_seen.data()[vs]
+               || !tight(u, edge, v) )
+            continue;
+          workspace.reach_seen.data()[vs] = 1;
+          workspace.reach_stack.push_back(v);
+        }
+      }
+      return false;
+    };
+
+    for ( usize guard = 0; current != finish &amp;&amp; guard &lt; graph.vertices_count(); ++guard ) {
+      vertex_descriptor selected_vertex = vertex_descriptor::invalid();
+      edge_descriptor selected_edge = edge_descriptor::invalid();
+      for ( auto edge : graph.out_edges(current) ) {
+        if ( workspace.excluded_edge.data()[static_cast&lt;usize&gt;(edge.value)] ) continue;
+        const vertex_descriptor neighbor = __impl::edge_neighbor(graph, edge, current);
+        const usize slot = static_cast&lt;usize&gt;(neighbor.value);
+        if ( workspace.excluded_vertex.data()[slot] || workspace.path_vertex.data()[slot] || !tight(current, edge, neighbor) ) continue;
+        if ( selected_vertex.valid() &amp;&amp; (selected_vertex &lt; neighbor || (selected_vertex == neighbor &amp;&amp; selected_edge &lt; edge)) ) continue;
+        if ( reaches_finish(neighbor) ) {
+          selected_vertex = neighbor;
+          selected_edge = edge;
+        }
+      }
+      if ( path_overflow ) return algorithm_status::overflow;
+      if ( !selected_vertex.valid() ) return algorithm_status::invalid_graph;
+      path.edges.push_back(selected_edge);
+      path.vertices.push_back(selected_vertex);
+      workspace.path_vertex.data()[static_cast&lt;usize&gt;(selected_vertex.value)] = 1;
+      current = selected_vertex;
+    }
+    if ( current != finish ) return algorithm_status::invalid_graph;
+    D partial{};
+    if ( !__impl::sub_distance(workspace.distance.data()[static_cast&lt;usize&gt;(finish.value)],
+                               workspace.potential.data()[static_cast&lt;usize&gt;(start.value)], partial)
+         || !__impl::add_distance(partial, workspace.potential.data()[static_cast&lt;usize&gt;(finish.value)], path.cost) )
+      return algorithm_status::overflow;
+    return algorithm_status::ok;
+  };
+
+  workspace.excluded_vertex.fill(u8(0));
+  workspace.excluded_edge.fill(u8(0));
+  weighted_path&lt;I, D&gt; first;
+  result.status = shortest_filtered(source, target, first);
+  if ( result.status != algorithm_status::ok ) return result;
+  result.paths.push_back(micron::move(first));
+
+  while ( result.paths.size() &lt; count ) {
+    const weighted_path&lt;I, D&gt; &amp;previous = result.paths.data()[result.paths.size() - 1];
+    D root_cost{};
+    for ( usize spur_index = 0; spur_index &lt; previous.edges.size(); ++spur_index ) {
+      workspace.excluded_vertex.fill(u8(0));
+      workspace.excluded_edge.fill(u8(0));
+      for ( usize i = 0; i &lt; spur_index; ++i ) workspace.excluded_vertex.data()[static_cast&lt;usize&gt;(previous.vertices.data()[i].value)] = 1;
+      for ( const auto &amp;accepted : result.paths ) {
+        if ( accepted.edges.size() &lt;= spur_index ) continue;
+        bool same_root = accepted.vertices.data()[spur_index] == previous.vertices.data()[spur_index];
+        for ( usize i = 0; same_root &amp;&amp; i &lt; spur_index; ++i )
+          same_root = accepted.edges.data()[i] == previous.edges.data()[i] &amp;&amp; accepted.vertices.data()[i] == previous.vertices.data()[i];
+        if ( same_root ) workspace.excluded_edge.data()[static_cast&lt;usize&gt;(accepted.edges.data()[spur_index].value)] = 1;
+      }
+
+      weighted_path&lt;I, D&gt; spur;
+      const algorithm_status spur_status = shortest_filtered(previous.vertices.data()[spur_index], target, spur);
+      if ( spur_status == algorithm_status::overflow ) {
+        result.status = spur_status;
+        return result;
+      }
+      if ( spur_status == algorithm_status::ok ) {
+        weighted_path&lt;I, D&gt; candidate;
+        candidate.vertices.reserve(spur_index + spur.vertices.size());
+        candidate.edges.reserve(spur_index + spur.edges.size());
+        for ( usize i = 0; i &lt; spur_index; ++i ) {
+          candidate.vertices.push_back(previous.vertices.data()[i]);
+          candidate.edges.push_back(previous.edges.data()[i]);
+        }
+        for ( auto vertex : spur.vertices ) candidate.vertices.push_back(vertex);
+        for ( auto edge : spur.edges ) candidate.edges.push_back(edge);
+        if ( !__impl::add_distance(root_cost, spur.cost, candidate.cost) ) {
+          result.status = algorithm_status::overflow;
+          return result;
+        }
+        bool duplicate = false;
+        for ( const auto &amp;accepted : result.paths ) duplicate |= __impl::same_weighted_path(accepted, candidate);
+        for ( const auto &amp;queued : workspace.candidates ) duplicate |= __impl::same_weighted_path(queued, candidate);
+        if ( !duplicate ) workspace.candidates.push_back(micron::move(candidate));
+      }
+      D next_cost{};
+      const D edge_weight = static_cast&lt;D&gt;(__impl::weight(weight_map, graph, previous.edges.data()[spur_index]));
+      if ( !__impl::add_distance(root_cost, edge_weight, next_cost) ) {
+        result.status = algorithm_status::overflow;
+        return result;
+      }
+      root_cost = next_cost;
+    }
+    if ( workspace.candidates.empty() ) break;
+    usize best = 0;
+    for ( usize i = 1; i &lt; workspace.candidates.size(); ++i )
+      if ( __impl::weighted_path_less(workspace.candidates.data()[i], workspace.candidates.data()[best]) ) best = i;
+    result.paths.push_back(micron::move(workspace.candidates.data()[best]));
+    workspace.candidates.erase(best);
+  }
+  result.status = algorithm_status::ok;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L156">line 156</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L159">line 159</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L163">line 163</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L341">line 341</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L363">line 363</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L377">line 377</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L388">line 388</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L400">line 400</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="yen.hpp.html#f-9f12c259710f16cd">__impl::yen_potentials</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="paths.hpp.html#f-9a610a726936d64e">__impl::add_distance</a>, <a href="yen.hpp.html#f-33447724e914c9c1">__impl::same_weighted_path</a>, <a href="yen.hpp.html#f-ae66e5d63dd81464">__impl::weighted_path_less</a>.</p></section><section class="function-entry" id="f-a3fb61dfe6f8727e"><h3><code>micron::math::graphs::yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count, WeightMap weight_map)</code></h3><p>Defined in <code>math/graph/yen.hpp</code>, <a href="../../../source/math/graph/yen.hpp.html#L405">line 405</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count, WeightMap weight_map)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor target</code></li><li><code>usize count</code></li><li><code>WeightMap weight_map</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count, WeightMap weight_map)
+{
+  using D = micron::remove_cvref_t&lt;decltype(__impl::weight(weight_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+  yen_workspace&lt;typename G::index_type, D&gt; workspace;
+  return yen(graph, source, target, count, workspace, weight_map);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>yen(graph, source, target, count, workspace, weight_map)</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L409">line 409</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="yen.hpp.html#f-50b6f7f28814f3e6">yen</a>.</p></section><section class="function-entry" id="f-f5b6ddb462b0f809"><h3><code>micron::math::graphs::yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count)</code></h3><p>Defined in <code>math/graph/yen.hpp</code>, <a href="../../../source/math/graph/yen.hpp.html#L414">line 414</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor target</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Returns <code>yen(graph, source, target, count, intrinsic_edge_weight{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+yen(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target, usize count)
+{
+  return yen(graph, source, target, count, intrinsic_edge_weight{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>yen(graph, source, target, count, intrinsic_edge_weight{})</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L416">line 416</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="yen.hpp.html#f-50b6f7f28814f3e6">yen</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-9f12c259710f16cd"><h3><code>micron::math::graphs::__impl::yen_potentials(const G &amp;graph, WeightMap &amp;weight_map, micron::vector&lt;D, micron::allocator_serial&lt;&gt;, false&gt; &amp;potential)</code></h3><p>Defined in <code>math/graph/yen.hpp</code>, <a href="../../../source/math/graph/yen.hpp.html#L64">line 64</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename WeightMap, typename D&gt;
+algorithm_status
+yen_potentials(const G &amp;graph, WeightMap &amp;weight_map, micron::vector&lt;D, micron::allocator_serial&lt;&gt;, false&gt; &amp;potential)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>WeightMap &amp;weight_map</code></li><li><code>micron::vector&lt;D, micron::allocator_serial&lt;&gt;, false&gt; &amp;potential</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename WeightMap, typename D&gt;
+algorithm_status
+yen_potentials(const G &amp;graph, WeightMap &amp;weight_map, micron::vector&lt;D, micron::allocator_serial&lt;&gt;, false&gt; &amp;potential)
+{
+  potential.resize(graph.vertex_slots(), D{});
+  potential.fill(D{});
+  for ( auto edge : graph.edges() )
+    if ( __impl::nonfinite_weight(static_cast&lt;D&gt;(__impl::weight(weight_map, graph, edge.id))) ) return algorithm_status::invalid_weight;
+
+  auto relax = [&amp;](typename G::vertex_descriptor u, typename G::vertex_descriptor v, const D &amp;weight) {
+    D candidate{};
+    if ( !__impl::add_distance(potential.data()[static_cast&lt;usize&gt;(u.value)], weight, candidate) ) return -1;
+    D &amp;target = potential.data()[static_cast&lt;usize&gt;(v.value)];
+    if ( candidate &lt; target ) {
+      target = candidate;
+      return 1;
+    }
+    return 0;
+  };
+  for ( usize pass = 1; pass &lt; graph.vertices_count(); ++pass ) {
+    bool changed = false;
+    for ( auto edge : graph.edges() ) {
+      const D weight = static_cast&lt;D&gt;(__impl::weight(weight_map, graph, edge.id));
+      const int forward = relax(edge.source, edge.target, weight);
+      if ( forward &lt; 0 ) return algorithm_status::overflow;
+      changed |= forward != 0;
+      if constexpr ( !G::is_directed ) {
+        const int reverse = relax(edge.target, edge.source, weight);
+        if ( reverse &lt; 0 ) return algorithm_status::overflow;
+        changed |= reverse != 0;
+      }
+    }
+    if ( !changed ) break;
+  }
+  for ( auto edge : graph.edges() ) {
+    const D weight = static_cast&lt;D&gt;(__impl::weight(weight_map, graph, edge.id));
+    const int forward = relax(edge.source, edge.target, weight);
+    if ( forward &lt; 0 ) return algorithm_status::overflow;
+    if ( forward &gt; 0 ) return algorithm_status::negative_cycle;
+    if constexpr ( !G::is_directed ) {
+      const int reverse = relax(edge.target, edge.source, weight);
+      if ( reverse &lt; 0 ) return algorithm_status::overflow;
+      if ( reverse &gt; 0 ) return algorithm_status::negative_cycle;
+    }
+  }
+  return algorithm_status::ok;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>algorithm_status::invalid_weight</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L69">line 69</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::overflow</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::overflow</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L90">line 90</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::overflow</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L99">line 99</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::negative_cycle</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::overflow</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L103">line 103</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::negative_cycle</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>algorithm_status::ok</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L107">line 107</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-db1488364cb16b49">__impl::nonfinite_weight</a>, <a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>.</p></section><section class="function-entry" id="f-33447724e914c9c1"><h3><code>micron::math::graphs::__impl::same_weighted_path(const weighted_path&lt;I, D&gt; &amp;a, const weighted_path&lt;I, D&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/graph/yen.hpp</code>, <a href="../../../source/math/graph/yen.hpp.html#L112">line 112</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, typename D&gt;
+[[nodiscard]] bool
+same_weighted_path(const weighted_path&lt;I, D&gt; &amp;a, const weighted_path&lt;I, D&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const weighted_path&lt;I, D&gt; &amp;a</code></li><li><code>const weighted_path&lt;I, D&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, typename D&gt;
+[[nodiscard]] bool
+same_weighted_path(const weighted_path&lt;I, D&gt; &amp;a, const weighted_path&lt;I, D&gt; &amp;b) noexcept
+{
+  if ( a.edges.size() != b.edges.size() || a.vertices.size() != b.vertices.size() ) return false;
+  for ( usize i = 0; i &lt; a.edges.size(); ++i )
+    if ( a.edges.data()[i] != b.edges.data()[i] ) return false;
+  for ( usize i = 0; i &lt; a.vertices.size(); ++i )
+    if ( a.vertices.data()[i] != b.vertices.data()[i] ) return false;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L114">line 114</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L116">line 116</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L118">line 118</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L119">line 119</a></td></tr></tbody></table></section><section class="function-entry" id="f-ae66e5d63dd81464"><h3><code>micron::math::graphs::__impl::weighted_path_less(const weighted_path&lt;I, D&gt; &amp;a, const weighted_path&lt;I, D&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/graph/yen.hpp</code>, <a href="../../../source/math/graph/yen.hpp.html#L124">line 124</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, typename D&gt;
+[[nodiscard]] bool
+weighted_path_less(const weighted_path&lt;I, D&gt; &amp;a, const weighted_path&lt;I, D&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const weighted_path&lt;I, D&gt; &amp;a</code></li><li><code>const weighted_path&lt;I, D&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, typename D&gt;
+[[nodiscard]] bool
+weighted_path_less(const weighted_path&lt;I, D&gt; &amp;a, const weighted_path&lt;I, D&gt; &amp;b) noexcept
+{
+  if ( a.cost &lt; b.cost ) return true;
+  if ( b.cost &lt; a.cost ) return false;
+  const usize vertices = a.vertices.size() &lt; b.vertices.size() ? a.vertices.size() : b.vertices.size();
+  for ( usize i = 0; i &lt; vertices; ++i ) {
+    if ( a.vertices.data()[i] &lt; b.vertices.data()[i] ) return true;
+    if ( b.vertices.data()[i] &lt; a.vertices.data()[i] ) return false;
+  }
+  if ( a.vertices.size() != b.vertices.size() ) return a.vertices.size() &lt; b.vertices.size();
+  for ( usize i = 0; i &lt; a.edges.size(); ++i ) {
+    if ( a.edges.data()[i] &lt; b.edges.data()[i] ) return true;
+    if ( b.edges.data()[i] &lt; a.edges.data()[i] ) return false;
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L126">line 126</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L127">line 127</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L130">line 130</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>a.vertices.size() &lt; b.vertices.size()</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L133">line 133</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L136">line 136</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/yen.hpp.html#L138">line 138</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

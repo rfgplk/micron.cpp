@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/queue/spsc_queue.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/queue/spsc_queue.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/queues.html">Queues</a></div><p>Defined in header <code>&lt;micron/queue/spsc_queue.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/queue/spsc_queue.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-1e8269ca66f62560">micron::spsc_queue</code></td><td>class; line 31</td></tr><tr class="t-dsc"><td><code id="s-d48a6c6375942786">micron::spsc_queue::category_type</code></td><td>typedef; line 78</td></tr><tr class="t-dsc"><td><code id="s-9fe143396dad96fc">micron::spsc_queue::mutability_type</code></td><td>typedef; line 79</td></tr><tr class="t-dsc"><td><code id="s-7e20b5ac79045810">micron::spsc_queue::memory_type</code></td><td>typedef; line 80</td></tr><tr class="t-dsc"><td><code id="s-68b9f7d7416fdb2f">micron::spsc_queue::value_type</code></td><td>typedef; line 81</td></tr><tr class="t-dsc"><td><code id="s-1b617613cb04a0a2">micron::spsc_queue::reference</code></td><td>typedef; line 82</td></tr><tr class="t-dsc"><td><code id="s-3434528ed69f689b">micron::spsc_queue::ref</code></td><td>typedef; line 83</td></tr><tr class="t-dsc"><td><code id="s-745f4991630cb983">micron::spsc_queue::const_reference</code></td><td>typedef; line 84</td></tr><tr class="t-dsc"><td><code id="s-ea07aed08f47e61e">micron::spsc_queue::const_ref</code></td><td>typedef; line 85</td></tr><tr class="t-dsc"><td><code id="s-d3f578f8790a32c2">micron::spsc_queue::pointer</code></td><td>typedef; line 86</td></tr><tr class="t-dsc"><td><code id="s-4e0d8b96b9a09e79">micron::spsc_queue::const_pointer</code></td><td>typedef; line 87</td></tr><tr class="t-dsc"><td><a href="#f-f1aaf95004f8d5fb">micron::spsc_queue::~spsc_queue()</a></td><td>function; line 89</td></tr><tr class="t-dsc"><td><a href="#f-63d1b1e55430763d">micron::spsc_queue::spsc_queue()</a></td><td>function; line 91</td></tr><tr class="t-dsc"><td><a href="#f-74ab843914f88f38">micron::spsc_queue::spsc_queue(const std::initializer_list&lt;T&gt; &amp;lst)</a></td><td>function; line 93</td></tr><tr class="t-dsc"><td><a href="#f-6525613cd2c7faf4">micron::spsc_queue::spsc_queue(const spsc_queue &amp;)</a></td><td>function; line 107</td></tr><tr class="t-dsc"><td><a href="#f-edaf59fe3fed6b32">micron::spsc_queue::spsc_queue(spsc_queue &amp;&amp;)</a></td><td>function; line 108</td></tr><tr class="t-dsc"><td><a href="#f-f0d9e5e99dc99ac8">micron::spsc_queue::operator=(const spsc_queue &amp;)</a></td><td>function; line 109</td></tr><tr class="t-dsc"><td><a href="#f-d20d322314902266">micron::spsc_queue::operator=(spsc_queue &amp;&amp;)</a></td><td>function; line 110</td></tr><tr class="t-dsc"><td><a href="#f-71de956bca9284c0">micron::spsc_queue::clear()</a></td><td>function; line 113</td></tr><tr class="t-dsc"><td><a href="#f-36ad0b1a28cac969">micron::spsc_queue::empty() const</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-4d2fd84853edc00e">micron::spsc_queue::size() const</a></td><td>function; line 138</td></tr><tr class="t-dsc"><td><a href="#f-6c68e2ab3e606c9c">micron::spsc_queue::capacity() const</a></td><td>function; line 147</td></tr><tr class="t-dsc"><td><a href="#f-9de030a2cc4bd9b1">micron::spsc_queue::max_size() const</a></td><td>function; line 153</td></tr><tr class="t-dsc"><td><a href="#f-9ce457bf79481a77">micron::spsc_queue::push(void)</a></td><td>function; line 159</td></tr><tr class="t-dsc"><td><a href="#f-9e115c8832ec5aa6">micron::spsc_queue::push(T &amp;&amp;val)</a></td><td>function; line 186</td></tr><tr class="t-dsc"><td><a href="#f-e350cb94c17713e5">micron::spsc_queue::push(const T &amp;val)</a></td><td>function; line 213</td></tr><tr class="t-dsc"><td><a href="#f-6145ecdb12f2ca6a">micron::spsc_queue::emplace(Args &amp;&amp;...args)</a></td><td>function; line 241</td></tr><tr class="t-dsc"><td><a href="#f-0d52f8e09aa95fbf">micron::spsc_queue::pop(T &amp;out)</a></td><td>function; line 264</td></tr><tr class="t-dsc"><td><a href="#f-d01e0bdd8a087c98">micron::spsc_queue::pop(void)</a></td><td>function; line 291</td></tr><tr class="t-dsc"><td><a href="#f-170210a1b556e96b">micron::spsc_queue::peek(T &amp;out) const</a></td><td>function; line 315</td></tr><tr class="t-dsc"><td><a href="#f-895e8b2243fb33d6">micron::spsc_queue::front()</a></td><td>function; line 328</td></tr><tr class="t-dsc"><td><a href="#f-03b77e9a785fb09b">micron::spsc_queue::front() const</a></td><td>function; line 334</td></tr><tr class="t-dsc"><td><a href="#f-2569ae0d9df60516">micron::spsc_queue::last()</a></td><td>function; line 340</td></tr><tr class="t-dsc"><td><a href="#f-22ab7da9e67c8497">micron::spsc_queue::last() const</a></td><td>function; line 346</td></tr><tr class="t-dsc"><td><a href="#f-1ad34c402395a2df">micron::spsc_queue::push_batch(const T *items, usize count)</a></td><td>function; line 352</td></tr><tr class="t-dsc"><td><a href="#f-816d9fa75b41b8b7">micron::spsc_queue::pop_batch(T *items, usize count)</a></td><td>function; line 389</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f1aaf95004f8d5fb"><h3><code>micron::spsc_queue::~spsc_queue()</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L89">line 89</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~spsc_queue()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~spsc_queue() { clear(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="spsc_queue.hpp.html#f-71de956bca9284c0">clear</a>.</p></section><section class="function-entry" id="f-63d1b1e55430763d"><h3><code>micron::spsc_queue::spsc_queue()</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L91">line 91</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>spsc_queue() : __mem(__spsc_capacity), __producer{ 0, 0 }, __consumer{ 0, 0 }</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">spsc_queue() : __mem(__spsc_capacity), __producer{ 0, 0 }, __consumer{ 0, 0 } { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-74ab843914f88f38"><h3><code>micron::spsc_queue::spsc_queue(const std::initializer_list&lt;T&gt; &amp;lst)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L93">line 93</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>spsc_queue(const std::initializer_list&lt;T&gt; &amp;lst) : spsc_queue()</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const std::initializer_list&lt;T&gt; &amp;lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">spsc_queue(const std::initializer_list&lt;T&gt; &amp;lst) : spsc_queue()
+  {
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( const T &amp;value : lst ) push(value);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      clear();
+      throw;
+    }
+#endif
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L102">line 102</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spsc_queue.hpp.html#f-9ce457bf79481a77">push</a>, <a href="spsc_queue.hpp.html#f-71de956bca9284c0">clear</a>.</p></section><section class="function-entry" id="f-6525613cd2c7faf4"><h3><code>micron::spsc_queue::spsc_queue(const spsc_queue &amp;)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L107">line 107</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>spsc_queue(const spsc_queue &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const spsc_queue &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-edaf59fe3fed6b32"><h3><code>micron::spsc_queue::spsc_queue(spsc_queue &amp;&amp;)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L108">line 108</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>spsc_queue(spsc_queue &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>spsc_queue &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-f0d9e5e99dc99ac8"><h3><code>micron::spsc_queue::operator=(const spsc_queue &amp;)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L109">line 109</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>spsc_queue &amp;operator=(const spsc_queue &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const spsc_queue &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-d20d322314902266"><h3><code>micron::spsc_queue::operator=(spsc_queue &amp;&amp;)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L110">line 110</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>spsc_queue &amp;operator=(spsc_queue &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>spsc_queue &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-71de956bca9284c0"><h3><code>micron::spsc_queue::clear()</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  clear()
+  {
+    const usize h = __consumer.head.get(memory_order_relaxed);
+    const usize t = __producer.tail.get(memory_order_relaxed);
+
+    if constexpr ( !micron::is_trivially_destructible_v&lt;T&gt; ) {
+      for ( usize i = h; i != t; ++i ) {
+        (__mem::memory)[i &amp; __mask].~T();
+      }
+    }
+
+    __consumer.head.store(0, memory_order_relaxed);
+    __producer.tail.store(0, memory_order_relaxed);
+    __producer.cached_head = 0;
+    __consumer.cached_tail = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-36ad0b1a28cac969"><h3><code>micron::spsc_queue::empty() const</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+  empty() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+  empty() const
+  {
+    const usize h = __consumer.head.get(memory_order_acquire);
+    return h == __producer.tail.get(memory_order_acquire);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>h == __producer.tail.get(memory_order_acquire)</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L134">line 134</a></td></tr></tbody></table></section><section class="function-entry" id="f-4d2fd84853edc00e"><h3><code>micron::spsc_queue::size() const</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L138">line 138</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  size() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  size() const
+  {
+    const usize h = __consumer.head.get(memory_order_acquire);
+    const usize t = __producer.tail.get(memory_order_acquire);
+    const usize n = t - h;
+    return n &lt; __spsc_capacity ? n : __spsc_capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n &lt; __spsc_capacity ? n : __spsc_capacity</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L143">line 143</a></td></tr></tbody></table></section><section class="function-entry" id="f-6c68e2ab3e606c9c"><h3><code>micron::spsc_queue::capacity() const</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L147">line 147</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  capacity() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__spsc_capacity</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  capacity() const
+  {
+    return __spsc_capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spsc_capacity</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L149">line 149</a></td></tr></tbody></table></section><section class="function-entry" id="f-9de030a2cc4bd9b1"><h3><code>micron::spsc_queue::max_size() const</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L153">line 153</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  max_size() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__spsc_capacity</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  max_size() const
+  {
+    return __spsc_capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spsc_capacity</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L155">line 155</a></td></tr></tbody></table></section><section class="function-entry" id="f-9ce457bf79481a77"><h3><code>micron::spsc_queue::push(void)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L159">line 159</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  push(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  push(void)
+  {
+    const usize t = __producer.tail.get(memory_order_relaxed);
+    const usize __next = t + 1;
+
+    usize avail = __spsc_capacity - (t - __producer.cached_head);
+
+    if ( avail == 0 ) [[unlikely]] {
+      __producer.cached_head = __consumer.head.get(memory_order_acquire);
+      avail = __spsc_capacity - (t - __producer.cached_head);
+
+      if ( avail == 0 ) return false;
+    }
+
+    const usize idx = t &amp; __mask;
+
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_constructible_v&lt;T&gt; ) {
+      new (micron::addr(__mem::memory[idx])) T{};
+    } else {
+      __mem::memory[idx] = T{};
+    }
+
+    __producer.tail.store(__next, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L170">line 170</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L182">line 182</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-9e115c8832ec5aa6"><h3><code>micron::spsc_queue::push(T &amp;&amp;val)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L186">line 186</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  push(T &amp;&amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  push(T &amp;&amp;val)
+  {
+    const usize t = __producer.tail.get(memory_order_relaxed);
+    const usize __next = t + 1;
+
+    usize avail = __spsc_capacity - (t - __producer.cached_head);
+
+    if ( avail == 0 ) [[unlikely]] {
+      __producer.cached_head = __consumer.head.get(memory_order_acquire);
+      avail = __spsc_capacity - (t - __producer.cached_head);
+
+      if ( avail == 0 ) return false;
+    }
+
+    const usize idx = t &amp; __mask;
+
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_constructible_v&lt;T&gt; ) {
+      new (micron::addr(__mem::memory[idx])) T{ micron::move(val) };
+    } else {
+      __mem::memory[idx] = micron::move(val);
+    }
+
+    __producer.tail.store(__next, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L209">line 209</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-e350cb94c17713e5"><h3><code>micron::spsc_queue::push(const T &amp;val)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L213">line 213</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  push(const T &amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  push(const T &amp;val)
+  {
+    const usize t = __producer.tail.get(memory_order_relaxed);
+    const usize __next = t + 1;
+
+    usize avail = __spsc_capacity - (t - __producer.cached_head);
+
+    if ( avail == 0 ) [[unlikely]] {
+      __producer.cached_head = __consumer.head.get(memory_order_acquire);
+      avail = __spsc_capacity - (t - __producer.cached_head);
+
+      if ( avail == 0 ) return false;
+    }
+
+    const usize idx = t &amp; __mask;
+
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_constructible_v&lt;T&gt; ) {
+      new (micron::addr(__mem::memory[idx])) T{ val };
+    } else {
+      __mem::memory[idx] = val;
+    }
+
+    __producer.tail.store(__next, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L224">line 224</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L236">line 236</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-6145ecdb12f2ca6a"><h3><code>micron::spsc_queue::emplace(Args &amp;&amp;...args)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L241">line 241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  __attribute__((always_inline)) inline bool
+  emplace(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  __attribute__((always_inline)) inline bool
+  emplace(Args &amp;&amp;...args)
+  {
+    const usize t = __producer.tail.get(memory_order_relaxed);
+    const usize __next = t + 1;
+
+    usize avail = __spsc_capacity - (t - __producer.cached_head);
+
+    if ( avail == 0 ) [[unlikely]] {
+      __producer.cached_head = __consumer.head.get(memory_order_acquire);
+      avail = __spsc_capacity - (t - __producer.cached_head);
+
+      if ( avail == 0 ) return false;
+    }
+
+    const usize idx = t &amp; __mask;
+
+    new (micron::addr(__mem::memory[idx])) T{ micron::forward&lt;Args&gt;(args)... };
+
+    __producer.tail.store(__next, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L252">line 252</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L260">line 260</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-0d52f8e09aa95fbf"><h3><code>micron::spsc_queue::pop(T &amp;out)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L264">line 264</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  pop(T &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  pop(T &amp;out)
+  {
+    const usize h = __consumer.head.get(memory_order_relaxed);
+
+    usize avail = __consumer.cached_tail - h;
+
+    if ( avail == 0 ) [[unlikely]] {
+      __consumer.cached_tail = __producer.tail.get(memory_order_acquire);
+      avail = __consumer.cached_tail - h;
+
+      if ( avail == 0 ) return false;
+    }
+
+    const usize idx = h &amp; __mask;
+
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_copyable_v&lt;T&gt; ) {
+      __assign(out, __mem::memory[idx]);
+      __mem::memory[idx].~T();
+    } else {
+      out = __mem::memory[idx];
+    }
+
+    __consumer.head.store(h + 1, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L274">line 274</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L287">line 287</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spsc_queue.hpp.html#f-cfda094550feb4fe">__assign</a>.</p></section><section class="function-entry" id="f-d01e0bdd8a087c98"><h3><code>micron::spsc_queue::pop(void)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L291">line 291</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  pop(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  pop(void)
+  {
+    const usize h = __consumer.head.get(memory_order_relaxed);
+
+    usize avail = __consumer.cached_tail - h;
+
+    if ( avail == 0 ) [[unlikely]] {
+      __consumer.cached_tail = __producer.tail.get(memory_order_acquire);
+      avail = __consumer.cached_tail - h;
+
+      if ( avail == 0 ) return false;
+    }
+
+    const usize idx = h &amp; __mask;
+
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_destructible_v&lt;T&gt; ) {
+      __mem::memory[idx].~T();
+    }
+
+    __consumer.head.store(h + 1, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L301">line 301</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L311">line 311</a></td></tr></tbody></table></section><section class="function-entry" id="f-170210a1b556e96b"><h3><code>micron::spsc_queue::peek(T &amp;out) const</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L315">line 315</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  peek(T &amp;out) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  peek(T &amp;out) const
+  {
+    const usize h = __consumer.head.get(memory_order_relaxed);
+    const usize t = __producer.tail.get(memory_order_acquire);
+
+    const bool has_data = (h != t);
+    if ( has_data ) [[likely]] {
+      out = __mem::memory[h &amp; __mask];
+    }
+    return has_data;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>has_data</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L324">line 324</a></td></tr></tbody></table></section><section class="function-entry" id="f-895e8b2243fb33d6"><h3><code>micron::spsc_queue::front()</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L328">line 328</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline T &amp;
+  front()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory[__consumer.head.get(memory_order_relaxed) &amp; __mask]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline T &amp;
+  front()
+  {
+    return __mem::memory[__consumer.head.get(memory_order_relaxed) &amp; __mask];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[__consumer.head.get(memory_order_relaxed) &amp; __mask]</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L330">line 330</a></td></tr></tbody></table></section><section class="function-entry" id="f-03b77e9a785fb09b"><h3><code>micron::spsc_queue::front() const</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L334">line 334</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline const T &amp;
+  front() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory[__consumer.head.get(memory_order_relaxed) &amp; __mask]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline const T &amp;
+  front() const
+  {
+    return __mem::memory[__consumer.head.get(memory_order_relaxed) &amp; __mask];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[__consumer.head.get(memory_order_relaxed) &amp; __mask]</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L336">line 336</a></td></tr></tbody></table></section><section class="function-entry" id="f-2569ae0d9df60516"><h3><code>micron::spsc_queue::last()</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L340">line 340</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline T &amp;
+  last()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory[(__producer.tail.get(memory_order_relaxed) - 1) &amp; __mask]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline T &amp;
+  last()
+  {
+    return __mem::memory[(__producer.tail.get(memory_order_relaxed) - 1) &amp; __mask];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[(__producer.tail.get(memory_order_relaxed) - 1) &amp; __mask]</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L342">line 342</a></td></tr></tbody></table></section><section class="function-entry" id="f-22ab7da9e67c8497"><h3><code>micron::spsc_queue::last() const</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L346">line 346</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline const T &amp;
+  last() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory[(__producer.tail.get(memory_order_relaxed) - 1) &amp; __mask]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline const T &amp;
+  last() const
+  {
+    return __mem::memory[(__producer.tail.get(memory_order_relaxed) - 1) &amp; __mask];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[(__producer.tail.get(memory_order_relaxed) - 1) &amp; __mask]</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L348">line 348</a></td></tr></tbody></table></section><section class="function-entry" id="f-1ad34c402395a2df"><h3><code>micron::spsc_queue::push_batch(const T *items, usize count)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L352">line 352</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline usize
+  push_batch(const T *items, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *items</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline usize
+  push_batch(const T *items, usize count)
+  {
+    const usize t = __producer.tail.get(memory_order_relaxed);
+    usize avail = __spsc_capacity - (t - __producer.cached_head);
+
+    if ( avail &lt; count ) [[unlikely]] {
+      __producer.cached_head = __consumer.head.get(memory_order_acquire);
+      avail = __spsc_capacity - (t - __producer.cached_head);
+    }
+
+    const usize to_push = (avail &lt; count) ? avail : count;
+    if ( to_push == 0 ) return 0;
+    const usize idx = t &amp; __mask;
+    const usize first = to_push &lt; (__spsc_capacity - idx) ? to_push : (__spsc_capacity - idx);
+
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+      micron::memcpy(micron::addressof(__mem::memory[idx]), items, first);
+      if ( first != to_push ) micron::memcpy(__mem::memory, items + first, to_push - first);
+    } else {
+      usize made = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( ; made &lt; to_push; ++made ) new (micron::addr(__mem::memory[(t + made) &amp; __mask])) T(items[made]);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        for ( usize i = 0; i &lt; made; ++i ) __mem::memory[(t + i) &amp; __mask].~T();
+        throw;
+      }
+#endif
+    }
+
+    __producer.tail.store(t + to_push, memory_order_release);
+    return to_push;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L363">line 363</a></td></tr><tr class="t-dsc"><td><code>to_push</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L385">line 385</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L379">line 379</a><br>Within <code>else of ( micron::is_trivially_copyable_v&lt;T&gt; )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-816d9fa75b41b8b7"><h3><code>micron::spsc_queue::pop_batch(T *items, usize count)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L389">line 389</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline usize
+  pop_batch(T *items, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *items</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline usize
+  pop_batch(T *items, usize count)
+  {
+    const usize h = __consumer.head.get(memory_order_relaxed);
+    usize avail = __consumer.cached_tail - h;
+
+    if ( avail &lt; count ) [[unlikely]] {
+      __consumer.cached_tail = __producer.tail.get(memory_order_acquire);
+      avail = __consumer.cached_tail - h;
+    }
+
+    const usize to_pop = (avail &lt; count) ? avail : count;
+    if ( to_pop == 0 ) return 0;
+    const usize idx = h &amp; __mask;
+    const usize first = to_pop &lt; (__spsc_capacity - idx) ? to_pop : (__spsc_capacity - idx);
+
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+      micron::memcpy(items, micron::addressof(__mem::memory[idx]), first);
+      if ( first != to_pop ) micron::memcpy(items + first, __mem::memory, to_pop - first);
+      __consumer.head.store(h + to_pop, memory_order_release);
+    } else if constexpr ( __assign_nothrow ) {
+      for ( usize i = 0; i &lt; to_pop; ++i ) {
+        T &amp;v = __mem::memory[(h + i) &amp; __mask];
+        __assign(items[i], v);
+        v.~T();
+      }
+      __consumer.head.store(h + to_pop, memory_order_release);
+    } else {
+      for ( usize i = 0; i &lt; to_pop; ++i ) {
+        T &amp;v = __mem::memory[(h + i) &amp; __mask];
+        __assign(items[i], v);
+        v.~T();
+        __consumer.head.store(h + i + 1, memory_order_release);
+      }
+    }
+    return to_pop;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L400">line 400</a></td></tr><tr class="t-dsc"><td><code>to_pop</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L423">line 423</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="spsc_queue.hpp.html#f-cfda094550feb4fe">__assign</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-35d10231d9958d3b"><h3><code>micron::spsc_queue::__next_pow2(usize n)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L34">line 34</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr static usize
+  __next_pow2(usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr static usize
+  __next_pow2(usize n)
+  {
+    n--;
+    n |= n &gt;&gt; 1;
+    n |= n &gt;&gt; 2;
+    n |= n &gt;&gt; 4;
+    n |= n &gt;&gt; 8;
+    n |= n &gt;&gt; 16;
+    if constexpr ( sizeof(usize) &gt; 4 ) {
+      constexpr usize __hi_shift = sizeof(usize) * 8u / 2u;
+      n |= n &gt;&gt; __hi_shift;
+    }
+    return n + 1;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n + 1</code></td><td><a href="../../source/queue/spsc_queue.hpp.html#L46">line 46</a></td></tr></tbody></table></section><section class="function-entry" id="f-cfda094550feb4fe"><h3><code>micron::spsc_queue::__assign(T &amp;out, T &amp;value) noexcept(__assign_nothrow)</code></h3><p>Defined in <code>queue/spsc_queue.hpp</code>, <a href="../../source/queue/spsc_queue.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline void
+  __assign(T &amp;out, T &amp;value) noexcept(__assign_nothrow)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li><li><code>T &amp;value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline void
+  __assign(T &amp;out, T &amp;value) noexcept(__assign_nothrow)
+  {
+    if constexpr ( micron::is_move_assignable_v&lt;T&gt; )
+      out = micron::move(value);
+    else
+      out = value;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

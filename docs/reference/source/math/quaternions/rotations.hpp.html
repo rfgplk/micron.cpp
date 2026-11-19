@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/quaternions/rotations.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/quaternions/rotations.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/quaternions/rotations.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../concepts.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;../../types.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../blas/identities.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../constants.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;../generic.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;../ieee.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #include &quot;../matrix/mat.hpp&quot;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../mk.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../quants/quat.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../quants/vec.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;../quants/vecs.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../sqrt.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;../trig.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;algebra.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> </span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> namespace micron</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> {</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> namespace math</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> {</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> namespace quaternions</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> {</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> </span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> [[nodiscard]] inline constexpr quaternion&lt;T&gt;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> from_axis_angle(T ax, T ay, T az, T angle) noexcept</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> {</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>   const T aax = math::fabs(ax);</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   const T aay = math::fabs(ay);</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   const T aaz = math::fabs(az);</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   const T m = math::fmax(aax, math::fmax(aay, aaz));</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   if ( m == T(0) ) return identity&lt;T&gt;();</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   const T inv_m = T(1) / m;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   const T sx = ax * inv_m;</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   const T sy = ay * inv_m;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   const T sz = az * inv_m;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>   const T inv_n = math::frsqrt(sx * sx + sy * sy + sz * sz) * inv_m;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>   const T half = angle * T(0.5);</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>   const T s = math::sin&lt;T&gt;(half);</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>   const T c = math::cos&lt;T&gt;(half);</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>   const T k = s * inv_n;</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>   return quaternion&lt;T&gt;{ ax * k, ay * k, az * k, c };</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> }</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> </span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> [[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> from_axis_angle(const micron::vector_3&lt;T&gt; &amp;axis, T angle) noexcept</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> {</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   return from_axis_angle&lt;T&gt;(axis.x, axis.y, axis.z, angle);</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> }</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> </span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> template&lt;ieee754_floating T&gt; struct axis_angle_t {</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>   micron::vector_3&lt;T&gt; axis;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   T angle;</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> };</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> </span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> // NOTE: uses atan2(|v|, w) instead of acos(w) for numerical stability (slower)</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> // returns angle in [0, 2pi] with the recovered axis chosen so that from_axis_angle(axis, angle) reconstructs the input quaternion</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> [[nodiscard]] inline constexpr axis_angle_t&lt;T&gt;</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> to_axis_angle(const quaternion&lt;T&gt; &amp;q) noexcept</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> {</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>   const T ax = math::fabs(q.x);</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>   const T ay = math::fabs(q.y);</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>   const T az = math::fabs(q.z);</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>   const T aw = math::fabs(q.w);</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   const T m = math::fmax(math::fmax(ax, ay), math::fmax(az, aw));</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   if ( m == T(0) ) {</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>     return axis_angle_t&lt;T&gt;{ micron::vector_3&lt;T&gt;{ T(1), T(0), T(0) }, T(0) };</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>   }</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>   const T inv_m = T(1) / m;</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   const T sx = q.x * inv_m;</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   const T sy = q.y * inv_m;</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>   const T sz = q.z * inv_m;</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>   const T sw = q.w * inv_m;</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>   const T inv_n = math::frsqrt(sx * sx + sy * sy + sz * sz + sw * sw) * inv_m;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>   const T nx = q.x * inv_n;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   const T ny = q.y * inv_n;</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>   const T nz = q.z * inv_n;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>   const T nw = q.w * inv_n;</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   const T v2 = nx * nx + ny * ny + nz * nz;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   const T v_norm = math::fsqrt(v2);</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>   // atan2 is exact for every representable v_norm; only the 1/v_norm below needs a floor</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>   if ( v_norm &lt;= __safe_min_n2&lt;T&gt;() ) {</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>     return axis_angle_t&lt;T&gt;{ micron::vector_3&lt;T&gt;{ T(1), T(0), T(0) }, T(0) };</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>   }</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>   const T half_angle = math::atan2&lt;T&gt;(v_norm, nw);</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>   const T inv_v = T(1) / v_norm;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>   return axis_angle_t&lt;T&gt;{ micron::vector_3&lt;T&gt;{ nx * inv_v, ny * inv_v, nz * inv_v }, T(2) * half_angle };</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> }</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> </span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> // NOTE: faster acos(w)-based decomposition</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> [[nodiscard]] inline constexpr axis_angle_t&lt;T&gt;</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> to_axis_angle_fast(const quaternion&lt;T&gt; &amp;q) noexcept</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> {</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   T w_clamped = q.w;</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   if ( w_clamped &gt; T(1) ) w_clamped = T(1);</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   if ( w_clamped &lt; T(-1) ) w_clamped = T(-1);</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   const T half_angle = math::acos&lt;T&gt;(w_clamped);</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   const T s = math::sin&lt;T&gt;(half_angle);</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>   if ( math::fabs(s) &lt; math::default_eps&lt;T&gt;() ) {</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>     return axis_angle_t&lt;T&gt;{ micron::vector_3&lt;T&gt;{ T(1), T(0), T(0) }, T(0) };</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   }</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   const T inv_s = T(1) / s;</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   return axis_angle_t&lt;T&gt;{ micron::vector_3&lt;T&gt;{ q.x * inv_s, q.y * inv_s, q.z * inv_s }, T(2) * half_angle };</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> }</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> </span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> // Shepperd&#x27;s method</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> [[nodiscard]] inline constexpr quaternion&lt;T&gt;</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> from_matrix(const mat&lt;T, 3, 3&gt; &amp;R) noexcept</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> {</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>   const T *__restrict__ d = R.data;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>   const T m00 = d[0], m01 = d[1], m02 = d[2];</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>   const T m10 = d[3], m11 = d[4], m12 = d[5];</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>   const T m20 = d[6], m21 = d[7], m22 = d[8];</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>   const T tr = m00 + m11 + m22;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>   const T eps = math::default_eps&lt;T&gt;();</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>   T x, y, z, w;</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>   if ( tr &gt; T(0) ) {</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>     const T r = tr + T(1);</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>     const T s = math::fsqrt(r &gt; T(0) ? r : T(0)) * T(2);</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>     const T inv_s = (s &gt; eps) ? T(1) / s : T(0);</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>     w = T(0.25) * s;</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>     x = (m21 - m12) * inv_s;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>     y = (m02 - m20) * inv_s;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     z = (m10 - m01) * inv_s;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>   } else if ( m00 &gt; m11 &amp;&amp; m00 &gt; m22 ) {</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     const T r = T(1) + m00 - m11 - m22;</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     const T s = math::fsqrt(r &gt; T(0) ? r : T(0)) * T(2);</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>     const T inv_s = (s &gt; eps) ? T(1) / s : T(0);</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>     x = T(0.25) * s;</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     y = (m01 + m10) * inv_s;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>     z = (m02 + m20) * inv_s;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>     w = (m21 - m12) * inv_s;</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>   } else if ( m11 &gt; m22 ) {</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>     const T r = T(1) + m11 - m00 - m22;</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     const T s = math::fsqrt(r &gt; T(0) ? r : T(0)) * T(2);</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>     const T inv_s = (s &gt; eps) ? T(1) / s : T(0);</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>     y = T(0.25) * s;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>     x = (m01 + m10) * inv_s;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     z = (m12 + m21) * inv_s;</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>     w = (m02 - m20) * inv_s;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>   } else {</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>     const T r = T(1) + m22 - m00 - m11;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>     const T s = math::fsqrt(r &gt; T(0) ? r : T(0)) * T(2);</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     const T inv_s = (s &gt; eps) ? T(1) / s : T(0);</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     z = T(0.25) * s;</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     x = (m02 + m20) * inv_s;</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>     y = (m12 + m21) * inv_s;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>     w = (m10 - m01) * inv_s;</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>   }</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>   const T n2 = x * x + y * y + z * z + w * w;</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>   // exact-zero OR non-finite (NaN/Inf input matrix yields NaN n2) -&gt; fall back to identity</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>   if ( n2 == T(0) || !ieee::is_finite(n2) ) return identity&lt;T&gt;();</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>   const T inv_n = math::frsqrt(n2);</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>   return quaternion&lt;T&gt;{ x * inv_n, y * inv_n, z * inv_n, w * inv_n };</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a> }</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a> </span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a> [[nodiscard, gnu::always_inline]] inline constexpr mat&lt;T, 3, 3&gt;</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a> to_matrix(const quaternion&lt;T&gt; &amp;q) noexcept</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a> {</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>   quat&lt;T&gt; qq{};</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>   qq.data[0] = q.x;</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>   qq.data[1] = q.y;</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   qq.data[2] = q.z;</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>   qq.data[3] = q.w;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>   return blas::identities::from_quat&lt;T&gt;(qq);</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a> }</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> </span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> // v&#x27; = (2w^2/|q|^2 - 1) v + (2 (u . v)/|q|^2) u + (2 w/|q|^2) (u x v)</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> [[nodiscard]] inline constexpr micron::vector_3&lt;T&gt;</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a> rotate(const quaternion&lt;T&gt; &amp;q, const micron::vector_3&lt;T&gt; &amp;v) noexcept</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> {</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>   const T ux = q.x, uy = q.y, uz = q.z, w = q.w;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   const T n2 = ux * ux + uy * uy + uz * uz + w * w;</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>   if ( n2 == T(0) ) return v;</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>   const T inv_n2 = T(1) / n2;</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>   const T two_inv_n2 = T(2) * inv_n2;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>   const T a = w * w * two_inv_n2 - T(1);</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   const T b = (ux * v.x + uy * v.y + uz * v.z) * two_inv_n2;</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>   const T c = w * two_inv_n2;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   const T cx = uy * v.z - uz * v.y;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>   const T cy = uz * v.x - ux * v.z;</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>   const T cz = ux * v.y - uy * v.x;</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   return micron::vector_3&lt;T&gt;{ a * v.x + b * ux + c * cx, a * v.y + b * uy + c * cy, a * v.z + b * uz + c * cz };</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> }</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a> </span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a> [[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a> x_quat(T angle) noexcept</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a> {</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>   T s, c;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>   math::sincos&lt;T&gt;(angle * T(0.5), s, c);</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   return quaternion&lt;T&gt;{ s, T(0), T(0), c };</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a> }</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> </span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> [[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a> y_quat(T angle) noexcept</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a> {</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>   T s, c;</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   math::sincos&lt;T&gt;(angle * T(0.5), s, c);</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>   return quaternion&lt;T&gt;{ T(0), s, T(0), c };</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a> }</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a> </span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a> [[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a> z_quat(T angle) noexcept</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a> {</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>   T s, c;</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>   math::sincos&lt;T&gt;(angle * T(0.5), s, c);</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>   return quaternion&lt;T&gt;{ T(0), T(0), s, c };</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> }</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a> </span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a> [[nodiscard]] inline constexpr micron::vector_3&lt;T&gt;</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a> __orthonormal_axis(const micron::vector_3&lt;T&gt; &amp;a) noexcept</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a> {</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>   const T ax = math::fabs(a.x), ay = math::fabs(a.y), az = math::fabs(a.z);</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>   const micron::vector_3&lt;T&gt; basis = (ax &lt;= ay &amp;&amp; ax &lt;= az) ? micron::vector_3&lt;T&gt;{ T(1), T(0), T(0) }</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>                                     : (ay &lt;= az)           ? micron::vector_3&lt;T&gt;{ T(0), T(1), T(0) }</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>                                                            : micron::vector_3&lt;T&gt;{ T(0), T(0), T(1) };</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>   const micron::vector_3&lt;T&gt; axis{ a.y * basis.z - a.z * basis.y, a.z * basis.x - a.x * basis.z, a.x * basis.y - a.y * basis.x };</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>   const T inv = math::frsqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>   return micron::vector_3&lt;T&gt;{ axis.x * inv, axis.y * inv, axis.z * inv };</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> }</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a> </span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> // shortest-arc rotation taking the unit vector a onto the unit vector b</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> [[nodiscard]] inline constexpr quaternion&lt;T&gt;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a> from_unit_vectors(const micron::vector_3&lt;T&gt; &amp;a, const micron::vector_3&lt;T&gt; &amp;b) noexcept</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a> {</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>   const T d = a.x * b.x + a.y * b.y + a.z * b.z;</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>   const T cx = a.y * b.z - a.z * b.y;</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>   const T cy = a.z * b.x - a.x * b.z;</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>   const T cz = a.x * b.y - a.y * b.x;</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>   const T w = T(1) + d;</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>   if ( w &gt; math::default_eps&lt;T&gt;() ) return quaternion&lt;T&gt;{ cx, cy, cz, w }.normalized();</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>   const micron::vector_3&lt;T&gt; axis = __orthonormal_axis&lt;T&gt;(a);</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>   return quaternion&lt;T&gt;{ axis.x, axis.y, axis.z, T(0) };</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a> }</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> </span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a> template&lt;ieee754_floating T&gt;</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a> [[nodiscard]] inline constexpr quaternion&lt;T&gt;</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a> from_two_vectors(const micron::vector_3&lt;T&gt; &amp;a, const micron::vector_3&lt;T&gt; &amp;b) noexcept</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a> {</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>   const T ma = math::fmax(math::fabs(a.x), math::fmax(math::fabs(a.y), math::fabs(a.z)));</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>   const T mb = math::fmax(math::fabs(b.x), math::fmax(math::fabs(b.y), math::fabs(b.z)));</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>   if ( ma == T(0) || mb == T(0) ) return identity&lt;T&gt;();</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>   const T ia = T(1) / math::fmax(ma, __safe_min_n2&lt;T&gt;());</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>   const T ib = T(1) / math::fmax(mb, __safe_min_n2&lt;T&gt;());</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>   const micron::vector_3&lt;T&gt; sa{ a.x * ia, a.y * ia, a.z * ia };</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>   const micron::vector_3&lt;T&gt; sb{ b.x * ib, b.y * ib, b.z * ib };</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>   const T s = math::fsqrt(sa.x * sa.x + sa.y * sa.y + sa.z * sa.z) * math::fsqrt(sb.x * sb.x + sb.y * sb.y + sb.z * sb.z);</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>   const T d = sa.x * sb.x + sa.y * sb.y + sa.z * sb.z;</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>   const T cx = sa.y * sb.z - sa.z * sb.y;</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>   const T cy = sa.z * sb.x - sa.x * sb.z;</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>   const T cz = sa.x * sb.y - sa.y * sb.x;</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>   const T w = s + d;</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a>   if ( w &gt; math::default_eps&lt;T&gt;() * s ) return quaternion&lt;T&gt;{ cx, cy, cz, w }.normalized();</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>   const micron::vector_3&lt;T&gt; axis = __orthonormal_axis&lt;T&gt;(sa);</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>   return quaternion&lt;T&gt;{ axis.x, axis.y, axis.z, T(0) };</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> }</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> </span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a> };      // namespace quaternions</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> };      // namespace math</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

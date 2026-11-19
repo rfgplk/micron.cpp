@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>maps/heap_swiss.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">maps/heap_swiss.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/maps/heap_swiss.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> #include &quot;../bits.hpp&quot;</span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../bits/__arch.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;../hash/hash.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../simd/aliases.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../simd/types.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;../types.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> </span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #include &quot;bits.hpp&quot;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> </span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../allocator.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../except.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;../memory/actions.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../memory/allocation/resources.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;../memory/new.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;../tuple.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> </span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #include &quot;swiss.hpp&quot;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> </span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> namespace micron</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> {</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> </span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> // growable heap-backed swiss table, other same as swiss_map</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> template&lt;typename K, typename V, class Alloc = micron::allocator_serial&lt;&gt;&gt;</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>   requires micron::is_copy_constructible_v&lt;V&gt; and micron::is_move_constructible_v&lt;V&gt;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> class heap_swiss_map</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> {</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>   struct __hs_entry {</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>     K key;</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>     V value;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> </span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>     __hs_entry() : key{}, value{} { }</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> </span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>     __hs_entry(const K &amp;k, const V &amp;v) : key(k), value(v) { }</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> </span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>     __hs_entry(K &amp;&amp;k, V &amp;&amp;v) : key(micron::move(k)), value(micron::move(v)) { }</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> </span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>     __hs_entry(const __hs_entry &amp;) = default;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>     __hs_entry(__hs_entry &amp;&amp;) = default;</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>     __hs_entry &amp;operator=(const __hs_entry &amp;) = default;</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>     __hs_entry &amp;operator=(__hs_entry &amp;&amp;) = default;</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>   };</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> </span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   using __storage_alloc = __maps::storage_allocator&lt;Alloc, __hs_entry&gt;;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> </span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   u8 *__ctrl = nullptr;</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   __hs_entry *__entries = nullptr;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   chunk&lt;byte&gt; __ctrl_block{ nullptr, 0 };</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>   chunk&lt;byte&gt; __entry_block{ nullptr, 0 };</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   usize __n_slots = 0;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>   usize __cap_mask = 0;</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   usize __size = 0;</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>   usize __growth_left = 0;      // slots remaining before resize</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> </span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   static constexpr usize __min_cap = 16;</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>   static constexpr usize __group = 16;</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>   static constexpr usize __load_num = 7;</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>   static constexpr usize __load_denom = 8;</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> </span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   static usize</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>   round_pow2(usize n) noexcept</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>   {</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>     if ( n &lt;= __min_cap ) return __min_cap;</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>     usize p = 1;</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>     while ( p &lt; n ) {</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>       usize np = p &lt;&lt; 1;</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>       if ( np &lt;= p ) return p;      // overflow: saturate (the subsequent alloc will throw)</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>       p = np;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>     }</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>     return p;</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>   }</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> </span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   static constexpr u8</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   __h2(hash64_t h) noexcept</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>   {</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>     u8 v = static_cast&lt;u8&gt;((h &gt;&gt; 40) &amp; 0x7Fu);</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>     u8 c = static_cast&lt;u8&gt;(v | __sentinel);</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     return c &gt;= __deleted ? static_cast&lt;u8&gt;(c - 2u) : c;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   }</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> </span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>   static constexpr usize</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   __h1(hash64_t h) noexcept</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   {</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>     return static_cast&lt;usize&gt;(h);</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>   }</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> </span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>   ::micron::__mask</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>   __match_h2(u8 hash_val, usize ind) const noexcept</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>   {</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>     simd::i128 m = simd::sse::splat_i8(static_cast&lt;char&gt;(hash_val));</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>     simd::i128 c = simd::sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(&amp;__ctrl[ind]));</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>     return ::micron::__mask(simd::sse::movemask_i8(simd::sse::eq_i8(m, c)));</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> #elif defined(__micron_arm_neon)</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>     uint8x16_t m = simd::neon::splat_u8(hash_val);</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>     uint8x16_t c = simd::neon::load_u8(&amp;__ctrl[ind]);</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>     return ::micron::__mask(static_cast&lt;i32&gt;(simd::neon::movemask_u8(simd::neon::eq(c, m))));</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> #else</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>     i32 r = 0;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>     for ( usize i = 0; i &lt; 16; ++i )</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>       if ( __ctrl[ind + i] == hash_val ) r |= (1 &lt;&lt; i);</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>     return ::micron::__mask(r);</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> #endif</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>   }</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> </span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   ::micron::__mask</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>   __match_empty_slots(usize ind) const noexcept</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>   {</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>     simd::i128 e = simd::sse::splat_i8(static_cast&lt;char&gt;(__empty));</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>     simd::i128 c = simd::sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(&amp;__ctrl[ind]));</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>     return ::micron::__mask(simd::sse::movemask_i8(simd::sse::eq_i8(e, c)));</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> #elif defined(__micron_arm_neon)</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>     uint8x16_t e = simd::neon::splat_u8(__empty);</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>     uint8x16_t c = simd::neon::load_u8(&amp;__ctrl[ind]);</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>     return ::micron::__mask(static_cast&lt;i32&gt;(simd::neon::movemask_u8(simd::neon::eq(c, e))));</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> #else</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>     i32 r = 0;</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     for ( usize i = 0; i &lt; 16; ++i )</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>       if ( __ctrl[ind + i] == __empty ) r |= (1 &lt;&lt; i);</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     return ::micron::__mask(r);</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> #endif</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>   }</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> </span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   ::micron::__mask</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>   __match_empty_or_del(usize ind) const noexcept</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   {</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     simd::i128 c = simd::sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(&amp;__ctrl[ind]));</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>     simd::i128 e = simd::sse::splat_i8(static_cast&lt;char&gt;(__empty));</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     simd::i128 d = simd::sse::splat_i8(static_cast&lt;char&gt;(__deleted));</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     return ::micron::__mask(simd::sse::movemask_i8(simd::sse::or_i128(simd::sse::eq_i8(c, e), simd::sse::eq_i8(c, d))));</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> #elif defined(__micron_arm_neon)</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>     uint8x16_t c = simd::neon::load_u8(&amp;__ctrl[ind]);</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     uint8x16_t e = simd::neon::splat_u8(__empty);</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>     uint8x16_t d = simd::neon::splat_u8(__deleted);</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>     return ::micron::__mask(static_cast&lt;i32&gt;(simd::neon::movemask_u8(simd::neon::or_(simd::neon::eq(c, e), simd::neon::eq(c, d)))));</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> #else</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>     i32 r = 0;</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     for ( usize i = 0; i &lt; 16; ++i ) {</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>       u8 cc = __ctrl[ind + i];</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>       if ( cc == __empty || cc == __deleted ) r |= (1 &lt;&lt; i);</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>     }</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>     return ::micron::__mask(r);</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> #endif</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>   }</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> </span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   void</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   __alloc_storage(usize n_slots)</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>   {</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     if ( n_slots &gt; static_cast&lt;usize&gt;(-1) - __group || n_slots &gt; static_cast&lt;usize&gt;(-1) / sizeof(__hs_entry) )</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>       exc&lt;except::library_error&gt;(&quot;heap_swiss_map: capacity overflow&quot;);</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>     chunk&lt;byte&gt; ctrl_block = __allocator_create&lt;Alloc, alignof(u8)&gt;(n_slots + __group);</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>     u8 *ctrl = reinterpret_cast&lt;u8 *&gt;(ctrl_block.ptr);</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> #if !defined(__micron_freestanding) || defined(__micron_eh)</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>     try {</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a> #endif</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>       chunk&lt;byte&gt; blk = __storage_alloc::create(n_slots * sizeof(__hs_entry));</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>       micron::memset(ctrl, __empty, n_slots + __group);</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>       __ctrl = ctrl;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>       __entries = micron::ptr_cast&lt;__hs_entry *&gt;(blk.ptr);</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>       __ctrl_block = ctrl_block;</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>       __entry_block = blk;</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>       __n_slots = n_slots;</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>       __cap_mask = n_slots - 1u;</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>       __growth_left = n_slots * __load_num / __load_denom;</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a> #if !defined(__micron_freestanding) || defined(__micron_eh)</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>     } catch ( ... ) {</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>       __allocator_destroy&lt;Alloc, alignof(u8)&gt;(ctrl_block);</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>       throw;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>     }</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a> #endif</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>   }</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> </span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>   void</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>   __destroy_occupied() noexcept</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>   {</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>     if ( !__entries || !__ctrl ) return;</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>     if constexpr ( !micron::is_trivially_destructible_v&lt;__hs_entry&gt; ) {</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>       for ( usize i = 0; i &lt; __n_slots; ++i ) {</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>         u8 c = __ctrl[i];</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>         if ( c != __empty &amp;&amp; c != __deleted ) __entries[i].~__hs_entry();</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>       }</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>     }</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   }</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a> </span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   void</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>   __free_storage() noexcept</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>   {</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>     if ( __ctrl ) {</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>       __allocator_destroy&lt;Alloc, alignof(u8)&gt;(__ctrl_block);</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>       __ctrl = nullptr;</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>       __ctrl_block = { nullptr, 0 };</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>     }</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>     if ( __entries ) {</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>       __storage_alloc::destroy(__entry_block);</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>       __entries = nullptr;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>       __entry_block = { nullptr, 0 };</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>     }</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>   }</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> </span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>   void</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>   __mirror_ctrl(usize probe, u8 v) noexcept</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   {</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>     __ctrl[probe] = v;</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>     if ( probe &lt; __group ) __ctrl[__n_slots + probe] = v;</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   }</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a> </span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>   template&lt;typename KK, typename VV&gt;</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>   V *</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   __probe_insert(KK &amp;&amp;key, VV &amp;&amp;value, u8 h2, usize start)</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   {</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>     usize i = 0;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>     while ( i &lt; __n_slots ) {</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>       usize g = (start + i) &amp; __cap_mask;</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>       ::micron::__mask em = __match_empty_or_del(g);</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>       if ( em.any() ) {</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>         usize probe = (g + em.lowest()) &amp; __cap_mask;</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>         bool consumed_empty = (__ctrl[probe] == __empty);</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>         new (micron::addr(__entries[probe])) __hs_entry{ micron::forward&lt;KK&gt;(key), micron::forward&lt;VV&gt;(value) };</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>         __mirror_ctrl(probe, h2);</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>         ++__size;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>         if ( consumed_empty ) --__growth_left;</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>         return micron::addr(__entries[probe].value);</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>       }</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>       i += __group;</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>     }</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>     return nullptr;</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>   }</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> </span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>   V *</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   __probe_find(const K &amp;key, u8 h2, usize start) const</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>   {</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>     if ( !__ctrl ) return nullptr;</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>     usize i = 0;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>     while ( i &lt; __n_slots ) {</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>       usize g = (start + i) &amp; __cap_mask;</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>       ::micron::__mask m = __match_h2(h2, g);</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>       while ( m.any() ) {</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>         usize probe = (g + m.lowest()) &amp; __cap_mask;</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>         if ( __entries[probe].key == key ) return const_cast&lt;V *&gt;(micron::addr(__entries[probe].value));</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>         m.clear_lowest();</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>       }</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>       if ( __match_empty_slots(g).any() ) return nullptr;</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>       i += __group;</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     }</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>     return nullptr;</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>   }</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a> </span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>   void</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>   __rehash(usize new_n_slots)</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>   {</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>     heap_swiss_map next(new_n_slots);</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>     if constexpr ( micron::is_copy_constructible_v&lt;K&gt; ) {</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>       for ( usize i = 0; i &lt; __n_slots; ++i ) {</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>         u8 c = __ctrl[i];</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>         if ( c == __empty || c == __deleted ) continue;</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>         hash64_t kh = hash&lt;hash64_t&gt;(__entries[i].key);</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>         next.__probe_insert(__entries[i].key, __entries[i].value, __h2(kh), __h1(kh) &amp; next.__cap_mask);</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>       }</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>     } else {</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>       for ( usize i = 0; i &lt; __n_slots; ++i ) {</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>         u8 c = __ctrl[i];</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>         if ( c == __empty || c == __deleted ) continue;</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a>         hash64_t kh = hash&lt;hash64_t&gt;(__entries[i].key);</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>         next.__probe_insert(micron::move(__entries[i].key), micron::move(__entries[i].value), __h2(kh), __h1(kh) &amp; next.__cap_mask);</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>       }</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>     }</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>     swap(next);</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>   }</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> </span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>   void</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>   __grow_for_insert()</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>   {</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>     if ( __n_slots &gt; static_cast&lt;usize&gt;(-1) / 2u ) exc&lt;except::library_error&gt;(&quot;heap_swiss_map: capacity overflow&quot;);</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>     __rehash(__n_slots * 2u);</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a>   }</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a> </span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>   template&lt;typename KK, typename VV&gt;</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>   micron::pair&lt;bool, V *&gt;</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>   __insert_known_hash(hash64_t kh, KK &amp;&amp;key, VV &amp;&amp;value, bool assign)</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>   {</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a>     u8 h2 = __h2(kh);</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>     usize start = __h1(kh) &amp; __cap_mask;</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>     V *existing = __probe_find(key, h2, start);</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>     if ( existing ) {</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>       if ( assign ) *existing = micron::forward&lt;VV&gt;(value);</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a>       return { false, existing };</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>     }</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>     if ( __growth_left == 0 ) {</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>       __grow_for_insert();</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>       start = __h1(kh) &amp; __cap_mask;</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>     }</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>     return { true, __probe_insert(micron::forward&lt;KK&gt;(key), micron::forward&lt;VV&gt;(value), h2, start) };</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>   }</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> </span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a> public:</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>   using category_type = map_tag;</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>   using mutability_type = mutable_tag;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a>   using memory_type = heap_tag;</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a>   typedef usize size_type;</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a>   typedef K key_type;</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a>   typedef V mapped_type;</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a>   typedef __hs_entry value_type;</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a>   typedef __hs_entry &amp;reference;</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a>   typedef const __hs_entry &amp;const_reference;</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a>   typedef __hs_entry *pointer;</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a>   typedef const __hs_entry *const_pointer;</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a> </span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>   ~heap_swiss_map()</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>   {</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>     __destroy_occupied();</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>     __free_storage();</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>   }</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a> </span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>   heap_swiss_map() { __alloc_storage(__min_cap); }</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a> </span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>   explicit heap_swiss_map(usize n) { __alloc_storage(round_pow2(n)); }</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a> </span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>   heap_swiss_map(const heap_swiss_map &amp;o)</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a>   {</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>     if ( !o.__ctrl ) return;</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>     __alloc_storage(o.__n_slots);</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a> #if !defined(__micron_freestanding) || defined(__micron_eh)</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>     try {</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a> #endif</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>       for ( usize i = 0; i &lt; o.__n_slots; ++i ) {</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>         u8 c = o.__ctrl[i];</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>         if ( c == __deleted ) {</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>           __mirror_ctrl(i, __deleted);</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>         } else if ( c != __empty ) {</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>           new (micron::addr(__entries[i])) __hs_entry(o.__entries[i]);</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>           __mirror_ctrl(i, c);</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>           ++__size;</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>         }</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>       }</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a> #if !defined(__micron_freestanding) || defined(__micron_eh)</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>     } catch ( ... ) {</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>       __destroy_occupied();</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a>       __free_storage();</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a>       throw;</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>     }</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a> #endif</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>     __growth_left = o.__growth_left;</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>   }</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a> </span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>   heap_swiss_map(heap_swiss_map &amp;&amp;o) noexcept</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a>       : __ctrl(o.__ctrl), __entries(o.__entries), __ctrl_block(o.__ctrl_block), __entry_block(o.__entry_block), __n_slots(o.__n_slots),</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>         __cap_mask(o.__cap_mask), __size(o.__size), __growth_left(o.__growth_left)</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>   {</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>     o.__ctrl = nullptr;</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>     o.__entries = nullptr;</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>     o.__ctrl_block = { nullptr, 0 };</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a>     o.__entry_block = { nullptr, 0 };</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>     o.__n_slots = 0;</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a>     o.__cap_mask = 0;</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>     o.__size = 0;</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a>     o.__growth_left = 0;</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>   }</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a> </span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>   heap_swiss_map &amp;</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a>   operator=(const heap_swiss_map &amp;o)</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>   {</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>     if ( this == &amp;o ) return *this;</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>     heap_swiss_map next(o);</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a>     swap(next);</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a>     return *this;</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a>   }</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a> </span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>   heap_swiss_map &amp;</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>   operator=(heap_swiss_map &amp;&amp;o) noexcept</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>   {</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a>     if ( this == &amp;o ) return *this;</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>     __destroy_occupied();</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>     __free_storage();</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>     __ctrl = o.__ctrl;</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a>     __entries = o.__entries;</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>     __ctrl_block = o.__ctrl_block;</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>     __entry_block = o.__entry_block;</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>     __n_slots = o.__n_slots;</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>     __cap_mask = o.__cap_mask;</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a>     __size = o.__size;</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>     __growth_left = o.__growth_left;</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>     o.__ctrl = nullptr;</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>     o.__entries = nullptr;</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>     o.__ctrl_block = { nullptr, 0 };</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>     o.__entry_block = { nullptr, 0 };</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a>     o.__n_slots = 0;</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>     o.__cap_mask = 0;</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a>     o.__size = 0;</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a>     o.__growth_left = 0;</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>     return *this;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a>   }</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a> </span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a>   usize</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>   size() const noexcept</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>   {</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>     return __size;</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>   }</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a> </span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>   usize</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a>   max_size() const noexcept</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a>   {</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>     return __n_slots;</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>   }</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a> </span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>   usize</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>   capacity() const noexcept</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>   {</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>     return __n_slots;</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>   }</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a> </span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a>   bool</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a>   empty() const noexcept</span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a>   {</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>     return __size == 0;</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>   }</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a> </span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>   float</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>   load_factor() const noexcept</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>   {</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>     return __n_slots &gt; 0u ? static_cast&lt;float&gt;(__size) / static_cast&lt;float&gt;(__n_slots) : 0.0f;</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>   }</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a> </span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>   void</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>   clear() noexcept</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>   {</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a>     __destroy_occupied();</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a>     if ( __ctrl ) micron::memset(__ctrl, __empty, __n_slots + __group);</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>     __size = 0;</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>     __growth_left = __n_slots * __load_num / __load_denom;</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a>   }</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a> </span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a>   void</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a>   reserve(usize n)</span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>   {</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>     usize need = round_pow2(n);</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>     if ( need &gt; __n_slots ) __rehash(need);</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>   }</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a> </span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>   template&lt;typename KK, typename VV&gt;</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>   micron::pair&lt;bool, V *&gt;</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>   insert_or_assign(KK &amp;&amp;key, VV &amp;&amp;value)</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>   {</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>     hash64_t kh = hash&lt;hash64_t&gt;(key);</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a>     return __insert_known_hash(kh, micron::forward&lt;KK&gt;(key), micron::forward&lt;VV&gt;(value), true);</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>   }</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a> </span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>   micron::pair&lt;bool, V *&gt;</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>   insert(const K &amp;key, const V &amp;value)</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>   {</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>     hash64_t kh = hash&lt;hash64_t&gt;(key);</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>     return __insert_known_hash(kh, key, value, false);</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a>   }</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a> </span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>   micron::pair&lt;bool, V *&gt;</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>   insert(K &amp;&amp;key, V &amp;&amp;value)</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>   {</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>     hash64_t kh = hash&lt;hash64_t&gt;(key);</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>     return __insert_known_hash(kh, micron::move(key), micron::move(value), false);</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a>   }</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a> </span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>   micron::pair&lt;bool, V *&gt;</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>   insert(const micron::pair&lt;K, V&gt; &amp;kv)</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>   {</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>     return insert(kv.a, kv.b);</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a>   }</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a> </span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a>   micron::pair&lt;bool, V *&gt;</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>   insert_hash(hash64_t kh, const K &amp;key, const V &amp;value)</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>   {</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>     return __insert_known_hash(kh, key, value, false);</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a>   }</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a> </span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>   micron::pair&lt;bool, V *&gt;</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a>   insert_hash(hash64_t kh, const K &amp;key, V &amp;&amp;value)</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a>   {</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>     return __insert_known_hash(kh, key, micron::move(value), false);</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>   }</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a> </span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>   template&lt;typename... Args&gt;</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a>   micron::pair&lt;bool, V *&gt;</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a>   emplace(const K &amp;key, Args &amp;&amp;...args)</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a>   {</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a>     hash64_t kh = hash&lt;hash64_t&gt;(key);</span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a>     return __insert_known_hash(kh, K(key), V(micron::forward&lt;Args&gt;(args)...), false);</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a>   }</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a> </span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a>   V *</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a>   find_hash(hash64_t kh, const K &amp;key)</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a>   {</span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a>     return __probe_find(key, __h2(kh), __h1(kh) &amp; __cap_mask);</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a>   }</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a> </span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a>   const V *</span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a>   find_hash(hash64_t kh, const K &amp;key) const</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a>   {</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a>     return __probe_find(key, __h2(kh), __h1(kh) &amp; __cap_mask);</span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a>   }</span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a> </span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a>   V *</span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a>   find(const K &amp;key)</span>
+<span id="L508" class="source-line"><a class="line-number" href="#L508">508</a>   {</span>
+<span id="L509" class="source-line"><a class="line-number" href="#L509">509</a>     hash64_t kh = hash&lt;hash64_t&gt;(key);</span>
+<span id="L510" class="source-line"><a class="line-number" href="#L510">510</a>     return find_hash(kh, key);</span>
+<span id="L511" class="source-line"><a class="line-number" href="#L511">511</a>   }</span>
+<span id="L512" class="source-line"><a class="line-number" href="#L512">512</a> </span>
+<span id="L513" class="source-line"><a class="line-number" href="#L513">513</a>   const V *</span>
+<span id="L514" class="source-line"><a class="line-number" href="#L514">514</a>   find(const K &amp;key) const</span>
+<span id="L515" class="source-line"><a class="line-number" href="#L515">515</a>   {</span>
+<span id="L516" class="source-line"><a class="line-number" href="#L516">516</a>     hash64_t kh = hash&lt;hash64_t&gt;(key);</span>
+<span id="L517" class="source-line"><a class="line-number" href="#L517">517</a>     return find_hash(kh, key);</span>
+<span id="L518" class="source-line"><a class="line-number" href="#L518">518</a>   }</span>
+<span id="L519" class="source-line"><a class="line-number" href="#L519">519</a> </span>
+<span id="L520" class="source-line"><a class="line-number" href="#L520">520</a>   bool</span>
+<span id="L521" class="source-line"><a class="line-number" href="#L521">521</a>   contains(const K &amp;key) const</span>
+<span id="L522" class="source-line"><a class="line-number" href="#L522">522</a>   {</span>
+<span id="L523" class="source-line"><a class="line-number" href="#L523">523</a>     return find(key) != nullptr;</span>
+<span id="L524" class="source-line"><a class="line-number" href="#L524">524</a>   }</span>
+<span id="L525" class="source-line"><a class="line-number" href="#L525">525</a> </span>
+<span id="L526" class="source-line"><a class="line-number" href="#L526">526</a>   usize</span>
+<span id="L527" class="source-line"><a class="line-number" href="#L527">527</a>   count(const K &amp;key) const</span>
+<span id="L528" class="source-line"><a class="line-number" href="#L528">528</a>   {</span>
+<span id="L529" class="source-line"><a class="line-number" href="#L529">529</a>     return find(key) ? 1u : 0u;</span>
+<span id="L530" class="source-line"><a class="line-number" href="#L530">530</a>   }</span>
+<span id="L531" class="source-line"><a class="line-number" href="#L531">531</a> </span>
+<span id="L532" class="source-line"><a class="line-number" href="#L532">532</a>   V &amp;</span>
+<span id="L533" class="source-line"><a class="line-number" href="#L533">533</a>   at(const K &amp;key)</span>
+<span id="L534" class="source-line"><a class="line-number" href="#L534">534</a>   {</span>
+<span id="L535" class="source-line"><a class="line-number" href="#L535">535</a>     V *v = find(key);</span>
+<span id="L536" class="source-line"><a class="line-number" href="#L536">536</a>     if ( !v ) [[unlikely]]</span>
+<span id="L537" class="source-line"><a class="line-number" href="#L537">537</a>       exc&lt;except::library_error&gt;(&quot;heap_swiss_map::at(): key not found&quot;);</span>
+<span id="L538" class="source-line"><a class="line-number" href="#L538">538</a>     return *v;</span>
+<span id="L539" class="source-line"><a class="line-number" href="#L539">539</a>   }</span>
+<span id="L540" class="source-line"><a class="line-number" href="#L540">540</a> </span>
+<span id="L541" class="source-line"><a class="line-number" href="#L541">541</a>   const V &amp;</span>
+<span id="L542" class="source-line"><a class="line-number" href="#L542">542</a>   at(const K &amp;key) const</span>
+<span id="L543" class="source-line"><a class="line-number" href="#L543">543</a>   {</span>
+<span id="L544" class="source-line"><a class="line-number" href="#L544">544</a>     const V *v = find(key);</span>
+<span id="L545" class="source-line"><a class="line-number" href="#L545">545</a>     if ( !v ) [[unlikely]]</span>
+<span id="L546" class="source-line"><a class="line-number" href="#L546">546</a>       exc&lt;except::library_error&gt;(&quot;heap_swiss_map::at(): key not found&quot;);</span>
+<span id="L547" class="source-line"><a class="line-number" href="#L547">547</a>     return *v;</span>
+<span id="L548" class="source-line"><a class="line-number" href="#L548">548</a>   }</span>
+<span id="L549" class="source-line"><a class="line-number" href="#L549">549</a> </span>
+<span id="L550" class="source-line"><a class="line-number" href="#L550">550</a>   V &amp;</span>
+<span id="L551" class="source-line"><a class="line-number" href="#L551">551</a>   operator[](const K &amp;key)</span>
+<span id="L552" class="source-line"><a class="line-number" href="#L552">552</a>   {</span>
+<span id="L553" class="source-line"><a class="line-number" href="#L553">553</a>     hash64_t kh = hash&lt;hash64_t&gt;(key);</span>
+<span id="L554" class="source-line"><a class="line-number" href="#L554">554</a>     V *v = find_hash(kh, key);</span>
+<span id="L555" class="source-line"><a class="line-number" href="#L555">555</a>     if ( v ) return *v;</span>
+<span id="L556" class="source-line"><a class="line-number" href="#L556">556</a>     auto r = __insert_known_hash(kh, key, V{}, false);</span>
+<span id="L557" class="source-line"><a class="line-number" href="#L557">557</a>     if ( !r.b ) [[unlikely]]</span>
+<span id="L558" class="source-line"><a class="line-number" href="#L558">558</a>       exc&lt;except::library_error&gt;(&quot;heap_swiss_map::operator[](): insertion failed&quot;);</span>
+<span id="L559" class="source-line"><a class="line-number" href="#L559">559</a>     return *r.b;</span>
+<span id="L560" class="source-line"><a class="line-number" href="#L560">560</a>   }</span>
+<span id="L561" class="source-line"><a class="line-number" href="#L561">561</a> </span>
+<span id="L562" class="source-line"><a class="line-number" href="#L562">562</a>   void</span>
+<span id="L563" class="source-line"><a class="line-number" href="#L563">563</a>   swap(heap_swiss_map &amp;o) noexcept</span>
+<span id="L564" class="source-line"><a class="line-number" href="#L564">564</a>   {</span>
+<span id="L565" class="source-line"><a class="line-number" href="#L565">565</a>     micron::swap(__ctrl, o.__ctrl);</span>
+<span id="L566" class="source-line"><a class="line-number" href="#L566">566</a>     micron::swap(__entries, o.__entries);</span>
+<span id="L567" class="source-line"><a class="line-number" href="#L567">567</a>     micron::swap(__ctrl_block, o.__ctrl_block);</span>
+<span id="L568" class="source-line"><a class="line-number" href="#L568">568</a>     micron::swap(__entry_block, o.__entry_block);</span>
+<span id="L569" class="source-line"><a class="line-number" href="#L569">569</a>     micron::swap(__n_slots, o.__n_slots);</span>
+<span id="L570" class="source-line"><a class="line-number" href="#L570">570</a>     micron::swap(__cap_mask, o.__cap_mask);</span>
+<span id="L571" class="source-line"><a class="line-number" href="#L571">571</a>     micron::swap(__size, o.__size);</span>
+<span id="L572" class="source-line"><a class="line-number" href="#L572">572</a>     micron::swap(__growth_left, o.__growth_left);</span>
+<span id="L573" class="source-line"><a class="line-number" href="#L573">573</a>   }</span>
+<span id="L574" class="source-line"><a class="line-number" href="#L574">574</a> </span>
+<span id="L575" class="source-line"><a class="line-number" href="#L575">575</a>   template&lt;typename Fn&gt;</span>
+<span id="L576" class="source-line"><a class="line-number" href="#L576">576</a>   void</span>
+<span id="L577" class="source-line"><a class="line-number" href="#L577">577</a>   for_each(Fn &amp;&amp;fn)</span>
+<span id="L578" class="source-line"><a class="line-number" href="#L578">578</a>   {</span>
+<span id="L579" class="source-line"><a class="line-number" href="#L579">579</a>     if ( !__ctrl ) return;</span>
+<span id="L580" class="source-line"><a class="line-number" href="#L580">580</a>     for ( usize i = 0; i &lt; __n_slots; ++i ) {</span>
+<span id="L581" class="source-line"><a class="line-number" href="#L581">581</a>       u8 c = __ctrl[i];</span>
+<span id="L582" class="source-line"><a class="line-number" href="#L582">582</a>       if ( c != __empty &amp;&amp; c != __deleted ) fn(__entries[i].key, __entries[i].value);</span>
+<span id="L583" class="source-line"><a class="line-number" href="#L583">583</a>     }</span>
+<span id="L584" class="source-line"><a class="line-number" href="#L584">584</a>   }</span>
+<span id="L585" class="source-line"><a class="line-number" href="#L585">585</a> </span>
+<span id="L586" class="source-line"><a class="line-number" href="#L586">586</a>   template&lt;typename Fn&gt;</span>
+<span id="L587" class="source-line"><a class="line-number" href="#L587">587</a>   void</span>
+<span id="L588" class="source-line"><a class="line-number" href="#L588">588</a>   for_each(Fn &amp;&amp;fn) const</span>
+<span id="L589" class="source-line"><a class="line-number" href="#L589">589</a>   {</span>
+<span id="L590" class="source-line"><a class="line-number" href="#L590">590</a>     if ( !__ctrl ) return;</span>
+<span id="L591" class="source-line"><a class="line-number" href="#L591">591</a>     for ( usize i = 0; i &lt; __n_slots; ++i ) {</span>
+<span id="L592" class="source-line"><a class="line-number" href="#L592">592</a>       u8 c = __ctrl[i];</span>
+<span id="L593" class="source-line"><a class="line-number" href="#L593">593</a>       if ( c != __empty &amp;&amp; c != __deleted ) fn(__entries[i].key, __entries[i].value);</span>
+<span id="L594" class="source-line"><a class="line-number" href="#L594">594</a>     }</span>
+<span id="L595" class="source-line"><a class="line-number" href="#L595">595</a>   }</span>
+<span id="L596" class="source-line"><a class="line-number" href="#L596">596</a> </span>
+<span id="L597" class="source-line"><a class="line-number" href="#L597">597</a>   bool</span>
+<span id="L598" class="source-line"><a class="line-number" href="#L598">598</a>   erase(const K &amp;key)</span>
+<span id="L599" class="source-line"><a class="line-number" href="#L599">599</a>   {</span>
+<span id="L600" class="source-line"><a class="line-number" href="#L600">600</a>     if ( !__ctrl ) return false;</span>
+<span id="L601" class="source-line"><a class="line-number" href="#L601">601</a>     hash64_t kh = hash&lt;hash64_t&gt;(key);</span>
+<span id="L602" class="source-line"><a class="line-number" href="#L602">602</a>     u8 h2 = __h2(kh);</span>
+<span id="L603" class="source-line"><a class="line-number" href="#L603">603</a>     usize start = __h1(kh) &amp; __cap_mask;</span>
+<span id="L604" class="source-line"><a class="line-number" href="#L604">604</a>     usize i = 0;</span>
+<span id="L605" class="source-line"><a class="line-number" href="#L605">605</a>     while ( i &lt; __n_slots ) {</span>
+<span id="L606" class="source-line"><a class="line-number" href="#L606">606</a>       usize g = (start + i) &amp; __cap_mask;</span>
+<span id="L607" class="source-line"><a class="line-number" href="#L607">607</a>       ::micron::__mask m = __match_h2(h2, g);</span>
+<span id="L608" class="source-line"><a class="line-number" href="#L608">608</a>       while ( m.any() ) {</span>
+<span id="L609" class="source-line"><a class="line-number" href="#L609">609</a>         usize probe = (g + m.lowest()) &amp; __cap_mask;</span>
+<span id="L610" class="source-line"><a class="line-number" href="#L610">610</a>         if ( __entries[probe].key == key ) {</span>
+<span id="L611" class="source-line"><a class="line-number" href="#L611">611</a>           if constexpr ( !micron::is_trivially_destructible_v&lt;__hs_entry&gt; ) __entries[probe].~__hs_entry();</span>
+<span id="L612" class="source-line"><a class="line-number" href="#L612">612</a>           __mirror_ctrl(probe, __deleted);</span>
+<span id="L613" class="source-line"><a class="line-number" href="#L613">613</a>           --__size;</span>
+<span id="L614" class="source-line"><a class="line-number" href="#L614">614</a>           return true;</span>
+<span id="L615" class="source-line"><a class="line-number" href="#L615">615</a>         }</span>
+<span id="L616" class="source-line"><a class="line-number" href="#L616">616</a>         m.clear_lowest();</span>
+<span id="L617" class="source-line"><a class="line-number" href="#L617">617</a>       }</span>
+<span id="L618" class="source-line"><a class="line-number" href="#L618">618</a>       if ( __match_empty_slots(g).any() ) return false;</span>
+<span id="L619" class="source-line"><a class="line-number" href="#L619">619</a>       i += __group;</span>
+<span id="L620" class="source-line"><a class="line-number" href="#L620">620</a>     }</span>
+<span id="L621" class="source-line"><a class="line-number" href="#L621">621</a>     return false;</span>
+<span id="L622" class="source-line"><a class="line-number" href="#L622">622</a>   }</span>
+<span id="L623" class="source-line"><a class="line-number" href="#L623">623</a> </span>
+<span id="L624" class="source-line"><a class="line-number" href="#L624">624</a>   class iterator</span>
+<span id="L625" class="source-line"><a class="line-number" href="#L625">625</a>   {</span>
+<span id="L626" class="source-line"><a class="line-number" href="#L626">626</a>     heap_swiss_map *__m;</span>
+<span id="L627" class="source-line"><a class="line-number" href="#L627">627</a>     usize __i;</span>
+<span id="L628" class="source-line"><a class="line-number" href="#L628">628</a> </span>
+<span id="L629" class="source-line"><a class="line-number" href="#L629">629</a>     void</span>
+<span id="L630" class="source-line"><a class="line-number" href="#L630">630</a>     advance()</span>
+<span id="L631" class="source-line"><a class="line-number" href="#L631">631</a>     {</span>
+<span id="L632" class="source-line"><a class="line-number" href="#L632">632</a>       while ( __i &lt; __m-&gt;__n_slots &amp;&amp; (__m-&gt;__ctrl[__i] == __empty || __m-&gt;__ctrl[__i] == __deleted) ) ++__i;</span>
+<span id="L633" class="source-line"><a class="line-number" href="#L633">633</a>     }</span>
+<span id="L634" class="source-line"><a class="line-number" href="#L634">634</a> </span>
+<span id="L635" class="source-line"><a class="line-number" href="#L635">635</a>   public:</span>
+<span id="L636" class="source-line"><a class="line-number" href="#L636">636</a>     using value_type = micron::pair&lt;const K &amp;, V &amp;&gt;;</span>
+<span id="L637" class="source-line"><a class="line-number" href="#L637">637</a>     using difference_type = ptrdiff_t;</span>
+<span id="L638" class="source-line"><a class="line-number" href="#L638">638</a>     using pointer = micron::pair&lt;const K *, V *&gt;;</span>
+<span id="L639" class="source-line"><a class="line-number" href="#L639">639</a>     using reference = micron::pair&lt;const K &amp;, V &amp;&gt;;</span>
+<span id="L640" class="source-line"><a class="line-number" href="#L640">640</a> </span>
+<span id="L641" class="source-line"><a class="line-number" href="#L641">641</a>     iterator(heap_swiss_map *m, usize i) : __m(m), __i(i) { advance(); }</span>
+<span id="L642" class="source-line"><a class="line-number" href="#L642">642</a> </span>
+<span id="L643" class="source-line"><a class="line-number" href="#L643">643</a>     reference</span>
+<span id="L644" class="source-line"><a class="line-number" href="#L644">644</a>     operator*()</span>
+<span id="L645" class="source-line"><a class="line-number" href="#L645">645</a>     {</span>
+<span id="L646" class="source-line"><a class="line-number" href="#L646">646</a>       return { __m-&gt;__entries[__i].key, __m-&gt;__entries[__i].value };</span>
+<span id="L647" class="source-line"><a class="line-number" href="#L647">647</a>     }</span>
+<span id="L648" class="source-line"><a class="line-number" href="#L648">648</a> </span>
+<span id="L649" class="source-line"><a class="line-number" href="#L649">649</a>     pointer</span>
+<span id="L650" class="source-line"><a class="line-number" href="#L650">650</a>     operator-&gt;()</span>
+<span id="L651" class="source-line"><a class="line-number" href="#L651">651</a>     {</span>
+<span id="L652" class="source-line"><a class="line-number" href="#L652">652</a>       return { micron::addr(__m-&gt;__entries[__i].key), micron::addr(__m-&gt;__entries[__i].value) };</span>
+<span id="L653" class="source-line"><a class="line-number" href="#L653">653</a>     }</span>
+<span id="L654" class="source-line"><a class="line-number" href="#L654">654</a> </span>
+<span id="L655" class="source-line"><a class="line-number" href="#L655">655</a>     iterator &amp;</span>
+<span id="L656" class="source-line"><a class="line-number" href="#L656">656</a>     operator++()</span>
+<span id="L657" class="source-line"><a class="line-number" href="#L657">657</a>     {</span>
+<span id="L658" class="source-line"><a class="line-number" href="#L658">658</a>       ++__i;</span>
+<span id="L659" class="source-line"><a class="line-number" href="#L659">659</a>       advance();</span>
+<span id="L660" class="source-line"><a class="line-number" href="#L660">660</a>       return *this;</span>
+<span id="L661" class="source-line"><a class="line-number" href="#L661">661</a>     }</span>
+<span id="L662" class="source-line"><a class="line-number" href="#L662">662</a> </span>
+<span id="L663" class="source-line"><a class="line-number" href="#L663">663</a>     iterator</span>
+<span id="L664" class="source-line"><a class="line-number" href="#L664">664</a>     operator++(int)</span>
+<span id="L665" class="source-line"><a class="line-number" href="#L665">665</a>     {</span>
+<span id="L666" class="source-line"><a class="line-number" href="#L666">666</a>       iterator tmp = *this;</span>
+<span id="L667" class="source-line"><a class="line-number" href="#L667">667</a>       ++(*this);</span>
+<span id="L668" class="source-line"><a class="line-number" href="#L668">668</a>       return tmp;</span>
+<span id="L669" class="source-line"><a class="line-number" href="#L669">669</a>     }</span>
+<span id="L670" class="source-line"><a class="line-number" href="#L670">670</a> </span>
+<span id="L671" class="source-line"><a class="line-number" href="#L671">671</a>     bool</span>
+<span id="L672" class="source-line"><a class="line-number" href="#L672">672</a>     operator==(const iterator &amp;o) const</span>
+<span id="L673" class="source-line"><a class="line-number" href="#L673">673</a>     {</span>
+<span id="L674" class="source-line"><a class="line-number" href="#L674">674</a>       return __m == o.__m &amp;&amp; __i == o.__i;</span>
+<span id="L675" class="source-line"><a class="line-number" href="#L675">675</a>     }</span>
+<span id="L676" class="source-line"><a class="line-number" href="#L676">676</a> </span>
+<span id="L677" class="source-line"><a class="line-number" href="#L677">677</a>     bool</span>
+<span id="L678" class="source-line"><a class="line-number" href="#L678">678</a>     operator!=(const iterator &amp;o) const</span>
+<span id="L679" class="source-line"><a class="line-number" href="#L679">679</a>     {</span>
+<span id="L680" class="source-line"><a class="line-number" href="#L680">680</a>       return !(*this == o);</span>
+<span id="L681" class="source-line"><a class="line-number" href="#L681">681</a>     }</span>
+<span id="L682" class="source-line"><a class="line-number" href="#L682">682</a>   };</span>
+<span id="L683" class="source-line"><a class="line-number" href="#L683">683</a> </span>
+<span id="L684" class="source-line"><a class="line-number" href="#L684">684</a>   class const_iterator</span>
+<span id="L685" class="source-line"><a class="line-number" href="#L685">685</a>   {</span>
+<span id="L686" class="source-line"><a class="line-number" href="#L686">686</a>     const heap_swiss_map *__m;</span>
+<span id="L687" class="source-line"><a class="line-number" href="#L687">687</a>     usize __i;</span>
+<span id="L688" class="source-line"><a class="line-number" href="#L688">688</a> </span>
+<span id="L689" class="source-line"><a class="line-number" href="#L689">689</a>     void</span>
+<span id="L690" class="source-line"><a class="line-number" href="#L690">690</a>     advance()</span>
+<span id="L691" class="source-line"><a class="line-number" href="#L691">691</a>     {</span>
+<span id="L692" class="source-line"><a class="line-number" href="#L692">692</a>       while ( __i &lt; __m-&gt;__n_slots &amp;&amp; (__m-&gt;__ctrl[__i] == __empty || __m-&gt;__ctrl[__i] == __deleted) ) ++__i;</span>
+<span id="L693" class="source-line"><a class="line-number" href="#L693">693</a>     }</span>
+<span id="L694" class="source-line"><a class="line-number" href="#L694">694</a> </span>
+<span id="L695" class="source-line"><a class="line-number" href="#L695">695</a>   public:</span>
+<span id="L696" class="source-line"><a class="line-number" href="#L696">696</a>     using value_type = micron::pair&lt;const K &amp;, const V &amp;&gt;;</span>
+<span id="L697" class="source-line"><a class="line-number" href="#L697">697</a>     using difference_type = ptrdiff_t;</span>
+<span id="L698" class="source-line"><a class="line-number" href="#L698">698</a>     using pointer = micron::pair&lt;const K *, const V *&gt;;</span>
+<span id="L699" class="source-line"><a class="line-number" href="#L699">699</a>     using reference = micron::pair&lt;const K &amp;, const V &amp;&gt;;</span>
+<span id="L700" class="source-line"><a class="line-number" href="#L700">700</a> </span>
+<span id="L701" class="source-line"><a class="line-number" href="#L701">701</a>     const_iterator(const heap_swiss_map *m, usize i) : __m(m), __i(i) { advance(); }</span>
+<span id="L702" class="source-line"><a class="line-number" href="#L702">702</a> </span>
+<span id="L703" class="source-line"><a class="line-number" href="#L703">703</a>     reference</span>
+<span id="L704" class="source-line"><a class="line-number" href="#L704">704</a>     operator*() const</span>
+<span id="L705" class="source-line"><a class="line-number" href="#L705">705</a>     {</span>
+<span id="L706" class="source-line"><a class="line-number" href="#L706">706</a>       return { __m-&gt;__entries[__i].key, __m-&gt;__entries[__i].value };</span>
+<span id="L707" class="source-line"><a class="line-number" href="#L707">707</a>     }</span>
+<span id="L708" class="source-line"><a class="line-number" href="#L708">708</a> </span>
+<span id="L709" class="source-line"><a class="line-number" href="#L709">709</a>     pointer</span>
+<span id="L710" class="source-line"><a class="line-number" href="#L710">710</a>     operator-&gt;() const</span>
+<span id="L711" class="source-line"><a class="line-number" href="#L711">711</a>     {</span>
+<span id="L712" class="source-line"><a class="line-number" href="#L712">712</a>       return { micron::addr(__m-&gt;__entries[__i].key), micron::addr(__m-&gt;__entries[__i].value) };</span>
+<span id="L713" class="source-line"><a class="line-number" href="#L713">713</a>     }</span>
+<span id="L714" class="source-line"><a class="line-number" href="#L714">714</a> </span>
+<span id="L715" class="source-line"><a class="line-number" href="#L715">715</a>     const_iterator &amp;</span>
+<span id="L716" class="source-line"><a class="line-number" href="#L716">716</a>     operator++()</span>
+<span id="L717" class="source-line"><a class="line-number" href="#L717">717</a>     {</span>
+<span id="L718" class="source-line"><a class="line-number" href="#L718">718</a>       ++__i;</span>
+<span id="L719" class="source-line"><a class="line-number" href="#L719">719</a>       advance();</span>
+<span id="L720" class="source-line"><a class="line-number" href="#L720">720</a>       return *this;</span>
+<span id="L721" class="source-line"><a class="line-number" href="#L721">721</a>     }</span>
+<span id="L722" class="source-line"><a class="line-number" href="#L722">722</a> </span>
+<span id="L723" class="source-line"><a class="line-number" href="#L723">723</a>     const_iterator</span>
+<span id="L724" class="source-line"><a class="line-number" href="#L724">724</a>     operator++(int)</span>
+<span id="L725" class="source-line"><a class="line-number" href="#L725">725</a>     {</span>
+<span id="L726" class="source-line"><a class="line-number" href="#L726">726</a>       const_iterator tmp = *this;</span>
+<span id="L727" class="source-line"><a class="line-number" href="#L727">727</a>       ++(*this);</span>
+<span id="L728" class="source-line"><a class="line-number" href="#L728">728</a>       return tmp;</span>
+<span id="L729" class="source-line"><a class="line-number" href="#L729">729</a>     }</span>
+<span id="L730" class="source-line"><a class="line-number" href="#L730">730</a> </span>
+<span id="L731" class="source-line"><a class="line-number" href="#L731">731</a>     bool</span>
+<span id="L732" class="source-line"><a class="line-number" href="#L732">732</a>     operator==(const const_iterator &amp;o) const</span>
+<span id="L733" class="source-line"><a class="line-number" href="#L733">733</a>     {</span>
+<span id="L734" class="source-line"><a class="line-number" href="#L734">734</a>       return __m == o.__m &amp;&amp; __i == o.__i;</span>
+<span id="L735" class="source-line"><a class="line-number" href="#L735">735</a>     }</span>
+<span id="L736" class="source-line"><a class="line-number" href="#L736">736</a> </span>
+<span id="L737" class="source-line"><a class="line-number" href="#L737">737</a>     bool</span>
+<span id="L738" class="source-line"><a class="line-number" href="#L738">738</a>     operator!=(const const_iterator &amp;o) const</span>
+<span id="L739" class="source-line"><a class="line-number" href="#L739">739</a>     {</span>
+<span id="L740" class="source-line"><a class="line-number" href="#L740">740</a>       return !(*this == o);</span>
+<span id="L741" class="source-line"><a class="line-number" href="#L741">741</a>     }</span>
+<span id="L742" class="source-line"><a class="line-number" href="#L742">742</a>   };</span>
+<span id="L743" class="source-line"><a class="line-number" href="#L743">743</a> </span>
+<span id="L744" class="source-line"><a class="line-number" href="#L744">744</a>   iterator</span>
+<span id="L745" class="source-line"><a class="line-number" href="#L745">745</a>   begin()</span>
+<span id="L746" class="source-line"><a class="line-number" href="#L746">746</a>   {</span>
+<span id="L747" class="source-line"><a class="line-number" href="#L747">747</a>     return iterator(this, 0);</span>
+<span id="L748" class="source-line"><a class="line-number" href="#L748">748</a>   }</span>
+<span id="L749" class="source-line"><a class="line-number" href="#L749">749</a> </span>
+<span id="L750" class="source-line"><a class="line-number" href="#L750">750</a>   iterator</span>
+<span id="L751" class="source-line"><a class="line-number" href="#L751">751</a>   end()</span>
+<span id="L752" class="source-line"><a class="line-number" href="#L752">752</a>   {</span>
+<span id="L753" class="source-line"><a class="line-number" href="#L753">753</a>     return iterator(this, __n_slots);</span>
+<span id="L754" class="source-line"><a class="line-number" href="#L754">754</a>   }</span>
+<span id="L755" class="source-line"><a class="line-number" href="#L755">755</a> </span>
+<span id="L756" class="source-line"><a class="line-number" href="#L756">756</a>   const_iterator</span>
+<span id="L757" class="source-line"><a class="line-number" href="#L757">757</a>   begin() const</span>
+<span id="L758" class="source-line"><a class="line-number" href="#L758">758</a>   {</span>
+<span id="L759" class="source-line"><a class="line-number" href="#L759">759</a>     return const_iterator(this, 0);</span>
+<span id="L760" class="source-line"><a class="line-number" href="#L760">760</a>   }</span>
+<span id="L761" class="source-line"><a class="line-number" href="#L761">761</a> </span>
+<span id="L762" class="source-line"><a class="line-number" href="#L762">762</a>   const_iterator</span>
+<span id="L763" class="source-line"><a class="line-number" href="#L763">763</a>   end() const</span>
+<span id="L764" class="source-line"><a class="line-number" href="#L764">764</a>   {</span>
+<span id="L765" class="source-line"><a class="line-number" href="#L765">765</a>     return const_iterator(this, __n_slots);</span>
+<span id="L766" class="source-line"><a class="line-number" href="#L766">766</a>   }</span>
+<span id="L767" class="source-line"><a class="line-number" href="#L767">767</a> </span>
+<span id="L768" class="source-line"><a class="line-number" href="#L768">768</a>   const_iterator</span>
+<span id="L769" class="source-line"><a class="line-number" href="#L769">769</a>   cbegin() const</span>
+<span id="L770" class="source-line"><a class="line-number" href="#L770">770</a>   {</span>
+<span id="L771" class="source-line"><a class="line-number" href="#L771">771</a>     return const_iterator(this, 0);</span>
+<span id="L772" class="source-line"><a class="line-number" href="#L772">772</a>   }</span>
+<span id="L773" class="source-line"><a class="line-number" href="#L773">773</a> </span>
+<span id="L774" class="source-line"><a class="line-number" href="#L774">774</a>   const_iterator</span>
+<span id="L775" class="source-line"><a class="line-number" href="#L775">775</a>   cend() const</span>
+<span id="L776" class="source-line"><a class="line-number" href="#L776">776</a>   {</span>
+<span id="L777" class="source-line"><a class="line-number" href="#L777">777</a>     return const_iterator(this, __n_slots);</span>
+<span id="L778" class="source-line"><a class="line-number" href="#L778">778</a>   }</span>
+<span id="L779" class="source-line"><a class="line-number" href="#L779">779</a> };</span>
+<span id="L780" class="source-line"><a class="line-number" href="#L780">780</a> </span>
+<span id="L781" class="source-line"><a class="line-number" href="#L781">781</a> template&lt;typename K, typename V, class Alloc = micron::allocator_serial&lt;&gt;&gt; using hswiss = heap_swiss_map&lt;K, V, Alloc&gt;;</span>
+<span id="L782" class="source-line"><a class="line-number" href="#L782">782</a> </span>
+<span id="L783" class="source-line"><a class="line-number" href="#L783">783</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

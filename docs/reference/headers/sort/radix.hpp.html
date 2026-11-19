@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sort/radix.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sort/radix.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/sorting.html">Sorting</a></div><p>Defined in header <code>&lt;micron/sort/radix.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sort/radix.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-03657f3cb0bcbcbe">micron::sort::radix(T &amp;arr)</a></td><td>function; line 93</td></tr><tr class="t-dsc"><td><a href="#f-6cb6ebf814b48f45">micron::sort::radix(T &amp;arr, KeyFn key)</a></td><td>function; line 101</td></tr><tr class="t-dsc"><td><a href="#f-a039d5c42618a442">micron::sort::radix(typename T::iterator start, typename T::iterator end)</a></td><td>function; line 109</td></tr><tr class="t-dsc"><td><a href="#f-368b8f26bacd8e94">micron::sort::fradix(T &amp;arr)</a></td><td>function; line 139</td></tr><tr class="t-dsc"><td><a href="#f-0bc0b28dd236e836">micron::sort::fradix(T &amp;arr, KeyFn key)</a></td><td>function; line 179</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-03657f3cb0bcbcbe"><h3><code>micron::sort::radix(T &amp;arr)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L93">line 93</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+  requires micron::is_integral_v&lt;typename T::value_type&gt;
+void
+radix(T &amp;arr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+  requires micron::is_integral_v&lt;typename T::value_type&gt;
+void
+radix(T &amp;arr)
+{
+  __radix_int(arr, [](const auto &amp;e) { return e; });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-3e17a1abe30b9855">__radix_int</a>.</p></section><section class="function-entry" id="f-6cb6ebf814b48f45"><h3><code>micron::sort::radix(T &amp;arr, KeyFn key)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L101">line 101</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename KeyFn&gt;
+  requires(is_integral_key_fn&lt;KeyFn, T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+void
+radix(T &amp;arr, KeyFn key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>KeyFn key</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename KeyFn&gt;
+  requires(is_integral_key_fn&lt;KeyFn, T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+void
+radix(T &amp;arr, KeyFn key)
+{
+  __radix_int(arr, key);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="radix.hpp.html#f-3e17a1abe30b9855">__radix_int</a>.</p></section><section class="function-entry" id="f-a039d5c42618a442"><h3><code>micron::sort::radix(typename T::iterator start, typename T::iterator end)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L109">line 109</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+  requires micron::is_integral_v&lt;typename T::value_type&gt;
+void
+radix(typename T::iterator start, typename T::iterator end)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>typename T::iterator start</code></li><li><code>typename T::iterator end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+  requires micron::is_integral_v&lt;typename T::value_type&gt;
+void
+radix(typename T::iterator start, typename T::iterator end)
+{
+  const max_t cnt = static_cast&lt;max_t&gt;(end - start);
+  if ( cnt &lt; 2 ) return;
+
+  using value_t = typename T::value_type;
+  value_t vmin = start[0], vmax = start[0];
+  for ( max_t i = 1; i &lt; cnt; ++i ) {
+    if ( start[i] &lt; vmin ) vmin = start[i];
+    if ( vmax &lt; start[i] ) vmax = start[i];
+  }
+  const umax_t bias_min = static_cast&lt;umax_t&gt;(vmin);
+  const umax_t span = static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(vmax) - static_cast&lt;umax_t&gt;(vmin));
+
+  T carr(static_cast&lt;typename T::size_type&gt;(cnt));
+  for ( i64 shift = 0; shift &lt; static_cast&lt;i64&gt;(sizeof(umax_t)) * 8; shift += 8 ) {
+    if ( (span &gt;&gt; shift) == 0 ) break;
+    usize bckt[256] = {};
+    for ( max_t i = 0; i &lt; cnt; ++i ) bckt[(static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(start[i]) - bias_min) &gt;&gt; shift) &amp; 0xFFu]++;
+    for ( i32 i = 1; i &lt; 256; ++i ) bckt[i] += bckt[i - 1];
+    for ( max_t k = cnt; k-- &gt; 0; )
+      carr[--bckt[(static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(start[k]) - bias_min) &gt;&gt; shift) &amp; 0xFFu]] = start[k];
+    micron::memcpy(start, &amp;carr[0], static_cast&lt;u64&gt;(cnt));
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sort/radix.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-368b8f26bacd8e94"><h3><code>micron::sort::fradix(T &amp;arr)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L139">line 139</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+  requires(micron::is_floating_point_v&lt;typename T::value_type&gt;
+           &amp;&amp; (sizeof(typename T::value_type) == 4 || sizeof(typename T::value_type) == 8))
+void
+fradix(T &amp;arr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+  requires(micron::is_floating_point_v&lt;typename T::value_type&gt;
+           &amp;&amp; (sizeof(typename T::value_type) == 4 || sizeof(typename T::value_type) == 8))
+void
+fradix(T &amp;arr)
+{
+  using V = typename T::value_type;
+  using U = micron::__conditional_t&lt;sizeof(V) == 4, u32, u64&gt;;
+  constexpr i64 W = static_cast&lt;i64&gt;(sizeof(V));
+  constexpr i64 TOP = W * 8 - 1;
+  const U signbit = static_cast&lt;U&gt;(1) &lt;&lt; TOP;
+
+  const usize n = arr.size();
+  if ( n &lt; 2 ) return;
+
+  __sort_scratch&lt;U&gt; kbuf(n), tbuf(n);
+  U *keys = kbuf.get();
+  U *tmp = tbuf.get();
+
+  for ( usize i = 0; i &lt; n; ++i ) {
+    U u = 0;
+    micron::bytecpy(&amp;u, &amp;arr[i], W);                                 // bit-pun float -&gt; unsigned
+    keys[i] = u ^ ((static_cast&lt;U&gt;(0) - (u &gt;&gt; TOP)) | signbit);      // order-preserving forward transform
+  }
+
+  for ( i64 b = 0; b &lt; W; ++b ) {
+    i32 cnt[256] = {};
+    for ( usize i = 0; i &lt; n; ++i ) cnt[static_cast&lt;byte&gt;(keys[i] &gt;&gt; (b * 8))]++;
+    for ( i32 i = 1; i &lt; 256; ++i ) cnt[i] += cnt[i - 1];
+    for ( usize i = n; i-- &gt; 0; ) tmp[--cnt[static_cast&lt;byte&gt;(keys[i] &gt;&gt; (b * 8))]] = keys[i];
+    U *swap = keys;
+    keys = tmp;
+    tmp = swap;
+  }
+
+  for ( usize i = 0; i &lt; n; ++i ) {
+    U u = keys[i] ^ (((keys[i] &gt;&gt; TOP) - static_cast&lt;U&gt;(1)) | signbit);      // inverse transform
+    micron::bytecpy(&amp;arr[i], &amp;u, W);                                         // bit-pun back to float
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sort/radix.hpp.html#L148">line 148</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-95166e01bb68ea54">micron::bytecpy</a>.</p></section><section class="function-entry" id="f-0bc0b28dd236e836"><h3><code>micron::sort::fradix(T &amp;arr, KeyFn key)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L179">line 179</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename KeyFn&gt;
+  requires(is_floating_key_fn&lt;KeyFn, T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+void
+fradix(T &amp;arr, KeyFn key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>KeyFn key</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename KeyFn&gt;
+  requires(is_floating_key_fn&lt;KeyFn, T&gt; &amp;&amp; micron::is_trivially_copyable_v&lt;typename T::value_type&gt;)
+void
+fradix(T &amp;arr, KeyFn key)
+{
+  using V = micron::remove_cvref_t&lt;decltype(key(arr[0]))&gt;;
+  using U = micron::__conditional_t&lt;sizeof(V) == 4, u32, u64&gt;;
+  constexpr i64 W = static_cast&lt;i64&gt;(sizeof(V));
+  constexpr i64 TOP = W * 8 - 1;
+  const U signbit = static_cast&lt;U&gt;(1) &lt;&lt; TOP;
+
+  const usize n = arr.size();
+  if ( n &lt; 2 ) return;
+
+  auto tkey = [&amp;](const typename T::value_type &amp;e) -&gt; U {
+    V v = key(e);
+    U u = 0;
+    micron::bytecpy(&amp;u, &amp;v, W);
+    return u ^ ((static_cast&lt;U&gt;(0) - (u &gt;&gt; TOP)) | signbit);
+  };
+
+  T carr = arr;
+  for ( i64 b = 0; b &lt; W; ++b ) {
+    usize cnt[256] = {};
+    for ( usize i = 0; i &lt; n; ++i ) cnt[static_cast&lt;byte&gt;(tkey(arr[i]) &gt;&gt; (b * 8))]++;
+    for ( i32 i = 1; i &lt; 256; ++i ) cnt[i] += cnt[i - 1];
+    for ( usize k = n; k-- &gt; 0; ) carr[--cnt[static_cast&lt;byte&gt;(tkey(arr[k]) &gt;&gt; (b * 8))]] = arr[k];
+    micron::memcpy(&amp;arr[0], &amp;carr[0], n);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sort/radix.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/process/keyctl.hpp.html#s-ac99ace6058edacb">key</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-df49e310c9184cdc"><h3><code>micron::sort::__sort_scratch::__sort_scratch(usize n)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L33">line 33</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __sort_scratch(usize n) : p(n ? new U[n] : nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __sort_scratch(usize n) : p(n ? new U[n] : nullptr) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-11d47349294a8286"><h3><code>micron::sort::__sort_scratch::~__sort_scratch()</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L35">line 35</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~__sort_scratch()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~__sort_scratch() { delete[] p; }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e377d7b40203257d"><h3><code>micron::sort::__sort_scratch::__sort_scratch(const __sort_scratch &amp;)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__sort_scratch(const __sort_scratch &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __sort_scratch &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-7b98a8808497e322"><h3><code>micron::sort::__sort_scratch::operator=(const __sort_scratch &amp;)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L38">line 38</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__sort_scratch &amp;operator=(const __sort_scratch &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __sort_scratch &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-c7c10092bb7d25e4"><h3><code>micron::sort::__sort_scratch::get() noexcept</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L41">line 41</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>U *
+  get() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>p</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">U *
+  get() noexcept
+  {
+    return p;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>p</code></td><td><a href="../../source/sort/radix.hpp.html#L43">line 43</a></td></tr></tbody></table></section><section class="function-entry" id="f-0a10e9780508c0e2"><h3><code>micron::sort::__radix_pass(T &amp;arr, T &amp;carr, usize n, i64 shift, umax_t bias_min, KeyFn key)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename KeyFn&gt;
+void
+__radix_pass(T &amp;arr, T &amp;carr, usize n, i64 shift, umax_t bias_min, KeyFn key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>T &amp;carr</code></li><li><code>usize n</code></li><li><code>i64 shift</code></li><li><code>umax_t bias_min</code></li><li><code>KeyFn key</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename KeyFn&gt;
+void
+__radix_pass(T &amp;arr, T &amp;carr, usize n, i64 shift, umax_t bias_min, KeyFn key)
+{
+  usize bckt[256] = {};
+
+  for ( usize i = 0; i &lt; n; ++i ) {
+    umax_t k = static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(key(arr[i])) - bias_min);
+    bckt[(k &gt;&gt; shift) &amp; 0xFFu]++;
+  }
+  for ( i32 i = 1; i &lt; 256; ++i ) bckt[i] += bckt[i - 1];
+
+  for ( usize k = n; k-- &gt; 0; ) {
+    umax_t kk = static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(key(arr[k])) - bias_min);
+    carr[--bckt[(kk &gt;&gt; shift) &amp; 0xFFu]] = arr[k];
+  }
+  micron::memcpy(&amp;arr[0], &amp;carr[0], n);      // element-count copy-back
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/process/keyctl.hpp.html#s-ac99ace6058edacb">key</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-3e17a1abe30b9855"><h3><code>micron::sort::__radix_int(T &amp;arr, KeyFn key)</code></h3><p>Defined in <code>sort/radix.hpp</code>, <a href="../../source/sort/radix.hpp.html#L68">line 68</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename KeyFn&gt;
+void
+__radix_int(T &amp;arr, KeyFn key)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>KeyFn key</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename KeyFn&gt;
+void
+__radix_int(T &amp;arr, KeyFn key)
+{
+  using key_t = micron::remove_cvref_t&lt;decltype(key(arr[0]))&gt;;
+  const usize n = arr.size();
+  if ( n &lt; 2 ) return;      // empty / single: sorted
+
+  key_t kmin = key(arr[0]), kmax = key(arr[0]);
+  for ( usize i = 1; i &lt; n; ++i ) {
+    key_t k = key(arr[i]);
+    if ( k &lt; kmin ) kmin = k;
+    if ( kmax &lt; k ) kmax = k;
+  }
+  const umax_t bias_min = static_cast&lt;umax_t&gt;(kmin);
+  const umax_t span = static_cast&lt;umax_t&gt;(static_cast&lt;umax_t&gt;(kmax) - static_cast&lt;umax_t&gt;(kmin));      // biased max
+
+  T carr = arr;      // scratch (overwritten each pass)
+  for ( i64 shift = 0; shift &lt; static_cast&lt;i64&gt;(sizeof(umax_t)) * 8; shift += 8 ) {
+    if ( (span &gt;&gt; shift) == 0 ) break;      // no more significant bytes
+    __radix_pass(arr, carr, n, shift, bias_min, key);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sort/radix.hpp.html#L72">line 72</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/process/keyctl.hpp.html#s-ac99ace6058edacb">key</a>, <a href="radix.hpp.html#f-0a10e9780508c0e2">__radix_pass</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

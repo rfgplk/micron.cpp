@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/bits/__exceptions.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/bits/__exceptions.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/bits/__exceptions.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/bits/__exceptions.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-c2d25e27fb44c9bd">micron::except::raise(Args &amp;&amp;...args)</a></td><td>function; line 90</td></tr><tr class="t-dsc"><td><a href="#f-bad120deb705280a">micron::except::raise(u32 eno, Args &amp;&amp;...args)</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-7d44650482dd1ae0">micron::except::raise_silent(Args &amp;&amp;...args)</a></td><td>function; line 116</td></tr><tr class="t-dsc"><td><a href="#f-a612396e3122cfff">micron::exc_silent(Args &amp;&amp;...args)</a></td><td>function; line 126</td></tr><tr class="t-dsc"><td><a href="#f-4cc1d1df403c43da">micron::exc(Args &amp;&amp;...args)</a></td><td>function; line 137</td></tr><tr class="t-dsc"><td><a href="#f-e41f8ecce94e4e03">micron::exc_e(i32 eno, Args &amp;&amp;...args)</a></td><td>function; line 149</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-c2d25e27fb44c9bd"><h3><code>micron::except::raise(Args &amp;&amp;...args)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L90">line 90</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+raise(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+raise(Args &amp;&amp;...args)
+{
+  T ex(args...);
+  __write(&quot;exception raised: &quot;);
+  __write_n(ex.what());
+  __write(&quot;errno: &quot;);
+  __write_unsigned(errno);
+  __write(&quot;\n&quot;);
+  abort(ex.which());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>abort(ex.which())</code></td><td><a href="../../source/bits/__exceptions.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__exceptions.hpp.html#f-5e33b41979906001">__write</a>, <a href="__exceptions.hpp.html#f-61ac321475561995">__write_n</a>, <a href="__exceptions.hpp.html#f-427464a5dfe13d0d">__write_unsigned</a>, <a href="../exit.hpp.html#f-6980559c7644f805">abort</a>.</p></section><section class="function-entry" id="f-bad120deb705280a"><h3><code>micron::except::raise(u32 eno, Args &amp;&amp;...args)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+raise(u32 eno, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 eno</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+raise(u32 eno, Args &amp;&amp;...args)
+{
+  T ex(args...);
+  __write(&quot;exception raised: &quot;);
+  __write_n(ex.what());
+  __write(&quot;errno: &quot;);
+  __write_unsigned(eno);
+  __write(&quot;\n&quot;);
+  abort(ex.which());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>abort(ex.which())</code></td><td><a href="../../source/bits/__exceptions.hpp.html#L111">line 111</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="__exceptions.hpp.html#f-5e33b41979906001">__write</a>, <a href="__exceptions.hpp.html#f-61ac321475561995">__write_n</a>, <a href="__exceptions.hpp.html#f-427464a5dfe13d0d">__write_unsigned</a>, <a href="../exit.hpp.html#f-6980559c7644f805">abort</a>.</p></section><section class="function-entry" id="f-7d44650482dd1ae0"><h3><code>micron::except::raise_silent(Args &amp;&amp;...args)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L116">line 116</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+raise_silent(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+raise_silent(Args &amp;&amp;...args)
+{
+  T ex(args...);
+  abort(ex.which());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>abort(ex.which())</code></td><td><a href="../../source/bits/__exceptions.hpp.html#L119">line 119</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../exit.hpp.html#f-6980559c7644f805">abort</a>.</p></section><section class="function-entry" id="f-a612396e3122cfff"><h3><code>micron::exc_silent(Args &amp;&amp;...args)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L126">line 126</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+exc_silent(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+exc_silent(Args &amp;&amp;...args)
+{
+  if constexpr ( micron::except::__use_exceptions )
+    throw T(micron::forward&lt;Args&gt;(args)...);
+  else {
+    except::raise_silent&lt;T&gt;(micron::forward&lt;Args&gt;(args)...);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw T(micron::forward&lt;Args&gt;(args)...);</code></td><td><a href="../../source/bits/__exceptions.hpp.html#L129">line 129</a><br>Within <code>( micron::except::__use_exceptions )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="__exceptions.hpp.html#f-7d44650482dd1ae0">except::raise_silent&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-4cc1d1df403c43da"><h3><code>micron::exc(Args &amp;&amp;...args)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L137">line 137</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+exc(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+exc(Args &amp;&amp;...args)
+{
+  if constexpr ( micron::except::__use_exceptions )
+    throw T(micron::forward&lt;Args&gt;(args)...);
+  else {
+    except::raise&lt;T&gt;(micron::forward&lt;Args&gt;(args)...);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw T(micron::forward&lt;Args&gt;(args)...);</code></td><td><a href="../../source/bits/__exceptions.hpp.html#L140">line 140</a><br>Within <code>( micron::except::__use_exceptions )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="__exceptions.hpp.html#f-c2d25e27fb44c9bd">except::raise&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-e41f8ecce94e4e03"><h3><code>micron::exc_e(i32 eno, Args &amp;&amp;...args)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L149">line 149</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+exc_e(i32 eno, Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 eno</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename... Args&gt;
+__attribute__((always_inline, noreturn)) inline void
+exc_e(i32 eno, Args &amp;&amp;...args)
+{
+  if constexpr ( micron::except::__use_exceptions )
+    throw T(micron::forward&lt;Args&gt;(args)...);
+  else {
+    except::raise&lt;T&gt;(static_cast&lt;u32&gt;(-eno), micron::forward&lt;Args&gt;(args)...);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw T(micron::forward&lt;Args&gt;(args)...);</code></td><td><a href="../../source/bits/__exceptions.hpp.html#L152">line 152</a><br>Within <code>( micron::except::__use_exceptions )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>, <a href="__exceptions.hpp.html#f-c2d25e27fb44c9bd">except::raise&lt;T&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-61ac321475561995"><h3><code>micron::except::__write_n(const char *str_err)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L31">line 31</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__write_n(const char *str_err)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str_err</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__write_n(const char *str_err)
+{
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag(str_err);
+#else
+  micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
+#endif
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag(&quot;\n&quot;);
+#else
+  micron::syscall(SYS_write, 2, micron::voidify(&quot;\n&quot;), 1);
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="wasm/host.hpp.html#f-53f3a6aa4135a032">wasm::write_diag</a>, <a href="../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>, <a href="../memory/addr.hpp.html#f-e74dbe26adf79385">micron::voidify</a>, <a href="../memory/cstring_c.hpp.html#f-a08b3ad0552bcf52">strlen</a>.</p></section><section class="function-entry" id="f-5e33b41979906001"><h3><code>micron::except::__write(const char *str_err, usize sz)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L46">line 46</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__write(const char *str_err, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str_err</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__write(const char *str_err, usize sz)
+{
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag(str_err, sz);
+#else
+  micron::syscall(SYS_write, 2, micron::voidify(str_err), sz);
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="wasm/host.hpp.html#f-53f3a6aa4135a032">wasm::write_diag</a>, <a href="../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>, <a href="../memory/addr.hpp.html#f-e74dbe26adf79385">micron::voidify</a>.</p></section><section class="function-entry" id="f-382a36e7db2c39e7"><h3><code>micron::except::__write(const char *str_err)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L56">line 56</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__write(const char *str_err)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *str_err</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__write(const char *str_err)
+{
+#if defined(__micron_arch_wasm32)
+  wasm::write_diag(str_err);
+#else
+  micron::syscall(SYS_write, 2, micron::voidify(str_err), strlen(str_err));
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="wasm/host.hpp.html#f-53f3a6aa4135a032">wasm::write_diag</a>, <a href="../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>, <a href="../memory/addr.hpp.html#f-e74dbe26adf79385">micron::voidify</a>, <a href="../memory/cstring_c.hpp.html#f-a08b3ad0552bcf52">strlen</a>.</p></section><section class="function-entry" id="f-427464a5dfe13d0d"><h3><code>micron::except::__write_unsigned(T n)</code></h3><p>Defined in <code>bits/__exceptions.hpp</code>, <a href="../../source/bits/__exceptions.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+__write_unsigned(T n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+__write_unsigned(T n)
+{
+  char buf[32];
+  int i = 0;
+  if ( n == 0 ) {
+    buf[i++] = &#x27;0&#x27;;
+  } else {
+    while ( n &gt; 0 ) {
+      buf[i++] = static_cast&lt;char&gt;(&#x27;0&#x27; + (n % 10));
+      n /= 10;
+    }
+    // reverse
+    for ( int j = 0; j &lt; i / 2; ++j ) {
+      char tmp = buf[j];
+      buf[j] = buf[i - j - 1];
+      buf[i - j - 1] = tmp;
+    }
+  }
+  __write(buf, static_cast&lt;usize&gt;(i));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="__exceptions.hpp.html#f-5e33b41979906001">__write</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

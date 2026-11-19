@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/elf/host_modules.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/elf/host_modules.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/elf/host_modules.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/elf/host_modules.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-adfabbbefe7b9462">micron::elf::uptr</code></td><td>typedef; line 31</td></tr><tr class="t-dsc"><td><code id="s-bd22dd97325adac5">micron::elf::host_max_modules</code></td><td>variable; line 33</td></tr><tr class="t-dsc"><td><code id="s-2e3ed50902c2f347">micron::elf::host_module_t</code></td><td>struct; line 35</td></tr><tr class="t-dsc"><td><code id="s-6ecbe40eaab4b880">micron::elf::host_module_t::base</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-eeca9460af94578e">micron::elf::host_module_t::span</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-66e684ee360d4c0b">micron::elf::host_module_t::bias</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-9143e39649d8aa41">micron::elf::host_module_t::soname</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-37a8d08498f9d939">micron::elf::host_module_t::dyn</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-e53983ed2dc9d197">micron::elf::host_module_t::path</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-c09d596028dfee73">micron::elf::host_module_t::exec</code></td><td>member; line 42</td></tr><tr class="t-dsc"><td><code id="s-e7c749a564e7ec72">micron::elf::host_module_t::valid</code></td><td>member; line 43</td></tr><tr class="t-dsc"><td><code id="s-e058cb2797bfe61a">micron::elf::host_scratch_size</code></td><td>variable; line 59</td></tr><tr class="t-dsc"><td><code id="s-b3209cf75e0f391c">micron::elf::maps_line_t</code></td><td>struct; line 92</td></tr><tr class="t-dsc"><td><code id="s-33b7bb97deb6b9fc">micron::elf::maps_line_t::start</code></td><td>member; line 93</td></tr><tr class="t-dsc"><td><code id="s-03210748489c2fb1">micron::elf::maps_line_t::end</code></td><td>member; line 94</td></tr><tr class="t-dsc"><td><code id="s-2c276a52f44a6003">micron::elf::maps_line_t::exec</code></td><td>member; line 95</td></tr><tr class="t-dsc"><td><code id="s-f9d55bd84e80c26d">micron::elf::maps_line_t::path</code></td><td>member; line 96</td></tr><tr class="t-dsc"><td><a href="#f-4feeba01202c6cf6">micron::elf::init_host_modules()</a></td><td>function; line 236</td></tr><tr class="t-dsc"><td><a href="#f-60bce57edccd651e">micron::elf::host_find(const char *name)</a></td><td>function; line 307</td></tr><tr class="t-dsc"><td><a href="#f-e670da3164496999">micron::elf::host_resolve_sym(const char *name)</a></td><td>function; line 321</td></tr><tr class="t-dsc"><td><a href="#f-04749ad4d06c1705">micron::elf::host_count() noexcept</a></td><td>function; line 341</td></tr><tr class="t-dsc"><td><a href="#f-7a8ad9ef3eb3b754">micron::elf::invalidate_host_modules() noexcept</a></td><td>function; line 348</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-4feeba01202c6cf6"><h3><code>micron::elf::init_host_modules()</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L236">line 236</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+init_host_modules()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+init_host_modules()
+{
+  if ( __host_initialized ) return;
+
+  // avoiding new/malloc
+  u8 *buf = reinterpret_cast&lt;u8 *&gt;(micron::mmap(nullptr, host_scratch_size, prot_read | prot_write, map_private | map_anonymous, -1, 0));
+  if ( mmap_failed(buf) ) return;
+
+  i32 fd = posix::open(&quot;/proc/self/maps&quot;, posix::o_rdonly);
+  if ( fd &lt; 0 ) {
+    micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(buf), host_scratch_size);
+    return;
+  }
+  usize total = 0;
+  while ( total + 1 &lt; host_scratch_size ) {
+    max_t n = posix::read(fd, buf + total, host_scratch_size - 1 - total);
+    if ( n &lt;= 0 ) break;
+    total += static_cast&lt;usize&gt;(n);
+  }
+  buf[total] = 0;
+  posix::close(fd);
+
+  usize i = 0;
+  while ( i &lt; total ) {
+    usize line_start = i;
+    while ( i &lt; total &amp;&amp; buf[i] != &#x27;\n&#x27; ) ++i;
+    if ( i &gt;= total ) break;
+    buf[i] = 0;
+    const char *line = reinterpret_cast&lt;const char *&gt;(buf + line_start);
+    ++i;
+
+    maps_line_t ln;
+    if ( !__parse_maps_line(line, ln) ) continue;
+
+    host_module_t *existing = nullptr;
+    for ( usize k = 0; k &lt; __host_module_count; ++k ) {
+      if ( __host_modules[k].path == ln.path ) {
+        existing = &amp;__host_modules[k];
+        break;
+      }
+    }
+    // a module spans several lines (r--p / r-xp / rw-p); union them so span covers the whole image
+    if ( existing ) {
+      const uptr lo = reinterpret_cast&lt;uptr&gt;(existing-&gt;base);
+      const uptr hi = lo + static_cast&lt;uptr&gt;(existing-&gt;span);
+      const uptr nlo = static_cast&lt;uptr&gt;(ln.start) &lt; lo ? static_cast&lt;uptr&gt;(ln.start) : lo;
+      const uptr nhi = static_cast&lt;uptr&gt;(ln.end) &gt; hi ? static_cast&lt;uptr&gt;(ln.end) : hi;
+      existing-&gt;base = reinterpret_cast&lt;u8 *&gt;(nlo);
+      existing-&gt;span = static_cast&lt;usize&gt;(nhi - nlo);
+      existing-&gt;exec = existing-&gt;exec || ln.exec;
+      continue;
+    }
+    if ( __host_module_count &gt;= host_max_modules ) continue;
+
+    host_module_t &amp;m = __host_modules[__host_module_count++];
+    // NOTE: via uptr, never straight off the u64 -- a bare cast truncates/sign-extends on i386/arm32
+    m.base = reinterpret_cast&lt;u8 *&gt;(static_cast&lt;uptr&gt;(ln.start));
+    m.span = static_cast&lt;usize&gt;(ln.end - ln.start);
+    m.exec = ln.exec;
+    m.path = ln.path;
+  }
+
+  micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(buf), host_scratch_size);
+
+  for ( usize k = 0; k &lt; __host_module_count; ++k ) {
+    __build_host_dyn(__host_modules[k]);
+  }
+  __host_initialized = true;      // publish only after the table is fully built (was set too early -&gt; empty-table race)
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L238">line 238</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L242">line 242</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L247">line 247</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">mmap_failed</a>, <a href="../io/sys.hpp.html#f-4489c173fc28797e">posix::open</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>, <a href="../io/sys.hpp.html#f-4dae032f64ac939d">posix::read</a>, <a href="../io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="host_modules.hpp.html#f-9287def674b824b1">__parse_maps_line</a>, <a href="host_modules.hpp.html#f-80dc839d484df599">__build_host_dyn</a>.</p></section><section class="function-entry" id="f-60bce57edccd651e"><h3><code>micron::elf::host_find(const char *name)</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L307">line 307</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const host_module_t *
+host_find(const char *name)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const host_module_t *
+host_find(const char *name)
+{
+  if ( !__host_initialized ) init_host_modules();
+  if ( !name || !*name ) return nullptr;
+  for ( usize k = 0; k &lt; __host_module_count; ++k ) {
+    const host_module_t &amp;m = __host_modules[k];
+    if ( !m.valid ) continue;
+    if ( m.soname &amp;&amp; micron::strcmp(m.soname, name) == 0 ) return &amp;m;
+    if ( micron::strcmp(__path_basename(m.path.c_str()), name) == 0 ) return &amp;m;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L310">line 310</a></td></tr><tr class="t-dsc"><td><code>&amp;m</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L314">line 314</a></td></tr><tr class="t-dsc"><td><code>&amp;m</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L315">line 315</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L317">line 317</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="host_modules.hpp.html#f-4feeba01202c6cf6">init_host_modules</a>, <a href="../../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>, <a href="host_modules.hpp.html#f-8f2e8970f51e25a0">__path_basename</a>.</p></section><section class="function-entry" id="f-e670da3164496999"><h3><code>micron::elf::host_resolve_sym(const char *name)</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L321">line 321</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void *
+host_resolve_sym(const char *name)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void *
+host_resolve_sym(const char *name)
+{
+  if ( !__host_initialized ) init_host_modules();
+  for ( usize k = 0; k &lt; __host_module_count; ++k ) {
+    const host_module_t &amp;m = __host_modules[k];
+    if ( !m.valid ) continue;
+    const nsym_t *s = lookup_sym(m.dyn, name);
+    if ( s &amp;&amp; s-&gt;shndx != shn_undef ) {
+      void *a = reinterpret_cast&lt;void *&gt;(static_cast&lt;uptr&gt;(m.bias) + static_cast&lt;uptr&gt;(s-&gt;value));
+      if ( elf_st_type(s-&gt;info) == stt_gnu_ifunc ) {
+        using ifn = void *(*)();
+        a = reinterpret_cast&lt;ifn&gt;(a)();
+      }
+      return a;
+    }
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L334">line 334</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L337">line 337</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="host_modules.hpp.html#f-4feeba01202c6cf6">init_host_modules</a>, <a href="hash.hpp.html#f-607cfcdb980d22e8">lookup_sym</a>, <a href="consts.hpp.html#f-4d024459ff0565fa">elf_st_type</a>.</p></section><section class="function-entry" id="f-04749ad4d06c1705"><h3><code>micron::elf::host_count() noexcept</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L341">line 341</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+host_count() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+host_count() noexcept
+{
+  if ( !__host_initialized ) init_host_modules();
+  return __host_module_count;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__host_module_count</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L344">line 344</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="host_modules.hpp.html#f-4feeba01202c6cf6">init_host_modules</a>.</p></section><section class="function-entry" id="f-7a8ad9ef3eb3b754"><h3><code>micron::elf::invalidate_host_modules() noexcept</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L348">line 348</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+invalidate_host_modules() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+invalidate_host_modules() noexcept
+{
+  for ( usize k = 0; k &lt; __host_module_count; ++k ) __host_modules[k] = host_module_t{};
+  __host_module_count = 0;
+  __host_initialized = false;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ca6eeba9a4facad0"><h3><code>micron::elf::__host_in_span(const host_module_t &amp;m, uptr p, usize n) noexcept</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L47">line 47</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__host_in_span(const host_module_t &amp;m, uptr p, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const host_module_t &amp;m</code></li><li><code>uptr p</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__host_in_span(const host_module_t &amp;m, uptr p, usize n) noexcept
+{
+  const uptr lo = reinterpret_cast&lt;uptr&gt;(m.base);
+  const uptr hi = lo + static_cast&lt;uptr&gt;(m.span);
+  if ( p &lt; lo || p &gt; hi ) return false;
+  return n &lt;= static_cast&lt;usize&gt;(hi - p);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L51">line 51</a></td></tr><tr class="t-dsc"><td><code>n &lt;= static_cast&lt;usize&gt;(hi - p)</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L52">line 52</a></td></tr></tbody></table></section><section class="function-entry" id="f-8f2e8970f51e25a0"><h3><code>micron::elf::__path_basename(const char *p) noexcept</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+__path_basename(const char *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+__path_basename(const char *p) noexcept
+{
+  const usize n = micron::strlen(p);
+  for ( usize i = n; i-- &gt; 0; ) {
+    if ( p[i] == &#x27;/&#x27; ) return p + i + 1;
+  }
+  return p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>p + i + 1</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L66">line 66</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L68">line 68</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>.</p></section><section class="function-entry" id="f-f59946865bee9d92"><h3><code>micron::elf::__parse_hex(const char *&amp;p) noexcept</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L72">line 72</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+__parse_hex(const char *&amp;p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *&amp;p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+__parse_hex(const char *&amp;p) noexcept
+{
+  u64 v = 0;
+  while ( *p ) {
+    char c = *p;
+    u32 d;
+    if ( c &gt;= &#x27;0&#x27; &amp;&amp; c &lt;= &#x27;9&#x27; )
+      d = static_cast&lt;u32&gt;(c - &#x27;0&#x27;);
+    else if ( c &gt;= &#x27;a&#x27; &amp;&amp; c &lt;= &#x27;f&#x27; )
+      d = static_cast&lt;u32&gt;(c - &#x27;a&#x27; + 10);
+    else if ( c &gt;= &#x27;A&#x27; &amp;&amp; c &lt;= &#x27;F&#x27; )
+      d = static_cast&lt;u32&gt;(c - &#x27;A&#x27; + 10);
+    else
+      break;
+    v = (v &lt;&lt; 4) | d;
+    ++p;
+  }
+  return v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L89">line 89</a></td></tr></tbody></table></section><section class="function-entry" id="f-9287def674b824b1"><h3><code>micron::elf::__parse_maps_line(const char *line, maps_line_t &amp;out) noexcept</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L102">line 102</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__parse_maps_line(const char *line, maps_line_t &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *line</code></li><li><code>maps_line_t &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__parse_maps_line(const char *line, maps_line_t &amp;out) noexcept
+{
+  const char *p = line;
+  out.start = __parse_hex(p);
+  if ( *p != &#x27;-&#x27; ) return false;
+  ++p;
+  out.end = __parse_hex(p);
+  if ( out.end &lt;= out.start ) return false;
+
+  while ( *p == &#x27; &#x27; || *p == &#x27;\t&#x27; ) ++p;
+  const char *perms = p;
+  usize pl = 0;
+  while ( perms[pl] &amp;&amp; perms[pl] != &#x27; &#x27; &amp;&amp; perms[pl] != &#x27;\t&#x27; &amp;&amp; perms[pl] != &#x27;\n&#x27; ) ++pl;
+  if ( pl &lt; 4 ) return false;
+  out.exec = (perms[2] == &#x27;x&#x27;);
+  p += pl;
+
+  for ( i32 f = 0; f &lt; 3 &amp;&amp; *p; ++f ) {      // offset, dev, inode
+    while ( *p == &#x27; &#x27; || *p == &#x27;\t&#x27; ) ++p;
+    while ( *p &amp;&amp; *p != &#x27; &#x27; &amp;&amp; *p != &#x27;\t&#x27; &amp;&amp; *p != &#x27;\n&#x27; ) ++p;
+  }
+  while ( *p == &#x27; &#x27; || *p == &#x27;\t&#x27; ) ++p;
+  if ( *p == 0 || *p == &#x27;\n&#x27; || *p != &#x27;/&#x27; ) return false;
+
+  out.path.set_size(0);
+  while ( *p &amp;&amp; *p != &#x27;\n&#x27; &amp;&amp; out.path.size() + 1 &lt; out.path.max_size() ) out.path += *p++;
+  out.path.null_term();
+  return !out.path.empty();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L109">line 109</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L115">line 115</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L124">line 124</a></td></tr><tr class="t-dsc"><td><code>!out.path.empty()</code></td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L129">line 129</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="host_modules.hpp.html#f-f59946865bee9d92">__parse_hex</a>.</p></section><section class="function-entry" id="f-80dc839d484df599"><h3><code>micron::elf::__build_host_dyn(host_module_t &amp;m)</code></h3><p>Defined in <code>linux/elf/host_modules.hpp</code>, <a href="../../../source/linux/elf/host_modules.hpp.html#L133">line 133</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__build_host_dyn(host_module_t &amp;m)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>host_module_t &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__build_host_dyn(host_module_t &amp;m)
+{
+  // a loaded module always has an executable mapping
+  if ( !m.exec ) return;
+  if ( m.span &lt; sizeof(nehdr_t) ) return;
+
+  volatile const u8 *probe = m.base;
+  const u8 b0 = probe[0];
+  if ( b0 != mag0 ) return;
+  const u8 b1 = probe[1];
+  if ( b1 != mag1 ) return;
+  const u8 b2 = probe[2];
+  if ( b2 != mag2 ) return;
+  const u8 b3 = probe[3];
+  if ( b3 != mag3 ) return;
+
+  const nehdr_t *eh = micron::ptr_cast&lt;const nehdr_t *&gt;(m.base);
+  if ( eh-&gt;ident[ei_class] != native_traits::ident_class ) return;
+  // WARNING: a class check alone is not enough; amd64 and an aarch64 object are both ELFCLASS64 with the same header layout
+  if ( expected_machine != 0 &amp;&amp; eh-&gt;machine != expected_machine ) return;
+  if ( eh-&gt;ident[ei_data] != (native_data == fmt_data::msb ? elfdata2msb : elfdata2lsb) ) return;
+  if ( eh-&gt;type != et_dyn &amp;&amp; eh-&gt;type != et_exec ) return;      // not a loadable image
+  if ( eh-&gt;phnum == 0 || eh-&gt;phnum &gt; 256 ) return;              // sanity bound on the phdr table
+
+  const uptr phdr_at = reinterpret_cast&lt;uptr&gt;(m.base) + static_cast&lt;uptr&gt;(eh-&gt;phoff);
+  if ( !__host_in_span(m, phdr_at, static_cast&lt;usize&gt;(eh-&gt;phnum) * sizeof(nphdr_t)) ) return;
+
+  const nphdr_t *phdrs = reinterpret_cast&lt;const nphdr_t *&gt;(phdr_at);
+  const nphdr_t *dyn_ph = nullptr;
+  uptr first_load_vaddr = ~uptr(0);
+  for ( half i = 0; i &lt; eh-&gt;phnum; ++i ) {
+    if ( phdrs[i].type == pt_load &amp;&amp; static_cast&lt;uptr&gt;(phdrs[i].vaddr) &lt; first_load_vaddr ) {
+      first_load_vaddr = static_cast&lt;uptr&gt;(phdrs[i].vaddr);
+    }
+    if ( phdrs[i].type == pt_dynamic ) dyn_ph = &amp;phdrs[i];
+  }
+  if ( !dyn_ph || first_load_vaddr == ~uptr(0) ) return;
+
+  const uptr base_u = reinterpret_cast&lt;uptr&gt;(m.base);
+  const uptr bias = base_u - first_load_vaddr;
+  m.bias = static_cast&lt;u64&gt;(bias);      // store for host_resolve_sym (ET_EXEC / nonzero-vaddr modules need it)
+
+  const uptr dyn_at = bias + static_cast&lt;uptr&gt;(dyn_ph-&gt;vaddr);
+  if ( !__host_in_span(m, dyn_at, sizeof(ndyn_t)) ) return;
+
+  const ndyn_t *dyn = reinterpret_cast&lt;const ndyn_t *&gt;(dyn_at);
+  const uptr span_end = reinterpret_cast&lt;uptr&gt;(m.base) + static_cast&lt;uptr&gt;(m.span);
+  auto in_dyn = [&amp;](const ndyn_t *d) { return reinterpret_cast&lt;uptr&gt;(d) + sizeof(ndyn_t) &lt;= span_end; };
+
+  auto resolve = [&amp;](u64 v) -&gt; uptr {
+    const uptr uv = static_cast&lt;uptr&gt;(v);
+    return uv &gt;= base_u ? uv : (bias + uv);
+  };
+
+  for ( const ndyn_t *d = dyn; in_dyn(d) &amp;&amp; d-&gt;tag != dt_null; ++d ) {
+    if ( d-&gt;tag == dt_strtab ) {
+      const uptr at = resolve(d-&gt;un.ptr);
+      if ( __host_in_span(m, at, 1) ) m.dyn.strtab = reinterpret_cast&lt;const char *&gt;(at);
+    } else if ( d-&gt;tag == dt_strsz )
+      m.dyn.strsz = d-&gt;un.val;
+  }
+
+  if ( !m.dyn.strtab ) return;
+  // clamp DT_STRSZ to what is actually mapped so a name offset can never leave the image
+  {
+    const uptr st = reinterpret_cast&lt;uptr&gt;(m.dyn.strtab);
+    const u64 avail = static_cast&lt;u64&gt;(span_end - st);
+    if ( m.dyn.strsz &gt; avail ) m.dyn.strsz = avail;
+  }
+
+  for ( const ndyn_t *d = dyn; in_dyn(d) &amp;&amp; d-&gt;tag != dt_null; ++d ) {
+    const uptr at = resolve(d-&gt;un.ptr);
+    switch ( d-&gt;tag ) {
+    case dt_symtab:
+      if ( __host_in_span(m, at, sizeof(nsym_t)) ) m.dyn.symtab = reinterpret_cast&lt;const nsym_t *&gt;(at);
+      break;
+    case dt_hash:
+      if ( __host_in_span(m, at, 2 * sizeof(word)) ) m.dyn.hash = reinterpret_cast&lt;const word *&gt;(at);
+      break;
+    case dt_gnu_hash:
+      if ( __host_in_span(m, at, 4 * sizeof(word)) ) m.dyn.gnu_hash = reinterpret_cast&lt;const word *&gt;(at);
+      break;
+    case dt_versym:
+      if ( __host_in_span(m, at, sizeof(half)) ) m.dyn.versym = reinterpret_cast&lt;const half *&gt;(at);
+      break;
+    case dt_syment:
+      m.dyn.syment = d-&gt;un.val;
+      break;
+    case dt_soname:
+      if ( d-&gt;un.val &lt; m.dyn.strsz ) {
+        m.dyn.soname = m.dyn.strtab + d-&gt;un.val;
+        m.soname = m.dyn.soname;
+      }
+      break;
+    default:
+      break;
+    }
+  }
+  m.dyn.symcount = count_dynsyms(m.dyn);
+  m.valid = m.dyn.symtab &amp;&amp; (m.dyn.hash || m.dyn.gnu_hash);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L136">line 136</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L137">line 137</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L143">line 143</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L147">line 147</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L152">line 152</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L153">line 153</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L154">line 154</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L155">line 155</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L158">line 158</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L169">line 169</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/linux/elf/host_modules.hpp.html#L195">line 195</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const nehdr_t *&gt;</a>, <a href="host_modules.hpp.html#f-ca6eeba9a4facad0">__host_in_span</a>, <a href="host_modules.hpp.html#s-adfabbbefe7b9462">uptr</a>, <a href="hash.hpp.html#f-d0994343c13cf149">count_dynsyms</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

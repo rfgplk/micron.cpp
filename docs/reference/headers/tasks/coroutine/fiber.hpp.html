@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/coroutine/fiber.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/coroutine/fiber.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/coroutine/fiber.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/tasks/coroutine/fiber.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-3dc2dae5044987c3">micron::fiber::fiber_state</code></td><td>enum; line 37<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-9ec901dd71bad1af">micron::fiber::fiber_state::done</code></td><td>enumerator; line 37<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-eb0a75f09806dfd0">micron::fiber::fiber_state::fresh</code></td><td>enumerator; line 37<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-aaad7eb430071da1">micron::fiber::fiber_state::running</code></td><td>enumerator; line 37<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-b2a42783682f1462">micron::fiber::fiber_state::suspended</code></td><td>enumerator; line 37<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-1ec3904af04e59b5">micron::fiber::fiber</code></td><td>struct; line 39<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-b184d07090dcd908">micron::fiber::fiber::ctx</code></td><td>member; line 40<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-bcc79fbd619a2606">micron::fiber::fiber::link</code></td><td>member; line 41<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-982e6d2ad737c8b0">micron::fiber::fiber::region</code></td><td>member; line 42<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6d0e93f09198699f">micron::fiber::fiber::frame_sp</code></td><td>member; line 43<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-623080762bafdc54">micron::fiber::fiber::parent</code></td><td>member; line 44<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-d94a17635d929ab7">micron::fiber::fiber::entry</code></td><td>member; line 45<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-f2bd2d6d872397a4">micron::fiber::fiber::arg</code></td><td>member; line 46<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-6652e4e0bfbc9d6e">micron::fiber::fiber::coro</code></td><td>member; line 47<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-4d934e0cdfec0b31">micron::fiber::fiber::state</code></td><td>member; line 48<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-9d10e0e873c24ad8">micron::fiber::fiber::refs</code></td><td>member; line 49<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-78ce647252cf3dd9">micron::fiber::fiber::owner_worker</code></td><td>member; line 50<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-02c4fbe3092ab84e">micron::fiber::fiber::escaped</code></td><td>member; line 51<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-722f6bf29dc76f46">micron::fiber::fiber::free_next</code></td><td>member; line 52<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-f21971299a03b2ac">micron::fiber::create_fiber(void (*entry)(fiber *), void *arg, usize stack_size = static_cast&lt;usize&gt;(micro_stack_size), fiber *parent = nullptr) noexcept</a></td><td>function; line 104<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-7ac05d43b1476e9c">micron::fiber::resume(fiber *f, ar::__fiber_ctx *host = &amp;__worker_sched_ctx) noexcept</a></td><td>function; line 146<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-9882f4dfc8fbe1a4">micron::fiber::suspend_to_scheduler() noexcept</a></td><td>function; line 156<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-66759f3e7b80751c">micron::fiber::current() noexcept</a></td><td>function; line 165<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-859c6d7350f248bc">micron::fiber::destroy_fiber(fiber *f) noexcept</a></td><td>function; line 251<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-a711adc0ab178467">micron::fiber::drain_freelist() noexcept</a></td><td>function; line 258<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-4912618cacc1ba17">micron::fiber::drain_seg_pool() noexcept</a></td><td>function; line 274<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f21971299a03b2ac"><h3><code>micron::fiber::create_fiber(void (*entry)(fiber *), void *arg, usize stack_size = static_cast&lt;usize&gt;(micro_stack_size), fiber *parent = nullptr) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L104">line 104</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline fiber *
+create_fiber(void (*entry)(fiber *), void *arg, usize stack_size = static_cast&lt;usize&gt;(micro_stack_size), fiber *parent = nullptr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void (*entry)(fiber *)</code></li><li><code>void *arg</code></li><li><code>usize stack_size = static_cast&lt;usize&gt;(micro_stack_size)</code></li><li><code>fiber *parent = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline fiber *
+create_fiber(void (*entry)(fiber *), void *arg, usize stack_size = static_cast&lt;usize&gt;(micro_stack_size), fiber *parent = nullptr) noexcept
+{
+  const u32 cls = __seg_class_for(stack_size);
+  fiber *f = nullptr;
+
+  if ( __seg_freelist[cls] != nullptr ) {      // recycle a same-class FCB+region
+    f = __seg_freelist[cls];
+    __seg_freelist[cls] = f-&gt;free_next;
+  } else if ( (f = __seg_pool[cls].pop()) != nullptr ) {
+    // recycled
+  } else {
+    __region reg;
+    if ( !__carve_region(reg, cls) ) return nullptr;
+    // embed the FCB at the top of the C-stack region, cache-line aligned
+    const usize fcb_addr = (reinterpret_cast&lt;usize&gt;(reg.stack_top) - sizeof(fiber)) &amp; ~static_cast&lt;usize&gt;(63);
+    f = reinterpret_cast&lt;fiber *&gt;(fcb_addr);
+    new (static_cast&lt;void *&gt;(f)) fiber();
+    f-&gt;region = reg;
+  }
+
+  // execution stack top sits just below the embedded FCB (16-aligned)
+  byte *stack_top = reinterpret_cast&lt;byte *&gt;(reinterpret_cast&lt;usize&gt;(f) &amp; ~static_cast&lt;usize&gt;(15));
+
+  f-&gt;link = &amp;__worker_sched_ctx;
+  f-&gt;parent = parent;
+  f-&gt;entry = entry;
+  f-&gt;arg = arg;
+  f-&gt;coro = nullptr;
+  f-&gt;frame_sp = f-&gt;region.frame_base;                  // coroutine-frame arena bump cursor (grows up)
+  f-&gt;refs.store(1, micron::memory_order_relaxed);      // execution holds the initial ref
+  f-&gt;owner_worker = __self_tid();
+  f-&gt;escaped = false;
+  f-&gt;free_next = nullptr;
+  // relaxed: the fiber is unpublished until the creating thread resumes or hands it off
+  f-&gt;state.store(static_cast&lt;u32&gt;(fiber_state::fresh), micron::memory_order_relaxed);
+
+  ar::make_context(&amp;f-&gt;ctx, stack_top, &amp;__micron_fiber_enter, f);
+  return f;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L116">line 116</a></td></tr><tr class="t-dsc"><td><code>f</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L141">line 141</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fiber_stack.hpp.html#f-e57e241a0e43ed0c">__seg_class_for</a>, <a href="fiber_stack.hpp.html#f-0e682e4595233e18">__carve_region</a>, <a href="fiber.hpp.html#f-79268b539ad42632">__self_tid</a>, <a href="../../bits/__ar.hpp.html#f-f53b42c002f01780">ar::make_context</a>.</p></section><section class="function-entry" id="f-7ac05d43b1476e9c"><h3><code>micron::fiber::resume(fiber *f, ar::__fiber_ctx *host = &amp;__worker_sched_ctx) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L146">line 146</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+resume(fiber *f, ar::__fiber_ctx *host = &amp;__worker_sched_ctx) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fiber *f</code></li><li><code>ar::__fiber_ctx *host = &amp;__worker_sched_ctx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+resume(fiber *f, ar::__fiber_ctx *host = &amp;__worker_sched_ctx) noexcept
+{
+  f-&gt;link = host;
+  fiber *prev = __current_fiber;
+  __current_fiber = f;
+  ar::__micron_swap_context(host, &amp;f-&gt;ctx);      // -&gt; trampoline (fresh) or the saved resume point
+  __current_fiber = prev;                        // control returned to the host
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../bits/__ar.hpp.html#f-2c308c1a02ba53fc">ar::__micron_swap_context</a>.</p></section><section class="function-entry" id="f-9882f4dfc8fbe1a4"><h3><code>micron::fiber::suspend_to_scheduler() noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L156">line 156</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+suspend_to_scheduler() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+suspend_to_scheduler() noexcept
+{
+  fiber *f = __current_fiber;
+  f-&gt;state.store(static_cast&lt;u32&gt;(fiber_state::suspended), micron::memory_order_release);
+  ar::__micron_swap_context(&amp;f-&gt;ctx, f-&gt;link);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../bits/__ar.hpp.html#f-2c308c1a02ba53fc">ar::__micron_swap_context</a>.</p></section><section class="function-entry" id="f-66759f3e7b80751c"><h3><code>micron::fiber::current() noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L165">line 165</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline fiber *
+current() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Returns <code>__current_fiber</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline fiber *
+current() noexcept
+{
+  return __current_fiber;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__current_fiber</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L167">line 167</a></td></tr></tbody></table></section><section class="function-entry" id="f-859c6d7350f248bc"><h3><code>micron::fiber::destroy_fiber(fiber *f) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L251">line 251</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+destroy_fiber(fiber *f) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fiber *f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+destroy_fiber(fiber *f) noexcept
+{
+  if ( f == nullptr ) return;
+  __drop_ref(f);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L253">line 253</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fiber.hpp.html#f-1470e148567ab793">__drop_ref</a>.</p></section><section class="function-entry" id="f-a711adc0ab178467"><h3><code>micron::fiber::drain_freelist() noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L258">line 258</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+drain_freelist() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+drain_freelist() noexcept
+{
+  for ( u32 c = 0; c &lt; __seg_class_count; ++c ) {
+    fiber *f = __seg_freelist[c];
+    __seg_freelist[c] = nullptr;
+    while ( f != nullptr ) {
+      fiber *nx = f-&gt;free_next;
+      __region reg = f-&gt;region;
+      f-&gt;~fiber();
+      __release_region(reg);
+      f = nx;
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fiber_stack.hpp.html#f-e4cdbee34b419dd8">__release_region</a>.</p></section><section class="function-entry" id="f-4912618cacc1ba17"><h3><code>micron::fiber::drain_seg_pool() noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L274">line 274</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+drain_seg_pool() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+drain_seg_pool() noexcept
+{
+  for ( u32 c = 0; c &lt; __seg_class_count; ++c )
+    __seg_pool[c].drain([](fiber *f) {
+      __region reg = f-&gt;region;
+      f-&gt;~fiber();
+      __release_region(reg);
+    });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-79268b539ad42632"><h3><code>micron::fiber::__self_tid() noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L63">line 63</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline i32
+__self_tid() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline i32
+__self_tid() noexcept
+{
+  i32 t = __cached_tid;
+  if ( t &lt; 0 ) [[unlikely]]
+    t = __cached_tid = static_cast&lt;i32&gt;(micthread::self());
+  return t;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L68">line 68</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/sys/micthread/threads.hpp.html#f-a0445a3e53f79567">micthread::self</a>.</p></section><section class="function-entry" id="f-b91e06ba8cfec39d"><h3><code>micron::fiber::__micron_fiber_enter(void *p) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L84">line 84</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__micron_fiber_enter(void *p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__micron_fiber_enter(void *p) noexcept
+{
+  fiber *f = static_cast&lt;fiber *&gt;(p);
+  f-&gt;state.store(static_cast&lt;u32&gt;(fiber_state::running), micron::memory_order_relaxed);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+  try {
+    f-&gt;entry(f);
+  } catch ( ... ) {
+    f-&gt;escaped = true;      // an exception escaped the noexcept coroutine chain; cl_sched __run fails fast on it
+  }
+#else
+  f-&gt;entry(f);
+#endif
+  f-&gt;state.store(static_cast&lt;u32&gt;(fiber_state::done), micron::memory_order_release);
+  ar::__micron_swap_context(&amp;f-&gt;ctx, f-&gt;link);      // final park back to the scheduler; never resumed
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../bits/__ar.hpp.html#f-2c308c1a02ba53fc">ar::__micron_swap_context</a>.</p></section><section class="function-entry" id="f-37a5876b739719e1"><h3><code>micron::fiber::__finalize_fiber(fiber *f) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L171">line 171</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__finalize_fiber(fiber *f) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fiber *f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__finalize_fiber(fiber *f) noexcept
+{
+  if ( f-&gt;owner_worker == __self_tid() ) {
+    f-&gt;free_next = __seg_freelist[f-&gt;region.cls];
+    __seg_freelist[f-&gt;region.cls] = f;      // keep the FCB constructed for reuse
+    return;
+  }
+  if ( __seg_pool[f-&gt;region.cls].push(f) ) return;
+  __region reg = f-&gt;region;
+  f-&gt;~fiber();
+  __release_region(reg);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L176">line 176</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L178">line 178</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fiber.hpp.html#f-79268b539ad42632">__self_tid</a>, <a href="fiber_stack.hpp.html#f-e4cdbee34b419dd8">__release_region</a>.</p></section><section class="function-entry" id="f-1470e148567ab793"><h3><code>micron::fiber::__drop_ref(fiber *f) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L185">line 185</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__drop_ref(fiber *f) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>fiber *f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__drop_ref(fiber *f) noexcept
+{
+  // acq_rel so the release pairs with the acquire that observes refs==0 -&gt; all prior frame writes are visible
+  if ( f-&gt;refs.sub_fetch(1, micron::memory_order_acq_rel) == 0 ) __finalize_fiber(f);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fiber.hpp.html#f-37a5876b739719e1">__finalize_fiber</a>.</p></section><section class="function-entry" id="f-15248d170091f1c0"><h3><code>micron::fiber::__frame_round(usize n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L204">line 204</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline usize
+__frame_round(usize n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>(n + (__frame_align - 1)) &amp; ~(__frame_align - 1)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline usize
+__frame_round(usize n) noexcept
+{
+  return (n + (__frame_align - 1)) &amp; ~(__frame_align - 1);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(n + (__frame_align - 1)) &amp; ~(__frame_align - 1)</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L206">line 206</a></td></tr></tbody></table></section><section class="function-entry" id="f-e081ccfde946f992"><h3><code>micron::fiber::__frame_alloc_heap(usize need) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L211">line 211</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void *
+__frame_alloc_heap(usize need) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize need</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void *
+__frame_alloc_heap(usize need) noexcept
+{
+  byte *raw = static_cast&lt;byte *&gt;(::operator new(need + __frame_align));
+  byte *h = reinterpret_cast&lt;byte *&gt;((reinterpret_cast&lt;usize&gt;(raw + __frame_hdr) + (__frame_align - 1)) &amp; ~(__frame_align - 1));
+  *micron::ptr_cast&lt;fiber **&gt;(h - __frame_hdr) = nullptr;
+  *micron::ptr_cast&lt;byte **&gt;(h - __frame_hdr + sizeof(void *)) = raw;
+  return h;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>h</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L217">line 217</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;fiber **&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;byte **&gt;</a>.</p></section><section class="function-entry" id="f-23e32865853d3ce6"><h3><code>micron::fiber::__frame_alloc(usize n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L221">line 221</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void *
+__frame_alloc(usize n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void *
+__frame_alloc(usize n) noexcept
+{
+  fiber *f = __current_fiber;
+  const usize need = __frame_hdr + __frame_round(n);
+  if ( f == nullptr ) return __frame_alloc_heap(need);
+  byte *h = reinterpret_cast&lt;byte *&gt;((reinterpret_cast&lt;usize&gt;(f-&gt;frame_sp) + (__frame_align - 1)) &amp; ~(__frame_align - 1));
+  byte *next = h + need;
+  if ( next &gt; f-&gt;region.frame_limit ) [[unlikely]]
+    return __frame_alloc_heap(need);
+  f-&gt;frame_sp = next;
+  *micron::ptr_cast&lt;fiber **&gt;(h) = f;
+  f-&gt;refs.fetch_add(1, micron::memory_order_relaxed);
+  return h + __frame_hdr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__frame_alloc_heap(need)</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L225">line 225</a></td></tr><tr class="t-dsc"><td><code>__frame_alloc_heap(need)</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L229">line 229</a></td></tr><tr class="t-dsc"><td><code>h + __frame_hdr</code></td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L233">line 233</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fiber.hpp.html#f-15248d170091f1c0">__frame_round</a>, <a href="fiber.hpp.html#f-e081ccfde946f992">__frame_alloc_heap</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;fiber **&gt;</a>.</p></section><section class="function-entry" id="f-ec0e2dbfa9ac5113"><h3><code>micron::fiber::__frame_free(void *p, usize n) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber.hpp</code>, <a href="../../../source/tasks/coroutine/fiber.hpp.html#L237">line 237</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__frame_free(void *p, usize n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__frame_free(void *p, usize n) noexcept
+{
+  if ( p == nullptr ) return;
+  byte *h = reinterpret_cast&lt;byte *&gt;(p) - __frame_hdr;
+  fiber *owner = *micron::ptr_cast&lt;fiber **&gt;(h);
+  if ( owner == nullptr ) {
+    ::operator delete(static_cast&lt;void *&gt;(*micron::ptr_cast&lt;byte **&gt;(h + sizeof(void *))));
+    return;
+  }
+  if ( owner == __current_fiber &amp;&amp; h + __frame_hdr + __frame_round(n) == owner-&gt;frame_sp ) owner-&gt;frame_sp = h;
+  __drop_ref(owner);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L239">line 239</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/fiber.hpp.html#L244">line 244</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;fiber **&gt;</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;byte **&gt;</a>, <a href="fiber.hpp.html#f-15248d170091f1c0">__frame_round</a>, <a href="fiber.hpp.html#f-1470e148567ab793">__drop_ref</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

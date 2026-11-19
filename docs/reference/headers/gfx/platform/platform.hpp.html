@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/gfx/platform/platform.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/gfx/platform/platform.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphics.html">Graphics</a></div><p>Defined in header <code>&lt;micron/gfx/platform/platform.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/gfx/platform/platform.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-1e28721dc9bc5d21">micron::gfx::platform::backend_tag_t</code></td><td>enum; line 22</td></tr><tr class="t-dsc"><td><code id="s-c87784cd5a84d9bd">micron::gfx::platform::backend_tag_t::none</code></td><td>enumerator; line 23</td></tr><tr class="t-dsc"><td><code id="s-5905524a880eb7e5">micron::gfx::platform::backend_tag_t::x11</code></td><td>enumerator; line 24</td></tr><tr class="t-dsc"><td><code id="s-a0219e2cd2d9f41f">micron::gfx::platform::backend_tag_t::wayland</code></td><td>enumerator; line 25</td></tr><tr class="t-dsc"><td><a href="#f-de8d18ab3255653b">micron::gfx::platform::env(const char *key) noexcept</a></td><td>function; line 89</td></tr><tr class="t-dsc"><td><a href="#f-5aeda6ed44b5abf0">micron::gfx::platform::select_backend() noexcept</a></td><td>function; line 95</td></tr><tr class="t-dsc"><td><a href="#f-bea109e68e17b09b">micron::gfx::platform::backend_name(backend_tag_t t) noexcept</a></td><td>function; line 110</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-de8d18ab3255653b"><h3><code>micron::gfx::platform::env(const char *key) noexcept</code></h3><p>Defined in <code>gfx/platform/platform.hpp</code>, <a href="../../../source/gfx/platform/platform.hpp.html#L89">line 89</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+env(const char *key) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *key</code></li></ul><h4>Effects</h4><p>Returns <code>__env::__get(key)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+env(const char *key) noexcept
+{
+  return __env::__get(key);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__env::__get(key)</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L91">line 91</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="platform.hpp.html#f-39ff58eaad0542be">__env::__get</a>.</p></section><section class="function-entry" id="f-5aeda6ed44b5abf0"><h3><code>micron::gfx::platform::select_backend() noexcept</code></h3><p>Defined in <code>gfx/platform/platform.hpp</code>, <a href="../../../source/gfx/platform/platform.hpp.html#L95">line 95</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline backend_tag_t
+select_backend() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline backend_tag_t
+select_backend() noexcept
+{
+  const char *session = env(&quot;XDG_SESSION_TYPE&quot;);
+  const char *wl = env(&quot;WAYLAND_DISPLAY&quot;);
+  const char *xdpy = env(&quot;DISPLAY&quot;);
+
+  if ( session &amp;&amp; micron::strcmp(session, &quot;wayland&quot;) == 0 &amp;&amp; __env::__nonempty(wl) ) return backend_tag_t::wayland;
+  if ( session &amp;&amp; micron::strcmp(session, &quot;x11&quot;) == 0 &amp;&amp; __env::__nonempty(xdpy) ) return backend_tag_t::x11;
+
+  if ( __env::__nonempty(wl) ) return backend_tag_t::wayland;
+  if ( __env::__nonempty(xdpy) ) return backend_tag_t::x11;
+  return backend_tag_t::none;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>backend_tag_t::wayland</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>backend_tag_t::x11</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L102">line 102</a></td></tr><tr class="t-dsc"><td><code>backend_tag_t::wayland</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>backend_tag_t::x11</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L105">line 105</a></td></tr><tr class="t-dsc"><td><code>backend_tag_t::none</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L106">line 106</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="platform.hpp.html#f-de8d18ab3255653b">env</a>, <a href="../../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>, <a href="platform.hpp.html#f-cdeb2356d072e280">__env::__nonempty</a>.</p></section><section class="function-entry" id="f-bea109e68e17b09b"><h3><code>micron::gfx::platform::backend_name(backend_tag_t t) noexcept</code></h3><p>Defined in <code>gfx/platform/platform.hpp</code>, <a href="../../../source/gfx/platform/platform.hpp.html#L110">line 110</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+backend_name(backend_tag_t t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>backend_tag_t t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+backend_name(backend_tag_t t) noexcept
+{
+  switch ( t ) {
+  case backend_tag_t::x11:
+    return &quot;x11&quot;;
+  case backend_tag_t::wayland:
+    return &quot;wayland&quot;;
+  case backend_tag_t::none:
+  default:
+    return &quot;none&quot;;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;x11&quot;</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L114">line 114</a></td></tr><tr class="t-dsc"><td><code>&quot;wayland&quot;</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L116">line 116</a></td></tr><tr class="t-dsc"><td><code>&quot;none&quot;</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L119">line 119</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-726f11553c9444b7"><h3><code>micron::gfx::platform::__env::__load() noexcept</code></h3><p>Defined in <code>gfx/platform/platform.hpp</code>, <a href="../../../source/gfx/platform/platform.hpp.html#L36">line 36</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__load() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__load() noexcept
+{
+  if ( __loaded ) return;
+  __loaded = true;
+
+  i32 fd = posix::open(&quot;/proc/self/environ&quot;, posix::o_rdonly);
+  if ( fd &lt; 0 ) return;
+  constexpr usize cap = 65536;
+  char *buf = reinterpret_cast&lt;char *&gt;(micron::mmap(nullptr, cap, prot_read | prot_write, map_private | map_anonymous, -1, 0));
+  if ( mmap_failed(buf) ) {
+    posix::close(fd);
+    return;
+  }
+  usize total = 0;
+  while ( total + 1 &lt; cap ) {
+    max_t n = posix::read(fd, buf + total, cap - 1 - total);
+    if ( n &lt;= 0 ) break;
+    total += static_cast&lt;usize&gt;(n);
+  }
+  buf[total] = 0;
+  posix::close(fd);
+  __buf = buf;
+  __sz = total;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/gfx/platform/platform.hpp.html#L38">line 38</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/gfx/platform/platform.hpp.html#L42">line 42</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/gfx/platform/platform.hpp.html#L47">line 47</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../linux/io/sys.hpp.html#f-4489c173fc28797e">posix::open</a>, <a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">mmap_failed</a>, <a href="../../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../../linux/io/sys.hpp.html#f-4dae032f64ac939d">posix::read</a>.</p></section><section class="function-entry" id="f-39ff58eaad0542be"><h3><code>micron::gfx::platform::__env::__get(const char *key) noexcept</code></h3><p>Defined in <code>gfx/platform/platform.hpp</code>, <a href="../../../source/gfx/platform/platform.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+__get(const char *key) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *key</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+__get(const char *key) noexcept
+{
+  __load();
+  if ( !__buf || !key ) return nullptr;
+  const usize klen = micron::strlen(key);
+  usize i = 0;
+  while ( i &lt; __sz ) {
+
+    if ( i + klen &lt; __sz &amp;&amp; __buf[i + klen] == &#x27;=&#x27; &amp;&amp; micron::strncmp(__buf + i, key, klen) == 0 ) {
+      return __buf + i + klen + 1;
+    }
+
+    while ( i &lt; __sz &amp;&amp; __buf[i] != 0 ) ++i;
+    ++i;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L65">line 65</a></td></tr><tr class="t-dsc"><td><code>__buf + i + klen + 1</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L71">line 71</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L77">line 77</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="platform.hpp.html#f-726f11553c9444b7">__load</a>, <a href="../../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="../../memory/cstring.hpp.html#f-40c432e3c9b7e8fd">micron::strncmp</a>.</p></section><section class="function-entry" id="f-cdeb2356d072e280"><h3><code>micron::gfx::platform::__env::__nonempty(const char *s) noexcept</code></h3><p>Defined in <code>gfx/platform/platform.hpp</code>, <a href="../../../source/gfx/platform/platform.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__nonempty(const char *s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li></ul><h4>Effects</h4><p>Returns <code>s &amp;&amp; s[0] != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__nonempty(const char *s) noexcept
+{
+  return s &amp;&amp; s[0] != 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s &amp;&amp; s[0] != 0</code></td><td><a href="../../../source/gfx/platform/platform.hpp.html#L83">line 83</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

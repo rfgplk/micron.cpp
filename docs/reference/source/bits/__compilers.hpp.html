@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bits/__compilers.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">bits/__compilers.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/bits/__compilers.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> // compiler identities and compiler specific settings/spellings</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> </span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> // TODO: if we add support for more compilers they should go here</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #if defined(__clang__)</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #define __micron_compiler_clang 1</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #define __micron_compiler_clang_major __clang_major__</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #define __micron_compiler_clang_minor __clang_minor__</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #define __micron_compiler_clang_patch __clang_patchlevel__</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #elif defined(__GNUC__)</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #define __micron_compiler_gcc 1</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #define __micron_compiler_gcc_major __GNUC__</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #define __micron_compiler_gcc_minor __GNUC_MINOR__</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #define __micron_compiler_gcc_patch __GNUC_PATCHLEVEL__</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #elif defined(_MSC_VER)</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> #define __micron_compiler_msvc 1</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> #define __micron_compiler_msvc_ver _MSC_VER</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> #elif defined(__INTEL_COMPILER) || defined(__ICC)</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> #define __micron_compiler_icc 1</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> #define __micron_compiler_icc_ver __INTEL_COMPILER</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> #elif defined(__INTEL_LLVM_COMPILER)</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> #define __micron_compiler_icx 1</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> #else</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> #define __micron_compiler_unknown 1</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> #endif</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> </span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> #if defined(__micron_compiler_gcc) || defined(__micron_compiler_clang)</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> #define __micron_compiler_gcc_compat 1</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> #endif</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> </span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> #define __micron_pragma_(x) _Pragma(#x)</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> </span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> #if defined(__micron_compiler_clang)</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> #define __micron_diagnostic_push __micron_pragma_(clang diagnostic push)</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> #define __micron_diagnostic_ignored(w) __micron_pragma_(clang diagnostic ignored w)</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> #define __micron_diagnostic_nan __micron_diagnostic_ignored(&quot;-Wnan-infinity-disabled&quot;)</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> #define __micron_diagnostic_pop __micron_pragma_(clang diagnostic pop)</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> #define __micron_loop_ivdep __micron_pragma_(clang loop vectorize(enable))</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> #define __micron_push_options</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> #define __micron_pop_options</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> #define __micron_optimize_no_fast_math</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> #define __micron_optimize_no_unsafe_math</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> #define __micron_optimize_no_tree_loop_distribute</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> #define __micron_gcc_unroll_4</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> #define __micron_gcc_unroll_8</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> #define __micron_gcc_target_avx512</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> #define __micron_externally_visible</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> #define __micron_optimize_O0</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> #else</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> #define __micron_diagnostic_push __micron_pragma_(GCC diagnostic push)</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> #define __micron_diagnostic_ignored(w) __micron_pragma_(GCC diagnostic ignored w)</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> #define __micron_diagnostic_nan</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> #define __micron_diagnostic_pop __micron_pragma_(GCC diagnostic pop)</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> #define __micron_loop_ivdep __micron_pragma_(GCC ivdep)</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> #define __micron_push_options __micron_pragma_(GCC push_options)</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> #define __micron_pop_options __micron_pragma_(GCC pop_options)</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> #define __micron_optimize_no_fast_math                                                                                                     \</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>   __micron_pragma_(GCC optimize(&quot;no-fast-math&quot;, &quot;no-associative-math&quot;, &quot;no-reciprocal-math&quot;, &quot;signed-zeros&quot;))</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> #define __micron_optimize_no_unsafe_math                                                                                                   \</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>   __micron_pragma_(GCC optimize(&quot;-fno-unsafe-math-optimizations&quot;, &quot;-fno-associative-math&quot;, &quot;-fno-reciprocal-math&quot;))</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> #define __micron_optimize_no_tree_loop_distribute __attribute__((optimize(&quot;-fno-tree-loop-distribute-patterns&quot;)))</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> #define __micron_gcc_unroll_4 __micron_pragma_(GCC unroll 4)</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> #define __micron_gcc_unroll_8 __micron_pragma_(GCC unroll 8)</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> #define __micron_gcc_target_avx512 __micron_pragma_(GCC target(&quot;avx512f,avx512bw,avx512dq,avx512vl&quot;))</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> #define __micron_externally_visible __attribute__((externally_visible))</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> #define __micron_optimize_O0 __attribute__((optimize(&quot;O0&quot;)))</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> #endif</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> </span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> #if defined(__micron_compiler_gcc)</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> #define __micron_diagnostic_suggest_noreturn __micron_diagnostic_ignored(&quot;-Wsuggest-attribute=noreturn&quot;)</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> #else</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> #define __micron_diagnostic_suggest_noreturn</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> #endif</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> </span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> #if defined(__micron_compiler_clang)</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> #define __micron_builtin_is_trivially_destructible(T) __is_trivially_destructible(T)</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> #else</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> #define __micron_builtin_is_trivially_destructible(T) __has_trivial_destructor(T)</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> #endif</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/hash/rapidhash.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/hash/rapidhash.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/hashing.html">Hashing</a></div><p>Defined in header <code>&lt;micron/hash/rapidhash.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/hash/rapidhash.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-9b5ec480a0fce026">micron::hashes::rapid_secret</code></td><td>variable; line 52</td></tr><tr class="t-dsc"><td><a href="#f-ec3ae3af5b18302a">micron::hashes::rapid_mum(u64 *A, u64 *B) noexcept</a></td><td>function; line 56</td></tr><tr class="t-dsc"><td><a href="#f-35bce16e334717b3">micron::hashes::rapid_mix(u64 A, u64 B) noexcept</a></td><td>function; line 65</td></tr><tr class="t-dsc"><td><a href="#f-5112792385c11a3d">micron::hashes::rapid_read64(const u8 *p) noexcept</a></td><td>function; line 72</td></tr><tr class="t-dsc"><td><a href="#f-833ad0c91cb6a048">micron::hashes::rapid_read32(const u8 *p) noexcept</a></td><td>function; line 83</td></tr><tr class="t-dsc"><td><a href="#f-70539ba639eed1bd">micron::hashes::rapid_finalize(u64 a, u64 b, u64 seed, usize i, const u64 *secret) noexcept</a></td><td>function; line 94</td></tr><tr class="t-dsc"><td><a href="#f-ecd39d4b45e4eaec">micron::hashes::rapid_short(const u8 *p, usize len, u64 &amp;seed, u64 &amp;a, u64 &amp;b) noexcept</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-a22515199c253e15">micron::hashes::rapidhash_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</a></td><td>function; line 122</td></tr><tr class="t-dsc"><td><a href="#f-c599c0fcaacaf962">micron::hashes::rapidhash_micro_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</a></td><td>function; line 178</td></tr><tr class="t-dsc"><td><a href="#f-3bafdd245db62715">micron::hashes::rapidhash_nano_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</a></td><td>function; line 223</td></tr><tr class="t-dsc"><td><a href="#f-0beb96442430df1e">micron::hashes::rapidhash(const byte *key, usize len) noexcept</a></td><td>function; line 261</td></tr><tr class="t-dsc"><td><a href="#f-289bc89d3a379892">micron::hashes::rapidhash(const byte *key, u64 seed, usize len) noexcept</a></td><td>function; line 267</td></tr><tr class="t-dsc"><td><a href="#f-674f979e7781cf21">micron::hashes::rapidhash_micro(const byte *key, usize len) noexcept</a></td><td>function; line 274</td></tr><tr class="t-dsc"><td><a href="#f-1230f9a42eb8404b">micron::hashes::rapidhash_micro(const byte *key, u64 seed, usize len) noexcept</a></td><td>function; line 280</td></tr><tr class="t-dsc"><td><a href="#f-ab07de80188ba91e">micron::hashes::rapidhash_nano(const byte *key, usize len) noexcept</a></td><td>function; line 287</td></tr><tr class="t-dsc"><td><a href="#f-87af5c671f9ae7a9">micron::hashes::rapidhash_nano(const byte *key, u64 seed, usize len) noexcept</a></td><td>function; line 293</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-ec3ae3af5b18302a"><h3><code>micron::hashes::rapid_mum(u64 *A, u64 *B) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L56">line 56</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+rapid_mum(u64 *A, u64 *B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 *A</code></li><li><code>u64 *B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+rapid_mum(u64 *A, u64 *B) noexcept
+{
+  u128 r = *A;
+  r *= *B;
+  *A = (u64)r;
+  *B = (u64)(r &gt;&gt; 64);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-35bce16e334717b3"><h3><code>micron::hashes::rapid_mix(u64 A, u64 B) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L65">line 65</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) u64
+rapid_mix(u64 A, u64 B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 A</code></li><li><code>u64 B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) u64
+rapid_mix(u64 A, u64 B) noexcept
+{
+  rapid_mum(&amp;A, &amp;B);
+  return A ^ B;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>A ^ B</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L68">line 68</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-ec3ae3af5b18302a">rapid_mum</a>.</p></section><section class="function-entry" id="f-5112792385c11a3d"><h3><code>micron::hashes::rapid_read64(const u8 *p) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) u64
+rapid_read64(const u8 *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) u64
+rapid_read64(const u8 *p) noexcept
+{
+  u64 v;
+  micron::cbytecpy&lt;sizeof(u64)&gt;(&amp;v, p);
+#if defined(__BYTE_ORDER__) &amp;&amp; __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  v = __builtin_bswap64(v);
+#endif
+  return v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L79">line 79</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-c91312fd0690789c">micron::cbytecpy&lt;sizeof(u64)&gt;</a>.</p></section><section class="function-entry" id="f-833ad0c91cb6a048"><h3><code>micron::hashes::rapid_read32(const u8 *p) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) u64
+rapid_read32(const u8 *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) u64
+rapid_read32(const u8 *p) noexcept
+{
+  u32 v;
+  micron::cbytecpy&lt;sizeof(u32)&gt;(&amp;v, p);
+#if defined(__BYTE_ORDER__) &amp;&amp; __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+  v = __builtin_bswap32(v);
+#endif
+  return (u64)v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(u64)v</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L90">line 90</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-c91312fd0690789c">micron::cbytecpy&lt;sizeof(u32)&gt;</a>.</p></section><section class="function-entry" id="f-70539ba639eed1bd"><h3><code>micron::hashes::rapid_finalize(u64 a, u64 b, u64 seed, usize i, const u64 *secret) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L94">line 94</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) u64
+rapid_finalize(u64 a, u64 b, u64 seed, usize i, const u64 *secret) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 a</code></li><li><code>u64 b</code></li><li><code>u64 seed</code></li><li><code>usize i</code></li><li><code>const u64 *secret</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) u64
+rapid_finalize(u64 a, u64 b, u64 seed, usize i, const u64 *secret) noexcept
+{
+  a ^= secret[1];
+  b ^= seed;
+  rapid_mum(&amp;a, &amp;b);
+  return rapid_mix(a ^ secret[7], b ^ secret[1] ^ i);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapid_mix(a ^ secret[7], b ^ secret[1] ^ i)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L99">line 99</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-ec3ae3af5b18302a">rapid_mum</a>, <a href="rapidhash.hpp.html#f-35bce16e334717b3">rapid_mix</a>.</p></section><section class="function-entry" id="f-ecd39d4b45e4eaec"><h3><code>micron::hashes::rapid_short(const u8 *p, usize len, u64 &amp;seed, u64 &amp;a, u64 &amp;b) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+rapid_short(const u8 *p, usize len, u64 &amp;seed, u64 &amp;a, u64 &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li><li><code>usize len</code></li><li><code>u64 &amp;seed</code></li><li><code>u64 &amp;a</code></li><li><code>u64 &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+rapid_short(const u8 *p, usize len, u64 &amp;seed, u64 &amp;a, u64 &amp;b) noexcept
+{
+  if ( len &gt;= 4 ) {
+    seed ^= len;
+    if ( len &gt;= 8 ) {
+      a = rapid_read64(p);
+      b = rapid_read64(p + len - 8);
+    } else {
+      a = rapid_read32(p);
+      b = rapid_read32(p + len - 4);
+    }
+  } else if ( len &gt; 0 ) {
+    a = (((u64)p[0]) &lt;&lt; 45) | p[len - 1];
+    b = p[len &gt;&gt; 1];
+  } else
+    a = b = 0;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-5112792385c11a3d">rapid_read64</a>, <a href="rapidhash.hpp.html#f-833ad0c91cb6a048">rapid_read32</a>.</p></section><section class="function-entry" id="f-a22515199c253e15"><h3><code>micron::hashes::rapidhash_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L122">line 122</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+rapidhash_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *key</code></li><li><code>usize len</code></li><li><code>u64 seed</code></li><li><code>const u64 *secret</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+rapidhash_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept
+{
+  const u8 *p = (const u8 *)key;
+  seed ^= rapid_mix(seed ^ secret[2], secret[1]);
+  u64 a = 0, b = 0;
+  usize i = len;
+  if ( __rapid_likely(len &lt;= 16) ) {
+    rapid_short(p, len, seed, a, b);
+  } else {
+    if ( len &gt; 112 ) {
+      u64 see1 = seed, see2 = seed;
+      u64 see3 = seed, see4 = seed;
+      u64 see5 = seed, see6 = seed;
+      do {
+        seed = rapid_mix(rapid_read64(p) ^ secret[0], rapid_read64(p + 8) ^ seed);
+        see1 = rapid_mix(rapid_read64(p + 16) ^ secret[1], rapid_read64(p + 24) ^ see1);
+        see2 = rapid_mix(rapid_read64(p + 32) ^ secret[2], rapid_read64(p + 40) ^ see2);
+        see3 = rapid_mix(rapid_read64(p + 48) ^ secret[3], rapid_read64(p + 56) ^ see3);
+        see4 = rapid_mix(rapid_read64(p + 64) ^ secret[4], rapid_read64(p + 72) ^ see4);
+        see5 = rapid_mix(rapid_read64(p + 80) ^ secret[5], rapid_read64(p + 88) ^ see5);
+        see6 = rapid_mix(rapid_read64(p + 96) ^ secret[6], rapid_read64(p + 104) ^ see6);
+        p += 112;
+        i -= 112;
+      } while ( i &gt; 112 );
+      seed ^= see1;
+      see2 ^= see3;
+      see4 ^= see5;
+      seed ^= see6;
+      see2 ^= see4;
+      seed ^= see2;
+    }
+    if ( i &gt; 16 ) {
+      seed = rapid_mix(rapid_read64(p) ^ secret[2], rapid_read64(p + 8) ^ seed);
+      if ( i &gt; 32 ) {
+        seed = rapid_mix(rapid_read64(p + 16) ^ secret[2], rapid_read64(p + 24) ^ seed);
+        if ( i &gt; 48 ) {
+          seed = rapid_mix(rapid_read64(p + 32) ^ secret[1], rapid_read64(p + 40) ^ seed);
+          if ( i &gt; 64 ) {
+            seed = rapid_mix(rapid_read64(p + 48) ^ secret[1], rapid_read64(p + 56) ^ seed);
+            if ( i &gt; 80 ) {
+              seed = rapid_mix(rapid_read64(p + 64) ^ secret[2], rapid_read64(p + 72) ^ seed);
+              if ( i &gt; 96 ) {
+                seed = rapid_mix(rapid_read64(p + 80) ^ secret[1], rapid_read64(p + 88) ^ seed);
+              }
+            }
+          }
+        }
+      }
+    }
+    a = rapid_read64(p + i - 16) ^ i;
+    b = rapid_read64(p + i - 8);
+  }
+  return rapid_finalize(a, b, seed, i, secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapid_finalize(a, b, seed, i, secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L174">line 174</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-35bce16e334717b3">rapid_mix</a>, <a href="rapidhash.hpp.html#f-ecd39d4b45e4eaec">rapid_short</a>, <a href="rapidhash.hpp.html#f-5112792385c11a3d">rapid_read64</a>, <a href="rapidhash.hpp.html#f-70539ba639eed1bd">rapid_finalize</a>.</p></section><section class="function-entry" id="f-c599c0fcaacaf962"><h3><code>micron::hashes::rapidhash_micro_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L178">line 178</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+rapidhash_micro_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *key</code></li><li><code>usize len</code></li><li><code>u64 seed</code></li><li><code>const u64 *secret</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+rapidhash_micro_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept
+{
+  const u8 *p = (const u8 *)key;
+  seed ^= rapid_mix(seed ^ secret[2], secret[1]);
+  u64 a = 0, b = 0;
+  usize i = len;
+  if ( __rapid_likely(len &lt;= 16) ) {
+    rapid_short(p, len, seed, a, b);
+  } else {
+    if ( i &gt; 80 ) {
+      u64 see1 = seed, see2 = seed;
+      u64 see3 = seed, see4 = seed;
+      do {
+        seed = rapid_mix(rapid_read64(p) ^ secret[0], rapid_read64(p + 8) ^ seed);
+        see1 = rapid_mix(rapid_read64(p + 16) ^ secret[1], rapid_read64(p + 24) ^ see1);
+        see2 = rapid_mix(rapid_read64(p + 32) ^ secret[2], rapid_read64(p + 40) ^ see2);
+        see3 = rapid_mix(rapid_read64(p + 48) ^ secret[3], rapid_read64(p + 56) ^ see3);
+        see4 = rapid_mix(rapid_read64(p + 64) ^ secret[4], rapid_read64(p + 72) ^ see4);
+        p += 80;
+        i -= 80;
+      } while ( i &gt; 80 );
+      seed ^= see1;
+      see2 ^= see3;
+      seed ^= see4;
+      seed ^= see2;
+    }
+    if ( i &gt; 16 ) {
+      seed = rapid_mix(rapid_read64(p) ^ secret[2], rapid_read64(p + 8) ^ seed);
+      if ( i &gt; 32 ) {
+        seed = rapid_mix(rapid_read64(p + 16) ^ secret[2], rapid_read64(p + 24) ^ seed);
+        if ( i &gt; 48 ) {
+          seed = rapid_mix(rapid_read64(p + 32) ^ secret[1], rapid_read64(p + 40) ^ seed);
+          if ( i &gt; 64 ) {
+            seed = rapid_mix(rapid_read64(p + 48) ^ secret[1], rapid_read64(p + 56) ^ seed);
+          }
+        }
+      }
+    }
+    a = rapid_read64(p + i - 16) ^ i;
+    b = rapid_read64(p + i - 8);
+  }
+  return rapid_finalize(a, b, seed, i, secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapid_finalize(a, b, seed, i, secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L219">line 219</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-35bce16e334717b3">rapid_mix</a>, <a href="rapidhash.hpp.html#f-ecd39d4b45e4eaec">rapid_short</a>, <a href="rapidhash.hpp.html#f-5112792385c11a3d">rapid_read64</a>, <a href="rapidhash.hpp.html#f-70539ba639eed1bd">rapid_finalize</a>.</p></section><section class="function-entry" id="f-3bafdd245db62715"><h3><code>micron::hashes::rapidhash_nano_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L223">line 223</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+rapidhash_nano_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *key</code></li><li><code>usize len</code></li><li><code>u64 seed</code></li><li><code>const u64 *secret</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+rapidhash_nano_internal(const void *key, usize len, u64 seed, const u64 *secret) noexcept
+{
+  const u8 *p = (const u8 *)key;
+  seed ^= rapid_mix(seed ^ secret[2], secret[1]);
+  u64 a = 0, b = 0;
+  usize i = len;
+  if ( __rapid_likely(len &lt;= 16) ) {
+    rapid_short(p, len, seed, a, b);
+  } else {
+    if ( i &gt; 48 ) {
+      u64 see1 = seed, see2 = seed;
+      do {
+        seed = rapid_mix(rapid_read64(p) ^ secret[0], rapid_read64(p + 8) ^ seed);
+        see1 = rapid_mix(rapid_read64(p + 16) ^ secret[1], rapid_read64(p + 24) ^ see1);
+        see2 = rapid_mix(rapid_read64(p + 32) ^ secret[2], rapid_read64(p + 40) ^ see2);
+        p += 48;
+        i -= 48;
+      } while ( i &gt; 48 );
+      seed ^= see1;
+      seed ^= see2;
+    }
+    if ( i &gt; 16 ) {
+      seed = rapid_mix(rapid_read64(p) ^ secret[2], rapid_read64(p + 8) ^ seed);
+      if ( i &gt; 32 ) {
+        seed = rapid_mix(rapid_read64(p + 16) ^ secret[2], rapid_read64(p + 24) ^ seed);
+      }
+    }
+    a = rapid_read64(p + i - 16) ^ i;
+    b = rapid_read64(p + i - 8);
+  }
+  return rapid_finalize(a, b, seed, i, secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapid_finalize(a, b, seed, i, secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L253">line 253</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-35bce16e334717b3">rapid_mix</a>, <a href="rapidhash.hpp.html#f-ecd39d4b45e4eaec">rapid_short</a>, <a href="rapidhash.hpp.html#f-5112792385c11a3d">rapid_read64</a>, <a href="rapidhash.hpp.html#f-70539ba639eed1bd">rapid_finalize</a>.</p></section><section class="function-entry" id="f-0beb96442430df1e"><h3><code>micron::hashes::rapidhash(const byte *key, usize len) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L261">line 261</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Seed = 0&gt;
+inline u64
+rapidhash(const byte *key, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *key</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Returns <code>rapidhash_internal(key, len, Seed, rapid_secret)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Seed = 0&gt;
+inline u64
+rapidhash(const byte *key, usize len) noexcept
+{
+  return rapidhash_internal(key, len, Seed, rapid_secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapidhash_internal(key, len, Seed, rapid_secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L263">line 263</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-a22515199c253e15">rapidhash_internal</a>.</p></section><section class="function-entry" id="f-289bc89d3a379892"><h3><code>micron::hashes::rapidhash(const byte *key, u64 seed, usize len) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L267">line 267</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+rapidhash(const byte *key, u64 seed, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *key</code></li><li><code>u64 seed</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Returns <code>rapidhash_internal(key, len, seed, rapid_secret)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+rapidhash(const byte *key, u64 seed, usize len) noexcept
+{
+  return rapidhash_internal(key, len, seed, rapid_secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapidhash_internal(key, len, seed, rapid_secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L269">line 269</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-a22515199c253e15">rapidhash_internal</a>.</p></section><section class="function-entry" id="f-674f979e7781cf21"><h3><code>micron::hashes::rapidhash_micro(const byte *key, usize len) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L274">line 274</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Seed = 0&gt;
+inline u64
+rapidhash_micro(const byte *key, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *key</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Returns <code>rapidhash_micro_internal(key, len, Seed, rapid_secret)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Seed = 0&gt;
+inline u64
+rapidhash_micro(const byte *key, usize len) noexcept
+{
+  return rapidhash_micro_internal(key, len, Seed, rapid_secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapidhash_micro_internal(key, len, Seed, rapid_secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L276">line 276</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-c599c0fcaacaf962">rapidhash_micro_internal</a>.</p></section><section class="function-entry" id="f-1230f9a42eb8404b"><h3><code>micron::hashes::rapidhash_micro(const byte *key, u64 seed, usize len) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L280">line 280</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+rapidhash_micro(const byte *key, u64 seed, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *key</code></li><li><code>u64 seed</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Returns <code>rapidhash_micro_internal(key, len, seed, rapid_secret)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+rapidhash_micro(const byte *key, u64 seed, usize len) noexcept
+{
+  return rapidhash_micro_internal(key, len, seed, rapid_secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapidhash_micro_internal(key, len, seed, rapid_secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L282">line 282</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-c599c0fcaacaf962">rapidhash_micro_internal</a>.</p></section><section class="function-entry" id="f-ab07de80188ba91e"><h3><code>micron::hashes::rapidhash_nano(const byte *key, usize len) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L287">line 287</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Seed = 0&gt;
+inline u64
+rapidhash_nano(const byte *key, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *key</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Returns <code>rapidhash_nano_internal(key, len, Seed, rapid_secret)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Seed = 0&gt;
+inline u64
+rapidhash_nano(const byte *key, usize len) noexcept
+{
+  return rapidhash_nano_internal(key, len, Seed, rapid_secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapidhash_nano_internal(key, len, Seed, rapid_secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-3bafdd245db62715">rapidhash_nano_internal</a>.</p></section><section class="function-entry" id="f-87af5c671f9ae7a9"><h3><code>micron::hashes::rapidhash_nano(const byte *key, u64 seed, usize len) noexcept</code></h3><p>Defined in <code>hash/rapidhash.hpp</code>, <a href="../../source/hash/rapidhash.hpp.html#L293">line 293</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+rapidhash_nano(const byte *key, u64 seed, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *key</code></li><li><code>u64 seed</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Returns <code>rapidhash_nano_internal(key, len, seed, rapid_secret)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+rapidhash_nano(const byte *key, u64 seed, usize len) noexcept
+{
+  return rapidhash_nano_internal(key, len, seed, rapid_secret);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rapidhash_nano_internal(key, len, seed, rapid_secret)</code></td><td><a href="../../source/hash/rapidhash.hpp.html#L295">line 295</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="rapidhash.hpp.html#f-3bafdd245db62715">rapidhash_nano_internal</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

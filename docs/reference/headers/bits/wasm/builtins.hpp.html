@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/bits/wasm/builtins.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/bits/wasm/builtins.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/wasm.html">WebAssembly target</a></div><p>Defined in header <code>&lt;micron/bits/wasm/builtins.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/bits/wasm/builtins.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-03a832ff2ae49a5b">memcpy(void *d, const void *s, __SIZE_TYPE__ n)</a></td><td>function; line 26</td></tr><tr class="t-dsc"><td><a href="#f-9fb9bb6de730451a">memmove(void *d, const void *s, __SIZE_TYPE__ n)</a></td><td>function; line 35</td></tr><tr class="t-dsc"><td><a href="#f-de42bef75fd20e07">memset(void *d, int c, __SIZE_TYPE__ n)</a></td><td>function; line 47</td></tr><tr class="t-dsc"><td><a href="#f-c58de6ed9470665e">memcmp(const void *a, const void *b, __SIZE_TYPE__ n)</a></td><td>function; line 55</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-03a832ff2ae49a5b"><h3><code>memcpy(void *d, const void *s, __SIZE_TYPE__ n)</code></h3><p>Defined in <code>bits/wasm/builtins.hpp</code>, <a href="../../../source/bits/wasm/builtins.hpp.html#L26">line 26</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used)) void *
+memcpy(void *d, const void *s, __SIZE_TYPE__ n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *d</code></li><li><code>const void *s</code></li><li><code>__SIZE_TYPE__ n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used)) void *
+memcpy(void *d, const void *s, __SIZE_TYPE__ n)
+{
+  auto *out = static_cast&lt;volatile unsigned char *&gt;(d);
+  const auto *in = static_cast&lt;const volatile unsigned char *&gt;(s);
+  for ( __SIZE_TYPE__ i = 0; i &lt; n; ++i ) out[i] = in[i];
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/bits/wasm/builtins.hpp.html#L31">line 31</a></td></tr></tbody></table></section><section class="function-entry" id="f-9fb9bb6de730451a"><h3><code>memmove(void *d, const void *s, __SIZE_TYPE__ n)</code></h3><p>Defined in <code>bits/wasm/builtins.hpp</code>, <a href="../../../source/bits/wasm/builtins.hpp.html#L35">line 35</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used)) void *
+memmove(void *d, const void *s, __SIZE_TYPE__ n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *d</code></li><li><code>const void *s</code></li><li><code>__SIZE_TYPE__ n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used)) void *
+memmove(void *d, const void *s, __SIZE_TYPE__ n)
+{
+  auto *out = static_cast&lt;volatile unsigned char *&gt;(d);
+  const auto *in = static_cast&lt;const volatile unsigned char *&gt;(s);
+  if ( reinterpret_cast&lt;__UINTPTR_TYPE__&gt;(d) &lt; reinterpret_cast&lt;__UINTPTR_TYPE__&gt;(s) )
+    for ( __SIZE_TYPE__ i = 0; i &lt; n; ++i ) out[i] = in[i];
+  else
+    for ( __SIZE_TYPE__ i = n; i; --i ) out[i - 1] = in[i - 1];
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/bits/wasm/builtins.hpp.html#L43">line 43</a></td></tr></tbody></table></section><section class="function-entry" id="f-de42bef75fd20e07"><h3><code>memset(void *d, int c, __SIZE_TYPE__ n)</code></h3><p>Defined in <code>bits/wasm/builtins.hpp</code>, <a href="../../../source/bits/wasm/builtins.hpp.html#L47">line 47</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used)) void *
+memset(void *d, int c, __SIZE_TYPE__ n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *d</code></li><li><code>int c</code></li><li><code>__SIZE_TYPE__ n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used)) void *
+memset(void *d, int c, __SIZE_TYPE__ n)
+{
+  auto *out = static_cast&lt;volatile unsigned char *&gt;(d);
+  for ( __SIZE_TYPE__ i = 0; i &lt; n; ++i ) out[i] = static_cast&lt;unsigned char&gt;(c);
+  return d;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>d</code></td><td><a href="../../../source/bits/wasm/builtins.hpp.html#L51">line 51</a></td></tr></tbody></table></section><section class="function-entry" id="f-c58de6ed9470665e"><h3><code>memcmp(const void *a, const void *b, __SIZE_TYPE__ n)</code></h3><p>Defined in <code>bits/wasm/builtins.hpp</code>, <a href="../../../source/bits/wasm/builtins.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used)) int
+memcmp(const void *a, const void *b, __SIZE_TYPE__ n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *a</code></li><li><code>const void *b</code></li><li><code>__SIZE_TYPE__ n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used)) int
+memcmp(const void *a, const void *b, __SIZE_TYPE__ n)
+{
+  const auto *x = static_cast&lt;const unsigned char *&gt;(a), *y = static_cast&lt;const unsigned char *&gt;(b);
+  for ( __SIZE_TYPE__ i = 0; i &lt; n; ++i )
+    if ( x[i] != y[i] ) return static_cast&lt;int&gt;(x[i]) - static_cast&lt;int&gt;(y[i]);
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(x[i]) - static_cast&lt;int&gt;(y[i])</code></td><td><a href="../../../source/bits/wasm/builtins.hpp.html#L59">line 59</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/bits/wasm/builtins.hpp.html#L60">line 60</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-f28220bb752b7ee9"><h3><code>__multi3(__int128 a, __int128 b) noexcept</code></h3><p>Defined in <code>bits/wasm/builtins.hpp</code>, <a href="../../../source/bits/wasm/builtins.hpp.html#L8">line 8</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak, used)) __int128
+__multi3(__int128 a, __int128 b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__int128 a</code></li><li><code>__int128 b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((weak, used)) __int128
+__multi3(__int128 a, __int128 b) noexcept
+{
+  struct words {
+    unsigned long long word[2];
+  };
+
+  const auto x = __builtin_bit_cast(words, a), y = __builtin_bit_cast(words, b);
+  words r{};
+  const unsigned long long al = static_cast&lt;unsigned&gt;(x.word[0]), ah = x.word[0] &gt;&gt; 32;
+  const unsigned long long bl = static_cast&lt;unsigned&gt;(y.word[0]), bh = y.word[0] &gt;&gt; 32;
+  const unsigned long long p0 = al * bl, p1 = al * bh, p2 = ah * bl, p3 = ah * bh;
+  const unsigned long long mid = (p0 &gt;&gt; 32) + static_cast&lt;unsigned&gt;(p1) + static_cast&lt;unsigned&gt;(p2);
+  r.word[0] = (mid &lt;&lt; 32) | static_cast&lt;unsigned&gt;(p0);
+  r.word[1] = p3 + (p1 &gt;&gt; 32) + (p2 &gt;&gt; 32) + (mid &gt;&gt; 32) + x.word[1] * y.word[0] + x.word[0] * y.word[1];
+  return __builtin_bit_cast(__int128, r);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__builtin_bit_cast(__int128, r)</code></td><td><a href="../../../source/bits/wasm/builtins.hpp.html#L22">line 22</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

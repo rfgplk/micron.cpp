@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/linalg/pseudoinv.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/linalg/pseudoinv.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/linalg/pseudoinv.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> // Moore-Penrose pseudoinverse and the sing val decomp derived utilities</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> //  pinv(A, tol): A+; Moore-Penrose pseudoinverse via thin SVD</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> //  rank(A, tol): numerical rank</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> //  null(A, tol): orthonormal basis of the null space</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> //  orth(A, tol): orthonormal basis of the column space</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../../concepts.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../../types.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../../vector/vector.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;../constants.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../mk.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;../sqrt.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;decomp.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #include &quot;decomp_ext.hpp&quot;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #include &quot;ops.hpp&quot;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> #include &quot;types.hpp&quot;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> </span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> namespace micron</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> {</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> namespace math</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> {</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> namespace linalg</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> {</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> namespace pseudoinv</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> {</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> </span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> template&lt;ieee754_floating F&gt; struct svd_result_dyn {</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   dynmat&lt;F&gt; U;      // rows × rows (full)</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   dynvec&lt;F&gt; S;      // length min(rows, cols)</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   dynmat&lt;F&gt; V;      // cols × cols</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   bool converged;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> };</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> </span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> template&lt;ieee754_floating F&gt;</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> [[nodiscard]] inline svd_result_dyn&lt;F&gt;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> svd(const dynmat&lt;F&gt; &amp;A) noexcept</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> {</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>   const usize R = A.rows;</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>   const usize C = A.cols;</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>   svd_result_dyn&lt;F&gt; r{ dynmat&lt;F&gt;::zero(R, R), dynvec&lt;F&gt;(C), dynmat&lt;F&gt;::identity(C), false };</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> </span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>   dynmat&lt;F&gt; W = A;</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   constexpr int max_sweeps = 30;</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   F *__restrict__ Wp = W.data();</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   F *__restrict__ Vp = r.V.data();</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>   const usize ld_W = W.ld;</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   const usize ld_V = r.V.ld;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> </span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   for ( int sweep = 0; sweep &lt; max_sweeps; ++sweep ) {</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>     usize rotations = 0;</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>     for ( usize p = 0; p + 1 &lt; C; ++p ) {</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>       for ( usize q = p + 1; q &lt; C; ++q ) {</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>         F *__restrict__ col_p = Wp + p;</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>         F *__restrict__ col_q = Wp + q;</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>         F a = F(0), b = F(0), c = F(0);</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>         for ( usize i = 0; i &lt; R; ++i ) {</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>           const F wp = col_p[i * ld_W];</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>           const F wq = col_q[i * ld_W];</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>           a = math::fma&lt;F&gt;(wp, wp, a);</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>           b = math::fma&lt;F&gt;(wq, wq, b);</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>           c = math::fma&lt;F&gt;(wp, wq, c);</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>         }</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>         // scale-free skip</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>         const F dd = math::fsqrt(a) * math::fsqrt(b) * F(R);</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>         if ( math::fabs(c) + dd == dd ) continue;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>         ++rotations;</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>         const F theta = (b - a) / (F(2) * c);</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>         const F t</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>             = (theta &gt;= F(0)) ? F(1) / (theta + math::fsqrt(F(1) + theta * theta)) : F(1) / (theta - math::fsqrt(F(1) + theta * theta));</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>         const F cs = F(1) / math::fsqrt(F(1) + t * t);</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>         const F sn = t * cs;</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>         for ( usize i = 0; i &lt; R; ++i ) {</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>           F *__restrict__ wp_p = col_p + i * ld_W;</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>           F *__restrict__ wp_q = col_q + i * ld_W;</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>           const F wp = *wp_p;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>           const F wq = *wp_q;</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>           *wp_p = cs * wp - sn * wq;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>           *wp_q = sn * wp + cs * wq;</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>         }</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>         F *__restrict__ vcol_p = Vp + p;</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>         F *__restrict__ vcol_q = Vp + q;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>         for ( usize i = 0; i &lt; C; ++i ) {</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>           F *__restrict__ vp_p = vcol_p + i * ld_V;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>           F *__restrict__ vp_q = vcol_q + i * ld_V;</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>           const F vp = *vp_p;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>           const F vq = *vp_q;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>           *vp_p = cs * vp - sn * vq;</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>           *vp_q = sn * vp + cs * vq;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>         }</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>       }</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>     }</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>     if ( rotations == 0 ) {</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>       r.converged = true;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>       break;</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>     }</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   }</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> </span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   F *__restrict__ Up = r.U.data();</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   const usize ld_U = r.U.ld;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>   for ( usize j = 0; j &lt; C; ++j ) {</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>     const F *__restrict__ wcol = Wp + j;</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>     F s = F(0);</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>     for ( usize i = 0; i &lt; R; ++i ) {</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>       const F wij = wcol[i * ld_W];</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>       s = math::fma&lt;F&gt;(wij, wij, s);</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     }</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>     s = math::fsqrt(s);</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>     r.S[j] = s;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>     F *__restrict__ ucol = Up + j;</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>     if ( s &gt; F(0) ) {</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>       const F inv = F(1) / s;</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>       for ( usize i = 0; i &lt; R; ++i ) ucol[i * ld_U] = wcol[i * ld_W] * inv;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>     } else {</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>       for ( usize i = 0; i &lt; R; ++i ) ucol[i * ld_U] = F(0);</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>     }</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>   }</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> </span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>   for ( usize i = 0; i + 1 &lt; C; ++i ) {</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>     usize maxj = i;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>     for ( usize j = i + 1; j &lt; C; ++j )</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>       if ( r.S[j] &gt; r.S[maxj] ) maxj = j;</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>     if ( maxj != i ) {</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>       F tmp = r.S[i];</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>       r.S[i] = r.S[maxj];</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>       r.S[maxj] = tmp;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>       F *__restrict__ ucol_i = Up + i;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>       F *__restrict__ ucol_j = Up + maxj;</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>       for ( usize rr = 0; rr &lt; R; ++rr ) {</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>         F *p_i = ucol_i + rr * ld_U;</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>         F *p_j = ucol_j + rr * ld_U;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>         F t2 = *p_i;</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>         *p_i = *p_j;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>         *p_j = t2;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>       }</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>       F *__restrict__ vcol_i = Vp + i;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>       F *__restrict__ vcol_j = Vp + maxj;</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>       for ( usize rr = 0; rr &lt; C; ++rr ) {</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>         F *p_i = vcol_i + rr * ld_V;</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>         F *p_j = vcol_j + rr * ld_V;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>         F t2 = *p_i;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>         *p_i = *p_j;</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>         *p_j = t2;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>       }</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>     }</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   }</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   return r;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a> }</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a> </span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> template&lt;ieee754_floating F, usize R_, usize C_&gt;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   requires(R_ &gt;= C_)</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> [[nodiscard]] inline mat&lt;F, C_, R_&gt;</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> pinv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a> {</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>   auto s = decomp::svd&lt;F, R_, C_&gt;(A);</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>   // determine effective tolerance</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>   F smax = F(0);</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>   constexpr usize K = (R_ &lt; C_) ? R_ : C_;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>     if ( s.S.data[i] &gt; smax ) smax = s.S.data[i];</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>   F use_tol = (tol &gt; F(0)) ? tol : F((R_ &gt; C_) ? R_ : C_) * smax * default_eps&lt;F&gt;();</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a> </span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   // inverse singular values</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>   F sinv[K];</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>   for ( usize i = 0; i &lt; K; ++i ) sinv[i] = (s.S.data[i] &gt; use_tol) ? F(1) / s.S.data[i] : F(0);</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> </span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   mat&lt;F, C_, R_&gt; P{};</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>   for ( usize i = 0; i &lt; C_; ++i ) {</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>     for ( usize j = 0; j &lt; R_; ++j ) {</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>       F acc = F(0);</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>       for ( usize k = 0; k &lt; K; ++k ) acc = math::fma&lt;F&gt;(s.V.data[i * C_ + k] * sinv[k], s.U.data[j * R_ + k], acc);</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>       P.data[i * R_ + j] = acc;</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>     }</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>   }</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>   return P;</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> }</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a> </span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a> template&lt;ieee754_floating F&gt;</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a> [[nodiscard]] inline dynmat&lt;F&gt;</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a> pinv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a> {</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>   if ( A.rows &lt; A.cols ) {</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>     dynmat&lt;F&gt; At(A.cols, A.rows);</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>     for ( usize i = 0; i &lt; A.rows; ++i )</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>       for ( usize j = 0; j &lt; A.cols; ++j ) At.at(j, i) = A.at(i, j);</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>     auto Pt = pinv&lt;F&gt;(At, tol);</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>     dynmat&lt;F&gt; P(A.cols, A.rows);</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>     for ( usize i = 0; i &lt; Pt.rows; ++i )</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>       for ( usize j = 0; j &lt; Pt.cols; ++j ) P.at(j, i) = Pt.at(i, j);</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>     return P;</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   }</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>   auto s = svd&lt;F&gt;(A);</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>   const usize R = A.rows;</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>   const usize C = A.cols;</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>   const usize K = (R &lt; C) ? R : C;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>   F smax = F(0);</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>     if ( s.S[i] &gt; smax ) smax = s.S[i];</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>   F use_tol = (tol &gt; F(0)) ? tol : F((R &gt; C) ? R : C) * smax * default_eps&lt;F&gt;();</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> </span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>   micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; sinv(K);</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   F *__restrict__ sinv_p = sinv.data();</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>   for ( usize i = 0; i &lt; K; ++i ) sinv_p[i] = (s.S[i] &gt; use_tol) ? F(1) / s.S[i] : F(0);</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a> </span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   dynmat&lt;F&gt; P(C, R, F(0));</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>   F *__restrict__ Pp = P.data();</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>   const usize ld_P = P.ld;</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>   const F *__restrict__ Vd = s.V.data();</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   const F *__restrict__ Ud = s.U.data();</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   const usize ld_V = s.V.ld;</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>   const usize ld_U = s.U.ld;</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>   for ( usize i = 0; i &lt; C; ++i ) {</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>     const F *__restrict__ vrow = Vd + i * ld_V;</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>     F *__restrict__ prow = Pp + i * ld_P;</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>     for ( usize j = 0; j &lt; R; ++j ) {</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>       const F *__restrict__ urow = Ud + j * ld_U;</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>       F acc = F(0);</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>       for ( usize k = 0; k &lt; K; ++k ) acc = math::fma&lt;F&gt;(vrow[k] * sinv_p[k], urow[k], acc);</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>       prow[j] = acc;</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>     }</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>   }</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>   return P;</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a> }</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a> </span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a> template&lt;ieee754_floating F, usize R_, usize C_&gt;</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>   requires(R_ &gt;= C_)</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> [[nodiscard]] inline usize</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> rank(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> {</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   auto s = decomp::svd&lt;F, R_, C_&gt;(A);</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>   constexpr usize K = (R_ &lt; C_) ? R_ : C_;</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>   F smax = F(0);</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>     if ( s.S.data[i] &gt; smax ) smax = s.S.data[i];</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>   F use_tol = (tol &gt; F(0)) ? tol : F((R_ &gt; C_) ? R_ : C_) * smax * default_eps&lt;F&gt;();</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>   usize rk = 0;</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>     if ( s.S.data[i] &gt; use_tol ) ++rk;</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>   return rk;</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a> }</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a> </span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a> template&lt;ieee754_floating F&gt;</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a> [[nodiscard]] inline usize</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a> rank(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> {</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>   if ( A.rows &lt; A.cols ) {</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>     dynmat&lt;F&gt; At(A.cols, A.rows);</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>     for ( usize i = 0; i &lt; A.rows; ++i )</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>       for ( usize j = 0; j &lt; A.cols; ++j ) At.at(j, i) = A.at(i, j);</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>     return rank&lt;F&gt;(At, tol);</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>   }</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>   auto s = svd&lt;F&gt;(A);</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>   const usize K = (A.rows &lt; A.cols) ? A.rows : A.cols;</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>   F smax = F(0);</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>     if ( s.S[i] &gt; smax ) smax = s.S[i];</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>   F use_tol = (tol &gt; F(0)) ? tol : F((A.rows &gt; A.cols) ? A.rows : A.cols) * smax * default_eps&lt;F&gt;();</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>   usize rk = 0;</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>     if ( s.S[i] &gt; use_tol ) ++rk;</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>   return rk;</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> }</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> </span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a> template&lt;ieee754_floating F&gt;</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> [[nodiscard]] inline dynmat&lt;F&gt;</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> orth(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> {</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>   if ( A.rows &lt; A.cols ) {</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>     dynmat&lt;F&gt; At(A.cols, A.rows);</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>     for ( usize i = 0; i &lt; A.rows; ++i )</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>       for ( usize j = 0; j &lt; A.cols; ++j ) At.at(j, i) = A.at(i, j);</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>     auto s = svd&lt;F&gt;(At);</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>     F smax = F(0);</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>     for ( usize i = 0; i &lt; s.S.size(); ++i )</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a>       if ( s.S[i] &gt; smax ) smax = s.S[i];</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>     F use_tol = (tol &gt; F(0)) ? tol : F((A.rows &gt; A.cols) ? A.rows : A.cols) * smax * default_eps&lt;F&gt;();</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>     usize rk = 0;</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>     for ( usize i = 0; i &lt; s.S.size(); ++i )</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>       if ( s.S[i] &gt; use_tol ) ++rk;</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>     dynmat&lt;F&gt; O(A.rows, rk);</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a>     for ( usize i = 0; i &lt; A.rows; ++i )</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>       for ( usize j = 0; j &lt; rk; ++j ) O.at(i, j) = s.V.at(i, j);</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>     return O;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>   }</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>   auto s = svd&lt;F&gt;(A);</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a>   const usize K = (A.rows &lt; A.cols) ? A.rows : A.cols;</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>   F smax = F(0);</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>     if ( s.S[i] &gt; smax ) smax = s.S[i];</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>   F use_tol = (tol &gt; F(0)) ? tol : F((A.rows &gt; A.cols) ? A.rows : A.cols) * smax * default_eps&lt;F&gt;();</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>   usize rk = 0;</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>     if ( s.S[i] &gt; use_tol ) ++rk;</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a>   dynmat&lt;F&gt; O(A.rows, rk);</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>   for ( usize i = 0; i &lt; A.rows; ++i )</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>     for ( usize j = 0; j &lt; rk; ++j ) O.at(i, j) = s.U.at(i, j);</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>   return O;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> }</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> </span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a> template&lt;ieee754_floating F&gt;</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a> [[nodiscard]] inline dynmat&lt;F&gt;</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a> null(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a> {</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a>   if ( A.rows &lt; A.cols ) {</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a>     dynmat&lt;F&gt; Ap(A.cols, A.cols, F(0));</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a>     for ( usize i = 0; i &lt; A.rows; ++i )</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a>       for ( usize j = 0; j &lt; A.cols; ++j ) Ap.at(i, j) = A.at(i, j);</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>     return null&lt;F&gt;(Ap, tol);</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>   }</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>   auto s = svd&lt;F&gt;(A);</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>   const usize K = (A.rows &lt; A.cols) ? A.rows : A.cols;</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>   F smax = F(0);</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>     if ( s.S[i] &gt; smax ) smax = s.S[i];</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>   F use_tol = (tol &gt; F(0)) ? tol : F((A.rows &gt; A.cols) ? A.rows : A.cols) * smax * default_eps&lt;F&gt;();</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>   usize rk = 0;</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a>   for ( usize i = 0; i &lt; K; ++i )</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>     if ( s.S[i] &gt; use_tol ) ++rk;</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a>   const usize ns = A.cols - rk;</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>   dynmat&lt;F&gt; N(A.cols, ns);</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>   for ( usize i = 0; i &lt; A.cols; ++i )</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>     for ( usize j = 0; j &lt; ns; ++j ) N.at(i, j) = s.V.at(i, rk + j);</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>   return N;</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a> }</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a> </span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a> };      // namespace pseudoinv</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a> };      // namespace linalg</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a> };      // namespace math</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/symbolic.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/symbolic.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/symbolic.html">Symbolic expressions</a></div><p>Defined in header <code>&lt;micron/math/symbolic.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/math/symbolic.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-91ebd8fdeab89eab">micron::math::symbolic::node_id</code></td><td>typedef; line 14</td></tr><tr class="t-dsc"><td><code id="s-60b92c8eb5fdc916">micron::math::symbolic::error</code></td><td>enum; line 17</td></tr><tr class="t-dsc"><td><code id="s-a428875f9e1b8df3">micron::math::symbolic::error::none</code></td><td>enumerator; line 18</td></tr><tr class="t-dsc"><td><code id="s-12f3c87ab7370bc6">micron::math::symbolic::error::invalid_limits</code></td><td>enumerator; line 19</td></tr><tr class="t-dsc"><td><code id="s-231c0dd4bab801d0">micron::math::symbolic::error::invalid_node</code></td><td>enumerator; line 20</td></tr><tr class="t-dsc"><td><code id="s-d900571a5569599e">micron::math::symbolic::error::invalid_variable</code></td><td>enumerator; line 21</td></tr><tr class="t-dsc"><td><code id="s-78df14fd2640dccc">micron::math::symbolic::error::invalid_symbol</code></td><td>enumerator; line 22</td></tr><tr class="t-dsc"><td><code id="s-9b264859a37eed19">micron::math::symbolic::error::assumption_conflict</code></td><td>enumerator; line 23</td></tr><tr class="t-dsc"><td><code id="s-024d04ad2cbcef08">micron::math::symbolic::error::node_limit</code></td><td>enumerator; line 24</td></tr><tr class="t-dsc"><td><code id="s-bf5c4e57857e9200">micron::math::symbolic::error::symbol_limit</code></td><td>enumerator; line 25</td></tr><tr class="t-dsc"><td><code id="s-8aa51b0c80b389aa">micron::math::symbolic::error::text_limit</code></td><td>enumerator; line 26</td></tr><tr class="t-dsc"><td><code id="s-0425981cbd1715b7">micron::math::symbolic::error::depth_limit</code></td><td>enumerator; line 27</td></tr><tr class="t-dsc"><td><code id="s-44ef547af526a686">micron::math::symbolic::error::rewrite_limit</code></td><td>enumerator; line 28</td></tr><tr class="t-dsc"><td><code id="s-fcc41273f252523e">micron::math::symbolic::error::polynomial_limit</code></td><td>enumerator; line 29</td></tr><tr class="t-dsc"><td><code id="s-91c9628973c2993c">micron::math::symbolic::error::limb_limit</code></td><td>enumerator; line 30</td></tr><tr class="t-dsc"><td><code id="s-6208000d7933c302">micron::math::symbolic::error::exponent_limit</code></td><td>enumerator; line 31</td></tr><tr class="t-dsc"><td><code id="s-e73b25c4627eb076">micron::math::symbolic::error::output_limit</code></td><td>enumerator; line 32</td></tr><tr class="t-dsc"><td><code id="s-f94733fe12c382e1">micron::math::symbolic::error::domain</code></td><td>enumerator; line 33</td></tr><tr class="t-dsc"><td><code id="s-6699c3ab39fa2899">micron::math::symbolic::error::allocation</code></td><td>enumerator; line 34</td></tr><tr class="t-dsc"><td><code id="s-8038087824b5c406">micron::math::symbolic::kind</code></td><td>enum; line 37</td></tr><tr class="t-dsc"><td><code id="s-f18e0c2baf44ca3c">micron::math::symbolic::kind::abs</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-edea10f0bc19c6dc">micron::math::symbolic::kind::add</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-4283291966cd9710">micron::math::symbolic::kind::cos</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-dc3e332fcc3a147a">micron::math::symbolic::kind::derivative</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-af224ceb4632a31e">micron::math::symbolic::kind::divide</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-f50f47e2f82b3a5a">micron::math::symbolic::kind::exp</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-dbbd6bd2aeddb86f">micron::math::symbolic::kind::integral</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-c5172b805e03c0a7">micron::math::symbolic::kind::log</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-bfdfa817e2ee3fca">micron::math::symbolic::kind::multiply</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-b6a2a43152c6184d">micron::math::symbolic::kind::power</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-03585efdc4ddbc8e">micron::math::symbolic::kind::rational</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-05d73844b21b4ba8">micron::math::symbolic::kind::sin</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-1f5cc7137712b194">micron::math::symbolic::kind::sqrt</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-5eec371da8f0bd3b">micron::math::symbolic::kind::symbol</code></td><td>enumerator; line 37</td></tr><tr class="t-dsc"><td><code id="s-a1e8a614f9b0564f">micron::math::symbolic::assumptions</code></td><td>enum; line 39</td></tr><tr class="t-dsc"><td><code id="s-a2131c0c66d69009">micron::math::symbolic::assumptions::none</code></td><td>enumerator; line 39</td></tr><tr class="t-dsc"><td><code id="s-fe5b222b93799f91">micron::math::symbolic::assumptions::nonnegative</code></td><td>enumerator; line 39</td></tr><tr class="t-dsc"><td><code id="s-019c44b38503b972">micron::math::symbolic::assumptions::nonzero</code></td><td>enumerator; line 39</td></tr><tr class="t-dsc"><td><code id="s-576cc5fc3ab30dc9">micron::math::symbolic::assumptions::positive</code></td><td>enumerator; line 39</td></tr><tr class="t-dsc"><td><code id="s-06191dfcb24c5236">micron::math::symbolic::assumptions::real</code></td><td>enumerator; line 39</td></tr><tr class="t-dsc"><td><code id="s-fc5b89334e4cadf8">micron::math::symbolic::limits</code></td><td>struct; line 53</td></tr><tr class="t-dsc"><td><code id="s-9c7bc5c524a9327a">micron::math::symbolic::limits::max_nodes</code></td><td>member; line 54</td></tr><tr class="t-dsc"><td><code id="s-36749bbb9ba0cbc7">micron::math::symbolic::limits::max_symbols</code></td><td>member; line 55</td></tr><tr class="t-dsc"><td><code id="s-cd340708d383982a">micron::math::symbolic::limits::max_text_bytes</code></td><td>member; line 56</td></tr><tr class="t-dsc"><td><code id="s-cdc329851a293b0e">micron::math::symbolic::limits::max_depth</code></td><td>member; line 57</td></tr><tr class="t-dsc"><td><code id="s-eb6e4471f3a3a723">micron::math::symbolic::limits::max_rewrites</code></td><td>member; line 58</td></tr><tr class="t-dsc"><td><code id="s-f4e8faa953bb5fc5">micron::math::symbolic::limits::max_polynomial_degree</code></td><td>member; line 59</td></tr><tr class="t-dsc"><td><code id="s-c5a9bada6c369a3e">micron::math::symbolic::limits::rational</code></td><td>member; line 60</td></tr><tr class="t-dsc"><td><code id="s-02c96af4feb56583">micron::math::symbolic::result</code></td><td>struct; line 63</td></tr><tr class="t-dsc"><td><code id="s-c8bb35e1dfd23b70">micron::math::symbolic::result::id</code></td><td>member; line 64</td></tr><tr class="t-dsc"><td><code id="s-03ac4570f2684c57">micron::math::symbolic::result::code</code></td><td>member; line 65</td></tr><tr class="t-dsc"><td><code id="s-0d64e334cd884b38">micron::math::symbolic::text_view</code></td><td>struct; line 74</td></tr><tr class="t-dsc"><td><code id="s-884c4c75e7ebad95">micron::math::symbolic::text_view::data</code></td><td>member; line 75</td></tr><tr class="t-dsc"><td><code id="s-d8edff6083177013">micron::math::symbolic::text_view::size</code></td><td>member; line 76</td></tr><tr class="t-dsc"><td><code id="s-47c2a093d0bd971e">micron::math::symbolic::node</code></td><td>struct; line 79</td></tr><tr class="t-dsc"><td><code id="s-3bc71d942d6305a8">micron::math::symbolic::node::type</code></td><td>member; line 80</td></tr><tr class="t-dsc"><td><code id="s-d008895583cf0ddb">micron::math::symbolic::node::left</code></td><td>member; line 81</td></tr><tr class="t-dsc"><td><code id="s-2d43b35af8ce9321">micron::math::symbolic::node::right</code></td><td>member; line 82</td></tr><tr class="t-dsc"><td><code id="s-06564b5f2ace6473">micron::math::symbolic::node::exponent</code></td><td>member; line 83</td></tr><tr class="t-dsc"><td><code id="s-596cf30a5a962471">micron::math::symbolic::node::payload</code></td><td>member; line 84</td></tr><tr class="t-dsc"><td><code id="s-bc5a56dac774a0ad">micron::math::symbolic::node::depth</code></td><td>member; line 85</td></tr><tr class="t-dsc"><td><code id="s-a607caf1ddece006">micron::math::symbolic::node::proven</code></td><td>member; line 86</td></tr><tr class="t-dsc"><td><code id="s-3f91970c8a339b86">micron::math::symbolic::arena</code></td><td>class; line 127</td></tr><tr class="t-dsc"><td><code id="s-4be346c79283d40f">micron::math::symbolic::arena::symbol_record::offset</code></td><td>member; line 136</td></tr><tr class="t-dsc"><td><code id="s-657d915f733d1a0e">micron::math::symbolic::arena::symbol_record::length</code></td><td>member; line 137</td></tr><tr class="t-dsc"><td><code id="s-4d3f7a87309f97f8">micron::math::symbolic::arena::symbol_record::id</code></td><td>member; line 138</td></tr><tr class="t-dsc"><td><code id="s-cce7cebdee821b63">micron::math::symbolic::arena::symbol_record::declared</code></td><td>member; line 139</td></tr><tr class="t-dsc"><td><code id="s-00ffbe26eae69de5">micron::math::symbolic::arena::context::remaining</code></td><td>member; line 151</td></tr><tr class="t-dsc"><td><code id="s-ddede2f34809f05b">micron::math::symbolic::arena::context::memo</code></td><td>member; line 152</td></tr><tr class="t-dsc"><td><code id="s-d22675f48cd254d0">micron::math::symbolic::arena::context::dependent</code></td><td>member; line 153</td></tr><tr class="t-dsc"><td><code id="s-9aef67ad214395b8">micron::math::symbolic::arena::context::failure</code></td><td>member; line 154</td></tr><tr class="t-dsc"><td><code id="s-e8cb732df9923640">micron::math::symbolic::arena::polynomial::terms</code></td><td>member; line 183</td></tr><tr class="t-dsc"><td><code id="s-c7a32517a719840d">micron::math::symbolic::arena::polynomial::recognized</code></td><td>member; line 184</td></tr><tr class="t-dsc"><td><code id="s-f4cbae45b7bbdd8c">micron::math::symbolic::arena::polynomial::failure</code></td><td>member; line 185</td></tr><tr class="t-dsc"><td><code id="s-0c3082ed152373aa">micron::math::symbolic::expression</code></td><td>class; line 1053</td></tr><tr class="t-dsc"><td><a href="#f-afea5bc4e3c72a1c">micron::math::symbolic::operator|(assumptions a, assumptions b) noexcept</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-66a70dec3389cc18">micron::math::symbolic::has(assumptions value, assumptions flag) noexcept</a></td><td>function; line 48</td></tr><tr class="t-dsc"><td><a href="#f-7522261c40e6c645">micron::math::symbolic::result::operator bool() const noexcept</a></td><td>function; line 68</td></tr><tr class="t-dsc"><td><a href="#f-edb36304c12dac54">micron::math::symbolic::arena::context::context(usize count, u64 budget)</a></td><td>function; line 156</td></tr><tr class="t-dsc"><td><a href="#f-8b6b28bc197a064b">micron::math::symbolic::arena::context::step() noexcept</a></td><td>function; line 170</td></tr><tr class="t-dsc"><td><a href="#f-164d84dc39d214bc">micron::math::symbolic::arena::arena(limits configuration = {})</a></td><td>function; line 685</td></tr><tr class="t-dsc"><td><a href="#f-048a5ad71ae3c08e">micron::math::symbolic::arena::arena(const arena &amp;)</a></td><td>function; line 704</td></tr><tr class="t-dsc"><td><a href="#f-d13069096997108d">micron::math::symbolic::arena::operator=(const arena &amp;)</a></td><td>function; line 705</td></tr><tr class="t-dsc"><td><a href="#f-2f80108d2e2033d5">micron::math::symbolic::arena::arena(arena &amp;&amp;) noexcept</a></td><td>function; line 706</td></tr><tr class="t-dsc"><td><a href="#f-7b79571b33bc13c8">micron::math::symbolic::arena::operator=(arena &amp;&amp;) noexcept</a></td><td>function; line 707</td></tr><tr class="t-dsc"><td><a href="#f-676ff1611ad0b004">micron::math::symbolic::arena::status() const noexcept</a></td><td>function; line 710</td></tr><tr class="t-dsc"><td><a href="#f-69fe7603633387ee">micron::math::symbolic::arena::size() const noexcept</a></td><td>function; line 716</td></tr><tr class="t-dsc"><td><a href="#f-7acf50c95bfe2b20">micron::math::symbolic::arena::configuration() const noexcept</a></td><td>function; line 722</td></tr><tr class="t-dsc"><td><a href="#f-6fbec468fd4d18c3">micron::math::symbolic::arena::get(node_id id) const noexcept</a></td><td>function; line 728</td></tr><tr class="t-dsc"><td><a href="#f-4897e8bf6bafc219">micron::math::symbolic::arena::clone_to(arena &amp;destination) const</a></td><td>function; line 734</td></tr><tr class="t-dsc"><td><a href="#f-28ae076586fceb90">micron::math::symbolic::arena::write_csexp(node_id expression, Sink &amp;&amp;sink) const</a></td><td>function; line 749</td></tr><tr class="t-dsc"><td><a href="#f-c4467cd542a15c4f">micron::math::symbolic::arena::write_csexp(node_id expression, Sink &amp;&amp;sink, char *buffer, usize capacity) const</a></td><td>function; line 763</td></tr><tr class="t-dsc"><td><a href="#f-de4694c331a513a0">micron::math::symbolic::arena::coefficient(node_id id) const noexcept</a></td><td>function; line 774</td></tr><tr class="t-dsc"><td><a href="#f-6a6b07020cbb7a94">micron::math::symbolic::arena::symbol_name(node_id id) const noexcept</a></td><td>function; line 781</td></tr><tr class="t-dsc"><td><a href="#f-989cf68aa6066668">micron::math::symbolic::arena::constant(const rational &amp;value)</a></td><td>function; line 790</td></tr><tr class="t-dsc"><td><a href="#f-b51fd8637222990e">micron::math::symbolic::arena::integer(i64 value)</a></td><td>function; line 814</td></tr><tr class="t-dsc"><td><a href="#f-16566339280056e7">micron::math::symbolic::arena::symbol(text_view name, assumptions properties = assumptions::none)</a></td><td>function; line 820</td></tr><tr class="t-dsc"><td><a href="#f-6a15ce2e3d1787f7">micron::math::symbolic::arena::symbol(const char (&amp;name)[N], assumptions properties = assumptions::none)</a></td><td>function; line 860</td></tr><tr class="t-dsc"><td><a href="#f-2c1e247baed5589c">micron::math::symbolic::arena::add(node_id left, node_id right)</a></td><td>function; line 866</td></tr><tr class="t-dsc"><td><a href="#f-c1be200946480f64">micron::math::symbolic::arena::negate(node_id value)</a></td><td>function; line 893</td></tr><tr class="t-dsc"><td><a href="#f-45f71235d04c9108">micron::math::symbolic::arena::subtract(node_id left, node_id right)</a></td><td>function; line 900</td></tr><tr class="t-dsc"><td><a href="#f-7fbe905803de433d">micron::math::symbolic::arena::multiply(node_id left, node_id right)</a></td><td>function; line 907</td></tr><tr class="t-dsc"><td><a href="#f-d3bb4c94fc30f9b5">micron::math::symbolic::arena::divide(node_id left, node_id right)</a></td><td>function; line 931</td></tr><tr class="t-dsc"><td><a href="#f-c722100313833605">micron::math::symbolic::arena::power(node_id base, i64 exponent)</a></td><td>function; line 950</td></tr><tr class="t-dsc"><td><a href="#f-05e2cf7bd8d981cc">micron::math::symbolic::arena::function(kind type, node_id argument)</a></td><td>function; line 969</td></tr><tr class="t-dsc"><td><a href="#f-5bed3d810d2b1c7e">micron::math::symbolic::arena::differentiate(node_id expression, node_id variable)</a></td><td>function; line 999</td></tr><tr class="t-dsc"><td><a href="#f-9b88e38832fdf10b">micron::math::symbolic::arena::integrate(node_id expression, node_id variable)</a></td><td>function; line 1009</td></tr><tr class="t-dsc"><td><a href="#f-b1a842357b67c54b">micron::math::symbolic::arena::substitute(node_id expression, node_id variable, node_id replacement)</a></td><td>function; line 1040</td></tr><tr class="t-dsc"><td><a href="#f-887d88af1b8969b7">micron::math::symbolic::expression::expression() noexcept</a></td><td>function; line 1059</td></tr><tr class="t-dsc"><td><a href="#f-7701964e938fd64c">micron::math::symbolic::expression::expression(arena &amp;&amp;owner, node_id root) noexcept</a></td><td>function; line 1061</td></tr><tr class="t-dsc"><td><a href="#f-8c51d14c20c72a65">micron::math::symbolic::expression::expression(const expression &amp;)</a></td><td>function; line 1063</td></tr><tr class="t-dsc"><td><a href="#f-a2fd42ac031bb58e">micron::math::symbolic::expression::operator=(const expression &amp;)</a></td><td>function; line 1064</td></tr><tr class="t-dsc"><td><a href="#f-7af67ca33618be90">micron::math::symbolic::expression::expression(expression &amp;&amp;) noexcept</a></td><td>function; line 1065</td></tr><tr class="t-dsc"><td><a href="#f-d94b983238a29e2c">micron::math::symbolic::expression::operator=(expression &amp;&amp;) noexcept</a></td><td>function; line 1066</td></tr><tr class="t-dsc"><td><a href="#f-804aab1a653039fc">micron::math::symbolic::expression::owner() const noexcept</a></td><td>function; line 1069</td></tr><tr class="t-dsc"><td><a href="#f-c3acfd2346ca1204">micron::math::symbolic::expression::root() const noexcept</a></td><td>function; line 1075</td></tr><tr class="t-dsc"><td><a href="#f-9fc5c8610ce103f5">micron::math::symbolic::expression::valid() const noexcept</a></td><td>function; line 1081</td></tr><tr class="t-dsc"><td><a href="#f-480791883b70987c">micron::math::symbolic::expression::clone_to(expression &amp;destination) const</a></td><td>function; line 1087</td></tr><tr class="t-dsc"><td><a href="#f-d719f3d8dd7bbef6">micron::math::symbolic::expression::write_csexp(Sink &amp;&amp;sink) const</a></td><td>function; line 1100</td></tr><tr class="t-dsc"><td><a href="#f-929572f6e39b1753">micron::math::symbolic::expression::write_csexp(Sink &amp;&amp;sink, char *buffer, usize capacity) const</a></td><td>function; line 1107</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-afea5bc4e3c72a1c"><h3><code>micron::math::symbolic::operator|(assumptions a, assumptions b) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr assumptions
+operator|(assumptions a, assumptions b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>assumptions a</code></li><li><code>assumptions b</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;assumptions&gt;(static_cast&lt;u8&gt;(a) | static_cast&lt;u8&gt;(b))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr assumptions
+operator|(assumptions a, assumptions b) noexcept
+{
+  return static_cast&lt;assumptions&gt;(static_cast&lt;u8&gt;(a) | static_cast&lt;u8&gt;(b));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;assumptions&gt;(static_cast&lt;u8&gt;(a) | static_cast&lt;u8&gt;(b))</code></td><td><a href="../../source/math/symbolic.hpp.html#L44">line 44</a></td></tr></tbody></table></section><section class="function-entry" id="f-66a70dec3389cc18"><h3><code>micron::math::symbolic::has(assumptions value, assumptions flag) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+has(assumptions value, assumptions flag) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>assumptions value</code></li><li><code>assumptions flag</code></li></ul><h4>Effects</h4><p>Returns <code>(static_cast&lt;u8&gt;(value) &amp; static_cast&lt;u8&gt;(flag)) == static_cast&lt;u8&gt;(flag)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+has(assumptions value, assumptions flag) noexcept
+{
+  return (static_cast&lt;u8&gt;(value) &amp; static_cast&lt;u8&gt;(flag)) == static_cast&lt;u8&gt;(flag);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(static_cast&lt;u8&gt;(value) &amp; static_cast&lt;u8&gt;(flag)) == static_cast&lt;u8&gt;(flag)</code></td><td><a href="../../source/math/symbolic.hpp.html#L50">line 50</a></td></tr></tbody></table></section><section class="function-entry" id="f-7522261c40e6c645"><h3><code>micron::math::symbolic::result::operator bool() const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit
+  operator bool() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>code == error::none &amp;&amp; id != invalid_node</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit
+  operator bool() const noexcept
+  {
+    return code == error::none &amp;&amp; id != invalid_node;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>code == error::none &amp;&amp; id != invalid_node</code></td><td><a href="../../source/math/symbolic.hpp.html#L70">line 70</a></td></tr></tbody></table></section><section class="function-entry" id="f-edb36304c12dac54"><h3><code>micron::math::symbolic::arena::context::context(usize count, u64 budget)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L156">line 156</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>context(usize count, u64 budget) : remaining(budget)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize count</code></li><li><code>u64 budget</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">context(usize count, u64 budget) : remaining(budget)
+    {
+      if ( !memo.initialize(count ? count : 1) || !memo.try_resize(count) || !dependent.initialize(count ? count : 1)
+           || !dependent.try_resize(count) ) {
+        failure = error::allocation;
+        return;
+      }
+      for ( usize i = 0; i &lt; count; ++i ) {
+        memo[i] = invalid_node;
+        dependent[i] = -1;
+      }
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/math/symbolic.hpp.html#L161">line 161</a></td></tr></tbody></table></section><section class="function-entry" id="f-8b6b28bc197a064b"><h3><code>micron::math::symbolic::arena::context::step() noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L170">line 170</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    step() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    step() noexcept
+    {
+      if ( failure != error::none ) return false;
+      if ( !remaining ) {
+        failure = error::rewrite_limit;
+        return false;
+      }
+      --remaining;
+      return true;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/math/symbolic.hpp.html#L172">line 172</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/math/symbolic.hpp.html#L175">line 175</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/math/symbolic.hpp.html#L178">line 178</a></td></tr></tbody></table></section><section class="function-entry" id="f-164d84dc39d214bc"><h3><code>micron::math::symbolic::arena::arena(limits configuration = {})</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L685">line 685</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit arena(limits configuration = {}) : __limits(configuration)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limits configuration = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit arena(limits configuration = {}) : __limits(configuration)
+  {
+    if ( !__limits.max_nodes || __limits.max_nodes &gt; (1u &lt;&lt; 28) || !__limits.max_symbols || !__limits.max_text_bytes || !__limits.max_depth
+         || __limits.max_depth &gt; 512 || __limits.max_polynomial_degree &gt; 4096 || !__limits.rational.max_limbs
+         || __limits.rational.max_work_limbs &lt; __limits.rational.max_limbs ) {
+      __state = error::invalid_limits;
+      return;
+    }
+    usize table_size = 1;
+    while ( table_size &lt; static_cast&lt;usize&gt;(__limits.max_nodes) * 2 ) table_size *= 2;
+    if ( !__nodes.initialize(__limits.max_nodes) || !__constants.initialize(__limits.max_nodes)
+         || !__symbols.initialize(__limits.max_symbols) || !__text.initialize(__limits.max_text_bytes) || !__table.initialize(table_size)
+         || !__table.try_resize(table_size) ) {
+      __state = error::allocation;
+      return;
+    }
+    for ( usize i = 0; i &lt; table_size; ++i ) __table[i] = invalid_node;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/math/symbolic.hpp.html#L691">line 691</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/math/symbolic.hpp.html#L699">line 699</a></td></tr></tbody></table></section><section class="function-entry" id="f-048a5ad71ae3c08e"><h3><code>micron::math::symbolic::arena::arena(const arena &amp;)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L704">line 704</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>arena(const arena &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const arena &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-d13069096997108d"><h3><code>micron::math::symbolic::arena::operator=(const arena &amp;)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L705">line 705</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>arena &amp;operator=(const arena &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const arena &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-2f80108d2e2033d5"><h3><code>micron::math::symbolic::arena::arena(arena &amp;&amp;) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L706">line 706</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>arena(arena &amp;&amp;) noexcept = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>arena &amp;&amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-7b79571b33bc13c8"><h3><code>micron::math::symbolic::arena::operator=(arena &amp;&amp;) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L707">line 707</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>arena &amp;operator=(arena &amp;&amp;) noexcept = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>arena &amp;&amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-676ff1611ad0b004"><h3><code>micron::math::symbolic::arena::status() const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L710">line 710</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>error
+  status() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__state</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">error
+  status() const noexcept
+  {
+    return __state;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__state</code></td><td><a href="../../source/math/symbolic.hpp.html#L712">line 712</a></td></tr></tbody></table></section><section class="function-entry" id="f-69fe7603633387ee"><h3><code>micron::math::symbolic::arena::size() const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L716">line 716</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__nodes.size()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return __nodes.size();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__nodes.size()</code></td><td><a href="../../source/math/symbolic.hpp.html#L718">line 718</a></td></tr></tbody></table></section><section class="function-entry" id="f-7acf50c95bfe2b20"><h3><code>micron::math::symbolic::arena::configuration() const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L722">line 722</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const limits &amp;
+  configuration() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__limits</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const limits &amp;
+  configuration() const noexcept
+  {
+    return __limits;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__limits</code></td><td><a href="../../source/math/symbolic.hpp.html#L724">line 724</a></td></tr></tbody></table></section><section class="function-entry" id="f-6fbec468fd4d18c3"><h3><code>micron::math::symbolic::arena::get(node_id id) const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L728">line 728</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const node *
+  get(node_id id) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id id</code></li></ul><h4>Effects</h4><p>Returns <code>id &lt; __nodes.size() ? __nodes.data() + id : nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const node *
+  get(node_id id) const noexcept
+  {
+    return id &lt; __nodes.size() ? __nodes.data() + id : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>id &lt; __nodes.size() ? __nodes.data() + id : nullptr</code></td><td><a href="../../source/math/symbolic.hpp.html#L730">line 730</a></td></tr></tbody></table></section><section class="function-entry" id="f-4897e8bf6bafc219"><h3><code>micron::math::symbolic::arena::clone_to(arena &amp;destination) const</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L734">line 734</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>error
+  clone_to(arena &amp;destination) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>arena &amp;destination</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">error
+  clone_to(arena &amp;destination) const
+  {
+    if ( __state != error::none ) return __state;
+    if ( this == &amp;destination ) return error::none;
+    arena copied(__limits);
+    if ( copied.status() != error::none ) return copied.status();
+    if ( !copied.__nodes.try_copy(__nodes) || !copied.__constants.try_copy(__constants) || !copied.__symbols.try_copy(__symbols)
+         || !copied.__text.try_copy(__text) || !copied.__table.try_copy(__table) )
+      return error::allocation;
+    destination = micron::move(copied);
+    return error::none;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__state</code></td><td><a href="../../source/math/symbolic.hpp.html#L736">line 736</a></td></tr><tr class="t-dsc"><td><code>error::none</code></td><td><a href="../../source/math/symbolic.hpp.html#L737">line 737</a></td></tr><tr class="t-dsc"><td><code>copied.status()</code></td><td><a href="../../source/math/symbolic.hpp.html#L739">line 739</a></td></tr><tr class="t-dsc"><td><code>error::allocation</code></td><td><a href="../../source/math/symbolic.hpp.html#L742">line 742</a></td></tr><tr class="t-dsc"><td><code>error::none</code></td><td><a href="../../source/math/symbolic.hpp.html#L744">line 744</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-28ae076586fceb90"><h3><code>micron::math::symbolic::arena::write_csexp(node_id expression, Sink &amp;&amp;sink) const</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L749">line 749</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sink&gt;
+  error
+  write_csexp(node_id expression, Sink &amp;&amp;sink) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>Sink &amp;&amp;sink</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sink&gt;
+  error
+  write_csexp(node_id expression, Sink &amp;&amp;sink) const
+  {
+    if ( !get(expression) ) return error::invalid_node;
+    if ( __limits.rational.max_limbs &gt; (~usize{ 0 } - 80) / mpn::limb_bits ) return error::limb_limit;
+    char local[256];
+    micron::reserved_vector&lt;char&gt; overflow;
+    __text_buffer scratch{ local, sizeof(local), &amp;overflow, __limits.rational.max_limbs * mpn::limb_bits + 80 };
+    u64 remaining = __limits.max_rewrites;
+    return write_node(expression, sink, scratch, remaining);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>error::invalid_node</code></td><td><a href="../../source/math/symbolic.hpp.html#L751">line 751</a></td></tr><tr class="t-dsc"><td><code>error::limb_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L752">line 752</a></td></tr><tr class="t-dsc"><td><code>write_node(expression, sink, scratch, remaining)</code></td><td><a href="../../source/math/symbolic.hpp.html#L757">line 757</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-5183162dc4083260">write_node</a>.</p></section><section class="function-entry" id="f-c4467cd542a15c4f"><h3><code>micron::math::symbolic::arena::write_csexp(node_id expression, Sink &amp;&amp;sink, char *buffer, usize capacity) const</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L763">line 763</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sink&gt;
+  error
+  write_csexp(node_id expression, Sink &amp;&amp;sink, char *buffer, usize capacity) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>Sink &amp;&amp;sink</code></li><li><code>char *buffer</code></li><li><code>usize capacity</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sink&gt;
+  error
+  write_csexp(node_id expression, Sink &amp;&amp;sink, char *buffer, usize capacity) const
+  {
+    if ( !get(expression) ) return error::invalid_node;
+    if ( __limits.rational.max_limbs &gt; (~usize{ 0 } - 80) / mpn::limb_bits ) return error::limb_limit;
+    if ( !buffer &amp;&amp; capacity ) return error::output_limit;
+    __text_buffer scratch{ buffer, capacity };
+    u64 remaining = __limits.max_rewrites;
+    return write_node(expression, sink, scratch, remaining);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>error::invalid_node</code></td><td><a href="../../source/math/symbolic.hpp.html#L765">line 765</a></td></tr><tr class="t-dsc"><td><code>error::limb_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L766">line 766</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L767">line 767</a></td></tr><tr class="t-dsc"><td><code>write_node(expression, sink, scratch, remaining)</code></td><td><a href="../../source/math/symbolic.hpp.html#L770">line 770</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-5183162dc4083260">write_node</a>.</p></section><section class="function-entry" id="f-de4694c331a513a0"><h3><code>micron::math::symbolic::arena::coefficient(node_id id) const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L774">line 774</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const rational *
+  coefficient(node_id id) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id id</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const rational *
+  coefficient(node_id id) const noexcept
+  {
+    const auto *value = get(id);
+    return value &amp;&amp; value-&gt;type == kind::rational ? __constants.data() + value-&gt;payload : nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value &amp;&amp; value-&gt;type == kind::rational ? __constants.data() + value-&gt;payload : nullptr</code></td><td><a href="../../source/math/symbolic.hpp.html#L777">line 777</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>.</p></section><section class="function-entry" id="f-6a6b07020cbb7a94"><h3><code>micron::math::symbolic::arena::symbol_name(node_id id) const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L781">line 781</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>text_view
+  symbol_name(node_id id) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id id</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">text_view
+  symbol_name(node_id id) const noexcept
+  {
+    const auto *value = get(id);
+    if ( !value || value-&gt;type != kind::symbol ) return {};
+    const auto &amp;symbol = __symbols[value-&gt;payload];
+    return { __text.data() + symbol.offset, symbol.length };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{}</code></td><td><a href="../../source/math/symbolic.hpp.html#L784">line 784</a></td></tr><tr class="t-dsc"><td><code>{ __text.data() + symbol.offset, symbol.length }</code></td><td><a href="../../source/math/symbolic.hpp.html#L786">line 786</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>.</p></section><section class="function-entry" id="f-989cf68aa6066668"><h3><code>micron::math::symbolic::arena::constant(const rational &amp;value)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L790">line 790</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  constant(const rational &amp;value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const rational &amp;value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  constant(const rational &amp;value)
+  {
+    if ( __state != error::none ) return fail(__state);
+    if ( !micron::math::__impl::fits(value, __limits.rational) ) return fail(error::limb_limit);
+    const usize mask = __table.size() - 1;
+    usize slot = rational_hash(value) &amp; mask;
+    while ( __table[slot] != invalid_node ) {
+      const auto found = __table[slot];
+      if ( __nodes[found].type == kind::rational &amp;&amp; __constants[__nodes[found].payload] == value ) return { found };
+      slot = (slot + 1) &amp; mask;
+    }
+    if ( __constants.size() == __limits.max_nodes ) return fail(error::node_limit);
+    const auto index = static_cast&lt;u32&gt;(__constants.size());
+    if ( !__constants.try_resize(__constants.size() + 1) ) return fail(error::allocation);
+    __constants[index] = value;
+    const auto properties = value.sign() &gt; 0   ? assumptions::positive
+                            : value.sign() &lt; 0 ? assumptions::real | assumptions::nonzero
+                                               : assumptions::real | assumptions::nonnegative;
+    const auto out = intern({ kind::rational, invalid_node, invalid_node, 0, index, 1, __impl::closure(properties) });
+    if ( !out || __nodes[out.id].payload != index ) (void)__constants.try_resize(index);
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(__state)</code></td><td><a href="../../source/math/symbolic.hpp.html#L792">line 792</a></td></tr><tr class="t-dsc"><td><code>fail(error::limb_limit)</code></td><td><a href="../../source/math/symbolic.hpp.html#L793">line 793</a></td></tr><tr class="t-dsc"><td><code>{ found }</code></td><td><a href="../../source/math/symbolic.hpp.html#L798">line 798</a></td></tr><tr class="t-dsc"><td><code>fail(error::node_limit)</code></td><td><a href="../../source/math/symbolic.hpp.html#L801">line 801</a></td></tr><tr class="t-dsc"><td><code>fail(error::allocation)</code></td><td><a href="../../source/math/symbolic.hpp.html#L803">line 803</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L810">line 810</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="rational.hpp.html#f-34f696e6d1234e0f">micron::math::__impl::fits</a>, <a href="symbolic.hpp.html#f-1fcbb7c3e72475c5">rational_hash</a>, <a href="symbolic.hpp.html#f-371ab6422e1bd6a5">intern</a>, <a href="symbolic.hpp.html#f-ceca6f08dc01d19a">__impl::closure</a>.</p></section><section class="function-entry" id="f-b51fd8637222990e"><h3><code>micron::math::symbolic::arena::integer(i64 value)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L814">line 814</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  integer(i64 value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 value</code></li></ul><h4>Effects</h4><p>Returns <code>rational_node(make_rational(value, 1, __limits.rational))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  integer(i64 value)
+  {
+    return rational_node(make_rational(value, 1, __limits.rational));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rational_node(make_rational(value, 1, __limits.rational))</code></td><td><a href="../../source/math/symbolic.hpp.html#L816">line 816</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-53d167899e8e94db">rational_node</a>, <a href="rational.hpp.html#f-c4d1a0a4baf15897">make_rational</a>.</p></section><section class="function-entry" id="f-16566339280056e7"><h3><code>micron::math::symbolic::arena::symbol(text_view name, assumptions properties = assumptions::none)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L820">line 820</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  symbol(text_view name, assumptions properties = assumptions::none)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>text_view name</code></li><li><code>assumptions properties = assumptions::none</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  symbol(text_view name, assumptions properties = assumptions::none)
+  {
+    if ( __state != error::none ) return fail(__state);
+    if ( !name.data || !name.size || static_cast&lt;u8&gt;(properties) &gt; 15 ) return fail(error::invalid_symbol);
+    if ( name.size &gt; __limits.max_text_bytes ) return fail(error::text_limit);
+    properties = __impl::closure(properties);
+    for ( usize i = 0; i &lt; name.size; ++i )
+      if ( !name.data[i] ) return fail(error::invalid_symbol);
+    for ( usize i = 0; i &lt; __symbols.size(); ++i ) {
+      const auto &amp;old = __symbols[i];
+      if ( old.length != name.size ) continue;
+      bool equal = true;
+      for ( usize j = 0; j &lt; name.size; ++j )
+        if ( __text[old.offset + j] != name.data[j] ) {
+          equal = false;
+          break;
+        }
+      if ( equal ) return old.declared == properties ? result{ old.id } : fail(error::assumption_conflict);
+    }
+    if ( name.size &gt; __limits.max_text_bytes - __text.size() ) return fail(error::text_limit);
+    if ( __symbols.size() == __limits.max_symbols ) return fail(error::symbol_limit);
+    const auto offset = static_cast&lt;u32&gt;(__text.size()), index = static_cast&lt;u32&gt;(__symbols.size());
+    if ( !__text.try_resize(__text.size() + name.size) ) return fail(error::allocation);
+    if ( !__symbols.try_resize(__symbols.size() + 1) ) {
+      (void)__text.try_resize(offset);
+      return fail(error::allocation);
+    }
+    for ( usize i = 0; i &lt; name.size; ++i ) __text[offset + i] = name.data[i];
+    const auto out = intern({ kind::symbol, invalid_node, invalid_node, 0, index, 1, properties });
+    if ( out )
+      __symbols[index] = { offset, static_cast&lt;u32&gt;(name.size), out.id, properties };
+    else {
+      (void)__symbols.try_resize(index);
+      (void)__text.try_resize(offset);
+    }
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(__state)</code></td><td><a href="../../source/math/symbolic.hpp.html#L822">line 822</a></td></tr><tr class="t-dsc"><td><code>fail(error::invalid_symbol)</code></td><td><a href="../../source/math/symbolic.hpp.html#L823">line 823</a></td></tr><tr class="t-dsc"><td><code>fail(error::text_limit)</code></td><td><a href="../../source/math/symbolic.hpp.html#L824">line 824</a></td></tr><tr class="t-dsc"><td><code>fail(error::invalid_symbol)</code></td><td><a href="../../source/math/symbolic.hpp.html#L827">line 827</a></td></tr><tr class="t-dsc"><td><code>old.declared == properties ? result{ old.id } : fail(error::assumption_conflict)</code></td><td><a href="../../source/math/symbolic.hpp.html#L837">line 837</a></td></tr><tr class="t-dsc"><td><code>fail(error::text_limit)</code></td><td><a href="../../source/math/symbolic.hpp.html#L839">line 839</a></td></tr><tr class="t-dsc"><td><code>fail(error::symbol_limit)</code></td><td><a href="../../source/math/symbolic.hpp.html#L840">line 840</a></td></tr><tr class="t-dsc"><td><code>fail(error::allocation)</code></td><td><a href="../../source/math/symbolic.hpp.html#L842">line 842</a></td></tr><tr class="t-dsc"><td><code>fail(error::allocation)</code></td><td><a href="../../source/math/symbolic.hpp.html#L845">line 845</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L855">line 855</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-ceca6f08dc01d19a">__impl::closure</a>, <a href="symbolic.hpp.html#f-371ab6422e1bd6a5">intern</a>.</p></section><section class="function-entry" id="f-6a15ce2e3d1787f7"><h3><code>micron::math::symbolic::arena::symbol(const char (&amp;name)[N], assumptions properties = assumptions::none)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L860">line 860</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N&gt;
+  result
+  symbol(const char (&amp;name)[N], assumptions properties = assumptions::none)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char (&amp;name)[N]</code></li><li><code>assumptions properties = assumptions::none</code></li></ul><h4>Effects</h4><p>Returns <code>symbol({ name, N - 1 }, properties)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N&gt;
+  result
+  symbol(const char (&amp;name)[N], assumptions properties = assumptions::none)
+  {
+    return symbol({ name, N - 1 }, properties);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>symbol({ name, N - 1 }, properties)</code></td><td><a href="../../source/math/symbolic.hpp.html#L862">line 862</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-16566339280056e7">symbol</a>.</p></section><section class="function-entry" id="f-2c1e247baed5589c"><h3><code>micron::math::symbolic::arena::add(node_id left, node_id right)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L866">line 866</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  add(node_id left, node_id right)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id left</code></li><li><code>node_id right</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  add(node_id left, node_id right)
+  {
+    if ( !get(left) || !get(right) ) return fail(error::invalid_node);
+    if ( literal(left, 0) ) return { right };
+    if ( literal(right, 0) ) return { left };
+    const auto *a = coefficient(left), *b = coefficient(right);
+    if ( a &amp;&amp; b ) return rational_node(rational_add(*a, *b, __limits.rational));
+    if ( left == right ) {
+      const auto two = integer(2);
+      return two ? multiply(two.id, left) : two;
+    }
+    if ( right &lt; left ) {
+      const auto temporary = left;
+      left = right;
+      right = temporary;
+    }
+    assumptions properties = assumptions::none;
+    if ( has(__nodes[left].proven, assumptions::real) &amp;&amp; has(__nodes[right].proven, assumptions::real) ) properties = assumptions::real;
+    if ( has(__nodes[left].proven, assumptions::nonnegative) &amp;&amp; has(__nodes[right].proven, assumptions::nonnegative) ) {
+      properties = properties | assumptions::nonnegative;
+      if ( has(__nodes[left].proven, assumptions::positive) || has(__nodes[right].proven, assumptions::positive) )
+        properties = properties | assumptions::positive;
+    }
+    return binary(kind::add, left, right, properties);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L868">line 868</a></td></tr><tr class="t-dsc"><td><code>{ right }</code></td><td><a href="../../source/math/symbolic.hpp.html#L869">line 869</a></td></tr><tr class="t-dsc"><td><code>{ left }</code></td><td><a href="../../source/math/symbolic.hpp.html#L870">line 870</a></td></tr><tr class="t-dsc"><td><code>rational_node(rational_add(*a, *b, __limits.rational))</code></td><td><a href="../../source/math/symbolic.hpp.html#L872">line 872</a></td></tr><tr class="t-dsc"><td><code>two ? multiply(two.id, left) : two</code></td><td><a href="../../source/math/symbolic.hpp.html#L875">line 875</a></td></tr><tr class="t-dsc"><td><code>binary(kind::add, left, right, properties)</code></td><td><a href="../../source/math/symbolic.hpp.html#L889">line 889</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-c35d8275dc015bfc">literal</a>, <a href="symbolic.hpp.html#f-de4694c331a513a0">coefficient</a>, <a href="symbolic.hpp.html#f-53d167899e8e94db">rational_node</a>, <a href="rational.hpp.html#f-b37c3ffc832e2b12">rational_add</a>, <a href="symbolic.hpp.html#f-b51fd8637222990e">integer</a>, <a href="symbolic.hpp.html#f-7fbe905803de433d">multiply</a>, <a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>, <a href="symbolic.hpp.html#f-b8bee476b3b4c2a4">binary</a>.</p></section><section class="function-entry" id="f-c1be200946480f64"><h3><code>micron::math::symbolic::arena::negate(node_id value)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L893">line 893</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  negate(node_id value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  negate(node_id value)
+  {
+    const auto negative = integer(-1);
+    return negative ? multiply(negative.id, value) : negative;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>negative ? multiply(negative.id, value) : negative</code></td><td><a href="../../source/math/symbolic.hpp.html#L896">line 896</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-b51fd8637222990e">integer</a>, <a href="symbolic.hpp.html#f-7fbe905803de433d">multiply</a>.</p></section><section class="function-entry" id="f-45f71235d04c9108"><h3><code>micron::math::symbolic::arena::subtract(node_id left, node_id right)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L900">line 900</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  subtract(node_id left, node_id right)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id left</code></li><li><code>node_id right</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  subtract(node_id left, node_id right)
+  {
+    const auto negative = negate(right);
+    return negative ? add(left, negative.id) : negative;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>negative ? add(left, negative.id) : negative</code></td><td><a href="../../source/math/symbolic.hpp.html#L903">line 903</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-c1be200946480f64">negate</a>, <a href="symbolic.hpp.html#f-2c1e247baed5589c">add</a>.</p></section><section class="function-entry" id="f-7fbe905803de433d"><h3><code>micron::math::symbolic::arena::multiply(node_id left, node_id right)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L907">line 907</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  multiply(node_id left, node_id right)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id left</code></li><li><code>node_id right</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  multiply(node_id left, node_id right)
+  {
+    if ( !get(left) || !get(right) ) return fail(error::invalid_node);
+    if ( literal(left, 0) || literal(right, 0) ) return integer(0);
+    if ( literal(left, 1) ) return { right };
+    if ( literal(right, 1) ) return { left };
+    const auto *a = coefficient(left), *b = coefficient(right);
+    if ( a &amp;&amp; b ) return rational_node(rational_multiply(*a, *b, __limits.rational));
+    if ( left == right ) return power(left, 2);
+    if ( right &lt; left ) {
+      const auto temporary = left;
+      left = right;
+      right = temporary;
+    }
+    assumptions properties = assumptions::none;
+    if ( has(__nodes[left].proven, assumptions::real) &amp;&amp; has(__nodes[right].proven, assumptions::real) ) properties = assumptions::real;
+    if ( has(__nodes[left].proven, assumptions::positive) &amp;&amp; has(__nodes[right].proven, assumptions::positive) )
+      properties = properties | assumptions::positive;
+    if ( has(__nodes[left].proven, assumptions::nonzero) &amp;&amp; has(__nodes[right].proven, assumptions::nonzero) )
+      properties = properties | assumptions::nonzero;
+    return binary(kind::multiply, left, right, properties);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L909">line 909</a></td></tr><tr class="t-dsc"><td><code>integer(0)</code></td><td><a href="../../source/math/symbolic.hpp.html#L910">line 910</a></td></tr><tr class="t-dsc"><td><code>{ right }</code></td><td><a href="../../source/math/symbolic.hpp.html#L911">line 911</a></td></tr><tr class="t-dsc"><td><code>{ left }</code></td><td><a href="../../source/math/symbolic.hpp.html#L912">line 912</a></td></tr><tr class="t-dsc"><td><code>rational_node(rational_multiply(*a, *b, __limits.rational))</code></td><td><a href="../../source/math/symbolic.hpp.html#L914">line 914</a></td></tr><tr class="t-dsc"><td><code>power(left, 2)</code></td><td><a href="../../source/math/symbolic.hpp.html#L915">line 915</a></td></tr><tr class="t-dsc"><td><code>binary(kind::multiply, left, right, properties)</code></td><td><a href="../../source/math/symbolic.hpp.html#L927">line 927</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-c35d8275dc015bfc">literal</a>, <a href="symbolic.hpp.html#f-b51fd8637222990e">integer</a>, <a href="symbolic.hpp.html#f-de4694c331a513a0">coefficient</a>, <a href="symbolic.hpp.html#f-53d167899e8e94db">rational_node</a>, <a href="rational.hpp.html#f-9461a2c6196de46e">rational_multiply</a>, <a href="symbolic.hpp.html#f-c722100313833605">power</a>, <a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>, <a href="symbolic.hpp.html#f-b8bee476b3b4c2a4">binary</a>.</p></section><section class="function-entry" id="f-d3bb4c94fc30f9b5"><h3><code>micron::math::symbolic::arena::divide(node_id left, node_id right)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L931">line 931</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  divide(node_id left, node_id right)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id left</code></li><li><code>node_id right</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  divide(node_id left, node_id right)
+  {
+    if ( !get(left) || !get(right) ) return fail(error::invalid_node);
+    if ( literal(right, 0) ) return fail(error::domain);
+    if ( literal(right, 1) ) return { left };
+    const auto *a = coefficient(left), *b = coefficient(right);
+    if ( a &amp;&amp; b ) return rational_node(rational_divide(*a, *b, __limits.rational));
+    if ( left == right &amp;&amp; has(__nodes[right].proven, assumptions::nonzero) ) return integer(1);
+    if ( literal(left, 0) &amp;&amp; has(__nodes[right].proven, assumptions::nonzero) ) return integer(0);
+    assumptions properties = assumptions::none;
+    if ( has(__nodes[left].proven, assumptions::real) &amp;&amp; has(__nodes[right].proven, assumptions::real) ) properties = assumptions::real;
+    if ( has(__nodes[left].proven, assumptions::positive) &amp;&amp; has(__nodes[right].proven, assumptions::positive) )
+      properties = properties | assumptions::positive;
+    if ( has(__nodes[left].proven, assumptions::nonzero) &amp;&amp; has(__nodes[right].proven, assumptions::nonzero) )
+      properties = properties | assumptions::nonzero;
+    return binary(kind::divide, left, right, properties);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L933">line 933</a></td></tr><tr class="t-dsc"><td><code>fail(error::domain)</code></td><td><a href="../../source/math/symbolic.hpp.html#L934">line 934</a></td></tr><tr class="t-dsc"><td><code>{ left }</code></td><td><a href="../../source/math/symbolic.hpp.html#L935">line 935</a></td></tr><tr class="t-dsc"><td><code>rational_node(rational_divide(*a, *b, __limits.rational))</code></td><td><a href="../../source/math/symbolic.hpp.html#L937">line 937</a></td></tr><tr class="t-dsc"><td><code>integer(1)</code></td><td><a href="../../source/math/symbolic.hpp.html#L938">line 938</a></td></tr><tr class="t-dsc"><td><code>integer(0)</code></td><td><a href="../../source/math/symbolic.hpp.html#L939">line 939</a></td></tr><tr class="t-dsc"><td><code>binary(kind::divide, left, right, properties)</code></td><td><a href="../../source/math/symbolic.hpp.html#L946">line 946</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-c35d8275dc015bfc">literal</a>, <a href="symbolic.hpp.html#f-de4694c331a513a0">coefficient</a>, <a href="symbolic.hpp.html#f-53d167899e8e94db">rational_node</a>, <a href="rational.hpp.html#f-af356262b9c4c992">rational_divide</a>, <a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>, <a href="symbolic.hpp.html#f-b51fd8637222990e">integer</a>, <a href="symbolic.hpp.html#f-b8bee476b3b4c2a4">binary</a>.</p></section><section class="function-entry" id="f-c722100313833605"><h3><code>micron::math::symbolic::arena::power(node_id base, i64 exponent)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L950">line 950</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  power(node_id base, i64 exponent)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id base</code></li><li><code>i64 exponent</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  power(node_id base, i64 exponent)
+  {
+    if ( !get(base) ) return fail(error::invalid_node);
+    const u64 magnitude = exponent &lt; 0 ? static_cast&lt;u64&gt;(-(exponent + 1)) + 1 : static_cast&lt;u64&gt;(exponent);
+    if ( magnitude &gt; __limits.rational.max_power ) return fail(error::exponent_limit);
+    if ( const auto *q = coefficient(base) ) return rational_node(rational_power(*q, exponent, __limits.rational));
+    if ( exponent == 1 ) return { base };
+    if ( !exponent &amp;&amp; has(__nodes[base].proven, assumptions::nonzero) ) return integer(1);
+    assumptions properties = assumptions::none;
+    if ( has(__nodes[base].proven, assumptions::real) ) {
+      properties = assumptions::real;
+      if ( exponent &gt; 0 &amp;&amp; (exponent &amp; 1) == 0 ) properties = properties | assumptions::nonnegative;
+    }
+    if ( has(__nodes[base].proven, assumptions::nonzero) ) properties = properties | assumptions::nonzero;
+    if ( has(__nodes[base].proven, assumptions::positive) ) properties = properties | assumptions::positive;
+    return intern({ kind::power, base, invalid_node, exponent, 0, __nodes[base].depth + 1, __impl::closure(properties) });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L952">line 952</a></td></tr><tr class="t-dsc"><td><code>fail(error::exponent_limit)</code></td><td><a href="../../source/math/symbolic.hpp.html#L954">line 954</a></td></tr><tr class="t-dsc"><td><code>rational_node(rational_power(*q, exponent, __limits.rational))</code></td><td><a href="../../source/math/symbolic.hpp.html#L955">line 955</a></td></tr><tr class="t-dsc"><td><code>{ base }</code></td><td><a href="../../source/math/symbolic.hpp.html#L956">line 956</a></td></tr><tr class="t-dsc"><td><code>integer(1)</code></td><td><a href="../../source/math/symbolic.hpp.html#L957">line 957</a></td></tr><tr class="t-dsc"><td><code>intern({ kind::power, base, invalid_node, exponent, 0, __nodes[base].depth + 1, __impl::closure(properties) })</code></td><td><a href="../../source/math/symbolic.hpp.html#L965">line 965</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-de4694c331a513a0">coefficient</a>, <a href="symbolic.hpp.html#f-53d167899e8e94db">rational_node</a>, <a href="rational.hpp.html#f-0df75414ff469d00">rational_power</a>, <a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>, <a href="symbolic.hpp.html#f-b51fd8637222990e">integer</a>, <a href="symbolic.hpp.html#f-371ab6422e1bd6a5">intern</a>, <a href="symbolic.hpp.html#f-ceca6f08dc01d19a">__impl::closure</a>.</p></section><section class="function-entry" id="f-05e2cf7bd8d981cc"><h3><code>micron::math::symbolic::arena::function(kind type, node_id argument)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L969">line 969</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  function(kind type, node_id argument)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>kind type</code></li><li><code>node_id argument</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  function(kind type, node_id argument)
+  {
+    const auto *value = get(argument);
+    if ( !value ) return fail(error::invalid_node);
+    if ( type != kind::sin &amp;&amp; type != kind::cos &amp;&amp; type != kind::exp &amp;&amp; type != kind::log &amp;&amp; type != kind::sqrt &amp;&amp; type != kind::abs )
+      return fail(error::invalid_node);
+    if ( const auto *q = coefficient(argument) ) {
+      if ( (type == kind::log &amp;&amp; q-&gt;sign() &lt;= 0) || (type == kind::sqrt &amp;&amp; q-&gt;sign() &lt; 0) ) return fail(error::domain);
+      if ( type == kind::abs ) return q-&gt;sign() &gt;= 0 ? result{ argument } : negate(argument);
+      if ( q-&gt;is_zero() ) return integer(type == kind::cos || type == kind::exp ? 1 : 0);
+      if ( type == kind::log &amp;&amp; literal(argument, 1) ) return integer(0);
+      if ( type == kind::sqrt &amp;&amp; literal(argument, 1) ) return integer(1);
+    }
+    if ( type == kind::abs &amp;&amp; has(value-&gt;proven, assumptions::nonnegative) ) return { argument };
+    if ( type == kind::exp &amp;&amp; value-&gt;type == kind::log &amp;&amp; has(__nodes[value-&gt;left].proven, assumptions::positive) ) return { value-&gt;left };
+    if ( type == kind::log &amp;&amp; value-&gt;type == kind::exp &amp;&amp; has(__nodes[value-&gt;left].proven, assumptions::real) ) return { value-&gt;left };
+    if ( type == kind::sqrt &amp;&amp; value-&gt;type == kind::power &amp;&amp; value-&gt;exponent == 2 &amp;&amp; has(__nodes[value-&gt;left].proven, assumptions::real) )
+      return function(kind::abs, value-&gt;left);
+    assumptions properties = assumptions::none;
+    if ( has(value-&gt;proven, assumptions::real) ) {
+      if ( type == kind::sin || type == kind::cos || type == kind::abs ) properties = assumptions::real;
+      if ( type == kind::exp ) properties = assumptions::positive;
+      if ( type == kind::abs ) properties = properties | assumptions::nonnegative;
+      if ( type == kind::sqrt &amp;&amp; has(value-&gt;proven, assumptions::nonnegative) ) properties = assumptions::nonnegative;
+      if ( type == kind::log &amp;&amp; has(value-&gt;proven, assumptions::positive) ) properties = assumptions::real;
+    }
+    return intern({ type, argument, invalid_node, 0, 0, value-&gt;depth + 1, __impl::closure(properties) });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L972">line 972</a></td></tr><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L974">line 974</a></td></tr><tr class="t-dsc"><td><code>fail(error::domain)</code></td><td><a href="../../source/math/symbolic.hpp.html#L976">line 976</a></td></tr><tr class="t-dsc"><td><code>q-&gt;sign() &gt;= 0 ? result{ argument } : negate(argument)</code></td><td><a href="../../source/math/symbolic.hpp.html#L977">line 977</a></td></tr><tr class="t-dsc"><td><code>integer(type == kind::cos || type == kind::exp ? 1 : 0)</code></td><td><a href="../../source/math/symbolic.hpp.html#L978">line 978</a></td></tr><tr class="t-dsc"><td><code>integer(0)</code></td><td><a href="../../source/math/symbolic.hpp.html#L979">line 979</a></td></tr><tr class="t-dsc"><td><code>integer(1)</code></td><td><a href="../../source/math/symbolic.hpp.html#L980">line 980</a></td></tr><tr class="t-dsc"><td><code>{ argument }</code></td><td><a href="../../source/math/symbolic.hpp.html#L982">line 982</a></td></tr><tr class="t-dsc"><td><code>{ value-&gt;left }</code></td><td><a href="../../source/math/symbolic.hpp.html#L983">line 983</a></td></tr><tr class="t-dsc"><td><code>{ value-&gt;left }</code></td><td><a href="../../source/math/symbolic.hpp.html#L984">line 984</a></td></tr><tr class="t-dsc"><td><code>function(kind::abs, value-&gt;left)</code></td><td><a href="../../source/math/symbolic.hpp.html#L986">line 986</a></td></tr><tr class="t-dsc"><td><code>intern({ type, argument, invalid_node, 0, 0, value-&gt;depth + 1, __impl::closure(properties) })</code></td><td><a href="../../source/math/symbolic.hpp.html#L995">line 995</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-de4694c331a513a0">coefficient</a>, <a href="symbolic.hpp.html#f-c1be200946480f64">negate</a>, <a href="symbolic.hpp.html#f-b51fd8637222990e">integer</a>, <a href="symbolic.hpp.html#f-c35d8275dc015bfc">literal</a>, <a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>, <a href="symbolic.hpp.html#f-371ab6422e1bd6a5">intern</a>, <a href="symbolic.hpp.html#f-ceca6f08dc01d19a">__impl::closure</a>.</p></section><section class="function-entry" id="f-5bed3d810d2b1c7e"><h3><code>micron::math::symbolic::arena::differentiate(node_id expression, node_id variable)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L999">line 999</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  differentiate(node_id expression, node_id variable)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>node_id variable</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  differentiate(node_id expression, node_id variable)
+  {
+    if ( !get(expression) || !get(variable) ) return fail(error::invalid_node);
+    if ( __nodes[variable].type != kind::symbol ) return fail(error::invalid_variable);
+    context work(__nodes.size(), __limits.max_rewrites);
+    if ( work.failure != error::none ) return fail(work.failure);
+    return derivative_of(expression, variable, work);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1001">line 1001</a></td></tr><tr class="t-dsc"><td><code>fail(error::invalid_variable)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1002">line 1002</a></td></tr><tr class="t-dsc"><td><code>fail(work.failure)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1004">line 1004</a></td></tr><tr class="t-dsc"><td><code>derivative_of(expression, variable, work)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1005">line 1005</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-9cc2a097fa976a36">derivative_of</a>.</p></section><section class="function-entry" id="f-9b88e38832fdf10b"><h3><code>micron::math::symbolic::arena::integrate(node_id expression, node_id variable)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1009">line 1009</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  integrate(node_id expression, node_id variable)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>node_id variable</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  integrate(node_id expression, node_id variable)
+  {
+    if ( !get(expression) || !get(variable) ) return fail(error::invalid_node);
+    if ( __nodes[variable].type != kind::symbol ) return fail(error::invalid_variable);
+    context work(__nodes.size(), __limits.max_rewrites);
+    if ( work.failure != error::none ) return fail(work.failure);
+    if ( !depends(expression, variable, work) ) return multiply(expression, variable);
+    if ( work.failure != error::none ) return fail(work.failure);
+    const auto coefficients = polynomial_of(expression, variable, work);
+    if ( coefficients.failure != error::none ) return fail(coefficients.failure);
+    if ( !coefficients.recognized ) return binary(kind::integral, expression, variable);
+    result sum = integer(0);
+    for ( usize i = 0; i &lt; coefficients.terms.size(); ++i ) {
+      if ( coefficients.terms[i].is_zero() ) continue;
+      if ( !work.step() ) return fail(work.failure);
+      const auto denominator = make_rational(static_cast&lt;i64&gt;(i + 1), 1, __limits.rational);
+      if ( !denominator ) return fail(__impl::convert(denominator.error));
+      const auto q = rational_divide(coefficients.terms[i], denominator.value, __limits.rational);
+      if ( !q ) return fail(__impl::convert(q.error));
+      const auto factor = constant(q.value), term_power = power(variable, static_cast&lt;i64&gt;(i + 1));
+      if ( !factor ) return factor;
+      if ( !term_power ) return term_power;
+      const auto term = multiply(factor.id, term_power.id);
+      if ( !term ) return term;
+      if ( !sum ) return sum;
+      sum = add(sum.id, term.id);
+    }
+    return sum;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1011">line 1011</a></td></tr><tr class="t-dsc"><td><code>fail(error::invalid_variable)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1012">line 1012</a></td></tr><tr class="t-dsc"><td><code>fail(work.failure)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1014">line 1014</a></td></tr><tr class="t-dsc"><td><code>multiply(expression, variable)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1015">line 1015</a></td></tr><tr class="t-dsc"><td><code>fail(work.failure)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1016">line 1016</a></td></tr><tr class="t-dsc"><td><code>fail(coefficients.failure)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1018">line 1018</a></td></tr><tr class="t-dsc"><td><code>binary(kind::integral, expression, variable)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1019">line 1019</a></td></tr><tr class="t-dsc"><td><code>fail(work.failure)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1023">line 1023</a></td></tr><tr class="t-dsc"><td><code>fail(__impl::convert(denominator.error))</code></td><td><a href="../../source/math/symbolic.hpp.html#L1025">line 1025</a></td></tr><tr class="t-dsc"><td><code>fail(__impl::convert(q.error))</code></td><td><a href="../../source/math/symbolic.hpp.html#L1027">line 1027</a></td></tr><tr class="t-dsc"><td><code>factor</code></td><td><a href="../../source/math/symbolic.hpp.html#L1029">line 1029</a></td></tr><tr class="t-dsc"><td><code>term_power</code></td><td><a href="../../source/math/symbolic.hpp.html#L1030">line 1030</a></td></tr><tr class="t-dsc"><td><code>term</code></td><td><a href="../../source/math/symbolic.hpp.html#L1032">line 1032</a></td></tr><tr class="t-dsc"><td><code>sum</code></td><td><a href="../../source/math/symbolic.hpp.html#L1033">line 1033</a></td></tr><tr class="t-dsc"><td><code>sum</code></td><td><a href="../../source/math/symbolic.hpp.html#L1036">line 1036</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-c58becdd6e6249f1">depends</a>, <a href="symbolic.hpp.html#f-7fbe905803de433d">multiply</a>, <a href="symbolic.hpp.html#f-27c37cd727f59ec5">polynomial_of</a>, <a href="symbolic.hpp.html#f-b8bee476b3b4c2a4">binary</a>, <a href="symbolic.hpp.html#f-b51fd8637222990e">integer</a>, <a href="rational.hpp.html#f-c4d1a0a4baf15897">make_rational</a>, <a href="symbolic.hpp.html#f-921b7990fd56ba83">__impl::convert</a>, <a href="rational.hpp.html#f-af356262b9c4c992">rational_divide</a>, <a href="symbolic.hpp.html#f-989cf68aa6066668">constant</a>, <a href="symbolic.hpp.html#f-c722100313833605">power</a>, <a href="symbolic.hpp.html#f-2c1e247baed5589c">add</a>.</p></section><section class="function-entry" id="f-b1a842357b67c54b"><h3><code>micron::math::symbolic::arena::substitute(node_id expression, node_id variable, node_id replacement)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1040">line 1040</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  substitute(node_id expression, node_id variable, node_id replacement)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>node_id variable</code></li><li><code>node_id replacement</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  substitute(node_id expression, node_id variable, node_id replacement)
+  {
+    if ( !get(expression) || !get(variable) || !get(replacement) ) return fail(error::invalid_node);
+    if ( __nodes[variable].type != kind::symbol ) return fail(error::invalid_variable);
+    // A substitution may not invalidate assumptions used to simplify the source.
+    const auto required = __nodes[variable].proven;
+    if ( !has(__nodes[replacement].proven, required) ) return fail(error::assumption_conflict);
+    context work(__nodes.size(), __limits.max_rewrites);
+    if ( work.failure != error::none ) return fail(work.failure);
+    return substitute_in(expression, variable, replacement, work);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1042">line 1042</a></td></tr><tr class="t-dsc"><td><code>fail(error::invalid_variable)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1043">line 1043</a></td></tr><tr class="t-dsc"><td><code>fail(error::assumption_conflict)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1046">line 1046</a></td></tr><tr class="t-dsc"><td><code>fail(work.failure)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1048">line 1048</a></td></tr><tr class="t-dsc"><td><code>substitute_in(expression, variable, replacement, work)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1049">line 1049</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>, <a href="symbolic.hpp.html#f-45adee33eeafaf50">substitute_in</a>.</p></section><section class="function-entry" id="f-887d88af1b8969b7"><h3><code>micron::math::symbolic::expression::expression() noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1059">line 1059</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>expression() noexcept : __arena(arena::empty_tag{})</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">expression() noexcept : __arena(arena::empty_tag{}) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7701964e938fd64c"><h3><code>micron::math::symbolic::expression::expression(arena &amp;&amp;owner, node_id root) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1061">line 1061</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>expression(arena &amp;&amp;owner, node_id root) noexcept : __arena(micron::move(owner)), __root(root)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>arena &amp;&amp;owner</code></li><li><code>node_id root</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">expression(arena &amp;&amp;owner, node_id root) noexcept : __arena(micron::move(owner)), __root(root) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8c51d14c20c72a65"><h3><code>micron::math::symbolic::expression::expression(const expression &amp;)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1063">line 1063</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>expression(const expression &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const expression &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-a2fd42ac031bb58e"><h3><code>micron::math::symbolic::expression::operator=(const expression &amp;)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1064">line 1064</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>expression &amp;operator=(const expression &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const expression &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-7af67ca33618be90"><h3><code>micron::math::symbolic::expression::expression(expression &amp;&amp;) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1065">line 1065</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>expression(expression &amp;&amp;) noexcept = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>expression &amp;&amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-d94b983238a29e2c"><h3><code>micron::math::symbolic::expression::operator=(expression &amp;&amp;) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1066">line 1066</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>expression &amp;operator=(expression &amp;&amp;) noexcept = default;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>expression &amp;&amp;</code></li></ul><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-804aab1a653039fc"><h3><code>micron::math::symbolic::expression::owner() const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1069">line 1069</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const arena &amp;
+  owner() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__arena</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const arena &amp;
+  owner() const noexcept
+  {
+    return __arena;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__arena</code></td><td><a href="../../source/math/symbolic.hpp.html#L1071">line 1071</a></td></tr></tbody></table></section><section class="function-entry" id="f-c3acfd2346ca1204"><h3><code>micron::math::symbolic::expression::root() const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1075">line 1075</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>node_id
+  root() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__root</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">node_id
+  root() const noexcept
+  {
+    return __root;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__root</code></td><td><a href="../../source/math/symbolic.hpp.html#L1077">line 1077</a></td></tr></tbody></table></section><section class="function-entry" id="f-9fc5c8610ce103f5"><h3><code>micron::math::symbolic::expression::valid() const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1081">line 1081</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  valid() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__arena.get(__root) != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  valid() const noexcept
+  {
+    return __arena.get(__root) != nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__arena.get(__root) != nullptr</code></td><td><a href="../../source/math/symbolic.hpp.html#L1083">line 1083</a></td></tr></tbody></table></section><section class="function-entry" id="f-480791883b70987c"><h3><code>micron::math::symbolic::expression::clone_to(expression &amp;destination) const</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1087">line 1087</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>error
+  clone_to(expression &amp;destination) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>expression &amp;destination</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">error
+  clone_to(expression &amp;destination) const
+  {
+    if ( !valid() ) return error::invalid_node;
+    if ( this == &amp;destination ) return error::none;
+    arena copied(arena::empty_tag{});
+    const auto code = __arena.clone_to(copied);
+    if ( code != error::none ) return code;
+    destination = expression(micron::move(copied), __root);
+    return error::none;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>error::invalid_node</code></td><td><a href="../../source/math/symbolic.hpp.html#L1089">line 1089</a></td></tr><tr class="t-dsc"><td><code>error::none</code></td><td><a href="../../source/math/symbolic.hpp.html#L1090">line 1090</a></td></tr><tr class="t-dsc"><td><code>code</code></td><td><a href="../../source/math/symbolic.hpp.html#L1093">line 1093</a></td></tr><tr class="t-dsc"><td><code>error::none</code></td><td><a href="../../source/math/symbolic.hpp.html#L1095">line 1095</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-9fc5c8610ce103f5">valid</a>, <a href="symbolic.hpp.html#f-887d88af1b8969b7">expression</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-d719f3d8dd7bbef6"><h3><code>micron::math::symbolic::expression::write_csexp(Sink &amp;&amp;sink) const</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1100">line 1100</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sink&gt;
+  error
+  write_csexp(Sink &amp;&amp;sink) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Sink &amp;&amp;sink</code></li></ul><h4>Effects</h4><p>Returns <code>__arena.write_csexp(__root, micron::forward&lt;Sink&gt;(sink))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sink&gt;
+  error
+  write_csexp(Sink &amp;&amp;sink) const
+  {
+    return __arena.write_csexp(__root, micron::forward&lt;Sink&gt;(sink));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__arena.write_csexp(__root, micron::forward&lt;Sink&gt;(sink))</code></td><td><a href="../../source/math/symbolic.hpp.html#L1102">line 1102</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Sink&gt;</a>.</p></section><section class="function-entry" id="f-929572f6e39b1753"><h3><code>micron::math::symbolic::expression::write_csexp(Sink &amp;&amp;sink, char *buffer, usize capacity) const</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L1107">line 1107</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sink&gt;
+  error
+  write_csexp(Sink &amp;&amp;sink, char *buffer, usize capacity) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Sink &amp;&amp;sink</code></li><li><code>char *buffer</code></li><li><code>usize capacity</code></li></ul><h4>Effects</h4><p>Returns <code>__arena.write_csexp(__root, micron::forward&lt;Sink&gt;(sink), buffer, capacity)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sink&gt;
+  error
+  write_csexp(Sink &amp;&amp;sink, char *buffer, usize capacity) const
+  {
+    return __arena.write_csexp(__root, micron::forward&lt;Sink&gt;(sink), buffer, capacity);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__arena.write_csexp(__root, micron::forward&lt;Sink&gt;(sink), buffer, capacity)</code></td><td><a href="../../source/math/symbolic.hpp.html#L1109">line 1109</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Sink&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ceca6f08dc01d19a"><h3><code>micron::math::symbolic::__impl::closure(assumptions value) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L93">line 93</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr assumptions
+closure(assumptions value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>assumptions value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr assumptions
+closure(assumptions value) noexcept
+{
+  if ( has(value, assumptions::positive) ) return value | assumptions::real | assumptions::nonzero | assumptions::nonnegative;
+  if ( has(value, assumptions::nonnegative) ) value = value | assumptions::real;
+  if ( has(value, assumptions::nonnegative) &amp;&amp; has(value, assumptions::nonzero) ) value = value | assumptions::positive;
+  return value;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value | assumptions::real | assumptions::nonzero | assumptions::nonnegative</code></td><td><a href="../../source/math/symbolic.hpp.html#L95">line 95</a></td></tr><tr class="t-dsc"><td><code>value</code></td><td><a href="../../source/math/symbolic.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>.</p></section><section class="function-entry" id="f-d6a3dcd9ca5cbd92"><h3><code>micron::math::symbolic::__impl::mix(u64 hash, u64 value) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L102">line 102</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u64
+mix(u64 hash, u64 value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 hash</code></li><li><code>u64 value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u64
+mix(u64 hash, u64 value) noexcept
+{
+  hash ^= value + 0x9e3779b97f4a7c15ULL + (hash &lt;&lt; 6) + (hash &gt;&gt; 2);
+  return hash;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>hash</code></td><td><a href="../../source/math/symbolic.hpp.html#L105">line 105</a></td></tr></tbody></table></section><section class="function-entry" id="f-921b7990fd56ba83"><h3><code>micron::math::symbolic::__impl::convert(rational_error code) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L109">line 109</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline error
+convert(rational_error code) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>rational_error code</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline error
+convert(rational_error code) noexcept
+{
+  switch ( code ) {
+  case rational_error::none:
+    return error::none;
+  case rational_error::zero_denominator:
+    return error::domain;
+  case rational_error::limb_limit:
+    return error::limb_limit;
+  case rational_error::exponent_limit:
+    return error::exponent_limit;
+  }
+  return error::domain;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>error::none</code></td><td><a href="../../source/math/symbolic.hpp.html#L113">line 113</a></td></tr><tr class="t-dsc"><td><code>error::domain</code></td><td><a href="../../source/math/symbolic.hpp.html#L115">line 115</a></td></tr><tr class="t-dsc"><td><code>error::limb_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L117">line 117</a></td></tr><tr class="t-dsc"><td><code>error::exponent_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td><code>error::domain</code></td><td><a href="../../source/math/symbolic.hpp.html#L121">line 121</a></td></tr></tbody></table></section><section class="function-entry" id="f-fd13f1702cf082c4"><h3><code>micron::math::symbolic::arena::arena(empty_tag) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L133">line 133</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit arena(empty_tag) noexcept : __state(error::invalid_limits)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>empty_tag</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit arena(empty_tag) noexcept : __state(error::invalid_limits) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f5267f98cef3deac"><h3><code>micron::math::symbolic::arena::__text_buffer::ensure(usize needed)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L195">line 195</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    ensure(usize needed)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize needed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    ensure(usize needed)
+    {
+      if ( needed &lt;= capacity ) return true;
+      if ( !overflow || needed &gt; maximum ) return false;
+      if ( !overflow-&gt;max_size() &amp;&amp; !overflow-&gt;initialize(maximum) ) return false;
+      if ( !overflow-&gt;try_resize(needed) ) return false;
+      bytes = overflow-&gt;data();
+      capacity = overflow-&gt;size();
+      return true;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/math/symbolic.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/math/symbolic.hpp.html#L198">line 198</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/math/symbolic.hpp.html#L199">line 199</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/math/symbolic.hpp.html#L200">line 200</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/math/symbolic.hpp.html#L203">line 203</a></td></tr></tbody></table></section><section class="function-entry" id="f-5183162dc4083260"><h3><code>micron::math::symbolic::arena::write_node(node_id id, Sink &amp;sink, __text_buffer &amp;scratch, u64 &amp;remaining) const</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L209">line 209</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sink&gt;
+  error
+  write_node(node_id id, Sink &amp;sink, __text_buffer &amp;scratch, u64 &amp;remaining) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id id</code></li><li><code>Sink &amp;sink</code></li><li><code>__text_buffer &amp;scratch</code></li><li><code>u64 &amp;remaining</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sink&gt;
+  error
+  write_node(node_id id, Sink &amp;sink, __text_buffer &amp;scratch, u64 &amp;remaining) const
+  {
+    if ( !remaining ) return error::rewrite_limit;
+    --remaining;
+    const auto emit = [&amp;](const char *text, usize length) { return sink(text, length); };
+    const auto &amp;value = __nodes[id];
+    if ( value.type == kind::rational ) {
+      const auto &amp;q = __constants[value.payload];
+      const usize numerator_capacity = q.numerator().magnitude().bit_length() + 2;
+      const usize denominator_capacity = q.denominator().bit_length() + 1;
+      if ( !scratch.ensure(numerator_capacity &gt; denominator_capacity ? numerator_capacity : denominator_capacity) )
+        return scratch.overflow ? error::allocation : error::output_limit;
+      const bool fraction = !q.is_integer();
+      if ( fraction &amp;&amp; !emit(&quot;(/ &quot;, 3) ) return error::output_limit;
+      const usize bytes = micron::math::to_chars(scratch.bytes, scratch.capacity, q.numerator());
+      if ( !bytes || !emit(scratch.bytes, bytes) ) return error::output_limit;
+      if ( fraction ) {
+        if ( !emit(&quot; &quot;, 1) ) return error::output_limit;
+        const usize denominator_bytes = micron::math::to_chars(scratch.bytes, scratch.capacity, q.denominator());
+        if ( !denominator_bytes || !emit(scratch.bytes, denominator_bytes) || !emit(&quot;)&quot;, 1) ) return error::output_limit;
+      }
+      return error::none;
+    }
+    if ( value.type == kind::symbol ) {
+      const auto name = symbol_name(id);
+      bool simple = name.data[0] != &#x27;#&#x27; &amp;&amp; (name.data[0] &lt; &#x27;0&#x27; || name.data[0] &gt; &#x27;9&#x27;);
+      if ( name.size &gt; 1 &amp;&amp; (name.data[0] == &#x27;+&#x27; || name.data[0] == &#x27;-&#x27;) &amp;&amp; name.data[1] &gt;= &#x27;0&#x27; &amp;&amp; name.data[1] &lt;= &#x27;9&#x27; ) simple = false;
+      for ( usize i = 0; i &lt; name.size; ++i ) {
+        const char c = name.data[i];
+        if ( static_cast&lt;u8&gt;(c) &lt;= 32 || c == &#x27;(&#x27; || c == &#x27;)&#x27; || c == &#x27;[&#x27; || c == &#x27;]&#x27; || c == &#x27;{&#x27; || c == &#x27;}&#x27; || c == &#x27;&quot;&#x27; || c == &#x27;\&#x27;&#x27;
+             || c == &#x27;`&#x27; || c == &#x27;,&#x27; || c == &#x27;;&#x27; )
+          simple = false;
+      }
+      if ( simple ) return emit(name.data, name.size) ? error::none : error::output_limit;
+      if ( !emit(&quot;(sym.symbol \&quot;&quot;, 13) ) return error::output_limit;
+      for ( usize i = 0; i &lt; name.size; ++i ) {
+        const u8 c = static_cast&lt;u8&gt;(name.data[i]);
+        if ( c == &#x27;&quot;&#x27; || c == &#x27;\\&#x27; ) {
+          const char escaped[2] = { &#x27;\\&#x27;, static_cast&lt;char&gt;(c) };
+          if ( !emit(escaped, 2) ) return error::output_limit;
+        } else if ( c &lt; 32 || c == 127 ) {
+          constexpr char hex[] = &quot;0123456789abcdef&quot;;
+          const char escaped[4] = { &#x27;\\&#x27;, &#x27;x&#x27;, hex[c &gt;&gt; 4], hex[c &amp; 15] };
+          if ( !emit(escaped, 4) ) return error::output_limit;
+        } else if ( !emit(name.data + i, 1) )
+          return error::output_limit;
+      }
+      return emit(&quot;\&quot;)&quot;, 2) ? error::none : error::output_limit;
+    }
+    const char *operation = nullptr;
+    usize operation_size = 0;
+    switch ( value.type ) {
+    case kind::add:
+      operation = &quot;(+ &quot;;
+      operation_size = 3;
+      break;
+    case kind::multiply:
+      operation = &quot;(* &quot;;
+      operation_size = 3;
+      break;
+    case kind::divide:
+      operation = &quot;(/ &quot;;
+      operation_size = 3;
+      break;
+    case kind::power:
+      operation = &quot;(math.pow &quot;;
+      operation_size = 10;
+      break;
+    case kind::sin:
+      operation = &quot;(math.sin &quot;;
+      operation_size = 10;
+      break;
+    case kind::cos:
+      operation = &quot;(math.cos &quot;;
+      operation_size = 10;
+      break;
+    case kind::exp:
+      operation = &quot;(math.exp &quot;;
+      operation_size = 10;
+      break;
+    case kind::log:
+      operation = &quot;(math.log &quot;;
+      operation_size = 10;
+      break;
+    case kind::sqrt:
+      operation = &quot;(math.sqrt &quot;;
+      operation_size = 11;
+      break;
+    case kind::abs:
+      operation = &quot;(math.abs &quot;;
+      operation_size = 10;
+      break;
+    case kind::derivative:
+      operation = &quot;(sym.derivative &quot;;
+      operation_size = 16;
+      break;
+    case kind::integral:
+      operation = &quot;(sym.integral &quot;;
+      operation_size = 14;
+      break;
+    default:
+      return error::invalid_node;
+    }
+    if ( !emit(operation, operation_size) ) return error::output_limit;
+    auto code = write_node(value.left, sink, scratch, remaining);
+    if ( code != error::none ) return code;
+    if ( value.right != invalid_node ) {
+      if ( !emit(&quot; &quot;, 1) ) return error::output_limit;
+      code = write_node(value.right, sink, scratch, remaining);
+      if ( code != error::none ) return code;
+    } else if ( value.type == kind::power ) {
+      if ( !emit(&quot; &quot;, 1) ) return error::output_limit;
+      if ( !scratch.ensure(65) ) return scratch.overflow ? error::allocation : error::output_limit;
+      const usize bytes = micron::math::to_chars(scratch.bytes, scratch.capacity, arbint&lt;64&gt;(value.exponent));
+      if ( !bytes || !emit(scratch.bytes, bytes) ) return error::output_limit;
+    }
+    return emit(&quot;)&quot;, 1) ? error::none : error::output_limit;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>error::rewrite_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L211">line 211</a></td></tr><tr class="t-dsc"><td><code>scratch.overflow ? error::allocation : error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L220">line 220</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L222">line 222</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L224">line 224</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L226">line 226</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L228">line 228</a></td></tr><tr class="t-dsc"><td><code>error::none</code></td><td><a href="../../source/math/symbolic.hpp.html#L230">line 230</a></td></tr><tr class="t-dsc"><td><code>emit(name.data, name.size) ? error::none : error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L242">line 242</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L243">line 243</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L248">line 248</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L252">line 252</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L254">line 254</a></td></tr><tr class="t-dsc"><td><code>emit(&quot;\&quot;)&quot;, 2) ? error::none : error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L256">line 256</a></td></tr><tr class="t-dsc"><td><code>error::invalid_node</code></td><td><a href="../../source/math/symbolic.hpp.html#L310">line 310</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L312">line 312</a></td></tr><tr class="t-dsc"><td><code>code</code></td><td><a href="../../source/math/symbolic.hpp.html#L314">line 314</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L316">line 316</a></td></tr><tr class="t-dsc"><td><code>code</code></td><td><a href="../../source/math/symbolic.hpp.html#L318">line 318</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L320">line 320</a></td></tr><tr class="t-dsc"><td><code>scratch.overflow ? error::allocation : error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L321">line 321</a></td></tr><tr class="t-dsc"><td><code>error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L323">line 323</a></td></tr><tr class="t-dsc"><td><code>emit(&quot;)&quot;, 1) ? error::none : error::output_limit</code></td><td><a href="../../source/math/symbolic.hpp.html#L325">line 325</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="arbint/convert.hpp.html#f-b3032c1851d78c34">micron::math::to_chars</a>, <a href="symbolic.hpp.html#f-6a6b07020cbb7a94">symbol_name</a>, <a href="arbint/signed.hpp.html#s-ab70406d0da87bb2">arbint&lt;64&gt;</a>.</p></section><section class="function-entry" id="f-bd3127ee314dec06"><h3><code>micron::math::symbolic::arena::fail(error code) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L329">line 329</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static result
+  fail(error code) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>error code</code></li></ul><h4>Effects</h4><p>Returns <code>{ invalid_node, code }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static result
+  fail(error code) noexcept
+  {
+    return { invalid_node, code };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ invalid_node, code }</code></td><td><a href="../../source/math/symbolic.hpp.html#L331">line 331</a></td></tr></tbody></table></section><section class="function-entry" id="f-1fcbb7c3e72475c5"><h3><code>micron::math::symbolic::arena::rational_hash(const rational &amp;q) noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L335">line 335</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static u64
+  rational_hash(const rational &amp;q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const rational &amp;q</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static u64
+  rational_hash(const rational &amp;q) noexcept
+  {
+    u64 hashed = __impl::mix(0x736d626f6c696301ULL, static_cast&lt;u8&gt;(kind::rational));
+    hashed = __impl::mix(hashed, static_cast&lt;u64&gt;(q.sign() + 1));
+    hashed = __impl::mix(hashed, q.numerator().size());
+    for ( usize i = 0; i &lt; q.numerator().size(); ++i ) hashed = __impl::mix(hashed, q.numerator().limbs()[i]);
+    hashed = __impl::mix(hashed, q.denominator().size());
+    for ( usize i = 0; i &lt; q.denominator().size(); ++i ) hashed = __impl::mix(hashed, q.denominator().limbs()[i]);
+    return hashed;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>hashed</code></td><td><a href="../../source/math/symbolic.hpp.html#L343">line 343</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-d6a3dcd9ca5cbd92">__impl::mix</a>.</p></section><section class="function-entry" id="f-3f1fb96f02b7100f"><h3><code>micron::math::symbolic::arena::hash(const node &amp;value) const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L347">line 347</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>u64
+  hash(const node &amp;value) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const node &amp;value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">u64
+  hash(const node &amp;value) const noexcept
+  {
+    if ( value.type == kind::rational ) return rational_hash(__constants[value.payload]);
+    u64 hashed = __impl::mix(0x736d626f6c696301ULL, static_cast&lt;u8&gt;(value.type));
+    hashed = __impl::mix(hashed, value.left);
+    hashed = __impl::mix(hashed, value.right);
+    hashed = __impl::mix(hashed, static_cast&lt;u64&gt;(value.exponent));
+    return __impl::mix(hashed, value.payload);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>rational_hash(__constants[value.payload])</code></td><td><a href="../../source/math/symbolic.hpp.html#L349">line 349</a></td></tr><tr class="t-dsc"><td><code>__impl::mix(hashed, value.payload)</code></td><td><a href="../../source/math/symbolic.hpp.html#L354">line 354</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-1fcbb7c3e72475c5">rational_hash</a>, <a href="symbolic.hpp.html#f-d6a3dcd9ca5cbd92">__impl::mix</a>.</p></section><section class="function-entry" id="f-dacca9b262b7a472"><h3><code>micron::math::symbolic::arena::same(const node &amp;a, const node &amp;b) const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L358">line 358</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  same(const node &amp;a, const node &amp;b) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const node &amp;a</code></li><li><code>const node &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  same(const node &amp;a, const node &amp;b) const noexcept
+  {
+    if ( a.type != b.type ) return false;
+    if ( a.type == kind::rational ) return __constants[a.payload] == __constants[b.payload];
+    return a.left == b.left &amp;&amp; a.right == b.right &amp;&amp; a.exponent == b.exponent &amp;&amp; a.payload == b.payload;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/math/symbolic.hpp.html#L360">line 360</a></td></tr><tr class="t-dsc"><td><code>__constants[a.payload] == __constants[b.payload]</code></td><td><a href="../../source/math/symbolic.hpp.html#L361">line 361</a></td></tr><tr class="t-dsc"><td><code>a.left == b.left &amp;&amp; a.right == b.right &amp;&amp; a.exponent == b.exponent &amp;&amp; a.payload == b.payload</code></td><td><a href="../../source/math/symbolic.hpp.html#L362">line 362</a></td></tr></tbody></table></section><section class="function-entry" id="f-371ab6422e1bd6a5"><h3><code>micron::math::symbolic::arena::intern(node value)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L366">line 366</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  intern(node value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  intern(node value)
+  {
+    if ( __state != error::none ) return fail(__state);
+    if ( value.depth &gt; __limits.max_depth ) return fail(error::depth_limit);
+    const usize mask = __table.size() - 1;
+    usize slot = hash(value) &amp; mask;
+    while ( __table[slot] != invalid_node ) {
+      const node_id found = __table[slot];
+      if ( same(__nodes[found], value) ) return { found };
+      slot = (slot + 1) &amp; mask;
+    }
+    if ( __nodes.size() == __limits.max_nodes ) return fail(error::node_limit);
+    const node_id id = static_cast&lt;node_id&gt;(__nodes.size());
+    if ( !__nodes.try_resize(__nodes.size() + 1) ) return fail(error::allocation);
+    __nodes[id] = value;
+    __table[slot] = id;
+    return { id };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(__state)</code></td><td><a href="../../source/math/symbolic.hpp.html#L368">line 368</a></td></tr><tr class="t-dsc"><td><code>fail(error::depth_limit)</code></td><td><a href="../../source/math/symbolic.hpp.html#L369">line 369</a></td></tr><tr class="t-dsc"><td><code>{ found }</code></td><td><a href="../../source/math/symbolic.hpp.html#L374">line 374</a></td></tr><tr class="t-dsc"><td><code>fail(error::node_limit)</code></td><td><a href="../../source/math/symbolic.hpp.html#L377">line 377</a></td></tr><tr class="t-dsc"><td><code>fail(error::allocation)</code></td><td><a href="../../source/math/symbolic.hpp.html#L379">line 379</a></td></tr><tr class="t-dsc"><td><code>{ id }</code></td><td><a href="../../source/math/symbolic.hpp.html#L382">line 382</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-3f1fb96f02b7100f">hash</a>, <a href="symbolic.hpp.html#f-dacca9b262b7a472">same</a>.</p></section><section class="function-entry" id="f-b8bee476b3b4c2a4"><h3><code>micron::math::symbolic::arena::binary(kind type, node_id left, node_id right, assumptions proven = assumptions::none)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L386">line 386</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  binary(kind type, node_id left, node_id right, assumptions proven = assumptions::none)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>kind type</code></li><li><code>node_id left</code></li><li><code>node_id right</code></li><li><code>assumptions proven = assumptions::none</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  binary(kind type, node_id left, node_id right, assumptions proven = assumptions::none)
+  {
+    if ( !get(left) || !get(right) ) return fail(error::invalid_node);
+    const auto depth = __nodes[left].depth &gt; __nodes[right].depth ? __nodes[left].depth : __nodes[right].depth;
+    return intern({ type, left, right, 0, 0, depth + 1, __impl::closure(proven) });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L388">line 388</a></td></tr><tr class="t-dsc"><td><code>intern({ type, left, right, 0, 0, depth + 1, __impl::closure(proven) })</code></td><td><a href="../../source/math/symbolic.hpp.html#L390">line 390</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-6fbec468fd4d18c3">get</a>, <a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-371ab6422e1bd6a5">intern</a>, <a href="symbolic.hpp.html#f-ceca6f08dc01d19a">__impl::closure</a>.</p></section><section class="function-entry" id="f-c35d8275dc015bfc"><h3><code>micron::math::symbolic::arena::literal(node_id id, i64 value) const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L394">line 394</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  literal(node_id id, i64 value) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id id</code></li><li><code>i64 value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  literal(node_id id, i64 value) const noexcept
+  {
+    const auto *q = coefficient(id);
+    return q &amp;&amp; q-&gt;is_integer() &amp;&amp; q-&gt;numerator() == value;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>q &amp;&amp; q-&gt;is_integer() &amp;&amp; q-&gt;numerator() == value</code></td><td><a href="../../source/math/symbolic.hpp.html#L397">line 397</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-de4694c331a513a0">coefficient</a>.</p></section><section class="function-entry" id="f-53d167899e8e94db"><h3><code>micron::math::symbolic::arena::rational_node(rational_result value)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L401">line 401</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  rational_node(rational_result value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>rational_result value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  rational_node(rational_result value)
+  {
+    if ( !value ) return fail(__impl::convert(value.error));
+    return constant(value.value);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fail(__impl::convert(value.error))</code></td><td><a href="../../source/math/symbolic.hpp.html#L403">line 403</a></td></tr><tr class="t-dsc"><td><code>constant(value.value)</code></td><td><a href="../../source/math/symbolic.hpp.html#L404">line 404</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-921b7990fd56ba83">__impl::convert</a>, <a href="symbolic.hpp.html#f-989cf68aa6066668">constant</a>.</p></section><section class="function-entry" id="f-c58becdd6e6249f1"><h3><code>micron::math::symbolic::arena::depends(node_id expression, node_id variable, context &amp;work) const noexcept</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L408">line 408</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  depends(node_id expression, node_id variable, context &amp;work) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>node_id variable</code></li><li><code>context &amp;work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  depends(node_id expression, node_id variable, context &amp;work) const noexcept
+  {
+    if ( expression &lt; work.dependent.size() &amp;&amp; work.dependent[expression] != -1 ) return work.dependent[expression] != 0;
+    if ( !work.step() ) return true;
+    const auto &amp;value = __nodes[expression];
+    bool dependent = expression == variable;
+    if ( !dependent &amp;&amp; value.left != invalid_node ) dependent = depends(value.left, variable, work);
+    if ( !dependent &amp;&amp; value.right != invalid_node ) dependent = depends(value.right, variable, work);
+    if ( expression &lt; work.dependent.size() ) work.dependent[expression] = dependent ? 1 : 0;
+    return dependent;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>work.dependent[expression] != 0</code></td><td><a href="../../source/math/symbolic.hpp.html#L410">line 410</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/math/symbolic.hpp.html#L411">line 411</a></td></tr><tr class="t-dsc"><td><code>dependent</code></td><td><a href="../../source/math/symbolic.hpp.html#L417">line 417</a></td></tr></tbody></table></section><section class="function-entry" id="f-9cc2a097fa976a36"><h3><code>micron::math::symbolic::arena::derivative_of(node_id expression, node_id variable, context &amp;work)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L421">line 421</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  derivative_of(node_id expression, node_id variable, context &amp;work)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>node_id variable</code></li><li><code>context &amp;work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  derivative_of(node_id expression, node_id variable, context &amp;work)
+  {
+    if ( expression &lt; work.memo.size() &amp;&amp; work.memo[expression] != invalid_node ) return { work.memo[expression] };
+    if ( !work.step() ) return fail(work.failure);
+    const node source = __nodes[expression];
+    result output;
+    if ( source.type == kind::rational || source.type == kind::symbol ) {
+      output = integer(expression == variable ? 1 : 0);
+    } else if ( source.type == kind::integral &amp;&amp; source.right == variable ) {
+      output = { source.left };
+    } else if ( source.type == kind::derivative || source.type == kind::integral ) {
+      output = binary(kind::derivative, expression, variable);
+    } else {
+      const auto dl = derivative_of(source.left, variable, work);
+      if ( !dl ) return dl;
+      if ( source.type == kind::add || source.type == kind::multiply || source.type == kind::divide ) {
+        const auto dr = derivative_of(source.right, variable, work);
+        if ( !dr ) return dr;
+        if ( source.type == kind::add ) {
+          output = add(dl.id, dr.id);
+        } else {
+          const auto first = multiply(dl.id, source.right), second = multiply(source.left, dr.id);
+          if ( !first ) return first;
+          if ( !second ) return second;
+          if ( source.type == kind::multiply ) {
+            output = add(first.id, second.id);
+          } else {
+            const auto top = subtract(first.id, second.id), bottom = power(source.right, 2);
+            if ( !top ) return top;
+            if ( !bottom ) return bottom;
+            output = divide(top.id, bottom.id);
+          }
+        }
+      } else if ( source.type == kind::power ) {
+        if ( source.exponent == (-9223372036854775807LL - 1) || source.exponent == 0 ) {
+          output = binary(kind::derivative, expression, variable);
+        } else {
+          const auto factor = integer(source.exponent), lower = power(source.left, source.exponent - 1);
+          if ( !factor ) return factor;
+          if ( !lower ) return lower;
+          const auto outer = multiply(factor.id, lower.id);
+          if ( !outer ) return outer;
+          output = multiply(outer.id, dl.id);
+        }
+      } else {
+        result outer;
+        switch ( source.type ) {
+        case kind::sin:
+          outer = function(kind::cos, source.left);
+          break;
+        case kind::cos: {
+          const auto sine = function(kind::sin, source.left);
+          if ( !sine ) return sine;
+          outer = negate(sine.id);
+          break;
+        }
+        case kind::exp:
+          outer = { expression };
+          break;
+        case kind::log: {
+          const auto one = integer(1);
+          if ( !one ) return one;
+          outer = divide(one.id, source.left);
+          break;
+        }
+        case kind::sqrt: {
+          const auto two = integer(2);
+          if ( !two ) return two;
+          const auto bottom = multiply(two.id, expression), one = integer(1);
+          if ( !bottom ) return bottom;
+          if ( !one ) return one;
+          outer = divide(one.id, bottom.id);
+          break;
+        }
+        case kind::abs:
+          if ( has(__nodes[source.left].proven, assumptions::positive) )
+            outer = integer(1);
+          else
+            return binary(kind::derivative, expression, variable);
+          break;
+        default:
+          return binary(kind::derivative, expression, variable);
+        }
+        if ( !outer ) return outer;
+        output = multiply(outer.id, dl.id);
+      }
+    }
+    if ( output &amp;&amp; expression &lt; work.memo.size() ) work.memo[expression] = output.id;
+    return output;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ work.memo[expression] }</code></td><td><a href="../../source/math/symbolic.hpp.html#L423">line 423</a></td></tr><tr class="t-dsc"><td><code>fail(work.failure)</code></td><td><a href="../../source/math/symbolic.hpp.html#L424">line 424</a></td></tr><tr class="t-dsc"><td><code>dl</code></td><td><a href="../../source/math/symbolic.hpp.html#L435">line 435</a></td></tr><tr class="t-dsc"><td><code>dr</code></td><td><a href="../../source/math/symbolic.hpp.html#L438">line 438</a></td></tr><tr class="t-dsc"><td><code>first</code></td><td><a href="../../source/math/symbolic.hpp.html#L443">line 443</a></td></tr><tr class="t-dsc"><td><code>second</code></td><td><a href="../../source/math/symbolic.hpp.html#L444">line 444</a></td></tr><tr class="t-dsc"><td><code>top</code></td><td><a href="../../source/math/symbolic.hpp.html#L449">line 449</a></td></tr><tr class="t-dsc"><td><code>bottom</code></td><td><a href="../../source/math/symbolic.hpp.html#L450">line 450</a></td></tr><tr class="t-dsc"><td><code>factor</code></td><td><a href="../../source/math/symbolic.hpp.html#L459">line 459</a></td></tr><tr class="t-dsc"><td><code>lower</code></td><td><a href="../../source/math/symbolic.hpp.html#L460">line 460</a></td></tr><tr class="t-dsc"><td><code>outer</code></td><td><a href="../../source/math/symbolic.hpp.html#L462">line 462</a></td></tr><tr class="t-dsc"><td><code>sine</code></td><td><a href="../../source/math/symbolic.hpp.html#L473">line 473</a></td></tr><tr class="t-dsc"><td><code>one</code></td><td><a href="../../source/math/symbolic.hpp.html#L482">line 482</a></td></tr><tr class="t-dsc"><td><code>two</code></td><td><a href="../../source/math/symbolic.hpp.html#L488">line 488</a></td></tr><tr class="t-dsc"><td><code>bottom</code></td><td><a href="../../source/math/symbolic.hpp.html#L490">line 490</a></td></tr><tr class="t-dsc"><td><code>one</code></td><td><a href="../../source/math/symbolic.hpp.html#L491">line 491</a></td></tr><tr class="t-dsc"><td><code>binary(kind::derivative, expression, variable)</code></td><td><a href="../../source/math/symbolic.hpp.html#L499">line 499</a></td></tr><tr class="t-dsc"><td><code>binary(kind::derivative, expression, variable)</code></td><td><a href="../../source/math/symbolic.hpp.html#L502">line 502</a></td></tr><tr class="t-dsc"><td><code>outer</code></td><td><a href="../../source/math/symbolic.hpp.html#L504">line 504</a></td></tr><tr class="t-dsc"><td><code>output</code></td><td><a href="../../source/math/symbolic.hpp.html#L509">line 509</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-b51fd8637222990e">integer</a>, <a href="symbolic.hpp.html#f-b8bee476b3b4c2a4">binary</a>, <a href="symbolic.hpp.html#f-2c1e247baed5589c">add</a>, <a href="symbolic.hpp.html#f-7fbe905803de433d">multiply</a>, <a href="symbolic.hpp.html#f-45f71235d04c9108">subtract</a>, <a href="symbolic.hpp.html#f-c722100313833605">power</a>, <a href="symbolic.hpp.html#f-d3bb4c94fc30f9b5">divide</a>, <a href="symbolic.hpp.html#f-05e2cf7bd8d981cc">function</a>, <a href="symbolic.hpp.html#f-c1be200946480f64">negate</a>, <a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>.</p></section><section class="function-entry" id="f-7a7ede9ef5b77a3e"><h3><code>micron::math::symbolic::arena::polynomial_storage(usize count)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L513">line 513</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>polynomial
+  polynomial_storage(usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">polynomial
+  polynomial_storage(usize count)
+  {
+    polynomial output;
+    if ( count &gt; static_cast&lt;usize&gt;(__limits.max_polynomial_degree) + 1 )
+      output.failure = error::polynomial_limit;
+    else if ( !output.terms.initialize(static_cast&lt;usize&gt;(__limits.max_polynomial_degree) + 1) || !output.terms.try_resize(count) )
+      output.failure = error::allocation;
+    return output;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>output</code></td><td><a href="../../source/math/symbolic.hpp.html#L520">line 520</a></td></tr></tbody></table></section><section class="function-entry" id="f-64e2efe8131fb327"><h3><code>micron::math::symbolic::arena::polynomial_multiply(const polynomial &amp;a, const polynomial &amp;b, context &amp;work)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L524">line 524</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>polynomial
+  polynomial_multiply(const polynomial &amp;a, const polynomial &amp;b, context &amp;work)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const polynomial &amp;a</code></li><li><code>const polynomial &amp;b</code></li><li><code>context &amp;work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">polynomial
+  polynomial_multiply(const polynomial &amp;a, const polynomial &amp;b, context &amp;work)
+  {
+    auto out = polynomial_storage(a.terms.size() + b.terms.size() - 1);
+    if ( out.failure != error::none ) return out;
+    for ( usize i = 0; i &lt; a.terms.size(); ++i )
+      for ( usize j = 0; j &lt; b.terms.size(); ++j ) {
+        if ( !work.step() ) {
+          out.failure = work.failure;
+          return out;
+        }
+        const auto product = rational_multiply(a.terms[i], b.terms[j], __limits.rational);
+        if ( !product ) {
+          out.failure = __impl::convert(product.error);
+          return out;
+        }
+        auto sum = rational_add(out.terms[i + j], product.value, __limits.rational);
+        if ( !sum ) {
+          out.failure = __impl::convert(sum.error);
+          return out;
+        }
+        out.terms[i + j] = micron::move(sum.value);
+      }
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L527">line 527</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L532">line 532</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L537">line 537</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L542">line 542</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L546">line 546</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-7a7ede9ef5b77a3e">polynomial_storage</a>, <a href="rational.hpp.html#f-9461a2c6196de46e">rational_multiply</a>, <a href="symbolic.hpp.html#f-921b7990fd56ba83">__impl::convert</a>, <a href="rational.hpp.html#f-b37c3ffc832e2b12">rational_add</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-27c37cd727f59ec5"><h3><code>micron::math::symbolic::arena::polynomial_of(node_id expression, node_id variable, context &amp;work)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L550">line 550</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>polynomial
+  polynomial_of(node_id expression, node_id variable, context &amp;work)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>node_id variable</code></li><li><code>context &amp;work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">polynomial
+  polynomial_of(node_id expression, node_id variable, context &amp;work)
+  {
+    polynomial out;
+    if ( !work.step() ) {
+      out.failure = work.failure;
+      return out;
+    }
+    const node value = __nodes[expression];
+    if ( value.type == kind::rational ) {
+      out = polynomial_storage(1);
+      if ( out.failure == error::none ) out.terms[0] = __constants[value.payload];
+      return out;
+    }
+    if ( expression == variable ) {
+      out = polynomial_storage(2);
+      if ( out.failure == error::none ) out.terms[1] = make_rational(1).value;
+      return out;
+    }
+    if ( value.type != kind::add &amp;&amp; value.type != kind::multiply &amp;&amp; value.type != kind::divide &amp;&amp; value.type != kind::power ) {
+      out.recognized = false;
+      return out;
+    }
+    auto left = polynomial_of(value.left, variable, work);
+    if ( left.failure != error::none || !left.recognized ) return left;
+    if ( value.type == kind::power ) {
+      if ( value.exponent &lt; 0 || (value.exponent == 0 &amp;&amp; !has(__nodes[value.left].proven, assumptions::nonzero)) ) {
+        left.recognized = false;
+        return left;
+      }
+      if ( left.terms.size() &gt; 1 &amp;&amp; static_cast&lt;u64&gt;(value.exponent) &gt; __limits.max_polynomial_degree / (left.terms.size() - 1) ) {
+        left.failure = error::polynomial_limit;
+        return left;
+      }
+      out = polynomial_storage(1);
+      if ( out.failure != error::none ) return out;
+      out.terms[0] = make_rational(1).value;
+      u64 remaining = static_cast&lt;u64&gt;(value.exponent);
+      while ( remaining ) {
+        if ( remaining &amp; 1 ) {
+          out = polynomial_multiply(out, left, work);
+          if ( out.failure != error::none ) return out;
+        }
+        remaining &gt;&gt;= 1;
+        if ( remaining ) {
+          left = polynomial_multiply(left, left, work);
+          if ( left.failure != error::none ) return left;
+        }
+      }
+      return out;
+    }
+    const auto right = polynomial_of(value.right, variable, work);
+    if ( right.failure != error::none || !right.recognized ) {
+      out.failure = right.failure;
+      out.recognized = right.recognized;
+      return out;
+    }
+    if ( value.type == kind::multiply ) return polynomial_multiply(left, right, work);
+    if ( value.type == kind::divide ) {
+      if ( right.terms.size() != 1 ) {
+        left.recognized = false;
+        return left;
+      }
+      for ( usize i = 0; i &lt; left.terms.size(); ++i ) {
+        auto quotient = rational_divide(left.terms[i], right.terms[0], __limits.rational);
+        if ( !quotient ) {
+          left.failure = __impl::convert(quotient.error);
+          return left;
+        }
+        left.terms[i] = micron::move(quotient.value);
+      }
+      return left;
+    }
+    out = polynomial_storage(left.terms.size() &gt; right.terms.size() ? left.terms.size() : right.terms.size());
+    if ( out.failure != error::none ) return out;
+    for ( usize i = 0; i &lt; out.terms.size(); ++i ) {
+      if ( !work.step() ) {
+        out.failure = work.failure;
+        return out;
+      }
+      if ( i &gt;= left.terms.size() )
+        out.terms[i] = right.terms[i];
+      else if ( i &gt;= right.terms.size() )
+        out.terms[i] = left.terms[i];
+      else {
+        auto sum = rational_add(left.terms[i], right.terms[i], __limits.rational);
+        if ( !sum ) {
+          out.failure = __impl::convert(sum.error);
+          return out;
+        }
+        out.terms[i] = micron::move(sum.value);
+      }
+    }
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L555">line 555</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L561">line 561</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L566">line 566</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L570">line 570</a></td></tr><tr class="t-dsc"><td><code>left</code></td><td><a href="../../source/math/symbolic.hpp.html#L573">line 573</a></td></tr><tr class="t-dsc"><td><code>left</code></td><td><a href="../../source/math/symbolic.hpp.html#L577">line 577</a></td></tr><tr class="t-dsc"><td><code>left</code></td><td><a href="../../source/math/symbolic.hpp.html#L581">line 581</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L584">line 584</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L590">line 590</a></td></tr><tr class="t-dsc"><td><code>left</code></td><td><a href="../../source/math/symbolic.hpp.html#L595">line 595</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L598">line 598</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L604">line 604</a></td></tr><tr class="t-dsc"><td><code>polynomial_multiply(left, right, work)</code></td><td><a href="../../source/math/symbolic.hpp.html#L606">line 606</a></td></tr><tr class="t-dsc"><td><code>left</code></td><td><a href="../../source/math/symbolic.hpp.html#L610">line 610</a></td></tr><tr class="t-dsc"><td><code>left</code></td><td><a href="../../source/math/symbolic.hpp.html#L616">line 616</a></td></tr><tr class="t-dsc"><td><code>left</code></td><td><a href="../../source/math/symbolic.hpp.html#L620">line 620</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L623">line 623</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L627">line 627</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L637">line 637</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L642">line 642</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-7a7ede9ef5b77a3e">polynomial_storage</a>, <a href="rational.hpp.html#f-c4d1a0a4baf15897">make_rational</a>, <a href="symbolic.hpp.html#f-66a70dec3389cc18">has</a>, <a href="symbolic.hpp.html#f-64e2efe8131fb327">polynomial_multiply</a>, <a href="rational.hpp.html#f-af356262b9c4c992">rational_divide</a>, <a href="symbolic.hpp.html#f-921b7990fd56ba83">__impl::convert</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="rational.hpp.html#f-b37c3ffc832e2b12">rational_add</a>.</p></section><section class="function-entry" id="f-45adee33eeafaf50"><h3><code>micron::math::symbolic::arena::substitute_in(node_id expression, node_id variable, node_id replacement, context &amp;work)</code></h3><p>Defined in <code>math/symbolic.hpp</code>, <a href="../../source/math/symbolic.hpp.html#L646">line 646</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>result
+  substitute_in(node_id expression, node_id variable, node_id replacement, context &amp;work)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>node_id expression</code></li><li><code>node_id variable</code></li><li><code>node_id replacement</code></li><li><code>context &amp;work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">result
+  substitute_in(node_id expression, node_id variable, node_id replacement, context &amp;work)
+  {
+    if ( expression == variable ) return { replacement };
+    if ( expression &lt; work.memo.size() &amp;&amp; work.memo[expression] != invalid_node ) return { work.memo[expression] };
+    if ( !work.step() ) return fail(work.failure);
+    const node value = __nodes[expression];
+    if ( value.type == kind::rational || value.type == kind::symbol ) return { expression };
+    // An unevaluated calculus node has an explicit binding slot. Do not silently
+    // rename it into a non-symbol or capture a replacement beneath the binder.
+    if ( value.type == kind::integral || value.type == kind::derivative ) return fail(error::invalid_variable);
+    const auto left = substitute_in(value.left, variable, replacement, work);
+    if ( !left ) return left;
+    result out;
+    if ( value.right != invalid_node ) {
+      const auto right = substitute_in(value.right, variable, replacement, work);
+      if ( !right ) return right;
+      switch ( value.type ) {
+      case kind::add:
+        out = add(left.id, right.id);
+        break;
+      case kind::multiply:
+        out = multiply(left.id, right.id);
+        break;
+      case kind::divide:
+        out = divide(left.id, right.id);
+        break;
+      default:
+        return fail(error::invalid_node);
+      }
+    } else if ( value.type == kind::power ) {
+      out = power(left.id, value.exponent);
+    } else {
+      out = function(value.type, left.id);
+    }
+    if ( out &amp;&amp; expression &lt; work.memo.size() ) work.memo[expression] = out.id;
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ replacement }</code></td><td><a href="../../source/math/symbolic.hpp.html#L648">line 648</a></td></tr><tr class="t-dsc"><td><code>{ work.memo[expression] }</code></td><td><a href="../../source/math/symbolic.hpp.html#L649">line 649</a></td></tr><tr class="t-dsc"><td><code>fail(work.failure)</code></td><td><a href="../../source/math/symbolic.hpp.html#L650">line 650</a></td></tr><tr class="t-dsc"><td><code>{ expression }</code></td><td><a href="../../source/math/symbolic.hpp.html#L652">line 652</a></td></tr><tr class="t-dsc"><td><code>fail(error::invalid_variable)</code></td><td><a href="../../source/math/symbolic.hpp.html#L655">line 655</a></td></tr><tr class="t-dsc"><td><code>left</code></td><td><a href="../../source/math/symbolic.hpp.html#L657">line 657</a></td></tr><tr class="t-dsc"><td><code>right</code></td><td><a href="../../source/math/symbolic.hpp.html#L661">line 661</a></td></tr><tr class="t-dsc"><td><code>fail(error::invalid_node)</code></td><td><a href="../../source/math/symbolic.hpp.html#L673">line 673</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/math/symbolic.hpp.html#L681">line 681</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbolic.hpp.html#f-bd3127ee314dec06">fail</a>, <a href="symbolic.hpp.html#f-2c1e247baed5589c">add</a>, <a href="symbolic.hpp.html#f-7fbe905803de433d">multiply</a>, <a href="symbolic.hpp.html#f-d3bb4c94fc30f9b5">divide</a>, <a href="symbolic.hpp.html#f-c722100313833605">power</a>, <a href="symbolic.hpp.html#f-05e2cf7bd8d981cc">function</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/powm.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/powm.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/powm.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/powm.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-46e7dccc92996582">micron::math::mpn::barrett_ctx</code></td><td>struct; line 34</td></tr><tr class="t-dsc"><td><code id="s-90001cc29d156640">micron::math::mpn::barrett_ctx::mp</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-d929146bb32309a4">micron::math::mpn::barrett_ctx::ip</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-5e5822acf4382528">micron::math::mpn::barrett_ctx::n</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-74b48c373d6f1446">micron::math::mpn::barrett_ctx::shift</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-9bede6a5df02c018">micron::math::mpn::mod_engines_built</code></td><td>variable; line 361</td></tr><tr class="t-dsc"><td><a href="#f-ab14bf3c687fc45d">micron::math::mpn::barrett_make(limb_t *mwork, limb_t *iwork, const limb_t *mp, usize n, limb_t *scratch) noexcept</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-bfed9a9d9df9dd59">micron::math::mpn::barrett_make_itch(usize n) noexcept</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-cbfa1ff052fae9ce">micron::math::mpn::barrett_reduce_itch(usize n) noexcept</a></td><td>function; line 60</td></tr><tr class="t-dsc"><td><a href="#f-789626c7c03e4ca2">micron::math::mpn::barrett_reduce(limb_t *rp, const limb_t *xp, usize xn, const barrett_ctx &amp;c, limb_t *scratch) noexcept</a></td><td>function; line 71</td></tr><tr class="t-dsc"><td><a href="#f-30c0cf7076175378">micron::math::mpn::barrett_mul(limb_t *rp, const limb_t *ap, const limb_t *bp, const barrett_ctx &amp;c, limb_t *scratch) noexcept</a></td><td>function; line 117</td></tr><tr class="t-dsc"><td><a href="#f-a66edf14b26c888f">micron::math::mpn::barrett_sqr(limb_t *rp, const limb_t *ap, const barrett_ctx &amp;c, limb_t *scratch) noexcept</a></td><td>function; line 126</td></tr><tr class="t-dsc"><td><a href="#f-18dd870bbf71355e">micron::math::mpn::barrett_op_itch(usize n) noexcept</a></td><td>function; line 135</td></tr><tr class="t-dsc"><td><a href="#f-2f20cc547e688f4c">micron::math::mpn::powm_window_for(usize ebits, usize n, usize budget) noexcept</a></td><td>function; line 146</td></tr><tr class="t-dsc"><td><a href="#f-9c001c6c20e34c03">micron::math::mpn::powm_itch(usize n, usize bn, usize ebits, usize budget = threshold::powm_table_limbs) noexcept</a></td><td>function; line 175</td></tr><tr class="t-dsc"><td><a href="#f-98d5d47ce52fed35">micron::math::mpn::powm_itch_max(usize cap, usize budget = threshold::powm_table_limbs) noexcept</a></td><td>function; line 185</td></tr><tr class="t-dsc"><td><a href="#f-e9bcc2f5800243a2">micron::math::mpn::powm(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, const limb_t *mp, usize n, limb_t *scratch,
+     usize budget = threshold::powm_table_limbs) noexcept</a></td><td>function; line 319</td></tr><tr class="t-dsc"><td><a href="#f-10a724184465b83d">micron::math::mpn::powm_with(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, const limb_t *mp, usize n, limb_t *scratch,
+          usize budget = threshold::powm_table_limbs) noexcept</a></td><td>function; line 366</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-ab14bf3c687fc45d"><h3><code>micron::math::mpn::barrett_make(limb_t *mwork, limb_t *iwork, const limb_t *mp, usize n, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr barrett_ctx
+barrett_make(limb_t *mwork, limb_t *iwork, const limb_t *mp, usize n, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *mwork</code></li><li><code>limb_t *iwork</code></li><li><code>const limb_t *mp</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr barrett_ctx
+barrett_make(limb_t *mwork, limb_t *iwork, const limb_t *mp, usize n, limb_t *scratch) noexcept
+{
+  const usize s = limb_clz(mp[n - 1]);
+  if ( s != 0 )
+    (void)lshift(mwork, mp, n, s);
+  else
+    copyi(mwork, mp, n);
+  invert_n(iwork, mwork, n, scratch);
+  return barrett_ctx{ mwork, iwork, n, s };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>barrett_ctx{ mwork, iwork, n, s }</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L50">line 50</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="limb.hpp.html#f-58e660595c930a67">limb_clz</a>, <a href="mpn_core.hpp.html#f-81cf2db0ef2efc0e">lshift</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="div_mu.hpp.html#f-255685b2f468cb6c">invert_n</a>.</p></section><section class="function-entry" id="f-bfed9a9d9df9dd59"><h3><code>micron::math::mpn::barrett_make_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+barrett_make_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>invert_n_itch(n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+barrett_make_itch(usize n) noexcept
+{
+  return invert_n_itch(n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>invert_n_itch(n)</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L56">line 56</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="div_mu.hpp.html#f-565359ad44d84e08">invert_n_itch</a>.</p></section><section class="function-entry" id="f-cbfa1ff052fae9ce"><h3><code>micron::math::mpn::barrett_reduce_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L60">line 60</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+barrett_reduce_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+barrett_reduce_itch(usize n) noexcept
+{
+  usize w = __mul_itch_bound(n + 1u, n);
+  const usize v = __mul_itch_bound(n, n);
+  if ( v &gt; w ) w = v;
+  // xw 2n+1, P 2n+1, T n+2, q3 n, U 2n, rr n+1
+  return (2u * n + 1u) + (2u * n + 1u) + (n + 2u) + n + (2u * n) + (n + 1u) + w;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(2u * n + 1u) + (2u * n + 1u) + (n + 2u) + n + (2u * n) + (n + 1u) + w</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L66">line 66</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-d99d21f6c745b624">__mul_itch_bound</a>.</p></section><section class="function-entry" id="f-789626c7c03e4ca2"><h3><code>micron::math::mpn::barrett_reduce(limb_t *rp, const limb_t *xp, usize xn, const barrett_ctx &amp;c, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L71">line 71</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+barrett_reduce(limb_t *rp, const limb_t *xp, usize xn, const barrett_ctx &amp;c, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *xp</code></li><li><code>usize xn</code></li><li><code>const barrett_ctx &amp;c</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+barrett_reduce(limb_t *rp, const limb_t *xp, usize xn, const barrett_ctx &amp;c, limb_t *scratch) noexcept
+{
+  const usize n = c.n;
+  limb_t *const xw = scratch;               // 2n + 1
+  limb_t *const pp = xw + 2u * n + 1u;      // 2n + 1
+  limb_t *const tt = pp + 2u * n + 1u;      // n + 2
+  limb_t *const q3 = tt + n + 2u;           // n
+  limb_t *const uu = q3 + n;                // 2n
+  limb_t *const rr = uu + 2u * n;           // n + 1
+  limb_t *const work = rr + n + 1u;
+
+  if ( xn &gt; 2u * n ) xn = 2u * n;
+  copyi(xw, xp, xn);
+  zero(xw + xn, 2u * n + 1u - xn);
+  if ( c.shift != 0 ) xw[2u * n] = lshift(xw, xw, 2u * n, c.shift);
+
+  // q1 = xw + n - 1, n + 1 limbs
+  mul(pp, xw + n - 1u, n + 1u, c.ip, n, work);
+
+  // T = floor(q2 / B^n) = q1 + floor(q1*ip / B^n)
+  copyi(tt, pp + n, n + 1u);
+  tt[n + 1u] = add_n(tt, tt, xw + n - 1u, n + 1u);
+
+  // q3 = floor(T / B)
+  if ( tt[n + 1u] != 0 ) [[unlikely]]
+    for ( usize i = 0; i &lt; n; ++i ) q3[i] = limb_max;
+  else
+    copyi(q3, tt + 1u, n);
+
+  mul(uu, q3, n, c.mp, n, work);
+
+  (void)sub_n(rr, xw, uu, n + 1u);      // wraps by design
+
+  for ( ;; ) {
+    if ( rr[n] == 0 &amp;&amp; cmp(rr, c.mp, n) &lt; 0 ) break;
+    (void)sub(rr, rr, n + 1u, c.mp, n);
+  }
+
+  if ( c.shift != 0 )
+    (void)rshift(rp, rr, n, c.shift);
+  else
+    copyi(rp, rr, n);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mpn_core.hpp.html#f-81cf2db0ef2efc0e">lshift</a>, <a href="mul.hpp.html#f-e7f7cb20e6b85f6a">mul</a>, <a href="mpn_core.hpp.html#f-5b9b8d30cd63fa29">add_n</a>, <a href="mpn_core.hpp.html#f-e077a5c4963fab6b">sub_n</a>, <a href="mpn_core.hpp.html#f-f2b616d01668414d">cmp</a>, <a href="mpn_core.hpp.html#f-e845dacf002635a3">sub</a>, <a href="mpn_core.hpp.html#f-02a58341b2dd4fe8">rshift</a>.</p></section><section class="function-entry" id="f-30c0cf7076175378"><h3><code>micron::math::mpn::barrett_mul(limb_t *rp, const limb_t *ap, const limb_t *bp, const barrett_ctx &amp;c, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L117">line 117</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+barrett_mul(limb_t *rp, const limb_t *ap, const limb_t *bp, const barrett_ctx &amp;c, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>const limb_t *bp</code></li><li><code>const barrett_ctx &amp;c</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+barrett_mul(limb_t *rp, const limb_t *ap, const limb_t *bp, const barrett_ctx &amp;c, limb_t *scratch) noexcept
+{
+  limb_t *const prod = scratch;      // 2n
+  limb_t *const work = prod + 2u * c.n;
+  mul(prod, ap, c.n, bp, c.n, work);
+  barrett_reduce(rp, prod, 2u * c.n, c, work);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-e7f7cb20e6b85f6a">mul</a>, <a href="powm.hpp.html#f-789626c7c03e4ca2">barrett_reduce</a>.</p></section><section class="function-entry" id="f-a66edf14b26c888f"><h3><code>micron::math::mpn::barrett_sqr(limb_t *rp, const limb_t *ap, const barrett_ctx &amp;c, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L126">line 126</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+barrett_sqr(limb_t *rp, const limb_t *ap, const barrett_ctx &amp;c, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>const barrett_ctx &amp;c</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+barrett_sqr(limb_t *rp, const limb_t *ap, const barrett_ctx &amp;c, limb_t *scratch) noexcept
+{
+  limb_t *const prod = scratch;      // 2n
+  limb_t *const work = prod + 2u * c.n;
+  sqr(prod, ap, c.n, work);
+  barrett_reduce(rp, prod, 2u * c.n, c, work);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-871d1061e7ab9c5e">sqr</a>, <a href="powm.hpp.html#f-789626c7c03e4ca2">barrett_reduce</a>.</p></section><section class="function-entry" id="f-18dd870bbf71355e"><h3><code>micron::math::mpn::barrett_op_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L135">line 135</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+barrett_op_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+barrett_op_itch(usize n) noexcept
+{
+  usize w = __mul_itch_bound(n, n);
+  const usize s = __sqr_itch_bound(n);
+  if ( s &gt; w ) w = s;
+  const usize r = barrett_reduce_itch(n);
+  if ( r &gt; w ) w = r;
+  return 2u * n + w;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>2u * n + w</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-d99d21f6c745b624">__mul_itch_bound</a>, <a href="mul.hpp.html#f-3c800bac55fe5b0c">__sqr_itch_bound</a>, <a href="powm.hpp.html#f-cbfa1ff052fae9ce">barrett_reduce_itch</a>.</p></section><section class="function-entry" id="f-2f20cc547e688f4c"><h3><code>micron::math::mpn::powm_window_for(usize ebits, usize n, usize budget) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L146">line 146</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+powm_window_for(usize ebits, usize n, usize budget) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize ebits</code></li><li><code>usize n</code></li><li><code>usize budget</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+powm_window_for(usize ebits, usize n, usize budget) noexcept
+{
+  usize k = powm_window(ebits);
+  if ( k &gt; threshold::powm_window_cap ) k = threshold::powm_window_cap;
+  if ( n == 0 ) n = 1;
+  while ( k &gt; 1u &amp;&amp; ((usize{ 1 } &lt;&lt; (k - 1u)) * n) &gt; budget ) --k;
+  return k;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>k</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L152">line 152</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="thresholds.hpp.html#f-8245460085722aa4">powm_window</a>.</p></section><section class="function-entry" id="f-9c001c6c20e34c03"><h3><code>micron::math::mpn::powm_itch(usize n, usize bn, usize ebits, usize budget = threshold::powm_table_limbs) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L175">line 175</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+powm_itch(usize n, usize bn, usize ebits, usize budget = threshold::powm_table_limbs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>usize bn</code></li><li><code>usize ebits</code></li><li><code>usize budget = threshold::powm_table_limbs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+powm_itch(usize n, usize bn, usize ebits, usize budget = threshold::powm_table_limbs) noexcept
+{
+  if ( n == 0 ) return 0;
+  if ( bn == 0 ) bn = 1;
+  const usize k = powm_window_for(ebits, n, budget);
+  const usize tbl = (usize{ 1 } &lt;&lt; (k - 1u)) * n;
+  return tbl + 2u * n + __powm_work_itch(n, bn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L177">line 177</a></td></tr><tr class="t-dsc"><td><code>tbl + 2u * n + __powm_work_itch(n, bn)</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L181">line 181</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="powm.hpp.html#f-2f20cc547e688f4c">powm_window_for</a>, <a href="powm.hpp.html#f-acce2b8dad390ad0">__powm_work_itch</a>.</p></section><section class="function-entry" id="f-98d5d47ce52fed35"><h3><code>micron::math::mpn::powm_itch_max(usize cap, usize budget = threshold::powm_table_limbs) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L185">line 185</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+powm_itch_max(usize cap, usize budget = threshold::powm_table_limbs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize cap</code></li><li><code>usize budget = threshold::powm_table_limbs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+powm_itch_max(usize cap, usize budget = threshold::powm_table_limbs) noexcept
+{
+  if ( cap == 0 ) return 0;
+  const usize tbl = budget &gt; cap ? budget : cap;
+  return tbl + 2u * cap + __powm_work_itch(cap, cap);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>tbl + 2u * cap + __powm_work_itch(cap, cap)</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L189">line 189</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="powm.hpp.html#f-acce2b8dad390ad0">__powm_work_itch</a>.</p></section><section class="function-entry" id="f-e9bcc2f5800243a2"><h3><code>micron::math::mpn::powm(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, const limb_t *mp, usize n, limb_t *scratch,
+     usize budget = threshold::powm_table_limbs) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L319">line 319</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+powm(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, const limb_t *mp, usize n, limb_t *scratch,
+     usize budget = threshold::powm_table_limbs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *bp</code></li><li><code>usize bn</code></li><li><code>const limb_t *ep</code></li><li><code>usize en</code></li><li><code>const limb_t *mp</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li><li><code>usize budget = threshold::powm_table_limbs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+powm(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, const limb_t *mp, usize n, limb_t *scratch,
+     usize budget = threshold::powm_table_limbs) noexcept
+{
+  n = normalize(mp, n);
+  if ( n == 0 ) return;
+
+  if ( n == 1 &amp;&amp; mp[0] == 1 ) {
+    rp[0] = 0;
+    return;
+  }
+
+  en = normalize(ep, en);
+  if ( en == 0 ) {
+    zero(rp, n);
+    rp[0] = 1;
+    return;
+  }
+
+  bn = normalize(bp, bn);
+  if ( bn == 0 ) {
+    zero(rp, n);
+    return;
+  }
+
+  const usize ebits = bitlen(ep, en);
+  const usize k = powm_window_for(ebits, n, budget);
+  const usize entries = usize{ 1 } &lt;&lt; (k - 1u);
+
+  limb_t *const tbl = scratch;                // entries * n
+  limb_t *const acc = tbl + entries * n;      // n
+  limb_t *const tmp = acc + n;                // n
+  limb_t *const work = tmp + n;
+
+  const bool odd = (mp[0] &amp; limb_t{ 1 }) != 0;
+  const bool use_mont = (threshold::powm_engine == 0u) ? odd : (threshold::powm_engine == 1u);
+
+  if ( use_mont )
+    __powm_engine&lt;modalgo::redc&gt;(rp, bp, bn, ep, en, ebits, mp, n, k, tbl, acc, tmp, work);
+  else
+    __powm_engine&lt;modalgo::barrett&gt;(rp, bp, bn, ep, en, ebits, mp, n, k, tbl, acc, tmp, work);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L323">line 323</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L327">line 327</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L334">line 334</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L340">line 340</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mpn_core.hpp.html#f-2de1ab6b28d39cf5">bitlen</a>, <a href="powm.hpp.html#f-2f20cc547e688f4c">powm_window_for</a>, <a href="powm.hpp.html#f-ad1d6ae6e9286476">__powm_engine&lt;modalgo::redc&gt;</a>, <a href="powm.hpp.html#f-ad1d6ae6e9286476">__powm_engine&lt;modalgo::barrett&gt;</a>.</p></section><section class="function-entry" id="f-10a724184465b83d"><h3><code>micron::math::mpn::powm_with(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, const limb_t *mp, usize n, limb_t *scratch,
+          usize budget = threshold::powm_table_limbs) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L366">line 366</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;modalgo K&gt;
+inline constexpr void
+powm_with(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, const limb_t *mp, usize n, limb_t *scratch,
+          usize budget = threshold::powm_table_limbs) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *bp</code></li><li><code>usize bn</code></li><li><code>const limb_t *ep</code></li><li><code>usize en</code></li><li><code>const limb_t *mp</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li><li><code>usize budget = threshold::powm_table_limbs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;modalgo K&gt;
+inline constexpr void
+powm_with(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, const limb_t *mp, usize n, limb_t *scratch,
+          usize budget = threshold::powm_table_limbs) noexcept
+{
+  static_assert(static_cast&lt;u8&gt;(K) &lt;= static_cast&lt;u8&gt;(mod_engines_built),
+                &quot;arbint: this modular engine is not implemented yet -- see mpn::mod_engines_built&quot;);
+  n = normalize(mp, n);
+  if ( n == 0 ) return;
+  if ( n == 1 &amp;&amp; mp[0] == 1 ) {
+    rp[0] = 0;
+    return;
+  }
+  en = normalize(ep, en);
+  if ( en == 0 ) {
+    zero(rp, n);
+    rp[0] = 1;
+    return;
+  }
+  bn = normalize(bp, bn);
+  if ( bn == 0 ) {
+    zero(rp, n);
+    return;
+  }
+
+  const usize ebits = bitlen(ep, en);
+  const usize k = powm_window_for(ebits, n, budget);
+  const usize entries = usize{ 1 } &lt;&lt; (k - 1u);
+
+  limb_t *const tbl = scratch;
+  limb_t *const acc = tbl + entries * n;
+  limb_t *const tmp = acc + n;
+  limb_t *const work = tmp + n;
+
+  __powm_engine&lt;K&gt;(rp, bp, bn, ep, en, ebits, mp, n, k, tbl, acc, tmp, work);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L372">line 372</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L375">line 375</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L381">line 381</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L386">line 386</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(static_cast&lt;u8&gt;(K) &lt;= static_cast&lt;u8&gt;(mod_engines_built),
+                &quot;arbint: this modular engine is not implemented yet -- see mpn::mod_engines_built&quot;);</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L369">line 369</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mpn_core.hpp.html#f-2de1ab6b28d39cf5">bitlen</a>, <a href="powm.hpp.html#f-2f20cc547e688f4c">powm_window_for</a>, <a href="powm.hpp.html#f-ad1d6ae6e9286476">__powm_engine&lt;K&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-acce2b8dad390ad0"><h3><code>micron::math::mpn::__powm_work_itch(usize n, usize bn) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L158">line 158</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+__powm_work_itch(usize n, usize bn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>usize bn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+__powm_work_itch(usize n, usize bn) noexcept
+{
+  usize mont = mont_op_itch(n);
+  const usize t = to_mont_itch(bn, n);
+  if ( t &gt; mont ) mont = t;
+
+  usize bar = barrett_make_itch(n);
+  const usize bop = barrett_op_itch(n);
+  if ( bop &gt; bar ) bar = bop;
+  const usize bred = (bn &gt; n ? (bn - n + 1u) : 1u) + divrem_cap_itch(bn &gt; n ? bn : n, n);
+  if ( bred &gt; bar ) bar = bred;
+  bar += 2u * n;
+
+  return mont &gt; bar ? mont : bar;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mont &gt; bar ? mont : bar</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L171">line 171</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mont.hpp.html#f-4fff2d67046bdacc">mont_op_itch</a>, <a href="mont.hpp.html#f-97861b7af1a31bd3">to_mont_itch</a>, <a href="powm.hpp.html#f-bfed9a9d9df9dd59">barrett_make_itch</a>, <a href="powm.hpp.html#f-18dd870bbf71355e">barrett_op_itch</a>, <a href="div_mu.hpp.html#f-d1e4cf8152d559a6">divrem_cap_itch</a>.</p></section><section class="function-entry" id="f-bffc01ce638c3c70"><h3><code>micron::math::mpn::__powm_bits(const limb_t *ep, usize en, usize lo, usize len) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L196">line 196</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+__powm_bits(const limb_t *ep, usize en, usize lo, usize len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const limb_t *ep</code></li><li><code>usize en</code></li><li><code>usize lo</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+__powm_bits(const limb_t *ep, usize en, usize lo, usize len) noexcept
+{
+  usize w = 0;
+  for ( usize j = len; j-- &gt; 0; ) w = (w &lt;&lt; 1) | (testbit(ep, en, lo + j) ? 1u : 0u);
+  return w;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w</code></td><td><a href="../../../source/math/arbint/powm.hpp.html#L200">line 200</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-0213fc5f0254b22e">testbit</a>.</p></section><section class="function-entry" id="f-1902546f63940faf"><h3><code>micron::math::mpn::__powm_window(limb_t *rp, const limb_t *ep, usize en, usize ebits, usize n, usize k, limb_t *tbl, limb_t *acc, limb_t *tmp,
+              Engine &amp;eng) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L205">line 205</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Engine&gt;
+inline constexpr void
+__powm_window(limb_t *rp, const limb_t *ep, usize en, usize ebits, usize n, usize k, limb_t *tbl, limb_t *acc, limb_t *tmp,
+              Engine &amp;eng) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ep</code></li><li><code>usize en</code></li><li><code>usize ebits</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>limb_t *tbl</code></li><li><code>limb_t *acc</code></li><li><code>limb_t *tmp</code></li><li><code>Engine &amp;eng</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Engine&gt;
+inline constexpr void
+__powm_window(limb_t *rp, const limb_t *ep, usize en, usize ebits, usize n, usize k, limb_t *tbl, limb_t *acc, limb_t *tmp,
+              Engine &amp;eng) noexcept
+{
+  const usize entries = usize{ 1 } &lt;&lt; (k - 1u);
+
+  // odd powers: T[j] = base^(2j+1)
+  if ( entries &gt; 1u ) {
+    eng.sqr(tmp, tbl);
+    for ( usize j = 1; j &lt; entries; ++j ) eng.mul(tbl + j * n, tbl + (j - 1u) * n, tmp);
+  }
+
+  bool first = true;
+  usize i = ebits;
+  while ( i &gt; 0 ) {
+    if ( !testbit(ep, en, i - 1u) ) {
+      if ( !first ) eng.sqr(acc, acc);
+      --i;
+      continue;
+    }
+    usize len = k &lt; i ? k : i;
+    while ( len &gt; 1u &amp;&amp; !testbit(ep, en, i - len) ) --len;
+    const usize w = __powm_bits(ep, en, i - len, len);
+
+    if ( first ) {
+      copyi(acc, tbl + ((w - 1u) &gt;&gt; 1) * n, n);
+      first = false;
+    } else {
+      for ( usize t = 0; t &lt; len; ++t ) eng.sqr(acc, acc);
+      eng.mul(acc, acc, tbl + ((w - 1u) &gt;&gt; 1) * n);
+    }
+    i -= len;
+  }
+  copyi(rp, acc, n);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-0213fc5f0254b22e">testbit</a>, <a href="powm.hpp.html#f-bffc01ce638c3c70">__powm_bits</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>.</p></section><section class="function-entry" id="f-ad1d6ae6e9286476"><h3><code>micron::math::mpn::__powm_engine(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, usize ebits, const limb_t *mp, usize n, usize k,
+              limb_t *tbl, limb_t *acc, limb_t *tmp, limb_t *work) noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L242">line 242</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;modalgo K&gt;
+inline constexpr void
+__powm_engine(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, usize ebits, const limb_t *mp, usize n, usize k,
+              limb_t *tbl, limb_t *acc, limb_t *tmp, limb_t *work) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *bp</code></li><li><code>usize bn</code></li><li><code>const limb_t *ep</code></li><li><code>usize en</code></li><li><code>usize ebits</code></li><li><code>const limb_t *mp</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>limb_t *tbl</code></li><li><code>limb_t *acc</code></li><li><code>limb_t *tmp</code></li><li><code>limb_t *work</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;modalgo K&gt;
+inline constexpr void
+__powm_engine(limb_t *rp, const limb_t *bp, usize bn, const limb_t *ep, usize en, usize ebits, const limb_t *mp, usize n, usize k,
+              limb_t *tbl, limb_t *acc, limb_t *tmp, limb_t *work) noexcept
+{
+  if constexpr ( K == modalgo::redc ) {
+    const mont_ctx c = mont_make(mp, n);
+
+    struct eng_t {
+      const mont_ctx &amp;c;
+      limb_t *w;
+
+      [[gnu::always_inline]] constexpr void
+      mul(limb_t *r, const limb_t *a, const limb_t *b) const noexcept
+      {
+        mont_mul(r, a, b, c, w);
+      }
+
+      [[gnu::always_inline]] constexpr void
+      sqr(limb_t *r, const limb_t *a) const noexcept
+      {
+        mont_sqr(r, a, c, w);
+      }
+    } eng{ c, work };
+
+    to_mont(tbl, bp, bn, c, work);
+    if ( is_zero(tbl, n) ) {
+      // b == 0 mod m, and e &gt; 0 here, so the answer is 0 whatever the window would do
+      zero(rp, n);
+      return;
+    }
+    __powm_window(acc, ep, en, ebits, n, k, tbl, acc, tmp, eng);
+    from_mont(rp, acc, c, work);
+  } else {
+    limb_t *const mw = work;        // n
+    limb_t *const iw = mw + n;      // n
+    limb_t *const bw = iw + n;      // the rest
+    const barrett_ctx c = barrett_make(mw, iw, mp, n, bw);
+
+    struct eng_t {
+      const barrett_ctx &amp;c;
+      limb_t *w;
+
+      [[gnu::always_inline]] constexpr void
+      mul(limb_t *r, const limb_t *a, const limb_t *b) const noexcept
+      {
+        barrett_mul(r, a, b, c, w);
+      }
+
+      [[gnu::always_inline]] constexpr void
+      sqr(limb_t *r, const limb_t *a) const noexcept
+      {
+        barrett_sqr(r, a, c, w);
+      }
+    } eng{ c, bw };
+
+    if ( bn &gt; n || cmp_var(bp, bn, mp, n) &gt;= 0 ) {
+      const usize qn = bn &gt; n ? bn - n + 1u : 1u;
+      limb_t *const qp = bw;
+      limb_t *const dw = qp + qn;
+      if ( bn &lt; n ) {
+        copyi(tbl, bp, bn);
+        zero(tbl + bn, n - bn);
+      } else {
+        divrem(qp, tbl, bp, bn, mp, n, dw);
+      }
+    } else {
+      copyi(tbl, bp, bn);
+      zero(tbl + bn, n - bn);
+    }
+    if ( is_zero(tbl, n) ) {
+      zero(rp, n);
+      return;
+    }
+    __powm_window(rp, ep, en, ebits, n, k, tbl, acc, tmp, eng);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L269">line 269</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/powm.hpp.html#L312">line 312</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mont.hpp.html#f-653dfcf306c8c56d">mont_make</a>, <a href="mont.hpp.html#f-9213d0cf7a9a3ece">to_mont</a>, <a href="mpn_core.hpp.html#f-7df898c7260d9740">is_zero</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="powm.hpp.html#f-1902546f63940faf">__powm_window</a>, <a href="mont.hpp.html#f-09ad6080e8297192">from_mont</a>, <a href="powm.hpp.html#f-ab14bf3c687fc45d">barrett_make</a>, <a href="mpn_core.hpp.html#f-5b9ddf144a5ad75c">cmp_var</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="div_mu.hpp.html#f-eeb8063a9a0ba734">divrem</a>.</p></section><section class="function-entry" id="f-d1a0878d76b156ba"><h3><code>micron::math::mpn::eng_t::mul(limb_t *r, const limb_t *a, const limb_t *b) const noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L253">line 253</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] constexpr void
+      mul(limb_t *r, const limb_t *a, const limb_t *b) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *r</code></li><li><code>const limb_t *a</code></li><li><code>const limb_t *b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] constexpr void
+      mul(limb_t *r, const limb_t *a, const limb_t *b) const noexcept
+      {
+        mont_mul(r, a, b, c, w);
+      }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mont.hpp.html#f-3a1346c171622709">mont_mul</a>.</p></section><section class="function-entry" id="f-d9fc8412df51c31c"><h3><code>micron::math::mpn::eng_t::sqr(limb_t *r, const limb_t *a) const noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L259">line 259</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] constexpr void
+      sqr(limb_t *r, const limb_t *a) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *r</code></li><li><code>const limb_t *a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] constexpr void
+      sqr(limb_t *r, const limb_t *a) const noexcept
+      {
+        mont_sqr(r, a, c, w);
+      }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mont.hpp.html#f-5834fe952b2b999a">mont_sqr</a>.</p></section><section class="function-entry" id="f-638b2ccb569accff"><h3><code>micron::math::mpn::eng_t::mul(limb_t *r, const limb_t *a, const limb_t *b) const noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L284">line 284</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] constexpr void
+      mul(limb_t *r, const limb_t *a, const limb_t *b) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *r</code></li><li><code>const limb_t *a</code></li><li><code>const limb_t *b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] constexpr void
+      mul(limb_t *r, const limb_t *a, const limb_t *b) const noexcept
+      {
+        barrett_mul(r, a, b, c, w);
+      }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="powm.hpp.html#f-30c0cf7076175378">barrett_mul</a>.</p></section><section class="function-entry" id="f-71d79219691a465e"><h3><code>micron::math::mpn::eng_t::sqr(limb_t *r, const limb_t *a) const noexcept</code></h3><p>Defined in <code>math/arbint/powm.hpp</code>, <a href="../../../source/math/arbint/powm.hpp.html#L290">line 290</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] constexpr void
+      sqr(limb_t *r, const limb_t *a) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *r</code></li><li><code>const limb_t *a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] constexpr void
+      sqr(limb_t *r, const limb_t *a) const noexcept
+      {
+        barrett_sqr(r, a, c, w);
+      }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="powm.hpp.html#f-a66edf14b26c888f">barrett_sqr</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sort/sort.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sort/sort.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/sorting.html">Sorting</a></div><p>Defined in header <code>&lt;micron/sort/sort.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sort/sort.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-c0cf7143ff29fd7d">micron::sort::sort(T &amp;arr)</a></td><td>function; line 85</td></tr><tr class="t-dsc"><td><a href="#f-602ddd18eff2967a">micron::sort::sort(T &amp;arr, Cmp comp)</a></td><td>function; line 92</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-c0cf7143ff29fd7d"><h3><code>micron::sort::sort(T &amp;arr)</code></h3><p>Defined in <code>sort/sort.hpp</code>, <a href="../../source/sort/sort.hpp.html#L85">line 85</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+T &amp;
+sort(T &amp;arr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li></ul><h4>Effects</h4><p>Returns <code>__sort_dispatch(arr, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+T &amp;
+sort(T &amp;arr)
+{
+  return __sort_dispatch(arr, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sort_dispatch(arr, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code></td><td><a href="../../source/sort/sort.hpp.html#L87">line 87</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-37628262ca57c5e2">__sort_dispatch</a>.</p></section><section class="function-entry" id="f-602ddd18eff2967a"><h3><code>micron::sort::sort(T &amp;arr, Cmp comp)</code></h3><p>Defined in <code>sort/sort.hpp</code>, <a href="../../source/sort/sort.hpp.html#L92">line 92</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+T &amp;
+sort(T &amp;arr, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Returns <code>__sort_dispatch(arr, comp)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+T &amp;
+sort(T &amp;arr, Cmp comp)
+{
+  return __sort_dispatch(arr, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sort_dispatch(arr, comp)</code></td><td><a href="../../source/sort/sort.hpp.html#L94">line 94</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-37628262ca57c5e2">__sort_dispatch</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-b63692aee0107d4f"><h3><code>micron::sort::__heap_range(It a, max_t lo, max_t hi, Cmp comp)</code></h3><p>Defined in <code>sort/sort.hpp</code>, <a href="../../source/sort/sort.hpp.html#L26">line 26</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename It, typename Cmp&gt;
+void
+__heap_range(It a, max_t lo, max_t hi, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It a</code></li><li><code>max_t lo</code></li><li><code>max_t hi</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename It, typename Cmp&gt;
+void
+__heap_range(It a, max_t lo, max_t hi, Cmp comp)
+{
+  const max_t n = hi - lo + 1;
+  auto sift = [&amp;](max_t root, max_t cnt) {
+    for ( ;; ) {
+      max_t child = (root &lt;&lt; 1) + 1;
+      if ( child &gt;= cnt ) break;
+      if ( child + 1 &lt; cnt &amp;&amp; comp(a[lo + child], a[lo + child + 1]) ) ++child;
+      if ( !comp(a[lo + root], a[lo + child]) ) break;
+      micron::swap(a[lo + root], a[lo + child]);
+      root = child;
+    }
+  };
+  for ( max_t start = n / 2; start-- &gt; 0; ) sift(start, n);
+  for ( max_t cnt = n; cnt &gt; 1; ) {
+    --cnt;
+    micron::swap(a[lo], a[lo + cnt]);
+    sift(0, cnt);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-51d6ff79df475609"><h3><code>micron::sort::__introsort(It a, max_t lo, max_t hi, max_t depth, Cmp comp)</code></h3><p>Defined in <code>sort/sort.hpp</code>, <a href="../../source/sort/sort.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename It, typename Cmp&gt;
+void
+__introsort(It a, max_t lo, max_t hi, max_t depth, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It a</code></li><li><code>max_t lo</code></li><li><code>max_t hi</code></li><li><code>max_t depth</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename It, typename Cmp&gt;
+void
+__introsort(It a, max_t lo, max_t hi, max_t depth, Cmp comp)
+{
+  constexpr max_t THRESH = 24;
+  while ( hi - lo &gt; THRESH ) {
+    if ( depth == 0 ) {
+      __heap_range(a, lo, hi, comp);
+      return;
+    }
+    --depth;
+    if ( hi - lo &gt;= 2 ) __q_med3_to_high(a, lo, hi, comp);
+    max_t p = __q_partition(a, lo, hi, comp);
+    if ( p - lo &lt; hi - p ) {
+      if ( lo &lt; p - 1 ) __introsort(a, lo, p - 1, depth, comp);
+      lo = p + 1;
+    } else {
+      if ( p + 1 &lt; hi ) __introsort(a, p + 1, hi, depth, comp);
+      hi = p - 1;
+    }
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/sort/sort.hpp.html#L55">line 55</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-b63692aee0107d4f">__heap_range</a>, <a href="quick.hpp.html#f-f1ef3cb917240f7b">__q_med3_to_high</a>, <a href="quick.hpp.html#f-fe50ae5579ac39dc">__q_partition</a>.</p></section><section class="function-entry" id="f-37628262ca57c5e2"><h3><code>micron::sort::__sort_dispatch(T &amp;arr, Cmp comp)</code></h3><p>Defined in <code>sort/sort.hpp</code>, <a href="../../source/sort/sort.hpp.html#L72">line 72</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Cmp&gt;
+T &amp;
+__sort_dispatch(T &amp;arr, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Cmp&gt;
+T &amp;
+__sort_dispatch(T &amp;arr, Cmp comp)
+{
+  const max_t n = static_cast&lt;max_t&gt;(arr.size());
+  if ( n &lt; 2 ) return arr;
+  max_t depth = 0;
+  for ( max_t t = n; t &gt; 1; t &gt;&gt;= 1 ) depth += 2;      // 2 * floor(log2 n)
+  __introsort(arr.begin(), 0, n - 1, depth, comp);
+  __insertion(arr, 0, arr.size(), comp);      // finish the &lt;= THRESH chunks
+  return arr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/sort/sort.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/sort/sort.hpp.html#L80">line 80</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sort.hpp.html#f-51d6ff79df475609">__introsort</a>, <a href="insertion.hpp.html#f-83a39a3537d74895">__insertion</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

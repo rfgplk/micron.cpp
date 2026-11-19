@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/linalg/decomp.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/linalg/decomp.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/matrix.html">Matrices and linear algebra</a></div><p>Defined in header <code>&lt;micron/math/linalg/decomp.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/linalg/decomp.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-413ba478995c4c94">micron::math::linalg::decomp::lu_result</code></td><td>struct; line 36</td></tr><tr class="t-dsc"><td><code id="s-2943ffe0d549e5c1">micron::math::linalg::decomp::lu_result::L</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-6d2813e1ab11a97c">micron::math::linalg::decomp::lu_result::U</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-319e5c4ad0a01aeb">micron::math::linalg::decomp::lu_result::singular</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-61f16f1361c8e0c4">micron::math::linalg::decomp::chol_result</code></td><td>struct; line 78</td></tr><tr class="t-dsc"><td><code id="s-4d4a3f535e1407ad">micron::math::linalg::decomp::chol_result::L</code></td><td>member; line 79</td></tr><tr class="t-dsc"><td><code id="s-da1ec01255f69812">micron::math::linalg::decomp::chol_result::spd</code></td><td>member; line 80</td></tr><tr class="t-dsc"><td><code id="s-9029dcd908178f76">micron::math::linalg::decomp::qr_result</code></td><td>struct; line 107</td></tr><tr class="t-dsc"><td><code id="s-e80a7da2afdebe97">micron::math::linalg::decomp::qr_result::Q</code></td><td>member; line 108</td></tr><tr class="t-dsc"><td><code id="s-c9d1f50a91f7ffde">micron::math::linalg::decomp::qr_result::R</code></td><td>member; line 109</td></tr><tr class="t-dsc"><td><code id="s-c1d8ac106c807030">micron::math::linalg::decomp::eigen_result2</code></td><td>struct; line 140</td></tr><tr class="t-dsc"><td><code id="s-78318ce74b489891">micron::math::linalg::decomp::eigen_result2::values</code></td><td>member; line 141</td></tr><tr class="t-dsc"><td><code id="s-85c612d303aa30b0">micron::math::linalg::decomp::eigen_result2::vectors</code></td><td>member; line 142</td></tr><tr class="t-dsc"><td><code id="s-0e6e7087cf9bd75e">micron::math::linalg::decomp::eigen_result3</code></td><td>struct; line 145</td></tr><tr class="t-dsc"><td><code id="s-8b3184f0a4dee18f">micron::math::linalg::decomp::eigen_result3::values</code></td><td>member; line 146</td></tr><tr class="t-dsc"><td><code id="s-4028b6e3f748b601">micron::math::linalg::decomp::eigen_result3::vectors</code></td><td>member; line 147</td></tr><tr class="t-dsc"><td><code id="s-c524f6df348b9934">micron::math::linalg::decomp::svd2_result</code></td><td>struct; line 277</td></tr><tr class="t-dsc"><td><code id="s-2d468cbd3cc1f378">micron::math::linalg::decomp::svd2_result::U</code></td><td>member; line 278</td></tr><tr class="t-dsc"><td><code id="s-ba8987aabe66a92d">micron::math::linalg::decomp::svd2_result::S</code></td><td>member; line 279</td></tr><tr class="t-dsc"><td><code id="s-8e735ee5a62697cf">micron::math::linalg::decomp::svd2_result::V</code></td><td>member; line 280</td></tr><tr class="t-dsc"><td><code id="s-990f69c2da5f65bf">micron::math::linalg::decomp::svd3_result</code></td><td>struct; line 320</td></tr><tr class="t-dsc"><td><code id="s-f437f161ea59cfa8">micron::math::linalg::decomp::svd3_result::U</code></td><td>member; line 321</td></tr><tr class="t-dsc"><td><code id="s-13d932f5cd19a61b">micron::math::linalg::decomp::svd3_result::S</code></td><td>member; line 322</td></tr><tr class="t-dsc"><td><code id="s-a3a00bc37cb86f17">micron::math::linalg::decomp::svd3_result::V</code></td><td>member; line 323</td></tr><tr class="t-dsc"><td><code id="s-ff15a6ef790e61bb">micron::math::linalg::decomp::lu_pivot_result</code></td><td>struct; line 386</td></tr><tr class="t-dsc"><td><code id="s-44b9f3a6365dcb2c">micron::math::linalg::decomp::lu_pivot_result::LU</code></td><td>member; line 387</td></tr><tr class="t-dsc"><td><code id="s-b4168b0ab5d56d27">micron::math::linalg::decomp::lu_pivot_result::perm</code></td><td>member; line 388</td></tr><tr class="t-dsc"><td><code id="s-e5b6d055718b2441">micron::math::linalg::decomp::lu_pivot_result::sign</code></td><td>member; line 389</td></tr><tr class="t-dsc"><td><code id="s-372f3828f830dd7a">micron::math::linalg::decomp::lu_pivot_result::singular</code></td><td>member; line 390</td></tr><tr class="t-dsc"><td><code id="s-caca171b70c0fe58">micron::math::linalg::decomp::lu_pivot_result_dyn</code></td><td>struct; line 457</td></tr><tr class="t-dsc"><td><code id="s-782d87b6aaf0eab0">micron::math::linalg::decomp::lu_pivot_result_dyn::LU</code></td><td>member; line 458</td></tr><tr class="t-dsc"><td><code id="s-a5e5726009a12950">micron::math::linalg::decomp::lu_pivot_result_dyn::perm</code></td><td>member; line 459</td></tr><tr class="t-dsc"><td><code id="s-24fbf74def6afb30">micron::math::linalg::decomp::lu_pivot_result_dyn::sign</code></td><td>member; line 460</td></tr><tr class="t-dsc"><td><code id="s-035c65d58d4791df">micron::math::linalg::decomp::lu_pivot_result_dyn::singular</code></td><td>member; line 461</td></tr><tr class="t-dsc"><td><code id="s-a724f0ae5055c5e6">micron::math::linalg::decomp::log_det_result</code></td><td>struct; line 595</td></tr><tr class="t-dsc"><td><code id="s-5b1ab97cb909707b">micron::math::linalg::decomp::log_det_result::log_abs</code></td><td>member; line 596</td></tr><tr class="t-dsc"><td><code id="s-640f5443f2374125">micron::math::linalg::decomp::log_det_result::sign</code></td><td>member; line 597</td></tr><tr class="t-dsc"><td><code id="s-20c60cbc2e0fdd01">micron::math::linalg::decomp::inv_result</code></td><td>struct; line 640</td></tr><tr class="t-dsc"><td><code id="s-1547f3324c8df89f">micron::math::linalg::decomp::inv_result::X</code></td><td>member; line 641</td></tr><tr class="t-dsc"><td><code id="s-8d97074430c309e7">micron::math::linalg::decomp::inv_result::singular</code></td><td>member; line 642</td></tr><tr class="t-dsc"><td><code id="s-e0322e2e858691a5">micron::math::linalg::decomp::inv_result_dyn</code></td><td>struct; line 661</td></tr><tr class="t-dsc"><td><code id="s-14502f93afbdb1d5">micron::math::linalg::decomp::inv_result_dyn::X</code></td><td>member; line 662</td></tr><tr class="t-dsc"><td><code id="s-e11cb705396c7f58">micron::math::linalg::decomp::inv_result_dyn::singular</code></td><td>member; line 663</td></tr><tr class="t-dsc"><td><code id="s-d61447213a7bc005">micron::math::linalg::decomp::qr_householder_result</code></td><td>struct; line 683</td></tr><tr class="t-dsc"><td><code id="s-818dce0de79e8b2f">micron::math::linalg::decomp::qr_householder_result::Q</code></td><td>member; line 684</td></tr><tr class="t-dsc"><td><code id="s-c83ec0d0f9901480">micron::math::linalg::decomp::qr_householder_result::R</code></td><td>member; line 685</td></tr><tr class="t-dsc"><td><code id="s-9c3d88385ffa1965">micron::math::linalg::decomp::qr_householder_result_dyn</code></td><td>struct; line 707</td></tr><tr class="t-dsc"><td><code id="s-8aa6b487d6bf7451">micron::math::linalg::decomp::qr_householder_result_dyn::Q</code></td><td>member; line 708</td></tr><tr class="t-dsc"><td><code id="s-1d0ef48a8f2993e3">micron::math::linalg::decomp::qr_householder_result_dyn::R</code></td><td>member; line 709</td></tr><tr class="t-dsc"><td><code id="s-0dc4c75628197d57">micron::math::linalg::decomp::lu_full_result</code></td><td>struct; line 739</td></tr><tr class="t-dsc"><td><code id="s-c43d89671566caf7">micron::math::linalg::decomp::lu_full_result::LU</code></td><td>member; line 740</td></tr><tr class="t-dsc"><td><code id="s-e92bd3f016d13859">micron::math::linalg::decomp::lu_full_result::perm_row</code></td><td>member; line 741</td></tr><tr class="t-dsc"><td><code id="s-a4d3d9e6afab9835">micron::math::linalg::decomp::lu_full_result::perm_col</code></td><td>member; line 742</td></tr><tr class="t-dsc"><td><code id="s-77b6e73fbf5c8908">micron::math::linalg::decomp::lu_full_result::sign</code></td><td>member; line 743</td></tr><tr class="t-dsc"><td><code id="s-d9350152dcda8a96">micron::math::linalg::decomp::lu_full_result::singular</code></td><td>member; line 744</td></tr><tr class="t-dsc"><td><code id="s-602e6fb788ba017a">micron::math::linalg::decomp::lu_full_result::rank</code></td><td>member; line 745</td></tr><tr class="t-dsc"><td><code id="s-efd7ba549f435366">micron::math::linalg::decomp::lu_full_result_dyn</code></td><td>struct; line 812</td></tr><tr class="t-dsc"><td><code id="s-d6bf6ef1560427ef">micron::math::linalg::decomp::lu_full_result_dyn::LU</code></td><td>member; line 813</td></tr><tr class="t-dsc"><td><code id="s-14a0fc9c5d514ba1">micron::math::linalg::decomp::lu_full_result_dyn::perm_row</code></td><td>member; line 814</td></tr><tr class="t-dsc"><td><code id="s-6e57213c28c867e7">micron::math::linalg::decomp::lu_full_result_dyn::perm_col</code></td><td>member; line 815</td></tr><tr class="t-dsc"><td><code id="s-3ae9739dcaf7c1f9">micron::math::linalg::decomp::lu_full_result_dyn::sign</code></td><td>member; line 816</td></tr><tr class="t-dsc"><td><code id="s-0c4cd0bb4ed8c56c">micron::math::linalg::decomp::lu_full_result_dyn::singular</code></td><td>member; line 817</td></tr><tr class="t-dsc"><td><code id="s-fbd4d24158d13c43">micron::math::linalg::decomp::lu_full_result_dyn::rank</code></td><td>member; line 818</td></tr><tr class="t-dsc"><td><code id="s-a1e284387c7a3777">micron::math::linalg::decomp::qr_colpiv_result</code></td><td>struct; line 945</td></tr><tr class="t-dsc"><td><code id="s-3e8c16cc0ff3a781">micron::math::linalg::decomp::qr_colpiv_result::Q</code></td><td>member; line 946</td></tr><tr class="t-dsc"><td><code id="s-d70617b928222755">micron::math::linalg::decomp::qr_colpiv_result::R</code></td><td>member; line 947</td></tr><tr class="t-dsc"><td><code id="s-e007ac6b0aa9cdc4">micron::math::linalg::decomp::qr_colpiv_result::perm</code></td><td>member; line 948</td></tr><tr class="t-dsc"><td><code id="s-920f4f3bb5bcf9d2">micron::math::linalg::decomp::qr_colpiv_result::sign</code></td><td>member; line 949</td></tr><tr class="t-dsc"><td><code id="s-305ce4819053490a">micron::math::linalg::decomp::qr_colpiv_result::rank</code></td><td>member; line 950</td></tr><tr class="t-dsc"><td><code id="s-ab988c1d99951b35">micron::math::linalg::decomp::qr_colpiv_result_dyn</code></td><td>struct; line 1025</td></tr><tr class="t-dsc"><td><code id="s-38328a94e09020fe">micron::math::linalg::decomp::qr_colpiv_result_dyn::Q</code></td><td>member; line 1026</td></tr><tr class="t-dsc"><td><code id="s-910ead2427340555">micron::math::linalg::decomp::qr_colpiv_result_dyn::R</code></td><td>member; line 1027</td></tr><tr class="t-dsc"><td><code id="s-671e98330f3f77c0">micron::math::linalg::decomp::qr_colpiv_result_dyn::perm</code></td><td>member; line 1028</td></tr><tr class="t-dsc"><td><code id="s-7c23101ab2289ff2">micron::math::linalg::decomp::qr_colpiv_result_dyn::sign</code></td><td>member; line 1029</td></tr><tr class="t-dsc"><td><code id="s-2d4ffc2f331ebc5e">micron::math::linalg::decomp::qr_colpiv_result_dyn::rank</code></td><td>member; line 1030</td></tr><tr class="t-dsc"><td><code id="s-a7ca9792340979b8">micron::math::linalg::decomp::qr_fullpiv_result</code></td><td>struct; line 1163</td></tr><tr class="t-dsc"><td><code id="s-31d09388d1a16c39">micron::math::linalg::decomp::qr_fullpiv_result::Q</code></td><td>member; line 1164</td></tr><tr class="t-dsc"><td><code id="s-7cbcb67cb3249bb2">micron::math::linalg::decomp::qr_fullpiv_result::R</code></td><td>member; line 1165</td></tr><tr class="t-dsc"><td><code id="s-61dcf9ed420c3b88">micron::math::linalg::decomp::qr_fullpiv_result::row_transp</code></td><td>member; line 1166</td></tr><tr class="t-dsc"><td><code id="s-3288abeb3df7fe35">micron::math::linalg::decomp::qr_fullpiv_result::perm_row</code></td><td>member; line 1167</td></tr><tr class="t-dsc"><td><code id="s-61cb2fb916f1665e">micron::math::linalg::decomp::qr_fullpiv_result::perm_col</code></td><td>member; line 1168</td></tr><tr class="t-dsc"><td><code id="s-f5402de1346ee95d">micron::math::linalg::decomp::qr_fullpiv_result::sign</code></td><td>member; line 1169</td></tr><tr class="t-dsc"><td><code id="s-208b1a9b92a66012">micron::math::linalg::decomp::qr_fullpiv_result::rank</code></td><td>member; line 1170</td></tr><tr class="t-dsc"><td><code id="s-32f406cda9bc5e5b">micron::math::linalg::decomp::qr_fullpiv_result_dyn</code></td><td>struct; line 1243</td></tr><tr class="t-dsc"><td><code id="s-b0af80976d51afa1">micron::math::linalg::decomp::qr_fullpiv_result_dyn::Q</code></td><td>member; line 1244</td></tr><tr class="t-dsc"><td><code id="s-9306e996e5993639">micron::math::linalg::decomp::qr_fullpiv_result_dyn::R</code></td><td>member; line 1245</td></tr><tr class="t-dsc"><td><code id="s-453e2f97be35aec6">micron::math::linalg::decomp::qr_fullpiv_result_dyn::row_transp</code></td><td>member; line 1246</td></tr><tr class="t-dsc"><td><code id="s-31cf0c1ecb872ea8">micron::math::linalg::decomp::qr_fullpiv_result_dyn::perm_row</code></td><td>member; line 1247</td></tr><tr class="t-dsc"><td><code id="s-3c7dde86c3fa5116">micron::math::linalg::decomp::qr_fullpiv_result_dyn::perm_col</code></td><td>member; line 1248</td></tr><tr class="t-dsc"><td><code id="s-0c30e2892a69b3c6">micron::math::linalg::decomp::qr_fullpiv_result_dyn::sign</code></td><td>member; line 1249</td></tr><tr class="t-dsc"><td><code id="s-9b15609a15ffb73b">micron::math::linalg::decomp::qr_fullpiv_result_dyn::rank</code></td><td>member; line 1250</td></tr><tr class="t-dsc"><td><code id="s-68373c2afaf94f81">micron::math::linalg::decomp::cod_result_dyn</code></td><td>struct; line 1405</td></tr><tr class="t-dsc"><td><code id="s-c15d31ba4d4ab470">micron::math::linalg::decomp::cod_result_dyn::Q</code></td><td>member; line 1406</td></tr><tr class="t-dsc"><td><code id="s-ffe0b170caf397a0">micron::math::linalg::decomp::cod_result_dyn::T_lower</code></td><td>member; line 1407</td></tr><tr class="t-dsc"><td><code id="s-f9f826d776277128">micron::math::linalg::decomp::cod_result_dyn::Z</code></td><td>member; line 1408</td></tr><tr class="t-dsc"><td><code id="s-dbbdaa037be5d5c4">micron::math::linalg::decomp::cod_result_dyn::perm_col</code></td><td>member; line 1409</td></tr><tr class="t-dsc"><td><code id="s-e63b452c1cfb45e8">micron::math::linalg::decomp::cod_result_dyn::rank</code></td><td>member; line 1410</td></tr><tr class="t-dsc"><td><a href="#f-74e3b9864a11e1bc">micron::math::linalg::decomp::lu(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-a5fb62e172e6915c">micron::math::linalg::decomp::chol(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 85</td></tr><tr class="t-dsc"><td><a href="#f-cfb60cb3fe9c4f89">micron::math::linalg::decomp::qr(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</a></td><td>function; line 114</td></tr><tr class="t-dsc"><td><a href="#f-33c74b2ccaaaeb93">micron::math::linalg::decomp::eigen_sym2(const mat&lt;F, 2, 2&gt; &amp;A) noexcept</a></td><td>function; line 152</td></tr><tr class="t-dsc"><td><a href="#f-a6cd582b2d3ad88c">micron::math::linalg::decomp::eigen_sym3(const mat&lt;F, 3, 3&gt; &amp;A) noexcept</a></td><td>function; line 193</td></tr><tr class="t-dsc"><td><a href="#f-e67d7512902a8909">micron::math::linalg::decomp::svd2(const mat&lt;F, 2, 2&gt; &amp;A) noexcept</a></td><td>function; line 285</td></tr><tr class="t-dsc"><td><a href="#f-5906d6c6ea9227df">micron::math::linalg::decomp::svd3(const mat&lt;F, 3, 3&gt; &amp;A) noexcept</a></td><td>function; line 328</td></tr><tr class="t-dsc"><td><a href="#f-c8063dd1853c6a62">micron::math::linalg::decomp::lu_pivot(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 395</td></tr><tr class="t-dsc"><td><a href="#f-d53c90fd5f4daa5e">micron::math::linalg::decomp::lu_pivot(const dynmat&lt;F&gt; &amp;A) noexcept</a></td><td>function; line 466</td></tr><tr class="t-dsc"><td><a href="#f-a08863f7146f40d8">micron::math::linalg::decomp::lu_solve(const lu_pivot_result&lt;F, N&gt; &amp;lu, vec&lt;F, N&gt; &amp;x_inout) noexcept</a></td><td>function; line 532</td></tr><tr class="t-dsc"><td><a href="#f-26502a623321ddea">micron::math::linalg::decomp::lu_solve(const lu_pivot_result_dyn&lt;F&gt; &amp;lu, dynvec&lt;F&gt; &amp;x_inout) noexcept</a></td><td>function; line 551</td></tr><tr class="t-dsc"><td><a href="#f-585e2bde12f2fd94">micron::math::linalg::decomp::det(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 573</td></tr><tr class="t-dsc"><td><a href="#f-0404a980d04246b3">micron::math::linalg::decomp::det(const dynmat&lt;F&gt; &amp;A) noexcept</a></td><td>function; line 584</td></tr><tr class="t-dsc"><td><a href="#f-a5a7f616e21c7d5a">micron::math::linalg::decomp::log_det(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 602</td></tr><tr class="t-dsc"><td><a href="#f-f6ec094e7181238e">micron::math::linalg::decomp::log_det(const dynmat&lt;F&gt; &amp;A) noexcept</a></td><td>function; line 621</td></tr><tr class="t-dsc"><td><a href="#f-461bdfa47b9fa25f">micron::math::linalg::decomp::inv(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 647</td></tr><tr class="t-dsc"><td><a href="#f-40e54f0e22d931fe">micron::math::linalg::decomp::inv(const dynmat&lt;F&gt; &amp;A) noexcept</a></td><td>function; line 668</td></tr><tr class="t-dsc"><td><a href="#f-ceb5e478ecd60054">micron::math::linalg::decomp::qr_householder(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</a></td><td>function; line 690</td></tr><tr class="t-dsc"><td><a href="#f-b9dd4483771b3cee">micron::math::linalg::decomp::qr_householder(const dynmat&lt;F&gt; &amp;A) noexcept</a></td><td>function; line 714</td></tr><tr class="t-dsc"><td><a href="#f-f5fa45f1de50e1df">micron::math::linalg::decomp::lu_pivot_full(const mat&lt;F, N, N&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 750</td></tr><tr class="t-dsc"><td><a href="#f-6827da51abb8f1a4">micron::math::linalg::decomp::lu_pivot_full(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 823</td></tr><tr class="t-dsc"><td><a href="#f-53a06ae0572aa368">micron::math::linalg::decomp::lu_full_solve(const lu_full_result&lt;F, N&gt; &amp;lu, const vec&lt;F, N&gt; &amp;b) noexcept</a></td><td>function; line 892</td></tr><tr class="t-dsc"><td><a href="#f-f73ef63cf94c02cc">micron::math::linalg::decomp::lu_full_solve(const lu_full_result_dyn&lt;F&gt; &amp;lu, const dynvec&lt;F&gt; &amp;b) noexcept</a></td><td>function; line 916</td></tr><tr class="t-dsc"><td><a href="#f-3a6118aade0a9fd0">micron::math::linalg::decomp::qr_householder_colpiv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 956</td></tr><tr class="t-dsc"><td><a href="#f-eeab84c3b233b8e8">micron::math::linalg::decomp::qr_householder_colpiv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 1035</td></tr><tr class="t-dsc"><td><a href="#f-a257e871340f04ee">micron::math::linalg::decomp::qr_colpiv_solve(const qr_colpiv_result&lt;F, R_, C_&gt; &amp;qr, const vec&lt;F, R_&gt; &amp;b) noexcept</a></td><td>function; line 1111</td></tr><tr class="t-dsc"><td><a href="#f-22e5827d3e5e4024">micron::math::linalg::decomp::qr_colpiv_solve(const qr_colpiv_result_dyn&lt;F&gt; &amp;qr, const dynvec&lt;F&gt; &amp;b) noexcept</a></td><td>function; line 1139</td></tr><tr class="t-dsc"><td><a href="#f-baaea40f52e3ff0a">micron::math::linalg::decomp::qr_householder_fullpiv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 1176</td></tr><tr class="t-dsc"><td><a href="#f-c05dc87acdc4f531">micron::math::linalg::decomp::qr_householder_fullpiv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 1255</td></tr><tr class="t-dsc"><td><a href="#f-facb402cbc004f41">micron::math::linalg::decomp::qr_fullpiv_solve(const qr_fullpiv_result&lt;F, R_, C_&gt; &amp;qr, const vec&lt;F, R_&gt; &amp;b) noexcept</a></td><td>function; line 1330</td></tr><tr class="t-dsc"><td><a href="#f-a868a4c9723e8a70">micron::math::linalg::decomp::qr_fullpiv_solve(const qr_fullpiv_result_dyn&lt;F&gt; &amp;qr, const dynvec&lt;F&gt; &amp;b) noexcept</a></td><td>function; line 1366</td></tr><tr class="t-dsc"><td><a href="#f-52008f94ad8fd72e">micron::math::linalg::decomp::cod(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</a></td><td>function; line 1415</td></tr><tr class="t-dsc"><td><a href="#f-b55a558530963f03">micron::math::linalg::decomp::cod_solve(const cod_result_dyn&lt;F&gt; &amp;c, const dynvec&lt;F&gt; &amp;b) noexcept</a></td><td>function; line 1469</td></tr><tr class="t-dsc"><td><a href="#f-c5d2fae2e526cfb7">micron::math::linalg::decomp::rcond(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 1505</td></tr><tr class="t-dsc"><td><a href="#f-6ddd1b612edb54d5">micron::math::linalg::decomp::rcond(const dynmat&lt;F&gt; &amp;A) noexcept</a></td><td>function; line 1528</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-74e3b9864a11e1bc"><h3><code>micron::math::linalg::decomp::lu(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline lu_result&lt;F, N&gt;
+lu(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline lu_result&lt;F, N&gt;
+lu(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  lu_result&lt;F, N&gt; r{ mat&lt;F, N, N&gt;::zero(), mat&lt;F, N, N&gt;::zero(), false };
+  // L diagonal = 1
+  for ( usize i = 0; i &lt; N; ++i ) r.L.data[i * N + i] = F(1);
+
+  for ( usize i = 0; i &lt; N; ++i ) {
+    // U row i
+    for ( usize j = i; j &lt; N; ++j ) {
+      F s = A.data[i * N + j];
+      for ( usize k = 0; k &lt; i; ++k ) s -= r.L.data[i * N + k] * r.U.data[k * N + j];
+      r.U.data[i * N + j] = s;
+    }
+    F piv = r.U.data[i * N + i];
+    if ( piv == F(0) ) {
+      r.singular = true;
+      return r;
+    }
+    F inv = F(1) / piv;
+    // L column i
+    for ( usize j = i + 1; j &lt; N; ++j ) {
+      F s = A.data[j * N + i];
+      for ( usize k = 0; k &lt; i; ++k ) s -= r.L.data[j * N + k] * r.U.data[k * N + i];
+      r.L.data[j * N + i] = s * inv;
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L60">line 60</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L70">line 70</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>.</p></section><section class="function-entry" id="f-a5fb62e172e6915c"><h3><code>micron::math::linalg::decomp::chol(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L85">line 85</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline chol_result&lt;F, N&gt;
+chol(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline chol_result&lt;F, N&gt;
+chol(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  chol_result&lt;F, N&gt; r{ mat&lt;F, N, N&gt;::zero(), true };
+  for ( usize i = 0; i &lt; N; ++i ) {
+    for ( usize j = 0; j &lt;= i; ++j ) {
+      F s = A.data[i * N + j];
+      for ( usize k = 0; k &lt; j; ++k ) s -= r.L.data[i * N + k] * r.L.data[j * N + k];
+      if ( i == j ) {
+        if ( s &lt;= F(0) ) {
+          r.spd = false;
+          return r;
+        }
+        r.L.data[i * N + j] = math::fsqrt(s);
+      } else {
+        r.L.data[i * N + j] = s / r.L.data[j * N + j];
+      }
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L95">line 95</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L103">line 103</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-cfb60cb3fe9c4f89"><h3><code>micron::math::linalg::decomp::qr(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L114">line 114</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline qr_result&lt;F, R_, C_&gt;
+qr(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, R_, C_&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline qr_result&lt;F, R_, C_&gt;
+qr(const mat&lt;F, R_, C_&gt; &amp;A) noexcept
+{
+  qr_result&lt;F, R_, C_&gt; r{ mat&lt;F, R_, C_&gt;::zero(), mat&lt;F, C_, C_&gt;::zero() };
+  vec&lt;F, R_&gt; q[C_];
+  for ( usize j = 0; j &lt; C_; ++j )
+    for ( usize i = 0; i &lt; R_; ++i ) q[j].data[i] = A.data[i * C_ + j];
+
+  for ( usize j = 0; j &lt; C_; ++j ) {
+    F nj = math::fsqrt(ops::dot(q[j], q[j]));
+    r.R.data[j * C_ + j] = nj;
+    if ( nj &gt; F(0) ) {
+      F inv = F(1) / nj;
+      for ( usize i = 0; i &lt; R_; ++i ) q[j].data[i] *= inv;
+    }
+    for ( usize k = j + 1; k &lt; C_; ++k ) {
+      F p = ops::dot(q[j], q[k]);
+      r.R.data[j * C_ + k] = p;
+      for ( usize i = 0; i &lt; R_; ++i ) q[k].data[i] -= p * q[j].data[i];
+    }
+  }
+  // pack q[] into Q
+  for ( usize j = 0; j &lt; C_; ++j )
+    for ( usize i = 0; i &lt; R_; ++i ) r.Q.data[i * C_ + j] = q[j].data[i];
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L137">line 137</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, R_, C_&gt;::zero</a>, <a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, C_, C_&gt;::zero</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="ops.hpp.html#f-5b7412ca67334070">ops::dot</a>.</p></section><section class="function-entry" id="f-33c74b2ccaaaeb93"><h3><code>micron::math::linalg::decomp::eigen_sym2(const mat&lt;F, 2, 2&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L152">line 152</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline eigen_result2&lt;F&gt;
+eigen_sym2(const mat&lt;F, 2, 2&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 2, 2&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline eigen_result2&lt;F&gt;
+eigen_sym2(const mat&lt;F, 2, 2&gt; &amp;A) noexcept
+{
+  F a = A.data[0], b = A.data[1], c = A.data[3];
+  F tr = a + c;
+  F det = a * c - b * b;
+  // discriminant can dip slightly negative through cancellation; clamp before sqrt.
+  // (under -Ofast the in-fsqrt NaN guard is folded away, so this explicit clamp is mandatory.)
+  F arg = tr * tr * F(0.25) - det;
+  if ( arg &lt; F(0) ) arg = F(0);
+  F disc = math::fsqrt(arg);
+  F l1 = tr * F(0.5) + disc;
+  F l2 = tr * F(0.5) - disc;
+
+  eigen_result2&lt;F&gt; r{};
+  r.values.data[0] = l1;
+  r.values.data[1] = l2;
+
+  // eigenvectors
+  if ( b != F(0) ) {
+    F v1y = b;
+    F v1x = l1 - c;
+    F n1 = math::fsqrt(v1x * v1x + v1y * v1y);
+    r.vectors.data[0] = v1x / n1;
+    r.vectors.data[2] = v1y / n1;
+    F v2y = b;
+    F v2x = l2 - c;
+    F n2 = math::fsqrt(v2x * v2x + v2y * v2y);
+    r.vectors.data[1] = v2x / n2;
+    r.vectors.data[3] = v2y / n2;
+  } else {
+    // already diagonal
+    r.vectors.data[0] = F(1);
+    r.vectors.data[1] = F(0);
+    r.vectors.data[2] = F(0);
+    r.vectors.data[3] = F(1);
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-a6cd582b2d3ad88c"><h3><code>micron::math::linalg::decomp::eigen_sym3(const mat&lt;F, 3, 3&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L193">line 193</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline eigen_result3&lt;F&gt;
+eigen_sym3(const mat&lt;F, 3, 3&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 3, 3&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline eigen_result3&lt;F&gt;
+eigen_sym3(const mat&lt;F, 3, 3&gt; &amp;A) noexcept
+{
+  mat&lt;F, 3, 3&gt; M = A;
+  mat&lt;F, 3, 3&gt; V = mat&lt;F, 3, 3&gt;::identity();
+  constexpr int max_sweeps = 50;
+
+  for ( int sweep = 0; sweep &lt; max_sweeps; ++sweep ) {
+    int rotations = 0;
+
+    static constexpr int pq[3][2] = { { 0, 1 }, { 0, 2 }, { 1, 2 } };
+    for ( int k = 0; k &lt; 3; ++k ) {
+      int p = pq[k][0], q = pq[k][1];
+      F app = M.data[p * 3 + p];
+      F aqq = M.data[q * 3 + q];
+      F apq = M.data[p * 3 + q];
+      // scale-free skip, the tqli idiom: nothing left to annihilate at this precision
+      const F dd = math::fabs(app) + math::fabs(aqq);
+      if ( math::fabs(apq) + dd == dd ) continue;
+      ++rotations;
+      F theta = (aqq - app) / (F(2) * apq);
+      F t;
+      if ( theta &gt;= F(0) )
+        t = F(1) / (theta + math::fsqrt(F(1) + theta * theta));
+      else
+        t = F(1) / (theta - math::fsqrt(F(1) + theta * theta));
+      F c = F(1) / math::fsqrt(F(1) + t * t);
+      F s = t * c;
+
+      F new_app = app - t * apq;
+      F new_aqq = aqq + t * apq;
+      M.data[p * 3 + p] = new_app;
+      M.data[q * 3 + q] = new_aqq;
+      M.data[p * 3 + q] = F(0);
+      M.data[q * 3 + p] = F(0);
+
+      // update remaining off-diagonals
+      for ( int r = 0; r &lt; 3; ++r ) {
+        if ( r == p || r == q ) continue;
+        F arp = M.data[r * 3 + p];
+        F arq = M.data[r * 3 + q];
+        F new_arp = c * arp - s * arq;
+        F new_arq = s * arp + c * arq;
+        M.data[r * 3 + p] = new_arp;
+        M.data[p * 3 + r] = new_arp;
+        M.data[r * 3 + q] = new_arq;
+        M.data[q * 3 + r] = new_arq;
+      }
+      // update eigenvector matrix V
+      for ( int r = 0; r &lt; 3; ++r ) {
+        F vrp = V.data[r * 3 + p];
+        F vrq = V.data[r * 3 + q];
+        V.data[r * 3 + p] = c * vrp - s * vrq;
+        V.data[r * 3 + q] = s * vrp + c * vrq;
+      }
+    }
+
+    if ( rotations == 0 ) break;
+  }
+
+  eigen_result3&lt;F&gt; res{};
+  res.values.data[0] = M.data[0];
+  res.values.data[1] = M.data[4];
+  res.values.data[2] = M.data[8];
+  res.vectors = V;
+
+  // sort eigenvalues ascending, carrying eigenvector columns (matches eigen_sym_qr&#x27;s convention).
+  for ( usize i = 0; i + 1 &lt; 3; ++i ) {
+    usize best = i;
+    for ( usize j = i + 1; j &lt; 3; ++j )
+      if ( res.values.data[j] &lt; res.values.data[best] ) best = j;
+    if ( best != i ) {
+      F tv = res.values.data[i];
+      res.values.data[i] = res.values.data[best];
+      res.values.data[best] = tv;
+      for ( usize rr = 0; rr &lt; 3; ++rr ) {
+        F tc = res.vectors.data[rr * 3 + i];
+        res.vectors.data[rr * 3 + i] = res.vectors.data[rr * 3 + best];
+        res.vectors.data[rr * 3 + best] = tc;
+      }
+    }
+  }
+  return res;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>res</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L274">line 274</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-7ed1904ce493336f">mat&lt;F, 3, 3&gt;::identity</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-e67d7512902a8909"><h3><code>micron::math::linalg::decomp::svd2(const mat&lt;F, 2, 2&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L285">line 285</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd2_result&lt;F&gt;
+svd2(const mat&lt;F, 2, 2&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 2, 2&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd2_result&lt;F&gt;
+svd2(const mat&lt;F, 2, 2&gt; &amp;A) noexcept
+{
+  mat&lt;F, 2, 2&gt; AtA{};
+  AtA.data[0] = A.data[0] * A.data[0] + A.data[2] * A.data[2];
+  AtA.data[1] = A.data[0] * A.data[1] + A.data[2] * A.data[3];
+  AtA.data[2] = AtA.data[1];
+  AtA.data[3] = A.data[1] * A.data[1] + A.data[3] * A.data[3];
+  auto e = eigen_sym2(AtA);
+
+  svd2_result&lt;F&gt; r{};
+  r.V = e.vectors;
+  r.S.data[0] = math::fsqrt(e.values.data[0] &lt; F(0) ? F(0) : e.values.data[0]);
+  r.S.data[1] = math::fsqrt(e.values.data[1] &lt; F(0) ? F(0) : e.values.data[1]);
+
+  vec&lt;F, 2&gt; v0{ r.V.data[0], r.V.data[2] };      // col 0 of V
+  vec&lt;F, 2&gt; v1{ r.V.data[1], r.V.data[3] };      // col 1 of V
+  vec&lt;F, 2&gt; u0 = ops::gemv(A, v0);
+  vec&lt;F, 2&gt; u1 = ops::gemv(A, v1);
+  if ( r.S.data[0] &gt; F(0) ) {
+    F inv = F(1) / r.S.data[0];
+    u0.data[0] *= inv;
+    u0.data[1] *= inv;
+  }
+  if ( r.S.data[1] &gt; F(0) ) {
+    F inv = F(1) / r.S.data[1];
+    u1.data[0] *= inv;
+    u1.data[1] *= inv;
+  }
+  r.U.data[0] = u0.data[0];
+  r.U.data[2] = u0.data[1];
+  r.U.data[1] = u1.data[0];
+  r.U.data[3] = u1.data[1];
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L317">line 317</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-33c74b2ccaaaeb93">eigen_sym2</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="ops.hpp.html#f-fbb2a440d79a9e5f">ops::gemv</a>.</p></section><section class="function-entry" id="f-5906d6c6ea9227df"><h3><code>micron::math::linalg::decomp::svd3(const mat&lt;F, 3, 3&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L328">line 328</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd3_result&lt;F&gt;
+svd3(const mat&lt;F, 3, 3&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, 3, 3&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline svd3_result&lt;F&gt;
+svd3(const mat&lt;F, 3, 3&gt; &amp;A) noexcept
+{
+  mat&lt;F, 3, 3&gt; AtA{};
+  // AtA[i,j] = sum_k A[k,i] * A[k,j]
+  for ( usize i = 0; i &lt; 3; ++i )
+    for ( usize j = 0; j &lt; 3; ++j ) {
+      F s = F(0);
+      for ( usize k = 0; k &lt; 3; ++k ) s += A.data[k * 3 + i] * A.data[k * 3 + j];
+      AtA.data[i * 3 + j] = s;
+    }
+  auto e = eigen_sym3(AtA);
+
+  svd3_result&lt;F&gt; r{};
+  r.V = e.vectors;
+  for ( usize i = 0; i &lt; 3; ++i ) {
+    F v = e.values.data[i];
+    r.S.data[i] = math::fsqrt(v &lt; F(0) ? F(0) : v);
+  }
+
+  // U columns = A * V columns scaled by 1/S
+  for ( usize j = 0; j &lt; 3; ++j ) {
+    vec&lt;F, 3&gt; vj{ r.V.data[j], r.V.data[3 + j], r.V.data[6 + j] };
+    vec&lt;F, 3&gt; uj = ops::gemv(A, vj);
+    if ( r.S.data[j] &gt; F(0) ) {
+      F inv = F(1) / r.S.data[j];
+      uj.data[0] *= inv;
+      uj.data[1] *= inv;
+      uj.data[2] *= inv;
+    }
+    r.U.data[j] = uj.data[0];
+    r.U.data[3 + j] = uj.data[1];
+    r.U.data[6 + j] = uj.data[2];
+  }
+
+  // sort singular values descending, carrying U-columns, S and V-columns together
+  // (umeyama&#x27;s reflection-scale and the suite convention assume σ descending; eigen_sym3
+  //  emits them in arbitrary Jacobi order).
+  for ( usize i = 0; i + 1 &lt; 3; ++i ) {
+    usize best = i;
+    for ( usize j = i + 1; j &lt; 3; ++j )
+      if ( r.S.data[j] &gt; r.S.data[best] ) best = j;
+    if ( best != i ) {
+      F ts = r.S.data[i];
+      r.S.data[i] = r.S.data[best];
+      r.S.data[best] = ts;
+      for ( usize rr = 0; rr &lt; 3; ++rr ) {
+        F tu = r.U.data[rr * 3 + i];
+        r.U.data[rr * 3 + i] = r.U.data[rr * 3 + best];
+        r.U.data[rr * 3 + best] = tu;
+        F tv = r.V.data[rr * 3 + i];
+        r.V.data[rr * 3 + i] = r.V.data[rr * 3 + best];
+        r.V.data[rr * 3 + best] = tv;
+      }
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L383">line 383</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-a6cd582b2d3ad88c">eigen_sym3</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="ops.hpp.html#f-fbb2a440d79a9e5f">ops::gemv</a>.</p></section><section class="function-entry" id="f-c8063dd1853c6a62"><h3><code>micron::math::linalg::decomp::lu_pivot(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L395">line 395</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline lu_pivot_result&lt;F, N&gt;
+lu_pivot(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline lu_pivot_result&lt;F, N&gt;
+lu_pivot(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  lu_pivot_result&lt;F, N&gt; r{ A, {}, 1, false };
+  for ( usize i = 0; i &lt; N; ++i ) r.perm[i] = i;
+
+  F scale[N];
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F m = F(0);
+    for ( usize j = 0; j &lt; N; ++j ) {
+      const F v = math::fabs(r.LU.data[i * N + j]);
+      if ( v &gt; m ) m = v;
+    }
+    scale[i] = m;
+  }
+
+  for ( usize k = 0; k &lt; N; ++k ) {
+    F best_a = F(0);
+    F best_s = F(1);
+    usize piv = k;
+    for ( usize i = k; i &lt; N; ++i ) {
+      const F a = math::fabs(r.LU.data[i * N + k]);
+      const F si = scale[i];
+      if ( si == F(0) ) continue;      // zero row: skip
+      if ( a * best_s &gt; best_a * si ) {
+        best_a = a;
+        best_s = si;
+        piv = i;
+      }
+    }
+    if ( best_a == F(0) ) {
+      r.singular = true;
+      return r;
+    }
+
+    if ( piv != k ) {
+      for ( usize j = 0; j &lt; N; ++j ) {
+        F t = r.LU.data[k * N + j];
+        r.LU.data[k * N + j] = r.LU.data[piv * N + j];
+        r.LU.data[piv * N + j] = t;
+      }
+      usize t = r.perm[k];
+      r.perm[k] = r.perm[piv];
+      r.perm[piv] = t;
+      F ts = scale[k];
+      scale[k] = scale[piv];
+      scale[piv] = ts;
+      r.sign = -r.sign;
+    }
+
+    const F inv_piv = F(1) / r.LU.data[k * N + k];
+    for ( usize i = k + 1; i &lt; N; ++i ) r.LU.data[i * N + k] *= inv_piv;
+    for ( usize i = k + 1; i &lt; N; ++i ) {
+      const F m = r.LU.data[i * N + k];
+      for ( usize j = k + 1; j &lt; N; ++j ) {
+        r.LU.data[i * N + j] = math::fma&lt;F&gt;(-m, r.LU.data[k * N + j], r.LU.data[i * N + j]);
+      }
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L426">line 426</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L453">line 453</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d53c90fd5f4daa5e"><h3><code>micron::math::linalg::decomp::lu_pivot(const dynmat&lt;F&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L466">line 466</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline lu_pivot_result_dyn&lt;F&gt;
+lu_pivot(const dynmat&lt;F&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline lu_pivot_result_dyn&lt;F&gt;
+lu_pivot(const dynmat&lt;F&gt; &amp;A) noexcept
+{
+  lu_pivot_result_dyn&lt;F&gt; r{ A, micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;(A.rows), 1, false };
+  const usize N = A.rows;
+  for ( usize i = 0; i &lt; N; ++i ) r.perm.data()[i] = i;
+  F *__restrict__ LU = r.LU.data();
+  const usize ld = r.LU.ld;
+
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; scale(N);
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F m = F(0);
+    for ( usize j = 0; j &lt; N; ++j ) {
+      const F v = math::fabs(LU[i * ld + j]);
+      if ( v &gt; m ) m = v;
+    }
+    scale.data()[i] = m;
+  }
+
+  for ( usize k = 0; k &lt; N; ++k ) {
+    F best_a = F(0);
+    F best_s = F(1);
+    usize piv = k;
+    for ( usize i = k; i &lt; N; ++i ) {
+      const F a = math::fabs(LU[i * ld + k]);
+      const F si = scale.data()[i];
+      if ( si == F(0) ) continue;
+      if ( a * best_s &gt; best_a * si ) {
+        best_a = a;
+        best_s = si;
+        piv = i;
+      }
+    }
+    if ( best_a == F(0) ) {
+      r.singular = true;
+      return r;
+    }
+
+    if ( piv != k ) {
+      for ( usize j = 0; j &lt; N; ++j ) {
+        F t = LU[k * ld + j];
+        LU[k * ld + j] = LU[piv * ld + j];
+        LU[piv * ld + j] = t;
+      }
+      usize t = r.perm.data()[k];
+      r.perm.data()[k] = r.perm.data()[piv];
+      r.perm.data()[piv] = t;
+      F ts = scale.data()[k];
+      scale.data()[k] = scale.data()[piv];
+      scale.data()[piv] = ts;
+      r.sign = -r.sign;
+    }
+
+    const F inv_piv = F(1) / LU[k * ld + k];
+    for ( usize i = k + 1; i &lt; N; ++i ) LU[i * ld + k] *= inv_piv;
+    for ( usize i = k + 1; i &lt; N; ++i ) {
+      const F m = LU[i * ld + k];
+      for ( usize j = k + 1; j &lt; N; ++j ) {
+        LU[i * ld + j] = math::fma&lt;F&gt;(-m, LU[k * ld + j], LU[i * ld + j]);
+      }
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L500">line 500</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L527">line 527</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a08863f7146f40d8"><h3><code>micron::math::linalg::decomp::lu_solve(const lu_pivot_result&lt;F, N&gt; &amp;lu, vec&lt;F, N&gt; &amp;x_inout) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L532">line 532</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+inline void
+lu_solve(const lu_pivot_result&lt;F, N&gt; &amp;lu, vec&lt;F, N&gt; &amp;x_inout) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const lu_pivot_result&lt;F, N&gt; &amp;lu</code></li><li><code>vec&lt;F, N&gt; &amp;x_inout</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+inline void
+lu_solve(const lu_pivot_result&lt;F, N&gt; &amp;lu, vec&lt;F, N&gt; &amp;x_inout) noexcept
+{
+  vec&lt;F, N&gt; b{};
+  for ( usize i = 0; i &lt; N; ++i ) b.data[i] = x_inout.data[lu.perm[i]];
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F s = b.data[i];
+    for ( usize j = 0; j &lt; i; ++j ) s = math::fma&lt;F&gt;(-lu.LU.data[i * N + j], b.data[j], s);
+    b.data[i] = s;
+  }
+  for ( usize ii = N; ii-- &gt; 0; ) {
+    F s = b.data[ii];
+    for ( usize j = ii + 1; j &lt; N; ++j ) s = math::fma&lt;F&gt;(-lu.LU.data[ii * N + j], b.data[j], s);
+    b.data[ii] = s / lu.LU.data[ii * N + ii];
+  }
+  x_inout = b;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-26502a623321ddea"><h3><code>micron::math::linalg::decomp::lu_solve(const lu_pivot_result_dyn&lt;F&gt; &amp;lu, dynvec&lt;F&gt; &amp;x_inout) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L551">line 551</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+lu_solve(const lu_pivot_result_dyn&lt;F&gt; &amp;lu, dynvec&lt;F&gt; &amp;x_inout) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const lu_pivot_result_dyn&lt;F&gt; &amp;lu</code></li><li><code>dynvec&lt;F&gt; &amp;x_inout</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+lu_solve(const lu_pivot_result_dyn&lt;F&gt; &amp;lu, dynvec&lt;F&gt; &amp;x_inout) noexcept
+{
+  const usize N = lu.LU.rows;
+  const usize ld = lu.LU.ld;
+  const F *__restrict__ LU = lu.LU.data();
+  dynvec&lt;F&gt; b(N);
+  for ( usize i = 0; i &lt; N; ++i ) b[i] = x_inout[lu.perm.data()[i]];
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F s = b[i];
+    for ( usize j = 0; j &lt; i; ++j ) s = math::fma&lt;F&gt;(-LU[i * ld + j], b[j], s);
+    b[i] = s;
+  }
+  for ( usize ii = N; ii-- &gt; 0; ) {
+    F s = b[ii];
+    for ( usize j = ii + 1; j &lt; N; ++j ) s = math::fma&lt;F&gt;(-LU[ii * ld + j], b[j], s);
+    b[ii] = s / LU[ii * ld + ii];
+  }
+  x_inout = micron::move(b);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-585e2bde12f2fd94"><h3><code>micron::math::linalg::decomp::det(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L573">line 573</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline F
+det(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline F
+det(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  auto lu = lu_pivot&lt;F, N&gt;(A);
+  if ( lu.singular ) return F(0);
+  F p = F(lu.sign);
+  for ( usize i = 0; i &lt; N; ++i ) p *= lu.LU.data[i * N + i];
+  return p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L576">line 576</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L579">line 579</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-c8063dd1853c6a62">lu_pivot&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-0404a980d04246b3"><h3><code>micron::math::linalg::decomp::det(const dynmat&lt;F&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L584">line 584</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+det(const dynmat&lt;F&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+det(const dynmat&lt;F&gt; &amp;A) noexcept
+{
+  auto lu = lu_pivot&lt;F&gt;(A);
+  if ( lu.singular ) return F(0);
+  const usize N = A.rows;
+  const usize ld = lu.LU.ld;
+  F p = F(lu.sign);
+  for ( usize i = 0; i &lt; N; ++i ) p *= lu.LU.data()[i * ld + i];
+  return p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L587">line 587</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L592">line 592</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-c8063dd1853c6a62">lu_pivot&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a5a7f616e21c7d5a"><h3><code>micron::math::linalg::decomp::log_det(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L602">line 602</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline log_det_result&lt;F&gt;
+log_det(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline log_det_result&lt;F&gt;
+log_det(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  auto lu = lu_pivot&lt;F, N&gt;(A);
+  if ( lu.singular ) return { F(0), 0 };
+  F la = F(0);
+  int s = lu.sign;
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F u = lu.LU.data[i * N + i];
+    if ( u &lt; F(0) ) {
+      s = -s;
+      u = -u;
+    }
+    la += math::log(u);
+  }
+  return { la, s };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ F(0), 0 }</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L605">line 605</a></td></tr><tr class="t-dsc"><td><code>{ la, s }</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L616">line 616</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-c8063dd1853c6a62">lu_pivot&lt;F, N&gt;</a>, <a href="../log.hpp.html#f-73546d0f9713cb61">math::log</a>.</p></section><section class="function-entry" id="f-f6ec094e7181238e"><h3><code>micron::math::linalg::decomp::log_det(const dynmat&lt;F&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L621">line 621</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline log_det_result&lt;F&gt;
+log_det(const dynmat&lt;F&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline log_det_result&lt;F&gt;
+log_det(const dynmat&lt;F&gt; &amp;A) noexcept
+{
+  auto lu = lu_pivot&lt;F&gt;(A);
+  if ( lu.singular ) return { F(0), 0 };
+  const usize N = A.rows;
+  const usize ld = lu.LU.ld;
+  F la = F(0);
+  int s = lu.sign;
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F u = lu.LU.data()[i * ld + i];
+    if ( u &lt; F(0) ) {
+      s = -s;
+      u = -u;
+    }
+    la += math::log(u);
+  }
+  return { la, s };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ F(0), 0 }</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L624">line 624</a></td></tr><tr class="t-dsc"><td><code>{ la, s }</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L637">line 637</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-c8063dd1853c6a62">lu_pivot&lt;F&gt;</a>, <a href="../log.hpp.html#f-73546d0f9713cb61">math::log</a>.</p></section><section class="function-entry" id="f-461bdfa47b9fa25f"><h3><code>micron::math::linalg::decomp::inv(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L647">line 647</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline inv_result&lt;F, N&gt;
+inv(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline inv_result&lt;F, N&gt;
+inv(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  auto lu = lu_pivot&lt;F, N&gt;(A);
+  inv_result&lt;F, N&gt; r{ mat&lt;F, N, N&gt;::zero(), lu.singular };
+  if ( r.singular ) return r;
+  for ( usize j = 0; j &lt; N; ++j ) {
+    vec&lt;F, N&gt; e{};
+    for ( usize i = 0; i &lt; N; ++i ) e.data[i] = (i == j) ? F(1) : F(0);
+    lu_solve&lt;F, N&gt;(lu, e);
+    for ( usize i = 0; i &lt; N; ++i ) r.X.data[i * N + j] = e.data[i];
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L651">line 651</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L658">line 658</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-c8063dd1853c6a62">lu_pivot&lt;F, N&gt;</a>, <a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>, <a href="decomp.hpp.html#f-a08863f7146f40d8">lu_solve&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-40e54f0e22d931fe"><h3><code>micron::math::linalg::decomp::inv(const dynmat&lt;F&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L668">line 668</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline inv_result_dyn&lt;F&gt;
+inv(const dynmat&lt;F&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline inv_result_dyn&lt;F&gt;
+inv(const dynmat&lt;F&gt; &amp;A) noexcept
+{
+  auto lu = lu_pivot&lt;F&gt;(A);
+  const usize N = A.rows;
+  inv_result_dyn&lt;F&gt; r{ dynmat&lt;F&gt;::zero(N, N), lu.singular };
+  if ( r.singular ) return r;
+  for ( usize j = 0; j &lt; N; ++j ) {
+    dynvec&lt;F&gt; e(N, F(0));
+    e[j] = F(1);
+    lu_solve&lt;F&gt;(lu, e);
+    for ( usize i = 0; i &lt; N; ++i ) r.X.at(i, j) = e[i];
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L673">line 673</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L680">line 680</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-c8063dd1853c6a62">lu_pivot&lt;F&gt;</a>, <a href="../matrix/dynmat.hpp.html#f-f2be77990fd00b81">dynmat&lt;F&gt;::zero</a>, <a href="decomp.hpp.html#f-a08863f7146f40d8">lu_solve&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ceb5e478ecd60054"><h3><code>micron::math::linalg::decomp::qr_householder(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L690">line 690</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline qr_householder_result&lt;F, R_, C_&gt;
+qr_householder(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, R_, C_&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline qr_householder_result&lt;F, R_, C_&gt;
+qr_householder(const mat&lt;F, R_, C_&gt; &amp;A) noexcept
+{
+  qr_householder_result&lt;F, R_, C_&gt; r{ mat&lt;F, R_, R_&gt;::identity(), A };
+  constexpr usize K = (R_ &lt; C_) ? R_ : C_;
+  for ( usize k = 0; k &lt; K; ++k ) {
+    vec&lt;F, R_&gt; x{};
+    for ( usize i = 0; i &lt; R_; ++i ) x.data[i] = F(0);
+    for ( usize i = k; i &lt; R_; ++i ) x.data[i] = r.R.data[i * C_ + k];
+    auto h = householder_reflector&lt;F, R_&gt;(x, k);
+    if ( h.beta == F(0) ) continue;
+    apply_householder_left&lt;F, R_, C_&gt;(r.R, h.v, h.beta, k);
+    apply_householder_right&lt;F, R_, R_&gt;(r.Q, h.v, h.beta, k);
+    for ( usize i = k + 1; i &lt; R_; ++i ) r.R.data[i * C_ + k] = F(0);
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L704">line 704</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-7ed1904ce493336f">mat&lt;F, R_, R_&gt;::identity</a>, <a href="householder.hpp.html#f-08df425cb4c5f10f">householder_reflector&lt;F, R_&gt;</a>, <a href="householder.hpp.html#f-2ed122114fe7bcb5">apply_householder_left&lt;F, R_, C_&gt;</a>, <a href="householder.hpp.html#f-a5404b9d89429eca">apply_householder_right&lt;F, R_, R_&gt;</a>.</p></section><section class="function-entry" id="f-b9dd4483771b3cee"><h3><code>micron::math::linalg::decomp::qr_householder(const dynmat&lt;F&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L714">line 714</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline qr_householder_result_dyn&lt;F&gt;
+qr_householder(const dynmat&lt;F&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline qr_householder_result_dyn&lt;F&gt;
+qr_householder(const dynmat&lt;F&gt; &amp;A) noexcept
+{
+  qr_householder_result_dyn&lt;F&gt; r{ dynmat&lt;F&gt;::identity(A.rows), A };
+  const usize R = A.rows;
+  const usize C = A.cols;
+  const usize K = (R &lt; C) ? R : C;
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; x(R);
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; v(R);
+  for ( usize k = 0; k &lt; K; ++k ) {
+    for ( usize i = 0; i &lt; R; ++i ) x.data()[i] = F(0);
+    for ( usize i = k; i &lt; R; ++i ) x.data()[i] = r.R.at(i, k);
+    F beta = __impl_decomp::householder_reflector_dyn&lt;F&gt;(x.data(), R, k, v.data());
+    if ( beta == F(0) ) continue;
+    __impl_decomp::apply_householder_left_dyn&lt;F&gt;(r.R.data(), R, C, r.R.ld, v.data(), beta, k);
+    __impl_decomp::apply_householder_right_dyn&lt;F&gt;(r.Q.data(), R, R, r.Q.ld, v.data(), beta, k);
+    for ( usize i = k + 1; i &lt; R; ++i ) r.R.at(i, k) = F(0);
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L731">line 731</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/dynmat.hpp.html#f-060fa63dd0fb5917">dynmat&lt;F&gt;::identity</a>, <a href="householder.hpp.html#f-7836e5300fbf1cd1">__impl_decomp::householder_reflector_dyn&lt;F&gt;</a>, <a href="householder.hpp.html#f-3c4226801713e256">__impl_decomp::apply_householder_left_dyn&lt;F&gt;</a>, <a href="householder.hpp.html#f-2e02f32bea4d10ee">__impl_decomp::apply_householder_right_dyn&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f5fa45f1de50e1df"><h3><code>micron::math::linalg::decomp::lu_pivot_full(const mat&lt;F, N, N&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L750">line 750</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline lu_full_result&lt;F, N&gt;
+lu_pivot_full(const mat&lt;F, N, N&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline lu_full_result&lt;F, N&gt;
+lu_pivot_full(const mat&lt;F, N, N&gt; &amp;A, F tol = F(0)) noexcept
+{
+  lu_full_result&lt;F, N&gt; r{ A, {}, {}, 1, false, 0 };
+  for ( usize i = 0; i &lt; N; ++i ) {
+    r.perm_row[i] = i;
+    r.perm_col[i] = i;
+  }
+
+  for ( usize k = 0; k &lt; N; ++k ) {
+    usize pi = k, pj = k;
+    F best = math::fabs(r.LU.data[k * N + k]);
+    for ( usize i = k; i &lt; N; ++i ) {
+      for ( usize j = k; j &lt; N; ++j ) {
+        F a = math::fabs(r.LU.data[i * N + j]);
+        if ( a &gt; best ) {
+          best = a;
+          pi = i;
+          pj = j;
+        }
+      }
+    }
+    if ( best &lt;= tol ) {
+      r.singular = true;
+      r.rank = k;
+      return r;
+    }
+    if ( pi != k ) {
+      for ( usize j = 0; j &lt; N; ++j ) {
+        F t = r.LU.data[k * N + j];
+        r.LU.data[k * N + j] = r.LU.data[pi * N + j];
+        r.LU.data[pi * N + j] = t;
+      }
+      usize t = r.perm_row[k];
+      r.perm_row[k] = r.perm_row[pi];
+      r.perm_row[pi] = t;
+      r.sign = -r.sign;
+    }
+    if ( pj != k ) {
+      for ( usize i = 0; i &lt; N; ++i ) {
+        F t = r.LU.data[i * N + k];
+        r.LU.data[i * N + k] = r.LU.data[i * N + pj];
+        r.LU.data[i * N + pj] = t;
+      }
+      usize t = r.perm_col[k];
+      r.perm_col[k] = r.perm_col[pj];
+      r.perm_col[pj] = t;
+      r.sign = -r.sign;
+    }
+
+    const F inv_piv = F(1) / r.LU.data[k * N + k];
+    for ( usize i = k + 1; i &lt; N; ++i ) r.LU.data[i * N + k] *= inv_piv;
+    for ( usize i = k + 1; i &lt; N; ++i ) {
+      const F m = r.LU.data[i * N + k];
+      for ( usize j = k + 1; j &lt; N; ++j ) {
+        r.LU.data[i * N + j] = math::fma&lt;F&gt;(-m, r.LU.data[k * N + j], r.LU.data[i * N + j]);
+      }
+    }
+    r.rank = k + 1;
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L774">line 774</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L809">line 809</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-6827da51abb8f1a4"><h3><code>micron::math::linalg::decomp::lu_pivot_full(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L823">line 823</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline lu_full_result_dyn&lt;F&gt;
+lu_pivot_full(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline lu_full_result_dyn&lt;F&gt;
+lu_pivot_full(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept
+{
+  const usize N = A.rows;
+  lu_full_result_dyn&lt;F&gt; r{
+    A, micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;(N), micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;(N), 1, false,
+    0,
+  };
+  for ( usize i = 0; i &lt; N; ++i ) {
+    r.perm_row.data()[i] = i;
+    r.perm_col.data()[i] = i;
+  }
+  F *__restrict__ LU = r.LU.data();
+  const usize ld = r.LU.ld;
+
+  for ( usize k = 0; k &lt; N; ++k ) {
+    usize pi = k, pj = k;
+    F best = math::fabs(LU[k * ld + k]);
+    for ( usize i = k; i &lt; N; ++i ) {
+      for ( usize j = k; j &lt; N; ++j ) {
+        F a = math::fabs(LU[i * ld + j]);
+        if ( a &gt; best ) {
+          best = a;
+          pi = i;
+          pj = j;
+        }
+      }
+    }
+    if ( best &lt;= tol ) {
+      r.singular = true;
+      r.rank = k;
+      return r;
+    }
+    if ( pi != k ) {
+      for ( usize j = 0; j &lt; N; ++j ) {
+        F t = LU[k * ld + j];
+        LU[k * ld + j] = LU[pi * ld + j];
+        LU[pi * ld + j] = t;
+      }
+      usize t = r.perm_row.data()[k];
+      r.perm_row.data()[k] = r.perm_row.data()[pi];
+      r.perm_row.data()[pi] = t;
+      r.sign = -r.sign;
+    }
+    if ( pj != k ) {
+      for ( usize i = 0; i &lt; N; ++i ) {
+        F t = LU[i * ld + k];
+        LU[i * ld + k] = LU[i * ld + pj];
+        LU[i * ld + pj] = t;
+      }
+      usize t = r.perm_col.data()[k];
+      r.perm_col.data()[k] = r.perm_col.data()[pj];
+      r.perm_col.data()[pj] = t;
+      r.sign = -r.sign;
+    }
+    const F inv_piv = F(1) / LU[k * ld + k];
+    for ( usize i = k + 1; i &lt; N; ++i ) LU[i * ld + k] *= inv_piv;
+    for ( usize i = k + 1; i &lt; N; ++i ) {
+      const F m = LU[i * ld + k];
+      for ( usize j = k + 1; j &lt; N; ++j ) {
+        LU[i * ld + j] = math::fma&lt;F&gt;(-m, LU[k * ld + j], LU[i * ld + j]);
+      }
+    }
+    r.rank = k + 1;
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L853">line 853</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L887">line 887</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-53a06ae0572aa368"><h3><code>micron::math::linalg::decomp::lu_full_solve(const lu_full_result&lt;F, N&gt; &amp;lu, const vec&lt;F, N&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L892">line 892</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline vec&lt;F, N&gt;
+lu_full_solve(const lu_full_result&lt;F, N&gt; &amp;lu, const vec&lt;F, N&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const lu_full_result&lt;F, N&gt; &amp;lu</code></li><li><code>const vec&lt;F, N&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline vec&lt;F, N&gt;
+lu_full_solve(const lu_full_result&lt;F, N&gt; &amp;lu, const vec&lt;F, N&gt; &amp;b) noexcept
+{
+  // y = P_r * b
+  vec&lt;F, N&gt; y{};
+  for ( usize i = 0; i &lt; N; ++i ) y.data[i] = b.data[lu.perm_row[i]];
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F s = y.data[i];
+    for ( usize j = 0; j &lt; i; ++j ) s = math::fma&lt;F&gt;(-lu.LU.data[i * N + j], y.data[j], s);
+    y.data[i] = s;
+  }
+  for ( usize ii = N; ii-- &gt; 0; ) {
+    F s = y.data[ii];
+    for ( usize j = ii + 1; j &lt; N; ++j ) s = math::fma&lt;F&gt;(-lu.LU.data[ii * N + j], y.data[j], s);
+    y.data[ii] = s / lu.LU.data[ii * N + ii];
+  }
+  // x = P_c * w  -&gt;  x[perm_col[k]] = w[k]
+  vec&lt;F, N&gt; x{};
+  for ( usize i = 0; i &lt; N; ++i ) x.data[i] = F(0);
+  for ( usize k = 0; k &lt; N; ++k ) x.data[lu.perm_col[k]] = y.data[k];
+  return x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L911">line 911</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f73ef63cf94c02cc"><h3><code>micron::math::linalg::decomp::lu_full_solve(const lu_full_result_dyn&lt;F&gt; &amp;lu, const dynvec&lt;F&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L916">line 916</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+lu_full_solve(const lu_full_result_dyn&lt;F&gt; &amp;lu, const dynvec&lt;F&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const lu_full_result_dyn&lt;F&gt; &amp;lu</code></li><li><code>const dynvec&lt;F&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+lu_full_solve(const lu_full_result_dyn&lt;F&gt; &amp;lu, const dynvec&lt;F&gt; &amp;b) noexcept
+{
+  const usize N = lu.LU.rows;
+  const usize ld = lu.LU.ld;
+  const F *__restrict__ LU = lu.LU.data();
+  dynvec&lt;F&gt; y(N, F(0));
+  for ( usize i = 0; i &lt; N; ++i ) y[i] = b[lu.perm_row.data()[i]];
+  for ( usize i = 0; i &lt; N; ++i ) {
+    F s = y[i];
+    for ( usize j = 0; j &lt; i; ++j ) s = math::fma&lt;F&gt;(-LU[i * ld + j], y[j], s);
+    y[i] = s;
+  }
+  for ( usize ii = N; ii-- &gt; 0; ) {
+    F s = y[ii];
+    for ( usize j = ii + 1; j &lt; N; ++j ) s = math::fma&lt;F&gt;(-LU[ii * ld + j], y[j], s);
+    y[ii] = s / LU[ii * ld + ii];
+  }
+  dynvec&lt;F&gt; x(N, F(0));
+  for ( usize k = 0; k &lt; N; ++k ) x[lu.perm_col.data()[k]] = y[k];
+  return x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L935">line 935</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3a6118aade0a9fd0"><h3><code>micron::math::linalg::decomp::qr_householder_colpiv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L956">line 956</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+  requires(R_ &gt;= 2)
+[[nodiscard]] inline qr_colpiv_result&lt;F, R_, C_&gt;
+qr_householder_colpiv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, R_, C_&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+  requires(R_ &gt;= 2)
+[[nodiscard]] inline qr_colpiv_result&lt;F, R_, C_&gt;
+qr_householder_colpiv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept
+{
+  qr_colpiv_result&lt;F, R_, C_&gt; r{};
+  constexpr usize K = (R_ &lt; C_) ? R_ : C_;
+  r.R = A;
+  for ( usize j = 0; j &lt; C_; ++j ) r.perm[j] = j;
+  r.sign = 1;
+  r.rank = 0;
+  for ( usize i = 0; i &lt; R_ * K; ++i ) r.Q.V.data[i] = F(0);
+  for ( usize k = 0; k &lt; K; ++k ) r.Q.betas[k] = F(0);
+
+  F c[C_];
+  for ( usize j = 0; j &lt; C_; ++j ) {
+    F s = F(0);
+    for ( usize i = 0; i &lt; R_; ++i ) {
+      const F v = r.R.data[i * C_ + j];
+      s = math::fma&lt;F&gt;(v, v, s);
+    }
+    c[j] = s;
+  }
+
+  for ( usize k = 0; k &lt; K; ++k ) {
+    usize p = k;
+    F cmax = c[k];
+    for ( usize j = k + 1; j &lt; C_; ++j ) {
+      if ( c[j] &gt; cmax ) {
+        cmax = c[j];
+        p = j;
+      }
+    }
+    if ( cmax &lt;= tol ) break;
+
+    if ( p != k ) {
+      for ( usize i = 0; i &lt; R_; ++i ) {
+        F t = r.R.data[i * C_ + k];
+        r.R.data[i * C_ + k] = r.R.data[i * C_ + p];
+        r.R.data[i * C_ + p] = t;
+      }
+      F ct = c[k];
+      c[k] = c[p];
+      c[p] = ct;
+      usize pt = r.perm[k];
+      r.perm[k] = r.perm[p];
+      r.perm[p] = pt;
+      r.sign = -r.sign;
+    }
+
+    vec&lt;F, R_&gt; x{};
+    for ( usize i = 0; i &lt; R_; ++i ) x.data[i] = F(0);
+    for ( usize i = k; i &lt; R_; ++i ) x.data[i] = r.R.data[i * C_ + k];
+    auto h = householder_reflector&lt;F, R_&gt;(x, k);
+    if ( h.beta == F(0) ) break;
+    apply_householder_left&lt;F, R_, C_&gt;(r.R, h.v, h.beta, k);
+    for ( usize i = k + 1; i &lt; R_; ++i ) r.R.data[i * C_ + k] = F(0);
+    for ( usize i = 0; i &lt; R_; ++i ) r.Q.V.data[i * K + k] = h.v.data[i];
+    r.Q.betas[k] = h.beta;
+    r.rank = k + 1;
+
+    for ( usize j = k + 1; j &lt; C_; ++j ) {
+      const F akj = r.R.data[k * C_ + j];
+      F nc = c[j] - akj * akj;
+      if ( nc &lt; F(0) ) nc = F(0);
+      c[j] = nc;
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1021">line 1021</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="householder.hpp.html#f-08df425cb4c5f10f">householder_reflector&lt;F, R_&gt;</a>, <a href="householder.hpp.html#f-2ed122114fe7bcb5">apply_householder_left&lt;F, R_, C_&gt;</a>.</p></section><section class="function-entry" id="f-eeab84c3b233b8e8"><h3><code>micron::math::linalg::decomp::qr_householder_colpiv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1035">line 1035</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline qr_colpiv_result_dyn&lt;F&gt;
+qr_householder_colpiv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline qr_colpiv_result_dyn&lt;F&gt;
+qr_householder_colpiv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept
+{
+  const usize R = A.rows;
+  const usize C = A.cols;
+  const usize K = (R &lt; C) ? R : C;
+  qr_colpiv_result_dyn&lt;F&gt; r{};
+  r.R = A;
+  r.perm = micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;(C);
+  for ( usize j = 0; j &lt; C; ++j ) r.perm.data()[j] = j;
+  r.sign = 1;
+  r.rank = 0;
+  r.Q.R = R;
+  r.Q.K = K;
+  r.Q.V = dynmat&lt;F&gt;::zero(R, K);
+  r.Q.betas = micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt;(K, F(0));
+
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; c(C, F(0));
+  for ( usize j = 0; j &lt; C; ++j ) {
+    F s = F(0);
+    for ( usize i = 0; i &lt; R; ++i ) {
+      const F v = r.R.at(i, j);
+      s = math::fma&lt;F&gt;(v, v, s);
+    }
+    c.data()[j] = s;
+  }
+
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; x(R, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; v(R, F(0));
+  for ( usize k = 0; k &lt; K; ++k ) {
+    usize p = k;
+    F cmax = c.data()[k];
+    for ( usize j = k + 1; j &lt; C; ++j ) {
+      if ( c.data()[j] &gt; cmax ) {
+        cmax = c.data()[j];
+        p = j;
+      }
+    }
+    if ( cmax &lt;= tol ) break;
+
+    if ( p != k ) {
+      for ( usize i = 0; i &lt; R; ++i ) {
+        F t = r.R.at(i, k);
+        r.R.at(i, k) = r.R.at(i, p);
+        r.R.at(i, p) = t;
+      }
+      F ct = c.data()[k];
+      c.data()[k] = c.data()[p];
+      c.data()[p] = ct;
+      usize pt = r.perm.data()[k];
+      r.perm.data()[k] = r.perm.data()[p];
+      r.perm.data()[p] = pt;
+      r.sign = -r.sign;
+    }
+
+    for ( usize i = 0; i &lt; R; ++i ) x.data()[i] = F(0);
+    for ( usize i = k; i &lt; R; ++i ) x.data()[i] = r.R.at(i, k);
+    F beta = __impl_decomp::householder_reflector_dyn&lt;F&gt;(x.data(), R, k, v.data());
+    if ( beta == F(0) ) break;
+    __impl_decomp::apply_householder_left_dyn&lt;F&gt;(r.R.data(), R, C, r.R.ld, v.data(), beta, k);
+    for ( usize i = k + 1; i &lt; R; ++i ) r.R.at(i, k) = F(0);
+    for ( usize i = 0; i &lt; R; ++i ) r.Q.V.at(i, k) = v.data()[i];
+    r.Q.betas.data()[k] = beta;
+    r.rank = k + 1;
+
+    for ( usize j = k + 1; j &lt; C; ++j ) {
+      const F akj = r.R.at(k, j);
+      F nc = c.data()[j] - akj * akj;
+      if ( nc &lt; F(0) ) nc = F(0);
+      c.data()[j] = nc;
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1106">line 1106</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/dynmat.hpp.html#f-f2be77990fd00b81">dynmat&lt;F&gt;::zero</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="householder.hpp.html#f-7836e5300fbf1cd1">__impl_decomp::householder_reflector_dyn&lt;F&gt;</a>, <a href="householder.hpp.html#f-3c4226801713e256">__impl_decomp::apply_householder_left_dyn&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a257e871340f04ee"><h3><code>micron::math::linalg::decomp::qr_colpiv_solve(const qr_colpiv_result&lt;F, R_, C_&gt; &amp;qr, const vec&lt;F, R_&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1111">line 1111</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline vec&lt;F, C_&gt;
+qr_colpiv_solve(const qr_colpiv_result&lt;F, R_, C_&gt; &amp;qr, const vec&lt;F, R_&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const qr_colpiv_result&lt;F, R_, C_&gt; &amp;qr</code></li><li><code>const vec&lt;F, R_&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline vec&lt;F, C_&gt;
+qr_colpiv_solve(const qr_colpiv_result&lt;F, R_, C_&gt; &amp;qr, const vec&lt;F, R_&gt; &amp;b) noexcept
+{
+  vec&lt;F, R_&gt; y{};
+  for ( usize i = 0; i &lt; R_; ++i ) y.data[i] = b.data[i];
+  // y := Q^T b
+  mat&lt;F, R_, 1&gt; Y{};
+  for ( usize i = 0; i &lt; R_; ++i ) Y.data[i] = y.data[i];
+  qr.Q.template apply_left_transposed&lt;1&gt;(Y);
+  for ( usize i = 0; i &lt; R_; ++i ) y.data[i] = Y.data[i];
+  // back-substitute R[0:rank, 0:rank] * z = y[0:rank]; z[rank:] = 0
+  vec&lt;F, C_&gt; z{};
+  for ( usize j = 0; j &lt; C_; ++j ) z.data[j] = F(0);
+  if ( qr.rank &gt; 0 ) {
+    for ( usize ii = qr.rank; ii-- &gt; 0; ) {
+      F s = y.data[ii];
+      for ( usize j = ii + 1; j &lt; qr.rank; ++j ) s -= qr.R.data[ii * C_ + j] * z.data[j];
+      z.data[ii] = s / qr.R.data[ii * C_ + ii];
+    }
+  }
+  // x = P z   (z is in pivoted order; x[perm[k]] = z[k])
+  vec&lt;F, C_&gt; x{};
+  for ( usize j = 0; j &lt; C_; ++j ) x.data[j] = F(0);
+  for ( usize k = 0; k &lt; C_; ++k ) x.data[qr.perm[k]] = z.data[k];
+  return x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1134">line 1134</a></td></tr></tbody></table></section><section class="function-entry" id="f-22e5827d3e5e4024"><h3><code>micron::math::linalg::decomp::qr_colpiv_solve(const qr_colpiv_result_dyn&lt;F&gt; &amp;qr, const dynvec&lt;F&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1139">line 1139</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+qr_colpiv_solve(const qr_colpiv_result_dyn&lt;F&gt; &amp;qr, const dynvec&lt;F&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const qr_colpiv_result_dyn&lt;F&gt; &amp;qr</code></li><li><code>const dynvec&lt;F&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+qr_colpiv_solve(const qr_colpiv_result_dyn&lt;F&gt; &amp;qr, const dynvec&lt;F&gt; &amp;b) noexcept
+{
+  const usize R = qr.Q.R;
+  const usize C = qr.R.cols;
+  dynmat&lt;F&gt; Y(R, 1);
+  for ( usize i = 0; i &lt; R; ++i ) Y.at(i, 0) = b[i];
+  qr.Q.apply_left_transposed(Y);
+  dynvec&lt;F&gt; z(C, F(0));
+  if ( qr.rank &gt; 0 ) {
+    for ( usize ii = qr.rank; ii-- &gt; 0; ) {
+      F s = Y.at(ii, 0);
+      for ( usize j = ii + 1; j &lt; qr.rank; ++j ) s -= qr.R.at(ii, j) * z[j];
+      z[ii] = s / qr.R.at(ii, ii);
+    }
+  }
+  dynvec&lt;F&gt; x(C, F(0));
+  for ( usize k = 0; k &lt; C; ++k ) x[qr.perm.data()[k]] = z[k];
+  return x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1156">line 1156</a></td></tr></tbody></table></section><section class="function-entry" id="f-baaea40f52e3ff0a"><h3><code>micron::math::linalg::decomp::qr_householder_fullpiv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1176">line 1176</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+  requires(R_ &gt;= 2)
+[[nodiscard]] inline qr_fullpiv_result&lt;F, R_, C_&gt;
+qr_householder_fullpiv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, R_, C_&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+  requires(R_ &gt;= 2)
+[[nodiscard]] inline qr_fullpiv_result&lt;F, R_, C_&gt;
+qr_householder_fullpiv(const mat&lt;F, R_, C_&gt; &amp;A, F tol = F(0)) noexcept
+{
+  qr_fullpiv_result&lt;F, R_, C_&gt; r{};
+  constexpr usize K = (R_ &lt; C_) ? R_ : C_;
+  r.R = A;
+  for ( usize i = 0; i &lt; R_; ++i ) {
+    r.perm_row[i] = i;
+    r.row_transp[i] = i;
+  }
+  for ( usize j = 0; j &lt; C_; ++j ) r.perm_col[j] = j;
+  r.sign = 1;
+  r.rank = 0;
+  for ( usize i = 0; i &lt; R_ * K; ++i ) r.Q.V.data[i] = F(0);
+  for ( usize k = 0; k &lt; K; ++k ) r.Q.betas[k] = F(0);
+
+  for ( usize k = 0; k &lt; K; ++k ) {
+    usize pi = k, pj = k;
+    F best = math::fabs(r.R.data[k * C_ + k]);
+    for ( usize i = k; i &lt; R_; ++i ) {
+      for ( usize j = k; j &lt; C_; ++j ) {
+        F a = math::fabs(r.R.data[i * C_ + j]);
+        if ( a &gt; best ) {
+          best = a;
+          pi = i;
+          pj = j;
+        }
+      }
+    }
+    if ( best &lt;= tol ) break;
+    r.row_transp[k] = pi;
+    if ( pi != k ) {
+      for ( usize j = 0; j &lt; C_; ++j ) {
+        F t = r.R.data[k * C_ + j];
+        r.R.data[k * C_ + j] = r.R.data[pi * C_ + j];
+        r.R.data[pi * C_ + j] = t;
+      }
+      usize t = r.perm_row[k];
+      r.perm_row[k] = r.perm_row[pi];
+      r.perm_row[pi] = t;
+      r.sign = -r.sign;
+    }
+    if ( pj != k ) {
+      for ( usize i = 0; i &lt; R_; ++i ) {
+        F t = r.R.data[i * C_ + k];
+        r.R.data[i * C_ + k] = r.R.data[i * C_ + pj];
+        r.R.data[i * C_ + pj] = t;
+      }
+      usize t = r.perm_col[k];
+      r.perm_col[k] = r.perm_col[pj];
+      r.perm_col[pj] = t;
+      r.sign = -r.sign;
+    }
+
+    vec&lt;F, R_&gt; x{};
+    for ( usize i = 0; i &lt; R_; ++i ) x.data[i] = F(0);
+    for ( usize i = k; i &lt; R_; ++i ) x.data[i] = r.R.data[i * C_ + k];
+    auto h = householder_reflector&lt;F, R_&gt;(x, k);
+    if ( h.beta == F(0) ) break;
+    apply_householder_left&lt;F, R_, C_&gt;(r.R, h.v, h.beta, k);
+    for ( usize i = k + 1; i &lt; R_; ++i ) r.R.data[i * C_ + k] = F(0);
+    for ( usize i = 0; i &lt; R_; ++i ) r.Q.V.data[i * K + k] = h.v.data[i];
+    r.Q.betas[k] = h.beta;
+    r.rank = k + 1;
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1240">line 1240</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="householder.hpp.html#f-08df425cb4c5f10f">householder_reflector&lt;F, R_&gt;</a>, <a href="householder.hpp.html#f-2ed122114fe7bcb5">apply_householder_left&lt;F, R_, C_&gt;</a>.</p></section><section class="function-entry" id="f-c05dc87acdc4f531"><h3><code>micron::math::linalg::decomp::qr_householder_fullpiv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1255">line 1255</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline qr_fullpiv_result_dyn&lt;F&gt;
+qr_householder_fullpiv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline qr_fullpiv_result_dyn&lt;F&gt;
+qr_householder_fullpiv(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept
+{
+  const usize R = A.rows;
+  const usize C = A.cols;
+  const usize K = (R &lt; C) ? R : C;
+  qr_fullpiv_result_dyn&lt;F&gt; r{};
+  r.R = A;
+  r.row_transp = micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;(K);
+  r.perm_row = micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;(R);
+  r.perm_col = micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;(C);
+  for ( usize i = 0; i &lt; K; ++i ) r.row_transp.data()[i] = i;
+  for ( usize i = 0; i &lt; R; ++i ) r.perm_row.data()[i] = i;
+  for ( usize j = 0; j &lt; C; ++j ) r.perm_col.data()[j] = j;
+  r.sign = 1;
+  r.rank = 0;
+  r.Q.R = R;
+  r.Q.K = K;
+  r.Q.V = dynmat&lt;F&gt;::zero(R, K);
+  r.Q.betas = micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt;(K, F(0));
+
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; x(R, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; v(R, F(0));
+  for ( usize k = 0; k &lt; K; ++k ) {
+    usize pi = k, pj = k;
+    F best = math::fabs(r.R.at(k, k));
+    for ( usize i = k; i &lt; R; ++i ) {
+      for ( usize j = k; j &lt; C; ++j ) {
+        F a = math::fabs(r.R.at(i, j));
+        if ( a &gt; best ) {
+          best = a;
+          pi = i;
+          pj = j;
+        }
+      }
+    }
+    if ( best &lt;= tol ) break;
+    r.row_transp.data()[k] = pi;
+    if ( pi != k ) {
+      for ( usize j = 0; j &lt; C; ++j ) {
+        F t = r.R.at(k, j);
+        r.R.at(k, j) = r.R.at(pi, j);
+        r.R.at(pi, j) = t;
+      }
+      usize t = r.perm_row.data()[k];
+      r.perm_row.data()[k] = r.perm_row.data()[pi];
+      r.perm_row.data()[pi] = t;
+      r.sign = -r.sign;
+    }
+    if ( pj != k ) {
+      for ( usize i = 0; i &lt; R; ++i ) {
+        F t = r.R.at(i, k);
+        r.R.at(i, k) = r.R.at(i, pj);
+        r.R.at(i, pj) = t;
+      }
+      usize t = r.perm_col.data()[k];
+      r.perm_col.data()[k] = r.perm_col.data()[pj];
+      r.perm_col.data()[pj] = t;
+      r.sign = -r.sign;
+    }
+
+    for ( usize i = 0; i &lt; R; ++i ) x.data()[i] = F(0);
+    for ( usize i = k; i &lt; R; ++i ) x.data()[i] = r.R.at(i, k);
+    F beta = __impl_decomp::householder_reflector_dyn&lt;F&gt;(x.data(), R, k, v.data());
+    if ( beta == F(0) ) break;
+    __impl_decomp::apply_householder_left_dyn&lt;F&gt;(r.R.data(), R, C, r.R.ld, v.data(), beta, k);
+    for ( usize i = k + 1; i &lt; R; ++i ) r.R.at(i, k) = F(0);
+    for ( usize i = 0; i &lt; R; ++i ) r.Q.V.at(i, k) = v.data()[i];
+    r.Q.betas.data()[k] = beta;
+    r.rank = k + 1;
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1325">line 1325</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/dynmat.hpp.html#f-f2be77990fd00b81">dynmat&lt;F&gt;::zero</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="householder.hpp.html#f-7836e5300fbf1cd1">__impl_decomp::householder_reflector_dyn&lt;F&gt;</a>, <a href="householder.hpp.html#f-3c4226801713e256">__impl_decomp::apply_householder_left_dyn&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-facb402cbc004f41"><h3><code>micron::math::linalg::decomp::qr_fullpiv_solve(const qr_fullpiv_result&lt;F, R_, C_&gt; &amp;qr, const vec&lt;F, R_&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1330">line 1330</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline vec&lt;F, C_&gt;
+qr_fullpiv_solve(const qr_fullpiv_result&lt;F, R_, C_&gt; &amp;qr, const vec&lt;F, R_&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const qr_fullpiv_result&lt;F, R_, C_&gt; &amp;qr</code></li><li><code>const vec&lt;F, R_&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline vec&lt;F, C_&gt;
+qr_fullpiv_solve(const qr_fullpiv_result&lt;F, R_, C_&gt; &amp;qr, const vec&lt;F, R_&gt; &amp;b) noexcept
+{
+  constexpr usize K = (R_ &lt; C_) ? R_ : C_;
+  vec&lt;F, R_&gt; y{};
+  for ( usize i = 0; i &lt; R_; ++i ) y.data[i] = b.data[i];
+  for ( usize k = 0; k &lt; K; ++k ) {
+    usize pi = qr.row_transp[k];
+    if ( pi != k ) {
+      F t = y.data[k];
+      y.data[k] = y.data[pi];
+      y.data[pi] = t;
+    }
+    F beta = qr.Q.betas[k];
+    if ( beta == F(0) ) continue;
+    F w = F(0);
+    for ( usize i = k; i &lt; R_; ++i ) w = math::fma&lt;F&gt;(qr.Q.V.data[i * K + k], y.data[i], w);
+    F bw = beta * w;
+    for ( usize i = k; i &lt; R_; ++i ) y.data[i] -= bw * qr.Q.V.data[i * K + k];
+  }
+  vec&lt;F, C_&gt; z{};
+  for ( usize j = 0; j &lt; C_; ++j ) z.data[j] = F(0);
+  if ( qr.rank &gt; 0 ) {
+    for ( usize ii = qr.rank; ii-- &gt; 0; ) {
+      F s = y.data[ii];
+      for ( usize j = ii + 1; j &lt; qr.rank; ++j ) s -= qr.R.data[ii * C_ + j] * z.data[j];
+      z.data[ii] = s / qr.R.data[ii * C_ + ii];
+    }
+  }
+  vec&lt;F, C_&gt; x{};
+  for ( usize j = 0; j &lt; C_; ++j ) x.data[j] = F(0);
+  for ( usize k = 0; k &lt; C_; ++k ) x.data[qr.perm_col[k]] = z.data[k];
+  return x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1361">line 1361</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a868a4c9723e8a70"><h3><code>micron::math::linalg::decomp::qr_fullpiv_solve(const qr_fullpiv_result_dyn&lt;F&gt; &amp;qr, const dynvec&lt;F&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1366">line 1366</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+qr_fullpiv_solve(const qr_fullpiv_result_dyn&lt;F&gt; &amp;qr, const dynvec&lt;F&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const qr_fullpiv_result_dyn&lt;F&gt; &amp;qr</code></li><li><code>const dynvec&lt;F&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+qr_fullpiv_solve(const qr_fullpiv_result_dyn&lt;F&gt; &amp;qr, const dynvec&lt;F&gt; &amp;b) noexcept
+{
+  const usize R = qr.Q.R;
+  const usize C = qr.R.cols;
+  const usize K = qr.Q.K;
+  dynvec&lt;F&gt; y(R, F(0));
+  for ( usize i = 0; i &lt; R; ++i ) y[i] = b[i];
+  for ( usize k = 0; k &lt; K; ++k ) {
+    usize pi = qr.row_transp.data()[k];
+    if ( pi != k ) {
+      F t = y[k];
+      y[k] = y[pi];
+      y[pi] = t;
+    }
+    F beta = qr.Q.betas.data()[k];
+    if ( beta == F(0) ) continue;
+    F w = F(0);
+    for ( usize i = k; i &lt; R; ++i ) w = math::fma&lt;F&gt;(qr.Q.V.at(i, k), y[i], w);
+    F bw = beta * w;
+    for ( usize i = k; i &lt; R; ++i ) y[i] -= bw * qr.Q.V.at(i, k);
+  }
+  dynvec&lt;F&gt; z(C, F(0));
+  if ( qr.rank &gt; 0 ) {
+    for ( usize ii = qr.rank; ii-- &gt; 0; ) {
+      F s = y[ii];
+      for ( usize j = ii + 1; j &lt; qr.rank; ++j ) s -= qr.R.at(ii, j) * z[j];
+      z[ii] = s / qr.R.at(ii, ii);
+    }
+  }
+  dynvec&lt;F&gt; x(C, F(0));
+  for ( usize k = 0; k &lt; C; ++k ) x[qr.perm_col.data()[k]] = z[k];
+  return x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1397">line 1397</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-52008f94ad8fd72e"><h3><code>micron::math::linalg::decomp::cod(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1415">line 1415</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cod_result_dyn&lt;F&gt;
+cod(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li><li><code>F tol = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cod_result_dyn&lt;F&gt;
+cod(const dynmat&lt;F&gt; &amp;A, F tol = F(0)) noexcept
+{
+  auto qr = qr_householder_colpiv&lt;F&gt;(A, tol);
+  const usize C = A.cols;
+  const usize K = qr.rank;
+
+  cod_result_dyn&lt;F&gt; r{};
+  r.Q = micron::move(qr.Q);
+  r.perm_col = micron::move(qr.perm);
+  r.rank = K;
+
+  if ( K == 0 ) {
+    r.T_lower = dynmat&lt;F&gt;::zero(0, 0);
+    r.Z.R = C;
+    r.Z.K = 0;
+    r.Z.V = dynmat&lt;F&gt;::zero(C, 0);
+    r.Z.betas = micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt;(0);
+    return r;
+  }
+
+  // B = R[0:K, :]^T   (size C x K)
+  dynmat&lt;F&gt; B(C, K);
+  for ( usize i = 0; i &lt; K; ++i )
+    for ( usize j = 0; j &lt; C; ++j ) B.at(j, i) = qr.R.at(i, j);
+
+  // Phase 2: QR of B
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; x(C, F(0));
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; v(C, F(0));
+  r.Z.R = C;
+  r.Z.K = K;
+  r.Z.V = dynmat&lt;F&gt;::zero(C, K);
+  r.Z.betas = micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt;(K, F(0));
+
+  for ( usize k = 0; k &lt; K; ++k ) {
+    for ( usize i = 0; i &lt; C; ++i ) x.data()[i] = F(0);
+    for ( usize i = k; i &lt; C; ++i ) x.data()[i] = B.at(i, k);
+    F beta = __impl_decomp::householder_reflector_dyn&lt;F&gt;(x.data(), C, k, v.data());
+    if ( beta == F(0) ) continue;
+    __impl_decomp::apply_householder_left_dyn&lt;F&gt;(B.data(), C, K, B.ld, v.data(), beta, k);
+    for ( usize i = k + 1; i &lt; C; ++i ) B.at(i, k) = F(0);
+    for ( usize i = 0; i &lt; C; ++i ) r.Z.V.at(i, k) = v.data()[i];
+    r.Z.betas.data()[k] = beta;
+  }
+
+  // T = (B[0:K, :])^T   -&gt;  K x K lower triangular
+  r.T_lower = dynmat&lt;F&gt;::zero(K, K);
+  for ( usize i = 0; i &lt; K; ++i )
+    for ( usize j = 0; j &lt;= i; ++j ) r.T_lower.at(i, j) = B.at(j, i);
+
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1432">line 1432</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1464">line 1464</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-3a6118aade0a9fd0">qr_householder_colpiv&lt;F&gt;</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../matrix/dynmat.hpp.html#f-f2be77990fd00b81">dynmat&lt;F&gt;::zero</a>, <a href="householder.hpp.html#f-7836e5300fbf1cd1">__impl_decomp::householder_reflector_dyn&lt;F&gt;</a>, <a href="householder.hpp.html#f-3c4226801713e256">__impl_decomp::apply_householder_left_dyn&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-b55a558530963f03"><h3><code>micron::math::linalg::decomp::cod_solve(const cod_result_dyn&lt;F&gt; &amp;c, const dynvec&lt;F&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1469">line 1469</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+cod_solve(const cod_result_dyn&lt;F&gt; &amp;c, const dynvec&lt;F&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cod_result_dyn&lt;F&gt; &amp;c</code></li><li><code>const dynvec&lt;F&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+cod_solve(const cod_result_dyn&lt;F&gt; &amp;c, const dynvec&lt;F&gt; &amp;b) noexcept
+{
+  const usize R = c.Q.R;
+  const usize C = c.Z.R;
+  const usize K = c.rank;
+
+  // y = Q^T b
+  dynmat&lt;F&gt; Y(R, 1);
+  for ( usize i = 0; i &lt; R; ++i ) Y.at(i, 0) = b[i];
+  c.Q.apply_left_transposed(Y);
+
+  // forward solve T_lower * z = y[0:K]
+  dynvec&lt;F&gt; z(K, F(0));
+  for ( usize i = 0; i &lt; K; ++i ) {
+    F s = Y.at(i, 0);
+    for ( usize j = 0; j &lt; i; ++j ) s -= c.T_lower.at(i, j) * z[j];
+    z[i] = s / c.T_lower.at(i, i);
+  }
+
+  // w has length C; w[0:K] = z, rest = 0
+  dynmat&lt;F&gt; W(C, 1);
+  for ( usize i = 0; i &lt; C; ++i ) W.at(i, 0) = F(0);
+  for ( usize i = 0; i &lt; K; ++i ) W.at(i, 0) = z[i];
+
+  c.Z.apply_left(W);
+
+  dynvec&lt;F&gt; x_perm(C, F(0));
+  for ( usize i = 0; i &lt; C; ++i ) x_perm[i] = W.at(i, 0);
+
+  dynvec&lt;F&gt; x(C, F(0));
+  for ( usize k = 0; k &lt; C; ++k ) x[c.perm_col.data()[k]] = x_perm[k];
+  return x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1500">line 1500</a></td></tr></tbody></table></section><section class="function-entry" id="f-c5d2fae2e526cfb7"><h3><code>micron::math::linalg::decomp::rcond(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1505">line 1505</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline F
+rcond(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline F
+rcond(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  F nA = F(0);
+  for ( usize j = 0; j &lt; N; ++j ) {
+    F s = F(0);
+    for ( usize i = 0; i &lt; N; ++i ) s += math::fabs(A.data[i * N + j]);
+    if ( s &gt; nA ) nA = s;
+  }
+  if ( nA == F(0) ) return F(0);
+  auto inv_r = inv&lt;F, N&gt;(A);
+  if ( inv_r.singular ) return F(0);
+  F nInv = F(0);
+  for ( usize j = 0; j &lt; N; ++j ) {
+    F s = F(0);
+    for ( usize i = 0; i &lt; N; ++i ) s += math::fabs(inv_r.X.data[i * N + j]);
+    if ( s &gt; nInv ) nInv = s;
+  }
+  if ( nInv == F(0) ) return F(0);
+  return F(1) / (nA * nInv);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1513">line 1513</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1515">line 1515</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1522">line 1522</a></td></tr><tr class="t-dsc"><td><code>F(1) / (nA * nInv)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1523">line 1523</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="decomp.hpp.html#f-461bdfa47b9fa25f">inv&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-6ddd1b612edb54d5"><h3><code>micron::math::linalg::decomp::rcond(const dynmat&lt;F&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/decomp.hpp</code>, <a href="../../../source/math/linalg/decomp.hpp.html#L1528">line 1528</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+rcond(const dynmat&lt;F&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+rcond(const dynmat&lt;F&gt; &amp;A) noexcept
+{
+  const usize N = A.rows;
+  F nA = F(0);
+  for ( usize j = 0; j &lt; N; ++j ) {
+    F s = F(0);
+    for ( usize i = 0; i &lt; N; ++i ) s += math::fabs(A.at(i, j));
+    if ( s &gt; nA ) nA = s;
+  }
+  if ( nA == F(0) ) return F(0);
+  auto inv_r = inv&lt;F&gt;(A);
+  if ( inv_r.singular ) return F(0);
+  F nInv = F(0);
+  for ( usize j = 0; j &lt; N; ++j ) {
+    F s = F(0);
+    for ( usize i = 0; i &lt; N; ++i ) s += math::fabs(inv_r.X.at(i, j));
+    if ( s &gt; nInv ) nInv = s;
+  }
+  if ( nInv == F(0) ) return F(0);
+  return F(1) / (nA * nInv);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1537">line 1537</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1539">line 1539</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1546">line 1546</a></td></tr><tr class="t-dsc"><td><code>F(1) / (nA * nInv)</code></td><td><a href="../../../source/math/linalg/decomp.hpp.html#L1547">line 1547</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="decomp.hpp.html#f-461bdfa47b9fa25f">inv&lt;F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

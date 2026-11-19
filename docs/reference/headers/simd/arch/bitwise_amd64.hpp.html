@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/simd/arch/bitwise_amd64.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/simd/arch/bitwise_amd64.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/simd/arch/bitwise_amd64.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/simd/arch/bitwise_amd64.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-d4fa93db491fe59a">micron::simd::find_first_set_128(const void *_ptr, usize len, const char b)</a></td><td>function; line 17</td></tr><tr class="t-dsc"><td><a href="#f-0d48f06422f6d8d5">micron::simd::find_first_set_256(const void *_ptr, usize len, const char b)</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-87fcd35f3c87f3fe">micron::simd::count_set_128(const void *_ptr, usize len, const char b)</a></td><td>function; line 55</td></tr><tr class="t-dsc"><td><a href="#f-aa4cc37a7cfa4bfa">micron::simd::count_set_256(const void *_ptr, usize len, const char b)</a></td><td>function; line 72</td></tr><tr class="t-dsc"><td><a href="#f-15b23088c90c8c06">micron::simd::any_set_128(const void *_ptr, usize len, const char b)</a></td><td>function; line 93</td></tr><tr class="t-dsc"><td><a href="#f-2ec60b07a2444d7a">micron::simd::any_set_256(const void *_ptr, usize len, const char b)</a></td><td>function; line 111</td></tr><tr class="t-dsc"><td><a href="#f-5d3774e55a905bbe">micron::simd::all_set_128(const void *_ptr, usize len, const char b)</a></td><td>function; line 133</td></tr><tr class="t-dsc"><td><a href="#f-9813ddaefef6a7a3">micron::simd::all_set_256(const void *_ptr, usize len, const char b)</a></td><td>function; line 151</td></tr><tr class="t-dsc"><td><a href="#f-31f8061ff40f4dc0">micron::simd::none_set_128(const void *_ptr, usize len, const char b)</a></td><td>function; line 173</td></tr><tr class="t-dsc"><td><a href="#f-98b5f507f51f1645">micron::simd::none_set_256(const void *_ptr, usize len, const char b)</a></td><td>function; line 191</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-d4fa93db491fe59a"><h3><code>micron::simd::find_first_set_128(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L17">line 17</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+find_first_set_128(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+find_first_set_128(const void *_ptr, usize len, const char b)
+{
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i128 char_reg = _mm_set1_epi8(b);
+  usize i = 0;
+  for ( ; i + 15 &lt; len; i += 16 ) {
+    i128 chunk = _mm_loadu_si128(reinterpret_cast&lt;const i128 *&gt;(ptr + i));
+    i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
+    int mask = _mm_movemask_epi8(cmp);
+    if ( mask ) return i + static_cast&lt;usize&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mask)));
+  }
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] == b ) return i;
+  return len;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>i + static_cast&lt;usize&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mask)))</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L26">line 26</a></td></tr><tr class="t-dsc"><td><code>i</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L29">line 29</a></td></tr><tr class="t-dsc"><td><code>len</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L30">line 30</a></td></tr></tbody></table></section><section class="function-entry" id="f-0d48f06422f6d8d5"><h3><code>micron::simd::find_first_set_256(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+find_first_set_256(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+find_first_set_256(const void *_ptr, usize len, const char b)
+{
+#if defined(__micron_x86_avx2)
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i256 char_reg = _mm256_set1_epi8(b);
+  usize i = 0;
+  for ( ; i + 31 &lt; len; i += 32 ) {
+    i256 chunk = _mm256_loadu_si256(reinterpret_cast&lt;const i256 *&gt;(ptr + i));
+    i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
+    int mask = _mm256_movemask_epi8(cmp);
+    if ( mask ) return i + static_cast&lt;usize&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mask)));
+  }
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] == b ) return i;
+  return len;
+#else
+  return find_first_set_128(_ptr, len, b);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>i + static_cast&lt;usize&gt;(__builtin_ctz(static_cast&lt;unsigned int&gt;(mask)))</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L44">line 44</a></td></tr><tr class="t-dsc"><td><code>i</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>len</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L48">line 48</a></td></tr><tr class="t-dsc"><td><code>find_first_set_128(_ptr, len, b)</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L50">line 50</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/bitwise.hpp.html#f-11510e5fe3ae317c">find_first_set_128</a>.</p></section><section class="function-entry" id="f-87fcd35f3c87f3fe"><h3><code>micron::simd::count_set_128(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+count_set_128(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+count_set_128(const void *_ptr, usize len, const char b)
+{
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i128 char_reg = _mm_set1_epi8(b);
+  usize i = 0;
+  usize cnt = 0;
+  for ( ; i + 15 &lt; len; i += 16 ) {
+    i128 chunk = _mm_loadu_si128(reinterpret_cast&lt;const i128 *&gt;(ptr + i));
+    i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
+    cnt += static_cast&lt;usize&gt;(_mm_popcnt_u32(static_cast&lt;unsigned int&gt;(_mm_movemask_epi8(cmp))));
+  }
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] == b ) ++cnt;
+  return cnt;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cnt</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L68">line 68</a></td></tr></tbody></table></section><section class="function-entry" id="f-aa4cc37a7cfa4bfa"><h3><code>micron::simd::count_set_256(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+count_set_256(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+count_set_256(const void *_ptr, usize len, const char b)
+{
+#if defined(__micron_x86_avx2)
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i256 char_reg = _mm256_set1_epi8(b);
+  usize i = 0;
+  usize cnt = 0;
+  for ( ; i + 31 &lt; len; i += 32 ) {
+    i256 chunk = _mm256_loadu_si256(reinterpret_cast&lt;const i256 *&gt;(ptr + i));
+    i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
+    cnt += static_cast&lt;usize&gt;(_mm_popcnt_u32(static_cast&lt;unsigned int&gt;(_mm256_movemask_epi8(cmp))));
+  }
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] == b ) ++cnt;
+  return cnt;
+#else
+  return count_set_128(_ptr, len, b);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cnt</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>count_set_128(_ptr, len, b)</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L88">line 88</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/bitwise.hpp.html#f-53a1819c448a45a5">count_set_128</a>.</p></section><section class="function-entry" id="f-15b23088c90c8c06"><h3><code>micron::simd::any_set_128(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L93">line 93</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+any_set_128(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+any_set_128(const void *_ptr, usize len, const char b)
+{
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i128 char_reg = _mm_set1_epi8(b);
+  usize i = 0;
+  for ( ; i + 15 &lt; len; i += 16 ) {
+    i128 chunk = _mm_loadu_si128(reinterpret_cast&lt;const i128 *&gt;(ptr + i));
+    i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
+
+    if ( _mm_movemask_epi8(cmp) ) return true;
+  }
+  // scalar tail
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] == b ) return true;
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L102">line 102</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L107">line 107</a></td></tr></tbody></table></section><section class="function-entry" id="f-2ec60b07a2444d7a"><h3><code>micron::simd::any_set_256(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L111">line 111</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+any_set_256(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+any_set_256(const void *_ptr, usize len, const char b)
+{
+#if defined(__micron_x86_avx2)
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i256 char_reg = _mm256_set1_epi8(b);
+  usize i = 0;
+  for ( ; i + 31 &lt; len; i += 32 ) {
+    i256 chunk = _mm256_loadu_si256(reinterpret_cast&lt;const i256 *&gt;(ptr + i));
+    i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
+
+    if ( _mm256_movemask_epi8(cmp) ) return true;
+  }
+  // scalar tail
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] == b ) return true;
+  return false;
+#else
+  return any_set_128(_ptr, len, b);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L121">line 121</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L126">line 126</a></td></tr><tr class="t-dsc"><td><code>any_set_128(_ptr, len, b)</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L128">line 128</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/bitwise.hpp.html#f-3894344f447bd033">any_set_128</a>.</p></section><section class="function-entry" id="f-5d3774e55a905bbe"><h3><code>micron::simd::all_set_128(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L133">line 133</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+all_set_128(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+all_set_128(const void *_ptr, usize len, const char b)
+{
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i128 char_reg = _mm_set1_epi8(b);
+  usize i = 0;
+  for ( ; i + 15 &lt; len; i += 16 ) {
+    i128 chunk = _mm_loadu_si128(reinterpret_cast&lt;const i128 *&gt;(ptr + i));
+    i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
+
+    if ( _mm_movemask_epi8(cmp) != 0xFFFF ) return false;
+  }
+  // scalar tail
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] != b ) return false;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L142">line 142</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L146">line 146</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L147">line 147</a></td></tr></tbody></table></section><section class="function-entry" id="f-9813ddaefef6a7a3"><h3><code>micron::simd::all_set_256(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L151">line 151</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+all_set_256(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+all_set_256(const void *_ptr, usize len, const char b)
+{
+#if defined(__micron_x86_avx2)
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i256 char_reg = _mm256_set1_epi8(b);
+  usize i = 0;
+  for ( ; i + 31 &lt; len; i += 32 ) {
+    i256 chunk = _mm256_loadu_si256(reinterpret_cast&lt;const i256 *&gt;(ptr + i));
+    i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
+
+    if ( _mm256_movemask_epi8(cmp) != (int)0xFFFFFFFF ) return false;
+  }
+  // scalar tail
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] != b ) return false;
+  return true;
+#else
+  return all_set_128(_ptr, len, b);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L161">line 161</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L166">line 166</a></td></tr><tr class="t-dsc"><td><code>all_set_128(_ptr, len, b)</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L168">line 168</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/bitwise.hpp.html#f-ee54a60973b0e05e">all_set_128</a>.</p></section><section class="function-entry" id="f-31f8061ff40f4dc0"><h3><code>micron::simd::none_set_128(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L173">line 173</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+none_set_128(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+none_set_128(const void *_ptr, usize len, const char b)
+{
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i128 char_reg = _mm_set1_epi8(b);
+  usize i = 0;
+  for ( ; i + 15 &lt; len; i += 16 ) {
+    i128 chunk = _mm_loadu_si128(reinterpret_cast&lt;const i128 *&gt;(ptr + i));
+    i128 cmp = _mm_cmpeq_epi8(chunk, char_reg);
+
+    if ( _mm_movemask_epi8(cmp) ) return false;
+  }
+  // scalar tail
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] == b ) return false;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L182">line 182</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L186">line 186</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L187">line 187</a></td></tr></tbody></table></section><section class="function-entry" id="f-98b5f507f51f1645"><h3><code>micron::simd::none_set_256(const void *_ptr, usize len, const char b)</code></h3><p>Defined in <code>simd/arch/bitwise_amd64.hpp</code>, <a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L191">line 191</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+none_set_256(const void *_ptr, usize len, const char b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *_ptr</code></li><li><code>usize len</code></li><li><code>const char b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+none_set_256(const void *_ptr, usize len, const char b)
+{
+#if defined(__micron_x86_avx2)
+  const unsigned char *ptr = static_cast&lt;const unsigned char *&gt;(_ptr);
+  i256 char_reg = _mm256_set1_epi8(b);
+  usize i = 0;
+  for ( ; i + 31 &lt; len; i += 32 ) {
+    i256 chunk = _mm256_loadu_si256(reinterpret_cast&lt;const i256 *&gt;(ptr + i));
+    i256 cmp = _mm256_cmpeq_epi8(chunk, char_reg);
+
+    if ( _mm256_movemask_epi8(cmp) ) return false;
+  }
+  // scalar tail
+  for ( ; i &lt; len; ++i )
+    if ( ptr[i] == b ) return false;
+  return true;
+#else
+  return none_set_128(_ptr, len, b);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L201">line 201</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L206">line 206</a></td></tr><tr class="t-dsc"><td><code>none_set_128(_ptr, len, b)</code></td><td><a href="../../../source/simd/arch/bitwise_amd64.hpp.html#L208">line 208</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/bitwise.hpp.html#f-4abd80e0eb7f568a">none_set_128</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

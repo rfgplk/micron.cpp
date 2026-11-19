@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bits/wasm/features.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">bits/wasm/features.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/bits/wasm/features.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2026 David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #if !defined(__clang__)</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #error &quot;micron: the native WebAssembly backend requires Clang&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #endif</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #if defined(__wasi__) || defined(__EMSCRIPTEN__)</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #error &quot;micron: use the native wasm32-unknown-unknown target&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #endif</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #if defined(MICRON_PORT_KERNEL) || defined(MICRON_PORT_METAL) || defined(MICRON_ENABLE_ATTACH) || defined(MICRON_ATTACH_MODULE)</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #error &quot;micron: native WebAssembly cannot use a Linux, metal or ELF module runtime&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #endif</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #if defined(__FAST_MATH__)</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #error &quot;micron: the WebAssembly numeric backend requires strict floating-point compilation&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #endif</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> </span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #if defined(__wasm_simd128__) &amp;&amp; !defined(MICRON_NO_SIMD)</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #define __micron_wasm_simd128 1</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #define __micron_simd_width 128</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> #else</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> #define __micron_simd_generic 1</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> #define __micron_simd_width 0</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> #endif</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> #define __micron_simd_wide_composite 1</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> </span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> #if defined(__wasm_atomics__)</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> #define __micron_wasm_atomics 1</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> #endif</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> #if defined(__wasm_bulk_memory__)</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> #define __micron_wasm_bulk_memory 1</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> #endif</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> #if defined(MICRON_WASM_THREADS)</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> #if !defined(__micron_wasm_atomics) || !defined(__micron_wasm_bulk_memory)</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> #error &quot;micron: MICRON_WASM_THREADS requires -matomics -mbulk-memory and shared memory&quot;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> #endif</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> #if defined(MICRON_NO_TLS)</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> #error &quot;micron: WebAssembly workers require thread-local storage&quot;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> #endif</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> #define __micron_wasm_threads 1</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> #endif</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> </span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> #if defined(__WASM_EXCEPTIONS__)</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> #define __micron_wasm_eh 1</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> #ifndef __micron_eh</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> #define __micron_eh 1</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> #endif</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> #elif defined(__micron_eh)</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> #error &quot;micron: WebAssembly exceptions require -fwasm-exceptions&quot;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> #endif</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> </span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> #define __micron_wasm_abi_version 1</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> #define __micron_wasm_page_size 65536u</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> #define __micron_wasm_allocation_granularity 4096u</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/sys/micthread/tls.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/sys/micthread/tls.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/sys/micthread/tls.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/linux/sys/micthread/tls.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-ef030ac76692e077"><h3><code>micron::__tls_round_up(u64 v, u64 a) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) constexpr u64
+__tls_round_up(u64 v, u64 a) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 v</code></li><li><code>u64 a</code></li></ul><h4>Effects</h4><p>Returns <code>(v + (a - 1)) &amp; ~(a - 1)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) constexpr u64
+__tls_round_up(u64 v, u64 a) noexcept
+{
+  return (v + (a - 1)) &amp; ~(a - 1);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(v + (a - 1)) &amp; ~(a - 1)</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L64">line 64</a></td></tr></tbody></table></section><section class="function-entry" id="f-9d4af18e3ee3c43e"><h3><code>micron::__tls_raw_mmap(usize bytes) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L68">line 68</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline byte *
+__tls_raw_mmap(usize bytes) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize bytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline byte *
+__tls_raw_mmap(usize bytes) noexcept
+{
+  byte *p = micron::bytemap(bytes);
+  return micron::mmap_failed(p) ? nullptr : p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::mmap_failed(p) ? nullptr : p</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L71">line 71</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../memory/mman.hpp.html#f-9a06376c4a335f89">micron::bytemap</a>, <a href="../../../memory/mman.hpp.html#f-3833a61859dc0c08">micron::mmap_failed</a>.</p></section><section class="function-entry" id="f-37513c80c33fa9e1"><h3><code>micron::__tls_capture_from_proc_auxv() noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__tls_capture_from_proc_auxv() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__tls_capture_from_proc_auxv() noexcept
+{
+#if defined(MICRON_TLS_NO_PROC)
+  return false;
+#else
+  // WARNING: auxv is usually small, but this _might_ overflow, be careful!
+  alignas(16) unsigned long buf[512];
+  i32 fd = micron::posix::open(&quot;/proc/self/auxv&quot;, micron::posix::o_rdonly);
+  if ( fd &lt; 0 ) return false;
+  usize total = 0;
+  for ( ;; ) {
+    max_t n = micron::posix::read(fd, reinterpret_cast&lt;char *&gt;(buf) + total, sizeof(buf) - total);
+    if ( n &lt;= 0 ) break;
+    total += static_cast&lt;usize&gt;(n);
+    if ( total &gt;= sizeof(buf) ) break;
+  }
+  micron::posix::close(fd);
+
+  const usize pairs = total / (2 * sizeof(unsigned long));
+  unsigned long phdr_addr = 0, phent = 0, phnum = 0, pagesz = 0;
+  for ( usize i = 0; i &lt; pairs; ++i ) {
+    unsigned long t = buf[2 * i], v = buf[2 * i + 1];
+    if ( t == at_null ) break;
+    if ( t == at_phdr )
+      phdr_addr = v;
+    else if ( t == at_phent )
+      phent = v;
+    else if ( t == at_phnum )
+      phnum = v;
+    else if ( t == at_pagesz )
+      pagesz = v;
+  }
+  if ( phdr_addr == 0 || phent == 0 || phnum == 0 ) return false;
+
+  const tls_image img = find_tls_in_phdrs(phdr_addr, phent, phnum);
+  __micron_tls_template
+      = __tls_template_t{ img.image, img.filesz, img.memsz, img.align ? img.align : __micron_tls_min_align, pagesz ? pagesz : 4096, true };
+  return true;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L78">line 78</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L83">line 83</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L107">line 107</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../io/sys.hpp.html#f-4489c173fc28797e">micron::posix::open</a>, <a href="../../io/sys.hpp.html#f-4dae032f64ac939d">micron::posix::read</a>, <a href="../../io/sys.hpp.html#f-3fa70c30c28afe18">micron::posix::close</a>, <a href="../../elf/auxv.hpp.html#f-de092c301bfb2a5f">find_tls_in_phdrs</a>.</p></section><section class="function-entry" id="f-a0d0f6c551e0ec81"><h3><code>micron::__tls_capture_from_ehdr() noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L117">line 117</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__tls_capture_from_ehdr() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__tls_capture_from_ehdr() noexcept
+{
+  if ( !__ehdr_usable() ) return false;
+  const tls_image img = find_tls_from_ehdr();
+  __micron_tls_template = __tls_template_t{ img.image, img.filesz, img.memsz, img.align ? img.align : __micron_tls_min_align, 4096, true };
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L122">line 122</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../elf/auxv.hpp.html#f-af77a16b162797fa">__ehdr_usable</a>, <a href="../../elf/auxv.hpp.html#f-1000775720082aeb">find_tls_from_ehdr</a>.</p></section><section class="function-entry" id="f-2a2cbea9a54ca30b"><h3><code>micron::__tls_capture_template(const byte *image, u64 filesz, u64 memsz, u64 align, usize pagesz) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L127">line 127</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__tls_capture_template(const byte *image, u64 filesz, u64 memsz, u64 align, usize pagesz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *image</code></li><li><code>u64 filesz</code></li><li><code>u64 memsz</code></li><li><code>u64 align</code></li><li><code>usize pagesz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__tls_capture_template(const byte *image, u64 filesz, u64 memsz, u64 align, usize pagesz) noexcept
+{
+  __micron_tls_template = __tls_template_t{ image, filesz, memsz, align ? align : __micron_tls_min_align, pagesz ? pagesz : 4096, true };
+  atom::store(__micron_tls_template_state.ptr(), __tls_tmpl_ready, static_cast&lt;int&gt;(memory_order_release));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../atomic/intrin.hpp.html#f-764f1c8f4bb9439d">atom::store</a>.</p></section><section class="function-entry" id="f-e7fee0d35ef00651"><h3><code>micron::__tls_ensure_template() noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L134">line 134</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__tls_ensure_template() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__tls_ensure_template() noexcept
+{
+  if ( atom::load(__micron_tls_template_state.ptr(), static_cast&lt;int&gt;(memory_order_acquire)) == __tls_tmpl_ready ) return true;
+  u32 expected = __tls_tmpl_uninit;
+  if ( __micron_tls_template_state.compare_exchange_strong(expected, __tls_tmpl_capturing, memory_order_acq_rel, memory_order_acquire) ) {
+#if defined(MICRON_ATTACH_MODULE)
+    const bool ok = __micron_tls_template.valid ? true : (__tls_capture_from_proc_auxv() or __tls_capture_from_ehdr());
+#else
+    const bool ok = __micron_tls_template.valid ? true : (__tls_capture_from_ehdr() or __tls_capture_from_proc_auxv());
+#endif
+    atom::store(__micron_tls_template_state.ptr(), ok ? __tls_tmpl_ready : __tls_tmpl_uninit, static_cast&lt;int&gt;(memory_order_release));
+    return ok;
+  }
+  while ( atom::load(__micron_tls_template_state.ptr(), static_cast&lt;int&gt;(memory_order_acquire)) == __tls_tmpl_capturing ) {
+  }
+  return atom::load(__micron_tls_template_state.ptr(), static_cast&lt;int&gt;(memory_order_acquire)) == __tls_tmpl_ready;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L136">line 136</a></td></tr><tr class="t-dsc"><td><code>ok</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>atom::load(__micron_tls_template_state.ptr(), static_cast&lt;int&gt;(memory_order_acquire)) == __tls_tmpl_ready</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L149">line 149</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../atomic/intrin.hpp.html#f-751f0c5aa5b6a558">atom::load</a>, <a href="tls.hpp.html#f-37513c80c33fa9e1">__tls_capture_from_proc_auxv</a>, <a href="tls.hpp.html#f-a0d0f6c551e0ec81">__tls_capture_from_ehdr</a>, <a href="../../../atomic/intrin.hpp.html#f-764f1c8f4bb9439d">atom::store</a>.</p></section><section class="function-entry" id="f-85b4da259590bf81"><h3><code>micron::__attach_host_tls_init() noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L154">line 154</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__attach_host_tls_init() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_ENABLE_ATTACH)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__attach_host_tls_init() noexcept
+{
+  if constexpr ( __micron_tls_surplus == 0 ) {
+    return false;
+  } else {
+    if ( __attach_host_tls_ready() ) return true;
+    if ( !__tls_ensure_template() ) return false;
+    byte *tp = __attach_read_tp();
+    if ( tp == nullptr ) return false;
+    const i64 surplus_tpoff = static_cast&lt;i64&gt;(&amp;__micron_attach_surplus[0] - tp);
+    const __tls_template_t &amp;t = __micron_tls_template;
+    const u64 p_align = t.align ? t.align : __micron_tls_min_align;
+    return __attach_host_tls_record(surplus_tpoff, __tls_round_up(t.memsz, p_align));
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L157">line 157</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L159">line 159</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L160">line 160</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L162">line 162</a></td></tr><tr class="t-dsc"><td><code>__attach_host_tls_record(surplus_tpoff, __tls_round_up(t.memsz, p_align))</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L166">line 166</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../attach/surplus.hpp.html#f-8fa527d134612713">__attach_host_tls_ready</a>, <a href="tls.hpp.html#f-e7fee0d35ef00651">__tls_ensure_template</a>, <a href="../../../attach/landlord.hpp.html#f-c1d53d4f8ac99557">__attach_read_tp</a>, <a href="../../../attach/surplus.hpp.html#f-719cabf416cc8950">__attach_host_tls_record</a>, <a href="tls.hpp.html#f-ef030ac76692e077">__tls_round_up</a>.</p></section><section class="function-entry" id="f-69a39851e3135851"><h3><code>micron::__tls_make_frame(const byte *image, u64 filesz, u64 memsz, u64 align, usize page_sz) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L173">line 173</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __tls_frame
+__tls_make_frame(const byte *image, u64 filesz, u64 memsz, u64 align, usize page_sz) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *image</code></li><li><code>u64 filesz</code></li><li><code>u64 memsz</code></li><li><code>u64 align</code></li><li><code>usize page_sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __tls_frame
+__tls_make_frame(const byte *image, u64 filesz, u64 memsz, u64 align, usize page_sz) noexcept
+{
+  __tls_frame f{};
+  if ( page_sz == 0 ) page_sz = 4096;
+  const u64 p_align = align ? align : __micron_tls_min_align;
+  if ( p_align &gt; page_sz ) return f;      // bad align
+  const u64 block = __tls_round_up(memsz, p_align);
+
+  // NOTE: no surplus region
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86)
+  // Variant II: [ image_block | TCB ], tp = base + block
+  const u64 alloc = __tls_round_up(block + __micron_tcb_sz, page_sz);
+  byte *base = __tls_raw_mmap(static_cast&lt;usize&gt;(alloc));
+  if ( !base ) return f;
+  byte *tp = base + block;
+  byte *image_dst = base;
+  for ( u64 i = 0; i &lt; filesz; ++i ) image_dst[i] = image[i];
+  *reinterpret_cast&lt;void **&gt;(tp) = tp;      // TCB self-pointer (%fs:0 == tp)
+  f = __tls_frame{ base, static_cast&lt;usize&gt;(alloc), tp, block };
+#elif defined(__micron_arch_arm64) || defined(__micron_arch_arm32)
+  // Variant I: [ TCB | pad | image_block ], tp = base; no self-pointer
+  // WARNING: armv7/armv8+ exec model resolves a thread_local at PT_TLS offset to read_tp + round_up(tcbhead, p_align) + o,
+  // the image __MUST__ start at p_align past the TCB, not at tcbhead
+  const u64 head = (sizeof(void *) == 8) ? __arm64_tcbhead_sz : __arm_tcbhead_sz;
+  const u64 head_aligned = __tls_round_up(head, p_align);
+  const u64 alloc = __tls_round_up(head_aligned + block, page_sz);
+  byte *base = __tls_raw_mmap(static_cast&lt;usize&gt;(alloc));
+  if ( !base ) return f;
+  byte *image_dst = base + head_aligned;
+  for ( u64 i = 0; i &lt; filesz; ++i ) image_dst[i] = image[i];
+  f = __tls_frame{ base, static_cast&lt;usize&gt;(alloc), base, block };
+#endif
+  return f;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L178">line 178</a></td></tr><tr class="t-dsc"><td><code>f</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L186">line 186</a></td></tr><tr class="t-dsc"><td><code>f</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L200">line 200</a></td></tr><tr class="t-dsc"><td><code>f</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L205">line 205</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-ef030ac76692e077">__tls_round_up</a>, <a href="tls.hpp.html#f-9d4af18e3ee3c43e">__tls_raw_mmap</a>.</p></section><section class="function-entry" id="f-f76d6cf8465bd0b2"><h3><code>micron::__tls_make_frame_cached() noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L209">line 209</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __tls_frame
+__tls_make_frame_cached() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __tls_frame
+__tls_make_frame_cached() noexcept
+{
+  if ( !__tls_ensure_template() ) return __tls_frame{};
+  const __tls_template_t &amp;t = __micron_tls_template;
+  return __tls_make_frame(t.image, t.filesz, t.memsz, t.align, t.pagesz);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__tls_frame{}</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L211">line 211</a></td></tr><tr class="t-dsc"><td><code>__tls_make_frame(t.image, t.filesz, t.memsz, t.align, t.pagesz)</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L213">line 213</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-e7fee0d35ef00651">__tls_ensure_template</a>, <a href="tls.hpp.html#f-69a39851e3135851">__tls_make_frame</a>.</p></section><section class="function-entry" id="f-3777552cbdbfc3f3"><h3><code>micron::__tls_seed_tcb_from_current([[maybe_unused]] const __tls_frame &amp;f) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L219">line 219</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__tls_seed_tcb_from_current([[maybe_unused]] const __tls_frame &amp;f) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>[[maybe_unused]] const __tls_frame &amp;f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__tls_seed_tcb_from_current([[maybe_unused]] const __tls_frame &amp;f) noexcept
+{
+#if defined(__micron_arch_amd64)
+  if ( !f.tp ) return;
+  unsigned long guard = 0, pguard = 0;
+  asm volatile(&quot;movq %%fs:0x28, %0&quot; : &quot;=r&quot;(guard));
+  asm volatile(&quot;movq %%fs:0x30, %0&quot; : &quot;=r&quot;(pguard));
+  *reinterpret_cast&lt;unsigned long *&gt;(f.tp + 0x28) = guard;
+  *reinterpret_cast&lt;unsigned long *&gt;(f.tp + 0x30) = pguard;
+#elif defined(__micron_arch_x86)
+  if ( !f.tp ) return;
+  unsigned long guard = 0, pguard = 0;
+  asm volatile(&quot;movl %%gs:0x14, %0&quot; : &quot;=r&quot;(guard));      // i386 glibc stack guard
+  asm volatile(&quot;movl %%gs:0x18, %0&quot; : &quot;=r&quot;(pguard));
+  *reinterpret_cast&lt;unsigned long *&gt;(f.tp + 0x14) = guard;
+  *reinterpret_cast&lt;unsigned long *&gt;(f.tp + 0x18) = pguard;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L222">line 222</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L229">line 229</a></td></tr></tbody></table></section><section class="function-entry" id="f-e154877fdcd515fe"><h3><code>micron::__tls_make_child_frame() noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L239">line 239</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __tls_frame
+__tls_make_child_frame() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __tls_frame
+__tls_make_child_frame() noexcept
+{
+#if defined(MICRON_ENABLE_ATTACH)
+  (void)__attach_host_tls_init();
+#endif
+  __tls_frame f = __tls_make_frame_cached();
+  if ( f.base ) {
+    __tls_seed_tcb_from_current(f);
+#if defined(__micron_attach_capable)
+    // WARNING: join the registry before seeding, never after
+    __attach_frame_register(f.base);
+    // seed every attached guest&#x27;s thread_locals into this frame&#x27;s surplus
+    __attach_copy_registered_tdata(f.base);
+#endif
+  }
+  return f;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L254">line 254</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-85b4da259590bf81">__attach_host_tls_init</a>, <a href="tls.hpp.html#f-f76d6cf8465bd0b2">__tls_make_frame_cached</a>, <a href="tls.hpp.html#f-3777552cbdbfc3f3">__tls_seed_tcb_from_current</a>, <a href="../../../attach/surplus.hpp.html#f-60aae68582cd3928">__attach_frame_register</a>, <a href="../../../attach/landlord.hpp.html#f-2d9f5d55d271da67">__attach_copy_registered_tdata</a>.</p></section><section class="function-entry" id="f-c2c2ada36ae7bb9d"><h3><code>micron::__tls_free_frame(const __tls_frame &amp;f) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L258">line 258</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__tls_free_frame(const __tls_frame &amp;f) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __tls_frame &amp;f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__tls_free_frame(const __tls_frame &amp;f) noexcept
+{
+  if ( !f.base ) return;
+#if defined(__micron_attach_capable)
+  // leave the registry before the pages go away, so no assign() walk can write into them
+  __attach_frame_unregister(f.base);
+#endif
+  micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(f.base), f.size);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L260">line 260</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../attach/surplus.hpp.html#f-dc5bae3242912e6a">__attach_frame_unregister</a>, <a href="../../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="../../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>.</p></section><section class="function-entry" id="f-1b74f28291fc2109"><h3><code>micron::__attach_make_child_frame(__tls_frame *out) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L270">line 270</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+__attach_make_child_frame(__tls_frame *out) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_attach_capable)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__tls_frame *out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+__attach_make_child_frame(__tls_frame *out) noexcept
+{
+  __tls_frame frame = __tls_make_child_frame();
+  if ( frame.base == nullptr ) return -1;
+  *out = frame;
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L273">line 273</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../../source/linux/sys/micthread/tls.hpp.html#L275">line 275</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-e154877fdcd515fe">__tls_make_child_frame</a>.</p></section><section class="function-entry" id="f-0a94bba6587c39da"><h3><code>micron::__attach_free_frame(const __tls_frame *f) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L279">line 279</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__attach_free_frame(const __tls_frame *f) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_attach_capable)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __tls_frame *f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__attach_free_frame(const __tls_frame *f) noexcept
+{
+  if ( f ) __tls_free_frame(*f);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-c2c2ada36ae7bb9d">__tls_free_frame</a>.</p></section><section class="function-entry" id="f-aff6e0e03ccdc3fc"><h3><code>__micron_tls_publish_template(const byte *image, u64 filesz, u64 memsz, u64 align, usize pagesz) noexcept</code></h3><p>Defined in <code>linux/sys/micthread/tls.hpp</code>, <a href="../../../../source/linux/sys/micthread/tls.hpp.html#L290">line 290</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((used)) inline void
+__micron_tls_publish_template(const byte *image, u64 filesz, u64 memsz, u64 align, usize pagesz) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_freestanding)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const byte *image</code></li><li><code>u64 filesz</code></li><li><code>u64 memsz</code></li><li><code>u64 align</code></li><li><code>usize pagesz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((used)) inline void
+__micron_tls_publish_template(const byte *image, u64 filesz, u64 memsz, u64 align, usize pagesz) noexcept
+{
+  micron::__tls_capture_template(image, filesz, memsz, align, pagesz);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="tls.hpp.html#f-2a2cbea9a54ca30b">micron::__tls_capture_template</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/maps/pmap.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/maps/pmap.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/maps.html">Maps</a></div><p>Defined in header <code>&lt;micron/maps/pmap.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/maps/pmap.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-12a06f19b1d14083">micron::pmap</code></td><td>class; line 37</td></tr><tr class="t-dsc"><td><code id="s-8a3e97a918547847">micron::pmap::category_type</code></td><td>typedef; line 649</td></tr><tr class="t-dsc"><td><code id="s-7a003ef66f61e9fc">micron::pmap::mutability_type</code></td><td>typedef; line 650</td></tr><tr class="t-dsc"><td><code id="s-2c57682228a22cc1">micron::pmap::memory_type</code></td><td>typedef; line 651</td></tr><tr class="t-dsc"><td><code id="s-0ef74698d1614d1c">micron::pmap::size_type</code></td><td>typedef; line 652</td></tr><tr class="t-dsc"><td><code id="s-8839a4514aeb925e">micron::pmap::key_type</code></td><td>typedef; line 653</td></tr><tr class="t-dsc"><td><code id="s-d6542e107fc8e25f">micron::pmap::mapped_type</code></td><td>typedef; line 654</td></tr><tr class="t-dsc"><td><a href="#f-22aa2d4f14b06fe5">micron::pmap::pmap()</a></td><td>function; line 656</td></tr><tr class="t-dsc"><td><a href="#f-080a4c6340874c12">micron::pmap::~pmap()</a></td><td>function; line 658</td></tr><tr class="t-dsc"><td><a href="#f-35652433d7585ccf">micron::pmap::pmap(const pmap &amp;o)</a></td><td>function; line 660</td></tr><tr class="t-dsc"><td><a href="#f-fe06db285a3620c3">micron::pmap::pmap(pmap &amp;&amp;o) noexcept</a></td><td>function; line 662</td></tr><tr class="t-dsc"><td><a href="#f-5bafe49c9518313c">micron::pmap::operator=(const pmap &amp;o)</a></td><td>function; line 669</td></tr><tr class="t-dsc"><td><a href="#f-4eb78350395e2379">micron::pmap::operator=(pmap &amp;&amp;o) noexcept</a></td><td>function; line 680</td></tr><tr class="t-dsc"><td><a href="#f-fd4a3710ae950aed">micron::pmap::size() const noexcept</a></td><td>function; line 692</td></tr><tr class="t-dsc"><td><a href="#f-1f6848634588da18">micron::pmap::empty() const noexcept</a></td><td>function; line 698</td></tr><tr class="t-dsc"><td><a href="#f-3cf2d7768a64b9ad">micron::pmap::insert_hash(hash64_t h, const K &amp;k, const V &amp;v) const</a></td><td>function; line 704</td></tr><tr class="t-dsc"><td><a href="#f-ad57171bfd5a87e9">micron::pmap::insert_hash(hash64_t h, const K &amp;k, V &amp;&amp;v) const</a></td><td>function; line 712</td></tr><tr class="t-dsc"><td><a href="#f-d4a4cb84527b1879">micron::pmap::insert(const K &amp;k, const V &amp;v) const</a></td><td>function; line 720</td></tr><tr class="t-dsc"><td><a href="#f-81398e474d791cc1">micron::pmap::insert(const K &amp;k, V &amp;&amp;v) const</a></td><td>function; line 726</td></tr><tr class="t-dsc"><td><a href="#f-0db43317e798247b">micron::pmap::set(const K &amp;k, const V &amp;v) const</a></td><td>function; line 732</td></tr><tr class="t-dsc"><td><a href="#f-97e291096e59b283">micron::pmap::emplace(const K &amp;k, Args &amp;&amp;...args) const</a></td><td>function; line 739</td></tr><tr class="t-dsc"><td><a href="#f-981b175ebdb59302">micron::pmap::erase_hash(hash64_t h, const K &amp;k) const</a></td><td>function; line 745</td></tr><tr class="t-dsc"><td><a href="#f-a7de5ecdb4625aad">micron::pmap::erase(const K &amp;k) const</a></td><td>function; line 753</td></tr><tr class="t-dsc"><td><a href="#f-eec3a50c76a7f7bf">micron::pmap::clear() const</a></td><td>function; line 759</td></tr><tr class="t-dsc"><td><a href="#f-4906a473dd6ed9fb">micron::pmap::find_hash(hash64_t h, const K &amp;k) const</a></td><td>function; line 765</td></tr><tr class="t-dsc"><td><a href="#f-09bd725e61d3a9fb">micron::pmap::find(const K &amp;k) const</a></td><td>function; line 771</td></tr><tr class="t-dsc"><td><a href="#f-d45bd2dba47918af">micron::pmap::contains(const K &amp;k) const</a></td><td>function; line 777</td></tr><tr class="t-dsc"><td><a href="#f-bdd5833bf6904be6">micron::pmap::at(const K &amp;k) const</a></td><td>function; line 783</td></tr><tr class="t-dsc"><td><a href="#f-ee0abf113d2b709e">micron::pmap::for_each(Fn &amp;&amp;fn) const</a></td><td>function; line 793</td></tr><tr class="t-dsc"><td><a href="#f-4defb06d9019c214">micron::pmap::identity() const noexcept</a></td><td>function; line 799</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-22aa2d4f14b06fe5"><h3><code>micron::pmap::pmap()</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L656">line 656</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-080a4c6340874c12"><h3><code>micron::pmap::~pmap()</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L658">line 658</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~pmap()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~pmap() { __release(__root); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-682c4aca06599a4f">__release</a>.</p></section><section class="function-entry" id="f-35652433d7585ccf"><h3><code>micron::pmap::pmap(const pmap &amp;o)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L660">line 660</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap(const pmap &amp;o) : __root(o.__root), __length(o.__length)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const pmap &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap(const pmap &amp;o) : __root(o.__root), __length(o.__length) { __retain(__root); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-4a40c1a0a6450a0c">__retain</a>.</p></section><section class="function-entry" id="f-fe06db285a3620c3"><h3><code>micron::pmap::pmap(pmap &amp;&amp;o) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L662">line 662</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap(pmap &amp;&amp;o) noexcept : __root(o.__root), __length(o.__length)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pmap &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap(pmap &amp;&amp;o) noexcept : __root(o.__root), __length(o.__length)
+  {
+    o.__root = 0;
+    o.__length = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5bafe49c9518313c"><h3><code>micron::pmap::operator=(const pmap &amp;o)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L669">line 669</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap &amp;
+  operator=(const pmap &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const pmap &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap &amp;
+  operator=(const pmap &amp;o)
+  {
+    if ( this == &amp;o ) return *this;
+    __retain(o.__root);
+    __release(__root);
+    __root = o.__root;
+    __length = o.__length;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/maps/pmap.hpp.html#L671">line 671</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/maps/pmap.hpp.html#L676">line 676</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-4a40c1a0a6450a0c">__retain</a>, <a href="pmap.hpp.html#f-682c4aca06599a4f">__release</a>.</p></section><section class="function-entry" id="f-4eb78350395e2379"><h3><code>micron::pmap::operator=(pmap &amp;&amp;o) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L680">line 680</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap &amp;
+  operator=(pmap &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pmap &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap &amp;
+  operator=(pmap &amp;&amp;o) noexcept
+  {
+    if ( this == &amp;o ) return *this;
+    __release(__root);
+    __root = o.__root;
+    __length = o.__length;
+    o.__root = 0;
+    o.__length = 0;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/maps/pmap.hpp.html#L682">line 682</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/maps/pmap.hpp.html#L688">line 688</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-682c4aca06599a4f">__release</a>.</p></section><section class="function-entry" id="f-fd4a3710ae950aed"><h3><code>micron::pmap::size() const noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L692">line 692</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__length</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const noexcept
+  {
+    return __length;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__length</code></td><td><a href="../../source/maps/pmap.hpp.html#L694">line 694</a></td></tr></tbody></table></section><section class="function-entry" id="f-1f6848634588da18"><h3><code>micron::pmap::empty() const noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L698">line 698</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__length == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const noexcept
+  {
+    return __length == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__length == 0</code></td><td><a href="../../source/maps/pmap.hpp.html#L700">line 700</a></td></tr></tbody></table></section><section class="function-entry" id="f-3cf2d7768a64b9ad"><h3><code>micron::pmap::insert_hash(hash64_t h, const K &amp;k, const V &amp;v) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L704">line 704</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap
+  insert_hash(hash64_t h, const K &amp;k, const V &amp;v) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>const V &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap
+  insert_hash(hash64_t h, const K &amp;k, const V &amp;v) const
+  {
+    bool existed = false;
+    uintptr_t nr = __insert_into(__root, h, k, V(v), 0, existed);
+    return pmap(nr, existed ? __length : __length + 1);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pmap(nr, existed ? __length : __length + 1)</code></td><td><a href="../../source/maps/pmap.hpp.html#L708">line 708</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-cfde83ae0203405e">__insert_into</a>, <a href="pmap.hpp.html#f-35652433d7585ccf">pmap</a>.</p></section><section class="function-entry" id="f-ad57171bfd5a87e9"><h3><code>micron::pmap::insert_hash(hash64_t h, const K &amp;k, V &amp;&amp;v) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L712">line 712</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap
+  insert_hash(hash64_t h, const K &amp;k, V &amp;&amp;v) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>V &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap
+  insert_hash(hash64_t h, const K &amp;k, V &amp;&amp;v) const
+  {
+    bool existed = false;
+    uintptr_t nr = __insert_into(__root, h, k, micron::move(v), 0, existed);
+    return pmap(nr, existed ? __length : __length + 1);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pmap(nr, existed ? __length : __length + 1)</code></td><td><a href="../../source/maps/pmap.hpp.html#L716">line 716</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-cfde83ae0203405e">__insert_into</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="pmap.hpp.html#f-35652433d7585ccf">pmap</a>.</p></section><section class="function-entry" id="f-d4a4cb84527b1879"><h3><code>micron::pmap::insert(const K &amp;k, const V &amp;v) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L720">line 720</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap
+  insert(const K &amp;k, const V &amp;v) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>const V &amp;v</code></li></ul><h4>Effects</h4><p>Returns <code>insert_hash(hash&lt;hash64_t&gt;(k), k, v)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap
+  insert(const K &amp;k, const V &amp;v) const
+  {
+    return insert_hash(hash&lt;hash64_t&gt;(k), k, v);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>insert_hash(hash&lt;hash64_t&gt;(k), k, v)</code></td><td><a href="../../source/maps/pmap.hpp.html#L722">line 722</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-3cf2d7768a64b9ad">insert_hash</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>.</p></section><section class="function-entry" id="f-81398e474d791cc1"><h3><code>micron::pmap::insert(const K &amp;k, V &amp;&amp;v) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L726">line 726</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap
+  insert(const K &amp;k, V &amp;&amp;v) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>V &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Returns <code>insert_hash(hash&lt;hash64_t&gt;(k), k, micron::move(v))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap
+  insert(const K &amp;k, V &amp;&amp;v) const
+  {
+    return insert_hash(hash&lt;hash64_t&gt;(k), k, micron::move(v));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>insert_hash(hash&lt;hash64_t&gt;(k), k, micron::move(v))</code></td><td><a href="../../source/maps/pmap.hpp.html#L728">line 728</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-3cf2d7768a64b9ad">insert_hash</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-0db43317e798247b"><h3><code>micron::pmap::set(const K &amp;k, const V &amp;v) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L732">line 732</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap
+  set(const K &amp;k, const V &amp;v) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>const V &amp;v</code></li></ul><h4>Effects</h4><p>Returns <code>insert(k, v)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap
+  set(const K &amp;k, const V &amp;v) const
+  {
+    return insert(k, v);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>insert(k, v)</code></td><td><a href="../../source/maps/pmap.hpp.html#L734">line 734</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-d4a4cb84527b1879">insert</a>.</p></section><section class="function-entry" id="f-97e291096e59b283"><h3><code>micron::pmap::emplace(const K &amp;k, Args &amp;&amp;...args) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L739">line 739</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  pmap
+  emplace(const K &amp;k, Args &amp;&amp;...args) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Returns <code>insert(k, V(micron::forward&lt;Args&gt;(args)...))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  pmap
+  emplace(const K &amp;k, Args &amp;&amp;...args) const
+  {
+    return insert(k, V(micron::forward&lt;Args&gt;(args)...));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>insert(k, V(micron::forward&lt;Args&gt;(args)...))</code></td><td><a href="../../source/maps/pmap.hpp.html#L741">line 741</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-d4a4cb84527b1879">insert</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-981b175ebdb59302"><h3><code>micron::pmap::erase_hash(hash64_t h, const K &amp;k) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L745">line 745</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap
+  erase_hash(hash64_t h, const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap
+  erase_hash(hash64_t h, const K &amp;k) const
+  {
+    bool erased = false;
+    uintptr_t nr = __erase_from(__root, h, k, 0, erased);
+    return pmap(nr, erased ? __length - 1 : __length);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pmap(nr, erased ? __length - 1 : __length)</code></td><td><a href="../../source/maps/pmap.hpp.html#L749">line 749</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-d2d3aec9ddd815df">__erase_from</a>, <a href="pmap.hpp.html#f-35652433d7585ccf">pmap</a>.</p></section><section class="function-entry" id="f-a7de5ecdb4625aad"><h3><code>micron::pmap::erase(const K &amp;k) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L753">line 753</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap
+  erase(const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>erase_hash(hash&lt;hash64_t&gt;(k), k)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap
+  erase(const K &amp;k) const
+  {
+    return erase_hash(hash&lt;hash64_t&gt;(k), k);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>erase_hash(hash&lt;hash64_t&gt;(k), k)</code></td><td><a href="../../source/maps/pmap.hpp.html#L755">line 755</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-981b175ebdb59302">erase_hash</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>.</p></section><section class="function-entry" id="f-eec3a50c76a7f7bf"><h3><code>micron::pmap::clear() const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L759">line 759</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap
+  clear() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>pmap()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap
+  clear() const
+  {
+    return pmap();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pmap()</code></td><td><a href="../../source/maps/pmap.hpp.html#L761">line 761</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-35652433d7585ccf">pmap</a>.</p></section><section class="function-entry" id="f-4906a473dd6ed9fb"><h3><code>micron::pmap::find_hash(hash64_t h, const K &amp;k) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L765">line 765</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const V *
+  find_hash(hash64_t h, const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>__find_in(__root, h, k, 0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const V *
+  find_hash(hash64_t h, const K &amp;k) const
+  {
+    return __find_in(__root, h, k, 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__find_in(__root, h, k, 0)</code></td><td><a href="../../source/maps/pmap.hpp.html#L767">line 767</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-2e1457e403372bf6">__find_in</a>.</p></section><section class="function-entry" id="f-09bd725e61d3a9fb"><h3><code>micron::pmap::find(const K &amp;k) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L771">line 771</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const V *
+  find(const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>find_hash(hash&lt;hash64_t&gt;(k), k)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const V *
+  find(const K &amp;k) const
+  {
+    return find_hash(hash&lt;hash64_t&gt;(k), k);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>find_hash(hash&lt;hash64_t&gt;(k), k)</code></td><td><a href="../../source/maps/pmap.hpp.html#L773">line 773</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-4906a473dd6ed9fb">find_hash</a>, <a href="../hash/hash.hpp.html#f-b999e7a8372d6324">hash&lt;hash64_t&gt;</a>.</p></section><section class="function-entry" id="f-d45bd2dba47918af"><h3><code>micron::pmap::contains(const K &amp;k) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L777">line 777</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  contains(const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Returns <code>find(k) != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  contains(const K &amp;k) const
+  {
+    return find(k) != nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>find(k) != nullptr</code></td><td><a href="../../source/maps/pmap.hpp.html#L779">line 779</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-09bd725e61d3a9fb">find</a>.</p></section><section class="function-entry" id="f-bdd5833bf6904be6"><h3><code>micron::pmap::at(const K &amp;k) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L783">line 783</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const V &amp;
+  at(const K &amp;k) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const V &amp;
+  at(const K &amp;k) const
+  {
+    const V *v = find(k);
+    if ( !v ) [[unlikely]]
+      exc&lt;except::library_error&gt;(&quot;pmap::at(): key not found&quot;);
+    return *v;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*v</code></td><td><a href="../../source/maps/pmap.hpp.html#L788">line 788</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;pmap::at(): key not found&quot;)</code></td><td><a href="../../source/maps/pmap.hpp.html#L787">line 787</a><br>Within <code>( !v )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-09bd725e61d3a9fb">find</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-ee0abf113d2b709e"><h3><code>micron::pmap::for_each(Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L793">line 793</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const
+  {
+    __walk(__root, micron::forward&lt;Fn&gt;(fn));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-1f120cbfee1e6875">__walk</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-4defb06d9019c214"><h3><code>micron::pmap::identity() const noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L799">line 799</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const void *
+  identity() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;const void *&gt;(__root)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const void *
+  identity() const noexcept
+  {
+    return reinterpret_cast&lt;const void *&gt;(__root);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;const void *&gt;(__root)</code></td><td><a href="../../source/maps/pmap.hpp.html#L801">line 801</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-9d34de6001e64add"><h3><code>micron::pmap::__is_leaf(uintptr_t p) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) bool
+  __is_leaf(uintptr_t p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t p</code></li></ul><h4>Effects</h4><p>Returns <code>(p &amp; __tag_mask) == __tag_leaf_bit</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) bool
+  __is_leaf(uintptr_t p) noexcept
+  {
+    return (p &amp; __tag_mask) == __tag_leaf_bit;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(p &amp; __tag_mask) == __tag_leaf_bit</code></td><td><a href="../../source/maps/pmap.hpp.html#L59">line 59</a></td></tr></tbody></table></section><section class="function-entry" id="f-daae8799bdeb7c00"><h3><code>micron::pmap::__as_leaf(uintptr_t p) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L63">line 63</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) __leaf *
+  __as_leaf(uintptr_t p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t p</code></li></ul><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;__leaf *&gt;(p &amp; ~__tag_mask)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) __leaf *
+  __as_leaf(uintptr_t p) noexcept
+  {
+    return reinterpret_cast&lt;__leaf *&gt;(p &amp; ~__tag_mask);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;__leaf *&gt;(p &amp; ~__tag_mask)</code></td><td><a href="../../source/maps/pmap.hpp.html#L65">line 65</a></td></tr></tbody></table></section><section class="function-entry" id="f-f8dce7bbc448b95d"><h3><code>micron::pmap::__as_internal(uintptr_t p) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) __internal *
+  __as_internal(uintptr_t p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t p</code></li></ul><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;__internal *&gt;(p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) __internal *
+  __as_internal(uintptr_t p) noexcept
+  {
+    return reinterpret_cast&lt;__internal *&gt;(p);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;__internal *&gt;(p)</code></td><td><a href="../../source/maps/pmap.hpp.html#L71">line 71</a></td></tr></tbody></table></section><section class="function-entry" id="f-5ceec5c4209326a3"><h3><code>micron::pmap::__tag_leaf_ptr(__leaf *l) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) uintptr_t
+  __tag_leaf_ptr(__leaf *l) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__leaf *l</code></li></ul><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;uintptr_t&gt;(l) | __tag_leaf_bit</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) uintptr_t
+  __tag_leaf_ptr(__leaf *l) noexcept
+  {
+    return reinterpret_cast&lt;uintptr_t&gt;(l) | __tag_leaf_bit;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;uintptr_t&gt;(l) | __tag_leaf_bit</code></td><td><a href="../../source/maps/pmap.hpp.html#L77">line 77</a></td></tr></tbody></table></section><section class="function-entry" id="f-95d7dd97d50c4b61"><h3><code>micron::pmap::__tag_internal_ptr(__internal *in) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) uintptr_t
+  __tag_internal_ptr(__internal *in) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__internal *in</code></li></ul><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;uintptr_t&gt;(in)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) uintptr_t
+  __tag_internal_ptr(__internal *in) noexcept
+  {
+    return reinterpret_cast&lt;uintptr_t&gt;(in);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;uintptr_t&gt;(in)</code></td><td><a href="../../source/maps/pmap.hpp.html#L83">line 83</a></td></tr></tbody></table></section><section class="function-entry" id="f-d7004ba7eb11161b"><h3><code>micron::pmap::__internal::__internal(u32 bm)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L91">line 91</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __internal(u32 bm) : refs(1), bitmap(bm)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 bm</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __internal(u32 bm) : refs(1), bitmap(bm) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-2096983fb32f5b8b"><h3><code>micron::pmap::__chain::__chain(hash64_t hh, Kf &amp;&amp;k, Vf &amp;&amp;v, __chain *nx = nullptr)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L102">line 102</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Kf, typename Vf&gt;
+    __chain(hash64_t hh, Kf &amp;&amp;k, Vf &amp;&amp;v, __chain *nx = nullptr)
+        : h(hh), next(nx), key(micron::forward&lt;Kf&gt;(k)), value(micron::forward&lt;Vf&gt;(v))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t hh</code></li><li><code>Kf &amp;&amp;k</code></li><li><code>Vf &amp;&amp;v</code></li><li><code>__chain *nx = nullptr</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Kf, typename Vf&gt;
+    __chain(hash64_t hh, Kf &amp;&amp;k, Vf &amp;&amp;v, __chain *nx = nullptr)
+        : h(hh), next(nx), key(micron::forward&lt;Kf&gt;(k)), value(micron::forward&lt;Vf&gt;(v))
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-10edf35e6612232e"><h3><code>micron::pmap::__leaf::__leaf(hash64_t hh, Kf &amp;&amp;k, Vf &amp;&amp;v)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L119">line 119</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Kf, typename Vf&gt;
+    __leaf(hash64_t hh, Kf &amp;&amp;k, Vf &amp;&amp;v)
+        : refs(1), overflow_len(0), h(hh), overflow(nullptr), key(micron::forward&lt;Kf&gt;(k)), value(micron::forward&lt;Vf&gt;(v))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t hh</code></li><li><code>Kf &amp;&amp;k</code></li><li><code>Vf &amp;&amp;v</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Kf, typename Vf&gt;
+    __leaf(hash64_t hh, Kf &amp;&amp;k, Vf &amp;&amp;v)
+        : refs(1), overflow_len(0), h(hh), overflow(nullptr), key(micron::forward&lt;Kf&gt;(k)), value(micron::forward&lt;Vf&gt;(v))
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5e688dc044077a27"><h3><code>micron::pmap::__children_of(__internal *in) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L126">line 126</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) uintptr_t *
+  __children_of(__internal *in) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__internal *in</code></li></ul><h4>Effects</h4><p>Returns <code>micron::ptr_cast&lt;uintptr_t *&gt;(reinterpret_cast&lt;byte *&gt;(in) + sizeof(__internal))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) uintptr_t *
+  __children_of(__internal *in) noexcept
+  {
+    return micron::ptr_cast&lt;uintptr_t *&gt;(reinterpret_cast&lt;byte *&gt;(in) + sizeof(__internal));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::ptr_cast&lt;uintptr_t *&gt;(reinterpret_cast&lt;byte *&gt;(in) + sizeof(__internal))</code></td><td><a href="../../source/maps/pmap.hpp.html#L128">line 128</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;uintptr_t *&gt;</a>.</p></section><section class="function-entry" id="f-a1f9a427dac9ddde"><h3><code>micron::pmap::__children_of(const __internal *in) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L132">line 132</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) const uintptr_t *
+  __children_of(const __internal *in) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __internal *in</code></li></ul><h4>Effects</h4><p>Returns <code>micron::ptr_cast&lt;const uintptr_t *&gt;(reinterpret_cast&lt;const byte *&gt;(in) + sizeof(__internal))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) const uintptr_t *
+  __children_of(const __internal *in) noexcept
+  {
+    return micron::ptr_cast&lt;const uintptr_t *&gt;(reinterpret_cast&lt;const byte *&gt;(in) + sizeof(__internal));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::ptr_cast&lt;const uintptr_t *&gt;(reinterpret_cast&lt;const byte *&gt;(in) + sizeof(__internal))</code></td><td><a href="../../source/maps/pmap.hpp.html#L134">line 134</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const uintptr_t *&gt;</a>.</p></section><section class="function-entry" id="f-9d69ce68d664a085"><h3><code>micron::pmap::__has(u32 bitmap, u32 logical_idx) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L138">line 138</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) bool
+  __has(u32 bitmap, u32 logical_idx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 bitmap</code></li><li><code>u32 logical_idx</code></li></ul><h4>Effects</h4><p>Returns <code>(bitmap &gt;&gt; logical_idx) &amp; 1u</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) bool
+  __has(u32 bitmap, u32 logical_idx) noexcept
+  {
+    return (bitmap &gt;&gt; logical_idx) &amp; 1u;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(bitmap &gt;&gt; logical_idx) &amp; 1u</code></td><td><a href="../../source/maps/pmap.hpp.html#L140">line 140</a></td></tr></tbody></table></section><section class="function-entry" id="f-5af3f68bd74d589f"><h3><code>micron::pmap::__phys_idx(u32 bitmap, u32 logical_idx) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L144">line 144</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) usize
+  __phys_idx(u32 bitmap, u32 logical_idx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 bitmap</code></li><li><code>u32 logical_idx</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;usize&gt;(micron::popcount(bitmap &amp; ((1u &lt;&lt; logical_idx) - 1u)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) usize
+  __phys_idx(u32 bitmap, u32 logical_idx) noexcept
+  {
+    return static_cast&lt;usize&gt;(micron::popcount(bitmap &amp; ((1u &lt;&lt; logical_idx) - 1u)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(micron::popcount(bitmap &amp; ((1u &lt;&lt; logical_idx) - 1u)))</code></td><td><a href="../../source/maps/pmap.hpp.html#L146">line 146</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits.hpp.html#f-2aa567b13f058e7a">micron::popcount</a>.</p></section><section class="function-entry" id="f-ecdb033b4daefdfa"><h3><code>micron::pmap::__alloc_internal(u32 bitmap)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L150">line 150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __internal *
+  __alloc_internal(u32 bitmap)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 bitmap</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __internal *
+  __alloc_internal(u32 bitmap)
+  {
+    usize n = static_cast&lt;usize&gt;(micron::popcount(bitmap));
+    void *raw = ::operator new(sizeof(__internal) + n * sizeof(uintptr_t));
+    auto *in = static_cast&lt;__internal *&gt;(raw);
+    new (in) __internal(bitmap);
+    uintptr_t *cs = __children_of(in);
+    for ( usize i = 0; i &lt; n; ++i ) cs[i] = 0;
+    return in;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>in</code></td><td><a href="../../source/maps/pmap.hpp.html#L158">line 158</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits.hpp.html#f-2aa567b13f058e7a">micron::popcount</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>.</p></section><section class="function-entry" id="f-d3afccf20c6abff4"><h3><code>micron::pmap::__destroy_chain(__chain *c) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L162">line 162</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __destroy_chain(__chain *c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__chain *c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __destroy_chain(__chain *c) noexcept
+  {
+    while ( c ) {
+      __chain *nx = c-&gt;next;
+      delete c;
+      c = nx;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-1eadcee5eca2f434"><h3><code>micron::pmap::__copy_chain(const __chain *src)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L172">line 172</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __chain *
+  __copy_chain(const __chain *src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __chain *src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __chain *
+  __copy_chain(const __chain *src)
+  {
+    __chain *head = nullptr;
+    __chain **tail = &amp;head;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( const __chain *c = src; c; c = c-&gt;next ) {
+        *tail = new __chain(c-&gt;h, c-&gt;key, c-&gt;value);
+        tail = &amp;(*tail)-&gt;next;
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __destroy_chain(head);      // a throwing K/V copy must not leak the partial chain
+      throw;
+    }
+#endif
+    return head;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>head</code></td><td><a href="../../source/maps/pmap.hpp.html#L189">line 189</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/pmap.hpp.html#L186">line 186</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-d3afccf20c6abff4">__destroy_chain</a>.</p></section><section class="function-entry" id="f-654b7674ba321f43"><h3><code>micron::pmap::__retain_refs(u32 *p) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L194">line 194</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) void
+  __retain_refs(u32 *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) void
+  __retain_refs(u32 *p) noexcept
+  {
+    u32 cur = atom::load(p, atomic_relaxed);
+    for ( ;; ) {
+      if ( cur == __immortal_refs ) [[unlikely]]
+        return;
+      if ( atom::compare_exchange(p, &amp;cur, cur + 1u, true, atomic_relaxed, atomic_relaxed) ) return;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L199">line 199</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L200">line 200</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../atomic/intrin.hpp.html#f-751f0c5aa5b6a558">atom::load</a>, <a href="../atomic/intrin.hpp.html#f-0e439b0657fa7347">atom::compare_exchange</a>.</p></section><section class="function-entry" id="f-7f8fc9b46d96416b"><h3><code>micron::pmap::__dec_refs(u32 *p) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L205">line 205</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) bool
+  __dec_refs(u32 *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) bool
+  __dec_refs(u32 *p) noexcept
+  {
+    u32 cur = atom::load(p, atomic_relaxed);
+    for ( ;; ) {
+      if ( cur == __immortal_refs ) [[unlikely]]
+        return false;
+      if ( atom::compare_exchange(p, &amp;cur, cur - 1u, true, atomic_release, atomic_relaxed) ) {
+        if ( cur != 1u ) [[likely]]
+          return false;
+        atom::thread_fence(atomic_acquire);
+        return true;
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/maps/pmap.hpp.html#L210">line 210</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/maps/pmap.hpp.html#L213">line 213</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/maps/pmap.hpp.html#L215">line 215</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../atomic/intrin.hpp.html#f-751f0c5aa5b6a558">atom::load</a>, <a href="../atomic/intrin.hpp.html#f-0e439b0657fa7347">atom::compare_exchange</a>, <a href="../atomic/intrin.hpp.html#f-ca8a84c531923ede">atom::thread_fence</a>.</p></section><section class="function-entry" id="f-4a40c1a0a6450a0c"><h3><code>micron::pmap::__retain(uintptr_t p) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L221">line 221</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) void
+  __retain(uintptr_t p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) void
+  __retain(uintptr_t p) noexcept
+  {
+    if ( !p ) return;
+    if ( __is_leaf(p) )
+      __retain_refs(&amp;__as_leaf(p)-&gt;refs);
+    else
+      __retain_refs(&amp;__as_internal(p)-&gt;refs);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L223">line 223</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-9d34de6001e64add">__is_leaf</a>, <a href="pmap.hpp.html#f-654b7674ba321f43">__retain_refs</a>, <a href="pmap.hpp.html#f-daae8799bdeb7c00">__as_leaf</a>, <a href="pmap.hpp.html#f-f8dce7bbc448b95d">__as_internal</a>.</p></section><section class="function-entry" id="f-682c4aca06599a4f"><h3><code>micron::pmap::__release(uintptr_t p) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L231">line 231</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __release(uintptr_t p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __release(uintptr_t p) noexcept
+  {
+    if ( !p ) return;
+    if ( __is_leaf(p) ) {
+      __leaf *l = __as_leaf(p);
+      if ( !__dec_refs(&amp;l-&gt;refs) ) return;
+      __destroy_chain(l-&gt;overflow);
+      delete l;
+      return;
+    }
+    __internal *in = __as_internal(p);
+    if ( !__dec_refs(&amp;in-&gt;refs) ) return;
+    usize n = static_cast&lt;usize&gt;(micron::popcount(in-&gt;bitmap));
+    uintptr_t *cs = __children_of(in);
+    for ( usize i = 0; i &lt; n; ++i ) __release(cs[i]);
+    in-&gt;~__internal();
+    ::operator delete(in);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L233">line 233</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L236">line 236</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L239">line 239</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L242">line 242</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-9d34de6001e64add">__is_leaf</a>, <a href="pmap.hpp.html#f-daae8799bdeb7c00">__as_leaf</a>, <a href="pmap.hpp.html#f-7f8fc9b46d96416b">__dec_refs</a>, <a href="pmap.hpp.html#f-d3afccf20c6abff4">__destroy_chain</a>, <a href="pmap.hpp.html#f-f8dce7bbc448b95d">__as_internal</a>, <a href="../bits.hpp.html#f-2aa567b13f058e7a">micron::popcount</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>.</p></section><section class="function-entry" id="f-3273ddad1a9f5837"><h3><code>micron::pmap::__node_guard::__node_guard(uintptr_t q) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L253">line 253</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __node_guard(uintptr_t q) noexcept : p(q)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t q</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __node_guard(uintptr_t q) noexcept : p(q) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-56ef2b77e8d8a4b3"><h3><code>micron::pmap::__node_guard::~__node_guard()</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L255">line 255</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~__node_guard()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~__node_guard()
+    {
+      if ( p ) __release(p);
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-682c4aca06599a4f">__release</a>.</p></section><section class="function-entry" id="f-350a0fb7e58b9154"><h3><code>micron::pmap::__node_guard::dismiss() noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L261">line 261</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    dismiss() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    dismiss() noexcept
+    {
+      p = 0;
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-2a8051017828ecfb"><h3><code>micron::pmap::__node_guard::__node_guard(const __node_guard &amp;)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L266">line 266</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_guard(const __node_guard &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __node_guard &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-8766727ac6c6a41a"><h3><code>micron::pmap::__node_guard::operator=(const __node_guard &amp;)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L267">line 267</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__node_guard &amp;operator=(const __node_guard &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __node_guard &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-10c849122e41023b"><h3><code>micron::pmap::__mix_hash(hash64_t h) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L271">line 271</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) hash64_t
+  __mix_hash(hash64_t h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) hash64_t
+  __mix_hash(hash64_t h) noexcept
+  {
+    h ^= h &gt;&gt; 30;
+    h *= 0xbf58476d1ce4e5b9ULL;
+    h ^= h &gt;&gt; 27;
+    h *= 0x94d049bb133111ebULL;
+    h ^= h &gt;&gt; 31;
+    return h;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>h</code></td><td><a href="../../source/maps/pmap.hpp.html#L278">line 278</a></td></tr></tbody></table></section><section class="function-entry" id="f-33d9c9b0680da694"><h3><code>micron::pmap::__idx_at(hash64_t h, usize depth) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L282">line 282</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __attribute__((always_inline)) u32
+  __idx_at(hash64_t h, usize depth) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hash64_t h</code></li><li><code>usize depth</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __attribute__((always_inline)) u32
+  __idx_at(hash64_t h, usize depth) noexcept
+  {
+    if ( depth &lt; __natural_depth ) [[likely]]
+      return static_cast&lt;u32&gt;(h &gt;&gt; (depth * __log2B)) &amp; __mask32;
+    return static_cast&lt;u32&gt;(__mix_hash(h) &gt;&gt; ((depth - __natural_depth) * __log2B)) &amp; __mask32;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u32&gt;(h &gt;&gt; (depth * __log2B)) &amp; __mask32</code></td><td><a href="../../source/maps/pmap.hpp.html#L285">line 285</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;u32&gt;(__mix_hash(h) &gt;&gt; ((depth - __natural_depth) * __log2B)) &amp; __mask32</code></td><td><a href="../../source/maps/pmap.hpp.html#L286">line 286</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-10c849122e41023b">__mix_hash</a>.</p></section><section class="function-entry" id="f-57b1a5b89b2765fd"><h3><code>micron::pmap::__internal_replace(const __internal *src, u32 logical_idx, uintptr_t new_child)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L290">line 290</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __internal *
+  __internal_replace(const __internal *src, u32 logical_idx, uintptr_t new_child)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __internal *src</code></li><li><code>u32 logical_idx</code></li><li><code>uintptr_t new_child</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __internal *
+  __internal_replace(const __internal *src, u32 logical_idx, uintptr_t new_child)
+  {
+    u32 bm = src-&gt;bitmap;
+    usize n = static_cast&lt;usize&gt;(micron::popcount(bm));
+    __internal *out = __alloc_internal(bm);
+    const uintptr_t *src_cs = __children_of(src);
+    uintptr_t *dst_cs = __children_of(out);
+    usize phys = __phys_idx(bm, logical_idx);
+    for ( usize i = 0; i &lt; n; ++i ) {
+      if ( i == phys ) {
+        dst_cs[i] = new_child;
+      } else {
+        dst_cs[i] = src_cs[i];
+        __retain(dst_cs[i]);
+      }
+    }
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/maps/pmap.hpp.html#L306">line 306</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits.hpp.html#f-2aa567b13f058e7a">micron::popcount</a>, <a href="pmap.hpp.html#f-ecdb033b4daefdfa">__alloc_internal</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>, <a href="pmap.hpp.html#f-5af3f68bd74d589f">__phys_idx</a>, <a href="pmap.hpp.html#f-4a40c1a0a6450a0c">__retain</a>.</p></section><section class="function-entry" id="f-3612b97c16fcf732"><h3><code>micron::pmap::__internal_insert(const __internal *src, u32 logical_idx, uintptr_t new_child)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L310">line 310</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __internal *
+  __internal_insert(const __internal *src, u32 logical_idx, uintptr_t new_child)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __internal *src</code></li><li><code>u32 logical_idx</code></li><li><code>uintptr_t new_child</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __internal *
+  __internal_insert(const __internal *src, u32 logical_idx, uintptr_t new_child)
+  {
+    u32 nbm = src-&gt;bitmap | (1u &lt;&lt; logical_idx);
+    __internal *out = __alloc_internal(nbm);
+    usize n_old = static_cast&lt;usize&gt;(micron::popcount(src-&gt;bitmap));
+    const uintptr_t *src_cs = __children_of(src);
+    uintptr_t *dst_cs = __children_of(out);
+    usize phys = __phys_idx(nbm, logical_idx);
+    for ( usize i = 0; i &lt; phys; ++i ) {
+      dst_cs[i] = src_cs[i];
+      __retain(dst_cs[i]);
+    }
+    dst_cs[phys] = new_child;
+    for ( usize i = phys; i &lt; n_old; ++i ) {
+      dst_cs[i + 1] = src_cs[i];
+      __retain(dst_cs[i + 1]);
+    }
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/maps/pmap.hpp.html#L327">line 327</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-ecdb033b4daefdfa">__alloc_internal</a>, <a href="../bits.hpp.html#f-2aa567b13f058e7a">micron::popcount</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>, <a href="pmap.hpp.html#f-5af3f68bd74d589f">__phys_idx</a>, <a href="pmap.hpp.html#f-4a40c1a0a6450a0c">__retain</a>.</p></section><section class="function-entry" id="f-49e28e29aafa8bd8"><h3><code>micron::pmap::__internal_remove(const __internal *src, u32 logical_idx)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L331">line 331</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __internal *
+  __internal_remove(const __internal *src, u32 logical_idx)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __internal *src</code></li><li><code>u32 logical_idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __internal *
+  __internal_remove(const __internal *src, u32 logical_idx)
+  {
+    u32 nbm = src-&gt;bitmap &amp; ~(1u &lt;&lt; logical_idx);
+    if ( nbm == 0 ) return nullptr;
+    __internal *out = __alloc_internal(nbm);
+    usize n_old = static_cast&lt;usize&gt;(micron::popcount(src-&gt;bitmap));
+    const uintptr_t *src_cs = __children_of(src);
+    uintptr_t *dst_cs = __children_of(out);
+    usize phys = __phys_idx(src-&gt;bitmap, logical_idx);
+    for ( usize i = 0; i &lt; phys; ++i ) {
+      dst_cs[i] = src_cs[i];
+      __retain(dst_cs[i]);
+    }
+    for ( usize i = phys + 1; i &lt; n_old; ++i ) {
+      dst_cs[i - 1] = src_cs[i];
+      __retain(dst_cs[i - 1]);
+    }
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/maps/pmap.hpp.html#L334">line 334</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/maps/pmap.hpp.html#L348">line 348</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-ecdb033b4daefdfa">__alloc_internal</a>, <a href="../bits.hpp.html#f-2aa567b13f058e7a">micron::popcount</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>, <a href="pmap.hpp.html#f-5af3f68bd74d589f">__phys_idx</a>, <a href="pmap.hpp.html#f-4a40c1a0a6450a0c">__retain</a>.</p></section><section class="function-entry" id="f-170e5be5bdc6e540"><h3><code>micron::pmap::__chain_has(const __chain *c, hash64_t h, const K &amp;k)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L352">line 352</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static bool
+  __chain_has(const __chain *c, hash64_t h, const K &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __chain *c</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static bool
+  __chain_has(const __chain *c, hash64_t h, const K &amp;k)
+  {
+    for ( ; c; c = c-&gt;next ) {
+      if ( c-&gt;h == h &amp;&amp; c-&gt;key == k ) return true;
+    }
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/maps/pmap.hpp.html#L355">line 355</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/maps/pmap.hpp.html#L357">line 357</a></td></tr></tbody></table></section><section class="function-entry" id="f-661e52dfc2ce8848"><h3><code>micron::pmap::__chain_find(const __chain *c, hash64_t h, const K &amp;k)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L361">line 361</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static const V *
+  __chain_find(const __chain *c, hash64_t h, const K &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __chain *c</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static const V *
+  __chain_find(const __chain *c, hash64_t h, const K &amp;k)
+  {
+    for ( ; c; c = c-&gt;next ) {
+      if ( c-&gt;h == h &amp;&amp; c-&gt;key == k ) return micron::addressof(c-&gt;value);
+    }
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addressof(c-&gt;value)</code></td><td><a href="../../source/maps/pmap.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/maps/pmap.hpp.html#L366">line 366</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><section class="function-entry" id="f-ebe7cb70cad119aa"><h3><code>micron::pmap::__chain_copy_with_replace(const __chain *src, hash64_t h, const K &amp;k, V v)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L370">line 370</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __chain *
+  __chain_copy_with_replace(const __chain *src, hash64_t h, const K &amp;k, V v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __chain *src</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>V v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __chain *
+  __chain_copy_with_replace(const __chain *src, hash64_t h, const K &amp;k, V v)
+  {
+    __chain *head = nullptr;
+    __chain **tail = &amp;head;
+    bool replaced = false;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( const __chain *c = src; c; c = c-&gt;next ) {
+        if ( !replaced &amp;&amp; c-&gt;h == h &amp;&amp; c-&gt;key == k ) {
+          *tail = new __chain(h, K(k), micron::move(v));
+          replaced = true;
+        } else {
+          *tail = new __chain(c-&gt;h, c-&gt;key, c-&gt;value);
+        }
+        tail = &amp;(*tail)-&gt;next;
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __destroy_chain(head);
+      throw;
+    }
+#endif
+    return head;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>head</code></td><td><a href="../../source/maps/pmap.hpp.html#L393">line 393</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/pmap.hpp.html#L390">line 390</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="pmap.hpp.html#f-d3afccf20c6abff4">__destroy_chain</a>.</p></section><section class="function-entry" id="f-b56f98ceecd19982"><h3><code>micron::pmap::__chain_copy_with_erase(const __chain *src, hash64_t h, const K &amp;k)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L397">line 397</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __chain *
+  __chain_copy_with_erase(const __chain *src, hash64_t h, const K &amp;k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __chain *src</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __chain *
+  __chain_copy_with_erase(const __chain *src, hash64_t h, const K &amp;k)
+  {
+    __chain *head = nullptr;
+    __chain **tail = &amp;head;
+    bool dropped = false;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      for ( const __chain *c = src; c; c = c-&gt;next ) {
+        if ( !dropped &amp;&amp; c-&gt;h == h &amp;&amp; c-&gt;key == k ) {
+          dropped = true;
+          continue;
+        }
+        *tail = new __chain(c-&gt;h, c-&gt;key, c-&gt;value);
+        tail = &amp;(*tail)-&gt;next;
+      }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __destroy_chain(head);
+      throw;
+    }
+#endif
+    return head;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>head</code></td><td><a href="../../source/maps/pmap.hpp.html#L419">line 419</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/pmap.hpp.html#L416">line 416</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-d3afccf20c6abff4">__destroy_chain</a>.</p></section><section class="function-entry" id="f-441021acc645c602"><h3><code>micron::pmap::__leaf_would_diverge(const __leaf *l, hash64_t new_h, usize depth) noexcept</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L423">line 423</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static bool
+  __leaf_would_diverge(const __leaf *l, hash64_t new_h, usize depth) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __leaf *l</code></li><li><code>hash64_t new_h</code></li><li><code>usize depth</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static bool
+  __leaf_would_diverge(const __leaf *l, hash64_t new_h, usize depth) noexcept
+  {
+    u32 ref_idx = __idx_at(l-&gt;h, depth);
+    if ( __idx_at(new_h, depth) != ref_idx ) return true;
+    for ( const __chain *c = l-&gt;overflow; c; c = c-&gt;next ) {
+      if ( __idx_at(c-&gt;h, depth) != ref_idx ) return true;
+    }
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/maps/pmap.hpp.html#L426">line 426</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/maps/pmap.hpp.html#L428">line 428</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/maps/pmap.hpp.html#L430">line 430</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-33d9c9b0680da694">__idx_at</a>.</p></section><section class="function-entry" id="f-f9c2e9f6cccbaf0c"><h3><code>micron::pmap::__child_absorb(uintptr_t *slot, hash64_t h, const K &amp;k, Vf &amp;&amp;v)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L435">line 435</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Vf&gt;
+  static void
+  __child_absorb(uintptr_t *slot, hash64_t h, const K &amp;k, Vf &amp;&amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t *slot</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>Vf &amp;&amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Vf&gt;
+  static void
+  __child_absorb(uintptr_t *slot, hash64_t h, const K &amp;k, Vf &amp;&amp;v)
+  {
+    if ( *slot == 0 ) {
+      *slot = __tag_leaf_ptr(new __leaf(h, k, micron::forward&lt;Vf&gt;(v)));
+    } else {
+      __leaf *l = __as_leaf(*slot);
+      l-&gt;overflow = new __chain(h, k, micron::forward&lt;Vf&gt;(v), l-&gt;overflow);
+      ++l-&gt;overflow_len;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-5ceec5c4209326a3">__tag_leaf_ptr</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Vf&gt;</a>, <a href="pmap.hpp.html#f-daae8799bdeb7c00">__as_leaf</a>.</p></section><section class="function-entry" id="f-aa1e3110a63c8754"><h3><code>micron::pmap::__split_leaf_with_extra(const __leaf *l, hash64_t new_h, const K &amp;new_k, V new_v, usize depth)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L447">line 447</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static __internal *
+  __split_leaf_with_extra(const __leaf *l, hash64_t new_h, const K &amp;new_k, V new_v, usize depth)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __leaf *l</code></li><li><code>hash64_t new_h</code></li><li><code>const K &amp;new_k</code></li><li><code>V new_v</code></li><li><code>usize depth</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static __internal *
+  __split_leaf_with_extra(const __leaf *l, hash64_t new_h, const K &amp;new_k, V new_v, usize depth)
+  {
+    u32 bm = 0;
+    bm |= 1u &lt;&lt; __idx_at(l-&gt;h, depth);
+    bm |= 1u &lt;&lt; __idx_at(new_h, depth);
+    for ( const __chain *c = l-&gt;overflow; c; c = c-&gt;next ) bm |= 1u &lt;&lt; __idx_at(c-&gt;h, depth);
+
+    __internal *in = __alloc_internal(bm);
+    uintptr_t *cs = __children_of(in);
+
+    auto place = [&amp;]&lt;typename Vf&gt;(hash64_t h, const K &amp;k, Vf &amp;&amp;v) {
+      u32 idx = __idx_at(h, depth);
+      __child_absorb(&amp;cs[__phys_idx(bm, idx)], h, k, micron::forward&lt;Vf&gt;(v));
+    };
+
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      place(l-&gt;h, l-&gt;key, l-&gt;value);
+      for ( const __chain *c = l-&gt;overflow; c; c = c-&gt;next ) place(c-&gt;h, c-&gt;key, c-&gt;value);
+      place(new_h, new_k, micron::move(new_v));
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __release(__tag_internal_ptr(in));
+      throw;
+    }
+#endif
+
+    return in;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>in</code></td><td><a href="../../source/maps/pmap.hpp.html#L475">line 475</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/maps/pmap.hpp.html#L471">line 471</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-33d9c9b0680da694">__idx_at</a>, <a href="pmap.hpp.html#f-ecdb033b4daefdfa">__alloc_internal</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="pmap.hpp.html#f-682c4aca06599a4f">__release</a>, <a href="pmap.hpp.html#f-95d7dd97d50c4b61">__tag_internal_ptr</a>.</p></section><section class="function-entry" id="f-cfde83ae0203405e"><h3><code>micron::pmap::__insert_into(uintptr_t n, hash64_t h, const K &amp;k, V v, usize depth, bool &amp;existed)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L479">line 479</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static uintptr_t
+  __insert_into(uintptr_t n, hash64_t h, const K &amp;k, V v, usize depth, bool &amp;existed)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t n</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>V v</code></li><li><code>usize depth</code></li><li><code>bool &amp;existed</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static uintptr_t
+  __insert_into(uintptr_t n, hash64_t h, const K &amp;k, V v, usize depth, bool &amp;existed)
+  {
+    if ( n == 0 ) {
+      existed = false;
+      return __tag_leaf_ptr(new __leaf(h, k, micron::move(v)));
+    }
+    if ( __is_leaf(n) ) {
+      const __leaf *l = __as_leaf(n);
+
+      if ( l-&gt;h == h &amp;&amp; l-&gt;key == k ) {
+        existed = true;
+        __leaf *nl = new __leaf(h, k, micron::move(v));
+        __node_guard g{ __tag_leaf_ptr(nl) };
+        nl-&gt;overflow_len = l-&gt;overflow_len;
+        nl-&gt;overflow = __copy_chain(l-&gt;overflow);      // if it throws, g frees nl (overflow still null)
+        g.dismiss();
+        return __tag_leaf_ptr(nl);
+      }
+
+      if ( __chain_has(l-&gt;overflow, h, k) ) {
+        existed = true;
+        __leaf *nl = new __leaf(l-&gt;h, l-&gt;key, l-&gt;value);
+        __node_guard g{ __tag_leaf_ptr(nl) };
+        nl-&gt;overflow_len = l-&gt;overflow_len;
+        nl-&gt;overflow = __chain_copy_with_replace(l-&gt;overflow, h, k, micron::move(v));
+        g.dismiss();
+        return __tag_leaf_ptr(nl);
+      }
+
+      existed = false;
+      u32 total_after = 1u + l-&gt;overflow_len + 1u;
+      if ( total_after &gt; __split_threshold &amp;&amp; depth &lt; __max_depth &amp;&amp; __leaf_would_diverge(l, h, depth) ) {
+        return __tag_internal_ptr(__split_leaf_with_extra(l, h, k, micron::move(v), depth));
+      }
+
+      __leaf *nl = new __leaf(l-&gt;h, l-&gt;key, l-&gt;value);
+      __node_guard g{ __tag_leaf_ptr(nl) };
+      nl-&gt;overflow_len = l-&gt;overflow_len + 1u;
+      __chain *rest = __copy_chain(l-&gt;overflow);
+      nl-&gt;overflow = rest;      // nl now owns rest; if the prepend below throws, g frees nl + rest
+      nl-&gt;overflow = new __chain(h, k, micron::move(v), rest);
+      g.dismiss();
+      return __tag_leaf_ptr(nl);
+    }
+
+    const __internal *in = __as_internal(n);
+    u32 idx = __idx_at(h, depth);
+    if ( !__has(in-&gt;bitmap, idx) ) {
+      existed = false;
+      __leaf *nl = new __leaf(h, k, micron::move(v));
+      __node_guard g{ __tag_leaf_ptr(nl) };      // freed if __internal_insert&#x27;s alloc throws (OOM)
+      uintptr_t res = __tag_internal_ptr(__internal_insert(in, idx, __tag_leaf_ptr(nl)));
+      g.dismiss();
+      return res;
+    }
+    usize phys = __phys_idx(in-&gt;bitmap, idx);
+    uintptr_t old_child = __children_of(in)[phys];
+    uintptr_t new_child = __insert_into(old_child, h, k, micron::move(v), depth + 1u, existed);
+    __node_guard g{ new_child };      // freed if __internal_replace&#x27;s alloc throws (OOM)
+    uintptr_t res = __tag_internal_ptr(__internal_replace(in, idx, new_child));
+    g.dismiss();
+    return res;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__tag_leaf_ptr(new __leaf(h, k, micron::move(v)))</code></td><td><a href="../../source/maps/pmap.hpp.html#L483">line 483</a></td></tr><tr class="t-dsc"><td><code>__tag_leaf_ptr(nl)</code></td><td><a href="../../source/maps/pmap.hpp.html#L495">line 495</a></td></tr><tr class="t-dsc"><td><code>__tag_leaf_ptr(nl)</code></td><td><a href="../../source/maps/pmap.hpp.html#L505">line 505</a></td></tr><tr class="t-dsc"><td><code>__tag_internal_ptr(__split_leaf_with_extra(l, h, k, micron::move(v), depth))</code></td><td><a href="../../source/maps/pmap.hpp.html#L511">line 511</a></td></tr><tr class="t-dsc"><td><code>__tag_leaf_ptr(nl)</code></td><td><a href="../../source/maps/pmap.hpp.html#L521">line 521</a></td></tr><tr class="t-dsc"><td><code>res</code></td><td><a href="../../source/maps/pmap.hpp.html#L532">line 532</a></td></tr><tr class="t-dsc"><td><code>res</code></td><td><a href="../../source/maps/pmap.hpp.html#L540">line 540</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-5ceec5c4209326a3">__tag_leaf_ptr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="pmap.hpp.html#f-9d34de6001e64add">__is_leaf</a>, <a href="pmap.hpp.html#f-daae8799bdeb7c00">__as_leaf</a>, <a href="pmap.hpp.html#f-1eadcee5eca2f434">__copy_chain</a>, <a href="pmap.hpp.html#f-170e5be5bdc6e540">__chain_has</a>, <a href="pmap.hpp.html#f-ebe7cb70cad119aa">__chain_copy_with_replace</a>, <a href="pmap.hpp.html#f-441021acc645c602">__leaf_would_diverge</a>, <a href="pmap.hpp.html#f-95d7dd97d50c4b61">__tag_internal_ptr</a>, <a href="pmap.hpp.html#f-aa1e3110a63c8754">__split_leaf_with_extra</a>, <a href="pmap.hpp.html#f-f8dce7bbc448b95d">__as_internal</a>, <a href="pmap.hpp.html#f-33d9c9b0680da694">__idx_at</a>, <a href="pmap.hpp.html#f-9d69ce68d664a085">__has</a>, <a href="pmap.hpp.html#f-3612b97c16fcf732">__internal_insert</a>, <a href="pmap.hpp.html#f-5af3f68bd74d589f">__phys_idx</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>, <a href="pmap.hpp.html#f-57b1a5b89b2765fd">__internal_replace</a>.</p></section><section class="function-entry" id="f-2e1457e403372bf6"><h3><code>micron::pmap::__find_in(uintptr_t n, hash64_t h, const K &amp;k, usize depth)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L544">line 544</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static const V *
+  __find_in(uintptr_t n, hash64_t h, const K &amp;k, usize depth)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t n</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>usize depth</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static const V *
+  __find_in(uintptr_t n, hash64_t h, const K &amp;k, usize depth)
+  {
+    while ( n != 0 ) {
+      if ( __is_leaf(n) ) {
+        const __leaf *l = __as_leaf(n);
+        if ( l-&gt;h == h &amp;&amp; l-&gt;key == k ) return micron::addressof(l-&gt;value);
+        return __chain_find(l-&gt;overflow, h, k);
+      }
+      const __internal *in = __as_internal(n);
+      u32 idx = __idx_at(h, depth);
+      if ( !__has(in-&gt;bitmap, idx) ) return nullptr;
+      n = __children_of(in)[__phys_idx(in-&gt;bitmap, idx)];
+      ++depth;
+    }
+    return nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addressof(l-&gt;value)</code></td><td><a href="../../source/maps/pmap.hpp.html#L549">line 549</a></td></tr><tr class="t-dsc"><td><code>__chain_find(l-&gt;overflow, h, k)</code></td><td><a href="../../source/maps/pmap.hpp.html#L550">line 550</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/maps/pmap.hpp.html#L554">line 554</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/maps/pmap.hpp.html#L558">line 558</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-9d34de6001e64add">__is_leaf</a>, <a href="pmap.hpp.html#f-daae8799bdeb7c00">__as_leaf</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="pmap.hpp.html#f-661e52dfc2ce8848">__chain_find</a>, <a href="pmap.hpp.html#f-f8dce7bbc448b95d">__as_internal</a>, <a href="pmap.hpp.html#f-33d9c9b0680da694">__idx_at</a>, <a href="pmap.hpp.html#f-9d69ce68d664a085">__has</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>, <a href="pmap.hpp.html#f-5af3f68bd74d589f">__phys_idx</a>.</p></section><section class="function-entry" id="f-d2d3aec9ddd815df"><h3><code>micron::pmap::__erase_from(uintptr_t n, hash64_t h, const K &amp;k, usize depth, bool &amp;erased)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L562">line 562</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static uintptr_t
+  __erase_from(uintptr_t n, hash64_t h, const K &amp;k, usize depth, bool &amp;erased)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t n</code></li><li><code>hash64_t h</code></li><li><code>const K &amp;k</code></li><li><code>usize depth</code></li><li><code>bool &amp;erased</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static uintptr_t
+  __erase_from(uintptr_t n, hash64_t h, const K &amp;k, usize depth, bool &amp;erased)
+  {
+    if ( n == 0 ) {
+      erased = false;
+      return 0;
+    }
+    if ( __is_leaf(n) ) {
+      const __leaf *l = __as_leaf(n);
+
+      if ( l-&gt;h == h &amp;&amp; l-&gt;key == k ) {
+        erased = true;
+        if ( l-&gt;overflow == nullptr ) return 0;
+
+        __chain *first = l-&gt;overflow;
+        __leaf *nl = new __leaf(first-&gt;h, first-&gt;key, first-&gt;value);
+        __node_guard g{ __tag_leaf_ptr(nl) };
+        nl-&gt;overflow_len = l-&gt;overflow_len - 1u;
+        nl-&gt;overflow = __copy_chain(first-&gt;next);
+        g.dismiss();
+        return __tag_leaf_ptr(nl);
+      }
+
+      if ( __chain_has(l-&gt;overflow, h, k) ) {
+        erased = true;
+        __leaf *nl = new __leaf(l-&gt;h, l-&gt;key, l-&gt;value);
+        __node_guard g{ __tag_leaf_ptr(nl) };
+        nl-&gt;overflow_len = l-&gt;overflow_len - 1u;
+        nl-&gt;overflow = __chain_copy_with_erase(l-&gt;overflow, h, k);
+        g.dismiss();
+        return __tag_leaf_ptr(nl);
+      }
+
+      erased = false;
+      __retain(n);
+      return n;
+    }
+
+    const __internal *in = __as_internal(n);
+    u32 idx = __idx_at(h, depth);
+    if ( !__has(in-&gt;bitmap, idx) ) {
+      erased = false;
+      __retain(n);
+      return n;
+    }
+    usize phys = __phys_idx(in-&gt;bitmap, idx);
+    uintptr_t old_child = __children_of(in)[phys];
+    uintptr_t new_child = __erase_from(old_child, h, k, depth + 1u, erased);
+    if ( !erased ) {
+
+      __release(new_child);
+      __retain(n);
+      return n;
+    }
+    if ( new_child == 0 ) {
+      __internal *nn = __internal_remove(in, idx);
+      if ( nn == nullptr ) return 0;
+      return __tag_internal_ptr(nn);
+    }
+    __node_guard g{ new_child };      // freed if __internal_replace&#x27;s alloc throws (OOM)
+    uintptr_t res = __tag_internal_ptr(__internal_replace(in, idx, new_child));
+    g.dismiss();
+    return res;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/maps/pmap.hpp.html#L566">line 566</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/maps/pmap.hpp.html#L573">line 573</a></td></tr><tr class="t-dsc"><td><code>__tag_leaf_ptr(nl)</code></td><td><a href="../../source/maps/pmap.hpp.html#L581">line 581</a></td></tr><tr class="t-dsc"><td><code>__tag_leaf_ptr(nl)</code></td><td><a href="../../source/maps/pmap.hpp.html#L591">line 591</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/maps/pmap.hpp.html#L596">line 596</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/maps/pmap.hpp.html#L604">line 604</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/maps/pmap.hpp.html#L613">line 613</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/maps/pmap.hpp.html#L617">line 617</a></td></tr><tr class="t-dsc"><td><code>__tag_internal_ptr(nn)</code></td><td><a href="../../source/maps/pmap.hpp.html#L618">line 618</a></td></tr><tr class="t-dsc"><td><code>res</code></td><td><a href="../../source/maps/pmap.hpp.html#L623">line 623</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-9d34de6001e64add">__is_leaf</a>, <a href="pmap.hpp.html#f-daae8799bdeb7c00">__as_leaf</a>, <a href="pmap.hpp.html#f-5ceec5c4209326a3">__tag_leaf_ptr</a>, <a href="pmap.hpp.html#f-1eadcee5eca2f434">__copy_chain</a>, <a href="pmap.hpp.html#f-170e5be5bdc6e540">__chain_has</a>, <a href="pmap.hpp.html#f-b56f98ceecd19982">__chain_copy_with_erase</a>, <a href="pmap.hpp.html#f-4a40c1a0a6450a0c">__retain</a>, <a href="pmap.hpp.html#f-f8dce7bbc448b95d">__as_internal</a>, <a href="pmap.hpp.html#f-33d9c9b0680da694">__idx_at</a>, <a href="pmap.hpp.html#f-9d69ce68d664a085">__has</a>, <a href="pmap.hpp.html#f-5af3f68bd74d589f">__phys_idx</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>, <a href="pmap.hpp.html#f-682c4aca06599a4f">__release</a>, <a href="pmap.hpp.html#f-49e28e29aafa8bd8">__internal_remove</a>, <a href="pmap.hpp.html#f-95d7dd97d50c4b61">__tag_internal_ptr</a>, <a href="pmap.hpp.html#f-57b1a5b89b2765fd">__internal_replace</a>.</p></section><section class="function-entry" id="f-1f120cbfee1e6875"><h3><code>micron::pmap::__walk(uintptr_t n, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L628">line 628</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  static void
+  __walk(uintptr_t n, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t n</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  static void
+  __walk(uintptr_t n, Fn &amp;&amp;fn)
+  {
+    if ( n == 0 ) return;
+    if ( __is_leaf(n) ) {
+      const __leaf *l = __as_leaf(n);
+      fn(l-&gt;key, l-&gt;value);
+      for ( const __chain *c = l-&gt;overflow; c; c = c-&gt;next ) fn(c-&gt;key, c-&gt;value);
+      return;
+    }
+    const __internal *in = __as_internal(n);
+    usize cnt = static_cast&lt;usize&gt;(micron::popcount(in-&gt;bitmap));
+    const uintptr_t *cs = __children_of(in);
+    for ( usize i = 0; i &lt; cnt; ++i ) __walk(cs[i], micron::forward&lt;Fn&gt;(fn));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L630">line 630</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/maps/pmap.hpp.html#L635">line 635</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pmap.hpp.html#f-9d34de6001e64add">__is_leaf</a>, <a href="pmap.hpp.html#f-daae8799bdeb7c00">__as_leaf</a>, <a href="pmap.hpp.html#f-f8dce7bbc448b95d">__as_internal</a>, <a href="../bits.hpp.html#f-2aa567b13f058e7a">micron::popcount</a>, <a href="pmap.hpp.html#f-5e688dc044077a27">__children_of</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-82f91b28bf14960c"><h3><code>micron::pmap::pmap(uintptr_t r, usize l)</code></h3><p>Defined in <code>maps/pmap.hpp</code>, <a href="../../source/maps/pmap.hpp.html#L646">line 646</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>pmap(uintptr_t r, usize l) : __root(r), __length(l)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>uintptr_t r</code></li><li><code>usize l</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">pmap(uintptr_t r, usize l) : __root(r), __length(l) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

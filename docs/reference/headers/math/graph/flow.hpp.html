@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/flow.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/flow.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/flow.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/flow.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-3d7d9bb9e203e2e8">micron::math::graphs::max_flow_result</code></td><td>struct; line 15</td></tr><tr class="t-dsc"><td><code id="s-452de27a3f04efae">micron::math::graphs::max_flow_result::status</code></td><td>member; line 16</td></tr><tr class="t-dsc"><td><code id="s-6275b4a1f779c390">micron::math::graphs::max_flow_result::value</code></td><td>member; line 17</td></tr><tr class="t-dsc"><td><code id="s-424b00a2d8f8fff5">micron::math::graphs::max_flow_result::flow</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><code id="s-e9cf09d32b3bf1cc">micron::math::graphs::max_flow_result::source_side</code></td><td>member; line 19</td></tr><tr class="t-dsc"><td><code id="s-afe7bd456467cbfa">micron::math::graphs::dinic::residual_arc::target</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-58f0c285ca72c9c6">micron::math::graphs::dinic::residual_arc::reverse</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-47ff75b4bd5f45cf">micron::math::graphs::dinic::residual_arc::capacity</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-8117122df7b39da9">micron::math::graphs::dinic::edge_location::source</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-a7ec1e3e7d7bb75d">micron::math::graphs::dinic::edge_location::arc</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-0c01d5f880412012">micron::math::graphs::edmonds_karp::residual_arc::target</code></td><td>member; line 177</td></tr><tr class="t-dsc"><td><code id="s-f9c9e30ed102dbb3">micron::math::graphs::edmonds_karp::residual_arc::reverse</code></td><td>member; line 178</td></tr><tr class="t-dsc"><td><code id="s-2889921daf395550">micron::math::graphs::edmonds_karp::residual_arc::capacity</code></td><td>member; line 179</td></tr><tr class="t-dsc"><td><code id="s-aeec1cedb5a80383">micron::math::graphs::edmonds_karp::edge_location::source</code></td><td>member; line 183</td></tr><tr class="t-dsc"><td><code id="s-81b8fd06337330b5">micron::math::graphs::edmonds_karp::edge_location::arc</code></td><td>member; line 184</td></tr><tr class="t-dsc"><td><code id="s-d4b0ea2b2899cfe4">micron::math::graphs::push_relabel::residual_arc::target</code></td><td>member; line 295</td></tr><tr class="t-dsc"><td><code id="s-5602e57a811548cc">micron::math::graphs::push_relabel::residual_arc::reverse</code></td><td>member; line 296</td></tr><tr class="t-dsc"><td><code id="s-d8dfb40db2a7d318">micron::math::graphs::push_relabel::residual_arc::capacity</code></td><td>member; line 297</td></tr><tr class="t-dsc"><td><code id="s-dc757bcfaa4495d4">micron::math::graphs::push_relabel::edge_location::source</code></td><td>member; line 301</td></tr><tr class="t-dsc"><td><code id="s-9d3acc8b4830458a">micron::math::graphs::push_relabel::edge_location::arc</code></td><td>member; line 302</td></tr><tr class="t-dsc"><td><code id="s-b00ed5aa422d532c">micron::math::graphs::global_cut_result</code></td><td>struct; line 501</td></tr><tr class="t-dsc"><td><code id="s-c299675939b41d0f">micron::math::graphs::global_cut_result::status</code></td><td>member; line 502</td></tr><tr class="t-dsc"><td><code id="s-9736b88a37359fcf">micron::math::graphs::global_cut_result::value</code></td><td>member; line 503</td></tr><tr class="t-dsc"><td><code id="s-42e39cf643703142">micron::math::graphs::global_cut_result::side</code></td><td>member; line 504</td></tr><tr class="t-dsc"><td><a href="#f-85628fa6b234f774">micron::math::graphs::dinic(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</a></td><td>function; line 24</td></tr><tr class="t-dsc"><td><a href="#f-98a2ee89816f547d">micron::math::graphs::dinic(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</a></td><td>function; line 164</td></tr><tr class="t-dsc"><td><a href="#f-8e506b24830f45d8">micron::math::graphs::edmonds_karp(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</a></td><td>function; line 171</td></tr><tr class="t-dsc"><td><a href="#f-89078f554b8c36e4">micron::math::graphs::push_relabel(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</a></td><td>function; line 289</td></tr><tr class="t-dsc"><td><a href="#f-b862a9a76c0420d5">micron::math::graphs::edmonds_karp(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</a></td><td>function; line 449</td></tr><tr class="t-dsc"><td><a href="#f-30cdfca755d02969">micron::math::graphs::push_relabel(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</a></td><td>function; line 456</td></tr><tr class="t-dsc"><td><a href="#f-b43bff9122e785f3">micron::math::graphs::boykov_kolmogorov(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map = {})</a></td><td>function; line 463</td></tr><tr class="t-dsc"><td><a href="#f-0e642c92fea1801a">micron::math::graphs::verify_flow(
+    const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink,
+    const max_flow_result&lt;typename G::index_type,
+                          micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                         micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;flow,
+    CapacityMap capacity_map)</a></td><td>function; line 470</td></tr><tr class="t-dsc"><td><a href="#f-551f785bb923540e">micron::math::graphs::stoer_wagner(const G &amp;graph, WeightMap weight_map)</a></td><td>function; line 509</td></tr><tr class="t-dsc"><td><a href="#f-bb6b067f8ea8e6c9">micron::math::graphs::stoer_wagner(const G &amp;graph)</a></td><td>function; line 593</td></tr><tr class="t-dsc"><td><a href="#f-8a2cf0dc03dffdaa">micron::math::graphs::local_edge_connectivity(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</a></td><td>function; line 600</td></tr><tr class="t-dsc"><td><a href="#f-8414fda7aa411503">micron::math::graphs::edge_connectivity(const G &amp;graph)</a></td><td>function; line 623</td></tr><tr class="t-dsc"><td><a href="#f-b8c21a4134b0e5a8">micron::math::graphs::local_node_connectivity(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</a></td><td>function; line 648</td></tr><tr class="t-dsc"><td><a href="#f-8b0af87ec0fa355b">micron::math::graphs::node_connectivity(const G &amp;graph)</a></td><td>function; line 674</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-85628fa6b234f774"><h3><code>micron::math::graphs::dinic(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L24">line 24</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+dinic(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor sink</code></li><li><code>CapacityMap capacity_map</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+dinic(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)
+{
+  using I = typename G::index_type;
+  using C = micron::remove_cvref_t&lt;decltype(__impl::weight(capacity_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+
+  struct residual_arc {
+    I target{};
+    usize reverse{};
+    C capacity{};
+  };
+
+  struct edge_location {
+    I source{ vertex_id&lt;I&gt;::invalid_value() };
+    usize arc{};
+  };
+
+  max_flow_result&lt;I, C&gt; result{ algorithm_status::ok, C{}, micron::vector&lt;C, micron::allocator_serial&lt;&gt;, false&gt;(graph.edge_slots(), C{}),
+                                micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), u8(0)) };
+  if constexpr ( !G::is_directed ) {
+    result.status = algorithm_status::invalid_graph;
+    return result;
+  }
+  if ( !graph.has_vertex(source) || !graph.has_vertex(sink) || source == sink ) {
+    result.status = algorithm_status::invalid_vertex;
+    return result;
+  }
+
+  using arc_vector = micron::vector&lt;residual_arc, micron::allocator_serial&lt;&gt;, false&gt;;
+  micron::vector&lt;arc_vector, micron::allocator_serial&lt;&gt;, false&gt; residual(graph.vertex_slots());
+  micron::vector&lt;edge_location, micron::allocator_serial&lt;&gt;, false&gt; location(graph.edge_slots());
+  for ( auto edge : graph.edges() ) {
+    const C capacity = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));
+    if ( __impl::invalid_weight(capacity) ) {
+      result.status = algorithm_status::invalid_weight;
+      return result;
+    }
+    const usize u = static_cast&lt;usize&gt;(edge.source.value);
+    const usize v = static_cast&lt;usize&gt;(edge.target.value);
+    const usize forward = residual.data()[u].size();
+    const usize reverse = residual.data()[v].size();
+    residual.data()[u].push_back(residual_arc{ edge.target.value, reverse, capacity });
+    residual.data()[v].push_back(residual_arc{ edge.source.value, forward, C{} });
+    location.data()[static_cast&lt;usize&gt;(edge.id.value)] = edge_location{ edge.source.value, forward };
+  }
+
+  micron::vector&lt;max_t, micron::allocator_serial&lt;&gt;, false&gt; level(graph.vertex_slots(), max_t(-1));
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; next(graph.vertex_slots(), usize(0));
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; queue;
+  queue.reserve(graph.vertices_count());
+
+  auto build_levels = [&amp;]() {
+    level.fill(max_t(-1));
+    queue.clear();
+    queue.push_back(source);
+    level.data()[static_cast&lt;usize&gt;(source.value)] = 0;
+    usize head = 0;
+    while ( head &lt; queue.size() ) {
+      const auto u = queue.data()[head++];
+      for ( const residual_arc &amp;arc : residual.data()[static_cast&lt;usize&gt;(u.value)] ) {
+        const usize v = static_cast&lt;usize&gt;(arc.target);
+        if ( arc.capacity &gt; C{} &amp;&amp; level.data()[v] &lt; 0 ) {
+          level.data()[v] = level.data()[static_cast&lt;usize&gt;(u.value)] + 1;
+          queue.push_back(typename G::vertex_descriptor(arc.target));
+        }
+      }
+    }
+    return level.data()[static_cast&lt;usize&gt;(sink.value)] &gt;= 0;
+  };
+
+  auto send = [&amp;](auto &amp;&amp;self, I raw_u, C pushed) -&gt; C {
+    if ( raw_u == sink.value || pushed == C{} ) return pushed;
+    const usize u = static_cast&lt;usize&gt;(raw_u);
+    arc_vector &amp;arcs = residual.data()[u];
+    for ( usize &amp;at = next.data()[u]; at &lt; arcs.size(); ++at ) {
+      residual_arc &amp;arc = arcs.data()[at];
+      const usize v = static_cast&lt;usize&gt;(arc.target);
+      if ( arc.capacity &lt;= C{} || level.data()[v] != level.data()[u] + 1 ) continue;
+      const C offered = pushed &lt; arc.capacity ? pushed : arc.capacity;
+      const C delivered = self(self, arc.target, offered);
+      if ( delivered == C{} ) continue;
+      arc.capacity -= delivered;
+      residual.data()[v].data()[arc.reverse].capacity += delivered;
+      return delivered;
+    }
+    return C{};
+  };
+
+  // The source&#x27;s outgoing residual sum is a finite, input-derived upper bound;
+  // it replaces an infinity sentinel and remains sound under -Ofast.
+  C source_bound{};
+  for ( const residual_arc &amp;arc : residual.data()[static_cast&lt;usize&gt;(source.value)] ) {
+    C next_bound{};
+    if ( !__impl::add_distance(source_bound, arc.capacity, next_bound) ) {
+      result.status = algorithm_status::overflow;
+      return result;
+    }
+    source_bound = next_bound;
+  }
+
+  while ( build_levels() ) {
+    next.fill(usize(0));
+    for ( ;; ) {
+      const C pushed = send(send, source.value, source_bound);
+      if ( pushed == C{} ) break;
+      C total{};
+      if ( !__impl::add_distance(result.value, pushed, total) ) {
+        result.status = algorithm_status::overflow;
+        return result;
+      }
+      result.value = total;
+    }
+  }
+
+  for ( auto edge : graph.edges() ) {
+    const edge_location place = location.data()[static_cast&lt;usize&gt;(edge.id.value)];
+    const C original = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));
+    const C remaining = residual.data()[static_cast&lt;usize&gt;(place.source)].data()[place.arc].capacity;
+    result.flow.data()[static_cast&lt;usize&gt;(edge.id.value)] = original - remaining;
+  }
+
+  // Final residual reachability is the min-cut certificate.
+  queue.clear();
+  queue.push_back(source);
+  result.source_side.data()[static_cast&lt;usize&gt;(source.value)] = 1;
+  usize head = 0;
+  while ( head &lt; queue.size() ) {
+    const auto u = queue.data()[head++];
+    for ( const residual_arc &amp;arc : residual.data()[static_cast&lt;usize&gt;(u.value)] ) {
+      const usize v = static_cast&lt;usize&gt;(arc.target);
+      if ( arc.capacity &gt; C{} &amp;&amp; !result.source_side.data()[v] ) {
+        result.source_side.data()[v] = 1;
+        queue.push_back(typename G::vertex_descriptor(arc.target));
+      }
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L44">line 44</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L48">line 48</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L118">line 118</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L159">line 159</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="paths.hpp.html#f-aa602021f094bd1f">__impl::invalid_weight</a>, <a href="../../types.hpp.html#s-66025c3768325240">max_t</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="paths.hpp.html#f-9a610a726936d64e">__impl::add_distance</a>, <a href="../../linux/process/signals.hpp.html#f-29321e62a7016a55">send</a>.</p></section><section class="function-entry" id="f-98a2ee89816f547d"><h3><code>micron::math::graphs::dinic(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L164">line 164</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+dinic(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor sink</code></li></ul><h4>Effects</h4><p>Returns <code>dinic(graph, source, sink, intrinsic_edge_weight{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+dinic(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)
+{
+  return dinic(graph, source, sink, intrinsic_edge_weight{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dinic(graph, source, sink, intrinsic_edge_weight{})</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L166">line 166</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="flow.hpp.html#f-85628fa6b234f774">dinic</a>.</p></section><section class="function-entry" id="f-8e506b24830f45d8"><h3><code>micron::math::graphs::edmonds_karp(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L171">line 171</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+edmonds_karp(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor sink</code></li><li><code>CapacityMap capacity_map</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+edmonds_karp(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)
+{
+  using I = typename G::index_type;
+  using C = micron::remove_cvref_t&lt;decltype(__impl::weight(capacity_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+
+  struct residual_arc {
+    I target{};
+    usize reverse{};
+    C capacity{};
+  };
+
+  struct edge_location {
+    I source{ vertex_id&lt;I&gt;::invalid_value() };
+    usize arc{};
+  };
+
+  max_flow_result&lt;I, C&gt; result{ algorithm_status::ok, C{}, micron::vector&lt;C, micron::allocator_serial&lt;&gt;, false&gt;(graph.edge_slots(), C{}),
+                                micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), u8(0)) };
+  if constexpr ( !G::is_directed ) {
+    result.status = algorithm_status::invalid_graph;
+    return result;
+  }
+  if ( !graph.has_vertex(source) || !graph.has_vertex(sink) || source == sink ) {
+    result.status = algorithm_status::invalid_vertex;
+    return result;
+  }
+
+  using arc_vector = micron::vector&lt;residual_arc, micron::allocator_serial&lt;&gt;, false&gt;;
+  micron::vector&lt;arc_vector, micron::allocator_serial&lt;&gt;, false&gt; residual(graph.vertex_slots());
+  micron::vector&lt;edge_location, micron::allocator_serial&lt;&gt;, false&gt; location(graph.edge_slots());
+  for ( auto edge : graph.edges() ) {
+    const C capacity = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));
+    if ( __impl::invalid_weight(capacity) ) {
+      result.status = algorithm_status::invalid_weight;
+      return result;
+    }
+    const usize u = static_cast&lt;usize&gt;(edge.source.value);
+    const usize v = static_cast&lt;usize&gt;(edge.target.value);
+    const usize forward = residual.data()[u].size();
+    const usize reverse = residual.data()[v].size();
+    residual.data()[u].push_back(residual_arc{ edge.target.value, reverse, capacity });
+    residual.data()[v].push_back(residual_arc{ edge.source.value, forward, C{} });
+    location.data()[static_cast&lt;usize&gt;(edge.id.value)] = edge_location{ edge.source.value, forward };
+  }
+
+  const usize slots = graph.vertex_slots();
+  micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; parent(slots, vertex_id&lt;I&gt;::invalid_value());
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; parent_arc(slots, usize(0));
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; reached(slots, u8(0));
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; queue;
+  queue.reserve(graph.vertices_count());
+
+  for ( ;; ) {
+    parent.fill(vertex_id&lt;I&gt;::invalid_value());
+    reached.fill(u8(0));
+    queue.clear();
+    queue.push_back(source);
+    reached.data()[static_cast&lt;usize&gt;(source.value)] = 1;
+    usize head = 0;
+    while ( head &lt; queue.size() &amp;&amp; !reached.data()[static_cast&lt;usize&gt;(sink.value)] ) {
+      const auto u = queue.data()[head++];
+      const auto &amp;arcs = residual.data()[static_cast&lt;usize&gt;(u.value)];
+      for ( usize arc_index = 0; arc_index &lt; arcs.size(); ++arc_index ) {
+        const residual_arc &amp;arc = arcs.data()[arc_index];
+        const usize v = static_cast&lt;usize&gt;(arc.target);
+        if ( arc.capacity &lt;= C{} || reached.data()[v] ) continue;
+        reached.data()[v] = 1;
+        parent.data()[v] = u.value;
+        parent_arc.data()[v] = arc_index;
+        queue.push_back(typename G::vertex_descriptor(arc.target));
+        if ( arc.target == sink.value ) break;
+      }
+    }
+    if ( !reached.data()[static_cast&lt;usize&gt;(sink.value)] ) {
+      result.source_side = micron::move(reached);
+      break;
+    }
+
+    C bottleneck{};
+    bool have_bottleneck = false;
+    I current = sink.value;
+    while ( current != source.value ) {
+      const I previous = parent.data()[static_cast&lt;usize&gt;(current)];
+      const residual_arc &amp;arc = residual.data()[static_cast&lt;usize&gt;(previous)].data()[parent_arc.data()[static_cast&lt;usize&gt;(current)]];
+      if ( !have_bottleneck || arc.capacity &lt; bottleneck ) {
+        bottleneck = arc.capacity;
+        have_bottleneck = true;
+      }
+      current = previous;
+    }
+
+    current = sink.value;
+    while ( current != source.value ) {
+      const I previous = parent.data()[static_cast&lt;usize&gt;(current)];
+      residual_arc &amp;arc = residual.data()[static_cast&lt;usize&gt;(previous)].data()[parent_arc.data()[static_cast&lt;usize&gt;(current)]];
+      arc.capacity -= bottleneck;
+      residual.data()[static_cast&lt;usize&gt;(current)].data()[arc.reverse].capacity += bottleneck;
+      current = previous;
+    }
+    C total{};
+    if ( !__impl::add_distance(result.value, bottleneck, total) ) {
+      result.status = algorithm_status::overflow;
+      return result;
+    }
+    result.value = total;
+  }
+
+  for ( auto edge : graph.edges() ) {
+    const edge_location place = location.data()[static_cast&lt;usize&gt;(edge.id.value)];
+    const C original = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));
+    const C remaining = residual.data()[static_cast&lt;usize&gt;(place.source)].data()[place.arc].capacity;
+    result.flow.data()[static_cast&lt;usize&gt;(edge.id.value)] = original - remaining;
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L191">line 191</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L195">line 195</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L273">line 273</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L284">line 284</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="paths.hpp.html#f-aa602021f094bd1f">__impl::invalid_weight</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="descriptors.hpp.html#f-ef8d5d2565228ebe">vertex_id&lt;I&gt;::invalid_value</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="paths.hpp.html#f-9a610a726936d64e">__impl::add_distance</a>.</p></section><section class="function-entry" id="f-89078f554b8c36e4"><h3><code>micron::math::graphs::push_relabel(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L289">line 289</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+push_relabel(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor sink</code></li><li><code>CapacityMap capacity_map</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+push_relabel(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map)
+{
+  using I = typename G::index_type;
+  using C = micron::remove_cvref_t&lt;decltype(__impl::weight(capacity_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+
+  struct residual_arc {
+    I target{};
+    usize reverse{};
+    C capacity{};
+  };
+
+  struct edge_location {
+    I source{ vertex_id&lt;I&gt;::invalid_value() };
+    usize arc{};
+  };
+
+  max_flow_result&lt;I, C&gt; result{ algorithm_status::ok, C{}, micron::vector&lt;C, micron::allocator_serial&lt;&gt;, false&gt;(graph.edge_slots(), C{}),
+                                micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), u8(0)) };
+  if constexpr ( !G::is_directed ) {
+    result.status = algorithm_status::invalid_graph;
+    return result;
+  }
+  if ( !graph.has_vertex(source) || !graph.has_vertex(sink) || source == sink ) {
+    result.status = algorithm_status::invalid_vertex;
+    return result;
+  }
+
+  using arc_vector = micron::vector&lt;residual_arc, micron::allocator_serial&lt;&gt;, false&gt;;
+  micron::vector&lt;arc_vector, micron::allocator_serial&lt;&gt;, false&gt; residual(graph.vertex_slots());
+  micron::vector&lt;edge_location, micron::allocator_serial&lt;&gt;, false&gt; location(graph.edge_slots());
+  for ( auto edge : graph.edges() ) {
+    const C capacity = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));
+    if ( __impl::invalid_weight(capacity) ) {
+      result.status = algorithm_status::invalid_weight;
+      return result;
+    }
+    const usize u = static_cast&lt;usize&gt;(edge.source.value);
+    const usize v = static_cast&lt;usize&gt;(edge.target.value);
+    const usize forward = residual.data()[u].size();
+    const usize reverse = residual.data()[v].size();
+    residual.data()[u].push_back(residual_arc{ edge.target.value, reverse, capacity });
+    residual.data()[v].push_back(residual_arc{ edge.source.value, forward, C{} });
+    location.data()[static_cast&lt;usize&gt;(edge.id.value)] = edge_location{ edge.source.value, forward };
+  }
+
+  const usize slots = graph.vertex_slots();
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; height(slots, usize(0));
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; current(slots, usize(0));
+  micron::vector&lt;C, micron::allocator_serial&lt;&gt;, false&gt; excess(slots, C{});
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; queued(slots, u8(0));
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; active;
+  active.reserve(graph.edges_count() + graph.vertices_count());
+  height.data()[static_cast&lt;usize&gt;(source.value)] = graph.vertices_count();
+
+  auto enqueue = [&amp;](I raw_vertex) {
+    if ( raw_vertex == source.value || raw_vertex == sink.value ) return;
+    const usize slot = static_cast&lt;usize&gt;(raw_vertex);
+    if ( excess.data()[slot] &lt;= C{} || queued.data()[slot] ) return;
+    queued.data()[slot] = 1;
+    active.push_back(typename G::vertex_descriptor(raw_vertex));
+  };
+
+  arc_vector &amp;source_arcs = residual.data()[static_cast&lt;usize&gt;(source.value)];
+  for ( usize arc_index = 0; arc_index &lt; source_arcs.size(); ++arc_index ) {
+    residual_arc &amp;arc = source_arcs.data()[arc_index];
+    if ( arc.capacity &lt;= C{} ) continue;
+    const C amount = arc.capacity;
+    arc.capacity = C{};
+    residual.data()[static_cast&lt;usize&gt;(arc.target)].data()[arc.reverse].capacity += amount;
+    if ( arc.target != source.value ) {
+      C total{};
+      if ( !__impl::add_distance(excess.data()[static_cast&lt;usize&gt;(arc.target)], amount, total) ) {
+        result.status = algorithm_status::overflow;
+        return result;
+      }
+      excess.data()[static_cast&lt;usize&gt;(arc.target)] = total;
+      enqueue(arc.target);
+    }
+  }
+
+  usize head = 0;
+  while ( head &lt; active.size() ) {
+    const auto vertex = active.data()[head++];
+    const usize u = static_cast&lt;usize&gt;(vertex.value);
+    queued.data()[u] = 0;
+    arc_vector &amp;arcs = residual.data()[u];
+
+    while ( excess.data()[u] &gt; C{} ) {
+      if ( current.data()[u] == arcs.size() ) {
+        bool found = false;
+        usize minimum_height = 0;
+        for ( const residual_arc &amp;arc : arcs ) {
+          if ( arc.capacity &lt;= C{} ) continue;
+          const usize candidate = height.data()[static_cast&lt;usize&gt;(arc.target)];
+          if ( !found || candidate &lt; minimum_height ) {
+            found = true;
+            minimum_height = candidate;
+          }
+        }
+        if ( !found ) {
+          result.status = algorithm_status::invalid_graph;
+          return result;
+        }
+        height.data()[u] = minimum_height + 1;
+        current.data()[u] = 0;
+        continue;
+      }
+
+      residual_arc &amp;arc = arcs.data()[current.data()[u]];
+      const usize v = static_cast&lt;usize&gt;(arc.target);
+      if ( arc.capacity &lt;= C{} || height.data()[u] != height.data()[v] + 1 ) {
+        ++current.data()[u];
+        continue;
+      }
+
+      const C amount = excess.data()[u] &lt; arc.capacity ? excess.data()[u] : arc.capacity;
+      const C previous_excess = excess.data()[v];
+      arc.capacity -= amount;
+      residual.data()[v].data()[arc.reverse].capacity += amount;
+      excess.data()[u] -= amount;
+      if ( arc.target != source.value ) {
+        C total{};
+        if ( !__impl::add_distance(excess.data()[v], amount, total) ) {
+          result.status = algorithm_status::overflow;
+          return result;
+        }
+        excess.data()[v] = total;
+        if ( previous_excess == C{} ) enqueue(arc.target);
+      }
+    }
+  }
+
+  result.value = excess.data()[static_cast&lt;usize&gt;(sink.value)];
+  for ( auto edge : graph.edges() ) {
+    const edge_location place = location.data()[static_cast&lt;usize&gt;(edge.id.value)];
+    const C original = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));
+    const C remaining = residual.data()[static_cast&lt;usize&gt;(place.source)].data()[place.arc].capacity;
+    result.flow.data()[static_cast&lt;usize&gt;(edge.id.value)] = original - remaining;
+  }
+
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; queue;
+  queue.reserve(graph.vertices_count());
+  queue.push_back(source);
+  result.source_side.data()[static_cast&lt;usize&gt;(source.value)] = 1;
+  head = 0;
+  while ( head &lt; queue.size() ) {
+    const auto u = queue.data()[head++];
+    for ( const residual_arc &amp;arc : residual.data()[static_cast&lt;usize&gt;(u.value)] ) {
+      const usize v = static_cast&lt;usize&gt;(arc.target);
+      if ( arc.capacity &gt; C{} &amp;&amp; !result.source_side.data()[v] ) {
+        result.source_side.data()[v] = 1;
+        queue.push_back(typename G::vertex_descriptor(arc.target));
+      }
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L309">line 309</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L313">line 313</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L323">line 323</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L362">line 362</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L390">line 390</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L413">line 413</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L444">line 444</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="paths.hpp.html#f-aa602021f094bd1f">__impl::invalid_weight</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="paths.hpp.html#f-9a610a726936d64e">__impl::add_distance</a>.</p></section><section class="function-entry" id="f-b862a9a76c0420d5"><h3><code>micron::math::graphs::edmonds_karp(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L449">line 449</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+edmonds_karp(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor sink</code></li></ul><h4>Effects</h4><p>Returns <code>edmonds_karp(graph, source, sink, intrinsic_edge_weight{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+edmonds_karp(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)
+{
+  return edmonds_karp(graph, source, sink, intrinsic_edge_weight{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>edmonds_karp(graph, source, sink, intrinsic_edge_weight{})</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L451">line 451</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="flow.hpp.html#f-8e506b24830f45d8">edmonds_karp</a>.</p></section><section class="function-entry" id="f-30cdfca755d02969"><h3><code>micron::math::graphs::push_relabel(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L456">line 456</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+push_relabel(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor sink</code></li></ul><h4>Effects</h4><p>Returns <code>push_relabel(graph, source, sink, intrinsic_edge_weight{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+push_relabel(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink)
+{
+  return push_relabel(graph, source, sink, intrinsic_edge_weight{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>push_relabel(graph, source, sink, intrinsic_edge_weight{})</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L458">line 458</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="flow.hpp.html#f-89078f554b8c36e4">push_relabel</a>.</p></section><section class="function-entry" id="f-b43bff9122e785f3"><h3><code>micron::math::graphs::boykov_kolmogorov(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map = {})</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L463">line 463</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename CapacityMap = intrinsic_edge_weight&gt;
+[[nodiscard]] auto
+boykov_kolmogorov(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map = {})</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor sink</code></li><li><code>CapacityMap capacity_map = {}</code></li></ul><h4>Effects</h4><p>Returns <code>dinic(graph, source, sink, capacity_map)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename CapacityMap = intrinsic_edge_weight&gt;
+[[nodiscard]] auto
+boykov_kolmogorov(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink, CapacityMap capacity_map = {})
+{
+  return dinic(graph, source, sink, capacity_map);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dinic(graph, source, sink, capacity_map)</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L465">line 465</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="flow.hpp.html#f-85628fa6b234f774">dinic</a>.</p></section><section class="function-entry" id="f-0e642c92fea1801a"><h3><code>micron::math::graphs::verify_flow(
+    const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink,
+    const max_flow_result&lt;typename G::index_type,
+                          micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                         micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;flow,
+    CapacityMap capacity_map)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L470">line 470</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] bool
+verify_flow(
+    const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink,
+    const max_flow_result&lt;typename G::index_type,
+                          micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                         micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;flow,
+    CapacityMap capacity_map)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor sink</code></li><li><code>const max_flow_result&lt;typename G::index_type,
+                          micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                         micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;flow</code></li><li><code>CapacityMap capacity_map</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] bool
+verify_flow(
+    const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor sink,
+    const max_flow_result&lt;typename G::index_type,
+                          micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                         micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;flow,
+    CapacityMap capacity_map)
+{
+  using C = typename decltype(flow.flow)::value_type;
+  if ( flow.status != algorithm_status::ok ) return false;
+  micron::vector&lt;C, micron::allocator_serial&lt;&gt;, false&gt; incoming(graph.vertex_slots(), C{});
+  micron::vector&lt;C, micron::allocator_serial&lt;&gt;, false&gt; outgoing(graph.vertex_slots(), C{});
+  for ( auto edge : graph.edges() ) {
+    const C value = flow.flow.data()[static_cast&lt;usize&gt;(edge.id.value)];
+    const C capacity = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));
+    if ( value &lt; C{} || capacity &lt; value ) return false;
+    outgoing.data()[static_cast&lt;usize&gt;(edge.source.value)] += value;
+    incoming.data()[static_cast&lt;usize&gt;(edge.target.value)] += value;
+  }
+  for ( auto vertex : graph.vertices() ) {
+    if ( vertex == source || vertex == sink ) continue;
+    const usize slot = static_cast&lt;usize&gt;(vertex.value);
+    if ( incoming.data()[slot] != outgoing.data()[slot] ) return false;
+  }
+  const usize source_slot = static_cast&lt;usize&gt;(source.value);
+  const usize sink_slot = static_cast&lt;usize&gt;(sink.value);
+  return outgoing.data()[source_slot] &gt;= incoming.data()[source_slot]
+         &amp;&amp; outgoing.data()[source_slot] - incoming.data()[source_slot] == flow.value
+         &amp;&amp; incoming.data()[sink_slot] &gt;= outgoing.data()[sink_slot]
+         &amp;&amp; incoming.data()[sink_slot] - outgoing.data()[sink_slot] == flow.value;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L478">line 478</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L484">line 484</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L491">line 491</a></td></tr><tr class="t-dsc"><td><code>outgoing.data()[source_slot] &gt;= incoming.data()[source_slot]
+         &amp;&amp; outgoing.data()[source_slot] - incoming.data()[source_slot] == flow.value
+         &amp;&amp; incoming.data()[sink_slot] &gt;= outgoing.data()[sink_slot]
+         &amp;&amp; incoming.data()[sink_slot] - outgoing.data()[sink_slot] == flow.value</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L495">line 495</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>.</p></section><section class="function-entry" id="f-551f785bb923540e"><h3><code>micron::math::graphs::stoer_wagner(const G &amp;graph, WeightMap weight_map)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L509">line 509</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+stoer_wagner(const G &amp;graph, WeightMap weight_map)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>WeightMap weight_map</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename WeightMap&gt;
+[[nodiscard]] auto
+stoer_wagner(const G &amp;graph, WeightMap weight_map)
+{
+  using I = typename G::index_type;
+  using W = micron::remove_cvref_t&lt;decltype(__impl::weight(weight_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+  global_cut_result&lt;I, W&gt; result{ algorithm_status::ok, W{},
+                                  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), u8(0)) };
+  if constexpr ( G::is_directed ) {
+    result.status = algorithm_status::invalid_graph;
+    return result;
+  }
+  const usize n = graph.vertices_count();
+  if ( n &lt; 2 ) return result;
+  auto mapping = __dense_vertex_mapping(graph);
+  micron::vector&lt;W, micron::allocator_serial&lt;&gt;, false&gt; weights(n * n, W{});
+  for ( auto edge : graph.edges() ) {
+    const usize u = static_cast&lt;usize&gt;(mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);
+    const usize v = static_cast&lt;usize&gt;(mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);
+    const W weight = static_cast&lt;W&gt;(__impl::weight(weight_map, graph, edge.id));
+    if ( __impl::invalid_weight(weight) ) {
+      result.status = algorithm_status::invalid_weight;
+      return result;
+    }
+    weights.data()[u * n + v] += weight;
+    weights.data()[v * n + u] += weight;
+  }
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; vertices(n);
+  micron::vector&lt;micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;, micron::allocator_serial&lt;&gt;, false&gt; groups(n);
+  for ( usize i = 0; i &lt; n; ++i ) {
+    vertices.data()[i] = i;
+    groups.data()[i].push_back(i);
+  }
+  bool have_cut = false;
+  usize active = n;
+  while ( active &gt; 1 ) {
+    micron::vector&lt;W, micron::allocator_serial&lt;&gt;, false&gt; connectivity(n, W{});
+    micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; added(n, u8(0));
+    usize previous = vertices.data()[0];
+    usize selected = previous;
+    for ( usize phase = 0; phase &lt; active; ++phase ) {
+      selected = vertices.data()[0];
+      bool found = false;
+      for ( usize j = 0; j &lt; active; ++j ) {
+        const usize candidate = vertices.data()[j];
+        if ( added.data()[candidate] ) continue;
+        if ( !found || connectivity.data()[selected] &lt; connectivity.data()[candidate] ) {
+          selected = candidate;
+          found = true;
+        }
+      }
+      if ( phase + 1 == active ) {
+        const W cut = connectivity.data()[selected];
+        if ( !have_cut || cut &lt; result.value ) {
+          have_cut = true;
+          result.value = cut;
+          result.side.fill(u8(0));
+          for ( usize dense : groups.data()[selected] )
+            result.side.data()[static_cast&lt;usize&gt;(mapping.dense_to_vertex.data()[dense].value)] = 1;
+        }
+        for ( usize j = 0; j &lt; n; ++j ) {
+          weights.data()[previous * n + j] += weights.data()[selected * n + j];
+          weights.data()[j * n + previous] = weights.data()[previous * n + j];
+        }
+        for ( usize dense : groups.data()[selected] ) groups.data()[previous].push_back(dense);
+        for ( usize j = 0; j &lt; active; ++j )
+          if ( vertices.data()[j] == selected ) {
+            vertices.data()[j] = vertices.data()[active - 1];
+            break;
+          }
+        --active;
+        break;
+      }
+      added.data()[selected] = 1;
+      previous = selected;
+      for ( usize j = 0; j &lt; active; ++j ) {
+        const usize candidate = vertices.data()[j];
+        if ( !added.data()[candidate] ) connectivity.data()[candidate] += weights.data()[selected * n + candidate];
+      }
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L517">line 517</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L520">line 520</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L529">line 529</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L588">line 588</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="matrix.hpp.html#f-44fac56732d2d13c">__dense_vertex_mapping</a>, <a href="paths.hpp.html#f-aa602021f094bd1f">__impl::invalid_weight</a>.</p></section><section class="function-entry" id="f-bb6b067f8ea8e6c9"><h3><code>micron::math::graphs::stoer_wagner(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L593">line 593</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+stoer_wagner(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Returns <code>stoer_wagner(graph, intrinsic_edge_weight{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+stoer_wagner(const G &amp;graph)
+{
+  return stoer_wagner(graph, intrinsic_edge_weight{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stoer_wagner(graph, intrinsic_edge_weight{})</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L595">line 595</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="flow.hpp.html#f-551f785bb923540e">stoer_wagner</a>.</p></section><section class="function-entry" id="f-8a2cf0dc03dffdaa"><h3><code>micron::math::graphs::local_edge_connectivity(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L600">line 600</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] usize
+local_edge_connectivity(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor target</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] usize
+local_edge_connectivity(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)
+{
+  if ( !graph.has_vertex(source) || !graph.has_vertex(target) || source == target ) return 0;
+  auto mapping = __dense_vertex_mapping(graph);
+  using network_type = weighted_digraph&lt;usize, empty_property, empty_property, empty_property, typename G::index_type, parallel_t&gt;;
+  network_type network;
+  (void)network.add_vertices(graph.vertices_count());
+  for ( auto edge : graph.edges() ) {
+    const auto u = mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)];
+    const auto v = mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)];
+    if ( u == v ) continue;
+    (void)network.add_edge(u, v, usize(1));
+    if constexpr ( !G::is_directed ) (void)network.add_edge(v, u, usize(1));
+  }
+  const auto dense_source = mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(source.value)];
+  const auto dense_target = mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(target.value)];
+  auto flow
+      = dinic(network, typename network_type::vertex_descriptor(dense_source), typename network_type::vertex_descriptor(dense_target));
+  return flow.status == algorithm_status::ok ? flow.value : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L602">line 602</a></td></tr><tr class="t-dsc"><td><code>flow.status == algorithm_status::ok ? flow.value : 0</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L618">line 618</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="matrix.hpp.html#f-44fac56732d2d13c">__dense_vertex_mapping</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="flow.hpp.html#f-85628fa6b234f774">dinic</a>.</p></section><section class="function-entry" id="f-8414fda7aa411503"><h3><code>micron::math::graphs::edge_connectivity(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L623">line 623</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] usize
+edge_connectivity(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] usize
+edge_connectivity(const G &amp;graph)
+{
+  if ( graph.vertices_count() &lt; 2 ) return 0;
+  auto vertices = graph.vertices();
+  const auto first = *vertices.begin();
+  usize best = graph.edges_count();
+  if constexpr ( G::is_directed ) {
+    for ( auto source : graph.vertices() )
+      for ( auto target : graph.vertices() )
+        if ( source != target ) {
+          const usize value = local_edge_connectivity(graph, source, target);
+          if ( value &lt; best ) best = value;
+        }
+  } else {
+    for ( auto target : graph.vertices() )
+      if ( target != first ) {
+        const usize value = local_edge_connectivity(graph, first, target);
+        if ( value &lt; best ) best = value;
+      }
+  }
+  return best;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L625">line 625</a></td></tr><tr class="t-dsc"><td><code>best</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L643">line 643</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="flow.hpp.html#f-8a2cf0dc03dffdaa">local_edge_connectivity</a>.</p></section><section class="function-entry" id="f-b8c21a4134b0e5a8"><h3><code>micron::math::graphs::local_node_connectivity(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L648">line 648</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] usize
+local_node_connectivity(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor source</code></li><li><code>typename G::vertex_descriptor target</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] usize
+local_node_connectivity(const G &amp;graph, typename G::vertex_descriptor source, typename G::vertex_descriptor target)
+{
+  if ( !graph.has_vertex(source) || !graph.has_vertex(target) || source == target ) return 0;
+  auto mapping = __dense_vertex_mapping(graph);
+  using network_type = weighted_digraph&lt;usize, empty_property, empty_property, empty_property, usize, parallel_t&gt;;
+  network_type network;
+  const usize count = graph.vertices_count();
+  (void)network.add_vertices(count * 2);
+  const usize dense_source = static_cast&lt;usize&gt;(mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(source.value)]);
+  const usize dense_target = static_cast&lt;usize&gt;(mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(target.value)]);
+  for ( usize vertex = 0; vertex &lt; count; ++vertex )
+    (void)network.add_edge(vertex * 2, vertex * 2 + 1, vertex == dense_source || vertex == dense_target ? count : usize(1));
+  for ( auto edge : graph.edges() ) {
+    const usize u = static_cast&lt;usize&gt;(mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);
+    const usize v = static_cast&lt;usize&gt;(mapping.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);
+    if ( u == v ) continue;
+    (void)network.add_edge(u * 2 + 1, v * 2, usize(1));
+    if constexpr ( !G::is_directed ) (void)network.add_edge(v * 2 + 1, u * 2, usize(1));
+  }
+  auto flow = dinic(network, typename network_type::vertex_descriptor(dense_source * 2 + 1),
+                    typename network_type::vertex_descriptor(dense_target * 2));
+  return flow.status == algorithm_status::ok ? flow.value : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L650">line 650</a></td></tr><tr class="t-dsc"><td><code>flow.status == algorithm_status::ok ? flow.value : 0</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L669">line 669</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="matrix.hpp.html#f-44fac56732d2d13c">__dense_vertex_mapping</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="flow.hpp.html#f-85628fa6b234f774">dinic</a>.</p></section><section class="function-entry" id="f-8b0af87ec0fa355b"><h3><code>micron::math::graphs::node_connectivity(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/flow.hpp</code>, <a href="../../../source/math/graph/flow.hpp.html#L674">line 674</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] usize
+node_connectivity(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] usize
+node_connectivity(const G &amp;graph)
+{
+  if ( graph.vertices_count() &lt; 2 ) return 0;
+  auto vertices = graph.vertices();
+  const auto first = *vertices.begin();
+  usize best = graph.vertices_count() - 1;
+  if constexpr ( G::is_directed ) {
+    for ( auto source : graph.vertices() )
+      for ( auto target : graph.vertices() )
+        if ( source != target ) {
+          const usize value = local_node_connectivity(graph, source, target);
+          if ( value &lt; best ) best = value;
+        }
+  } else {
+    for ( auto target : graph.vertices() )
+      if ( target != first ) {
+        const usize value = local_node_connectivity(graph, first, target);
+        if ( value &lt; best ) best = value;
+      }
+  }
+  return best;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L676">line 676</a></td></tr><tr class="t-dsc"><td><code>best</code></td><td><a href="../../../source/math/graph/flow.hpp.html#L694">line 694</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="flow.hpp.html#f-b8c21a4134b0e5a8">local_node_connectivity</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

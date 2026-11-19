@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/dynamic/registry.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/dynamic/registry.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/dynamic.html">Dynamic loading</a></div><p>Defined in header <code>&lt;micron/dynamic/registry.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/dynamic/registry.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-1c14a00ffac590f9">micron::elf::dl::max_modules</code></td><td>variable; line 25</td></tr><tr class="t-dsc"><td><code id="s-d837aeec2cc635fd">micron::elf::dl::max_deps</code></td><td>variable; line 26</td></tr><tr class="t-dsc"><td><code id="s-e908a797222c4d26">micron::elf::dl::dl_module</code></td><td>struct; line 28</td></tr><tr class="t-dsc"><td><code id="s-90c52793f5898718">micron::elf::dl::dl_module::mod</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-6b414aa2121d06c7">micron::elf::dl::dl_module::options</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-2aeed88d15792c90">micron::elf::dl::dl_module::index</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-a9977d85d95b9279">micron::elf::dl::dl_module::generation</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-624af3f7aad6e5cb">micron::elf::dl::dl_module::refcount</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-a9185000d34a44ca">micron::elf::dl::dl_module::load_order</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-26a3f0a09e3a3301">micron::elf::dl::dl_module::dev</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-01c98343f3e02d24">micron::elf::dl::dl_module::ino</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-e4ed5aa1044b43e6">micron::elf::dl::dl_module::in_use</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-00fff929ff01fb9b">micron::elf::dl::dl_module::global</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-79075990159d27ae">micron::elf::dl::dl_module::nodelete</code></td><td>member; line 42</td></tr><tr class="t-dsc"><td><code id="s-5531d3eb02690a51">micron::elf::dl::dl_module::relocated</code></td><td>member; line 43</td></tr><tr class="t-dsc"><td><code id="s-c866b0e47b221e86">micron::elf::dl::dl_module::initialized</code></td><td>member; line 44</td></tr><tr class="t-dsc"><td><code id="s-1aa4c28942a292ff">micron::elf::dl::dl_module::deepbind</code></td><td>member; line 45</td></tr><tr class="t-dsc"><td><code id="s-ea8f5eaac821beb9">micron::elf::dl::dl_module::dep_count</code></td><td>member; line 47</td></tr><tr class="t-dsc"><td><code id="s-f0a808bc71e12900">micron::elf::dl::dl_module::deps</code></td><td>member; line 48</td></tr><tr class="t-dsc"><td><a href="#f-87d6ca049b3b9768">micron::elf::dl::dl_module::soname() const noexcept</a></td><td>function; line 51</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-87d6ca049b3b9768"><h3><code>micron::elf::dl::dl_module::soname() const noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L51">line 51</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const char *
+  soname() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>mod.dyn.soname ? mod.dyn.soname : mod.path.c_str()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const char *
+  soname() const noexcept
+  {
+    return mod.dyn.soname ? mod.dyn.soname : mod.path.c_str();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>mod.dyn.soname ? mod.dyn.soname : mod.path.c_str()</code></td><td><a href="../../source/dynamic/registry.hpp.html#L53">line 53</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-396a41703067b61c"><h3><code>micron::elf::dl::__slot_alloc() noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L64">line 64</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline dl_module *
+__slot_alloc() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline dl_module *
+__slot_alloc() noexcept
+{
+  for ( usize i = 0; i &lt; max_modules; ++i ) {
+    if ( __slots[i] &amp;&amp; __slots[i]-&gt;in_use ) continue;
+    dl_module *m = __slots[i];
+    if ( !m ) {
+      void *p
+          = reinterpret_cast&lt;void *&gt;(micron::mmap(nullptr, sizeof(dl_module), prot_read | prot_write, map_private | map_anonymous, -1, 0));
+      if ( mmap_failed(p) ) return nullptr;
+      m = micron::construct_at(reinterpret_cast&lt;dl_module *&gt;(p));
+      __slots[i] = m;
+    } else {
+
+      m = micron::construct_at(m);
+    }
+    m-&gt;index = static_cast&lt;u32&gt;(i);
+    m-&gt;generation = __generation_next++;
+    m-&gt;in_use = true;
+    if ( i + 1 &gt; __slot_high ) __slot_high = i + 1;
+    return m;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L72">line 72</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/dynamic/registry.hpp.html#L83">line 83</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L85">line 85</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../memory/mman.hpp.html#f-3833a61859dc0c08">mmap_failed</a>, <a href="../memory/actions.hpp.html#f-35d51760c7b897c3">micron::construct_at</a>.</p></section><section class="function-entry" id="f-3706d5aa72613e40"><h3><code>micron::elf::dl::__slot_free(dl_module *m) noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L89">line 89</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__slot_free(dl_module *m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>dl_module *m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__slot_free(dl_module *m) noexcept
+{
+  if ( !m || !m-&gt;in_use ) return;
+  micron::destroy_at(m);
+  m-&gt;in_use = false;
+
+  invalidate_host_modules();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/dynamic/registry.hpp.html#L91">line 91</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-ee1373b6940b4a8b">micron::destroy_at</a>, <a href="../linux/elf/host_modules.hpp.html#f-7a8ad9ef3eb3b754">invalidate_host_modules</a>.</p></section><section class="function-entry" id="f-eb9c7d8a273d8cb6"><h3><code>micron::elf::dl::__slot_at(u32 index, u32 generation) noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L99">line 99</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline dl_module *
+__slot_at(u32 index, u32 generation) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 index</code></li><li><code>u32 generation</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline dl_module *
+__slot_at(u32 index, u32 generation) noexcept
+{
+  if ( index &gt;= max_modules ) return nullptr;
+  dl_module *m = __slots[index];
+  if ( !m || !m-&gt;in_use ) return nullptr;
+  if ( m-&gt;generation != generation ) return nullptr;
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L103">line 103</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/dynamic/registry.hpp.html#L105">line 105</a></td></tr></tbody></table></section><section class="function-entry" id="f-2ed8aead70f4b413"><h3><code>micron::elf::dl::__find_by_ident(u64 dev, u64 ino) noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L109">line 109</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline dl_module *
+__find_by_ident(u64 dev, u64 ino) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 dev</code></li><li><code>u64 ino</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline dl_module *
+__find_by_ident(u64 dev, u64 ino) noexcept
+{
+  if ( ino == 0 ) return nullptr;
+  for ( usize i = 0; i &lt; __slot_high; ++i ) {
+    dl_module *m = __slots[i];
+    if ( m &amp;&amp; m-&gt;in_use &amp;&amp; m-&gt;ino == ino &amp;&amp; m-&gt;dev == dev ) return m;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/dynamic/registry.hpp.html#L114">line 114</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L116">line 116</a></td></tr></tbody></table></section><section class="function-entry" id="f-b43a440430d387c6"><h3><code>micron::elf::dl::__find_by_soname(const char *name) noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L120">line 120</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline dl_module *
+__find_by_soname(const char *name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline dl_module *
+__find_by_soname(const char *name) noexcept
+{
+  if ( !name || !*name ) return nullptr;
+  for ( usize i = 0; i &lt; __slot_high; ++i ) {
+    dl_module *m = __slots[i];
+    if ( !m || !m-&gt;in_use ) continue;
+    if ( m-&gt;mod.dyn.soname &amp;&amp; micron::strcmp(m-&gt;mod.dyn.soname, name) == 0 ) return m;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L122">line 122</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/dynamic/registry.hpp.html#L126">line 126</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L128">line 128</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>.</p></section><section class="function-entry" id="f-33ace7541f1a84ce"><h3><code>micron::elf::dl::__find_by_address(const void *addr) noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L132">line 132</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline dl_module *
+__find_by_address(const void *addr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *addr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline dl_module *
+__find_by_address(const void *addr) noexcept
+{
+  const u8 *p = reinterpret_cast&lt;const u8 *&gt;(addr);
+  for ( usize i = 0; i &lt; __slot_high; ++i ) {
+    dl_module *m = __slots[i];
+    if ( !m || !m-&gt;in_use || !m-&gt;mod.load_base ) continue;
+    if ( p &gt;= m-&gt;mod.load_base &amp;&amp; p &lt; m-&gt;mod.load_base + m-&gt;mod.load_span ) return m;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/dynamic/registry.hpp.html#L138">line 138</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L140">line 140</a></td></tr></tbody></table></section><section class="function-entry" id="f-16b1c08ea4fbb190"><h3><code>micron::elf::dl::__file_probe(const char *path, u64 &amp;dev, u64 &amp;ino, bool *native = nullptr) noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L144">line 144</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__file_probe(const char *path, u64 &amp;dev, u64 &amp;ino, bool *native = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *path</code></li><li><code>u64 &amp;dev</code></li><li><code>u64 &amp;ino</code></li><li><code>bool *native = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__file_probe(const char *path, u64 &amp;dev, u64 &amp;ino, bool *native = nullptr) noexcept
+{
+  if ( native ) *native = false;
+  const i32 fd = posix::open(path, posix::o_rdonly);
+  if ( fd &lt; 0 ) return false;
+
+#if defined(__micron_arch_arm32) || defined(__micron_arch_x86)
+  posix::stat64_t st{};
+#else
+  posix::stat_t st{};
+#endif
+  if ( posix::fstat(fd, st) &lt; 0 ) {
+    posix::close(fd);
+    return false;
+  }
+  dev = static_cast&lt;u64&gt;(st.st_dev);
+  ino = static_cast&lt;u64&gt;(st.st_ino);
+
+  if ( native ) {
+    u8 probe[ident_size + 4];
+    if ( posix::pread(fd, probe, sizeof(probe), 0) == static_cast&lt;max_t&gt;(sizeof(probe)) ) {
+      const half machine = static_cast&lt;half&gt;(static_cast&lt;half&gt;(probe[ident_size + 2]) | (static_cast&lt;half&gt;(probe[ident_size + 3]) &lt;&lt; 8));
+      *native = probe[ei_mag0] == mag0 &amp;&amp; probe[ei_mag1] == static_cast&lt;u8&gt;(mag1) &amp;&amp; probe[ei_mag2] == static_cast&lt;u8&gt;(mag2)
+                &amp;&amp; probe[ei_mag3] == static_cast&lt;u8&gt;(mag3) &amp;&amp; probe[ei_class] == native_traits::ident_class
+                &amp;&amp; probe[ei_data] == (native_data == fmt_data::msb ? elfdata2msb : elfdata2lsb)
+                &amp;&amp; (expected_machine == 0 || machine == expected_machine);
+    }
+  }
+  posix::close(fd);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/registry.hpp.html#L148">line 148</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/dynamic/registry.hpp.html#L157">line 157</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/dynamic/registry.hpp.html#L173">line 173</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-4489c173fc28797e">posix::open</a>, <a href="../linux/sys/stat.hpp.html#f-bd0672840e2ec772">posix::fstat</a>, <a href="../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../linux/io/sys.hpp.html#f-6136a3af63c90c77">posix::pread</a>.</p></section><section class="function-entry" id="f-2cbc913f64b0cfa7"><h3><code>micron::elf::dl::__file_ident(const char *path, u64 &amp;dev, u64 &amp;ino) noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L177">line 177</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__file_ident(const char *path, u64 &amp;dev, u64 &amp;ino) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *path</code></li><li><code>u64 &amp;dev</code></li><li><code>u64 &amp;ino</code></li></ul><h4>Effects</h4><p>Returns <code>__file_probe(path, dev, ino, nullptr)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__file_ident(const char *path, u64 &amp;dev, u64 &amp;ino) noexcept
+{
+  return __file_probe(path, dev, ino, nullptr);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__file_probe(path, dev, ino, nullptr)</code></td><td><a href="../../source/dynamic/registry.hpp.html#L179">line 179</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="registry.hpp.html#f-16b1c08ea4fbb190">__file_probe</a>.</p></section><section class="function-entry" id="f-e3719b780d3787e2"><h3><code>micron::elf::dl::__find_by_path(const char *path) noexcept</code></h3><p>Defined in <code>dynamic/registry.hpp</code>, <a href="../../source/dynamic/registry.hpp.html#L183">line 183</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline dl_module *
+__find_by_path(const char *path) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *path</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline dl_module *
+__find_by_path(const char *path) noexcept
+{
+  if ( !path || !*path ) return nullptr;
+  for ( usize i = 0; i &lt; __slot_high; ++i ) {
+    dl_module *m = __slots[i];
+    if ( !m || !m-&gt;in_use ) continue;
+    if ( micron::strcmp(m-&gt;mod.path.c_str(), path) == 0 ) return m;
+  }
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L185">line 185</a></td></tr><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/dynamic/registry.hpp.html#L189">line 189</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/dynamic/registry.hpp.html#L191">line 191</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/reflect.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../assets/cppreference2/screen.css"><link rel="stylesheet" href="../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../index.html">Reference</a> <a href="index.html">Headers</a> <a href="../functions/index.html">Functions</a> <a href="../symbols/index.html">Symbols</a> <a href="../source/index.html">Source</a> <a href="../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/reflect.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../index.html">micron reference</a> › <a href="../modules/reflection.html">Reflection</a></div><p>Defined in header <code>&lt;micron/reflect.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../source/reflect.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-26bc8d63cff1ab38">micron::reflect::reflectable</code></td><td>concept; line 38<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><code id="s-f57d233b32cb1f5e">micron::reflect::reflectable_enum</code></td><td>concept; line 41<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><code id="s-bd47dc8ca6e60fa3">micron::reflect::reflectable_aggregate</code></td><td>concept; line 44<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><code id="s-b29fa74315776dc2">micron::reflect::members</code></td><td>variable; line 47<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><code id="s-8046a0d7eec748b6">micron::reflect::field_count</code></td><td>variable; line 50<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><code id="s-baccb517eb508517">micron::reflect::bases</code></td><td>variable; line 53<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><code id="s-761289273c9a6e6f">micron::reflect::base_count</code></td><td>variable; line 56<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><code id="s-e763f14cac774de2">micron::reflect::member_type</code></td><td>typedef; line 111<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-103fa51c38cba665">micron::reflect::name_of(void)</a></td><td>function; line 63<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-61e5f8b93cc0d1d0">micron::reflect::name_view(void)</a></td><td>function; line 71<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-2e5d1c428d6be645">micron::reflect::type_name(void)</a></td><td>function; line 78<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-27a916341bd77c6f">micron::reflect::type_name_view(void)</a></td><td>function; line 86<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-d0e5587ffad56897">micron::reflect::type_display(void)</a></td><td>function; line 93<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-c5c8067400c341d7">micron::reflect::member_ptr(void)</a></td><td>function; line 106<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-5160adc2d078a376">micron::reflect::for_each_field(Fn &amp;&amp;__fn)</a></td><td>function; line 118<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-4113a4433a175f64">micron::reflect::for_each_field(T &amp;&amp;__obj, Fn &amp;&amp;__fn)</a></td><td>function; line 125<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-6e7921ccbd906668">micron::reflect::for_each_field_indexed(T &amp;&amp;__obj, Fn &amp;&amp;__fn)</a></td><td>function; line 132<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-fb0d87940c6af89a">micron::reflect::get_field(T &amp;&amp;__obj) noexcept</a></td><td>function; line 148<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-6a132797f4e5a6cc">micron::reflect::field_name(void)</a></td><td>function; line 157<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-e415a57a7a6a8d5d">micron::reflect::field_offset(void)</a></td><td>function; line 164<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-866494415f270245">micron::reflect::index_of(micron::meta::identifier __name)</a></td><td>function; line 174<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-fd7aa28df990b729">micron::reflect::has_field(micron::meta::identifier __name)</a></td><td>function; line 188<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-ea2745e50c2fa3d5">micron::reflect::enum_values(void)</a></td><td>function; line 207<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-df773cadcb371ed1">micron::reflect::enum_name(E __v) noexcept</a></td><td>function; line 218<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-dd4a6036a7b98c4d">micron::reflect::enum_from_name(micron::meta::identifier __name, E &amp;__out) noexcept</a></td><td>function; line 230<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-b40e703efbc78a1c">micron::reflect::to_tuple(const T &amp;__obj)</a></td><td>function; line 267<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-37573d7387f31bd7">micron::reflect::tie_fields(T &amp;__obj)</a></td><td>function; line 275<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-d7d28a74c35909cf">micron::reflect::equal(const T &amp;__a, const T &amp;__b) noexcept</a></td><td>function; line 286<br><small><code>#if defined(__micron_reflection)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-a767c504b984eba9">micron::reflect::hash(const T &amp;__obj) noexcept</a></td><td>function; line 362<br><small><code>#if defined(__micron_reflection)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-103fa51c38cba665"><h3><code>micron::reflect::name_of(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;micron::meta::info M&gt;
+consteval auto
+name_of(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;micron::meta::info M&gt;
+consteval auto
+name_of(void)
+{
+  constexpr auto __s = micron::meta::identifier_of(M);
+  return micron::fixed_string&lt;__s.size() + 1&gt;{ __s.data(), __s.size() };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::fixed_string&lt;__s.size() + 1&gt;{ __s.data(), __s.size() }</code></td><td><a href="../source/reflect.hpp.html#L66">line 66</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-8f5604687980d831">micron::meta::identifier_of</a>.</p></section><section class="function-entry" id="f-61e5f8b93cc0d1d0"><h3><code>micron::reflect::name_view(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L71">line 71</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;micron::meta::info M&gt;
+consteval micron::meta::identifier
+name_view(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Returns <code>micron::meta::identifier_of(M)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;micron::meta::info M&gt;
+consteval micron::meta::identifier
+name_view(void)
+{
+  return micron::meta::identifier_of(M);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::meta::identifier_of(M)</code></td><td><a href="../source/reflect.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-8f5604687980d831">micron::meta::identifier_of</a>.</p></section><section class="function-entry" id="f-2e5d1c428d6be645"><h3><code>micron::reflect::type_name(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+consteval auto
+type_name(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+consteval auto
+type_name(void)
+{
+  constexpr auto __s = micron::meta::identifier_of(micron::meta::dealias(^^micron::remove_cvref_t&lt;T&gt;));
+  return micron::fixed_string&lt;__s.size() + 1&gt;{ __s.data(), __s.size() };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::fixed_string&lt;__s.size() + 1&gt;{ __s.data(), __s.size() }</code></td><td><a href="../source/reflect.hpp.html#L81">line 81</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-8f5604687980d831">micron::meta::identifier_of</a>, <a href="meta.hpp.html#f-bc94b42b6012f78c">micron::meta::dealias</a>.</p></section><section class="function-entry" id="f-27a916341bd77c6f"><h3><code>micron::reflect::type_name_view(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+consteval micron::meta::identifier
+type_name_view(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Returns <code>micron::meta::identifier_of(micron::meta::dealias(^^micron::remove_cvref_t&lt;T&gt;))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+consteval micron::meta::identifier
+type_name_view(void)
+{
+  return micron::meta::identifier_of(micron::meta::dealias(^^micron::remove_cvref_t&lt;T&gt;));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::meta::identifier_of(micron::meta::dealias(^^micron::remove_cvref_t&lt;T&gt;))</code></td><td><a href="../source/reflect.hpp.html#L88">line 88</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-8f5604687980d831">micron::meta::identifier_of</a>, <a href="meta.hpp.html#f-bc94b42b6012f78c">micron::meta::dealias</a>.</p></section><section class="function-entry" id="f-d0e5587ffad56897"><h3><code>micron::reflect::type_display(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L93">line 93</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+consteval micron::meta::identifier
+type_display(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Returns <code>micron::meta::display_string_of(micron::meta::dealias(^^micron::remove_cvref_t&lt;T&gt;))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+consteval micron::meta::identifier
+type_display(void)
+{
+  return micron::meta::display_string_of(micron::meta::dealias(^^micron::remove_cvref_t&lt;T&gt;));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::meta::display_string_of(micron::meta::dealias(^^micron::remove_cvref_t&lt;T&gt;))</code></td><td><a href="../source/reflect.hpp.html#L95">line 95</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-325a03903656c379">micron::meta::display_string_of</a>, <a href="meta.hpp.html#f-bc94b42b6012f78c">micron::meta::dealias</a>.</p></section><section class="function-entry" id="f-c5c8067400c341d7"><h3><code>micron::reflect::member_ptr(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L106">line 106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;micron::meta::info M&gt;
+consteval auto
+member_ptr(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Returns <code>&amp;[:M:]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;micron::meta::info M&gt;
+consteval auto
+member_ptr(void)
+{
+  return &amp;[:M:];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;[:M:]</code></td><td><a href="../source/reflect.hpp.html#L108">line 108</a></td></tr></tbody></table></section><section class="function-entry" id="f-5160adc2d078a376"><h3><code>micron::reflect::for_each_field(Fn &amp;&amp;__fn)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L118">line 118</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Fn&gt;
+constexpr void
+for_each_field(Fn &amp;&amp;__fn)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;__fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Fn&gt;
+constexpr void
+for_each_field(Fn &amp;&amp;__fn)
+{
+  template for ( constexpr auto __m : members&lt;T&gt; ) __fn.template operator()&lt;__m&gt;();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4113a4433a175f64"><h3><code>micron::reflect::for_each_field(T &amp;&amp;__obj, Fn &amp;&amp;__fn)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L125">line 125</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Fn&gt;
+constexpr void
+for_each_field(T &amp;&amp;__obj, Fn &amp;&amp;__fn)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;__obj</code></li><li><code>Fn &amp;&amp;__fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Fn&gt;
+constexpr void
+for_each_field(T &amp;&amp;__obj, Fn &amp;&amp;__fn)
+{
+  template for ( constexpr auto __m : members&lt;micron::remove_cvref_t&lt;T&gt;&gt; ) __fn(name_of&lt;__m&gt;(), __obj.[:__m:]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-103fa51c38cba665">name_of&lt;__m&gt;</a>.</p></section><section class="function-entry" id="f-6e7921ccbd906668"><h3><code>micron::reflect::for_each_field_indexed(T &amp;&amp;__obj, Fn &amp;&amp;__fn)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L132">line 132</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Fn&gt;
+constexpr void
+for_each_field_indexed(T &amp;&amp;__obj, Fn &amp;&amp;__fn)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;__obj</code></li><li><code>Fn &amp;&amp;__fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Fn&gt;
+constexpr void
+for_each_field_indexed(T &amp;&amp;__obj, Fn &amp;&amp;__fn)
+{
+  usize __i = 0;
+  template for ( constexpr auto __m : members&lt;micron::remove_cvref_t&lt;T&gt;&gt; )
+  {
+    __fn(__i, name_of&lt;__m&gt;(), __obj.[:__m:]);
+    ++__i;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-103fa51c38cba665">name_of&lt;__m&gt;</a>.</p></section><section class="function-entry" id="f-fb0d87940c6af89a"><h3><code>micron::reflect::get_field(T &amp;&amp;__obj) noexcept</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L148">line 148</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize I, typename T&gt;
+constexpr decltype(auto)
+get_field(T &amp;&amp;__obj) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;__obj</code></li></ul><h4>Effects</h4><p>Returns <code>(__obj.[:members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]:])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize I, typename T&gt;
+constexpr decltype(auto)
+get_field(T &amp;&amp;__obj) noexcept
+{
+  return (__obj.[:members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]:]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__obj.[:members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]:])</code></td><td><a href="../source/reflect.hpp.html#L150">line 150</a></td></tr></tbody></table></section><section class="function-entry" id="f-6a132797f4e5a6cc"><h3><code>micron::reflect::field_name(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize I, typename T&gt;
+consteval auto
+field_name(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Returns <code>name_of&lt;members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]&gt;()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize I, typename T&gt;
+consteval auto
+field_name(void)
+{
+  return name_of&lt;members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]&gt;();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>name_of&lt;members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]&gt;()</code></td><td><a href="../source/reflect.hpp.html#L159">line 159</a></td></tr></tbody></table></section><section class="function-entry" id="f-e415a57a7a6a8d5d"><h3><code>micron::reflect::field_offset(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L164">line 164</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize I, typename T&gt;
+consteval usize
+field_offset(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Returns <code>static_cast&lt;usize&gt;(micron::meta::offset_of(members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]).bytes)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize I, typename T&gt;
+consteval usize
+field_offset(void)
+{
+  return static_cast&lt;usize&gt;(micron::meta::offset_of(members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]).bytes);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;usize&gt;(micron::meta::offset_of(members&lt;micron::remove_cvref_t&lt;T&gt;&gt;.ptr[I]).bytes)</code></td><td><a href="../source/reflect.hpp.html#L166">line 166</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-eeb7cc752589647b">micron::meta::offset_of</a>.</p></section><section class="function-entry" id="f-866494415f270245"><h3><code>micron::reflect::index_of(micron::meta::identifier __name)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L174">line 174</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+consteval usize
+index_of(micron::meta::identifier __name)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::meta::identifier __name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+consteval usize
+index_of(micron::meta::identifier __name)
+{
+  usize __i = 0;
+  usize __found = static_cast&lt;usize&gt;(-1);
+  template for ( constexpr auto __m : members&lt;T&gt; )
+  {
+    if ( micron::meta::identifier_of(__m) == __name ) __found = __i;
+    ++__i;
+  }
+  return __found;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__found</code></td><td><a href="../source/reflect.hpp.html#L183">line 183</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-8f5604687980d831">micron::meta::identifier_of</a>.</p></section><section class="function-entry" id="f-fd7aa28df990b729"><h3><code>micron::reflect::has_field(micron::meta::identifier __name)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L188">line 188</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+consteval bool
+has_field(micron::meta::identifier __name)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::meta::identifier __name</code></li></ul><h4>Effects</h4><p>Returns <code>index_of&lt;T&gt;(__name) != static_cast&lt;usize&gt;(-1)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+consteval bool
+has_field(micron::meta::identifier __name)
+{
+  return index_of&lt;T&gt;(__name) != static_cast&lt;usize&gt;(-1);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>index_of&lt;T&gt;(__name) != static_cast&lt;usize&gt;(-1)</code></td><td><a href="../source/reflect.hpp.html#L190">line 190</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-866494415f270245">index_of&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-ea2745e50c2fa3d5"><h3><code>micron::reflect::enum_values(void)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L207">line 207</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename E&gt;
+  requires reflectable_enum&lt;E&gt;
+consteval auto
+enum_values(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename E&gt;
+  requires reflectable_enum&lt;E&gt;
+consteval auto
+enum_values(void)
+{
+  micron::constexpr_array&lt;micron::remove_cvref_t&lt;E&gt;, enum_count&lt;E&gt;&gt; __out{};
+  usize __i = 0;
+  template for ( constexpr auto __e : enumerators&lt;E&gt; ) __out[__i++] = [:__e:];
+  return __out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__out</code></td><td><a href="../source/reflect.hpp.html#L212">line 212</a></td></tr></tbody></table></section><section class="function-entry" id="f-df773cadcb371ed1"><h3><code>micron::reflect::enum_name(E __v) noexcept</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L218">line 218</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename E&gt;
+  requires reflectable_enum&lt;E&gt;
+constexpr micron::meta::identifier
+enum_name(E __v) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>E __v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename E&gt;
+  requires reflectable_enum&lt;E&gt;
+constexpr micron::meta::identifier
+enum_name(E __v) noexcept
+{
+  template for ( constexpr auto __e : enumerators&lt;E&gt; )
+  {
+    if ( __v == [:__e:] ) return micron::meta::identifier_of(__e);
+  }
+  return micron::meta::identifier{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::meta::identifier_of(__e)</code></td><td><a href="../source/reflect.hpp.html#L222">line 222</a></td></tr><tr class="t-dsc"><td><code>micron::meta::identifier{}</code></td><td><a href="../source/reflect.hpp.html#L224">line 224</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-8f5604687980d831">micron::meta::identifier_of</a>.</p></section><section class="function-entry" id="f-dd4a6036a7b98c4d"><h3><code>micron::reflect::enum_from_name(micron::meta::identifier __name, E &amp;__out) noexcept</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L230">line 230</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename E&gt;
+  requires reflectable_enum&lt;E&gt;
+constexpr bool
+enum_from_name(micron::meta::identifier __name, E &amp;__out) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::meta::identifier __name</code></li><li><code>E &amp;__out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename E&gt;
+  requires reflectable_enum&lt;E&gt;
+constexpr bool
+enum_from_name(micron::meta::identifier __name, E &amp;__out) noexcept
+{
+  template for ( constexpr auto __e : enumerators&lt;E&gt; )
+  {
+    if ( micron::meta::identifier_of(__e) == __name ) {
+      __out = [:__e:];
+      return true;
+    }
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../source/reflect.hpp.html#L236">line 236</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../source/reflect.hpp.html#L239">line 239</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="meta.hpp.html#f-8f5604687980d831">micron::meta::identifier_of</a>.</p></section><section class="function-entry" id="f-b40e703efbc78a1c"><h3><code>micron::reflect::to_tuple(const T &amp;__obj)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L267">line 267</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires reflectable&lt;T&gt;
+constexpr auto
+to_tuple(const T &amp;__obj)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;__obj</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__to_tuple(__obj, micron::make_index_sequence&lt;field_count&lt;T&gt;&gt;{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires reflectable&lt;T&gt;
+constexpr auto
+to_tuple(const T &amp;__obj)
+{
+  return __impl::__to_tuple(__obj, micron::make_index_sequence&lt;field_count&lt;T&gt;&gt;{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__to_tuple(__obj, micron::make_index_sequence&lt;field_count&lt;T&gt;&gt;{})</code></td><td><a href="../source/reflect.hpp.html#L269">line 269</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-417c5e0c52c25dd9">__impl::__to_tuple</a>.</p></section><section class="function-entry" id="f-37573d7387f31bd7"><h3><code>micron::reflect::tie_fields(T &amp;__obj)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L275">line 275</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires reflectable&lt;T&gt;
+constexpr auto
+tie_fields(T &amp;__obj)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;__obj</code></li></ul><h4>Effects</h4><p>Returns <code>__impl::__to_ref_tuple(__obj, micron::make_index_sequence&lt;field_count&lt;T&gt;&gt;{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires reflectable&lt;T&gt;
+constexpr auto
+tie_fields(T &amp;__obj)
+{
+  return __impl::__to_ref_tuple(__obj, micron::make_index_sequence&lt;field_count&lt;T&gt;&gt;{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__to_ref_tuple(__obj, micron::make_index_sequence&lt;field_count&lt;T&gt;&gt;{})</code></td><td><a href="../source/reflect.hpp.html#L277">line 277</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-fe49b2282163e279">__impl::__to_ref_tuple</a>.</p></section><section class="function-entry" id="f-d7d28a74c35909cf"><h3><code>micron::reflect::equal(const T &amp;__a, const T &amp;__b) noexcept</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L286">line 286</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires reflectable&lt;T&gt;
+constexpr bool
+equal(const T &amp;__a, const T &amp;__b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;__a</code></li><li><code>const T &amp;__b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires reflectable&lt;T&gt;
+constexpr bool
+equal(const T &amp;__a, const T &amp;__b) noexcept
+{
+  bool __eq = true;
+  template for ( constexpr auto __b_ : bases&lt;T&gt; )
+  {
+    if ( __eq ) {
+      using B = [:micron::meta::type_of(__b_):];
+      if constexpr ( micron::equality_comparable&lt;B&gt; )
+        __eq = (static_cast&lt;const B &amp;&gt;(__a) == static_cast&lt;const B &amp;&gt;(__b));
+      else
+        __eq = equal(static_cast&lt;const B &amp;&gt;(__a), static_cast&lt;const B &amp;&gt;(__b));
+    }
+  }
+  template for ( constexpr auto __m : members&lt;T&gt; )
+  {
+    if ( __eq ) {
+      using M = micron::remove_cvref_t&lt;decltype(__a.[:__m:])&gt;;
+      if constexpr ( reflectable&lt;M&gt; &amp;&amp; !micron::equality_comparable&lt;M&gt; )
+        __eq = equal(__a.[:__m:], __b.[:__m:]);
+      else
+        __eq = (__a.[:__m:] == __b.[:__m:]);
+    }
+  }
+  return __eq;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__eq</code></td><td><a href="../source/reflect.hpp.html#L309">line 309</a></td></tr></tbody></table></section><section class="function-entry" id="f-a767c504b984eba9"><h3><code>micron::reflect::hash(const T &amp;__obj) noexcept</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L362">line 362</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires reflectable&lt;T&gt;
+constexpr u64
+hash(const T &amp;__obj) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;__obj</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires reflectable&lt;T&gt;
+constexpr u64
+hash(const T &amp;__obj) noexcept
+{
+  u64 __h = __impl::__fnv_basis;
+  template for ( constexpr auto __b_ : bases&lt;T&gt; )
+  {
+    using B = [:micron::meta::type_of(__b_):];
+    __h ^= hash(static_cast&lt;const B &amp;&gt;(__obj));
+    __h *= __impl::__fnv_prime;
+  }
+  template for ( constexpr auto __m : members&lt;T&gt; )
+  {
+    using M = micron::remove_cvref_t&lt;decltype(__obj.[:__m:])&gt;;
+    if constexpr ( reflectable&lt;M&gt; ) {
+      __h ^= hash(__obj.[:__m:]);
+      __h *= __impl::__fnv_prime;
+    } else
+      __impl::__mix_scalar(__h, __obj.[:__m:]);
+  }
+  return __h;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__h</code></td><td><a href="../source/reflect.hpp.html#L380">line 380</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-f9156accda40d0d9">__impl::__mix_scalar</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-417c5e0c52c25dd9"><h3><code>micron::reflect::__impl::__to_tuple(const T &amp;__obj, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L250">line 250</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, usize... I&gt;
+constexpr auto
+__to_tuple(const T &amp;__obj, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;__obj</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Returns <code>micron::tuple&lt;field_type&lt;I, T&gt;...&gt;{ get_field&lt;I&gt;(__obj)... }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, usize... I&gt;
+constexpr auto
+__to_tuple(const T &amp;__obj, micron::index_sequence&lt;I...&gt;)
+{
+  return micron::tuple&lt;field_type&lt;I, T&gt;...&gt;{ get_field&lt;I&gt;(__obj)... };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::tuple&lt;field_type&lt;I, T&gt;...&gt;{ get_field&lt;I&gt;(__obj)... }</code></td><td><a href="../source/reflect.hpp.html#L252">line 252</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-fb0d87940c6af89a">get_field&lt;I&gt;</a>.</p></section><section class="function-entry" id="f-fe49b2282163e279"><h3><code>micron::reflect::__impl::__to_ref_tuple(T &amp;__obj, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L257">line 257</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, usize... I&gt;
+constexpr auto
+__to_ref_tuple(T &amp;__obj, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;__obj</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Returns <code>micron::tuple&lt;field_type&lt;I, T&gt; &amp;...&gt;{ get_field&lt;I&gt;(__obj)... }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, usize... I&gt;
+constexpr auto
+__to_ref_tuple(T &amp;__obj, micron::index_sequence&lt;I...&gt;)
+{
+  return micron::tuple&lt;field_type&lt;I, T&gt; &amp;...&gt;{ get_field&lt;I&gt;(__obj)... };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::tuple&lt;field_type&lt;I, T&gt; &amp;...&gt;{ get_field&lt;I&gt;(__obj)... }</code></td><td><a href="../source/reflect.hpp.html#L259">line 259</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-fb0d87940c6af89a">get_field&lt;I&gt;</a>.</p></section><section class="function-entry" id="f-d8571f569f1d3ece"><h3><code>micron::reflect::__impl::__mix_bytes(u64 &amp;__h, const unsigned char *__p, usize __n) noexcept</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L319">line 319</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+__mix_bytes(u64 &amp;__h, const unsigned char *__p, usize __n) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 &amp;__h</code></li><li><code>const unsigned char *__p</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+__mix_bytes(u64 &amp;__h, const unsigned char *__p, usize __n) noexcept
+{
+  for ( usize i = 0; i &lt; __n; ++i ) {
+    __h ^= static_cast&lt;u64&gt;(__p[i]);
+    __h *= __fnv_prime;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f852dd06f3e6ebe1"><h3><code>micron::reflect::__impl::__mix_word(u64 &amp;__h, u64 __w) noexcept</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L328">line 328</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+__mix_word(u64 &amp;__h, u64 __w) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 &amp;__h</code></li><li><code>u64 __w</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+__mix_word(u64 &amp;__h, u64 __w) noexcept
+{
+  for ( usize i = 0; i &lt; sizeof(u64); ++i ) {
+    __h ^= (__w &gt;&gt; (i * 8)) &amp; 0xffull;
+    __h *= __fnv_prime;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f9156accda40d0d9"><h3><code>micron::reflect::__impl::__mix_scalar(u64 &amp;__h, const M &amp;__v) noexcept</code></h3><p>Defined in <code>reflect.hpp</code>, <a href="../source/reflect.hpp.html#L338">line 338</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename M&gt;
+constexpr void
+__mix_scalar(u64 &amp;__h, const M &amp;__v) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_reflection)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 &amp;__h</code></li><li><code>const M &amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename M&gt;
+constexpr void
+__mix_scalar(u64 &amp;__h, const M &amp;__v) noexcept
+{
+  if constexpr ( micron::is_floating_point_v&lt;M&gt; ) {
+    if ( __v == static_cast&lt;M&gt;(0) ) {
+      __mix_word(__h, 0);
+      return;
+    }
+    if constexpr ( sizeof(M) == 4 )
+      __mix_word(__h, static_cast&lt;u64&gt;(__builtin_bit_cast(u32, __v)));
+    else if constexpr ( sizeof(M) == 8 )
+      __mix_word(__h, __builtin_bit_cast(u64, __v));
+    else
+      __mix_bytes(__h, reinterpret_cast&lt;const unsigned char *&gt;(micron::addressof(__v)), sizeof(M));
+  } else if constexpr ( micron::is_integral_v&lt;M&gt; or micron::is_enum_v&lt;M&gt; )
+    __mix_word(__h, static_cast&lt;u64&gt;(__v));
+  else
+    __mix_bytes(__h, reinterpret_cast&lt;const unsigned char *&gt;(micron::addressof(__v)), sizeof(M));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/reflect.hpp.html#L343">line 343</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="reflect.hpp.html#f-f852dd06f3e6ebe1">__mix_word</a>, <a href="reflect.hpp.html#f-d8571f569f1d3ece">__mix_bytes</a>, <a href="memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../about.html">Attribution and licenses</a> · <a href="../index.html">Contents</a></p></div></div>
+</body></html>

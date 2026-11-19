@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/coroutine/fiber_stack.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/coroutine/fiber_stack.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/coroutine/fiber_stack.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/tasks/coroutine/fiber_stack.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e57e241a0e43ed0c"><h3><code>micron::fiber::__seg_class_for(usize want) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber_stack.hpp</code>, <a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L58">line 58</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline u32
+__seg_class_for(usize want) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize want</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline u32
+__seg_class_for(usize want) noexcept
+{
+  for ( u32 i = 0; i &lt; __seg_class_count; ++i )
+    if ( __seg_size_table[i] &gt;= want ) return i;
+  return __seg_class_count - 1;      // clamp to the largest class
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>i</code></td><td><a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L61">line 61</a></td></tr><tr class="t-dsc"><td><code>__seg_class_count - 1</code></td><td><a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L62">line 62</a></td></tr></tbody></table></section><section class="function-entry" id="f-62b7d2a1519ad2e7"><h3><code>micron::fiber::__region_geometry(__region &amp;out, byte *run, usize total, usize stack_bytes, u32 cls, bool from_va) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber_stack.hpp</code>, <a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__region_geometry(__region &amp;out, byte *run, usize total, usize stack_bytes, u32 cls, bool from_va) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__region &amp;out</code></li><li><code>byte *run</code></li><li><code>usize total</code></li><li><code>usize stack_bytes</code></li><li><code>u32 cls</code></li><li><code>bool from_va</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__region_geometry(__region &amp;out, byte *run, usize total, usize stack_bytes, u32 cls, bool from_va) noexcept
+{
+  constexpr usize page = __micron_page_size_default;
+  const usize frame_bytes = total - stack_bytes - 2 * page;
+  out.run = run;
+  out.frame_base = run + page;
+  out.frame_limit = out.frame_base + frame_bytes;
+  out.mid_guard = out.frame_limit;
+  out.stack_base = out.mid_guard + page;
+  out.stack_top = out.stack_base + stack_bytes;
+  out.frame_bytes = frame_bytes;
+  out.stack_bytes = stack_bytes;
+  out.total = total;
+  out.from_va = from_va;
+  out.cls = cls;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-0e682e4595233e18"><h3><code>micron::fiber::__carve_region(__region &amp;out, u32 cls) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber_stack.hpp</code>, <a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L85">line 85</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold]] inline bool
+__carve_region(__region &amp;out, u32 cls) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__region &amp;out</code></li><li><code>u32 cls</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold]] inline bool
+__carve_region(__region &amp;out, u32 cls) noexcept
+{
+  if ( cls &gt;= __seg_class_count ) cls = __seg_class_count - 1;
+  constexpr usize page = __micron_page_size_default;
+  const usize usable = __seg_size_table[cls];
+  const usize frame_want = (usable * __seg_frame_ratio_num / __seg_frame_ratio_den + page - 1) &amp; ~(page - 1);
+  usize stack_bytes = ((usable - frame_want) + page - 1) &amp; ~(page - 1);
+  if ( stack_bytes &lt; page ) stack_bytes = page;
+
+  {
+    const usize want = page + frame_want + page + stack_bytes;
+    const usize total = (want + abc::__sheet_align_mask) &amp; ~abc::__sheet_align_mask;      // granule-rounded
+    byte *run = reinterpret_cast&lt;byte *&gt;(abc::__va_carve_reserved(total));
+    if ( run != nullptr ) {
+      __region_geometry(out, run, total, stack_bytes, cls, true);
+      if ( abc::__va_commit(micron::ptr_cast&lt;addr_t *&gt;(out.frame_base), out.frame_bytes) != nullptr
+           &amp;&amp; abc::__va_commit(micron::ptr_cast&lt;addr_t *&gt;(out.stack_base), out.stack_bytes) != nullptr ) [[likely]]
+        return true;
+      abc::__va_release(micron::ptr_cast&lt;addr_t *&gt;(run), total);      // commit failed: hand the run back
+    }
+  }
+
+  const usize total = page + frame_want + page + stack_bytes;
+  byte *run = reinterpret_cast&lt;byte *&gt;(micron::addrmap(total));
+  if ( micron::mmap_failed(run) || run == nullptr ) {
+    out = __region{};
+    return false;
+  }
+  __region_geometry(out, run, total, stack_bytes, cls, false);
+  (void)micron::mprotect(micron::ptr_cast&lt;addr_t *&gt;(out.run), page, micron::prot_none);
+  (void)micron::mprotect(micron::ptr_cast&lt;addr_t *&gt;(out.mid_guard), page, micron::prot_none);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L102">line 102</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L116">line 116</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/allocation/abcmalloc/va_reserve.hpp.html#f-a316d3c457b1710e">abc::__va_carve_reserved</a>, <a href="fiber_stack.hpp.html#f-62b7d2a1519ad2e7">__region_geometry</a>, <a href="../../memory/allocation/abcmalloc/va_reserve.hpp.html#f-09eeac4e120e6584">abc::__va_commit</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>, <a href="../../memory/allocation/abcmalloc/va_reserve.hpp.html#f-2910ec84a38165d1">abc::__va_release</a>, <a href="../../memory/mman.hpp.html#f-3a83e56e52357149">micron::addrmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">micron::mmap_failed</a>, <a href="../../memory/mman.hpp.html#f-6285349af4d8d7c9">micron::mprotect</a>.</p></section><section class="function-entry" id="f-e4cdbee34b419dd8"><h3><code>micron::fiber::__release_region(const __region &amp;reg) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber_stack.hpp</code>, <a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L121">line 121</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__release_region(const __region &amp;reg) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __region &amp;reg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__release_region(const __region &amp;reg) noexcept
+{
+  if ( reg.run == nullptr ) return;
+  if ( reg.from_va )
+    abc::__va_release(micron::ptr_cast&lt;addr_t *&gt;(reg.run), reg.total);
+  else
+    micron::try_unmap(reg.run, reg.total);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L123">line 123</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/allocation/abcmalloc/va_reserve.hpp.html#f-2910ec84a38165d1">abc::__va_release</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>, <a href="../../memory/mman.hpp.html#f-5aa762742568f3e4">micron::try_unmap</a>.</p></section><section class="function-entry" id="f-9d5e8d15231a794a"><h3><code>micron::fiber::__decommit_region(const __region &amp;reg) noexcept</code></h3><p>Defined in <code>tasks/coroutine/fiber_stack.hpp</code>, <a href="../../../source/tasks/coroutine/fiber_stack.hpp.html#L131">line 131</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline void
+__decommit_region(const __region &amp;reg) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __region &amp;reg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline void
+__decommit_region(const __region &amp;reg) noexcept
+{
+  if ( reg.frame_base != nullptr &amp;&amp; reg.stack_top &gt; reg.frame_base )
+    (void)micron::madvise(micron::ptr_cast&lt;addr_t *&gt;(reg.frame_base), static_cast&lt;usize&gt;(reg.stack_top - reg.frame_base),
+                          /*MADV_DONTNEED*/ 4);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../memory/mman.hpp.html#f-16426f2dac0ec6c8">micron::madvise</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

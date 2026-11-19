@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/lazy/partition.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/lazy/partition.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/lazy.html">Lazy algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/lazy/partition.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/algorithm/lazy/partition.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-fc68aa1390f1d028">micron::lz::partition_into(V &amp;&amp;__v, const P &amp;__p)</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-7c056becf0577175">micron::lz::partition(P &amp;&amp;__p)</a></td><td>function; line 66</td></tr><tr class="t-dsc"><td><a href="#f-80fc1c5a61011100">micron::lz::unzip_into(V &amp;&amp;__v)</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-fc1877cfae1f7f7a">micron::lz::unzip() noexcept</a></td><td>function; line 102</td></tr><tr class="t-dsc"><td><a href="#f-7f3db77e656c9c73">micron::lz::traverse_into(V &amp;&amp;__v, const F &amp;__f)</a></td><td>function; line 109</td></tr><tr class="t-dsc"><td><a href="#f-48757746660a9a9e">micron::lz::traverse(F &amp;&amp;__f)</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-325cb066cf95c966">micron::lz::sequence_into(V &amp;&amp;__v)</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-0307fc80597fe648">micron::lz::sequence() noexcept</a></td><td>function; line 195</td></tr><tr class="t-dsc"><td><a href="#f-6447c7a0dfe2be7a">micron::lz::sequence_check() noexcept</a></td><td>function; line 211</td></tr><tr class="t-dsc"><td><a href="#f-c2abec1ab4e3b3de">micron::lz::uncons() noexcept</a></td><td>function; line 243</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-fc68aa1390f1d028"><h3><code>micron::lz::partition_into(V &amp;&amp;__v, const P &amp;__p)</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C, typename P, typename V&gt;
+constexpr micron::tuple&lt;C, C&gt;
+partition_into(V &amp;&amp;__v, const P &amp;__p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li><li><code>const P &amp;__p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C, typename P, typename V&gt;
+constexpr micron::tuple&lt;C, C&gt;
+partition_into(V &amp;&amp;__v, const P &amp;__p)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::partition: this pipeline never terminates&quot;);
+
+  C __yes, __no;
+  const usize __hint = static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v));
+  __impl::__reserve_if(__yes, __hint);
+  __impl::__reserve_if(__no, __hint);
+
+  __impl::__each(__v, [&amp;](auto &amp;&amp;__x) {
+    if ( __p(__x) )
+      __yes.push_back(static_cast&lt;typename C::value_type&gt;(__x));
+    else
+      __no.push_back(static_cast&lt;typename C::value_type&gt;(__x));
+  });
+  return micron::make_tuple(micron::move(__yes), micron::move(__no));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::make_tuple(micron::move(__yes), micron::move(__no))</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L50">line 50</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::partition: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L37">line 37</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-86b48cc370469477">micron::ranges::reserve_hint</a>, <a href="partition.hpp.html#f-7deb8dc22ec830f5">__impl::__reserve_if</a>, <a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>, <a href="../../tuple.hpp.html#f-bcb8998427f6c9c0">micron::make_tuple</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-7c056becf0577175"><h3><code>micron::lz::partition(P &amp;&amp;__p)</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L66">line 66</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C, typename P&gt;
+[[nodiscard]] constexpr auto
+partition(P &amp;&amp;__p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>P &amp;&amp;__p</code></li></ul><h4>Effects</h4><p>Returns <code>__partition_fn&lt;C, micron::decay_t&lt;P&gt;&gt;{ micron::forward&lt;P&gt;(__p) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C, typename P&gt;
+[[nodiscard]] constexpr auto
+partition(P &amp;&amp;__p)
+{
+  return __partition_fn&lt;C, micron::decay_t&lt;P&gt;&gt;{ micron::forward&lt;P&gt;(__p) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__partition_fn&lt;C, micron::decay_t&lt;P&gt;&gt;{ micron::forward&lt;P&gt;(__p) }</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L68">line 68</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;P&gt;</a>.</p></section><section class="function-entry" id="f-80fc1c5a61011100"><h3><code>micron::lz::unzip_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename CA, typename CB, typename V&gt;
+constexpr micron::tuple&lt;CA, CB&gt;
+unzip_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename CA, typename CB, typename V&gt;
+constexpr micron::tuple&lt;CA, CB&gt;
+unzip_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::unzip: this pipeline never terminates&quot;);
+
+  CA __as;
+  CB __bs;
+  const usize __hint = static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v));
+  __impl::__reserve_if(__as, __hint);
+  __impl::__reserve_if(__bs, __hint);
+
+  __impl::__each(__v, [&amp;](auto &amp;&amp;__x) {
+    __as.push_back(static_cast&lt;typename CA::value_type&gt;(micron::get&lt;0&gt;(__x)));
+    __bs.push_back(static_cast&lt;typename CB::value_type&gt;(micron::get&lt;1&gt;(__x)));
+  });
+  return micron::make_tuple(micron::move(__as), micron::move(__bs));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::make_tuple(micron::move(__as), micron::move(__bs))</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L88">line 88</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::unzip: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L76">line 76</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-86b48cc370469477">micron::ranges::reserve_hint</a>, <a href="partition.hpp.html#f-7deb8dc22ec830f5">__impl::__reserve_if</a>, <a href="__lazy_bits.hpp.html#f-ca99f0c5641fb333">__impl::__each</a>, <a href="../../tuple.hpp.html#f-bcb8998427f6c9c0">micron::make_tuple</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-fc1877cfae1f7f7a"><h3><code>micron::lz::unzip() noexcept</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L102">line 102</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename CA, typename CB&gt;
+[[nodiscard]] constexpr auto
+unzip() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__unzip_fn&lt;CA, CB&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename CA, typename CB&gt;
+[[nodiscard]] constexpr auto
+unzip() noexcept
+{
+  return __unzip_fn&lt;CA, CB&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__unzip_fn&lt;CA, CB&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L104">line 104</a></td></tr></tbody></table></section><section class="function-entry" id="f-7f3db77e656c9c73"><h3><code>micron::lz::traverse_into(V &amp;&amp;__v, const F &amp;__f)</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L109">line 109</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C, typename F, typename V&gt;
+constexpr auto
+traverse_into(V &amp;&amp;__v, const F &amp;__f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li><li><code>const F &amp;__f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C, typename F, typename V&gt;
+constexpr auto
+traverse_into(V &amp;&amp;__v, const F &amp;__f)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  using Res = micron::remove_cvref_t&lt;micron::invoke_result_t&lt;const F &amp;, micron::ranges::range_reference_t&lt;B&gt;&gt;&gt;;
+  using E = typename Res::second_type;
+  using O = micron::option&lt;C, E&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::traverse: this pipeline never terminates&quot;);
+
+  C __out;
+  __impl::__reserve_if(__out, static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v)));
+
+  bool __failed = false;
+  E __err{};
+  __impl::__each_while(__v, [&amp;](auto &amp;&amp;__x) {
+    Res __r = __f(micron::forward&lt;decltype(__x)&gt;(__x));
+    if ( !__r.is_first() ) {
+      __err = __r.template cast&lt;E&gt;();
+      __failed = true;
+      return false;
+    }
+    __out.push_back(static_cast&lt;typename C::value_type&gt;(__r.template cast&lt;typename Res::first_type&gt;()));
+    return true;
+  });
+
+  if ( __failed ) return O{ __err };
+  return O{ micron::move(__out) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>O{ __err }</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L133">line 133</a></td></tr><tr class="t-dsc"><td><code>O{ micron::move(__out) }</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L134">line 134</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::traverse: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L115">line 115</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="partition.hpp.html#f-7deb8dc22ec830f5">__impl::__reserve_if</a>, <a href="../../range.hpp.html#s-86b48cc370469477">micron::ranges::reserve_hint</a>, <a href="__lazy_bits.hpp.html#f-7a839b56f3247dcf">__impl::__each_while</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-48757746660a9a9e"><h3><code>micron::lz::traverse(F &amp;&amp;__f)</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C, typename F&gt;
+[[nodiscard]] constexpr auto
+traverse(F &amp;&amp;__f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F &amp;&amp;__f</code></li></ul><h4>Effects</h4><p>Returns <code>__traverse_fn&lt;C, micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C, typename F&gt;
+[[nodiscard]] constexpr auto
+traverse(F &amp;&amp;__f)
+{
+  return __traverse_fn&lt;C, micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__traverse_fn&lt;C, micron::decay_t&lt;F&gt;&gt;{ micron::forward&lt;F&gt;(__f) }</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L152">line 152</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-325cb066cf95c966"><h3><code>micron::lz::sequence_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C, typename V&gt;
+constexpr auto
+sequence_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C, typename V&gt;
+constexpr auto
+sequence_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  using Opt = micron::ranges::range_value_t&lt;B&gt;;
+  using E = typename Opt::second_type;
+  using O = micron::option&lt;C, E&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::sequence: this pipeline never terminates&quot;);
+
+  C __out;
+  __impl::__reserve_if(__out, static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v)));
+
+  bool __failed = false;
+  E __err{};
+  __impl::__each_while(__v, [&amp;](auto &amp;&amp;__o) {
+    if ( !__o.is_first() ) {
+      __err = __o.template cast&lt;E&gt;();
+      __failed = true;
+      return false;
+    }
+    __out.push_back(static_cast&lt;typename C::value_type&gt;(__o.template cast&lt;typename Opt::first_type&gt;()));
+    return true;
+  });
+
+  if ( __failed ) return O{ __err };
+  return O{ micron::move(__out) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>O{ __err }</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L180">line 180</a></td></tr><tr class="t-dsc"><td><code>O{ micron::move(__out) }</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L181">line 181</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::sequence: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L163">line 163</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="partition.hpp.html#f-7deb8dc22ec830f5">__impl::__reserve_if</a>, <a href="../../range.hpp.html#s-86b48cc370469477">micron::ranges::reserve_hint</a>, <a href="__lazy_bits.hpp.html#f-7a839b56f3247dcf">__impl::__each_while</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-0307fc80597fe648"><h3><code>micron::lz::sequence() noexcept</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C&gt;
+[[nodiscard]] constexpr auto
+sequence() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__sequence_fn&lt;C&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C&gt;
+[[nodiscard]] constexpr auto
+sequence() noexcept
+{
+  return __sequence_fn&lt;C&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sequence_fn&lt;C&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L197">line 197</a></td></tr></tbody></table></section><section class="function-entry" id="f-6447c7a0dfe2be7a"><h3><code>micron::lz::sequence_check() noexcept</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr auto
+sequence_check() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__sequence_check_fn{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr auto
+sequence_check() noexcept
+{
+  return __sequence_check_fn{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sequence_check_fn{}</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L213">line 213</a></td></tr></tbody></table></section><section class="function-entry" id="f-c2abec1ab4e3b3de"><h3><code>micron::lz::uncons() noexcept</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L243">line 243</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C&gt;
+[[nodiscard]] constexpr auto
+uncons() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__uncons_fn&lt;C&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C&gt;
+[[nodiscard]] constexpr auto
+uncons() noexcept
+{
+  return __uncons_fn&lt;C&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__uncons_fn&lt;C&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L245">line 245</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-7deb8dc22ec830f5"><h3><code>micron::lz::__impl::__reserve_if(C &amp;__c, usize __n)</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L24">line 24</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C&gt;
+constexpr void
+__reserve_if(C &amp;__c, usize __n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>C &amp;__c</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C&gt;
+constexpr void
+__reserve_if(C &amp;__c, usize __n)
+{
+  if constexpr ( requires(C &amp;__x, usize __k) { __x.reserve(__k); } )
+    if ( __n ) __c.reserve(__n);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ae01e2aa78565d60"><h3><code>micron::lz::__partition_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L58">line 58</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr micron::tuple&lt;C, C&gt;
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>partition_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr micron::tuple&lt;C, C&gt;
+  operator()(R &amp;&amp;__r) const
+  {
+    return partition_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __p);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>partition_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __p)</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L60">line 60</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="partition.hpp.html#f-fc68aa1390f1d028">partition_into&lt;C&gt;</a>, <a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-399756e4202cf3c2"><h3><code>micron::lz::__unzip_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L94">line 94</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr micron::tuple&lt;CA, CB&gt;
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>unzip_into&lt;CA, CB&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr micron::tuple&lt;CA, CB&gt;
+  operator()(R &amp;&amp;__r) const
+  {
+    return unzip_into&lt;CA, CB&gt;(__as_view(micron::forward&lt;R&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>unzip_into&lt;CA, CB&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L96">line 96</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="partition.hpp.html#f-80fc1c5a61011100">unzip_into&lt;CA, CB&gt;</a>, <a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-795b83a943cd204e"><h3><code>micron::lz::__traverse_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L142">line 142</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>traverse_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __f)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    return traverse_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __f);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>traverse_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)), __f)</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L144">line 144</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="partition.hpp.html#f-7f3db77e656c9c73">traverse_into&lt;C&gt;</a>, <a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-adab5abc5e440206"><h3><code>micron::lz::__sequence_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L187">line 187</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>sequence_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    return sequence_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sequence_into&lt;C&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L189">line 189</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="partition.hpp.html#f-325cb066cf95c966">sequence_into&lt;C&gt;</a>, <a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><section class="function-entry" id="f-1ef9a3bc6d289826"><h3><code>micron::lz::__sequence_check_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L203">line 203</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr bool
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr bool
+  operator()(R &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;R&gt;(__r));
+    return __impl::__each_while(__v, [](auto &amp;&amp;__o) { return __o.is_first(); });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__each_while(__v, [](auto &amp;&amp;__o) { return __o.is_first(); })</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L206">line 206</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>, <a href="__lazy_bits.hpp.html#f-7a839b56f3247dcf">__impl::__each_while</a>.</p></section><section class="function-entry" id="f-d218f01c4d5f299b"><h3><code>micron::lz::__uncons_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/partition.hpp</code>, <a href="../../../source/algorithm/lazy/partition.hpp.html#L219">line 219</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr auto
+  operator()(R &amp;&amp;__r) const
+  {
+    auto __v = __as_view(micron::forward&lt;R&gt;(__r));
+    using B = micron::remove_cvref_t&lt;decltype(__v)&gt;;
+    using E = micron::ranges::range_value_t&lt;B&gt;;
+    using O = micron::option&lt;micron::tuple&lt;E, C&gt;, fp::empty_container_error&gt;;
+    static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::uncons: this pipeline never terminates&quot;);
+
+    auto __i = micron::ranges::begin(__v);
+    const auto __e = micron::ranges::end(__v);
+    if ( __i == __e ) return O{ fp::empty_container_error{} };
+
+    E __head = static_cast&lt;E&gt;(*__i);
+    ++__i;
+    C __rest;
+    const usize __hint = static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v));
+    __impl::__reserve_if(__rest, __hint);
+    for ( ; !(__i == __e); ++__i ) __rest.push_back(static_cast&lt;typename C::value_type&gt;(*__i));
+    return O{ micron::make_tuple(micron::move(__head), micron::move(__rest)) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>O{ fp::empty_container_error{} }</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L229">line 229</a></td></tr><tr class="t-dsc"><td><code>O{ micron::make_tuple(micron::move(__head), micron::move(__rest)) }</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L237">line 237</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless, &quot;micron::lz::uncons: this pipeline never terminates&quot;);</code></td><td><a href="../../../source/algorithm/lazy/partition.hpp.html#L225">line 225</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>, <a href="../../range.hpp.html#s-86b48cc370469477">micron::ranges::reserve_hint</a>, <a href="partition.hpp.html#f-7deb8dc22ec830f5">__impl::__reserve_if</a>, <a href="../../tuple.hpp.html#f-bcb8998427f6c9c0">micron::make_tuple</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

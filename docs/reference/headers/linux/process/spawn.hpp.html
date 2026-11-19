@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/process/spawn.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/process/spawn.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/process/spawn.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/linux/process/spawn.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-672421e8230045fe">micron::exec_wait</code></td><td>variable; line 18</td></tr><tr class="t-dsc"><td><code id="s-03a1d9fb5abfa126">micron::exec_continue</code></td><td>variable; line 19</td></tr><tr class="t-dsc"><td><code id="s-0ba6e64bdcf28ba4">micron::is_limits_set</code></td><td>concept; line 21</td></tr><tr class="t-dsc"><td><a href="#f-169a233930d682b1">micron::child_apply_limits(const Lims &amp;lims)</a></td><td>function; line 27</td></tr><tr class="t-dsc"><td><a href="#f-d031265f79090c60">micron::inplace_spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)</a></td><td>function; line 44</td></tr><tr class="t-dsc"><td><a href="#f-81024c58aef28174">micron::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Lims &amp;lims)</a></td><td>function; line 111</td></tr><tr class="t-dsc"><td><a href="#f-f15b58b6ba191596">micron::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &amp;caps)</a></td><td>function; line 118</td></tr><tr class="t-dsc"><td><a href="#f-2b431e08d2a687b0">micron::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &amp;caps, const Lims &amp;lims)</a></td><td>function; line 125</td></tr><tr class="t-dsc"><td><a href="#f-812d87d6bc5b6bcb">micron::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const posix::spawn_file_actions_t *fa,
+      const posix::spawnattr_t *attr, const char *cwd = nullptr, const posix::limits_t *lims = nullptr, const ucap_set_t *caps = nullptr)</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-6fce333fec1c7bb4">micron::unsafe::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)</a></td><td>function; line 200</td></tr><tr class="t-dsc"><td><a href="#f-bdf2777bc4e68fc6">micron::unsafe::spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawnattr_t &amp;attrp, char *const *argv, char *const *envp)</a></td><td>function; line 206</td></tr><tr class="t-dsc"><td><a href="#f-8d0005de4d16b7a1">micron::unsafe::spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawn_file_actions_t &amp;file_actions, const posix::spawnattr_t &amp;attrp,
+      char *const *argv, char *const *envp)</a></td><td>function; line 212</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-169a233930d682b1"><h3><code>micron::child_apply_limits(const Lims &amp;lims)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L27">line 27</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_limits_set Lims&gt;
+inline void
+child_apply_limits(const Lims &amp;lims)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Lims &amp;lims</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_limits_set Lims&gt;
+inline void
+child_apply_limits(const Lims &amp;lims)
+{
+  for ( rlim_t i = 0; i &lt; posix::rlimit_nlimits; ++i ) {
+    posix::rlimit64_t rl = lims.lim[i];       // local copy (64-bit fields)
+    posix::set_process_limits(0, i, rl);      // prlimit64 on self (64-bit correct on every arch)
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sys/limits.hpp.html#f-3492958cc7e59195">posix::set_process_limits</a>.</p></section><section class="function-entry" id="f-d031265f79090c60"><h3><code>micron::inplace_spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) void
+inplace_spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) void
+inplace_spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)
+{
+  __inplace_spawn(pid, path, argv, envp);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="spawn.hpp.html#f-252589f0b53c99dc">__inplace_spawn</a>.</p></section><section class="function-entry" id="f-81024c58aef28174"><h3><code>micron::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Lims &amp;lims)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L111">line 111</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_limits_set Lims&gt;
+inline int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Lims &amp;lims)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li><li><code>const Lims &amp;lims</code></li></ul><h4>Effects</h4><p>Returns <code>__spawn_caps&lt;true, false&gt;(pid, path, argv, envp, &amp;lims)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_limits_set Lims&gt;
+inline int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Lims &amp;lims)
+{
+  return __spawn_caps&lt;true, false&gt;(pid, path, argv, envp, &amp;lims);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spawn_caps&lt;true, false&gt;(pid, path, argv, envp, &amp;lims)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L113">line 113</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spawn.hpp.html#f-cc24576a9738a41b">__spawn_caps&lt;true, false&gt;</a>.</p></section><section class="function-entry" id="f-f15b58b6ba191596"><h3><code>micron::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &amp;caps)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L118">line 118</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_cap_set Caps&gt;
+inline int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &amp;caps)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li><li><code>const Caps &amp;caps</code></li></ul><h4>Effects</h4><p>Returns <code>__spawn_caps&lt;false, true, posix::limits_t, Caps&gt;(pid, path, argv, envp, nullptr, &amp;caps)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_cap_set Caps&gt;
+inline int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &amp;caps)
+{
+  return __spawn_caps&lt;false, true, posix::limits_t, Caps&gt;(pid, path, argv, envp, nullptr, &amp;caps);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spawn_caps&lt;false, true, posix::limits_t, Caps&gt;(pid, path, argv, envp, nullptr, &amp;caps)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L120">line 120</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spawn.hpp.html#f-cc24576a9738a41b">__spawn_caps&lt;false, true, posix::limits_t, Caps&gt;</a>.</p></section><section class="function-entry" id="f-2b431e08d2a687b0"><h3><code>micron::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &amp;caps, const Lims &amp;lims)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L125">line 125</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_cap_set Caps, is_limits_set Lims&gt;
+inline int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &amp;caps, const Lims &amp;lims)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li><li><code>const Caps &amp;caps</code></li><li><code>const Lims &amp;lims</code></li></ul><h4>Effects</h4><p>Returns <code>__spawn_caps&lt;true, true, Lims, Caps&gt;(pid, path, argv, envp, &amp;lims, &amp;caps)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_cap_set Caps, is_limits_set Lims&gt;
+inline int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const Caps &amp;caps, const Lims &amp;lims)
+{
+  return __spawn_caps&lt;true, true, Lims, Caps&gt;(pid, path, argv, envp, &amp;lims, &amp;caps);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spawn_caps&lt;true, true, Lims, Caps&gt;(pid, path, argv, envp, &amp;lims, &amp;caps)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L127">line 127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spawn.hpp.html#f-cc24576a9738a41b">__spawn_caps&lt;true, true, Lims, Caps&gt;</a>.</p></section><section class="function-entry" id="f-812d87d6bc5b6bcb"><h3><code>micron::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const posix::spawn_file_actions_t *fa,
+      const posix::spawnattr_t *attr, const char *cwd = nullptr, const posix::limits_t *lims = nullptr, const ucap_set_t *caps = nullptr)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const posix::spawn_file_actions_t *fa,
+      const posix::spawnattr_t *attr, const char *cwd = nullptr, const posix::limits_t *lims = nullptr, const ucap_set_t *caps = nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li><li><code>const posix::spawn_file_actions_t *fa</code></li><li><code>const posix::spawnattr_t *attr</code></li><li><code>const char *cwd = nullptr</code></li><li><code>const posix::limits_t *lims = nullptr</code></li><li><code>const ucap_set_t *caps = nullptr</code></li></ul><h4>Effects</h4><p>Returns <code>__spawn_caps&lt;true, true, posix::limits_t, ucap_set_t&gt;(pid, path, argv, envp, lims, caps, fa, attr, cwd)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp, const posix::spawn_file_actions_t *fa,
+      const posix::spawnattr_t *attr, const char *cwd = nullptr, const posix::limits_t *lims = nullptr, const ucap_set_t *caps = nullptr)
+{
+  return __spawn_caps&lt;true, true, posix::limits_t, ucap_set_t&gt;(pid, path, argv, envp, lims, caps, fa, attr, cwd);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spawn_caps&lt;true, true, posix::limits_t, ucap_set_t&gt;(pid, path, argv, envp, lims, caps, fa, attr, cwd)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L134">line 134</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spawn.hpp.html#f-cc24576a9738a41b">__spawn_caps&lt;true, true, posix::limits_t, ucap_set_t&gt;</a>.</p></section><section class="function-entry" id="f-6fce333fec1c7bb4"><h3><code>micron::unsafe::spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L200">line 200</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li></ul><h4>Effects</h4><p>Returns <code>__spawn(pid, path, nullptr, nullptr, argv, envp)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+spawn(pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)
+{
+  return __spawn(pid, path, nullptr, nullptr, argv, envp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spawn(pid, path, nullptr, nullptr, argv, envp)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L202">line 202</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spawn.hpp.html#f-33080e928fe1a030">__spawn</a>.</p></section><section class="function-entry" id="f-bdf2777bc4e68fc6"><h3><code>micron::unsafe::spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawnattr_t &amp;attrp, char *const *argv, char *const *envp)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L206">line 206</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawnattr_t &amp;attrp, char *const *argv, char *const *envp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>const posix::spawnattr_t &amp;attrp</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li></ul><h4>Effects</h4><p>Returns <code>__spawn(pid, path, nullptr, &amp;attrp, argv, envp)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawnattr_t &amp;attrp, char *const *argv, char *const *envp)
+{
+  return __spawn(pid, path, nullptr, &amp;attrp, argv, envp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spawn(pid, path, nullptr, &amp;attrp, argv, envp)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L208">line 208</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spawn.hpp.html#f-33080e928fe1a030">__spawn</a>.</p></section><section class="function-entry" id="f-8d0005de4d16b7a1"><h3><code>micron::unsafe::spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawn_file_actions_t &amp;file_actions, const posix::spawnattr_t &amp;attrp,
+      char *const *argv, char *const *envp)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L212">line 212</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawn_file_actions_t &amp;file_actions, const posix::spawnattr_t &amp;attrp,
+      char *const *argv, char *const *envp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>const posix::spawn_file_actions_t &amp;file_actions</code></li><li><code>const posix::spawnattr_t &amp;attrp</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li></ul><h4>Effects</h4><p>Returns <code>__spawn(pid, path, &amp;file_actions, &amp;attrp, argv, envp)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawn_file_actions_t &amp;file_actions, const posix::spawnattr_t &amp;attrp,
+      char *const *argv, char *const *envp)
+{
+  return __spawn(pid, path, &amp;file_actions, &amp;attrp, argv, envp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__spawn(pid, path, &amp;file_actions, &amp;attrp, argv, envp)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L215">line 215</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="spawn.hpp.html#f-33080e928fe1a030">__spawn</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-252589f0b53c99dc"><h3><code>micron::__inplace_spawn([[maybe_unused]] pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L36">line 36</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) void
+__inplace_spawn([[maybe_unused]] pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>[[maybe_unused]] pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) void
+__inplace_spawn([[maybe_unused]] pid_t &amp;pid, const char *__restrict path, char *const *argv, char *const *envp)
+{
+  // TODO: configure
+  micron::posix::spawn_ctx ctx = { path, argv, envp, nullptr, nullptr, 0 };
+  micron::posix::spawn_process(ctx);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sys/spawn.hpp.html#f-30ad81e9429f9e1d">micron::posix::spawn_process</a>.</p></section><section class="function-entry" id="f-cc24576a9738a41b"><h3><code>micron::__spawn_caps(pid_t &amp;pid, const char *path, char *const *argv, char *const *envp, [[maybe_unused]] const Lims *lims = nullptr,
+             [[maybe_unused]] const Caps *caps = nullptr, const posix::spawn_file_actions_t *fa = nullptr,
+             const posix::spawnattr_t *attr = nullptr, const char *cwd = nullptr)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L53">line 53</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Lim = false, bool Cap = false, typename Lims = posix::limits_t, typename Caps = ucap_set_t&gt;
+inline int
+__spawn_caps(pid_t &amp;pid, const char *path, char *const *argv, char *const *envp, [[maybe_unused]] const Lims *lims = nullptr,
+             [[maybe_unused]] const Caps *caps = nullptr, const posix::spawn_file_actions_t *fa = nullptr,
+             const posix::spawnattr_t *attr = nullptr, const char *cwd = nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li><li><code>[[maybe_unused]] const Lims *lims = nullptr</code></li><li><code>[[maybe_unused]] const Caps *caps = nullptr</code></li><li><code>const posix::spawn_file_actions_t *fa = nullptr</code></li><li><code>const posix::spawnattr_t *attr = nullptr</code></li><li><code>const char *cwd = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Lim = false, bool Cap = false, typename Lims = posix::limits_t, typename Caps = ucap_set_t&gt;
+inline int
+__spawn_caps(pid_t &amp;pid, const char *path, char *const *argv, char *const *envp, [[maybe_unused]] const Lims *lims = nullptr,
+             [[maybe_unused]] const Caps *caps = nullptr, const posix::spawn_file_actions_t *fa = nullptr,
+             const posix::spawnattr_t *attr = nullptr, const char *cwd = nullptr)
+{
+  int pipefd[2];
+  int pr = micron::pipe2(pipefd, posix::o_cloexec);
+  if ( pr &lt; 0 ) return micron::syscall_errno(pr);
+
+  pid = micron::try_fork();
+  if ( pid &lt; 0 ) {
+    micron::close(pipefd[0]);
+    micron::close(pipefd[1]);
+    return micron::syscall_errno(pid);
+  }
+  if ( pid == 0 ) {
+    micron::close(pipefd[0]);
+
+    if ( cwd ) {
+      long cr = micron::posix::chdir(cwd);
+      if ( micron::syscall_failed(cr) ) {
+        int e = micron::syscall_errno(cr);
+        micron::write(pipefd[1], &amp;e, sizeof(e));
+        micron::posix::exit(127);
+        __builtin_unreachable();
+      }
+    }
+
+    // NOTE: child_apply_limits/apply_caps_child are void
+    if constexpr ( Lim ) {
+      if ( lims ) child_apply_limits(*lims);
+    }
+
+    if constexpr ( Cap ) {
+      if ( caps ) apply_caps_child(*caps);
+    }
+
+    posix::spawn_ctx ctx{ path, argv, envp, fa, attr, pipefd[1] };
+    micron::posix::spawn_process(ctx);
+    micron::posix::exit(6);
+    __builtin_unreachable();
+  }
+
+  micron::close(pipefd[1]);
+  int err = 0;
+  max_t n = micron::read(pipefd[0], &amp;err, sizeof(err));
+  micron::close(pipefd[0]);
+  if ( n == static_cast&lt;max_t&gt;(sizeof(err)) ) {
+    micron::wait4(pid, nullptr, 0, nullptr);
+    return err;
+  }
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::syscall_errno(pr)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L59">line 59</a></td></tr><tr class="t-dsc"><td><code>micron::syscall_errno(pid)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L65">line 65</a></td></tr><tr class="t-dsc"><td><code>err</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L103">line 103</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../io.hpp.html#s-08281f87c902c395">micron::pipe2</a>, <a href="../sys/syscall_arm32.hpp.html#f-9c1737a3507eeb48">micron::syscall_errno</a>, <a href="fork.hpp.html#f-5d3108d1f424574e">micron::try_fork</a>, <a href="../io.hpp.html#s-dead85e01b48c90d">micron::close</a>, <a href="../io/sys.hpp.html#f-7edcdac8976c7158">micron::posix::chdir</a>, <a href="../sys/syscall_arm32.hpp.html#f-58f441e7b9a1ad97">micron::syscall_failed</a>, <a href="../io.hpp.html#s-b9004329dc02cd6f">micron::write</a>, <a href="../sys/system.hpp.html#f-c3ae4983501a390d">micron::posix::exit</a>, <a href="spawn.hpp.html#f-169a233930d682b1">child_apply_limits</a>, <a href="capabilities.hpp.html#f-682a95378d9ada3e">apply_caps_child</a>, <a href="../sys/spawn.hpp.html#f-30ad81e9429f9e1d">micron::posix::spawn_process</a>, <a href="../io.hpp.html#s-069e04c7774e0b49">micron::read</a>, <a href="wait.hpp.html#f-bd387a0076ced9e2">micron::wait4</a>.</p></section><section class="function-entry" id="f-13eb9309c936112e"><h3><code>micron::unsafe::__spawn_child_thunk(void *p)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L145">line 145</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static int
+__spawn_child_thunk(void *p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static int
+__spawn_child_thunk(void *p)
+{
+  auto *a = static_cast&lt;__spawn_clone_arg *&gt;(p);
+  micron::close(a-&gt;read_fd);
+  micron::posix::spawn_process(&amp;a-&gt;ctx);
+  return 127;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>127</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L150">line 150</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../io.hpp.html#s-dead85e01b48c90d">micron::close</a>, <a href="../sys/spawn.hpp.html#f-30ad81e9429f9e1d">micron::posix::spawn_process</a>.</p></section><section class="function-entry" id="f-33080e928fe1a030"><h3><code>micron::unsafe::__spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawn_file_actions_t *__restrict file_actions,
+        const posix::spawnattr_t *__restrict attrp, char *const *argv, char *const *envp)</code></h3><p>Defined in <code>linux/process/spawn.hpp</code>, <a href="../../../source/linux/process/spawn.hpp.html#L154">line 154</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>int
+__spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawn_file_actions_t *__restrict file_actions,
+        const posix::spawnattr_t *__restrict attrp, char *const *argv, char *const *envp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>pid_t &amp;pid</code></li><li><code>const char *__restrict path</code></li><li><code>const posix::spawn_file_actions_t *__restrict file_actions</code></li><li><code>const posix::spawnattr_t *__restrict attrp</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">int
+__spawn(pid_t &amp;pid, const char *__restrict path, const posix::spawn_file_actions_t *__restrict file_actions,
+        const posix::spawnattr_t *__restrict attrp, char *const *argv, char *const *envp)
+{
+  int pipefd[2];
+  int pr = micron::pipe2(pipefd, posix::o_cloexec);
+  if ( pr &lt; 0 ) return micron::syscall_errno(pr);
+
+  constexpr usize stack_size = 1 &lt;&lt; 20;
+  void *stack
+      = reinterpret_cast&lt;void *&gt;(micron::mmap(nullptr, stack_size + 4096, prot_read | prot_write, map_private | map_anonymous, -1, 0));
+  if ( mmap_failed(stack) ) return micron::syscall_errno(reinterpret_cast&lt;long&gt;(stack));
+
+  micron::mprotect(stack, 4096, prot_none);
+  constexpr u32 red_zone = 128;
+  uintptr_t sp = reinterpret_cast&lt;uintptr_t&gt;(stack) + stack_size + 4096 - red_zone;
+  sp &amp;= ~uintptr_t(0xF);
+
+  auto *arg = reinterpret_cast&lt;__spawn_clone_arg *&gt;(
+      micron::mmap(nullptr, sizeof(__spawn_clone_arg), prot_read | prot_write, map_private | map_anonymous, -1, 0));
+  if ( mmap_failed(arg) ) return micron::syscall_errno(reinterpret_cast&lt;long&gt;(arg));
+
+  arg-&gt;ctx = { path, argv, envp, file_actions, attrp, pipefd[1] };
+  arg-&gt;read_fd = pipefd[0];
+
+  // child now runs __spawn_child_thunk on the fresh stack via the asm trampoline
+  unsigned long f = micron::posix::__micron_fold_exit_signal(0, static_cast&lt;int&gt;(posix::sig_chld));
+  pid_t child
+      = static_cast&lt;pid_t&gt;(::__micron_clone_entry(&amp;__spawn_child_thunk, reinterpret_cast&lt;void *&gt;(sp), f, arg, nullptr, nullptr, nullptr));
+
+  micron::close(pipefd[1]);
+
+  int err;
+  max_t n = micron::read(pipefd[0], &amp;err, sizeof(err));
+  micron::close(pipefd[0]);
+
+  if ( n == sizeof(err) ) {
+    micron::wait4(child, nullptr, 0, nullptr);
+    return err;
+  }
+
+  if ( pid ) pid = child;
+
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::syscall_errno(pr)</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L159">line 159</a></td></tr><tr class="t-dsc"><td><code>micron::syscall_errno(reinterpret_cast&lt;long&gt;(stack))</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L164">line 164</a></td></tr><tr class="t-dsc"><td><code>micron::syscall_errno(reinterpret_cast&lt;long&gt;(arg))</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L173">line 173</a></td></tr><tr class="t-dsc"><td><code>err</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L191">line 191</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/linux/process/spawn.hpp.html#L196">line 196</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../io.hpp.html#s-08281f87c902c395">micron::pipe2</a>, <a href="../sys/syscall_arm32.hpp.html#f-9c1737a3507eeb48">micron::syscall_errno</a>, <a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">mmap_failed</a>, <a href="../../memory/mman.hpp.html#f-6285349af4d8d7c9">micron::mprotect</a>, <a href="../../types.hpp.html#s-7d2021401cb248d6">uintptr_t</a>, <a href="../io.hpp.html#s-dead85e01b48c90d">micron::close</a>, <a href="../io.hpp.html#s-069e04c7774e0b49">micron::read</a>, <a href="wait.hpp.html#f-bd387a0076ced9e2">micron::wait4</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

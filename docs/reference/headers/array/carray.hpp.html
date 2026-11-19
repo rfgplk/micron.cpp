@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/array/carray.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/array/carray.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/arrays.html">Arrays</a></div><p>Defined in header <code>&lt;micron/array/carray.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/array/carray.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-6f47e97b0aea4872">micron::carray</code></td><td>class; line 37</td></tr><tr class="t-dsc"><td><code id="s-a694586b911f28ca">micron::carray::category_type</code></td><td>typedef; line 637</td></tr><tr class="t-dsc"><td><code id="s-4d6c27ae80e9c460">micron::carray::contiguous_tag</code></td><td>typedef; line 638</td></tr><tr class="t-dsc"><td><code id="s-76b378b776d01e87">micron::carray::mutability_type</code></td><td>typedef; line 639</td></tr><tr class="t-dsc"><td><code id="s-59f6b50faee7976a">micron::carray::memory_type</code></td><td>typedef; line 640</td></tr><tr class="t-dsc"><td><code id="s-58a8ac1c641a49ba">micron::carray::size_type</code></td><td>typedef; line 641</td></tr><tr class="t-dsc"><td><code id="s-d72af348d78ee14a">micron::carray::value_type</code></td><td>typedef; line 642</td></tr><tr class="t-dsc"><td><code id="s-e0b7f1e0639991a3">micron::carray::reference</code></td><td>typedef; line 643</td></tr><tr class="t-dsc"><td><code id="s-213da4d8550b136c">micron::carray::ref</code></td><td>typedef; line 644</td></tr><tr class="t-dsc"><td><code id="s-0b06f2d8530b787c">micron::carray::const_reference</code></td><td>typedef; line 645</td></tr><tr class="t-dsc"><td><code id="s-eac57cda6bf45936">micron::carray::const_ref</code></td><td>typedef; line 646</td></tr><tr class="t-dsc"><td><code id="s-185504821db36980">micron::carray::pointer</code></td><td>typedef; line 647</td></tr><tr class="t-dsc"><td><code id="s-17b10e22a2c2294a">micron::carray::const_pointer</code></td><td>typedef; line 648</td></tr><tr class="t-dsc"><td><code id="s-79df5b67c4029549">micron::carray::iterator</code></td><td>typedef; line 649</td></tr><tr class="t-dsc"><td><code id="s-b6c9b6a849a4e5e9">micron::carray::const_iterator</code></td><td>typedef; line 650</td></tr><tr class="t-dsc"><td><code id="s-3969b92552fa6c1f">micron::carray::length</code></td><td>member; line 651</td></tr><tr class="t-dsc"><td><code id="s-cc33f0e3067ef440">micron::carray::static_size</code></td><td>member; line 652</td></tr><tr class="t-dsc"><td><a href="#f-7a7c2cc94fa6f3ed">micron::carray::~carray()</a></td><td>function; line 655</td></tr><tr class="t-dsc"><td><a href="#f-5086d07234d0060c">micron::carray::carray()</a></td><td>function; line 657</td></tr><tr class="t-dsc"><td><a href="#f-fb55593d994b4971">micron::carray::carray(Fn &amp;&amp;fn)</a></td><td>function; line 661</td></tr><tr class="t-dsc"><td><a href="#f-f6847007c640ebe6">micron::carray::carray(Fn &amp;&amp;fn)</a></td><td>function; line 669</td></tr><tr class="t-dsc"><td><a href="#f-a5a4fdf7e055ba5a">micron::carray::carray(const T &amp;o)</a></td><td>function; line 675</td></tr><tr class="t-dsc"><td><a href="#f-fdd5f63171ca62a7">micron::carray::carray(const std::initializer_list&lt;T&gt; &amp;&amp;lst)</a></td><td>function; line 677</td></tr><tr class="t-dsc"><td><a href="#f-1b754c359fd4b267">micron::carray::carray(A &amp;&amp;o)</a></td><td>function; line 700</td></tr><tr class="t-dsc"><td><a href="#f-bcd2848f1999bdae">micron::carray::carray(const slice&lt;T&gt; &amp;o)</a></td><td>function; line 709</td></tr><tr class="t-dsc"><td><a href="#f-606c0d43b3d80b9f">micron::carray::carray(const carray &amp;o)</a></td><td>function; line 716</td></tr><tr class="t-dsc"><td><a href="#f-71f74dd0bef6e368">micron::carray::carray(carray &amp;&amp;o)</a></td><td>function; line 718</td></tr><tr class="t-dsc"><td><a href="#f-18311a9c2e5dd7d1">micron::carray::begin() noexcept</a></td><td>function; line 724</td></tr><tr class="t-dsc"><td><a href="#f-9a0aa2d80f3c88bf">micron::carray::begin() const noexcept</a></td><td>function; line 730</td></tr><tr class="t-dsc"><td><a href="#f-1d5ac2f0f2ef2c3a">micron::carray::cbegin() const noexcept</a></td><td>function; line 736</td></tr><tr class="t-dsc"><td><a href="#f-a4b0d437724846e4">micron::carray::end() noexcept</a></td><td>function; line 742</td></tr><tr class="t-dsc"><td><a href="#f-ea40d79994c906a1">micron::carray::end() const noexcept</a></td><td>function; line 748</td></tr><tr class="t-dsc"><td><a href="#f-30403127e6436132">micron::carray::cend() const noexcept</a></td><td>function; line 754</td></tr><tr class="t-dsc"><td><a href="#f-8a207a0395b8afb3">micron::carray::size() const noexcept</a></td><td>function; line 763</td></tr><tr class="t-dsc"><td><a href="#f-58706c51bf95fc65">micron::carray::max_size() const noexcept</a></td><td>function; line 769</td></tr><tr class="t-dsc"><td><a href="#f-4cc2a1a71b8487c8">micron::carray::addr() noexcept</a></td><td>function; line 778</td></tr><tr class="t-dsc"><td><a href="#f-6fde4d3c07923a14">micron::carray::addr() const noexcept</a></td><td>function; line 784</td></tr><tr class="t-dsc"><td><a href="#f-bf36842fe09493e8">micron::carray::data() noexcept</a></td><td>function; line 790</td></tr><tr class="t-dsc"><td><a href="#f-38a659777caff81a">micron::carray::data() const noexcept</a></td><td>function; line 796</td></tr><tr class="t-dsc"><td><a href="#f-1cf0a7b587b8b561">micron::carray::clear()</a></td><td>function; line 802</td></tr><tr class="t-dsc"><td><a href="#f-6f614c66d697ca4f">micron::carray::at(const size_type i)</a></td><td>function; line 809</td></tr><tr class="t-dsc"><td><a href="#f-f74b20c7da9678fb">micron::carray::at(const size_type i) const</a></td><td>function; line 816</td></tr><tr class="t-dsc"><td><a href="#f-ebbd98399fda2182">micron::carray::front() noexcept</a></td><td>function; line 823</td></tr><tr class="t-dsc"><td><a href="#f-c8ea790bd40d1f79">micron::carray::front() const noexcept</a></td><td>function; line 829</td></tr><tr class="t-dsc"><td><a href="#f-6ba7c8d69d223f7c">micron::carray::back() noexcept</a></td><td>function; line 835</td></tr><tr class="t-dsc"><td><a href="#f-5189a57246dd9c8d">micron::carray::back() const noexcept</a></td><td>function; line 841</td></tr><tr class="t-dsc"><td><a href="#f-b54fa1cac5527772">micron::carray::get(const size_type n) noexcept</a></td><td>function; line 847</td></tr><tr class="t-dsc"><td><a href="#f-c71c0ac99e03a3db">micron::carray::get(const size_type n) const noexcept</a></td><td>function; line 853</td></tr><tr class="t-dsc"><td><a href="#f-2e52ec558e1496d2">micron::carray::cget(const size_type n) const noexcept</a></td><td>function; line 859</td></tr><tr class="t-dsc"><td><a href="#f-9193d41a20846c11">micron::carray::operator[](const size_type i) noexcept</a></td><td>function; line 865</td></tr><tr class="t-dsc"><td><a href="#f-40b2fcffe426d54e">micron::carray::operator[](const size_type i) const noexcept</a></td><td>function; line 871</td></tr><tr class="t-dsc"><td><a href="#f-8ff4feadf3fcc7d6">micron::carray::operator[]()</a></td><td>function; line 877</td></tr><tr class="t-dsc"><td><a href="#f-2ea3407d90f5c58d">micron::carray::operator[]() const</a></td><td>function; line 883</td></tr><tr class="t-dsc"><td><a href="#f-c49fc24198df35fa">micron::carray::operator[](size_type from, size_type to) const</a></td><td>function; line 889</td></tr><tr class="t-dsc"><td><a href="#f-6280b631514ed203">micron::carray::operator[](size_type from, size_type to)</a></td><td>function; line 895</td></tr><tr class="t-dsc"><td><a href="#f-dee386be19812b79">micron::carray::operator&amp;() noexcept</a></td><td>function; line 901</td></tr><tr class="t-dsc"><td><a href="#f-2e3f5c04249de5e2">micron::carray::operator&amp;() const noexcept</a></td><td>function; line 907</td></tr><tr class="t-dsc"><td><a href="#f-07079caec17f1f6d">micron::carray::operator=(T (&amp;o)[M])
+    requires(M &lt;= N)</a></td><td>function; line 917</td></tr><tr class="t-dsc"><td><a href="#f-d957ca8bc2344f2d">micron::carray::operator=(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;T&gt;)</a></td><td>function; line 926</td></tr><tr class="t-dsc"><td><a href="#f-9765e64b2fc11967">micron::carray::operator=(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; !micron::is_fundamental_v&lt;T&gt;)</a></td><td>function; line 935</td></tr><tr class="t-dsc"><td><a href="#f-fc7b18993c1eacd7">micron::carray::operator=(const A &amp;o)</a></td><td>function; line 945</td></tr><tr class="t-dsc"><td><a href="#f-afb41a61f7c373a0">micron::carray::operator=(const A &amp;o)</a></td><td>function; line 958</td></tr><tr class="t-dsc"><td><a href="#f-8a362e1bde9125d1">micron::carray::operator=(const carray &amp;o)</a></td><td>function; line 969</td></tr><tr class="t-dsc"><td><a href="#f-cd13db503abbbf16">micron::carray::operator=(carray &amp;&amp;o)</a></td><td>function; line 977</td></tr><tr class="t-dsc"><td><a href="#f-f8a853f0488ae12f">micron::carray::operator+(const carray&lt;T, M&gt; &amp;o) const</a></td><td>function; line 990</td></tr><tr class="t-dsc"><td><a href="#f-3d58a98ce7c9479c">micron::carray::operator-(const carray&lt;T, M&gt; &amp;o) const</a></td><td>function; line 1000</td></tr><tr class="t-dsc"><td><a href="#f-745060f52e28e123">micron::carray::operator*(const carray&lt;T, M&gt; &amp;o) const</a></td><td>function; line 1010</td></tr><tr class="t-dsc"><td><a href="#f-95e0a9134bf16675">micron::carray::operator/(const carray&lt;T, M&gt; &amp;o) const</a></td><td>function; line 1020</td></tr><tr class="t-dsc"><td><a href="#f-c6fdc6b76a648219">micron::carray::operator%(const carray&lt;T, M&gt; &amp;o) const</a></td><td>function; line 1036</td></tr><tr class="t-dsc"><td><a href="#f-41cdeddb54b03ab5">micron::carray::sum(void) const noexcept</a></td><td>function; line 1053</td></tr><tr class="t-dsc"><td><a href="#f-906bed95ba46e2c8">micron::carray::mul_reduce(void) const noexcept</a></td><td>function; line 1062</td></tr><tr class="t-dsc"><td><a href="#f-7e01c159eedaf697">micron::carray::operator+=(const T &amp;o)</a></td><td>function; line 1074</td></tr><tr class="t-dsc"><td><a href="#f-79429f7ce8b9ac87">micron::carray::operator-=(const T &amp;o)</a></td><td>function; line 1081</td></tr><tr class="t-dsc"><td><a href="#f-f54f5cc01bf5a7fc">micron::carray::operator*=(const T &amp;o)</a></td><td>function; line 1088</td></tr><tr class="t-dsc"><td><a href="#f-534436c3829740e1">micron::carray::operator/=(const T &amp;o)</a></td><td>function; line 1095</td></tr><tr class="t-dsc"><td><a href="#f-01a692aa8dcdd69c">micron::carray::operator%=(const T &amp;o)
+    requires micron::is_integral_v&lt;T&gt;</a></td><td>function; line 1102</td></tr><tr class="t-dsc"><td><a href="#f-c400528bdb1b0c07">micron::carray::operator+=(const carray&lt;T, M&gt; &amp;o)</a></td><td>function; line 1121</td></tr><tr class="t-dsc"><td><a href="#f-053c3b4e174ee3dc">micron::carray::operator-=(const carray&lt;T, M&gt; &amp;o)</a></td><td>function; line 1130</td></tr><tr class="t-dsc"><td><a href="#f-854cc1bb27847dfd">micron::carray::operator*=(const carray&lt;T, M&gt; &amp;o)</a></td><td>function; line 1139</td></tr><tr class="t-dsc"><td><a href="#f-4230d35ef7e8eb1e">micron::carray::operator/=(const carray&lt;T, M&gt; &amp;o)</a></td><td>function; line 1148</td></tr><tr class="t-dsc"><td><a href="#f-460eb09c7d5404e0">micron::carray::operator%=(const carray&lt;T, M&gt; &amp;o)</a></td><td>function; line 1163</td></tr><tr class="t-dsc"><td><a href="#f-1f764990f7db5f0d">micron::carray::mul(const size_type n)</a></td><td>function; line 1179</td></tr><tr class="t-dsc"><td><a href="#f-1fa8f6e1b0b0266b">micron::carray::div(const size_type n)</a></td><td>function; line 1186</td></tr><tr class="t-dsc"><td><a href="#f-7c7bfabfbea40dca">micron::carray::sub(const size_type n)</a></td><td>function; line 1193</td></tr><tr class="t-dsc"><td><a href="#f-a93bad835e96301c">micron::carray::add(const size_type n)</a></td><td>function; line 1200</td></tr><tr class="t-dsc"><td><a href="#f-6b73a232f6316cd0">micron::carray::all(const T &amp;o) const noexcept</a></td><td>function; line 1210</td></tr><tr class="t-dsc"><td><a href="#f-495df6ece24cc3be">micron::carray::any(const T &amp;o) const noexcept</a></td><td>function; line 1218</td></tr><tr class="t-dsc"><td><a href="#f-df782491313ad20b">micron::carray::sqrt(void)</a></td><td>function; line 1226</td></tr><tr class="t-dsc"><td><a href="#f-fa1b282e3b5ae52d">micron::carray::fill(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;T&gt;)</a></td><td>function; line 1239</td></tr><tr class="t-dsc"><td><a href="#f-e151f307eaf2783c">micron::carray::fill(const F &amp;o)</a></td><td>function; line 1248</td></tr><tr class="t-dsc"><td><a href="#f-a6a935bd38a875af">micron::carray::is_pod() noexcept</a></td><td>function; line 1258</td></tr><tr class="t-dsc"><td><a href="#f-df26e96bbe59fad0">micron::carray::is_class() noexcept</a></td><td>function; line 1264</td></tr><tr class="t-dsc"><td><a href="#f-34f0b36a25d9848f">micron::carray::is_trivial() noexcept</a></td><td>function; line 1270</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-7a7c2cc94fa6f3ed"><h3><code>micron::carray::~carray()</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L655">line 655</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~carray()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~carray() { __impl_container::destroy_fast&lt;N, T&gt;(micron::addr(stack[0])); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-51f290f83369ae65">__impl_container::destroy_fast&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-5086d07234d0060c"><h3><code>micron::carray::carray()</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L657">line 657</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>carray()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">carray() { __impl_container::construct&lt;N, T&gt;(micron::addr(stack[0]), T{}); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-7b27242390af4c2b">__impl_container::construct&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-fb55593d994b4971"><h3><code>micron::carray::carray(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L661">line 661</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(micron::is_function_v&lt;Fn&gt; or micron::is_invocable_v&lt;Fn&gt;)
+  carray(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(micron::is_function_v&lt;Fn&gt; or micron::is_invocable_v&lt;Fn&gt;)
+  carray(Fn &amp;&amp;fn)
+  {
+    __impl_container::construct&lt;N, T&gt;(micron::addr(stack[0]), T{});
+    micron::generate(begin(), end(), fn);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-7b27242390af4c2b">__impl_container::construct&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../algorithm/algorithm.hpp.html#f-dc58410872e8a322">micron::generate</a>, <a href="carray.hpp.html#f-18311a9c2e5dd7d1">begin</a>, <a href="carray.hpp.html#f-a4b0d437724846e4">end</a>.</p></section><section class="function-entry" id="f-f6847007c640ebe6"><h3><code>micron::carray::carray(Fn &amp;&amp;fn)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L669">line 669</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, T *&gt; or micron::is_invocable_v&lt;Fn, T&gt;)
+  carray(Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, T *&gt; or micron::is_invocable_v&lt;Fn, T&gt;)
+  carray(Fn &amp;&amp;fn)
+  {
+    __impl_container::construct&lt;N, T&gt;(micron::addr(stack[0]), T{});
+    micron::transform(begin(), end(), fn);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-7b27242390af4c2b">__impl_container::construct&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../algorithm/algorithm.hpp.html#f-0ba499c136c6c2b5">micron::transform</a>, <a href="carray.hpp.html#f-18311a9c2e5dd7d1">begin</a>, <a href="carray.hpp.html#f-a4b0d437724846e4">end</a>.</p></section><section class="function-entry" id="f-a5a4fdf7e055ba5a"><h3><code>micron::carray::carray(const T &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L675">line 675</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>carray(const T &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">carray(const T &amp;o) { __impl_container::construct&lt;N, T&gt;(micron::addr(stack[0]), o); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-7b27242390af4c2b">__impl_container::construct&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-fdd5f63171ca62a7"><h3><code>micron::carray::carray(const std::initializer_list&lt;T&gt; &amp;&amp;lst)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L677">line 677</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>carray(const std::initializer_list&lt;T&gt; &amp;&amp;lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const std::initializer_list&lt;T&gt; &amp;&amp;lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">carray(const std::initializer_list&lt;T&gt; &amp;&amp;lst)
+  {
+    if ( lst.size() &gt; N ) exc&lt;except::runtime_error&gt;(&quot;micron::carray init_list too large.&quot;);
+    size_type i = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+      for ( auto &amp;&amp;value : lst ) {
+        new (micron::addr(stack[i])) T(value);
+        ++i;      // advance only after successful construction
+      }
+      for ( ; i &lt; N; ++i ) new (micron::addr(stack[i])) T{};
+    } catch ( ... ) {
+      for ( size_type j = 0; j &lt; i; ++j ) stack[j].~T();      // unwind already-built prefix
+      throw;
+    }
+#else
+    for ( auto &amp;&amp;value : lst ) new (micron::addr(stack[i++])) T(value);
+    for ( ; i &lt; N; ++i ) new (micron::addr(stack[i])) T{};
+#endif
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::carray init_list too large.&quot;)</code></td><td><a href="../../source/array/carray.hpp.html#L679">line 679</a><br>Within <code>( lst.size() &gt; N )</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/carray.hpp.html#L690">line 690</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-1b754c359fd4b267"><h3><code>micron::carray::carray(A &amp;&amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L700">line 700</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_container A&gt;
+    requires(!micron::is_same_v&lt;A, carray&gt;)
+  carray(A &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_container A&gt;
+    requires(!micron::is_same_v&lt;A, carray&gt;)
+  carray(A &amp;&amp;o)
+  {
+    if ( o.size() &lt; N ) exc&lt;except::runtime_error&gt;(&quot;micron::carray carray(A&amp;&amp;) invalid size&quot;);
+    if constexpr ( micron::is_rvalue_reference_v&lt;A &amp;&amp;&gt; )
+      __impl_container::move_init&lt;N, T&gt;(micron::addr(stack[0]), o.begin());
+    else
+      __impl_container::copy&lt;N, T&gt;(micron::addr(stack[0]), o.begin());
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::carray carray(A&amp;&amp;) invalid size&quot;)</code></td><td><a href="../../source/array/carray.hpp.html#L702">line 702</a><br>Within <code>( o.size() &lt; N )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="../bits/__container.hpp.html#f-9319f5530a150527">__impl_container::move_init&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../bits/__container.hpp.html#f-0d88c97bdfcabe99">__impl_container::copy&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-bcd2848f1999bdae"><h3><code>micron::carray::carray(const slice&lt;T&gt; &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L709">line 709</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>carray(const slice&lt;T&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const slice&lt;T&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">carray(const slice&lt;T&gt; &amp;o)
+  {
+    const size_type bound = o.size() &lt; N ? o.size() : N;
+    __impl_container::copy(micron::addr(stack[0]), o.begin(), bound);
+    if ( bound &lt; N ) __impl_container::construct(micron::addr(stack[bound]), T{}, N - bound);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-0d88c97bdfcabe99">__impl_container::copy</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../bits/__container.hpp.html#f-7b27242390af4c2b">__impl_container::construct</a>.</p></section><section class="function-entry" id="f-606c0d43b3d80b9f"><h3><code>micron::carray::carray(const carray &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L716">line 716</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>carray(const carray &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">carray(const carray &amp;o) { __impl_container::copy&lt;N, T&gt;(micron::addr(stack[0]), micron::addr(o.stack[0])); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-0d88c97bdfcabe99">__impl_container::copy&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-71f74dd0bef6e368"><h3><code>micron::carray::carray(carray &amp;&amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L718">line 718</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>carray(carray &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>carray &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">carray(carray &amp;&amp;o) { __impl_container::move_init&lt;N, T&gt;(micron::addr(stack[0]), micron::addr(o.stack[0])); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-9319f5530a150527">__impl_container::move_init&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-18311a9c2e5dd7d1"><h3><code>micron::carray::begin() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L724">line 724</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] iterator
+  begin() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addr(stack[0])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] iterator
+  begin() noexcept
+  {
+    return micron::addr(stack[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addr(stack[0])</code></td><td><a href="../../source/array/carray.hpp.html#L726">line 726</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-9a0aa2d80f3c88bf"><h3><code>micron::carray::begin() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L730">line 730</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const_iterator
+  begin() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addr(stack[0])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const_iterator
+  begin() const noexcept
+  {
+    return micron::addr(stack[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addr(stack[0])</code></td><td><a href="../../source/array/carray.hpp.html#L732">line 732</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-1d5ac2f0f2ef2c3a"><h3><code>micron::carray::cbegin() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L736">line 736</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const_iterator
+  cbegin() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addr(stack[0])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const_iterator
+  cbegin() const noexcept
+  {
+    return micron::addr(stack[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addr(stack[0])</code></td><td><a href="../../source/array/carray.hpp.html#L738">line 738</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-a4b0d437724846e4"><h3><code>micron::carray::end() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L742">line 742</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] iterator
+  end() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addr(stack[N])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] iterator
+  end() noexcept
+  {
+    return micron::addr(stack[N]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addr(stack[N])</code></td><td><a href="../../source/array/carray.hpp.html#L744">line 744</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-ea40d79994c906a1"><h3><code>micron::carray::end() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L748">line 748</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const_iterator
+  end() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addr(stack[N])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const_iterator
+  end() const noexcept
+  {
+    return micron::addr(stack[N]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addr(stack[N])</code></td><td><a href="../../source/array/carray.hpp.html#L750">line 750</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-30403127e6436132"><h3><code>micron::carray::cend() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L754">line 754</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const_iterator
+  cend() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::addr(stack[N])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const_iterator
+  cend() const noexcept
+  {
+    return micron::addr(stack[N]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::addr(stack[N])</code></td><td><a href="../../source/array/carray.hpp.html#L756">line 756</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-8a207a0395b8afb3"><h3><code>micron::carray::size() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L763">line 763</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>size_type
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>N</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">size_type
+  size() const noexcept
+  {
+    return N;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>N</code></td><td><a href="../../source/array/carray.hpp.html#L765">line 765</a></td></tr></tbody></table></section><section class="function-entry" id="f-58706c51bf95fc65"><h3><code>micron::carray::max_size() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L769">line 769</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>size_type
+  max_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>N</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">size_type
+  max_size() const noexcept
+  {
+    return N;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>N</code></td><td><a href="../../source/array/carray.hpp.html#L771">line 771</a></td></tr></tbody></table></section><section class="function-entry" id="f-4cc2a1a71b8487c8"><h3><code>micron::carray::addr() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L778">line 778</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>auto *
+  addr() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">auto *
+  addr() noexcept
+  {
+    return this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>this</code></td><td><a href="../../source/array/carray.hpp.html#L780">line 780</a></td></tr></tbody></table></section><section class="function-entry" id="f-6fde4d3c07923a14"><h3><code>micron::carray::addr() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L784">line 784</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const auto *
+  addr() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const auto *
+  addr() const noexcept
+  {
+    return this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>this</code></td><td><a href="../../source/array/carray.hpp.html#L786">line 786</a></td></tr></tbody></table></section><section class="function-entry" id="f-bf36842fe09493e8"><h3><code>micron::carray::data() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L790">line 790</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] iterator
+  data() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>stack</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] iterator
+  data() noexcept
+  {
+    return stack;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack</code></td><td><a href="../../source/array/carray.hpp.html#L792">line 792</a></td></tr></tbody></table></section><section class="function-entry" id="f-38a659777caff81a"><h3><code>micron::carray::data() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L796">line 796</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const_iterator
+  data() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>stack</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const_iterator
+  data() const noexcept
+  {
+    return stack;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack</code></td><td><a href="../../source/array/carray.hpp.html#L798">line 798</a></td></tr></tbody></table></section><section class="function-entry" id="f-1cf0a7b587b8b561"><h3><code>micron::carray::clear()</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L802">line 802</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear()
+  {
+    __impl_container::destroy&lt;N, T&gt;(micron::addr(stack[0]));
+    __impl_container::construct&lt;N, T&gt;(micron::addr(stack[0]), T{});
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-779c0db971bd6e11">__impl_container::destroy&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../bits/__container.hpp.html#f-7b27242390af4c2b">__impl_container::construct&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-6f614c66d697ca4f"><h3><code>micron::carray::at(const size_type i)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L809">line 809</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline T &amp;
+  at(const size_type i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline T &amp;
+  at(const size_type i)
+  {
+    if ( i &gt;= N ) exc&lt;except::library_error&gt;(&quot;micron::carray at() out of range.&quot;);
+    return stack[i];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack[i]</code></td><td><a href="../../source/array/carray.hpp.html#L812">line 812</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::carray at() out of range.&quot;)</code></td><td><a href="../../source/array/carray.hpp.html#L811">line 811</a><br>Within <code>( i &gt;= N )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-f74b20c7da9678fb"><h3><code>micron::carray::at(const size_type i) const</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L816">line 816</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T &amp;
+  at(const size_type i) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T &amp;
+  at(const size_type i) const
+  {
+    if ( i &gt;= N ) exc&lt;except::library_error&gt;(&quot;micron::carray at() out of range.&quot;);
+    return stack[i];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack[i]</code></td><td><a href="../../source/array/carray.hpp.html#L819">line 819</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::carray at() out of range.&quot;)</code></td><td><a href="../../source/array/carray.hpp.html#L818">line 818</a><br>Within <code>( i &gt;= N )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-ebbd98399fda2182"><h3><code>micron::carray::front() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L823">line 823</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline T &amp;
+  front() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>stack[0]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline T &amp;
+  front() noexcept
+  {
+    return stack[0];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack[0]</code></td><td><a href="../../source/array/carray.hpp.html#L825">line 825</a></td></tr></tbody></table></section><section class="function-entry" id="f-c8ea790bd40d1f79"><h3><code>micron::carray::front() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L829">line 829</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T &amp;
+  front() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>stack[0]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T &amp;
+  front() const noexcept
+  {
+    return stack[0];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack[0]</code></td><td><a href="../../source/array/carray.hpp.html#L831">line 831</a></td></tr></tbody></table></section><section class="function-entry" id="f-6ba7c8d69d223f7c"><h3><code>micron::carray::back() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L835">line 835</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline T &amp;
+  back() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>stack[N - 1]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline T &amp;
+  back() noexcept
+  {
+    return stack[N - 1];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack[N - 1]</code></td><td><a href="../../source/array/carray.hpp.html#L837">line 837</a></td></tr></tbody></table></section><section class="function-entry" id="f-5189a57246dd9c8d"><h3><code>micron::carray::back() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L841">line 841</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T &amp;
+  back() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>stack[N - 1]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T &amp;
+  back() const noexcept
+  {
+    return stack[N - 1];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack[N - 1]</code></td><td><a href="../../source/array/carray.hpp.html#L843">line 843</a></td></tr></tbody></table></section><section class="function-entry" id="f-b54fa1cac5527772"><h3><code>micron::carray::get(const size_type n) noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L847">line 847</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline iterator
+  get(const size_type n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Returns <code>(stack + n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline iterator
+  get(const size_type n) noexcept
+  {
+    return (stack + n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(stack + n)</code></td><td><a href="../../source/array/carray.hpp.html#L849">line 849</a></td></tr></tbody></table></section><section class="function-entry" id="f-c71c0ac99e03a3db"><h3><code>micron::carray::get(const size_type n) const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L853">line 853</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const_iterator
+  get(const size_type n) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Returns <code>(stack + n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const_iterator
+  get(const size_type n) const noexcept
+  {
+    return (stack + n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(stack + n)</code></td><td><a href="../../source/array/carray.hpp.html#L855">line 855</a></td></tr></tbody></table></section><section class="function-entry" id="f-2e52ec558e1496d2"><h3><code>micron::carray::cget(const size_type n) const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L859">line 859</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const_iterator
+  cget(const size_type n) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Returns <code>(stack + n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const_iterator
+  cget(const size_type n) const noexcept
+  {
+    return (stack + n);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(stack + n)</code></td><td><a href="../../source/array/carray.hpp.html#L861">line 861</a></td></tr></tbody></table></section><section class="function-entry" id="f-9193d41a20846c11"><h3><code>micron::carray::operator[](const size_type i) noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L865">line 865</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline T &amp;
+  operator[](const size_type i) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type i</code></li></ul><h4>Effects</h4><p>Returns <code>stack[i]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline T &amp;
+  operator[](const size_type i) noexcept
+  {
+    return stack[i];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack[i]</code></td><td><a href="../../source/array/carray.hpp.html#L867">line 867</a></td></tr></tbody></table></section><section class="function-entry" id="f-40b2fcffe426d54e"><h3><code>micron::carray::operator[](const size_type i) const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L871">line 871</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T &amp;
+  operator[](const size_type i) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type i</code></li></ul><h4>Effects</h4><p>Returns <code>stack[i]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T &amp;
+  operator[](const size_type i) const noexcept
+  {
+    return stack[i];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>stack[i]</code></td><td><a href="../../source/array/carray.hpp.html#L873">line 873</a></td></tr></tbody></table></section><section class="function-entry" id="f-8ff4feadf3fcc7d6"><h3><code>micron::carray::operator[]()</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L877">line 877</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline slice&lt;T&gt;
+  operator[]()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>slice&lt;T&gt;(begin(), end())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline slice&lt;T&gt;
+  operator[]()
+  {
+    return slice&lt;T&gt;(begin(), end());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>slice&lt;T&gt;(begin(), end())</code></td><td><a href="../../source/array/carray.hpp.html#L879">line 879</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../slice.hpp.html#s-17d2aaedd28b5a25">slice&lt;T&gt;</a>, <a href="carray.hpp.html#f-18311a9c2e5dd7d1">begin</a>, <a href="carray.hpp.html#f-a4b0d437724846e4">end</a>.</p></section><section class="function-entry" id="f-2ea3407d90f5c58d"><h3><code>micron::carray::operator[]() const</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L883">line 883</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const slice&lt;T&gt;
+  operator[]() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>slice&lt;T&gt;(cbegin(), cend())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const slice&lt;T&gt;
+  operator[]() const
+  {
+    return slice&lt;T&gt;(cbegin(), cend());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>slice&lt;T&gt;(cbegin(), cend())</code></td><td><a href="../../source/array/carray.hpp.html#L885">line 885</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../slice.hpp.html#s-17d2aaedd28b5a25">slice&lt;T&gt;</a>, <a href="carray.hpp.html#f-1d5ac2f0f2ef2c3a">cbegin</a>, <a href="carray.hpp.html#f-30403127e6436132">cend</a>.</p></section><section class="function-entry" id="f-c49fc24198df35fa"><h3><code>micron::carray::operator[](size_type from, size_type to) const</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L889">line 889</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) const slice&lt;T&gt;
+  operator[](size_type from, size_type to) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>size_type from</code></li><li><code>size_type to</code></li></ul><h4>Effects</h4><p>Returns <code>slice&lt;T&gt;(get(from), get(to))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) const slice&lt;T&gt;
+  operator[](size_type from, size_type to) const
+  {
+    return slice&lt;T&gt;(get(from), get(to));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>slice&lt;T&gt;(get(from), get(to))</code></td><td><a href="../../source/array/carray.hpp.html#L891">line 891</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../slice.hpp.html#s-17d2aaedd28b5a25">slice&lt;T&gt;</a>, <a href="carray.hpp.html#f-b54fa1cac5527772">get</a>.</p></section><section class="function-entry" id="f-6280b631514ed203"><h3><code>micron::carray::operator[](size_type from, size_type to)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L895">line 895</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) slice&lt;T&gt;
+  operator[](size_type from, size_type to)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>size_type from</code></li><li><code>size_type to</code></li></ul><h4>Effects</h4><p>Returns <code>slice&lt;T&gt;(get(from), get(to))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) slice&lt;T&gt;
+  operator[](size_type from, size_type to)
+  {
+    return slice&lt;T&gt;(get(from), get(to));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>slice&lt;T&gt;(get(from), get(to))</code></td><td><a href="../../source/array/carray.hpp.html#L897">line 897</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../slice.hpp.html#s-17d2aaedd28b5a25">slice&lt;T&gt;</a>, <a href="carray.hpp.html#f-b54fa1cac5527772">get</a>.</p></section><section class="function-entry" id="f-dee386be19812b79"><h3><code>micron::carray::operator&amp;() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L901">line 901</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>byte *
+  operator&amp;() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;byte *&gt;(stack)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">byte *
+  operator&amp;() noexcept
+  {
+    return reinterpret_cast&lt;byte *&gt;(stack);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;byte *&gt;(stack)</code></td><td><a href="../../source/array/carray.hpp.html#L903">line 903</a></td></tr></tbody></table></section><section class="function-entry" id="f-2e3f5c04249de5e2"><h3><code>micron::carray::operator&amp;() const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L907">line 907</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const byte *
+  operator&amp;() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;const byte *&gt;(stack)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const byte *
+  operator&amp;() const noexcept
+  {
+    return reinterpret_cast&lt;const byte *&gt;(stack);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;const byte *&gt;(stack)</code></td><td><a href="../../source/array/carray.hpp.html#L909">line 909</a></td></tr></tbody></table></section><section class="function-entry" id="f-07079caec17f1f6d"><h3><code>micron::carray::operator=(T (&amp;o)[M])
+    requires(M &lt;= N)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L917">line 917</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+  carray &amp;
+  operator=(T (&amp;o)[M])
+    requires(M &lt;= N)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T (&amp;o)[M]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+  carray &amp;
+  operator=(T (&amp;o)[M])
+    requires(M &lt;= N)
+  {
+    __impl_container::copy_assign&lt;M, T&gt;(micron::addr(stack[0]), micron::addr(o[0]));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L921">line 921</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-a67715ad572ebda3">__impl_container::copy_assign&lt;M, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-d957ca8bc2344f2d"><h3><code>micron::carray::operator=(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;T&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L926">line 926</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  carray &amp;
+  operator=(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;T&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  carray &amp;
+  operator=(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;T&gt;)
+  {
+    micron::ctypeset&lt;N&gt;(micron::addr(stack[0]), static_cast&lt;T&gt;(o));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L930">line 930</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-94d8dd241201ce9e">micron::ctypeset&lt;N&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-9765e64b2fc11967"><h3><code>micron::carray::operator=(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; !micron::is_fundamental_v&lt;T&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L935">line 935</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  carray &amp;
+  operator=(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; !micron::is_fundamental_v&lt;T&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  carray &amp;
+  operator=(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; !micron::is_fundamental_v&lt;T&gt;)
+  {
+    for ( size_type i = 0; i &lt; N; ++i ) stack[i] = o;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L939">line 939</a></td></tr></tbody></table></section><section class="function-entry" id="f-fc7b18993c1eacd7"><h3><code>micron::carray::operator=(const A &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L945">line 945</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_constexpr_container A&gt;
+    requires(micron::has_static_size&lt;A&gt;)
+  carray &amp;
+  operator=(const A &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_constexpr_container A&gt;
+    requires(micron::has_static_size&lt;A&gt;)
+  carray &amp;
+  operator=(const A &amp;o)
+  {
+    if constexpr ( N &lt;= A::static_size )
+      __impl_container::copy_assign&lt;N, T&gt;(micron::addr(stack[0]), micron::addr(o[0]));
+    else if constexpr ( A::static_size &gt; 0 )
+      __impl_container::copy_assign&lt;A::static_size, T&gt;(micron::addr(stack[0]), micron::addr(o[0]));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L951">line 951</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-a67715ad572ebda3">__impl_container::copy_assign&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../bits/__container.hpp.html#f-a67715ad572ebda3">__impl_container::copy_assign&lt;A::static_size, T&gt;</a>.</p></section><section class="function-entry" id="f-afb41a61f7c373a0"><h3><code>micron::carray::operator=(const A &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L958">line 958</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_container A&gt;
+    requires(!micron::is_same_v&lt;A, carray&gt; and !micron::has_static_size&lt;A&gt;)
+  carray &amp;
+  operator=(const A &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_container A&gt;
+    requires(!micron::is_same_v&lt;A, carray&gt; and !micron::has_static_size&lt;A&gt;)
+  carray &amp;
+  operator=(const A &amp;o)
+  {
+    if ( o.size() == 0 ) return *this;
+    if ( N &lt;= o.size() )
+      __impl_container::copy_assign&lt;N, T&gt;(micron::addr(stack[0]), micron::addr(o[0]));
+    else
+      __impl_container::copy_assign(micron::addr(stack[0]), micron::addr(o[0]), o.size());
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L960">line 960</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L965">line 965</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__container.hpp.html#f-a67715ad572ebda3">__impl_container::copy_assign&lt;N, T&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../bits/__container.hpp.html#f-a67715ad572ebda3">__impl_container::copy_assign</a>.</p></section><section class="function-entry" id="f-8a362e1bde9125d1"><h3><code>micron::carray::operator=(const carray &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L969">line 969</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>carray &amp;
+  operator=(const carray &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">carray &amp;
+  operator=(const carray &amp;o)
+  {
+    if ( this == micron::addr(o) ) return *this;      // operator&amp; is overloaded (returns byte*)
+    __impl_container::copy_assign&lt;N, T&gt;(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L971">line 971</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L973">line 973</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../bits/__container.hpp.html#f-a67715ad572ebda3">__impl_container::copy_assign&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-cd13db503abbbf16"><h3><code>micron::carray::operator=(carray &amp;&amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L977">line 977</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>carray &amp;
+  operator=(carray &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>carray &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">carray &amp;
+  operator=(carray &amp;&amp;o)
+  {
+    if ( this == micron::addr(o) ) return *this;      // operator&amp; is overloaded (returns byte*)
+    __impl_container::move_assign&lt;N, T&gt;(micron::addr(stack[0]), micron::addr(o.stack[0]));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L979">line 979</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L981">line 981</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../bits/__container.hpp.html#f-3ad2cd6f2384a45a">__impl_container::move_assign&lt;N, T&gt;</a>.</p></section><section class="function-entry" id="f-f8a853f0488ae12f"><h3><code>micron::carray::operator+(const carray&lt;T, M&gt; &amp;o) const</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L990">line 990</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray
+  operator+(const carray&lt;T, M&gt; &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray
+  operator+(const carray&lt;T, M&gt; &amp;o) const
+  {
+    carray arr(*this);
+    __carray_dispatch_array(+=, arr.template __v_add_elements, arr.__ur_add_array, true, M);
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/carray.hpp.html#L994">line 994</a></td></tr></tbody></table></section><section class="function-entry" id="f-3d58a98ce7c9479c"><h3><code>micron::carray::operator-(const carray&lt;T, M&gt; &amp;o) const</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1000">line 1000</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray
+  operator-(const carray&lt;T, M&gt; &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray
+  operator-(const carray&lt;T, M&gt; &amp;o) const
+  {
+    carray arr(*this);
+    __carray_dispatch_array(-=, arr.template __v_sub_elements, arr.__ur_sub_array, true, M);
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/carray.hpp.html#L1004">line 1004</a></td></tr></tbody></table></section><section class="function-entry" id="f-745060f52e28e123"><h3><code>micron::carray::operator*(const carray&lt;T, M&gt; &amp;o) const</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1010">line 1010</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray
+  operator*(const carray&lt;T, M&gt; &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray
+  operator*(const carray&lt;T, M&gt; &amp;o) const
+  {
+    carray arr(*this);
+    __carray_dispatch_array(*=, arr.template __v_mul_elements, arr.__ur_mul_array, __can_simd_mul, M);
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/carray.hpp.html#L1014">line 1014</a></td></tr></tbody></table></section><section class="function-entry" id="f-95e0a9134bf16675"><h3><code>micron::carray::operator/(const carray&lt;T, M&gt; &amp;o) const</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1020">line 1020</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray
+  operator/(const carray&lt;T, M&gt; &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray
+  operator/(const carray&lt;T, M&gt; &amp;o) const
+  {
+    carray arr(*this);
+    T *__restrict dst = arr.stack;
+    const T *__restrict src = o.stack;
+    if constexpr ( M &lt;= __unroll_threshold )
+      arr.__ur_div_array(src, micron::make_index_sequence&lt;M&gt;{});
+    else {
+      __micron_loop_ivdep for ( size_type i = 0; i &lt; M; i++ ) dst[i] /= src[i];
+    }
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/carray.hpp.html#L1030">line 1030</a></td></tr></tbody></table></section><section class="function-entry" id="f-c6fdc6b76a648219"><h3><code>micron::carray::operator%(const carray&lt;T, M&gt; &amp;o) const</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1036">line 1036</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N &amp;&amp; micron::is_integral_v&lt;T&gt;)
+  inline __attribute__((always_inline)) carray
+  operator%(const carray&lt;T, M&gt; &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N &amp;&amp; micron::is_integral_v&lt;T&gt;)
+  inline __attribute__((always_inline)) carray
+  operator%(const carray&lt;T, M&gt; &amp;o) const
+  {
+    carray arr(*this);
+    T *__restrict dst = arr.stack;
+    const T *__restrict src = o.stack;
+    if constexpr ( M &lt;= __unroll_threshold )
+      arr.__ur_mod_array(src, micron::make_index_sequence&lt;M&gt;{});
+    else {
+      __micron_loop_ivdep for ( size_type i = 0; i &lt; M; i++ ) dst[i] %= src[i];
+    }
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/carray.hpp.html#L1046">line 1046</a></td></tr></tbody></table></section><section class="function-entry" id="f-41cdeddb54b03ab5"><h3><code>micron::carray::sum(void) const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1053">line 1053</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  sum(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  sum(void) const noexcept
+  {
+    const T *__restrict src = stack;
+    T sm = T{};
+    __micron_loop_ivdep for ( size_type i = 0; i &lt; N; i++ ) sm += src[i];
+    return sm;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sm</code></td><td><a href="../../source/array/carray.hpp.html#L1058">line 1058</a></td></tr></tbody></table></section><section class="function-entry" id="f-906bed95ba46e2c8"><h3><code>micron::carray::mul_reduce(void) const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1062">line 1062</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  mul_reduce(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  mul_reduce(void) const noexcept
+  {
+    const T *__restrict src = stack;
+    T m = src[0];
+    __micron_loop_ivdep for ( size_type i = 1; i &lt; N; i++ ) m *= src[i];
+    return m;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/array/carray.hpp.html#L1067">line 1067</a></td></tr></tbody></table></section><section class="function-entry" id="f-7e01c159eedaf697"><h3><code>micron::carray::operator+=(const T &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1074">line 1074</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) carray &amp;
+  operator+=(const T &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) carray &amp;
+  operator+=(const T &amp;o)
+  {
+    __carray_dispatch_scalar(+=, __v_add_broadcast, __ur_add_scalar, true);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1077">line 1077</a></td></tr></tbody></table></section><section class="function-entry" id="f-79429f7ce8b9ac87"><h3><code>micron::carray::operator-=(const T &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1081">line 1081</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) carray &amp;
+  operator-=(const T &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) carray &amp;
+  operator-=(const T &amp;o)
+  {
+    __carray_dispatch_scalar(-=, __v_sub_broadcast, __ur_sub_scalar, true);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1084">line 1084</a></td></tr></tbody></table></section><section class="function-entry" id="f-f54f5cc01bf5a7fc"><h3><code>micron::carray::operator*=(const T &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1088">line 1088</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) carray &amp;
+  operator*=(const T &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) carray &amp;
+  operator*=(const T &amp;o)
+  {
+    __carray_dispatch_scalar(*=, __v_mul_broadcast, __ur_mul_scalar, __can_simd_mul);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1091">line 1091</a></td></tr></tbody></table></section><section class="function-entry" id="f-534436c3829740e1"><h3><code>micron::carray::operator/=(const T &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1095">line 1095</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) carray &amp;
+  operator/=(const T &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) carray &amp;
+  operator/=(const T &amp;o)
+  {
+    __carray_dispatch_scalar(/=, __v_div_broadcast, __ur_div_scalar, __can_simd_div);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1098">line 1098</a></td></tr></tbody></table></section><section class="function-entry" id="f-01a692aa8dcdd69c"><h3><code>micron::carray::operator%=(const T &amp;o)
+    requires micron::is_integral_v&lt;T&gt;</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1102">line 1102</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) carray &amp;
+  operator%=(const T &amp;o)
+    requires micron::is_integral_v&lt;T&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) carray &amp;
+  operator%=(const T &amp;o)
+    requires micron::is_integral_v&lt;T&gt;
+  {
+    // no SIMD for modulo
+    if constexpr ( __use_unroll )
+      __ur_mod_scalar(o, micron::make_index_sequence&lt;N&gt;{});
+    else {
+      T *__restrict dst = stack;
+      __micron_loop_ivdep for ( size_type i = 0; i &lt; N; i++ ) dst[i] %= o;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1112">line 1112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-56ad9260212dba61">__ur_mod_scalar</a>.</p></section><section class="function-entry" id="f-c400528bdb1b0c07"><h3><code>micron::carray::operator+=(const carray&lt;T, M&gt; &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1121">line 1121</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray &amp;
+  operator+=(const carray&lt;T, M&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray &amp;
+  operator+=(const carray&lt;T, M&gt; &amp;o)
+  {
+    __carray_dispatch_array(+=, this-&gt;template __v_add_elements, __ur_add_array, true, M);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1124">line 1124</a></td></tr></tbody></table></section><section class="function-entry" id="f-053c3b4e174ee3dc"><h3><code>micron::carray::operator-=(const carray&lt;T, M&gt; &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1130">line 1130</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray &amp;
+  operator-=(const carray&lt;T, M&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray &amp;
+  operator-=(const carray&lt;T, M&gt; &amp;o)
+  {
+    __carray_dispatch_array(-=, this-&gt;template __v_sub_elements, __ur_sub_array, true, M);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1133">line 1133</a></td></tr></tbody></table></section><section class="function-entry" id="f-854cc1bb27847dfd"><h3><code>micron::carray::operator*=(const carray&lt;T, M&gt; &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1139">line 1139</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray &amp;
+  operator*=(const carray&lt;T, M&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray &amp;
+  operator*=(const carray&lt;T, M&gt; &amp;o)
+  {
+    __carray_dispatch_array(*=, this-&gt;template __v_mul_elements, __ur_mul_array, __can_simd_mul, M);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1142">line 1142</a></td></tr></tbody></table></section><section class="function-entry" id="f-4230d35ef7e8eb1e"><h3><code>micron::carray::operator/=(const carray&lt;T, M&gt; &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1148">line 1148</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray &amp;
+  operator/=(const carray&lt;T, M&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N)
+  inline __attribute__((always_inline)) carray &amp;
+  operator/=(const carray&lt;T, M&gt; &amp;o)
+  {
+    if constexpr ( M &lt;= __unroll_threshold )
+      __ur_div_array(o.stack, micron::make_index_sequence&lt;M&gt;{});
+    else {
+      T *__restrict dst = stack;
+      const T *__restrict src = o.stack;
+      __micron_loop_ivdep for ( size_type i = 0; i &lt; M; i++ ) dst[i] /= src[i];
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1157">line 1157</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-7f486206f04e84ed">__ur_div_array</a>.</p></section><section class="function-entry" id="f-460eb09c7d5404e0"><h3><code>micron::carray::operator%=(const carray&lt;T, M&gt; &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1163">line 1163</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;size_type M&gt;
+    requires(M &lt;= N &amp;&amp; micron::is_integral_v&lt;T&gt;)
+  inline __attribute__((always_inline)) carray &amp;
+  operator%=(const carray&lt;T, M&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const carray&lt;T, M&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;size_type M&gt;
+    requires(M &lt;= N &amp;&amp; micron::is_integral_v&lt;T&gt;)
+  inline __attribute__((always_inline)) carray &amp;
+  operator%=(const carray&lt;T, M&gt; &amp;o)
+  {
+    if constexpr ( M &lt;= __unroll_threshold )
+      __ur_mod_array(o.stack, micron::make_index_sequence&lt;M&gt;{});
+    else {
+      T *__restrict dst = stack;
+      const T *__restrict src = o.stack;
+      __micron_loop_ivdep for ( size_type i = 0; i &lt; M; i++ ) dst[i] %= src[i];
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1172">line 1172</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-a7a3669070306143">__ur_mod_array</a>.</p></section><section class="function-entry" id="f-1f764990f7db5f0d"><h3><code>micron::carray::mul(const size_type n)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1179">line 1179</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  mul(const size_type n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  mul(const size_type n)
+  {
+    T *__restrict dst = stack;
+    __micron_loop_ivdep for ( size_type i = 0; i &lt; N; i++ ) dst[i] *= n;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-1fa8f6e1b0b0266b"><h3><code>micron::carray::div(const size_type n)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1186">line 1186</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  div(const size_type n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  div(const size_type n)
+  {
+    T *__restrict dst = stack;
+    __micron_loop_ivdep for ( size_type i = 0; i &lt; N; i++ ) dst[i] /= n;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7c7bfabfbea40dca"><h3><code>micron::carray::sub(const size_type n)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1193">line 1193</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  sub(const size_type n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  sub(const size_type n)
+  {
+    T *__restrict dst = stack;
+    __micron_loop_ivdep for ( size_type i = 0; i &lt; N; i++ ) dst[i] -= n;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a93bad835e96301c"><h3><code>micron::carray::add(const size_type n)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1200">line 1200</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  add(const size_type n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  add(const size_type n)
+  {
+    T *__restrict dst = stack;
+    __micron_loop_ivdep for ( size_type i = 0; i &lt; N; i++ ) dst[i] += n;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6b73a232f6316cd0"><h3><code>micron::carray::all(const T &amp;o) const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1210">line 1210</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  all(const T &amp;o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  all(const T &amp;o) const noexcept
+  {
+    for ( size_type i = 0; i &lt; N; i++ )
+      if ( stack[i] != o ) return false;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/array/carray.hpp.html#L1213">line 1213</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/array/carray.hpp.html#L1214">line 1214</a></td></tr></tbody></table></section><section class="function-entry" id="f-495df6ece24cc3be"><h3><code>micron::carray::any(const T &amp;o) const noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1218">line 1218</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  any(const T &amp;o) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  any(const T &amp;o) const noexcept
+  {
+    for ( size_type i = 0; i &lt; N; i++ )
+      if ( stack[i] == o ) return true;
+    return false;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/array/carray.hpp.html#L1221">line 1221</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/array/carray.hpp.html#L1222">line 1222</a></td></tr></tbody></table></section><section class="function-entry" id="f-df782491313ad20b"><h3><code>micron::carray::sqrt(void)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1226">line 1226</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  sqrt(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  sqrt(void)
+  {
+    T *__restrict dst = stack;
+    for ( size_type i = 0; i &lt; N; i++ ) {
+      if constexpr ( micron::is_floating_point_v&lt;T&gt; )
+        dst[i] = static_cast&lt;T&gt;(math::sqrt(dst[i]));      // no narrowing through float
+      else
+        dst[i] = static_cast&lt;T&gt;(math::sqrt(static_cast&lt;double&gt;(dst[i])));
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../math/sqrt.hpp.html#f-46c3d4c86e9c4191">math::sqrt</a>.</p></section><section class="function-entry" id="f-fa1b282e3b5ae52d"><h3><code>micron::carray::fill(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;T&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1239">line 1239</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  carray &amp;
+  fill(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;T&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  carray &amp;
+  fill(const F &amp;o)
+    requires(micron::is_fundamental_v&lt;F&gt; &amp;&amp; micron::is_fundamental_v&lt;T&gt;)
+  {
+    micron::ctypeset&lt;N&gt;(micron::addr(stack[0]), static_cast&lt;T&gt;(o));
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1243">line 1243</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-94d8dd241201ce9e">micron::ctypeset&lt;N&gt;</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-e151f307eaf2783c"><h3><code>micron::carray::fill(const F &amp;o)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1248">line 1248</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  carray &amp;
+  fill(const F &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  carray &amp;
+  fill(const F &amp;o)
+  {
+    for ( size_type i = 0; i &lt; N; ++i ) stack[i] = o;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/carray.hpp.html#L1251">line 1251</a></td></tr></tbody></table></section><section class="function-entry" id="f-a6a935bd38a875af"><h3><code>micron::carray::is_pod() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1258">line 1258</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr bool
+  is_pod() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::is_pod_v&lt;T&gt;</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr bool
+  is_pod() noexcept
+  {
+    return micron::is_pod_v&lt;T&gt;;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::is_pod_v&lt;T&gt;</code></td><td><a href="../../source/array/carray.hpp.html#L1260">line 1260</a></td></tr></tbody></table></section><section class="function-entry" id="f-df26e96bbe59fad0"><h3><code>micron::carray::is_class() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1264">line 1264</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr bool
+  is_class() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::is_class_v&lt;T&gt;</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr bool
+  is_class() noexcept
+  {
+    return micron::is_class_v&lt;T&gt;;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::is_class_v&lt;T&gt;</code></td><td><a href="../../source/array/carray.hpp.html#L1266">line 1266</a></td></tr></tbody></table></section><section class="function-entry" id="f-34f0b36a25d9848f"><h3><code>micron::carray::is_trivial() noexcept</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L1270">line 1270</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr bool
+  is_trivial() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::is_trivial_v&lt;T&gt;</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v&lt;T&gt;;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::is_trivial_v&lt;T&gt;</code></td><td><a href="../../source/array/carray.hpp.html#L1272">line 1272</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-31f3eda1c7e31602"><h3><code>micron::carray::__ur_add_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L108">line 108</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_add_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_add_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] += v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ce27379bd00492db"><h3><code>micron::carray::__ur_sub_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L115">line 115</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_sub_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_sub_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] -= v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d7dd2ada40e869c8"><h3><code>micron::carray::__ur_mul_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L122">line 122</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_mul_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_mul_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] *= v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d59c5cf2730c60ad"><h3><code>micron::carray::__ur_div_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L129">line 129</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_div_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_div_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] /= v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-56ad9260212dba61"><h3><code>micron::carray::__ur_mod_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L136">line 136</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_mod_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_mod_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] %= v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-caf77d64f4e80770"><h3><code>micron::carray::__ur_add_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L143">line 143</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_add_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_add_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] += src[I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d857693bc3e0db10"><h3><code>micron::carray::__ur_sub_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L150">line 150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_sub_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_sub_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] -= src[I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-aa1095e89ef694f1"><h3><code>micron::carray::__ur_mul_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L157">line 157</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_mul_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_mul_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] *= src[I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7f486206f04e84ed"><h3><code>micron::carray::__ur_div_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L164">line 164</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_div_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_div_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] /= src[I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a7a3669070306143"><h3><code>micron::carray::__ur_mod_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L171">line 171</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_mod_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __ur_mod_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[I] %= src[I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a6ed13f4014ac0a8"><h3><code>micron::carray::__tail_add_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L179">line 179</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_add_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_add_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[__vbulk + I] += v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9b1ba0515ae2dae7"><h3><code>micron::carray::__tail_sub_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L186">line 186</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_sub_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_sub_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[__vbulk + I] -= v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b0f3b208b437f9db"><h3><code>micron::carray::__tail_mul_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L193">line 193</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_mul_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_mul_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[__vbulk + I] *= v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3a816fb3ff43ab10"><h3><code>micron::carray::__tail_div_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L200">line 200</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_div_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;v</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_div_scalar(const T &amp;v, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[__vbulk + I] /= v), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c428bfe8f84716f4"><h3><code>micron::carray::__tail_add_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L207">line 207</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_add_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_add_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[__vbulk + I] += src[__vbulk + I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5ff4fbfca2f8c4bc"><h3><code>micron::carray::__tail_sub_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L214">line 214</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_sub_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_sub_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[__vbulk + I] -= src[__vbulk + I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-31a400a365fd0e2c"><h3><code>micron::carray::__tail_mul_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L221">line 221</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_mul_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_mul_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[__vbulk + I] *= src[__vbulk + I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-0579f704f9412031"><h3><code>micron::carray::__tail_div_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L228">line 228</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_div_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li><li><code>micron::index_sequence&lt;I...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize... I&gt;
+  inline __attribute__((always_inline)) void
+  __tail_div_array(const T *__restrict src, micron::index_sequence&lt;I...&gt;)
+  {
+    ((stack[__vbulk + I] /= src[__vbulk + I]), ...);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c4c8a56359c2bacf"><h3><code>micron::carray::__v_add_broadcast(const T &amp;scalar)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L234">line 234</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+  __v_add_broadcast(const T &amp;scalar)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;scalar</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+  __v_add_broadcast(const T &amp;scalar)
+  {
+#if defined(__micron_arch_x86_any) &amp;&amp; __micron_x86_simd_width &gt;= 128
+    if constexpr ( __v256 &amp;&amp; __is_f32 ) {
+      __m256 sv = _mm256_set1_ps(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) {
+        if constexpr ( __use_prefetch ) __builtin_prefetch(stack + i + __prefetch_dist, 0, 1);
+        _mm256_store_ps(stack + i, _mm256_add_ps(_mm256_load_ps(stack + i), sv));
+      }
+    } else if constexpr ( __v256 &amp;&amp; __is_f64 ) {
+      __m256d sv = _mm256_set1_pd(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) {
+        if constexpr ( __use_prefetch ) __builtin_prefetch(stack + i + __prefetch_dist, 0, 1);
+        _mm256_store_pd(stack + i, _mm256_add_pd(_mm256_load_pd(stack + i), sv));
+      }
+    } else if constexpr ( __v256 &amp;&amp; __is_i32 ) {
+      __m256i sv = _mm256_set1_epi32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        _mm256_store_si256(reinterpret_cast&lt;__m256i *&gt;(stack + i),
+                           _mm256_add_epi32(_mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(stack + i)), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f32 ) {
+      __m128 sv = _mm_set1_ps(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm_store_ps(stack + i, _mm_add_ps(_mm_load_ps(stack + i), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f64 ) {
+      __m128d sv = _mm_set1_pd(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm_store_pd(stack + i, _mm_add_pd(_mm_load_pd(stack + i), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_i32 ) {
+      __m128i sv = _mm_set1_epi32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        _mm_store_si128(reinterpret_cast&lt;__m128i *&gt;(stack + i),
+                        _mm_add_epi32(_mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(stack + i)), sv));
+    }
+#elif defined(__micron_arm_neon)
+    if constexpr ( __have_neon &amp;&amp; __is_f32 ) {
+      float32x4_t sv = vdupq_n_f32(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) vst1q_f32(stack + i, vaddq_f32(vld1q_f32(stack + i), sv));
+    } else if constexpr ( __have_neon &amp;&amp; __is_i32 ) {
+      int32x4_t sv = vdupq_n_s32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        vst1q_s32(reinterpret_cast&lt;int *&gt;(stack + i), vaddq_s32(vld1q_s32(reinterpret_cast&lt;const int *&gt;(stack + i)), sv));
+    }
+#endif
+    if constexpr ( __vtail &gt; 0 ) __tail_add_scalar(scalar, micron::make_index_sequence&lt;__vtail&gt;{});
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-a6ed13f4014ac0a8">__tail_add_scalar</a>.</p></section><section class="function-entry" id="f-542f13612b2ba96c"><h3><code>micron::carray::__v_sub_broadcast(const T &amp;scalar)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L280">line 280</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+  __v_sub_broadcast(const T &amp;scalar)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;scalar</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+  __v_sub_broadcast(const T &amp;scalar)
+  {
+#if defined(__micron_arch_x86_any) &amp;&amp; __micron_x86_simd_width &gt;= 128
+    if constexpr ( __v256 &amp;&amp; __is_f32 ) {
+      __m256 sv = _mm256_set1_ps(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm256_store_ps(stack + i, _mm256_sub_ps(_mm256_load_ps(stack + i), sv));
+    } else if constexpr ( __v256 &amp;&amp; __is_f64 ) {
+      __m256d sv = _mm256_set1_pd(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm256_store_pd(stack + i, _mm256_sub_pd(_mm256_load_pd(stack + i), sv));
+    } else if constexpr ( __v256 &amp;&amp; __is_i32 ) {
+      __m256i sv = _mm256_set1_epi32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        _mm256_store_si256(reinterpret_cast&lt;__m256i *&gt;(stack + i),
+                           _mm256_sub_epi32(_mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(stack + i)), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f32 ) {
+      __m128 sv = _mm_set1_ps(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm_store_ps(stack + i, _mm_sub_ps(_mm_load_ps(stack + i), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f64 ) {
+      __m128d sv = _mm_set1_pd(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm_store_pd(stack + i, _mm_sub_pd(_mm_load_pd(stack + i), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_i32 ) {
+      __m128i sv = _mm_set1_epi32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        _mm_store_si128(reinterpret_cast&lt;__m128i *&gt;(stack + i),
+                        _mm_sub_epi32(_mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(stack + i)), sv));
+    }
+#elif defined(__micron_arm_neon)
+    if constexpr ( __have_neon &amp;&amp; __is_f32 ) {
+      float32x4_t sv = vdupq_n_f32(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) vst1q_f32(stack + i, vsubq_f32(vld1q_f32(stack + i), sv));
+    } else if constexpr ( __have_neon &amp;&amp; __is_i32 ) {
+      int32x4_t sv = vdupq_n_s32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        vst1q_s32(reinterpret_cast&lt;int *&gt;(stack + i), vsubq_s32(vld1q_s32(reinterpret_cast&lt;const int *&gt;(stack + i)), sv));
+    }
+#endif
+    if constexpr ( __vtail &gt; 0 ) __tail_sub_scalar(scalar, micron::make_index_sequence&lt;__vtail&gt;{});
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-9b1ba0515ae2dae7">__tail_sub_scalar</a>.</p></section><section class="function-entry" id="f-09a48599675ebc8a"><h3><code>micron::carray::__v_mul_broadcast(const T &amp;scalar)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L320">line 320</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+  __v_mul_broadcast(const T &amp;scalar)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;scalar</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+  __v_mul_broadcast(const T &amp;scalar)
+  {
+#if defined(__micron_arch_x86_any) &amp;&amp; __micron_x86_simd_width &gt;= 128
+    if constexpr ( __v256 &amp;&amp; __is_f32 ) {
+      __m256 sv = _mm256_set1_ps(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm256_store_ps(stack + i, _mm256_mul_ps(_mm256_load_ps(stack + i), sv));
+    } else if constexpr ( __v256 &amp;&amp; __is_f64 ) {
+      __m256d sv = _mm256_set1_pd(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm256_store_pd(stack + i, _mm256_mul_pd(_mm256_load_pd(stack + i), sv));
+    } else if constexpr ( __v256 &amp;&amp; __is_i32 &amp;&amp; __can_simd_mul_int ) {
+      __m256i sv = _mm256_set1_epi32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        _mm256_store_si256(reinterpret_cast&lt;__m256i *&gt;(stack + i),
+                           _mm256_mullo_epi32(_mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(stack + i)), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f32 ) {
+      __m128 sv = _mm_set1_ps(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm_store_ps(stack + i, _mm_mul_ps(_mm_load_ps(stack + i), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f64 ) {
+      __m128d sv = _mm_set1_pd(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm_store_pd(stack + i, _mm_mul_pd(_mm_load_pd(stack + i), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_i32 &amp;&amp; __can_simd_mul_int ) {
+      __m128i sv = _mm_set1_epi32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        _mm_store_si128(reinterpret_cast&lt;__m128i *&gt;(stack + i),
+                        _mm_mullo_epi32(_mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(stack + i)), sv));
+    }
+#elif defined(__micron_arm_neon)
+    if constexpr ( __have_neon &amp;&amp; __is_f32 ) {
+      float32x4_t sv = vdupq_n_f32(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) vst1q_f32(stack + i, vmulq_f32(vld1q_f32(stack + i), sv));
+    } else if constexpr ( __have_neon &amp;&amp; __is_i32 ) {
+      int32x4_t sv = vdupq_n_s32(static_cast&lt;int&gt;(scalar));
+      for ( usize i = 0; i &lt; __vbulk; i += __velems )
+        vst1q_s32(reinterpret_cast&lt;int *&gt;(stack + i), vmulq_s32(vld1q_s32(reinterpret_cast&lt;const int *&gt;(stack + i)), sv));
+    }
+#endif
+    if constexpr ( __vtail &gt; 0 ) __tail_mul_scalar(scalar, micron::make_index_sequence&lt;__vtail&gt;{});
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-b0f3b208b437f9db">__tail_mul_scalar</a>.</p></section><section class="function-entry" id="f-a59c0ed09b66efd4"><h3><code>micron::carray::__v_div_broadcast(const T &amp;scalar)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L360">line 360</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+  __v_div_broadcast(const T &amp;scalar)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;scalar</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+  __v_div_broadcast(const T &amp;scalar)
+  {
+    // integer div has no SIMD insts
+#if defined(__micron_arch_x86_any) &amp;&amp; __micron_x86_simd_width &gt;= 128
+    if constexpr ( __v256 &amp;&amp; __is_f32 ) {
+      __m256 sv = _mm256_set1_ps(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm256_store_ps(stack + i, _mm256_div_ps(_mm256_load_ps(stack + i), sv));
+    } else if constexpr ( __v256 &amp;&amp; __is_f64 ) {
+      __m256d sv = _mm256_set1_pd(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm256_store_pd(stack + i, _mm256_div_pd(_mm256_load_pd(stack + i), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f32 ) {
+      __m128 sv = _mm_set1_ps(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm_store_ps(stack + i, _mm_div_ps(_mm_load_ps(stack + i), sv));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f64 ) {
+      __m128d sv = _mm_set1_pd(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) _mm_store_pd(stack + i, _mm_div_pd(_mm_load_pd(stack + i), sv));
+    }
+#elif defined(__micron_arm_neon)
+    if constexpr ( __have_neon &amp;&amp; __is_f32 ) {
+      float32x4_t sv = vdupq_n_f32(scalar);
+      for ( usize i = 0; i &lt; __vbulk; i += __velems ) vst1q_f32(stack + i, vdivq_f32(vld1q_f32(stack + i), sv));
+    }
+#endif
+    if constexpr ( __vtail &gt; 0 ) __tail_div_scalar(scalar, micron::make_index_sequence&lt;__vtail&gt;{});
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-3a816fb3ff43ab10">__tail_div_scalar</a>.</p></section><section class="function-entry" id="f-2ea4146ee8e9d5b4"><h3><code>micron::carray::__v_add_elements(const T *__restrict src)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L388">line 388</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt;
+  inline __attribute__((always_inline)) void
+  __v_add_elements(const T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt;
+  inline __attribute__((always_inline)) void
+  __v_add_elements(const T *__restrict src)
+  {
+    static constexpr usize bulk = __velems &gt; 0 ? (M / __velems) * __velems : 0;
+    static constexpr usize tail = M - bulk;
+#if defined(__micron_arch_x86_any) &amp;&amp; __micron_x86_simd_width &gt;= 128
+    if constexpr ( __v256 &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_ps(stack + i, _mm256_add_ps(_mm256_load_ps(stack + i), _mm256_load_ps(src + i)));
+    } else if constexpr ( __v256 &amp;&amp; __is_f64 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_pd(stack + i, _mm256_add_pd(_mm256_load_pd(stack + i), _mm256_load_pd(src + i)));
+    } else if constexpr ( __v256 &amp;&amp; __is_i32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_si256(reinterpret_cast&lt;__m256i *&gt;(stack + i),
+                           _mm256_add_epi32(_mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(stack + i)),
+                                            _mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(src + i))));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) _mm_store_ps(stack + i, _mm_add_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f64 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) _mm_store_pd(stack + i, _mm_add_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
+    } else if constexpr ( __v128_only &amp;&amp; __is_i32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm_store_si128(reinterpret_cast&lt;__m128i *&gt;(stack + i), _mm_add_epi32(_mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(stack + i)),
+                                                                              _mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(src + i))));
+    }
+#elif defined(__micron_arm_neon)
+    if constexpr ( __have_neon &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) vst1q_f32(stack + i, vaddq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
+    } else if constexpr ( __have_neon &amp;&amp; __is_i32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        vst1q_s32(reinterpret_cast&lt;int *&gt;(stack + i),
+                  vaddq_s32(vld1q_s32(reinterpret_cast&lt;const int *&gt;(stack + i)), vld1q_s32(reinterpret_cast&lt;const int *&gt;(src + i))));
+    }
+#endif
+    if constexpr ( tail &gt; 0 )
+      for ( usize i = bulk; i &lt; M; i++ ) stack[i] += src[i];
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e2c8709d89b34d85"><h3><code>micron::carray::__v_sub_elements(const T *__restrict src)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L428">line 428</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt;
+  inline __attribute__((always_inline)) void
+  __v_sub_elements(const T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt;
+  inline __attribute__((always_inline)) void
+  __v_sub_elements(const T *__restrict src)
+  {
+    static constexpr usize bulk = __velems &gt; 0 ? (M / __velems) * __velems : 0;
+    static constexpr usize tail = M - bulk;
+#if defined(__micron_arch_x86_any) &amp;&amp; __micron_x86_simd_width &gt;= 128
+    if constexpr ( __v256 &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_ps(stack + i, _mm256_sub_ps(_mm256_load_ps(stack + i), _mm256_load_ps(src + i)));
+    } else if constexpr ( __v256 &amp;&amp; __is_f64 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_pd(stack + i, _mm256_sub_pd(_mm256_load_pd(stack + i), _mm256_load_pd(src + i)));
+    } else if constexpr ( __v256 &amp;&amp; __is_i32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_si256(reinterpret_cast&lt;__m256i *&gt;(stack + i),
+                           _mm256_sub_epi32(_mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(stack + i)),
+                                            _mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(src + i))));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) _mm_store_ps(stack + i, _mm_sub_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f64 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) _mm_store_pd(stack + i, _mm_sub_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
+    } else if constexpr ( __v128_only &amp;&amp; __is_i32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm_store_si128(reinterpret_cast&lt;__m128i *&gt;(stack + i), _mm_sub_epi32(_mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(stack + i)),
+                                                                              _mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(src + i))));
+    }
+#elif defined(__micron_arm_neon)
+    if constexpr ( __have_neon &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) vst1q_f32(stack + i, vsubq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
+    } else if constexpr ( __have_neon &amp;&amp; __is_i32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        vst1q_s32(reinterpret_cast&lt;int *&gt;(stack + i),
+                  vsubq_s32(vld1q_s32(reinterpret_cast&lt;const int *&gt;(stack + i)), vld1q_s32(reinterpret_cast&lt;const int *&gt;(src + i))));
+    }
+#endif
+    if constexpr ( tail &gt; 0 )
+      for ( usize i = bulk; i &lt; M; i++ ) stack[i] -= src[i];
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a9740f6fc34f4204"><h3><code>micron::carray::__v_mul_elements(const T *__restrict src)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L468">line 468</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt;
+  inline __attribute__((always_inline)) void
+  __v_mul_elements(const T *__restrict src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__restrict src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt;
+  inline __attribute__((always_inline)) void
+  __v_mul_elements(const T *__restrict src)
+  {
+    static constexpr usize bulk = (__velems &gt; 0 &amp;&amp; __can_simd_mul) ? (M / __velems) * __velems : 0;
+    static constexpr usize tail = M - bulk;
+#if defined(__micron_arch_x86_any) &amp;&amp; __micron_x86_simd_width &gt;= 128
+    if constexpr ( __v256 &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_ps(stack + i, _mm256_mul_ps(_mm256_load_ps(stack + i), _mm256_load_ps(src + i)));
+    } else if constexpr ( __v256 &amp;&amp; __is_f64 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_pd(stack + i, _mm256_mul_pd(_mm256_load_pd(stack + i), _mm256_load_pd(src + i)));
+    } else if constexpr ( __v256 &amp;&amp; __is_i32 &amp;&amp; __can_simd_mul_int ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm256_store_si256(reinterpret_cast&lt;__m256i *&gt;(stack + i),
+                           _mm256_mullo_epi32(_mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(stack + i)),
+                                              _mm256_load_si256(reinterpret_cast&lt;const __m256i *&gt;(src + i))));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) _mm_store_ps(stack + i, _mm_mul_ps(_mm_load_ps(stack + i), _mm_load_ps(src + i)));
+    } else if constexpr ( __v128_only &amp;&amp; __is_f64 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) _mm_store_pd(stack + i, _mm_mul_pd(_mm_load_pd(stack + i), _mm_load_pd(src + i)));
+    } else if constexpr ( __v128_only &amp;&amp; __is_i32 &amp;&amp; __can_simd_mul_int ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        _mm_store_si128(reinterpret_cast&lt;__m128i *&gt;(stack + i),
+                        _mm_mullo_epi32(_mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(stack + i)),
+                                        _mm_load_si128(reinterpret_cast&lt;const __m128i *&gt;(src + i))));
+    }
+#elif defined(__micron_arm_neon)
+    if constexpr ( __have_neon &amp;&amp; __is_f32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems ) vst1q_f32(stack + i, vmulq_f32(vld1q_f32(stack + i), vld1q_f32(src + i)));
+    } else if constexpr ( __have_neon &amp;&amp; __is_i32 ) {
+      for ( usize i = 0; i &lt; bulk; i += __velems )
+        vst1q_s32(reinterpret_cast&lt;int *&gt;(stack + i),
+                  vmulq_s32(vld1q_s32(reinterpret_cast&lt;const int *&gt;(stack + i)), vld1q_s32(reinterpret_cast&lt;const int *&gt;(src + i))));
+    }
+#endif
+    if constexpr ( tail &gt; 0 )
+      for ( usize i = bulk; i &lt; M; i++ ) stack[i] *= src[i];
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c86882254cdc607d"><h3><code>micron::carray::__apply_add(const U &amp;v)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L509">line 509</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_add(const U &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const U &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_add(const U &amp;v)
+  {
+    if constexpr ( micron::is_arithmetic_v&lt;micron::remove_cv_t&lt;U&gt;&gt; ) {
+      if constexpr ( __use_simd )
+        __v_add_broadcast(static_cast&lt;T&gt;(v));
+      else if constexpr ( __use_unroll )
+        __ur_add_scalar(static_cast&lt;T&gt;(v), micron::make_index_sequence&lt;N&gt;{});
+      else {
+        T *__restrict dst = stack;
+        __micron_loop_ivdep for ( usize i = 0; i &lt; N; i++ ) dst[i] += static_cast&lt;T&gt;(v);
+      }
+    } else {
+      const auto *__restrict src = v.data();
+      const usize bound = v.size() &lt; N ? v.size() : N;
+      T *__restrict dst = stack;
+      __micron_loop_ivdep for ( usize i = 0; i &lt; bound; i++ ) dst[i] += src[i];
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-c4c8a56359c2bacf">__v_add_broadcast</a>, <a href="carray.hpp.html#f-31f3eda1c7e31602">__ur_add_scalar</a>.</p></section><section class="function-entry" id="f-f88a2b94c40daeb5"><h3><code>micron::carray::__apply_sub(const U &amp;v)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L530">line 530</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_sub(const U &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const U &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_sub(const U &amp;v)
+  {
+    if constexpr ( micron::is_arithmetic_v&lt;micron::remove_cv_t&lt;U&gt;&gt; ) {
+      if constexpr ( __use_simd )
+        __v_sub_broadcast(static_cast&lt;T&gt;(v));
+      else if constexpr ( __use_unroll )
+        __ur_sub_scalar(static_cast&lt;T&gt;(v), micron::make_index_sequence&lt;N&gt;{});
+      else {
+        T *__restrict dst = stack;
+        __micron_loop_ivdep for ( usize i = 0; i &lt; N; i++ ) dst[i] -= static_cast&lt;T&gt;(v);
+      }
+    } else {
+      const auto *__restrict src = v.data();
+      const usize bound = v.size() &lt; N ? v.size() : N;
+      T *__restrict dst = stack;
+      __micron_loop_ivdep for ( usize i = 0; i &lt; bound; i++ ) dst[i] -= src[i];
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-542f13612b2ba96c">__v_sub_broadcast</a>, <a href="carray.hpp.html#f-ce27379bd00492db">__ur_sub_scalar</a>.</p></section><section class="function-entry" id="f-7e695ba9902f2275"><h3><code>micron::carray::__apply_mul(const U &amp;v)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L551">line 551</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_mul(const U &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const U &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_mul(const U &amp;v)
+  {
+    if constexpr ( micron::is_arithmetic_v&lt;micron::remove_cv_t&lt;U&gt;&gt; ) {
+      if constexpr ( __use_simd &amp;&amp; __can_simd_mul )
+        __v_mul_broadcast(static_cast&lt;T&gt;(v));
+      else if constexpr ( __use_unroll )
+        __ur_mul_scalar(static_cast&lt;T&gt;(v), micron::make_index_sequence&lt;N&gt;{});
+      else {
+        T *__restrict dst = stack;
+        __micron_loop_ivdep for ( usize i = 0; i &lt; N; i++ ) dst[i] *= static_cast&lt;T&gt;(v);
+      }
+    } else {
+      const auto *__restrict src = v.data();
+      const usize bound = v.size() &lt; N ? v.size() : N;
+      T *__restrict dst = stack;
+      __micron_loop_ivdep for ( usize i = 0; i &lt; bound; i++ ) dst[i] *= src[i];
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-09a48599675ebc8a">__v_mul_broadcast</a>, <a href="carray.hpp.html#f-d7dd2ada40e869c8">__ur_mul_scalar</a>.</p></section><section class="function-entry" id="f-092277ac38229a0d"><h3><code>micron::carray::__apply_div(const U &amp;v)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L572">line 572</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_div(const U &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const U &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_div(const U &amp;v)
+  {
+    if constexpr ( micron::is_arithmetic_v&lt;micron::remove_cv_t&lt;U&gt;&gt; ) {
+      if constexpr ( __use_simd &amp;&amp; __can_simd_div )
+        __v_div_broadcast(static_cast&lt;T&gt;(v));
+      else if constexpr ( __use_unroll )
+        __ur_div_scalar(static_cast&lt;T&gt;(v), micron::make_index_sequence&lt;N&gt;{});
+      else {
+        T *__restrict dst = stack;
+        __micron_loop_ivdep for ( usize i = 0; i &lt; N; i++ ) dst[i] /= static_cast&lt;T&gt;(v);
+      }
+    } else {
+      const auto *__restrict src = v.data();
+      const usize bound = v.size() &lt; N ? v.size() : N;
+      T *__restrict dst = stack;
+      __micron_loop_ivdep for ( usize i = 0; i &lt; bound; i++ ) dst[i] /= src[i];
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-a59c0ed09b66efd4">__v_div_broadcast</a>, <a href="carray.hpp.html#f-d59c5cf2730c60ad">__ur_div_scalar</a>.</p></section><section class="function-entry" id="f-7eecfe8de59e10f2"><h3><code>micron::carray::__apply_mod(const U &amp;v)</code></h3><p>Defined in <code>array/carray.hpp</code>, <a href="../../source/array/carray.hpp.html#L593">line 593</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_mod(const U &amp;v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const U &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U&gt;
+  inline __attribute__((always_inline)) void
+  __apply_mod(const U &amp;v)
+  {
+    // SIMD doesn&#x27;t support modulos
+    if constexpr ( micron::is_arithmetic_v&lt;micron::remove_cv_t&lt;U&gt;&gt; ) {
+      if constexpr ( __use_unroll )
+        __ur_mod_scalar(static_cast&lt;T&gt;(v), micron::make_index_sequence&lt;N&gt;{});
+      else {
+        T *__restrict dst = stack;
+        __micron_loop_ivdep for ( usize i = 0; i &lt; N; i++ ) dst[i] %= static_cast&lt;T&gt;(v);
+      }
+    } else {
+      const auto *__restrict src = v.data();
+      const usize bound = v.size() &lt; N ? v.size() : N;
+      T *__restrict dst = stack;
+      __micron_loop_ivdep for ( usize i = 0; i &lt; bound; i++ ) dst[i] %= src[i];
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="carray.hpp.html#f-56ad9260212dba61">__ur_mod_scalar</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/stdin.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/stdin.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/io.html">Input and output</a></div><p>Defined in header <code>&lt;micron/io/stdin.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/io/stdin.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-0f96a6a3311dabc5">micron::io::copy_to([[maybe_unused]] const fd_t &amp;handle)</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-d10219b016c2543e">micron::terminal(S &amp;bf)</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-f4df84dc1375a49b">micron::from_terminal(S &amp;bf)</a></td><td>function; line 62</td></tr><tr class="t-dsc"><td><a href="#f-2e21bc6cebb49e64">micron::from_terminal(void)</a></td><td>function; line 69</td></tr><tr class="t-dsc"><td><a href="#f-ede7509ecd59d486">micron::terminal(void)</a></td><td>function; line 78</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-0f96a6a3311dabc5"><h3><code>micron::io::copy_to([[maybe_unused]] const fd_t &amp;handle)</code></h3><p>Defined in <code>io/stdin.hpp</code>, <a href="../../source/io/stdin.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+copy_to([[maybe_unused]] const fd_t &amp;handle)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>[[maybe_unused]] const fd_t &amp;handle</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+copy_to([[maybe_unused]] const fd_t &amp;handle)
+{
+  // TODO: unimplemented
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d10219b016c2543e"><h3><code>micron::terminal(S &amp;bf)</code></h3><p>Defined in <code>io/stdin.hpp</code>, <a href="../../source/io/stdin.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S = micron::string, bool Echo = false&gt;
+void
+terminal(S &amp;bf)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>S &amp;bf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S = micron::string, bool Echo = false&gt;
+void
+terminal(S &amp;bf)
+{
+  if ( !io::__read_from&lt;S, &#x27;\n&#x27;&gt;(bf, micron::io::stdin) ) exc&lt;except::io_error&gt;(&quot;from_terminal(): failed to read from stream.&quot;);
+  if constexpr ( Echo ) io::println(bf);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::io_error&gt;(&quot;from_terminal(): failed to read from stream.&quot;)</code></td><td><a href="../../source/io/stdin.hpp.html#L56">line 56</a><br>Within <code>( !io::__read_from&lt;S, &#x27;\n&#x27;&gt;(bf, micron::io::stdin) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="stdin.hpp.html#f-cd600132f626a7a6">io::__read_from&lt;S, &#x27;\n&#x27;&gt;</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::io_error&gt;</a>, <a href="echo.hpp.html#f-6f53894b3a57425c">io::println</a>.</p></section><section class="function-entry" id="f-f4df84dc1375a49b"><h3><code>micron::from_terminal(S &amp;bf)</code></h3><p>Defined in <code>io/stdin.hpp</code>, <a href="../../source/io/stdin.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S = micron::string, char End = &#x27;\n&#x27;&gt;
+void
+from_terminal(S &amp;bf)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>S &amp;bf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S = micron::string, char End = &#x27;\n&#x27;&gt;
+void
+from_terminal(S &amp;bf)
+{
+  if ( !io::__read_from&lt;S, End&gt;(bf, micron::io::stdin) ) exc&lt;except::io_error&gt;(&quot;from_terminal(): failed to read from stream.&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::io_error&gt;(&quot;from_terminal(): failed to read from stream.&quot;)</code></td><td><a href="../../source/io/stdin.hpp.html#L64">line 64</a><br>Within <code>( !io::__read_from&lt;S, End&gt;(bf, micron::io::stdin) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="stdin.hpp.html#f-cd600132f626a7a6">io::__read_from&lt;S, End&gt;</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::io_error&gt;</a>.</p></section><section class="function-entry" id="f-2e21bc6cebb49e64"><h3><code>micron::from_terminal(void)</code></h3><p>Defined in <code>io/stdin.hpp</code>, <a href="../../source/io/stdin.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S = micron::string, char End = &#x27;\n&#x27;&gt;
+S
+from_terminal(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S = micron::string, char End = &#x27;\n&#x27;&gt;
+S
+from_terminal(void)
+{
+  S bf{};
+  if ( !io::__read_from&lt;S, End&gt;(bf, micron::io::stdin) ) exc&lt;except::io_error&gt;(&quot;from_terminal(): failed to read from stream.&quot;);
+  return bf;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>bf</code></td><td><a href="../../source/io/stdin.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::io_error&gt;(&quot;from_terminal(): failed to read from stream.&quot;)</code></td><td><a href="../../source/io/stdin.hpp.html#L72">line 72</a><br>Within <code>( !io::__read_from&lt;S, End&gt;(bf, micron::io::stdin) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="stdin.hpp.html#f-cd600132f626a7a6">io::__read_from&lt;S, End&gt;</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::io_error&gt;</a>.</p></section><section class="function-entry" id="f-ede7509ecd59d486"><h3><code>micron::terminal(void)</code></h3><p>Defined in <code>io/stdin.hpp</code>, <a href="../../source/io/stdin.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S = micron::string, bool Echo = false&gt;
+S
+terminal(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S = micron::string, bool Echo = false&gt;
+S
+terminal(void)
+{
+  S bf;
+  if ( !io::__read_from&lt;S, &#x27;\n&#x27;&gt;(bf, micron::io::stdin) ) exc&lt;except::io_error&gt;(&quot;from_terminal(): failed to read from stream.&quot;);
+  if constexpr ( Echo ) io::println(bf);
+  return bf;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>bf</code></td><td><a href="../../source/io/stdin.hpp.html#L83">line 83</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::io_error&gt;(&quot;from_terminal(): failed to read from stream.&quot;)</code></td><td><a href="../../source/io/stdin.hpp.html#L81">line 81</a><br>Within <code>( !io::__read_from&lt;S, &#x27;\n&#x27;&gt;(bf, micron::io::stdin) )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="stdin.hpp.html#f-cd600132f626a7a6">io::__read_from&lt;S, &#x27;\n&#x27;&gt;</a>, <a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::io_error&gt;</a>, <a href="echo.hpp.html#f-6f53894b3a57425c">io::println</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-cd600132f626a7a6"><h3><code>micron::io::__read_from(S &amp;buf, const fd_t &amp;handle)</code></h3><p>Defined in <code>io/stdin.hpp</code>, <a href="../../source/io/stdin.hpp.html#L22">line 22</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S = micron::string, char C = &#x27;\n&#x27;&gt;
+inline bool
+__read_from(S &amp;buf, const fd_t &amp;handle)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>S &amp;buf</code></li><li><code>const fd_t &amp;handle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S = micron::string, char C = &#x27;\n&#x27;&gt;
+inline bool
+__read_from(S &amp;buf, const fd_t &amp;handle)
+{
+  if ( handle.has_error() or !handle.open() ) return false;
+  constexpr usize __heap_cap = 16u * 1024u * 1024u;
+  usize needle = 0;
+  for ( ;; ) {
+    if constexpr ( requires { typename S::memory_type; } and micron::is_same_v&lt;typename S::memory_type, stack_tag&gt; ) {
+      if ( needle &gt;= buf.max_size() ) break;
+    } else {
+      if ( needle &gt;= __heap_cap ) break;
+    }
+    char ch = 0;
+    max_t r = io::fget_byte(&amp;ch, handle);
+    if ( r &lt;= 0 ) break;
+    buf.push_back(ch);
+    if ( ch == C ) break;
+    needle++;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/io/stdin.hpp.html#L24">line 24</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/io/stdin.hpp.html#L40">line 40</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="io.hpp.html#f-46f6475835e023dc">io::fget_byte</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

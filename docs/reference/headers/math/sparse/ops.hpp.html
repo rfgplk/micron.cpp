@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/sparse/ops.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/sparse/ops.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/sparse.html">Sparse matrices</a></div><p>Defined in header <code>&lt;micron/math/sparse/ops.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/sparse/ops.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-cb5bc25677ce8482">micron::math::sparse::scal(T alpha, csc&lt;T, I&gt; &amp;A) noexcept</a></td><td>function; line 27</td></tr><tr class="t-dsc"><td><a href="#f-b09f8c5db7f77cb5">micron::math::sparse::scal(T alpha, csr&lt;T, I&gt; &amp;A) noexcept</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-cfa78f0ad222e651">micron::math::sparse::scal(T alpha, sparse_vec&lt;T, I&gt; &amp;v) noexcept</a></td><td>function; line 41</td></tr><tr class="t-dsc"><td><a href="#f-9b2ca8e69898a8da">micron::math::sparse::norm_frob(const csc&lt;T, I&gt; &amp;A) noexcept</a></td><td>function; line 48</td></tr><tr class="t-dsc"><td><a href="#f-4d54083a9e87dfc9">micron::math::sparse::norm_frob(const csr&lt;T, I&gt; &amp;A) noexcept</a></td><td>function; line 56</td></tr><tr class="t-dsc"><td><a href="#f-618843607727bba2">micron::math::sparse::norm_l2(const sparse_vec&lt;T, I&gt; &amp;v) noexcept</a></td><td>function; line 64</td></tr><tr class="t-dsc"><td><a href="#f-b77c23f0a8fb9010">micron::math::sparse::dot(const sparse_vec&lt;T, I&gt; &amp;a, const sparse_vec&lt;T, I&gt; &amp;b) noexcept</a></td><td>function; line 72</td></tr><tr class="t-dsc"><td><a href="#f-8ddf7e013871896e">micron::math::sparse::dot(const sparse_vec&lt;T, I&gt; &amp;a, const dynvec&lt;T&gt; &amp;b) noexcept</a></td><td>function; line 96</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-cb5bc25677ce8482"><h3><code>micron::math::sparse::scal(T alpha, csc&lt;T, I&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/sparse/ops.hpp</code>, <a href="../../../source/math/sparse/ops.hpp.html#L27">line 27</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+scal(T alpha, csc&lt;T, I&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>csc&lt;T, I&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+scal(T alpha, csc&lt;T, I&gt; &amp;A) noexcept
+{
+  scal_values&lt;T&gt;(alpha, A.values.data(), A.nnz());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-f4df4258f4e2f7d8">scal_values&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-b09f8c5db7f77cb5"><h3><code>micron::math::sparse::scal(T alpha, csr&lt;T, I&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/sparse/ops.hpp</code>, <a href="../../../source/math/sparse/ops.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+scal(T alpha, csr&lt;T, I&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>csr&lt;T, I&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+scal(T alpha, csr&lt;T, I&gt; &amp;A) noexcept
+{
+  scal_values&lt;T&gt;(alpha, A.values.data(), A.nnz());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-f4df4258f4e2f7d8">scal_values&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-cfa78f0ad222e651"><h3><code>micron::math::sparse::scal(T alpha, sparse_vec&lt;T, I&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/sparse/ops.hpp</code>, <a href="../../../source/math/sparse/ops.hpp.html#L41">line 41</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+scal(T alpha, sparse_vec&lt;T, I&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>sparse_vec&lt;T, I&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+inline void
+scal(T alpha, sparse_vec&lt;T, I&gt; &amp;v) noexcept
+{
+  scal_values&lt;T&gt;(alpha, v.values.data(), v.nnz());
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-f4df4258f4e2f7d8">scal_values&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-9b2ca8e69898a8da"><h3><code>micron::math::sparse::norm_frob(const csc&lt;T, I&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/sparse/ops.hpp</code>, <a href="../../../source/math/sparse/ops.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+norm_frob(const csc&lt;T, I&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const csc&lt;T, I&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+norm_frob(const csc&lt;T, I&gt; &amp;A) noexcept
+{
+  T s = norm_sq_values&lt;T&gt;(A.values.data(), A.nnz());
+  return math::fsqrt(s);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fsqrt(s)</code></td><td><a href="../../../source/math/sparse/ops.hpp.html#L51">line 51</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-85570a028e779580">norm_sq_values&lt;T&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-4d54083a9e87dfc9"><h3><code>micron::math::sparse::norm_frob(const csr&lt;T, I&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/sparse/ops.hpp</code>, <a href="../../../source/math/sparse/ops.hpp.html#L56">line 56</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+norm_frob(const csr&lt;T, I&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const csr&lt;T, I&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+norm_frob(const csr&lt;T, I&gt; &amp;A) noexcept
+{
+  T s = norm_sq_values&lt;T&gt;(A.values.data(), A.nnz());
+  return math::fsqrt(s);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fsqrt(s)</code></td><td><a href="../../../source/math/sparse/ops.hpp.html#L59">line 59</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-85570a028e779580">norm_sq_values&lt;T&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-618843607727bba2"><h3><code>micron::math::sparse::norm_l2(const sparse_vec&lt;T, I&gt; &amp;v) noexcept</code></h3><p>Defined in <code>math/sparse/ops.hpp</code>, <a href="../../../source/math/sparse/ops.hpp.html#L64">line 64</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+norm_l2(const sparse_vec&lt;T, I&gt; &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const sparse_vec&lt;T, I&gt; &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+norm_l2(const sparse_vec&lt;T, I&gt; &amp;v) noexcept
+{
+  T s = norm_sq_values&lt;T&gt;(v.values.data(), v.nnz());
+  return math::fsqrt(s);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::fsqrt(s)</code></td><td><a href="../../../source/math/sparse/ops.hpp.html#L67">line 67</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd_kernels.hpp.html#f-85570a028e779580">norm_sq_values&lt;T&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-b77c23f0a8fb9010"><h3><code>micron::math::sparse::dot(const sparse_vec&lt;T, I&gt; &amp;a, const sparse_vec&lt;T, I&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/sparse/ops.hpp</code>, <a href="../../../source/math/sparse/ops.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+dot(const sparse_vec&lt;T, I&gt; &amp;a, const sparse_vec&lt;T, I&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const sparse_vec&lt;T, I&gt; &amp;a</code></li><li><code>const sparse_vec&lt;T, I&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+dot(const sparse_vec&lt;T, I&gt; &amp;a, const sparse_vec&lt;T, I&gt; &amp;b) noexcept
+{
+  T s = T(0);
+  usize ia = 0, ib = 0;
+  const usize na = a.nnz();
+  const usize nb = b.nnz();
+  while ( ia &lt; na &amp;&amp; ib &lt; nb ) {
+    const I ka = a.idx.data()[ia];
+    const I kb = b.idx.data()[ib];
+    if ( ka == kb ) {
+      s = math::fma&lt;T&gt;(a.values.data()[ia], b.values.data()[ib], s);
+      ++ia;
+      ++ib;
+    } else if ( ka &lt; kb ) {
+      ++ia;
+    } else {
+      ++ib;
+    }
+  }
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/math/sparse/ops.hpp.html#L91">line 91</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-8ddf7e013871896e"><h3><code>micron::math::sparse::dot(const sparse_vec&lt;T, I&gt; &amp;a, const dynvec&lt;T&gt; &amp;b) noexcept</code></h3><p>Defined in <code>math/sparse/ops.hpp</code>, <a href="../../../source/math/sparse/ops.hpp.html#L96">line 96</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+dot(const sparse_vec&lt;T, I&gt; &amp;a, const dynvec&lt;T&gt; &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const sparse_vec&lt;T, I&gt; &amp;a</code></li><li><code>const dynvec&lt;T&gt; &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T, micron::integral I&gt;
+[[nodiscard]] inline T
+dot(const sparse_vec&lt;T, I&gt; &amp;a, const dynvec&lt;T&gt; &amp;b) noexcept
+{
+  T s = T(0);
+  const usize na = a.nnz();
+  for ( usize k = 0; k &lt; na; ++k ) s = math::fma&lt;T&gt;(a.values.data()[k], b[a.idx.data()[k]], s);
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/math/sparse/ops.hpp.html#L101">line 101</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;T&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

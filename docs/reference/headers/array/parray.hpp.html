@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/array/parray.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/array/parray.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/arrays.html">Arrays</a></div><p>Defined in header <code>&lt;micron/array/parray.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/array/parray.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-c3d8f409a14715c8">micron::parray</code></td><td>class; line 25</td></tr><tr class="t-dsc"><td><code id="s-8a48744140d53d7e">micron::parray::category_type</code></td><td>typedef; line 468</td></tr><tr class="t-dsc"><td><code id="s-e88d4ab583a0edd0">micron::parray::mutability_type</code></td><td>typedef; line 469</td></tr><tr class="t-dsc"><td><code id="s-881c3d619bec7d2a">micron::parray::memory_type</code></td><td>typedef; line 470</td></tr><tr class="t-dsc"><td><code id="s-88fcac945fe169dc">micron::parray::size_type</code></td><td>typedef; line 471</td></tr><tr class="t-dsc"><td><code id="s-76b80e065b08e34d">micron::parray::value_type</code></td><td>typedef; line 472</td></tr><tr class="t-dsc"><td><code id="s-4922bc2f6819f0ad">micron::parray::const_reference</code></td><td>typedef; line 473</td></tr><tr class="t-dsc"><td><code id="s-46a84e06acffc77c">micron::parray::const_ref</code></td><td>typedef; line 474</td></tr><tr class="t-dsc"><td><code id="s-716f203f43f5480e">micron::parray::const_pointer</code></td><td>typedef; line 475</td></tr><tr class="t-dsc"><td><code id="s-2f0c0b37579afaaf">micron::parray::length</code></td><td>member; line 476</td></tr><tr class="t-dsc"><td><code id="s-3a7dfa3a8c7fdc3c">micron::parray::static_size</code></td><td>member; line 477</td></tr><tr class="t-dsc"><td><code id="s-ab37cf322a51c39b">micron::parray::branching</code></td><td>member; line 478</td></tr><tr class="t-dsc"><td><code id="s-b01ccc4fa8a3ab0a">micron::parray::height</code></td><td>member; line 479</td></tr><tr class="t-dsc"><td><code id="s-8dfa9ee2992ae235">micron::parray::const_iterator</code></td><td>class; line 883</td></tr><tr class="t-dsc"><td><code id="s-7045d6702589a303">micron::parray::iterator</code></td><td>typedef; line 954</td></tr><tr class="t-dsc"><td><a href="#f-554ada2f92f144ee">micron::parray::~parray()</a></td><td>function; line 481</td></tr><tr class="t-dsc"><td><a href="#f-792e6083fefb9ef1">micron::parray::parray()</a></td><td>function; line 483</td></tr><tr class="t-dsc"><td><a href="#f-ca1db256cef90dd8">micron::parray::parray(const parray &amp;o)</a></td><td>function; line 486</td></tr><tr class="t-dsc"><td><a href="#f-8726147ed92eb959">micron::parray::operator=(const parray &amp;o)</a></td><td>function; line 489</td></tr><tr class="t-dsc"><td><a href="#f-01a589bcb6021abb">micron::parray::parray(parray &amp;&amp;o) noexcept</a></td><td>function; line 499</td></tr><tr class="t-dsc"><td><a href="#f-61a5a06fde5f5c43">micron::parray::operator=(parray &amp;&amp;o) noexcept</a></td><td>function; line 502</td></tr><tr class="t-dsc"><td><a href="#f-6823832f02a7cf2e">micron::parray::parray(const T &amp;val)</a></td><td>function; line 513</td></tr><tr class="t-dsc"><td><a href="#f-b503d9c5ce60e9e4">micron::parray::parray(const std::initializer_list&lt;T&gt; &amp;&amp;lst)</a></td><td>function; line 516</td></tr><tr class="t-dsc"><td><a href="#f-a944e966fe97e527">micron::parray::parray(const T *data, usize count)</a></td><td>function; line 527</td></tr><tr class="t-dsc"><td><a href="#f-866c99389d7f1689">micron::parray::parray(Fn &amp;&amp;fn, usize count)</a></td><td>function; line 540</td></tr><tr class="t-dsc"><td><a href="#f-2935dbde1ba9abc2">micron::parray::set(usize idx, const T &amp;val) const</a></td><td>function; line 554</td></tr><tr class="t-dsc"><td><a href="#f-efb44fd7ecff21ef">micron::parray::set(usize idx, T &amp;&amp;val) const</a></td><td>function; line 563</td></tr><tr class="t-dsc"><td><a href="#f-de6c53c978fb6636">micron::parray::update(usize idx, Fn &amp;&amp;fn) const</a></td><td>function; line 573</td></tr><tr class="t-dsc"><td><a href="#f-043ff5074ee1e10b">micron::parray::clear() const</a></td><td>function; line 582</td></tr><tr class="t-dsc"><td><a href="#f-241201c43074299a">micron::parray::fill(const T &amp;val) const</a></td><td>function; line 588</td></tr><tr class="t-dsc"><td><a href="#f-5c656fc61e760407">micron::parray::set_many(Ps &amp;&amp;...pairs) const</a></td><td>function; line 595</td></tr><tr class="t-dsc"><td><a href="#f-850b2ec16656fdf5">micron::parray::get(usize idx) const</a></td><td>function; line 619</td></tr><tr class="t-dsc"><td><a href="#f-75c5b30ef34285f3">micron::parray::at(usize idx) const</a></td><td>function; line 625</td></tr><tr class="t-dsc"><td><a href="#f-a87ca1c7af9ea4e7">micron::parray::operator[](usize idx) const</a></td><td>function; line 633</td></tr><tr class="t-dsc"><td><a href="#f-c47589d73f36b88d">micron::parray::front() const</a></td><td>function; line 639</td></tr><tr class="t-dsc"><td><a href="#f-5cbbb6368fab8673">micron::parray::back() const</a></td><td>function; line 645</td></tr><tr class="t-dsc"><td><a href="#f-076241711b7ce119">micron::parray::size() const noexcept</a></td><td>function; line 651</td></tr><tr class="t-dsc"><td><a href="#f-d0bc0127d8a0c79a">micron::parray::max_size() const noexcept</a></td><td>function; line 657</td></tr><tr class="t-dsc"><td><a href="#f-99c8bcbfe2011729">micron::parray::empty() const noexcept</a></td><td>function; line 663</td></tr><tr class="t-dsc"><td><a href="#f-c02270ab7f290ca2">micron::parray::identity() const noexcept</a></td><td>function; line 670</td></tr><tr class="t-dsc"><td><a href="#f-adccd41cdcbe2adb">micron::parray::operator==(const parray &amp;o) const</a></td><td>function; line 676</td></tr><tr class="t-dsc"><td><a href="#f-b2b0cee527a79720">micron::parray::operator!=(const parray &amp;o) const</a></td><td>function; line 682</td></tr><tr class="t-dsc"><td><a href="#f-000b52debdf185ed">micron::parray::operator+(const parray &amp;o) const</a></td><td>function; line 688</td></tr><tr class="t-dsc"><td><a href="#f-279f0e235366a605">micron::parray::operator-(const parray &amp;o) const</a></td><td>function; line 700</td></tr><tr class="t-dsc"><td><a href="#f-ebc127f2cf4df45e">micron::parray::operator*(const parray &amp;o) const</a></td><td>function; line 712</td></tr><tr class="t-dsc"><td><a href="#f-2aaeca56d6500ea1">micron::parray::operator/(const parray &amp;o) const</a></td><td>function; line 724</td></tr><tr class="t-dsc"><td><a href="#f-8615427f8878a3a2">micron::parray::operator%(const parray &amp;o) const</a></td><td>function; line 736</td></tr><tr class="t-dsc"><td><a href="#f-12e428829ad93c5a">micron::parray::operator+=(const T &amp;o) const</a></td><td>function; line 749</td></tr><tr class="t-dsc"><td><a href="#f-9e351e3df99697b5">micron::parray::operator-=(const T &amp;o) const</a></td><td>function; line 755</td></tr><tr class="t-dsc"><td><a href="#f-6887de8d1d9a2454">micron::parray::operator*=(const T &amp;o) const</a></td><td>function; line 761</td></tr><tr class="t-dsc"><td><a href="#f-ef94fe2e1202167a">micron::parray::operator/=(const T &amp;o) const</a></td><td>function; line 767</td></tr><tr class="t-dsc"><td><a href="#f-ae76b4164268e206">micron::parray::operator%=(const T &amp;o) const</a></td><td>function; line 773</td></tr><tr class="t-dsc"><td><a href="#f-9f7b051e0ded2852">micron::parray::operator+=(const parray &amp;o) const</a></td><td>function; line 780</td></tr><tr class="t-dsc"><td><a href="#f-6415e77ebab3e6b2">micron::parray::operator-=(const parray &amp;o) const</a></td><td>function; line 786</td></tr><tr class="t-dsc"><td><a href="#f-2ecf163609ae2531">micron::parray::operator*=(const parray &amp;o) const</a></td><td>function; line 792</td></tr><tr class="t-dsc"><td><a href="#f-d55d4341ce2aae6e">micron::parray::operator/=(const parray &amp;o) const</a></td><td>function; line 798</td></tr><tr class="t-dsc"><td><a href="#f-cd0f6e2452e65b6e">micron::parray::operator%=(const parray &amp;o) const</a></td><td>function; line 804</td></tr><tr class="t-dsc"><td><a href="#f-47a9e99e4798a025">micron::parray::add(const size_type n) const</a></td><td>function; line 810</td></tr><tr class="t-dsc"><td><a href="#f-23d40aee3d23916a">micron::parray::sub(const size_type n) const</a></td><td>function; line 816</td></tr><tr class="t-dsc"><td><a href="#f-de7b0fd6858c288b">micron::parray::mul(const size_type n) const</a></td><td>function; line 822</td></tr><tr class="t-dsc"><td><a href="#f-f0f7b40e142b2263">micron::parray::div(const size_type n) const</a></td><td>function; line 828</td></tr><tr class="t-dsc"><td><a href="#f-72cbb72a12019e5b">micron::parray::sum() const</a></td><td>function; line 834</td></tr><tr class="t-dsc"><td><a href="#f-00564eb39f6d3de7">micron::parray::mul_reduce() const</a></td><td>function; line 842</td></tr><tr class="t-dsc"><td><a href="#f-2dd4ffdd6241e64a">micron::parray::all(const T &amp;o) const</a></td><td>function; line 856</td></tr><tr class="t-dsc"><td><a href="#f-451a1876fdcc316d">micron::parray::any(const T &amp;o) const</a></td><td>function; line 866</td></tr><tr class="t-dsc"><td><a href="#f-b99675a4c9bea6c4">micron::parray::for_each(Fn &amp;&amp;fn) const</a></td><td>function; line 878</td></tr><tr class="t-dsc"><td><a href="#f-e670c7f45c8e2ccc">micron::parray::const_iterator::const_iterator()</a></td><td>function; line 889</td></tr><tr class="t-dsc"><td><a href="#f-768baee57264c18f">micron::parray::const_iterator::const_iterator(const parray *p, usize i)</a></td><td>function; line 891</td></tr><tr class="t-dsc"><td><a href="#f-88fc870fe1b9d097">micron::parray::const_iterator::operator*() const</a></td><td>function; line 894</td></tr><tr class="t-dsc"><td><a href="#f-a5f830c749bce44b">micron::parray::const_iterator::operator-&gt;() const</a></td><td>function; line 900</td></tr><tr class="t-dsc"><td><a href="#f-c7e2b8f833cb1306">micron::parray::const_iterator::operator++()</a></td><td>function; line 906</td></tr><tr class="t-dsc"><td><a href="#f-0fd79a7eb9f5a8d2">micron::parray::const_iterator::operator++(int)</a></td><td>function; line 913</td></tr><tr class="t-dsc"><td><a href="#f-f3683e1e8c396d39">micron::parray::const_iterator::operator--()</a></td><td>function; line 921</td></tr><tr class="t-dsc"><td><a href="#f-0c91dc6b4b95eebe">micron::parray::const_iterator::operator--(int)</a></td><td>function; line 928</td></tr><tr class="t-dsc"><td><a href="#f-35239e69a64db1df">micron::parray::const_iterator::operator==(const const_iterator &amp;o) const</a></td><td>function; line 936</td></tr><tr class="t-dsc"><td><a href="#f-42f2e4a3ed742afc">micron::parray::const_iterator::operator!=(const const_iterator &amp;o) const</a></td><td>function; line 942</td></tr><tr class="t-dsc"><td><a href="#f-81a21f9186f0691b">micron::parray::const_iterator::index() const</a></td><td>function; line 948</td></tr><tr class="t-dsc"><td><a href="#f-8c495c588dd11169">micron::parray::begin() const</a></td><td>function; line 957</td></tr><tr class="t-dsc"><td><a href="#f-e9d5653419d6cac4">micron::parray::end() const</a></td><td>function; line 963</td></tr><tr class="t-dsc"><td><a href="#f-1441f3df413b185e">micron::parray::cbegin() const</a></td><td>function; line 969</td></tr><tr class="t-dsc"><td><a href="#f-e2c9350c7f300974">micron::parray::cend() const</a></td><td>function; line 975</td></tr><tr class="t-dsc"><td><a href="#f-c5483ab50b76f6d5">micron::parray::is_pod()</a></td><td>function; line 981</td></tr><tr class="t-dsc"><td><a href="#f-3ea335c01c9a4ad9">micron::parray::is_class()</a></td><td>function; line 987</td></tr><tr class="t-dsc"><td><a href="#f-892db2b8354397a5">micron::parray::is_trivial() noexcept</a></td><td>function; line 993</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-554ada2f92f144ee"><h3><code>micron::parray::~parray()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L481">line 481</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~parray()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~parray() { __release&lt;__root_level&gt;(__root); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-053b9428970090c4">__release&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-792e6083fefb9ef1"><h3><code>micron::parray::parray()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L483">line 483</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray() : __root(nullptr)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray() : __root(nullptr) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-ca1db256cef90dd8"><h3><code>micron::parray::parray(const parray &amp;o)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L486">line 486</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray(const parray &amp;o) : __root(__retain&lt;__root_level&gt;(o.__root))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray(const parray &amp;o) : __root(__retain&lt;__root_level&gt;(o.__root)) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8726147ed92eb959"><h3><code>micron::parray::operator=(const parray &amp;o)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L489">line 489</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray &amp;
+  operator=(const parray &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray &amp;
+  operator=(const parray &amp;o)
+  {
+    if ( this != &amp;o ) [[likely]] {
+      __release&lt;__root_level&gt;(__root);
+      __root = __retain&lt;__root_level&gt;(o.__root);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/parray.hpp.html#L495">line 495</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-053b9428970090c4">__release&lt;__root_level&gt;</a>, <a href="parray.hpp.html#f-e09904ef01e660cf">__retain&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-01a589bcb6021abb"><h3><code>micron::parray::parray(parray &amp;&amp;o) noexcept</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L499">line 499</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray(parray &amp;&amp;o) noexcept : __root(o.__root)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>parray &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray(parray &amp;&amp;o) noexcept : __root(o.__root) { o.__root = nullptr; }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-61a5a06fde5f5c43"><h3><code>micron::parray::operator=(parray &amp;&amp;o) noexcept</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L502">line 502</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray &amp;
+  operator=(parray &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>parray &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray &amp;
+  operator=(parray &amp;&amp;o) noexcept
+  {
+    if ( this != &amp;o ) [[likely]] {
+      __release&lt;__root_level&gt;(__root);
+      __root = o.__root;
+      o.__root = nullptr;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/parray.hpp.html#L509">line 509</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-053b9428970090c4">__release&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-6823832f02a7cf2e"><h3><code>micron::parray::parray(const T &amp;val)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L513">line 513</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit parray(const T &amp;val) : __root(__build_filled&lt;__root_level&gt;(val))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit parray(const T &amp;val) : __root(__build_filled&lt;__root_level&gt;(val)) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b503d9c5ce60e9e4"><h3><code>micron::parray::parray(const std::initializer_list&lt;T&gt; &amp;&amp;lst)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L516">line 516</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray(const std::initializer_list&lt;T&gt; &amp;&amp;lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const std::initializer_list&lt;T&gt; &amp;&amp;lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray(const std::initializer_list&lt;T&gt; &amp;&amp;lst)
+  {
+    if ( lst.size() &gt; length ) exc&lt;except::runtime_error&gt;(&quot;micron::parray init_list too large for capacity&quot;);
+    if ( lst.size() == 0 ) {
+      __root = nullptr;
+      return;
+    }
+    __root = __build_from&lt;__root_level&gt;(lst.begin(), lst.size(), 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/array/parray.hpp.html#L521">line 521</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::parray init_list too large for capacity&quot;)</code></td><td><a href="../../source/array/parray.hpp.html#L518">line 518</a><br>Within <code>( lst.size() &gt; length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="parray.hpp.html#f-4d308e1389ebedcb">__build_from&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-a944e966fe97e527"><h3><code>micron::parray::parray(const T *data, usize count)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L527">line 527</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray(const T *data, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *data</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray(const T *data, usize count)
+  {
+    if ( count &gt; length ) exc&lt;except::runtime_error&gt;(&quot;micron::parray data exceeds capacity&quot;);
+    if ( count == 0 ) {
+      __root = nullptr;
+      return;
+    }
+    __root = __build_from&lt;__root_level&gt;(data, count, 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/array/parray.hpp.html#L532">line 532</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::parray data exceeds capacity&quot;)</code></td><td><a href="../../source/array/parray.hpp.html#L529">line 529</a><br>Within <code>( count &gt; length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="parray.hpp.html#f-4d308e1389ebedcb">__build_from&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-866c99389d7f1689"><h3><code>micron::parray::parray(Fn &amp;&amp;fn, usize count)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L540">line 540</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, usize&gt;)
+  explicit parray(Fn &amp;&amp;fn, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+    requires(micron::is_invocable_v&lt;Fn, usize&gt;)
+  explicit parray(Fn &amp;&amp;fn, usize count)
+  {
+    if ( count &gt; length ) exc&lt;except::runtime_error&gt;(&quot;micron::parray generator count exceeds capacity&quot;);
+    // build incrementally
+    void *root = nullptr;
+    for ( usize i = 0; i &lt; count; ++i ) {
+      void *next = __set_impl&lt;__root_level&gt;(root, i, fn(i));
+      __release&lt;__root_level&gt;(root);
+      root = next;
+    }
+    __root = root;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::parray generator count exceeds capacity&quot;)</code></td><td><a href="../../source/array/parray.hpp.html#L542">line 542</a><br>Within <code>( count &gt; length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="parray.hpp.html#f-c3316ee5b0d04c43">__set_impl&lt;__root_level&gt;</a>, <a href="parray.hpp.html#f-053b9428970090c4">__release&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-2935dbde1ba9abc2"><h3><code>micron::parray::set(usize idx, const T &amp;val) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L554">line 554</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] parray
+  set(usize idx, const T &amp;val) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize idx</code></li><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] parray
+  set(usize idx, const T &amp;val) const
+  {
+    if ( idx &gt;= length ) [[unlikely]]
+      exc&lt;except::runtime_error&gt;(&quot;micron::parray set() out of range&quot;);
+    void *nr = __set_impl&lt;__root_level&gt;(__root, idx, val);
+    return parray(nr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>parray(nr)</code></td><td><a href="../../source/array/parray.hpp.html#L559">line 559</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::parray set() out of range&quot;)</code></td><td><a href="../../source/array/parray.hpp.html#L557">line 557</a><br>Within <code>( idx &gt;= length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="parray.hpp.html#f-c3316ee5b0d04c43">__set_impl&lt;__root_level&gt;</a>, <a href="parray.hpp.html#f-792e6083fefb9ef1">parray</a>.</p></section><section class="function-entry" id="f-efb44fd7ecff21ef"><h3><code>micron::parray::set(usize idx, T &amp;&amp;val) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L563">line 563</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] parray
+  set(usize idx, T &amp;&amp;val) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize idx</code></li><li><code>T &amp;&amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] parray
+  set(usize idx, T &amp;&amp;val) const
+  {
+    if ( idx &gt;= length ) [[unlikely]]
+      exc&lt;except::runtime_error&gt;(&quot;micron::parray set() out of range&quot;);
+    void *nr = __set_impl&lt;__root_level&gt;(__root, idx, micron::move(val));
+    return parray(nr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>parray(nr)</code></td><td><a href="../../source/array/parray.hpp.html#L568">line 568</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::parray set() out of range&quot;)</code></td><td><a href="../../source/array/parray.hpp.html#L566">line 566</a><br>Within <code>( idx &gt;= length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="parray.hpp.html#f-c3316ee5b0d04c43">__set_impl&lt;__root_level&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="parray.hpp.html#f-792e6083fefb9ef1">parray</a>.</p></section><section class="function-entry" id="f-de6c53c978fb6636"><h3><code>micron::parray::update(usize idx, Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L573">line 573</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  [[nodiscard]] parray
+  update(usize idx, Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize idx</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  [[nodiscard]] parray
+  update(usize idx, Fn &amp;&amp;fn) const
+  {
+    if ( idx &gt;= length ) [[unlikely]]
+      exc&lt;except::runtime_error&gt;(&quot;micron::parray update() out of range&quot;);
+    void *nr = __update_impl&lt;__root_level&gt;(__root, idx, static_cast&lt;Fn &amp;&amp;&gt;(fn));
+    return parray(nr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>parray(nr)</code></td><td><a href="../../source/array/parray.hpp.html#L578">line 578</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::parray update() out of range&quot;)</code></td><td><a href="../../source/array/parray.hpp.html#L576">line 576</a><br>Within <code>( idx &gt;= length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="parray.hpp.html#f-8737fc86ad25352e">__update_impl&lt;__root_level&gt;</a>, <a href="parray.hpp.html#f-792e6083fefb9ef1">parray</a>.</p></section><section class="function-entry" id="f-043ff5074ee1e10b"><h3><code>micron::parray::clear() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L582">line 582</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] parray
+  clear() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>parray()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] parray
+  clear() const
+  {
+    return parray();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>parray()</code></td><td><a href="../../source/array/parray.hpp.html#L584">line 584</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-792e6083fefb9ef1">parray</a>.</p></section><section class="function-entry" id="f-241201c43074299a"><h3><code>micron::parray::fill(const T &amp;val) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L588">line 588</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] parray
+  fill(const T &amp;val) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Returns <code>parray(val)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] parray
+  fill(const T &amp;val) const
+  {
+    return parray(val);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>parray(val)</code></td><td><a href="../../source/array/parray.hpp.html#L590">line 590</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-792e6083fefb9ef1">parray</a>.</p></section><section class="function-entry" id="f-5c656fc61e760407"><h3><code>micron::parray::set_many(Ps &amp;&amp;...pairs) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L595">line 595</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Ps&gt;
+  [[nodiscard]] parray
+  set_many(Ps &amp;&amp;...pairs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Ps &amp;&amp;...pairs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Ps&gt;
+  [[nodiscard]] parray
+  set_many(Ps &amp;&amp;...pairs) const
+  {
+    void *root = __retain&lt;__root_level&gt;(__root);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    try {
+#endif
+      auto apply_one = [&amp;root](auto &amp;&amp;pair) {
+        if ( pair.a &gt;= length ) [[unlikely]]
+          exc&lt;except::runtime_error&gt;(&quot;micron::parray set_many(): index out of range&quot;);
+        void *next = __set_impl&lt;__root_level&gt;(root, pair.a, static_cast&lt;decltype(pair.b) &amp;&amp;&gt;(pair.b));
+        __release&lt;__root_level&gt;(root);
+        root = next;
+      };
+      (apply_one(static_cast&lt;Ps &amp;&amp;&gt;(pairs)), ...);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+    } catch ( ... ) {
+      __release&lt;__root_level&gt;(root);
+      throw;
+    }
+#endif
+    return parray(root);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>parray(root)</code></td><td><a href="../../source/array/parray.hpp.html#L615">line 615</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L612">line 612</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-e09904ef01e660cf">__retain&lt;__root_level&gt;</a>, <a href="parray.hpp.html#f-053b9428970090c4">__release&lt;__root_level&gt;</a>, <a href="parray.hpp.html#f-792e6083fefb9ef1">parray</a>.</p></section><section class="function-entry" id="f-850b2ec16656fdf5"><h3><code>micron::parray::get(usize idx) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L619">line 619</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+  get(usize idx) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize idx</code></li></ul><h4>Effects</h4><p>Returns <code>__get_impl&lt;__root_level&gt;(__root, idx)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+  get(usize idx) const
+  {
+    return __get_impl&lt;__root_level&gt;(__root, idx);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__get_impl&lt;__root_level&gt;(__root, idx)</code></td><td><a href="../../source/array/parray.hpp.html#L621">line 621</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-bbae22c26b6835e2">__get_impl&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-75c5b30ef34285f3"><h3><code>micron::parray::at(usize idx) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L625">line 625</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+  at(usize idx) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+  at(usize idx) const
+  {
+    if ( idx &gt;= length ) [[unlikely]]
+      exc&lt;except::runtime_error&gt;(&quot;micron::parray at() out of range&quot;);
+    return __get_impl&lt;__root_level&gt;(__root, idx);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__get_impl&lt;__root_level&gt;(__root, idx)</code></td><td><a href="../../source/array/parray.hpp.html#L629">line 629</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::runtime_error&gt;(&quot;micron::parray at() out of range&quot;)</code></td><td><a href="../../source/array/parray.hpp.html#L628">line 628</a><br>Within <code>( idx &gt;= length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::runtime_error&gt;</a>, <a href="parray.hpp.html#f-bbae22c26b6835e2">__get_impl&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-a87ca1c7af9ea4e7"><h3><code>micron::parray::operator[](usize idx) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L633">line 633</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+  operator[](usize idx) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize idx</code></li></ul><h4>Effects</h4><p>Returns <code>__get_impl&lt;__root_level&gt;(__root, idx)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+  operator[](usize idx) const
+  {
+    return __get_impl&lt;__root_level&gt;(__root, idx);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__get_impl&lt;__root_level&gt;(__root, idx)</code></td><td><a href="../../source/array/parray.hpp.html#L635">line 635</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-bbae22c26b6835e2">__get_impl&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-c47589d73f36b88d"><h3><code>micron::parray::front() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L639">line 639</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+  front() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__get_impl&lt;__root_level&gt;(__root, 0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+  front() const
+  {
+    return __get_impl&lt;__root_level&gt;(__root, 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__get_impl&lt;__root_level&gt;(__root, 0)</code></td><td><a href="../../source/array/parray.hpp.html#L641">line 641</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-bbae22c26b6835e2">__get_impl&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-5cbbb6368fab8673"><h3><code>micron::parray::back() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L645">line 645</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+  back() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__get_impl&lt;__root_level&gt;(__root, length - 1)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+  back() const
+  {
+    return __get_impl&lt;__root_level&gt;(__root, length - 1);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__get_impl&lt;__root_level&gt;(__root, length - 1)</code></td><td><a href="../../source/array/parray.hpp.html#L647">line 647</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-bbae22c26b6835e2">__get_impl&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-076241711b7ce119"><h3><code>micron::parray::size() const noexcept</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L651">line 651</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>size_type
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>length</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">size_type
+  size() const noexcept
+  {
+    return length;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>length</code></td><td><a href="../../source/array/parray.hpp.html#L653">line 653</a></td></tr></tbody></table></section><section class="function-entry" id="f-d0bc0127d8a0c79a"><h3><code>micron::parray::max_size() const noexcept</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L657">line 657</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>size_type
+  max_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>length</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">size_type
+  max_size() const noexcept
+  {
+    return length;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>length</code></td><td><a href="../../source/array/parray.hpp.html#L659">line 659</a></td></tr></tbody></table></section><section class="function-entry" id="f-99c8bcbfe2011729"><h3><code>micron::parray::empty() const noexcept</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L663">line 663</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>false</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const noexcept
+  {
+    return false;      // always has length elements, never empty
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/array/parray.hpp.html#L665">line 665</a></td></tr></tbody></table></section><section class="function-entry" id="f-c02270ab7f290ca2"><h3><code>micron::parray::identity() const noexcept</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L670">line 670</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const void *
+  identity() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__root</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const void *
+  identity() const noexcept
+  {
+    return __root;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__root</code></td><td><a href="../../source/array/parray.hpp.html#L672">line 672</a></td></tr></tbody></table></section><section class="function-entry" id="f-adccd41cdcbe2adb"><h3><code>micron::parray::operator==(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L676">line 676</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  operator==(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__equal_impl&lt;__root_level&gt;(__root, o.__root)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  operator==(const parray &amp;o) const
+  {
+    return __equal_impl&lt;__root_level&gt;(__root, o.__root);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__equal_impl&lt;__root_level&gt;(__root, o.__root)</code></td><td><a href="../../source/array/parray.hpp.html#L678">line 678</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-3e1035e9cbbc259f">__equal_impl&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-b2b0cee527a79720"><h3><code>micron::parray::operator!=(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L682">line 682</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  operator!=(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>!(*this == o)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  operator!=(const parray &amp;o) const
+  {
+    return !(*this == o);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>!(*this == o)</code></td><td><a href="../../source/array/parray.hpp.html#L684">line 684</a></td></tr></tbody></table></section><section class="function-entry" id="f-000b52debdf185ed"><h3><code>micron::parray::operator+(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L688">line 688</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator+(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator+(const parray &amp;o) const
+  {
+    parray arr(*this);
+    o.for_each([&amp;arr](usize idx, const T &amp;val) {
+      T sum = arr.get(idx) + val;
+      parray next = arr.set(idx, micron::move(sum));
+      arr = micron::move(next);
+    });
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/parray.hpp.html#L696">line 696</a></td></tr></tbody></table></section><section class="function-entry" id="f-279f0e235366a605"><h3><code>micron::parray::operator-(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L700">line 700</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator-(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator-(const parray &amp;o) const
+  {
+    parray arr(*this);
+    o.for_each([&amp;arr](usize idx, const T &amp;val) {
+      T diff = arr.get(idx) - val;
+      parray next = arr.set(idx, micron::move(diff));
+      arr = micron::move(next);
+    });
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/parray.hpp.html#L708">line 708</a></td></tr></tbody></table></section><section class="function-entry" id="f-ebc127f2cf4df45e"><h3><code>micron::parray::operator*(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L712">line 712</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator*(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator*(const parray &amp;o) const
+  {
+    parray arr(*this);
+    o.for_each([&amp;arr](usize idx, const T &amp;val) {
+      T prod = arr.get(idx) * val;
+      parray next = arr.set(idx, micron::move(prod));
+      arr = micron::move(next);
+    });
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/parray.hpp.html#L720">line 720</a></td></tr></tbody></table></section><section class="function-entry" id="f-2aaeca56d6500ea1"><h3><code>micron::parray::operator/(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L724">line 724</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator/(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator/(const parray &amp;o) const
+  {
+    parray arr(*this);
+    o.for_each([&amp;arr](usize idx, const T &amp;val) {
+      T quot = arr.get(idx) / val;
+      parray next = arr.set(idx, micron::move(quot));
+      arr = micron::move(next);
+    });
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/parray.hpp.html#L732">line 732</a></td></tr></tbody></table></section><section class="function-entry" id="f-8615427f8878a3a2"><h3><code>micron::parray::operator%(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L736">line 736</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator%(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator%(const parray &amp;o) const
+  {
+    parray arr(*this);
+    o.for_each([&amp;arr](usize idx, const T &amp;val) {
+      T rem = arr.get(idx) % val;
+      parray next = arr.set(idx, micron::move(rem));
+      arr = micron::move(next);
+    });
+    return arr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/array/parray.hpp.html#L744">line 744</a></td></tr></tbody></table></section><section class="function-entry" id="f-12e428829ad93c5a"><h3><code>micron::parray::operator+=(const T &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L749">line 749</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator+=(const T &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a + b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator+=(const T &amp;o) const
+  {
+    return __apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a + b; });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a + b; })</code></td><td><a href="../../source/array/parray.hpp.html#L751">line 751</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-e4e6d7f5acd2fdd8">__apply_scalar</a>.</p></section><section class="function-entry" id="f-9e351e3df99697b5"><h3><code>micron::parray::operator-=(const T &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L755">line 755</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator-=(const T &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a - b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator-=(const T &amp;o) const
+  {
+    return __apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a - b; });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a - b; })</code></td><td><a href="../../source/array/parray.hpp.html#L757">line 757</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-e4e6d7f5acd2fdd8">__apply_scalar</a>.</p></section><section class="function-entry" id="f-6887de8d1d9a2454"><h3><code>micron::parray::operator*=(const T &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L761">line 761</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator*=(const T &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a * b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator*=(const T &amp;o) const
+  {
+    return __apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a * b; });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a * b; })</code></td><td><a href="../../source/array/parray.hpp.html#L763">line 763</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-e4e6d7f5acd2fdd8">__apply_scalar</a>.</p></section><section class="function-entry" id="f-ef94fe2e1202167a"><h3><code>micron::parray::operator/=(const T &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L767">line 767</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator/=(const T &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a / b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator/=(const T &amp;o) const
+  {
+    return __apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a / b; });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a / b; })</code></td><td><a href="../../source/array/parray.hpp.html#L769">line 769</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-e4e6d7f5acd2fdd8">__apply_scalar</a>.</p></section><section class="function-entry" id="f-ae76b4164268e206"><h3><code>micron::parray::operator%=(const T &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L773">line 773</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator%=(const T &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a % b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator%=(const T &amp;o) const
+  {
+    return __apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a % b; });
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__apply_scalar(o, [](const T &amp;a, const T &amp;b) { return a % b; })</code></td><td><a href="../../source/array/parray.hpp.html#L775">line 775</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-e4e6d7f5acd2fdd8">__apply_scalar</a>.</p></section><section class="function-entry" id="f-9f7b051e0ded2852"><h3><code>micron::parray::operator+=(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L780">line 780</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator+=(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>*this + o</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator+=(const parray &amp;o) const
+  {
+    return *this + o;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this + o</code></td><td><a href="../../source/array/parray.hpp.html#L782">line 782</a></td></tr></tbody></table></section><section class="function-entry" id="f-6415e77ebab3e6b2"><h3><code>micron::parray::operator-=(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L786">line 786</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator-=(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>*this - o</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator-=(const parray &amp;o) const
+  {
+    return *this - o;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this - o</code></td><td><a href="../../source/array/parray.hpp.html#L788">line 788</a></td></tr></tbody></table></section><section class="function-entry" id="f-2ecf163609ae2531"><h3><code>micron::parray::operator*=(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L792">line 792</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator*=(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>*this * o</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator*=(const parray &amp;o) const
+  {
+    return *this * o;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this * o</code></td><td><a href="../../source/array/parray.hpp.html#L794">line 794</a></td></tr></tbody></table></section><section class="function-entry" id="f-d55d4341ce2aae6e"><h3><code>micron::parray::operator/=(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L798">line 798</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator/=(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>*this / o</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator/=(const parray &amp;o) const
+  {
+    return *this / o;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this / o</code></td><td><a href="../../source/array/parray.hpp.html#L800">line 800</a></td></tr></tbody></table></section><section class="function-entry" id="f-cd0f6e2452e65b6e"><h3><code>micron::parray::operator%=(const parray &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L804">line 804</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>parray
+  operator%=(const parray &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>*this % o</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">parray
+  operator%=(const parray &amp;o) const
+  {
+    return *this % o;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this % o</code></td><td><a href="../../source/array/parray.hpp.html#L806">line 806</a></td></tr></tbody></table></section><section class="function-entry" id="f-47a9e99e4798a025"><h3><code>micron::parray::add(const size_type n) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L810">line 810</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] parray
+  add(const size_type n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Returns <code>operator+=(static_cast&lt;T&gt;(n))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] parray
+  add(const size_type n) const
+  {
+    return operator+=(static_cast&lt;T&gt;(n));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>operator+=(static_cast&lt;T&gt;(n))</code></td><td><a href="../../source/array/parray.hpp.html#L812">line 812</a></td></tr></tbody></table></section><section class="function-entry" id="f-23d40aee3d23916a"><h3><code>micron::parray::sub(const size_type n) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L816">line 816</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] parray
+  sub(const size_type n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Returns <code>operator-=(static_cast&lt;T&gt;(n))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] parray
+  sub(const size_type n) const
+  {
+    return operator-=(static_cast&lt;T&gt;(n));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>operator-=(static_cast&lt;T&gt;(n))</code></td><td><a href="../../source/array/parray.hpp.html#L818">line 818</a></td></tr></tbody></table></section><section class="function-entry" id="f-de7b0fd6858c288b"><h3><code>micron::parray::mul(const size_type n) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L822">line 822</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] parray
+  mul(const size_type n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Returns <code>operator*=(static_cast&lt;T&gt;(n))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] parray
+  mul(const size_type n) const
+  {
+    return operator*=(static_cast&lt;T&gt;(n));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>operator*=(static_cast&lt;T&gt;(n))</code></td><td><a href="../../source/array/parray.hpp.html#L824">line 824</a></td></tr></tbody></table></section><section class="function-entry" id="f-f0f7b40e142b2263"><h3><code>micron::parray::div(const size_type n) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L828">line 828</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] parray
+  div(const size_type n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const size_type n</code></li></ul><h4>Effects</h4><p>Returns <code>operator/=(static_cast&lt;T&gt;(n))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] parray
+  div(const size_type n) const
+  {
+    return operator/=(static_cast&lt;T&gt;(n));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>operator/=(static_cast&lt;T&gt;(n))</code></td><td><a href="../../source/array/parray.hpp.html#L830">line 830</a></td></tr></tbody></table></section><section class="function-entry" id="f-72cbb72a12019e5b"><h3><code>micron::parray::sum() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L834">line 834</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  sum() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  sum() const
+  {
+    T s{};
+    for_each([&amp;s](usize, const T &amp;v) { s += v; });
+    return s;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/array/parray.hpp.html#L838">line 838</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-b99675a4c9bea6c4">for_each</a>.</p></section><section class="function-entry" id="f-00564eb39f6d3de7"><h3><code>micron::parray::mul_reduce() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L842">line 842</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T
+  mul_reduce() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T
+  mul_reduce() const
+  {
+    T m = get(0);
+    for_each([&amp;m, first = true](usize, const T &amp;v) mutable {
+      if ( first ) {
+        first = false;
+        return;
+      }
+      m *= v;
+    });
+    return m;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../source/array/parray.hpp.html#L852">line 852</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-850b2ec16656fdf5">get</a>, <a href="parray.hpp.html#f-b99675a4c9bea6c4">for_each</a>.</p></section><section class="function-entry" id="f-2dd4ffdd6241e64a"><h3><code>micron::parray::all(const T &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L856">line 856</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  all(const T &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  all(const T &amp;o) const
+  {
+    bool result = true;
+    for_each([&amp;result, &amp;o](usize, const T &amp;v) {
+      if ( !(v == o) ) result = false;
+    });
+    return result;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/array/parray.hpp.html#L862">line 862</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-b99675a4c9bea6c4">for_each</a>.</p></section><section class="function-entry" id="f-451a1876fdcc316d"><h3><code>micron::parray::any(const T &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L866">line 866</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  any(const T &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  any(const T &amp;o) const
+  {
+    bool result = false;
+    for_each([&amp;result, &amp;o](usize, const T &amp;v) {
+      if ( v == o ) result = true;
+    });
+    return result;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../source/array/parray.hpp.html#L872">line 872</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-b99675a4c9bea6c4">for_each</a>.</p></section><section class="function-entry" id="f-b99675a4c9bea6c4"><h3><code>micron::parray::for_each(Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L878">line 878</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  void
+  for_each(Fn &amp;&amp;fn) const
+  {
+    __for_each_impl&lt;__root_level&gt;(__root, 0, static_cast&lt;Fn &amp;&amp;&gt;(fn));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-ba50404ebf8f3bf4">__for_each_impl&lt;__root_level&gt;</a>.</p></section><section class="function-entry" id="f-e670c7f45c8e2ccc"><h3><code>micron::parray::const_iterator::const_iterator()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L889">line 889</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator() : __owner(nullptr), __idx(0)</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator() : __owner(nullptr), __idx(0) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-768baee57264c18f"><h3><code>micron::parray::const_iterator::const_iterator(const parray *p, usize i)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L891">line 891</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator(const parray *p, usize i) : __owner(p), __idx(i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const parray *p</code></li><li><code>usize i</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator(const parray *p, usize i) : __owner(p), __idx(i) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-88fc870fe1b9d097"><h3><code>micron::parray::const_iterator::operator*() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L894">line 894</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T &amp;
+    operator*() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__owner-&gt;get(__idx)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T &amp;
+    operator*() const
+    {
+      return __owner-&gt;get(__idx);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__owner-&gt;get(__idx)</code></td><td><a href="../../source/array/parray.hpp.html#L896">line 896</a></td></tr></tbody></table></section><section class="function-entry" id="f-a5f830c749bce44b"><h3><code>micron::parray::const_iterator::operator-&gt;() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L900">line 900</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const T *
+    operator-&gt;() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>&amp;__owner-&gt;get(__idx)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const T *
+    operator-&gt;() const
+    {
+      return &amp;__owner-&gt;get(__idx);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;__owner-&gt;get(__idx)</code></td><td><a href="../../source/array/parray.hpp.html#L902">line 902</a></td></tr></tbody></table></section><section class="function-entry" id="f-c7e2b8f833cb1306"><h3><code>micron::parray::const_iterator::operator++()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L906">line 906</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator &amp;
+    operator++()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator &amp;
+    operator++()
+    {
+      ++__idx;
+      return *this;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/parray.hpp.html#L909">line 909</a></td></tr></tbody></table></section><section class="function-entry" id="f-0fd79a7eb9f5a8d2"><h3><code>micron::parray::const_iterator::operator++(int)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L913">line 913</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+    operator++(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+    operator++(int)
+    {
+      const_iterator tmp = *this;
+      ++__idx;
+      return tmp;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tmp</code></td><td><a href="../../source/array/parray.hpp.html#L917">line 917</a></td></tr></tbody></table></section><section class="function-entry" id="f-f3683e1e8c396d39"><h3><code>micron::parray::const_iterator::operator--()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L921">line 921</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator &amp;
+    operator--()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator &amp;
+    operator--()
+    {
+      --__idx;
+      return *this;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/array/parray.hpp.html#L924">line 924</a></td></tr></tbody></table></section><section class="function-entry" id="f-0c91dc6b4b95eebe"><h3><code>micron::parray::const_iterator::operator--(int)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L928">line 928</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+    operator--(int)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+    operator--(int)
+    {
+      const_iterator tmp = *this;
+      --__idx;
+      return tmp;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tmp</code></td><td><a href="../../source/array/parray.hpp.html#L932">line 932</a></td></tr></tbody></table></section><section class="function-entry" id="f-35239e69a64db1df"><h3><code>micron::parray::const_iterator::operator==(const const_iterator &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L936">line 936</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator==(const const_iterator &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>__owner == o.__owner &amp;&amp; __idx == o.__idx</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator==(const const_iterator &amp;o) const
+    {
+      return __owner == o.__owner &amp;&amp; __idx == o.__idx;      // compare owner too: iterators into different parrays are unequal
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__owner == o.__owner &amp;&amp; __idx == o.__idx</code></td><td><a href="../../source/array/parray.hpp.html#L938">line 938</a></td></tr></tbody></table></section><section class="function-entry" id="f-42f2e4a3ed742afc"><h3><code>micron::parray::const_iterator::operator!=(const const_iterator &amp;o) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L942">line 942</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    operator!=(const const_iterator &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const const_iterator &amp;o</code></li></ul><h4>Effects</h4><p>Returns <code>!(*this == o)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    operator!=(const const_iterator &amp;o) const
+    {
+      return !(*this == o);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>!(*this == o)</code></td><td><a href="../../source/array/parray.hpp.html#L944">line 944</a></td></tr></tbody></table></section><section class="function-entry" id="f-81a21f9186f0691b"><h3><code>micron::parray::const_iterator::index() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L948">line 948</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+    index() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__idx</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+    index() const
+    {
+      return __idx;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__idx</code></td><td><a href="../../source/array/parray.hpp.html#L950">line 950</a></td></tr></tbody></table></section><section class="function-entry" id="f-8c495c588dd11169"><h3><code>micron::parray::begin() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L957">line 957</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  begin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator(this, 0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  begin() const
+  {
+    return const_iterator(this, 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator(this, 0)</code></td><td><a href="../../source/array/parray.hpp.html#L959">line 959</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#s-8dfa9ee2992ae235">const_iterator</a>.</p></section><section class="function-entry" id="f-e9d5653419d6cac4"><h3><code>micron::parray::end() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L963">line 963</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  end() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator(this, length)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  end() const
+  {
+    return const_iterator(this, length);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator(this, length)</code></td><td><a href="../../source/array/parray.hpp.html#L965">line 965</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#s-8dfa9ee2992ae235">const_iterator</a>.</p></section><section class="function-entry" id="f-1441f3df413b185e"><h3><code>micron::parray::cbegin() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L969">line 969</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  cbegin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator(this, 0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  cbegin() const
+  {
+    return const_iterator(this, 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator(this, 0)</code></td><td><a href="../../source/array/parray.hpp.html#L971">line 971</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#s-8dfa9ee2992ae235">const_iterator</a>.</p></section><section class="function-entry" id="f-e2c9350c7f300974"><h3><code>micron::parray::cend() const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L975">line 975</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const_iterator
+  cend() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_iterator(this, length)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const_iterator
+  cend() const
+  {
+    return const_iterator(this, length);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_iterator(this, length)</code></td><td><a href="../../source/array/parray.hpp.html#L977">line 977</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#s-8dfa9ee2992ae235">const_iterator</a>.</p></section><section class="function-entry" id="f-c5483ab50b76f6d5"><h3><code>micron::parray::is_pod()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L981">line 981</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr bool
+  is_pod()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::is_pod_v&lt;T&gt;</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr bool
+  is_pod()
+  {
+    return micron::is_pod_v&lt;T&gt;;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::is_pod_v&lt;T&gt;</code></td><td><a href="../../source/array/parray.hpp.html#L983">line 983</a></td></tr></tbody></table></section><section class="function-entry" id="f-3ea335c01c9a4ad9"><h3><code>micron::parray::is_class()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L987">line 987</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr bool
+  is_class()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::is_class_v&lt;T&gt;</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr bool
+  is_class()
+  {
+    return micron::is_class_v&lt;T&gt;;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::is_class_v&lt;T&gt;</code></td><td><a href="../../source/array/parray.hpp.html#L989">line 989</a></td></tr></tbody></table></section><section class="function-entry" id="f-892db2b8354397a5"><h3><code>micron::parray::is_trivial() noexcept</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L993">line 993</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr bool
+  is_trivial() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::is_trivial_v&lt;T&gt;</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr bool
+  is_trivial() noexcept
+  {
+    return micron::is_trivial_v&lt;T&gt;;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::is_trivial_v&lt;T&gt;</code></td><td><a href="../../source/array/parray.hpp.html#L995">line 995</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-882ef7b21f5a02c5"><h3><code>micron::parray::__cpow(usize base, usize exp)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L31">line 31</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr usize
+  __cpow(usize base, usize exp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize base</code></li><li><code>usize exp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr usize
+  __cpow(usize base, usize exp)
+  {
+    usize r = 1;
+    for ( usize i = 0; i &lt; exp; ++i ) r *= base;
+    return r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/array/parray.hpp.html#L35">line 35</a></td></tr></tbody></table></section><section class="function-entry" id="f-802736853743e6be"><h3><code>micron::parray::__alloc_internal()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L51">line 51</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __node *
+  __alloc_internal()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __node *
+  __alloc_internal()
+  {
+    auto *n = reinterpret_cast&lt;__node *&gt;(abc::alloc(sizeof(__node)));
+    n-&gt;refs = 1;
+    for ( usize i = 0; i &lt; B; ++i ) n-&gt;children[i] = nullptr;
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/array/parray.hpp.html#L56">line 56</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-3a9ea01b5923b18d">abc::alloc</a>.</p></section><section class="function-entry" id="f-efe7dcdcbf8c6357"><h3><code>micron::parray::__alloc_leaf()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L60">line 60</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __leaf *
+  __alloc_leaf()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;__leaf *&gt;(abc::alloc(sizeof(__leaf)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __leaf *
+  __alloc_leaf()
+  {
+    return reinterpret_cast&lt;__leaf *&gt;(abc::alloc(sizeof(__leaf)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;__leaf *&gt;(abc::alloc(sizeof(__leaf)))</code></td><td><a href="../../source/array/parray.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-3a9ea01b5923b18d">abc::alloc</a>.</p></section><section class="function-entry" id="f-61ceff4fa88d1fdb"><h3><code>micron::parray::__make_default_leaf()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L66">line 66</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __leaf *
+  __make_default_leaf()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __leaf *
+  __make_default_leaf()
+  {
+    __leaf *l = __alloc_leaf();
+    l-&gt;refs = 1;
+    for ( usize i = 0; i &lt; B; ++i ) new (micron::addr(l-&gt;values[i])) T();
+    return l;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>l</code></td><td><a href="../../source/array/parray.hpp.html#L71">line 71</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-efe7dcdcbf8c6357">__alloc_leaf</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-c81d8056c6a06845"><h3><code>micron::parray::__dealloc_leaf(__leaf *l)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L75">line 75</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline void
+  __dealloc_leaf(__leaf *l)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__leaf *l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline void
+  __dealloc_leaf(__leaf *l)
+  {
+    if constexpr ( !micron::is_trivially_destructible_v&lt;T&gt; ) {
+      for ( usize i = 0; i &lt; B; ++i ) l-&gt;values[i].~T();
+    }
+    abc::dealloc(reinterpret_cast&lt;byte *&gt;(l));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-47c80fb7e3ffd0b7">abc::dealloc</a>.</p></section><section class="function-entry" id="f-e09904ef01e660cf"><h3><code>micron::parray::__retain(void *p)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L85">line 85</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl&gt;
+  static inline void *
+  __retain(void *p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl&gt;
+  static inline void *
+  __retain(void *p)
+  {
+    if ( !p ) [[unlikely]]
+      return nullptr;
+    // atomic refcount: a persistent value may be shared (copied) across threads
+    if constexpr ( Lvl == 0 )
+      __atomic_fetch_add(&amp;static_cast&lt;__leaf *&gt;(p)-&gt;refs, 1u, __ATOMIC_RELAXED);
+    else
+      __atomic_fetch_add(&amp;static_cast&lt;__node *&gt;(p)-&gt;refs, 1u, __ATOMIC_RELAXED);
+    return p;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/array/parray.hpp.html#L88">line 88</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../source/array/parray.hpp.html#L94">line 94</a></td></tr></tbody></table></section><section class="function-entry" id="f-053b9428970090c4"><h3><code>micron::parray::__release(void *p)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L99">line 99</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl&gt;
+  static void
+  __release(void *p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl&gt;
+  static void
+  __release(void *p)
+  {
+    if ( !p ) [[unlikely]]
+      return;
+
+    if constexpr ( Lvl == 0 ) {
+      __leaf *l = static_cast&lt;__leaf *&gt;(p);
+      if ( __atomic_fetch_sub(&amp;l-&gt;refs, 1u, __ATOMIC_ACQ_REL) == 1u ) [[unlikely]]
+        __dealloc_leaf(l);
+    } else {
+      __node *n = static_cast&lt;__node *&gt;(p);
+      if ( __atomic_fetch_sub(&amp;n-&gt;refs, 1u, __ATOMIC_ACQ_REL) == 1u ) [[unlikely]] {
+        for ( usize i = 0; i &lt; B; ++i ) __release&lt;Lvl - 1&gt;(n-&gt;children[i]);
+        abc::dealloc(reinterpret_cast&lt;byte *&gt;(n));
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/array/parray.hpp.html#L102">line 102</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-c81d8056c6a06845">__dealloc_leaf</a>, <a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-47c80fb7e3ffd0b7">abc::dealloc</a>.</p></section><section class="function-entry" id="f-c3316ee5b0d04c43"><h3><code>micron::parray::__set_impl(void *p, usize idx, Vf &amp;&amp;val)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L119">line 119</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl, typename Vf&gt;
+  static void *
+  __set_impl(void *p, usize idx, Vf &amp;&amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li><li><code>usize idx</code></li><li><code>Vf &amp;&amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl, typename Vf&gt;
+  static void *
+  __set_impl(void *p, usize idx, Vf &amp;&amp;val)
+  {
+    if constexpr ( Lvl == 0 ) {
+      // leaf level
+      const usize slot = idx &amp; __mask;
+      __leaf *fresh = __alloc_leaf();
+      fresh-&gt;refs = 1;
+
+      if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+        if ( p )
+          micron::bytecpy(reinterpret_cast&lt;byte *&gt;(fresh-&gt;values), reinterpret_cast&lt;const byte *&gt;(static_cast&lt;const __leaf *&gt;(p)-&gt;values),
+                          B * sizeof(T));
+        else
+          for ( usize i = 0; i &lt; B; ++i ) new (micron::addr(fresh-&gt;values[i])) T();
+        fresh-&gt;values[slot] = static_cast&lt;Vf &amp;&amp;&gt;(val);
+        return fresh;
+      } else {
+        usize built = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+        try {
+#endif
+          if ( p ) {
+            const __leaf *old = static_cast&lt;const __leaf *&gt;(p);
+            for ( usize i = 0; i &lt; B; ++i, ++built ) new (micron::addr(fresh-&gt;values[i])) T(old-&gt;values[i]);
+          } else {
+            for ( usize i = 0; i &lt; B; ++i, ++built ) new (micron::addr(fresh-&gt;values[i])) T();
+          }
+          fresh-&gt;values[slot] = static_cast&lt;Vf &amp;&amp;&gt;(val);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+        } catch ( ... ) {
+          for ( usize j = 0; j &lt; built; ++j ) fresh-&gt;values[j].~T();
+          abc::dealloc(reinterpret_cast&lt;byte *&gt;(fresh));
+          throw;
+        }
+#endif
+        return fresh;
+      }
+
+    } else {
+      // internal level
+      const usize slot = (idx &gt;&gt; (Lvl * K)) &amp; __mask;
+      __node *fresh = __alloc_internal();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        if ( p ) {
+          const __node *old = static_cast&lt;const __node *&gt;(p);
+          for ( usize i = 0; i &lt; B; ++i ) {
+            if ( i == slot )
+              fresh-&gt;children[i] = __set_impl&lt;Lvl - 1&gt;(old-&gt;children[i], idx, static_cast&lt;Vf &amp;&amp;&gt;(val));
+            else
+              fresh-&gt;children[i] = __retain&lt;Lvl - 1&gt;(old-&gt;children[i]);
+          }
+        } else {
+          fresh-&gt;children[slot] = __set_impl&lt;Lvl - 1&gt;(nullptr, idx, static_cast&lt;Vf &amp;&amp;&gt;(val));
+        }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        __release&lt;Lvl&gt;(fresh);
+        throw;
+      }
+#endif
+      return fresh;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/array/parray.hpp.html#L134">line 134</a></td></tr><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/array/parray.hpp.html#L154">line 154</a></td></tr><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/array/parray.hpp.html#L181">line 181</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L151">line 151</a><br>Within <code>( Lvl == 0 )</code>, <code>else of ( micron::is_trivially_copyable_v&lt;T&gt; )</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L178">line 178</a><br>Within <code>else of ( Lvl == 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-efe7dcdcbf8c6357">__alloc_leaf</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-95166e01bb68ea54">micron::bytecpy</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-47c80fb7e3ffd0b7">abc::dealloc</a>, <a href="parray.hpp.html#f-802736853743e6be">__alloc_internal</a>, <a href="parray.hpp.html#f-e09904ef01e660cf">__retain&lt;Lvl - 1&gt;</a>, <a href="parray.hpp.html#f-053b9428970090c4">__release&lt;Lvl&gt;</a>.</p></section><section class="function-entry" id="f-baeec07477c4ff0f"><h3><code>micron::parray::__default_val()</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L186">line 186</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline const T &amp;
+  __default_val()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline const T &amp;
+  __default_val()
+  {
+    static const T __d{};
+    return __d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__d</code></td><td><a href="../../source/array/parray.hpp.html#L189">line 189</a></td></tr></tbody></table></section><section class="function-entry" id="f-bbae22c26b6835e2"><h3><code>micron::parray::__get_impl(const void *p, usize idx)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L194">line 194</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl&gt;
+  static inline const T &amp;
+  __get_impl(const void *p, usize idx)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li><li><code>usize idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl&gt;
+  static inline const T &amp;
+  __get_impl(const void *p, usize idx)
+  {
+    if ( !p ) [[unlikely]]
+      return __default_val();
+
+    if constexpr ( Lvl == 0 ) {
+      return static_cast&lt;const __leaf *&gt;(p)-&gt;values[idx &amp; __mask];
+    } else {
+      const usize slot = (idx &gt;&gt; (Lvl * K)) &amp; __mask;
+      return __get_impl&lt;Lvl - 1&gt;(static_cast&lt;const __node *&gt;(p)-&gt;children[slot], idx);
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__default_val()</code></td><td><a href="../../source/array/parray.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;const __leaf *&gt;(p)-&gt;values[idx &amp; __mask]</code></td><td><a href="../../source/array/parray.hpp.html#L200">line 200</a></td></tr><tr class="t-dsc"><td><code>__get_impl&lt;Lvl - 1&gt;(static_cast&lt;const __node *&gt;(p)-&gt;children[slot], idx)</code></td><td><a href="../../source/array/parray.hpp.html#L203">line 203</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-baeec07477c4ff0f">__default_val</a>.</p></section><section class="function-entry" id="f-4d308e1389ebedcb"><h3><code>micron::parray::__build_from(const T *data, usize count, usize base)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L209">line 209</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl&gt;
+  static void *
+  __build_from(const T *data, usize count, usize base)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *data</code></li><li><code>usize count</code></li><li><code>usize base</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl&gt;
+  static void *
+  __build_from(const T *data, usize count, usize base)
+  {
+    if ( base &gt;= count ) [[unlikely]]
+      return nullptr;
+
+    if constexpr ( Lvl == 0 ) {
+      __leaf *l = __alloc_leaf();
+      l-&gt;refs = 1;
+      usize built = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( usize i = 0; i &lt; B; ++i, ++built ) {
+          if ( base + i &lt; count )
+            new (micron::addr(l-&gt;values[i])) T(data[base + i]);
+          else
+            new (micron::addr(l-&gt;values[i])) T();
+        }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        for ( usize j = 0; j &lt; built; ++j ) l-&gt;values[j].~T();
+        abc::dealloc(reinterpret_cast&lt;byte *&gt;(l));
+        throw;
+      }
+#endif
+      return l;
+    } else {
+      static constexpr usize child_span = __cpow(B, Lvl);
+      __node *n = __alloc_internal();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( usize i = 0; i &lt; B; ++i ) n-&gt;children[i] = __build_from&lt;Lvl - 1&gt;(data, count, base + i * child_span);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        __release&lt;Lvl&gt;(n);
+        throw;
+      }
+#endif
+      return n;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/array/parray.hpp.html#L212">line 212</a></td></tr><tr class="t-dsc"><td><code>l</code></td><td><a href="../../source/array/parray.hpp.html#L234">line 234</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/array/parray.hpp.html#L248">line 248</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L231">line 231</a><br>Within <code>( Lvl == 0 )</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L245">line 245</a><br>Within <code>else of ( Lvl == 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-efe7dcdcbf8c6357">__alloc_leaf</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-47c80fb7e3ffd0b7">abc::dealloc</a>, <a href="parray.hpp.html#f-882ef7b21f5a02c5">__cpow</a>, <a href="parray.hpp.html#f-802736853743e6be">__alloc_internal</a>, <a href="parray.hpp.html#f-053b9428970090c4">__release&lt;Lvl&gt;</a>.</p></section><section class="function-entry" id="f-9221dd53327299c7"><h3><code>micron::parray::__build_filled(const T &amp;val)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L254">line 254</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl&gt;
+  static void *
+  __build_filled(const T &amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl&gt;
+  static void *
+  __build_filled(const T &amp;val)
+  {
+    if constexpr ( Lvl == 0 ) {
+      __leaf *l = __alloc_leaf();
+      l-&gt;refs = 1;
+      usize built = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( usize i = 0; i &lt; B; ++i, ++built ) new (micron::addr(l-&gt;values[i])) T(val);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        for ( usize j = 0; j &lt; built; ++j ) l-&gt;values[j].~T();
+        abc::dealloc(reinterpret_cast&lt;byte *&gt;(l));
+        throw;
+      }
+#endif
+      return l;
+    } else {
+      __node *n = __alloc_internal();
+      void *child;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        child = __build_filled&lt;Lvl - 1&gt;(val);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        __release&lt;Lvl&gt;(n);
+        throw;
+      }
+#endif
+      // child is shared by all B slots
+      if constexpr ( Lvl - 1 == 0 )
+        static_cast&lt;__leaf *&gt;(child)-&gt;refs = B;
+      else
+        static_cast&lt;__node *&gt;(child)-&gt;refs = B;
+      for ( usize i = 0; i &lt; B; ++i ) n-&gt;children[i] = child;
+      return n;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>l</code></td><td><a href="../../source/array/parray.hpp.html#L271">line 271</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/array/parray.hpp.html#L291">line 291</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L268">line 268</a><br>Within <code>( Lvl == 0 )</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L282">line 282</a><br>Within <code>else of ( Lvl == 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-efe7dcdcbf8c6357">__alloc_leaf</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-47c80fb7e3ffd0b7">abc::dealloc</a>, <a href="parray.hpp.html#f-802736853743e6be">__alloc_internal</a>, <a href="parray.hpp.html#f-053b9428970090c4">__release&lt;Lvl&gt;</a>.</p></section><section class="function-entry" id="f-8737fc86ad25352e"><h3><code>micron::parray::__update_impl(void *p, usize idx, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L297">line 297</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl, typename Fn&gt;
+  static void *
+  __update_impl(void *p, usize idx, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li><li><code>usize idx</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl, typename Fn&gt;
+  static void *
+  __update_impl(void *p, usize idx, Fn &amp;&amp;fn)
+  {
+    if constexpr ( Lvl == 0 ) {
+      const usize slot = idx &amp; __mask;
+      __leaf *fresh = __alloc_leaf();
+      fresh-&gt;refs = 1;
+
+      if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+        if ( p )
+          micron::bytecpy(reinterpret_cast&lt;byte *&gt;(fresh-&gt;values), reinterpret_cast&lt;const byte *&gt;(static_cast&lt;const __leaf *&gt;(p)-&gt;values),
+                          B * sizeof(T));
+        else
+          for ( usize i = 0; i &lt; B; ++i ) new (micron::addr(fresh-&gt;values[i])) T();
+        fresh-&gt;values[slot] = fn(static_cast&lt;const T &amp;&gt;(fresh-&gt;values[slot]));
+        return fresh;
+      } else {
+        usize built = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+        try {
+#endif
+          if ( p ) {
+            const __leaf *old = static_cast&lt;const __leaf *&gt;(p);
+            for ( usize i = 0; i &lt; B; ++i, ++built ) new (micron::addr(fresh-&gt;values[i])) T(old-&gt;values[i]);
+          } else {
+            for ( usize i = 0; i &lt; B; ++i, ++built ) new (micron::addr(fresh-&gt;values[i])) T();
+          }
+          T result = fn(static_cast&lt;const T &amp;&gt;(fresh-&gt;values[slot]));
+          fresh-&gt;values[slot] = micron::move(result);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+        } catch ( ... ) {
+          for ( usize j = 0; j &lt; built; ++j ) fresh-&gt;values[j].~T();
+          abc::dealloc(reinterpret_cast&lt;byte *&gt;(fresh));
+          throw;
+        }
+#endif
+        return fresh;
+      }
+
+    } else {
+      const usize slot = (idx &gt;&gt; (Lvl * K)) &amp; __mask;
+      __node *fresh = __alloc_internal();
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        if ( p ) {
+          const __node *old = static_cast&lt;const __node *&gt;(p);
+          for ( usize i = 0; i &lt; B; ++i ) {
+            if ( i == slot )
+              fresh-&gt;children[i] = __update_impl&lt;Lvl - 1&gt;(old-&gt;children[i], idx, static_cast&lt;Fn &amp;&amp;&gt;(fn));
+            else
+              fresh-&gt;children[i] = __retain&lt;Lvl - 1&gt;(old-&gt;children[i]);
+          }
+        } else {
+          fresh-&gt;children[slot] = __update_impl&lt;Lvl - 1&gt;(nullptr, idx, static_cast&lt;Fn &amp;&amp;&gt;(fn));
+        }
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        __release&lt;Lvl&gt;(fresh);
+        throw;
+      }
+#endif
+      return fresh;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/array/parray.hpp.html#L311">line 311</a></td></tr><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/array/parray.hpp.html#L332">line 332</a></td></tr><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/array/parray.hpp.html#L358">line 358</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L329">line 329</a><br>Within <code>( Lvl == 0 )</code>, <code>else of ( micron::is_trivially_copyable_v&lt;T&gt; )</code></td></tr><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/array/parray.hpp.html#L355">line 355</a><br>Within <code>else of ( Lvl == 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-efe7dcdcbf8c6357">__alloc_leaf</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-95166e01bb68ea54">micron::bytecpy</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-47c80fb7e3ffd0b7">abc::dealloc</a>, <a href="parray.hpp.html#f-802736853743e6be">__alloc_internal</a>, <a href="parray.hpp.html#f-e09904ef01e660cf">__retain&lt;Lvl - 1&gt;</a>, <a href="parray.hpp.html#f-053b9428970090c4">__release&lt;Lvl&gt;</a>.</p></section><section class="function-entry" id="f-ba50404ebf8f3bf4"><h3><code>micron::parray::__for_each_impl(const void *p, usize base, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L364">line 364</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl, typename Fn&gt;
+  static void
+  __for_each_impl(const void *p, usize base, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li><li><code>usize base</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl, typename Fn&gt;
+  static void
+  __for_each_impl(const void *p, usize base, Fn &amp;&amp;fn)
+  {
+    if ( !p ) return;
+
+    if constexpr ( Lvl == 0 ) {
+      const __leaf *l = static_cast&lt;const __leaf *&gt;(p);
+      for ( usize i = 0; i &lt; B; ++i ) fn(base + i, static_cast&lt;const T &amp;&gt;(l-&gt;values[i]));
+    } else {
+      static constexpr usize child_span = __cpow(B, Lvl);
+      const __node *n = static_cast&lt;const __node *&gt;(p);
+      for ( usize i = 0; i &lt; B; ++i ) __for_each_impl&lt;Lvl - 1&gt;(n-&gt;children[i], base + i * child_span, static_cast&lt;Fn &amp;&amp;&gt;(fn));
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/array/parray.hpp.html#L366">line 366</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-882ef7b21f5a02c5">__cpow</a>.</p></section><section class="function-entry" id="f-3e1035e9cbbc259f"><h3><code>micron::parray::__equal_impl(const void *a, const void *b)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L380">line 380</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl&gt;
+  static bool
+  __equal_impl(const void *a, const void *b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *a</code></li><li><code>const void *b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl&gt;
+  static bool
+  __equal_impl(const void *a, const void *b)
+  {
+    if ( a == b ) [[unlikely]]
+      return true;
+
+    // both null == equal
+    if ( !a &amp;&amp; !b ) [[unlikely]]
+      return true;
+
+    // one null, one valid
+    if ( !a || !b ) {
+      const void *live = a ? a : b;
+      if constexpr ( Lvl == 0 ) {
+        const __leaf *l = static_cast&lt;const __leaf *&gt;(live);
+        const T d{};
+        for ( usize i = 0; i &lt; B; ++i )
+          if ( !(l-&gt;values[i] == d) ) return false;
+        return true;
+      } else {
+        const __node *n = static_cast&lt;const __node *&gt;(live);
+        for ( usize i = 0; i &lt; B; ++i )
+          if ( !__equal_impl&lt;Lvl - 1&gt;(n-&gt;children[i], nullptr) ) return false;
+        return true;
+      }
+    }
+
+    if constexpr ( Lvl == 0 ) {
+      const __leaf *la = static_cast&lt;const __leaf *&gt;(a);
+      const __leaf *lb = static_cast&lt;const __leaf *&gt;(b);
+      if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+        return micron::bytecmp(reinterpret_cast&lt;const byte *&gt;(la-&gt;values), reinterpret_cast&lt;const byte *&gt;(lb-&gt;values), B * sizeof(T)) == 0;
+      } else {
+        for ( usize i = 0; i &lt; B; ++i )
+          if ( !(la-&gt;values[i] == lb-&gt;values[i]) ) return false;
+        return true;
+      }
+    } else {
+      const __node *na = static_cast&lt;const __node *&gt;(a);
+      const __node *nb = static_cast&lt;const __node *&gt;(b);
+      for ( usize i = 0; i &lt; B; ++i )
+        if ( !__equal_impl&lt;Lvl - 1&gt;(na-&gt;children[i], nb-&gt;children[i]) ) return false;
+      return true;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/array/parray.hpp.html#L383">line 383</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/array/parray.hpp.html#L387">line 387</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/array/parray.hpp.html#L396">line 396</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/array/parray.hpp.html#L397">line 397</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/array/parray.hpp.html#L401">line 401</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/array/parray.hpp.html#L402">line 402</a></td></tr><tr class="t-dsc"><td><code>micron::bytecmp(reinterpret_cast&lt;const byte *&gt;(la-&gt;values), reinterpret_cast&lt;const byte *&gt;(lb-&gt;values), B * sizeof(T)) == 0</code></td><td><a href="../../source/array/parray.hpp.html#L410">line 410</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/array/parray.hpp.html#L413">line 413</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/array/parray.hpp.html#L414">line 414</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/array/parray.hpp.html#L420">line 420</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/array/parray.hpp.html#L421">line 421</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcmp.hpp.html#f-96be8426d38eac40">micron::bytecmp</a>.</p></section><section class="function-entry" id="f-e4e6d7f5acd2fdd8"><h3><code>micron::parray::__apply_scalar(const T &amp;scalar, Fn &amp;&amp;fn) const</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L427">line 427</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  parray
+  __apply_scalar(const T &amp;scalar, Fn &amp;&amp;fn) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;scalar</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  parray
+  __apply_scalar(const T &amp;scalar, Fn &amp;&amp;fn) const
+  {
+    void *nr = __apply_scalar_impl&lt;__root_level&gt;(__root, scalar, static_cast&lt;Fn &amp;&amp;&gt;(fn));
+    return parray(nr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>parray(nr)</code></td><td><a href="../../source/array/parray.hpp.html#L430">line 430</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-8e5cebb57b0507a7">__apply_scalar_impl&lt;__root_level&gt;</a>, <a href="parray.hpp.html#f-792e6083fefb9ef1">parray</a>.</p></section><section class="function-entry" id="f-8e5cebb57b0507a7"><h3><code>micron::parray::__apply_scalar_impl(const void *p, const T &amp;scalar, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L435">line 435</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize Lvl, typename Fn&gt;
+  static void *
+  __apply_scalar_impl(const void *p, const T &amp;scalar, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *p</code></li><li><code>const T &amp;scalar</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize Lvl, typename Fn&gt;
+  static void *
+  __apply_scalar_impl(const void *p, const T &amp;scalar, Fn &amp;&amp;fn)
+  {
+    if constexpr ( Lvl == 0 ) {
+      __leaf *fresh = __alloc_leaf();
+      fresh-&gt;refs = 1;
+      if ( p ) {
+        const __leaf *old = static_cast&lt;const __leaf *&gt;(p);
+        for ( usize i = 0; i &lt; B; ++i ) new (micron::addr(fresh-&gt;values[i])) T(fn(old-&gt;values[i], scalar));
+      } else {
+        const T d{};
+        for ( usize i = 0; i &lt; B; ++i ) new (micron::addr(fresh-&gt;values[i])) T(fn(d, scalar));
+      }
+      return fresh;
+    } else {
+      __node *fresh = reinterpret_cast&lt;__node *&gt;(abc::alloc(sizeof(__node)));
+      fresh-&gt;refs = 1;
+      if ( p ) {
+        const __node *old = static_cast&lt;const __node *&gt;(p);
+        for ( usize i = 0; i &lt; B; ++i ) fresh-&gt;children[i] = __apply_scalar_impl&lt;Lvl - 1&gt;(old-&gt;children[i], scalar, fn);
+      } else {
+        for ( usize i = 0; i &lt; B; ++i ) fresh-&gt;children[i] = __apply_scalar_impl&lt;Lvl - 1&gt;(nullptr, scalar, fn);
+      }
+      return fresh;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/array/parray.hpp.html#L447">line 447</a></td></tr><tr class="t-dsc"><td><code>fresh</code></td><td><a href="../../source/array/parray.hpp.html#L457">line 457</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parray.hpp.html#f-efe7dcdcbf8c6357">__alloc_leaf</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/allocation/abcmalloc/malloc.hpp.html#f-3a9ea01b5923b18d">abc::alloc</a>.</p></section><section class="function-entry" id="f-55ff889add97870f"><h3><code>micron::parray::parray(void *root)</code></h3><p>Defined in <code>array/parray.hpp</code>, <a href="../../source/array/parray.hpp.html#L465">line 465</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit parray(void *root) : __root(root)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *root</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit parray(void *root) : __root(root) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

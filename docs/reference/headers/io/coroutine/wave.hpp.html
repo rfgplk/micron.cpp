@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/coroutine/wave.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/coroutine/wave.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/io_coro.html">Coroutine I/O</a></div><p>Defined in header <code>&lt;micron/io/coroutine/wave.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/io/coroutine/wave.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-bcabe78b158cbd4d">MICRON_CORO_WAVE_ITEMS</code></td><td>macro; line 34<br><small><code>#if defined(MICRON_CORO_URING)</code><br><code>#ifndef MICRON_CORO_WAVE_ITEMS</code></small></td></tr><tr class="t-dsc"><td><code id="s-e037e5613fdaa98b">MICRON_CORO_WAVE_CAP</code></td><td>macro; line 37<br><small><code>#if defined(MICRON_CORO_URING)</code><br><code>#ifndef MICRON_CORO_WAVE_CAP</code></small></td></tr><tr class="t-dsc"><td><code id="s-cfe57596544908b2">micron::io::coro::wave_items</code></td><td>variable; line 40<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-78bfeeb145ab6eb2">micron::io::coro::wave_cap</code></td><td>variable; line 41<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-93ee83c8cfe8fdae">micron::io::coro::wave_sqes</code></td><td>variable; line 42<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-f3df24f722be0765">micron::io::coro::wave_name_cap</code></td><td>variable; line 43<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-fab9be5c9d1bda29">micron::io::coro::wave_result</code></td><td>struct; line 45<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-7217536f941857d4">micron::io::coro::wave_result::name</code></td><td>member; line 46<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-cbcfb6684399021c">micron::io::coro::wave_result::data</code></td><td>member; line 47<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-7ab823c9fd934f77">micron::io::coro::wave_result::len</code></td><td>member; line 48<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-effaa87fb59e8a53">micron::io::coro::wave_result::err</code></td><td>member; line 49<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-0fdd2828d09a416f">micron::io::coro::wave_result::close_err</code></td><td>member; line 50<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-e63eb0f0c88b4808">micron::io::coro::wave_result::unstaged</code></td><td>member; line 51<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-559a6ae5c49d8f7c">micron::io::coro::wave_result::partial</code></td><td>member; line 52<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><code id="s-155787caa8983533">micron::io::coro::wave</code></td><td>class; line 55<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-0eddd63f25fafbd7">micron::io::coro::wave::wave() noexcept</a></td><td>function; line 92<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-a03ce1ee5616ada9">micron::io::coro::wave::wave(const wave &amp;)</a></td><td>function; line 97<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-bd41a97cd01e57a7">micron::io::coro::wave::operator=(const wave &amp;)</a></td><td>function; line 98<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-5226592e48122811">micron::io::coro::wave::wave(wave &amp;&amp;)</a></td><td>function; line 99<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-c2a0cef2dd496fe9">micron::io::coro::wave::operator=(wave &amp;&amp;)</a></td><td>function; line 100<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-f13c15d57742cfa4">micron::io::coro::wave::~wave() noexcept</a></td><td>function; line 103<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-130e666a78db52ff">micron::io::coro::wave::available() noexcept</a></td><td>function; line 113<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-a9d29f8447dd83c2">micron::io::coro::wave::begin(i32 dirfd) noexcept</a></td><td>function; line 119<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-232ef6070aad1924">micron::io::coro::wave::full() const noexcept</a></td><td>function; line 130<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-e6bfa83f72ea5634">micron::io::coro::wave::empty() const noexcept</a></td><td>function; line 136<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-4caa8df8bbf90b8a">micron::io::coro::wave::inert() const noexcept</a></td><td>function; line 142<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-483dc2c09b354df9">micron::io::coro::wave::size() const noexcept</a></td><td>function; line 148<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-6ed52d63ad7b8c19">micron::io::coro::wave::stranded() const noexcept</a></td><td>function; line 155<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-c4a9f936d965f53c">micron::io::coro::wave::operator[](usize i) const noexcept</a></td><td>function; line 161<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-18ac03242420779a">micron::io::coro::wave::push(const char *name) noexcept</a></td><td>function; line 167<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-ecb6cc9ba2d35434">micron::io::coro::wave::run()</a></td><td>function; line 180<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-c0efd3a3c08c3c1a">micron::io::coro::wave::clear() noexcept</a></td><td>function; line 260<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-0eddd63f25fafbd7"><h3><code>micron::io::coro::wave::wave() noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L92">line 92</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>wave() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">wave() noexcept
+  {
+    for ( u32 __i = 0; __i &lt; wave_items; ++__i ) __slot[__i] = -1;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a03ce1ee5616ada9"><h3><code>micron::io::coro::wave::wave(const wave &amp;)</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L97">line 97</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>wave(const wave &amp;) = delete;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const wave &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-bd41a97cd01e57a7"><h3><code>micron::io::coro::wave::operator=(const wave &amp;)</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L98">line 98</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>wave &amp;operator=(const wave &amp;) = delete;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const wave &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-5226592e48122811"><h3><code>micron::io::coro::wave::wave(wave &amp;&amp;)</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L99">line 99</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>wave(wave &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>wave &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-c2a0cef2dd496fe9"><h3><code>micron::io::coro::wave::operator=(wave &amp;&amp;)</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L100">line 100</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>wave &amp;operator=(wave &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>wave &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-f13c15d57742cfa4"><h3><code>micron::io::coro::wave::~wave() noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~wave() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~wave() noexcept
+  {
+    (void)micron::coro::io::__wave_abandon(__wv);
+    micron::coro::io::__wave_drain_cancel(__wv, __nodes, __staged * wave_sqes, __rid);
+    if ( !micron::coro::io::__wave_settle(__wv) ) return;      // resumed frame never reported; leak, do not corrupt
+    __reclaim_slots();
+    if ( __slab != nullptr ) micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(__slab), __slab_sz);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/io/coroutine/wave.hpp.html#L107">line 107</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../tasks/coroutine/wave.hpp.html#f-6e631fa29104887f">micron::coro::io::__wave_abandon</a>, <a href="../../tasks/coroutine/wave.hpp.html#f-bee759ebe1be595e">micron::coro::io::__wave_drain_cancel</a>, <a href="../../tasks/coroutine/wave.hpp.html#f-cca7a4a19e85bf7c">micron::coro::io::__wave_settle</a>, <a href="wave.hpp.html#f-934260a8848cd6c4">__reclaim_slots</a>, <a href="../../memory/mman.hpp.html#f-91fec72a8f74043f">micron::munmap</a>, <a href="../../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;addr_t *&gt;</a>.</p></section><section class="function-entry" id="f-130e666a78db52ff"><h3><code>micron::io::coro::wave::available() noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L113">line 113</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] static bool
+  available() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>micron::coro::io::wave_available()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] static bool
+  available() noexcept
+  {
+    return micron::coro::io::wave_available();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::coro::io::wave_available()</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L115">line 115</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../tasks/coroutine/wave.hpp.html#f-3dddecb7064a4468">micron::coro::io::wave_available</a>.</p></section><section class="function-entry" id="f-a9d29f8447dd83c2"><h3><code>micron::io::coro::wave::begin(i32 dirfd) noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L119">line 119</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  begin(i32 dirfd) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 dirfd</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  begin(i32 dirfd) noexcept
+  {
+    __dirfd = dirfd;
+    __n = 0;
+    __staged = 0;
+    __seen = 0;
+    __missed = 0;
+    __inert = false;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-232ef6070aad1924"><h3><code>micron::io::coro::wave::full() const noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L130">line 130</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  full() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__n &gt;= wave_items</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  full() const noexcept
+  {
+    return __n &gt;= wave_items;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__n &gt;= wave_items</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L132">line 132</a></td></tr></tbody></table></section><section class="function-entry" id="f-e6bfa83f72ea5634"><h3><code>micron::io::coro::wave::empty() const noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L136">line 136</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__n == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  empty() const noexcept
+  {
+    return __n == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__n == 0</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L138">line 138</a></td></tr></tbody></table></section><section class="function-entry" id="f-4caa8df8bbf90b8a"><h3><code>micron::io::coro::wave::inert() const noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L142">line 142</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  inert() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__inert</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  inert() const noexcept
+  {
+    return __inert;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__inert</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L144">line 144</a></td></tr></tbody></table></section><section class="function-entry" id="f-483dc2c09b354df9"><h3><code>micron::io::coro::wave::size() const noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L148">line 148</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__n</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  size() const noexcept
+  {
+    return __n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__n</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L150">line 150</a></td></tr></tbody></table></section><section class="function-entry" id="f-6ed52d63ad7b8c19"><h3><code>micron::io::coro::wave::stranded() const noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L155">line 155</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] u32
+  stranded() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__stranded</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] u32
+  stranded() const noexcept
+  {
+    return __stranded;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__stranded</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L157">line 157</a></td></tr></tbody></table></section><section class="function-entry" id="f-c4a9f936d965f53c"><h3><code>micron::io::coro::wave::operator[](usize i) const noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L161">line 161</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const wave_result &amp;
+  operator[](usize i) const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize i</code></li></ul><h4>Effects</h4><p>Returns <code>__res[i]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const wave_result &amp;
+  operator[](usize i) const noexcept
+  {
+    return __res[i];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__res[i]</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L163">line 163</a></td></tr></tbody></table></section><section class="function-entry" id="f-18ac03242420779a"><h3><code>micron::io::coro::wave::push(const char *name) noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L167">line 167</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  push(const char *name) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  push(const char *name) noexcept
+  {
+    if ( __n &gt;= wave_items ) return false;
+    if ( name == nullptr || name[0] == 0 ) return false;
+    usize __l = 0;
+    while ( name[__l] != 0 )
+      if ( ++__l &gt;= wave_name_cap ) return false;      // sstr&lt;N&gt; needs strlen &lt; N, room for the nul
+    __name[__n] = micron::sstr&lt;wave_name_cap&gt;(name);
+    ++__n;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L169">line 169</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L170">line 170</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L173">line 173</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L176">line 176</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../string/strings.hpp.html#s-9cbf5013422bd1c5">micron::sstr&lt;wave_name_cap&gt;</a>.</p></section><section class="function-entry" id="f-ecb6cc9ba2d35434"><h3><code>micron::io::coro::wave::run()</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L180">line 180</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] micron::task&lt;i32&gt;
+  run()</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] micron::task&lt;i32&gt;
+  run()
+  {
+    if ( __n == 0 ) co_return 0;
+    if ( !__arm_slab() ) co_return -error::out_of_memory;
+
+    for ( u32 __i = 0; __i &lt; __n; ++__i ) {
+      __res[__i] = wave_result{};
+      __res[__i].name = __name[__i].c_str();
+      __slot[__i] = -1;
+    }
+
+    u32 __k = 0;
+    __staged = 0;
+    __rid = micron::coro::io::wave_ring_id();
+    const u32 __room = micron::coro::io::wave_room();
+    for ( u32 __i = 0; __i &lt; __n; ++__i ) {
+      if ( __k + wave_sqes &gt; __room ) break;
+      const i32 __s = micron::coro::io::wave_slot_acquire();
+      if ( __s &lt; 0 ) break;
+      __slot[__i] = __s;
+
+      micron::uring::sqe *__s0 = &amp;__q[__k];
+      micron::uring::sqe *__s1 = &amp;__q[__k + 1];
+      micron::uring::sqe *__s2 = &amp;__q[__k + 2];
+
+      micron::uring::prep_openat_direct(__s0, __dirfd, __name[__i].c_str(), posix::o_rdonly | posix::o_nofollow, 0, static_cast&lt;u32&gt;(__s));
+      __s0-&gt;flags |= micron::uring::sqe_io_link;
+
+      micron::uring::prep_read(__s1, __s, __slab + static_cast&lt;usize&gt;(__i) * wave_cap, static_cast&lt;u32&gt;(wave_cap), 0);
+      micron::uring::sqe_set_fixed_file(__s1);
+      __s1-&gt;flags |= micron::uring::sqe_io_hardlink;
+
+      micron::uring::prep_close_direct(__s2, static_cast&lt;u32&gt;(__s));
+
+      for ( u32 __j = 0; __j &lt; wave_sqes; ++__j ) {
+        __nodes[__k + __j].__idx = static_cast&lt;u16&gt;(__i);
+        __nodes[__k + __j].__step = static_cast&lt;u8&gt;(__j);
+        __nodes[__k + __j].__res = 0;      // a batch that never reaches the ring must not read as the last one&#x27;s
+      }
+      __k += wave_sqes;
+      __staged = __i + 1;
+    }
+
+    i32 __rc = 0;
+    if ( __k != 0 ) {
+      micron::coro::io::__wave_awaitable __aw{ __q, __nodes, &amp;__wv, __k, 0 };
+      __rc = co_await __aw;
+    }
+
+    __reclaim_slots();
+
+    if ( __rc == 0 ) {
+      for ( u32 __i = 0; __i &lt; __k; __i += wave_sqes ) {
+        const u32 __it = __nodes[__i].__idx;
+        const i32 __oerr = __nodes[__i].__res;
+        const i32 __rres = __nodes[__i + 1].__res;
+        __res[__it].close_err = __oerr &lt; 0 ? 0 : __nodes[__i + 2].__res;
+        if ( __oerr &lt; 0 ) {
+          __res[__it].err = __oerr;
+          continue;
+        }
+        if ( __rres &lt; 0 ) {
+          __res[__it].err = __rres;
+          continue;
+        }
+        __res[__it].data = __slab + static_cast&lt;usize&gt;(__it) * wave_cap;
+        __res[__it].len = static_cast&lt;usize&gt;(__rres);
+        __res[__it].partial = static_cast&lt;usize&gt;(__rres) &gt;= wave_cap;
+      }
+    } else {
+      for ( u32 __i = 0; __i &lt; __staged; ++__i ) __res[__i].err = __rc;
+    }
+    for ( u32 __i = __staged; __i &lt; __n; ++__i ) __res[__i].unstaged = true;
+
+    __note();
+    __wv.__fin.store(1, micron::memory_order_release);
+    co_return __rc;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="wave.hpp.html#f-d4991417ca71a7cc">__arm_slab</a>, <a href="../../tasks/coroutine/wave.hpp.html#f-c1fd6ba11dcbc6d7">micron::coro::io::wave_ring_id</a>, <a href="../../tasks/coroutine/wave.hpp.html#f-54d42d050392603e">micron::coro::io::wave_room</a>, <a href="../../tasks/coroutine/wave.hpp.html#f-e5270d7499810071">micron::coro::io::wave_slot_acquire</a>, <a href="../../linux/sys/uring.hpp.html#f-3e74ca2f33e820fd">micron::uring::prep_openat_direct</a>, <a href="../../linux/sys/uring.hpp.html#f-5c87ea0d968460ed">micron::uring::prep_read</a>, <a href="../../linux/sys/uring.hpp.html#f-30d3148ba22b37a8">micron::uring::sqe_set_fixed_file</a>, <a href="../../linux/sys/uring.hpp.html#f-a37310765e6cf7bd">micron::uring::prep_close_direct</a>, <a href="wave.hpp.html#f-934260a8848cd6c4">__reclaim_slots</a>, <a href="wave.hpp.html#f-9cecc8506367473f">__note</a>.</p></section><section class="function-entry" id="f-c0efd3a3c08c3c1a"><h3><code>micron::io::coro::wave::clear() noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L260">line 260</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  clear() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  clear() noexcept
+  {
+    __n = 0;
+    __staged = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-d4991417ca71a7cc"><h3><code>micron::io::coro::wave::__arm_slab() noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L78">line 78</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  __arm_slab() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  __arm_slab() noexcept
+  {
+    if ( __slab != nullptr ) return true;
+    void *__p = micron::mmap(nullptr, __slab_sz, prot_read | prot_write, map_private | map_anonymous, -1, 0);
+    if ( micron::mmap_failed(reinterpret_cast&lt;addr_t *&gt;(__p)) ) return false;
+    __slab = reinterpret_cast&lt;byte *&gt;(__p);
+    usize __ps = micron::getpagesizelive();
+    if ( __ps == 0 || __ps &gt; __slab_sz ) __ps = micron::page_size;      // probe refused; fall back to the arch default
+    if ( __ps == 0 ) __ps = 4096;
+    for ( usize __o = 0; __o &lt; __slab_sz; __o += __ps ) __slab[__o] = 0;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L82">line 82</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L88">line 88</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../memory/mman.hpp.html#f-9c3a472bccf562f4">micron::mmap</a>, <a href="../../memory/mman.hpp.html#f-3833a61859dc0c08">micron::mmap_failed</a>, <a href="../../linux/sys/sysinfo.hpp.html#f-ffe324d1fbd7978e">micron::getpagesizelive</a>.</p></section><section class="function-entry" id="f-d53537f2681b5e58"><h3><code>micron::io::coro::wave::__slot_still_open(u32 __i) const noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L268">line 268</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  __slot_still_open(u32 __i) const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 __i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  __slot_still_open(u32 __i) const noexcept
+  {
+    if ( __i &gt;= __staged ) return false;      // never reached the ring, so nothing was opened
+    const u32 __b = __i * wave_sqes;
+    return __nodes[__b].__res &gt;= 0 &amp;&amp; __nodes[__b + 2].__res != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L270">line 270</a></td></tr><tr class="t-dsc"><td><code>__nodes[__b].__res &gt;= 0 &amp;&amp; __nodes[__b + 2].__res != 0</code></td><td><a href="../../../source/io/coroutine/wave.hpp.html#L272">line 272</a></td></tr></tbody></table></section><section class="function-entry" id="f-934260a8848cd6c4"><h3><code>micron::io::coro::wave::__reclaim_slots() noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L278">line 278</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __reclaim_slots() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __reclaim_slots() noexcept
+  {
+    for ( u32 __i = 0; __i &lt; wave_items; ++__i ) {
+      if ( __slot[__i] &lt; 0 ) continue;
+      if ( __slot_still_open(__i) &amp;&amp; !micron::coro::io::wave_slot_close(__rid, __slot[__i]) ) {
+        __slot[__i] = -1;
+        ++__stranded;
+        continue;
+      }
+      micron::coro::io::wave_slot_release(__rid, __slot[__i]);
+      __slot[__i] = -1;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="wave.hpp.html#f-d53537f2681b5e58">__slot_still_open</a>, <a href="../../tasks/coroutine/wave.hpp.html#f-fa83000536fa5393">micron::coro::io::wave_slot_close</a>, <a href="../../tasks/coroutine/wave.hpp.html#f-c72ebd748f6cdb64">micron::coro::io::wave_slot_release</a>.</p></section><section class="function-entry" id="f-9cecc8506367473f"><h3><code>micron::io::coro::wave::__note() noexcept</code></h3><p>Defined in <code>io/coroutine/wave.hpp</code>, <a href="../../../source/io/coroutine/wave.hpp.html#L293">line 293</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __note() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __note() noexcept
+  {
+    __seen += __staged;
+    for ( u32 __i = 0; __i &lt; __staged; ++__i )
+      if ( __res[__i].partial ) ++__missed;
+    if ( __seen &gt;= wave_items &amp;&amp; __missed * 2u &gt; __seen ) __inert = true;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/gfx/vk/swapchain.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/gfx/vk/swapchain.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/vulkan.html">Vulkan</a></div><p>Defined in header <code>&lt;micron/gfx/vk/swapchain.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/gfx/vk/swapchain.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-14fddcce6996ecaa">micron::gfx::vk::max_swapchain_images</code></td><td>variable; line 27</td></tr><tr class="t-dsc"><td><code id="s-7f0fc49786181431">micron::gfx::vk::swapchain_request</code></td><td>struct; line 29</td></tr><tr class="t-dsc"><td><code id="s-f672624622618ac3">micron::gfx::vk::swapchain_request::extent</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-d1dca321d798b03e">micron::gfx::vk::swapchain_request::format</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-b3b353887d2078ae">micron::gfx::vk::swapchain_request::present_mode</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-6095babc589c3dac">micron::gfx::vk::swapchain_request::image_usage</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-9be8d857b05f85e9">micron::gfx::vk::swapchain_request::min_image_count</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-1bd245aa5e806697">micron::gfx::vk::swapchain</code></td><td>class; line 38</td></tr><tr class="t-dsc"><td><a href="#f-7da3d3262955c8d5">micron::gfx::vk::swapchain::~swapchain()</a></td><td>function; line 162</td></tr><tr class="t-dsc"><td><a href="#f-610e939b3a95d47b">micron::gfx::vk::swapchain::swapchain()</a></td><td>function; line 164</td></tr><tr class="t-dsc"><td><a href="#f-aa0b0918151a9102">micron::gfx::vk::swapchain::swapchain(device &amp;dev, surface &amp;surf, const swapchain_request &amp;r = {})</a></td><td>function; line 166</td></tr><tr class="t-dsc"><td><a href="#f-e48ee0875c4336a5">micron::gfx::vk::swapchain::swapchain(const swapchain &amp;)</a></td><td>function; line 168</td></tr><tr class="t-dsc"><td><a href="#f-2f67a23b324caf76">micron::gfx::vk::swapchain::swapchain(swapchain &amp;&amp;o) noexcept</a></td><td>function; line 170</td></tr><tr class="t-dsc"><td><a href="#f-95f9d343e3fa3e0e">micron::gfx::vk::swapchain::operator=(const swapchain &amp;)</a></td><td>function; line 183</td></tr><tr class="t-dsc"><td><a href="#f-df97099d2bd0e738">micron::gfx::vk::swapchain::operator=(swapchain &amp;&amp;o) noexcept</a></td><td>function; line 186</td></tr><tr class="t-dsc"><td><a href="#f-2160e80e7047c4a0">micron::gfx::vk::swapchain::handle() const noexcept</a></td><td>function; line 211</td></tr><tr class="t-dsc"><td><a href="#f-e4b466815fd72618">micron::gfx::vk::swapchain::valid() const noexcept</a></td><td>function; line 217</td></tr><tr class="t-dsc"><td><a href="#f-2306c66db4d5f035">micron::gfx::vk::swapchain::operator bool() const noexcept</a></td><td>function; line 223</td></tr><tr class="t-dsc"><td><a href="#f-2d5fd2f0511b7d00">micron::gfx::vk::swapchain::format() const noexcept</a></td><td>function; line 229</td></tr><tr class="t-dsc"><td><a href="#f-b029bf13ea58189d">micron::gfx::vk::swapchain::color_space() const noexcept</a></td><td>function; line 235</td></tr><tr class="t-dsc"><td><a href="#f-0175a6f877fb2e2c">micron::gfx::vk::swapchain::extent() const noexcept</a></td><td>function; line 241</td></tr><tr class="t-dsc"><td><a href="#f-3bc70d782905d7cd">micron::gfx::vk::swapchain::present_mode() const noexcept</a></td><td>function; line 247</td></tr><tr class="t-dsc"><td><a href="#f-5b55db0969bbfbfc">micron::gfx::vk::swapchain::image_count() const noexcept</a></td><td>function; line 253</td></tr><tr class="t-dsc"><td><a href="#f-71e3d73cef3e3bee">micron::gfx::vk::swapchain::image_at(u32 i) const noexcept</a></td><td>function; line 259</td></tr><tr class="t-dsc"><td><a href="#f-031743e227629e1c">micron::gfx::vk::swapchain::view_at(u32 i) const noexcept</a></td><td>function; line 265</td></tr><tr class="t-dsc"><td><a href="#f-36b427c660887fba">micron::gfx::vk::swapchain::image_handle(u32 i) const noexcept</a></td><td>function; line 271</td></tr><tr class="t-dsc"><td><a href="#f-f4fdf3122e080c16">micron::gfx::vk::swapchain::view_handle(u32 i) const noexcept</a></td><td>function; line 277</td></tr><tr class="t-dsc"><td><a href="#f-60878ae34d20f04d">micron::gfx::vk::swapchain::acquire_next_image(semaphore *signal_sem, fence *signal_fence, u64 timeout_ns, u32 *out_index) noexcept</a></td><td>function; line 283</td></tr><tr class="t-dsc"><td><a href="#f-1e777a1dddc32e8e">micron::gfx::vk::swapchain::present(queue &amp;q, u32 image_index, semaphore *wait = nullptr) noexcept</a></td><td>function; line 292</td></tr><tr class="t-dsc"><td><a href="#f-98939445b298102a">micron::gfx::vk::swapchain::recreate(VkExtent2D new_extent, const swapchain_request *overrides = nullptr)</a></td><td>function; line 315</td></tr><tr class="t-dsc"><td><a href="#f-f905617daa894f58">micron::gfx::vk::swapchain::reset() noexcept</a></td><td>function; line 336</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-7da3d3262955c8d5"><h3><code>micron::gfx::vk::swapchain::~swapchain()</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L162">line 162</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~swapchain()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~swapchain() { reset(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="swapchain.hpp.html#f-f905617daa894f58">reset</a>.</p></section><section class="function-entry" id="f-610e939b3a95d47b"><h3><code>micron::gfx::vk::swapchain::swapchain()</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L164">line 164</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>swapchain() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-aa0b0918151a9102"><h3><code>micron::gfx::vk::swapchain::swapchain(device &amp;dev, surface &amp;surf, const swapchain_request &amp;r = {})</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L166">line 166</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>swapchain(device &amp;dev, surface &amp;surf, const swapchain_request &amp;r = {}) : __dev(&amp;dev), __surf(&amp;surf)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>device &amp;dev</code></li><li><code>surface &amp;surf</code></li><li><code>const swapchain_request &amp;r = {}</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">swapchain(device &amp;dev, surface &amp;surf, const swapchain_request &amp;r = {}) : __dev(&amp;dev), __surf(&amp;surf) { __build(r, VK_NULL_HANDLE); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="swapchain.hpp.html#f-614a6e8b62edb89f">__build</a>.</p></section><section class="function-entry" id="f-e48ee0875c4336a5"><h3><code>micron::gfx::vk::swapchain::swapchain(const swapchain &amp;)</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L168">line 168</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>swapchain(const swapchain &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const swapchain &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-2f67a23b324caf76"><h3><code>micron::gfx::vk::swapchain::swapchain(swapchain &amp;&amp;o) noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L170">line 170</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>swapchain(swapchain &amp;&amp;o) noexcept
+      : __dev(o.__dev), __surf(o.__surf), __h(o.__h), __format(o.__format), __color_space(o.__color_space), __extent(o.__extent),
+        __present_mode(o.__present_mode), __image_usage(o.__image_usage), __min_image_count(o.__min_image_count),
+        __image_count(o.__image_count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>swapchain &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">swapchain(swapchain &amp;&amp;o) noexcept
+      : __dev(o.__dev), __surf(o.__surf), __h(o.__h), __format(o.__format), __color_space(o.__color_space), __extent(o.__extent),
+        __present_mode(o.__present_mode), __image_usage(o.__image_usage), __min_image_count(o.__min_image_count),
+        __image_count(o.__image_count)
+  {
+    for ( u32 i = 0; i &lt; o.__image_count; ++i ) {
+      __images[i] = static_cast&lt;image &amp;&amp;&gt;(o.__images[i]);
+      __views[i] = static_cast&lt;image_view &amp;&amp;&gt;(o.__views[i]);
+    }
+    o.__h = nullptr;
+    o.__image_count = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-95f9d343e3fa3e0e"><h3><code>micron::gfx::vk::swapchain::operator=(const swapchain &amp;)</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L183">line 183</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>swapchain &amp;operator=(const swapchain &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const swapchain &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-df97099d2bd0e738"><h3><code>micron::gfx::vk::swapchain::operator=(swapchain &amp;&amp;o) noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L186">line 186</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>swapchain &amp;
+  operator=(swapchain &amp;&amp;o) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>swapchain &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">swapchain &amp;
+  operator=(swapchain &amp;&amp;o) noexcept
+  {
+    if ( this != &amp;o ) {
+      reset();
+      __dev = o.__dev;
+      __surf = o.__surf;
+      __h = o.__h;
+      __format = o.__format;
+      __color_space = o.__color_space;
+      __extent = o.__extent;
+      __present_mode = o.__present_mode;
+      __image_usage = o.__image_usage;
+      __min_image_count = o.__min_image_count;
+      __image_count = o.__image_count;
+      for ( u32 i = 0; i &lt; o.__image_count; ++i ) {
+        __images[i] = static_cast&lt;image &amp;&amp;&gt;(o.__images[i]);
+        __views[i] = static_cast&lt;image_view &amp;&amp;&gt;(o.__views[i]);
+      }
+      o.__h = nullptr;
+      o.__image_count = 0;
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L207">line 207</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="swapchain.hpp.html#f-f905617daa894f58">reset</a>.</p></section><section class="function-entry" id="f-2160e80e7047c4a0"><h3><code>micron::gfx::vk::swapchain::handle() const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkSwapchainKHR
+  handle() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__h</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkSwapchainKHR
+  handle() const noexcept
+  {
+    return __h;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__h</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L213">line 213</a></td></tr></tbody></table></section><section class="function-entry" id="f-e4b466815fd72618"><h3><code>micron::gfx::vk::swapchain::valid() const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L217">line 217</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  valid() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__h != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  valid() const noexcept
+  {
+    return __h != nullptr;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__h != nullptr</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L219">line 219</a></td></tr></tbody></table></section><section class="function-entry" id="f-2306c66db4d5f035"><h3><code>micron::gfx::vk::swapchain::operator bool() const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L223">line 223</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit
+  operator bool() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>valid()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit
+  operator bool() const noexcept
+  {
+    return valid();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>valid()</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L225">line 225</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="swapchain.hpp.html#f-e4b466815fd72618">valid</a>.</p></section><section class="function-entry" id="f-2d5fd2f0511b7d00"><h3><code>micron::gfx::vk::swapchain::format() const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L229">line 229</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkFormat
+  format() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__format</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkFormat
+  format() const noexcept
+  {
+    return __format;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__format</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L231">line 231</a></td></tr></tbody></table></section><section class="function-entry" id="f-b029bf13ea58189d"><h3><code>micron::gfx::vk::swapchain::color_space() const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L235">line 235</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkColorSpaceKHR
+  color_space() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__color_space</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkColorSpaceKHR
+  color_space() const noexcept
+  {
+    return __color_space;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__color_space</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L237">line 237</a></td></tr></tbody></table></section><section class="function-entry" id="f-0175a6f877fb2e2c"><h3><code>micron::gfx::vk::swapchain::extent() const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L241">line 241</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkExtent2D
+  extent() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__extent</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkExtent2D
+  extent() const noexcept
+  {
+    return __extent;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__extent</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L243">line 243</a></td></tr></tbody></table></section><section class="function-entry" id="f-3bc70d782905d7cd"><h3><code>micron::gfx::vk::swapchain::present_mode() const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L247">line 247</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkPresentModeKHR
+  present_mode() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__present_mode</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkPresentModeKHR
+  present_mode() const noexcept
+  {
+    return __present_mode;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__present_mode</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L249">line 249</a></td></tr></tbody></table></section><section class="function-entry" id="f-5b55db0969bbfbfc"><h3><code>micron::gfx::vk::swapchain::image_count() const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L253">line 253</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>u32
+  image_count() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__image_count</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">u32
+  image_count() const noexcept
+  {
+    return __image_count;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__image_count</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L255">line 255</a></td></tr></tbody></table></section><section class="function-entry" id="f-71e3d73cef3e3bee"><h3><code>micron::gfx::vk::swapchain::image_at(u32 i) const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L259">line 259</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const image &amp;
+  image_at(u32 i) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 i</code></li></ul><h4>Effects</h4><p>Returns <code>__images[i]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const image &amp;
+  image_at(u32 i) const noexcept
+  {
+    return __images[i];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__images[i]</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L261">line 261</a></td></tr></tbody></table></section><section class="function-entry" id="f-031743e227629e1c"><h3><code>micron::gfx::vk::swapchain::view_at(u32 i) const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L265">line 265</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const image_view &amp;
+  view_at(u32 i) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 i</code></li></ul><h4>Effects</h4><p>Returns <code>__views[i]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const image_view &amp;
+  view_at(u32 i) const noexcept
+  {
+    return __views[i];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__views[i]</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L267">line 267</a></td></tr></tbody></table></section><section class="function-entry" id="f-36b427c660887fba"><h3><code>micron::gfx::vk::swapchain::image_handle(u32 i) const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L271">line 271</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkImage
+  image_handle(u32 i) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 i</code></li></ul><h4>Effects</h4><p>Returns <code>__images[i].handle()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkImage
+  image_handle(u32 i) const noexcept
+  {
+    return __images[i].handle();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__images[i].handle()</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L273">line 273</a></td></tr></tbody></table></section><section class="function-entry" id="f-f4fdf3122e080c16"><h3><code>micron::gfx::vk::swapchain::view_handle(u32 i) const noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L277">line 277</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkImageView
+  view_handle(u32 i) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 i</code></li></ul><h4>Effects</h4><p>Returns <code>__views[i].handle()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkImageView
+  view_handle(u32 i) const noexcept
+  {
+    return __views[i].handle();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__views[i].handle()</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L279">line 279</a></td></tr></tbody></table></section><section class="function-entry" id="f-60878ae34d20f04d"><h3><code>micron::gfx::vk::swapchain::acquire_next_image(semaphore *signal_sem, fence *signal_fence, u64 timeout_ns, u32 *out_index) noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L283">line 283</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkResult
+  acquire_next_image(semaphore *signal_sem, fence *signal_fence, u64 timeout_ns, u32 *out_index) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>semaphore *signal_sem</code></li><li><code>fence *signal_fence</code></li><li><code>u64 timeout_ns</code></li><li><code>u32 *out_index</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkResult
+  acquire_next_image(semaphore *signal_sem, fence *signal_fence, u64 timeout_ns, u32 *out_index) noexcept
+  {
+    if ( !__h || !__dev || !vkAcquireNextImageKHR ) return VK_ERROR_INITIALIZATION_FAILED;
+    VkSemaphore s = signal_sem ? signal_sem-&gt;handle() : VK_NULL_HANDLE;
+    VkFence f = signal_fence ? signal_fence-&gt;handle() : VK_NULL_HANDLE;
+    return vkAcquireNextImageKHR(__dev-&gt;handle(), __h, timeout_ns, s, f, out_index);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>VK_ERROR_INITIALIZATION_FAILED</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L285">line 285</a></td></tr><tr class="t-dsc"><td><code>vkAcquireNextImageKHR(__dev-&gt;handle(), __h, timeout_ns, s, f, out_index)</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L288">line 288</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vulkan.hpp.html#s-44bf3456b8fe946b">vkAcquireNextImageKHR</a>.</p></section><section class="function-entry" id="f-1e777a1dddc32e8e"><h3><code>micron::gfx::vk::swapchain::present(queue &amp;q, u32 image_index, semaphore *wait = nullptr) noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L292">line 292</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkResult
+  present(queue &amp;q, u32 image_index, semaphore *wait = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>queue &amp;q</code></li><li><code>u32 image_index</code></li><li><code>semaphore *wait = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkResult
+  present(queue &amp;q, u32 image_index, semaphore *wait = nullptr) noexcept
+  {
+    if ( !__h || !q.valid() || !vkQueuePresentKHR ) return VK_ERROR_INITIALIZATION_FAILED;
+
+    VkSemaphore w = wait ? wait-&gt;handle() : VK_NULL_HANDLE;
+    VkSwapchainKHR sc = __h;
+    VkResult per_swapchain = VK_SUCCESS;
+
+    VkPresentInfoKHR info{};
+    info.sType = structure_type_of_v&lt;VkPresentInfoKHR&gt;;
+    info.waitSemaphoreCount = w ? 1u : 0u;
+    info.pWaitSemaphores = w ? &amp;w : nullptr;
+    info.swapchainCount = 1;
+    info.pSwapchains = &amp;sc;
+    info.pImageIndices = &amp;image_index;
+    info.pResults = &amp;per_swapchain;
+
+    const VkResult r = vkQueuePresentKHR(q.handle(), &amp;info);
+    if ( r == VK_SUCCESS &amp;&amp; per_swapchain != VK_SUCCESS ) return per_swapchain;
+    return r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>VK_ERROR_INITIALIZATION_FAILED</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L294">line 294</a></td></tr><tr class="t-dsc"><td><code>per_swapchain</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L310">line 310</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L311">line 311</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vulkan.hpp.html#s-3070c16e56ba1941">vkQueuePresentKHR</a>.</p></section><section class="function-entry" id="f-98939445b298102a"><h3><code>micron::gfx::vk::swapchain::recreate(VkExtent2D new_extent, const swapchain_request *overrides = nullptr)</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L315">line 315</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  recreate(VkExtent2D new_extent, const swapchain_request *overrides = nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>VkExtent2D new_extent</code></li><li><code>const swapchain_request *overrides = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  recreate(VkExtent2D new_extent, const swapchain_request *overrides = nullptr)
+  {
+    swapchain_request r;
+    if ( overrides ) r = *overrides;
+    r.extent = new_extent;
+    if ( !overrides ) {
+      r.format.format = __format;
+      r.format.colorSpace = __color_space;
+      r.present_mode = __present_mode;
+      r.image_usage = __image_usage;
+      r.min_image_count = __min_image_count;
+    }
+
+    VkSwapchainKHR old = __h;
+    __destroy_views();
+    __h = nullptr;
+    __build(r, old);
+    if ( old &amp;&amp; vkDestroySwapchainKHR ) vkDestroySwapchainKHR(__dev-&gt;handle(), old, host_allocation_callbacks());
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="swapchain.hpp.html#f-ec446a35b40dc7f5">__destroy_views</a>, <a href="swapchain.hpp.html#f-614a6e8b62edb89f">__build</a>, <a href="vulkan.hpp.html#s-8d16c2c4eaa12c06">vkDestroySwapchainKHR</a>, <a href="__bits/__vk_host_alloc.hpp.html#f-b0e4cc657036c3f5">host_allocation_callbacks</a>.</p></section><section class="function-entry" id="f-f905617daa894f58"><h3><code>micron::gfx::vk::swapchain::reset() noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L336">line 336</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reset() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reset() noexcept
+  {
+    __destroy_views();
+    if ( __h &amp;&amp; __dev &amp;&amp; vkDestroySwapchainKHR ) vkDestroySwapchainKHR(__dev-&gt;handle(), __h, host_allocation_callbacks());
+    __h = nullptr;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="swapchain.hpp.html#f-ec446a35b40dc7f5">__destroy_views</a>, <a href="vulkan.hpp.html#s-8d16c2c4eaa12c06">vkDestroySwapchainKHR</a>, <a href="__bits/__vk_host_alloc.hpp.html#f-b0e4cc657036c3f5">host_allocation_callbacks</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-1aa4541dd820f0ea"><h3><code>micron::gfx::vk::swapchain::__compose_create_info(VkSwapchainCreateInfoKHR &amp;ci, const swapchain_request &amp;r, VkSwapchainKHR old) const</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L55">line 55</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>VkExtent2D
+  __compose_create_info(VkSwapchainCreateInfoKHR &amp;ci, const swapchain_request &amp;r, VkSwapchainKHR old) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>VkSwapchainCreateInfoKHR &amp;ci</code></li><li><code>const swapchain_request &amp;r</code></li><li><code>VkSwapchainKHR old</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">VkExtent2D
+  __compose_create_info(VkSwapchainCreateInfoKHR &amp;ci, const swapchain_request &amp;r, VkSwapchainKHR old) const
+  {
+    if ( !__dev || !__surf || !vkGetPhysicalDeviceSurfaceCapabilitiesKHR )
+      throw except::library_error(&quot;vk::swapchain: surface caps probe missing&quot;);
+
+    VkSurfaceCapabilitiesKHR caps{};
+    check_vk(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(__dev-&gt;physical().handle(), __surf-&gt;handle(), &amp;caps),
+             &quot;vkGetPhysicalDeviceSurfaceCapabilitiesKHR&quot;);
+
+    VkExtent2D ext = r.extent;
+    if ( ext.width == 0 || ext.height == 0 ) {
+
+      if ( caps.currentExtent.width != ~0u )
+        ext = caps.currentExtent;
+      else
+        ext = caps.minImageExtent;
+    }
+
+    if ( ext.width &lt; caps.minImageExtent.width ) ext.width = caps.minImageExtent.width;
+    if ( ext.height &lt; caps.minImageExtent.height ) ext.height = caps.minImageExtent.height;
+    if ( caps.maxImageExtent.width &amp;&amp; ext.width &gt; caps.maxImageExtent.width ) ext.width = caps.maxImageExtent.width;
+    if ( caps.maxImageExtent.height &amp;&amp; ext.height &gt; caps.maxImageExtent.height ) ext.height = caps.maxImageExtent.height;
+
+    u32 min_count = r.min_image_count ? r.min_image_count : (caps.minImageCount + 1);
+    if ( caps.maxImageCount &gt; 0 &amp;&amp; min_count &gt; caps.maxImageCount ) min_count = caps.maxImageCount;
+    if ( min_count &lt; caps.minImageCount ) min_count = caps.minImageCount;
+
+    VkCompositeAlphaFlagBitsKHR alpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+    if ( !static_cast&lt;bool&gt;(caps.supportedCompositeAlpha &amp; VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR) ) {
+
+      const u32 mask = static_cast&lt;u32&gt;(caps.supportedCompositeAlpha);
+      for ( u32 b = 1; b &lt; 16; b &lt;&lt;= 1 ) {
+        if ( mask &amp; b ) {
+          alpha = static_cast&lt;VkCompositeAlphaFlagBitsKHR&gt;(b);
+          break;
+        }
+      }
+    }
+
+    ci = {};
+    ci.sType = structure_type_of_v&lt;VkSwapchainCreateInfoKHR&gt;;
+    ci.surface = __surf-&gt;handle();
+    ci.minImageCount = min_count;
+    ci.imageFormat = r.format.format;
+    ci.imageColorSpace = r.format.colorSpace;
+    ci.imageExtent = ext;
+    ci.imageArrayLayers = 1;
+    ci.imageUsage = r.image_usage;
+    ci.imageSharingMode = static_cast&lt;VkSharingMode&gt;(VK_SHARING_MODE_EXCLUSIVE);
+    ci.preTransform = caps.currentTransform;
+    ci.compositeAlpha = alpha;
+    ci.presentMode = r.present_mode;
+    ci.clipped = VK_TRUE;
+    ci.oldSwapchain = old;
+    return ext;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ext</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L109">line 109</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw except::library_error(&quot;vk::swapchain: surface caps probe missing&quot;);</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L58">line 58</a><br>Within <code>( !__dev || !__surf || !vkGetPhysicalDeviceSurfaceCapabilitiesKHR )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="errors.hpp.html#f-4cb878a7c92c3052">check_vk</a>, <a href="vulkan.hpp.html#s-1c7bf112f226b2c8">vkGetPhysicalDeviceSurfaceCapabilitiesKHR</a>.</p></section><section class="function-entry" id="f-7e77539403fbf444"><h3><code>micron::gfx::vk::swapchain::__retrieve_images()</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L113">line 113</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __retrieve_images()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __retrieve_images()
+  {
+    if ( !__h || !vkGetSwapchainImagesKHR )
+      throw except::library_error(&quot;vk::swapchain::__retrieve_images: vkGetSwapchainImagesKHR unresolved&quot;);
+    u32 n = 0;
+    check_vk(vkGetSwapchainImagesKHR(__dev-&gt;handle(), __h, &amp;n, nullptr), &quot;vkGetSwapchainImagesKHR&quot;);
+    if ( n &gt; max_swapchain_images ) n = max_swapchain_images;
+    VkImage raw[max_swapchain_images]{};
+    check_vk(vkGetSwapchainImagesKHR(__dev-&gt;handle(), __h, &amp;n, raw), &quot;vkGetSwapchainImagesKHR&quot;);
+
+    VkExtent3D ext3{ __extent.width, __extent.height, 1 };
+    for ( u32 i = 0; i &lt; n; ++i ) {
+      __images[i] = image::wrap_external(raw[i], __format, ext3);
+      __views[i] = image_view(*__dev, __images[i], VK_IMAGE_ASPECT_COLOR_BIT, static_cast&lt;VkImageViewType&gt;(VK_IMAGE_VIEW_TYPE_2D));
+    }
+    __image_count = n;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw except::library_error(&quot;vk::swapchain::__retrieve_images: vkGetSwapchainImagesKHR unresolved&quot;);</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L116">line 116</a><br>Within <code>( !__h || !vkGetSwapchainImagesKHR )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="errors.hpp.html#f-4cb878a7c92c3052">check_vk</a>, <a href="vulkan.hpp.html#s-4f3736dbbdac3453">vkGetSwapchainImagesKHR</a>, <a href="image.hpp.html#f-014ac680b138a764">image::wrap_external</a>, <a href="image_view.hpp.html#s-a765fa687b96ab61">image_view</a>.</p></section><section class="function-entry" id="f-614a6e8b62edb89f"><h3><code>micron::gfx::vk::swapchain::__build(const swapchain_request &amp;r, VkSwapchainKHR old)</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L132">line 132</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __build(const swapchain_request &amp;r, VkSwapchainKHR old)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const swapchain_request &amp;r</code></li><li><code>VkSwapchainKHR old</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __build(const swapchain_request &amp;r, VkSwapchainKHR old)
+  {
+    if ( !__dev || !__dev-&gt;valid() ) throw except::logic_error(&quot;vk::swapchain: invalid device&quot;);
+    if ( !__surf || !__surf-&gt;valid() ) throw except::logic_error(&quot;vk::swapchain: invalid surface&quot;);
+    if ( !vkCreateSwapchainKHR )
+      throw except::library_error(&quot;vk::swapchain: vkCreateSwapchainKHR unresolved — enable VK_KHR_swapchain on the device&quot;);
+
+    VkSwapchainCreateInfoKHR ci{};
+    VkExtent2D final_ext = __compose_create_info(ci, r, old);
+
+    check_vk(vkCreateSwapchainKHR(__dev-&gt;handle(), &amp;ci, host_allocation_callbacks(), &amp;__h), &quot;vkCreateSwapchainKHR&quot;);
+
+    __format = r.format.format;
+    __color_space = r.format.colorSpace;
+    __extent = final_ext;
+    __present_mode = r.present_mode;
+    __image_usage = r.image_usage;
+    __min_image_count = ci.minImageCount;
+    __retrieve_images();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw except::logic_error(&quot;vk::swapchain: invalid device&quot;);</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L134">line 134</a><br>Within <code>( !__dev || !__dev-&gt;valid() )</code></td></tr><tr class="t-dsc"><td><code>throw except::logic_error(&quot;vk::swapchain: invalid surface&quot;);</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L135">line 135</a><br>Within <code>( !__surf || !__surf-&gt;valid() )</code></td></tr><tr class="t-dsc"><td><code>throw except::library_error(&quot;vk::swapchain: vkCreateSwapchainKHR unresolved — enable VK_KHR_swapchain on the device&quot;);</code></td><td><a href="../../../source/gfx/vk/swapchain.hpp.html#L137">line 137</a><br>Within <code>( !vkCreateSwapchainKHR )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="swapchain.hpp.html#f-1aa4541dd820f0ea">__compose_create_info</a>, <a href="errors.hpp.html#f-4cb878a7c92c3052">check_vk</a>, <a href="vulkan.hpp.html#s-7dfe55d07f6dc10f">vkCreateSwapchainKHR</a>, <a href="__bits/__vk_host_alloc.hpp.html#f-b0e4cc657036c3f5">host_allocation_callbacks</a>, <a href="swapchain.hpp.html#f-7e77539403fbf444">__retrieve_images</a>.</p></section><section class="function-entry" id="f-ec446a35b40dc7f5"><h3><code>micron::gfx::vk::swapchain::__destroy_views() noexcept</code></h3><p>Defined in <code>gfx/vk/swapchain.hpp</code>, <a href="../../../source/gfx/vk/swapchain.hpp.html#L154">line 154</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __destroy_views() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __destroy_views() noexcept
+  {
+    for ( u32 i = 0; i &lt; __image_count; ++i ) __views[i].reset();
+    for ( u32 i = 0; i &lt; __image_count; ++i ) __images[i].reset();
+    __image_count = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/gcd_lehmer.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/gcd_lehmer.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/gcd_lehmer.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/gcd_lehmer.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-435a8e816e24dfe5">micron::math::mpn::gcd_lehmer_itch(usize un, usize vn) noexcept</a></td><td>function; line 31</td></tr><tr class="t-dsc"><td><a href="#f-ff54bd1a19334e48">micron::math::mpn::gcd_lehmer(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept</a></td><td>function; line 44</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-435a8e816e24dfe5"><h3><code>micron::math::mpn::gcd_lehmer_itch(usize un, usize vn) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_lehmer.hpp</code>, <a href="../../../source/math/arbint/gcd_lehmer.hpp.html#L31">line 31</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+gcd_lehmer_itch(usize un, usize vn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize un</code></li><li><code>usize vn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+gcd_lehmer_itch(usize un, usize vn) noexcept
+{
+  if ( vn &gt; un ) {
+    const usize t = un;
+    un = vn;
+    vn = t;
+  }
+  if ( vn == 0 ) return 0;
+  return 4u * un + (un + 1u) + divrem_cap_itch(un, vn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/gcd_lehmer.hpp.html#L38">line 38</a></td></tr><tr class="t-dsc"><td><code>4u * un + (un + 1u) + divrem_cap_itch(un, vn)</code></td><td><a href="../../../source/math/arbint/gcd_lehmer.hpp.html#L39">line 39</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="div_mu.hpp.html#f-d1e4cf8152d559a6">divrem_cap_itch</a>.</p></section><section class="function-entry" id="f-ff54bd1a19334e48"><h3><code>micron::math::mpn::gcd_lehmer(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/gcd_lehmer.hpp</code>, <a href="../../../source/math/arbint/gcd_lehmer.hpp.html#L44">line 44</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+gcd_lehmer(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *gp</code></li><li><code>const limb_t *up</code></li><li><code>usize un</code></li><li><code>const limb_t *vp</code></li><li><code>usize vn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+gcd_lehmer(limb_t *gp, const limb_t *up, usize un, const limb_t *vp, usize vn, limb_t *scratch) noexcept
+{
+  limb_t *a = scratch;           // un
+  limb_t *b = a + un;            // un
+  limb_t *t = b + un;            // un
+  limb_t *s = t + un;            // un
+  limb_t *const q = s + un;      // un + 1
+  limb_t *const work = q + un + 1u;
+
+  usize an = un, bn = vn;
+  copyi(a, up, un);
+  copyi(b, vp, vn);
+
+  for ( ;; ) {
+    if ( bn == 0 ) break;
+    if ( an &lt;= 2 &amp;&amp; bn &lt;= 2 ) {
+      limb_t g1 = 0, g0 = 0;
+      gcd_22_any(g1, g0, an &gt; 1 ? a[1] : 0, a[0], bn &gt; 1 ? b[1] : 0, b[0]);
+      a[0] = g0;
+      a[1] = g1;
+      an = normalize(a, 2);
+      bn = 0;
+      break;
+    }
+    if ( bn == 1 ) {
+      a[0] = gcd_1(a, an, b[0]);
+      an = a[0] != 0 ? 1u : 0u;
+      bn = 0;
+      break;
+    }
+
+    if ( an == bn ) {
+      const usize sh = limb_clz(a[an - 1u]);
+      limb_t A = 0, A0 = 0, B = 0, B0 = 0;
+      __window2(A, A0, a, an, sh);
+      __window2(B, B0, b, an, sh);
+
+      mat1 m{};
+      if ( hgcd2_sel(m, A, A0, B, B0) ) {
+        usize n2 = 0;
+        if ( mat1_mul_inverse_vector(m, t, s, a, b, an, n2) ) {
+          limb_t *sw = a;
+          a = t;
+          t = sw;
+          sw = b;
+          b = s;
+          s = sw;
+          an = normalize(a, n2);
+          bn = normalize(b, n2);
+          if ( cmp_var(a, an, b, bn) &lt; 0 ) {
+            sw = a;
+            a = b;
+            b = sw;
+            const usize tn = an;
+            an = bn;
+            bn = tn;
+          }
+          continue;
+        }
+        // the matrix was not valid for the full operands
+      }
+    }
+
+    // no run could be validated
+    divrem(q, t, a, an, b, bn, work);
+    const usize tn = normalize(t, bn);
+    limb_t *sw = a;
+    a = b;
+    b = t;
+    t = sw;
+    an = bn;
+    bn = tn;
+  }
+
+  if ( an == 0 ) return 0;
+  copyi(gp, a, an);
+  return an;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/gcd_lehmer.hpp.html#L118">line 118</a></td></tr><tr class="t-dsc"><td><code>an</code></td><td><a href="../../../source/math/arbint/gcd_lehmer.hpp.html#L120">line 120</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="gcd_base.hpp.html#f-65754b4822661a7a">gcd_22_any</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="gcd_base.hpp.html#f-76ebfc7334477c7a">gcd_1</a>, <a href="limb.hpp.html#f-58e660595c930a67">limb_clz</a>, <a href="hgcd2.hpp.html#f-3bbe0cb6bbe6981b">__window2</a>, <a href="hgcd2.hpp.html#f-fe02b444cad2b131">hgcd2_sel</a>, <a href="hgcd2.hpp.html#f-aaf9bbe45c7c7e76">mat1_mul_inverse_vector</a>, <a href="mpn_core.hpp.html#f-5b9ddf144a5ad75c">cmp_var</a>, <a href="div_mu.hpp.html#f-eeb8063a9a0ba734">divrem</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

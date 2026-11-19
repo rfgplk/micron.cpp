@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/integrate/bits/arch/kernels_arm32.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../../index.html">Reference</a> <a href="../../../../index.html">Headers</a> <a href="../../../../../functions/index.html">Functions</a> <a href="../../../../../symbols/index.html">Symbols</a> <a href="../../../../../source/index.html">Source</a> <a href="../../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/integrate/bits/arch/kernels_arm32.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../../index.html">micron reference</a> › <a href="../../../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/integrate/bits/arch/kernels_arm32.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-8ce5e112715df8a4"><h3><code>micron::math::integrate::__integrate_arch::__horizontal(simd::f128 value) noexcept</code></h3><p>Defined in <code>math/integrate/bits/arch/kernels_arm32.hpp</code>, <a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L20">line 20</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline f32
+__horizontal(simd::f128 value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>simd::f128 value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline f32
+__horizontal(simd::f128 value) noexcept
+{
+  const float32x2_t pair = vadd_f32(vget_low_f32(value), vget_high_f32(value));
+  return f32(vget_lane_f32(vpadd_f32(pair, pair), 0));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f32(vget_lane_f32(vpadd_f32(pair, pair), 0))</code></td><td><a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L23">line 23</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../../types.hpp.html#s-cadb933712e16f5c">f32</a>.</p></section><section class="function-entry" id="f-75cb02a79ad4e4d6"><h3><code>micron::math::integrate::__integrate_arch::sum_fast(const f32 *values, usize count) noexcept</code></h3><p>Defined in <code>math/integrate/bits/arch/kernels_arm32.hpp</code>, <a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L27">line 27</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline f32
+sum_fast(const f32 *values, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *values</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline f32
+sum_fast(const f32 *values, usize count) noexcept
+{
+  simd::f128 a0 = simd::neon::splat_f32(0.0f), a1 = a0, a2 = a0, a3 = a0;
+  usize i = 0;
+  for ( ; i + 16 &lt;= count; i += 16 ) {
+    a0 = simd::neon::add(a0, simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i)));
+    a1 = simd::neon::add(a1, simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i + 4)));
+    a2 = simd::neon::add(a2, simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i + 8)));
+    a3 = simd::neon::add(a3, simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i + 12)));
+  }
+  f32 result = __horizontal(simd::neon::add(simd::neon::add(a0, a1), simd::neon::add(a2, a3)));
+  for ( ; i &lt; count; ++i ) result += values[i];
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L39">line 39</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-b0226ef72e98ddfe">simd::neon::add</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">simd::neon::load_f32</a>, <a href="kernels_amd64.hpp.html#f-86eed204e3e315b3">__horizontal</a>.</p></section><section class="function-entry" id="f-4daa526c63bc5bee"><h3><code>micron::math::integrate::__integrate_arch::weighted_sum_fast(const f32 *weights, const f32 *values, usize count) noexcept</code></h3><p>Defined in <code>math/integrate/bits/arch/kernels_arm32.hpp</code>, <a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L43">line 43</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline f32
+weighted_sum_fast(const f32 *weights, const f32 *values, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *weights</code></li><li><code>const f32 *values</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline f32
+weighted_sum_fast(const f32 *weights, const f32 *values, usize count) noexcept
+{
+  simd::f128 a0 = simd::neon::splat_f32(0.0f), a1 = a0, a2 = a0, a3 = a0;
+  usize i = 0;
+  for ( ; i + 16 &lt;= count; i += 16 ) {
+    a0 = simd::neon::fma_f32(a0, simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(weights + i)),
+                             simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i)));
+    a1 = simd::neon::fma_f32(a1, simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(weights + i + 4)),
+                             simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i + 4)));
+    a2 = simd::neon::fma_f32(a2, simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(weights + i + 8)),
+                             simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i + 8)));
+    a3 = simd::neon::fma_f32(a3, simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(weights + i + 12)),
+                             simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i + 12)));
+  }
+  f32 result = __horizontal(simd::neon::add(simd::neon::add(a0, a1), simd::neon::add(a2, a3)));
+  for ( ; i &lt; count; ++i ) result += weights[i] * values[i];
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L59">line 59</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-6c5a9afa68798b38">simd::neon::fma_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">simd::neon::load_f32</a>, <a href="kernels_amd64.hpp.html#f-86eed204e3e315b3">__horizontal</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-b0226ef72e98ddfe">simd::neon::add</a>.</p></section><section class="function-entry" id="f-915ef105968d59fa"><h3><code>micron::math::integrate::__integrate_arch::diff_uniform(const f32 *values, f32 *out, usize count, f32 dx) noexcept</code></h3><p>Defined in <code>math/integrate/bits/arch/kernels_arm32.hpp</code>, <a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L63">line 63</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+diff_uniform(const f32 *values, f32 *out, usize count, f32 dx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *values</code></li><li><code>f32 *out</code></li><li><code>usize count</code></li><li><code>f32 dx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+diff_uniform(const f32 *values, f32 *out, usize count, f32 dx) noexcept
+{
+  if ( count &lt; 2 ) {
+    if ( count == 1 ) out[0] = f32(0);
+    return;
+  }
+  out[0] = (values[1] - values[0]) / dx;
+  const simd::f128 scale = simd::neon::splat_f32(float(f32(0.5) / dx));
+  usize i = 1;
+  for ( ; i + 4 &lt;= count - 1; i += 4 ) {
+    const simd::f128 lo = simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i - 1));
+    const simd::f128 hi = simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i + 1));
+    simd::neon::store_f32(reinterpret_cast&lt;float *&gt;(out + i), simd::neon::mul(simd::neon::sub(hi, lo), scale));
+  }
+  for ( ; i + 1 &lt; count; ++i ) out[i] = (values[i + 1] - values[i - 1]) * f32(0.5) / dx;
+  out[count - 1] = (values[count - 1] - values[count - 2]) / dx;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L67">line 67</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">simd::neon::load_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-b2d69468a29bad57">simd::neon::store_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-ab4be90efdab0c2a">simd::neon::mul</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-e8ef7ffd7c20cb04">simd::neon::sub</a>.</p></section><section class="function-entry" id="f-c7682f54a2ae655f"><h3><code>micron::math::integrate::__integrate_arch::cum_trapezoid_uniform(const f32 *values, f32 *out, usize count, f32 dx) noexcept</code></h3><p>Defined in <code>math/integrate/bits/arch/kernels_arm32.hpp</code>, <a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L82">line 82</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+cum_trapezoid_uniform(const f32 *values, f32 *out, usize count, f32 dx) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *values</code></li><li><code>f32 *out</code></li><li><code>usize count</code></li><li><code>f32 dx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+cum_trapezoid_uniform(const f32 *values, f32 *out, usize count, f32 dx) noexcept
+{
+  if ( count == 0 ) return;
+  out[0] = f32(0);
+  const simd::f128 zero = simd::neon::splat_f32(0.0f);
+  const simd::f128 scale = simd::neon::splat_f32(float(f32(0.5) * dx));
+  f32 carry = f32(0);
+  usize i = 1;
+  for ( ; i + 4 &lt;= count; i += 4 ) {
+    simd::f128 value = simd::neon::mul(simd::neon::add(simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i - 1)),
+                                                       simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i))),
+                                       scale);
+    value = simd::neon::add(value, simd::neon::ext_f32&lt;3&gt;(zero, value));
+    value = simd::neon::add(value, simd::neon::ext_f32&lt;2&gt;(zero, value));
+    value = simd::neon::add(value, simd::neon::splat_f32(float(carry)));
+    simd::neon::store_f32(reinterpret_cast&lt;float *&gt;(out + i), value);
+    carry = f32(simd::neon::get_lane_f32&lt;3&gt;(value));
+  }
+  for ( ; i &lt; count; ++i ) {
+    carry += f32(0.5) * dx * (values[i - 1] + values[i]);
+    out[i] = carry;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L84">line 84</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../../types.hpp.html#s-cadb933712e16f5c">f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-ab4be90efdab0c2a">simd::neon::mul</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-b0226ef72e98ddfe">simd::neon::add</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">simd::neon::load_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-f4943c2c85920cd9">simd::neon::ext_f32&lt;3&gt;</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-f4943c2c85920cd9">simd::neon::ext_f32&lt;2&gt;</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-b2d69468a29bad57">simd::neon::store_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-571373fccce69219">simd::neon::get_lane_f32&lt;3&gt;</a>.</p></section><section class="function-entry" id="f-87c16b01402a8127"><h3><code>micron::math::integrate::__integrate_arch::affine_transform(const f32 *values, f32 *out, usize count, f32 scale, f32 offset) noexcept</code></h3><p>Defined in <code>math/integrate/bits/arch/kernels_arm32.hpp</code>, <a href="../../../../../source/math/integrate/bits/arch/kernels_arm32.hpp.html#L107">line 107</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+affine_transform(const f32 *values, f32 *out, usize count, f32 scale, f32 offset) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *values</code></li><li><code>f32 *out</code></li><li><code>usize count</code></li><li><code>f32 scale</code></li><li><code>f32 offset</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+affine_transform(const f32 *values, f32 *out, usize count, f32 scale, f32 offset) noexcept
+{
+  const simd::f128 s = simd::neon::splat_f32(float(scale));
+  const simd::f128 o = simd::neon::splat_f32(float(offset));
+  usize i = 0;
+  for ( ; i + 4 &lt;= count; i += 4 ) {
+    const simd::f128 value = simd::neon::load_f32(reinterpret_cast&lt;const float *&gt;(values + i));
+    simd::neon::store_f32(reinterpret_cast&lt;float *&gt;(out + i), simd::neon::fma_f32(o, value, s));
+  }
+  for ( ; i &lt; count; ++i ) out[i] = values[i] * scale + offset;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../../../simd/aliases/neon.hpp.html#f-3b11631b63fd09ad">simd::neon::splat_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">simd::neon::load_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-b2d69468a29bad57">simd::neon::store_f32</a>, <a href="../../../../simd/aliases/neon.hpp.html#f-6c5a9afa68798b38">simd::neon::fma_f32</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../../about.html">Attribution and licenses</a> · <a href="../../../../../index.html">Contents</a></p></div></div>
+</body></html>

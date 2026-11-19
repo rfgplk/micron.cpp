@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/blas/level3.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/blas/level3.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/blas.html">BLAS</a></div><p>Defined in header <code>&lt;micron/math/blas/level3.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/blas/level3.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-6cc4a8356c9827f6">micron::math::blas::level3::col_view</code></td><td>name; line 36</td></tr><tr class="t-dsc"><td><code id="s-e5bdeae87e43013b">micron::math::blas::level3::row_view</code></td><td>name; line 37</td></tr><tr class="t-dsc"><td><code id="s-a70983fa99bcedd2">micron::math::blas::level3::sym_col_view</code></td><td>name; line 38</td></tr><tr class="t-dsc"><td><code id="s-a38c5d198617a14e">micron::math::blas::level3::sym_row_view</code></td><td>name; line 39</td></tr><tr class="t-dsc"><td><code id="s-114de2542b66abd2">micron::math::blas::level3::tri_col_view</code></td><td>name; line 40</td></tr><tr class="t-dsc"><td><code id="s-5d24ef2a86322d7a">micron::math::blas::level3::tri_row_view</code></td><td>name; line 41</td></tr><tr class="t-dsc"><td><a href="#f-e95bcab4d69639eb">micron::math::blas::level3::gemm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</a></td><td>function; line 100</td></tr><tr class="t-dsc"><td><a href="#f-19051b48d72f0d0e">micron::math::blas::level3::gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-ada7569951d28c35">micron::math::blas::level3::gemm_aligned(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-0e0ff6987500e067">micron::math::blas::level3::gemm_row_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept</a></td><td>function; line 171</td></tr><tr class="t-dsc"><td><a href="#f-02dcd344c1907a01">micron::math::blas::level3::gemm_row_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</a></td><td>function; line 180</td></tr><tr class="t-dsc"><td><a href="#f-f25fdbf27e4b5aa1">micron::math::blas::level3::gemm_row_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</a></td><td>function; line 188</td></tr><tr class="t-dsc"><td><a href="#f-df20b121e4ab4038">micron::math::blas::level3::gemm_row_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</a></td><td>function; line 196</td></tr><tr class="t-dsc"><td><a href="#f-b7b8f5d4c6968339">micron::math::blas::level3::gemm_col(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept</a></td><td>function; line 204</td></tr><tr class="t-dsc"><td><a href="#f-7edc1b5fbd932014">micron::math::blas::level3::symm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</a></td><td>function; line 213</td></tr><tr class="t-dsc"><td><a href="#f-657dee7c902879a6">micron::math::blas::level3::hemm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</a></td><td>function; line 229</td></tr><tr class="t-dsc"><td><a href="#f-615f66bb091d7c04">micron::math::blas::level3::syrk(T alpha, const VA &amp;A, T beta, VC C) noexcept</a></td><td>function; line 237</td></tr><tr class="t-dsc"><td><a href="#f-4ee3e16cf94eedf0">micron::math::blas::level3::herk(T alpha, const VA &amp;A, T beta, VC C) noexcept</a></td><td>function; line 249</td></tr><tr class="t-dsc"><td><a href="#f-bce1dbeb195483ab">micron::math::blas::level3::syr2k(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</a></td><td>function; line 257</td></tr><tr class="t-dsc"><td><a href="#f-083e18f2ff0130e7">micron::math::blas::level3::her2k(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</a></td><td>function; line 269</td></tr><tr class="t-dsc"><td><a href="#f-1c9c52e40eac5ed8">micron::math::blas::level3::trmm(T alpha, const VA &amp;A, VB B) noexcept</a></td><td>function; line 277</td></tr><tr class="t-dsc"><td><a href="#f-5e2a99ee0e942032">micron::math::blas::level3::trsm(T alpha, const VA &amp;A, VB B) noexcept</a></td><td>function; line 294</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-e95bcab4d69639eb"><h3><code>micron::math::blas::level3::gemm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L100">line 100</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt; and micron::same_as&lt;typename VA::value_type, T&gt;
+           and micron::same_as&lt;typename VB::value_type, T&gt; and micron::same_as&lt;typename VC::value_type, T&gt;)
+inline constexpr void
+gemm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>const VB &amp;B</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt; and micron::same_as&lt;typename VA::value_type, T&gt;
+           and micron::same_as&lt;typename VB::value_type, T&gt; and micron::same_as&lt;typename VC::value_type, T&gt;)
+inline constexpr void
+gemm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept
+{
+  constexpr bool trA = micron::same_as&lt;OpA, op::trans&gt; or micron::same_as&lt;OpA, op::conj_trans&gt;;
+  constexpr bool trB = micron::same_as&lt;OpB, op::trans&gt; or micron::same_as&lt;OpB, op::conj_trans&gt;;
+  const usize m = trA ? A.cols : A.rows;
+  const usize k = trA ? A.rows : A.cols;
+  const usize n = trB ? B.rows : B.cols;
+
+  if !consteval {
+    if ( __impl_level3::view_overlaps(C, A) || __impl_level3::view_overlaps(C, B) ) {
+      micron::math::dynmat&lt;T&gt; tmp(m, n);
+      bits::gemm_kernel&lt;T&gt;(trA, trB, m, n, k, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data,
+                           __impl_level3::rs_of(B), __impl_level3::cs_of(B), T(0), tmp.data(), ssize_t(tmp.ld), ssize_t(1));
+      const ssize_t rs_C = __impl_level3::rs_of(C);
+      const ssize_t cs_C = __impl_level3::cs_of(C);
+      for ( usize i = 0; i &lt; m; ++i ) {
+        for ( usize j = 0; j &lt; n; ++j ) {
+          T &amp;cij = C.data[ssize_t(i) * rs_C + ssize_t(j) * cs_C];
+          cij = beta * cij + tmp.data()[i * tmp.ld + j];
+        }
+      }
+      return;
+    }
+  }
+
+  bits::gemm_kernel&lt;T&gt;(trA, trB, m, n, k, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data, __impl_level3::rs_of(B),
+                       __impl_level3::cs_of(B), beta, C.data, __impl_level3::rs_of(C), __impl_level3::cs_of(C));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/blas/level3.hpp.html#L121">line 121</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-893f5c74f8cea606">__impl_level3::view_overlaps</a>, <a href="bits/impl.hpp.html#f-1b2426c09d278e36">bits::gemm_kernel&lt;T&gt;</a>, <a href="level3.hpp.html#f-98252a0a1da541e6">__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">__impl_level3::cs_of</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-19051b48d72f0d0e"><h3><code>micron::math::blas::level3::gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>usize lda</code></li><li><code>const T *B</code></li><li><code>usize ldb</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>usize ldc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_row(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept
+{
+  // NOTE: rank-one products need no panel packing or general GEMM frame
+  if ( k == 1 ) {
+    const usize a_step = trA ? 1 : lda, b_step = trB ? ldb : 1;
+    for ( usize i = 0; i &lt; m; ++i ) {
+      const T a = alpha * A[i * a_step];
+      T *row = C + i * ldc;
+      for ( usize j = 0; j &lt; n; ++j ) {
+        if ( beta == T(0) )
+          row[j] = a * B[j * b_step];
+        else
+          row[j] = bits::fma_acc&lt;T&gt;(a, B[j * b_step], beta * row[j]);
+      }
+    }
+    return;
+  }
+  __impl_level3::gemm_row_general&lt;T&gt;(trA, trB, m, n, k, alpha, A, lda, B, ldb, beta, C, ldc);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/blas/level3.hpp.html#L147">line 147</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-53d7e867428ab4f6">bits::fma_acc&lt;T&gt;</a>, <a href="level3.hpp.html#f-aa26380727d999db">__impl_level3::gemm_row_general&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-ada7569951d28c35"><h3><code>micron::math::blas::level3::gemm_aligned(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt; and micron::same_as&lt;typename VA::value_type, T&gt;
+           and micron::same_as&lt;typename VB::value_type, T&gt; and micron::same_as&lt;typename VC::value_type, T&gt;)
+inline constexpr void
+gemm_aligned(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>const VB &amp;B</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag OpA = op::none, op::op_tag OpB = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt; and micron::same_as&lt;typename VA::value_type, T&gt;
+           and micron::same_as&lt;typename VB::value_type, T&gt; and micron::same_as&lt;typename VC::value_type, T&gt;)
+inline constexpr void
+gemm_aligned(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept
+{
+  constexpr bool trA = micron::same_as&lt;OpA, op::trans&gt; or micron::same_as&lt;OpA, op::conj_trans&gt;;
+  constexpr bool trB = micron::same_as&lt;OpB, op::trans&gt; or micron::same_as&lt;OpB, op::conj_trans&gt;;
+  const usize m = trA ? A.cols : A.rows;
+  const usize k = trA ? A.rows : A.cols;
+  const usize n = trB ? B.rows : B.cols;
+  bits::gemm_kernel_aligned&lt;T&gt;(trA, trB, m, n, k, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data,
+                               __impl_level3::rs_of(B), __impl_level3::cs_of(B), beta, C.data, __impl_level3::rs_of(C),
+                               __impl_level3::cs_of(C));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-c9a20d0873e1863a">bits::gemm_kernel_aligned&lt;T&gt;</a>, <a href="level3.hpp.html#f-98252a0a1da541e6">__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">__impl_level3::cs_of</a>.</p></section><section class="function-entry" id="f-0e0ff6987500e067"><h3><code>micron::math::blas::level3::gemm_row_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L171">line 171</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_row_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>usize lda</code></li><li><code>const T *B</code></li><li><code>usize ldb</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>usize ldc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_row_aligned(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept
+{
+  bits::gemm_kernel_aligned&lt;T&gt;(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-c9a20d0873e1863a">bits::gemm_kernel_aligned&lt;T&gt;</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-02dcd344c1907a01"><h3><code>micron::math::blas::level3::gemm_row_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L180">line 180</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>usize lda</code></li><li><code>const T *B</code></li><li><code>usize ldb</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>usize ldc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_a(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept
+{
+  bits::gemm_kernel_aligned_exp_a&lt;T&gt;(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-c5371b79627ceb23">bits::gemm_kernel_aligned_exp_a&lt;T&gt;</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-f25fdbf27e4b5aa1"><h3><code>micron::math::blas::level3::gemm_row_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L188">line 188</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>usize lda</code></li><li><code>const T *B</code></li><li><code>usize ldb</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>usize ldc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_b(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept
+{
+  bits::gemm_kernel_aligned_exp_b&lt;T&gt;(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-da6b808ea2f1698a">bits::gemm_kernel_aligned_exp_b&lt;T&gt;</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-df20b121e4ab4038"><h3><code>micron::math::blas::level3::gemm_row_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L196">line 196</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>usize lda</code></li><li><code>const T *B</code></li><li><code>usize ldb</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>usize ldc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline void
+gemm_row_aligned_exp_c(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                       usize ldc) noexcept
+{
+  bits::gemm_kernel_aligned_exp_c&lt;T&gt;(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-8df957f39758eedb">bits::gemm_kernel_aligned_exp_c&lt;T&gt;</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-b7b8f5d4c6968339"><h3><code>micron::math::blas::level3::gemm_col(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L204">line 204</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_col(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>usize lda</code></li><li><code>const T *B</code></li><li><code>usize ldb</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>usize ldc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::flatten]] inline constexpr void
+gemm_col(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+         usize ldc) noexcept
+{
+  bits::gemm_kernel&lt;T&gt;(trA, trB, m, n, k, alpha, A, 1, ssize_t(lda), B, 1, ssize_t(ldb), beta, C, 1, ssize_t(ldc));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-1b2426c09d278e36">bits::gemm_kernel&lt;T&gt;</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-7edc1b5fbd932014"><h3><code>micron::math::blas::level3::symm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L213">line 213</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;side::side_tag S = side::left, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt;)
+[[gnu::flatten]] inline constexpr void
+symm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>const VB &amp;B</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;side::side_tag S = side::left, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VB&gt; and mat_view_like&lt;VC&gt;)
+[[gnu::flatten]] inline constexpr void
+symm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept
+{
+  constexpr bool upper = micron::same_as&lt;typename VA::uplo_type, uplo::upper&gt;;
+  if constexpr ( micron::same_as&lt;S, side::left&gt; ) {
+    bits::symm_left_kernel&lt;T&gt;(upper, B.rows, B.cols, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data,
+                              __impl_level3::rs_of(B), __impl_level3::cs_of(B), beta, C.data, __impl_level3::rs_of(C),
+                              __impl_level3::cs_of(C));
+  } else {
+    bits::symm_right_kernel&lt;T&gt;(upper, B.rows, B.cols, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data,
+                               __impl_level3::rs_of(B), __impl_level3::cs_of(B), beta, C.data, __impl_level3::rs_of(C),
+                               __impl_level3::cs_of(C));
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-f898f9f09d0e120e">bits::symm_left_kernel&lt;T&gt;</a>, <a href="level3.hpp.html#f-98252a0a1da541e6">__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">__impl_level3::cs_of</a>, <a href="bits/impl.hpp.html#f-156f45b95eac2582">bits::symm_right_kernel&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-657dee7c902879a6"><h3><code>micron::math::blas::level3::hemm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L229">line 229</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;side::side_tag S = side::left, blas_scalar T, typename VA, typename VB, typename VC&gt;
+[[gnu::flatten]] inline constexpr void
+hemm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>const VB &amp;B</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;side::side_tag S = side::left, blas_scalar T, typename VA, typename VB, typename VC&gt;
+[[gnu::flatten]] inline constexpr void
+hemm(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept
+{
+  symm&lt;S, T&gt;(alpha, A, B, beta, C);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-7edc1b5fbd932014">symm&lt;S, T&gt;</a>.</p></section><section class="function-entry" id="f-615f66bb091d7c04"><h3><code>micron::math::blas::level3::syrk(T alpha, const VA &amp;A, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L237">line 237</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt;)
+[[gnu::flatten]] inline constexpr void
+syrk(T alpha, const VA &amp;A, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt;)
+[[gnu::flatten]] inline constexpr void
+syrk(T alpha, const VA &amp;A, T beta, VC C) noexcept
+{
+  constexpr bool trA = micron::same_as&lt;OpA, op::trans&gt; or micron::same_as&lt;OpA, op::conj_trans&gt;;
+  constexpr bool upper = micron::same_as&lt;typename VC::uplo_type, uplo::upper&gt;;
+  const usize n = trA ? A.cols : A.rows;
+  const usize k = trA ? A.rows : A.cols;
+  bits::syrk_kernel&lt;T&gt;(upper, trA, n, k, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), beta, C.data,
+                       __impl_level3::rs_of(C), __impl_level3::cs_of(C));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-7fca1bc75e421f60">bits::syrk_kernel&lt;T&gt;</a>, <a href="level3.hpp.html#f-98252a0a1da541e6">__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">__impl_level3::cs_of</a>.</p></section><section class="function-entry" id="f-4ee3e16cf94eedf0"><h3><code>micron::math::blas::level3::herk(T alpha, const VA &amp;A, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L249">line 249</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VC&gt;
+[[gnu::flatten]] inline constexpr void
+herk(T alpha, const VA &amp;A, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VC&gt;
+[[gnu::flatten]] inline constexpr void
+herk(T alpha, const VA &amp;A, T beta, VC C) noexcept
+{
+  syrk&lt;OpA, T&gt;(alpha, A, beta, C);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-615f66bb091d7c04">syrk&lt;OpA, T&gt;</a>.</p></section><section class="function-entry" id="f-bce1dbeb195483ab"><h3><code>micron::math::blas::level3::syr2k(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L257">line 257</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt;)
+[[gnu::flatten]] inline constexpr void
+syr2k(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>const VB &amp;B</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt;)
+[[gnu::flatten]] inline constexpr void
+syr2k(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept
+{
+  constexpr bool trA = micron::same_as&lt;OpA, op::trans&gt; or micron::same_as&lt;OpA, op::conj_trans&gt;;
+  constexpr bool upper = micron::same_as&lt;typename VC::uplo_type, uplo::upper&gt;;
+  const usize n = trA ? A.cols : A.rows;
+  const usize k = trA ? A.rows : A.cols;
+  bits::syr2k_kernel&lt;T&gt;(upper, trA, n, k, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data, __impl_level3::rs_of(B),
+                        __impl_level3::cs_of(B), beta, C.data, __impl_level3::rs_of(C), __impl_level3::cs_of(C));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-ad00034a9ae5e828">bits::syr2k_kernel&lt;T&gt;</a>, <a href="level3.hpp.html#f-98252a0a1da541e6">__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">__impl_level3::cs_of</a>.</p></section><section class="function-entry" id="f-083e18f2ff0130e7"><h3><code>micron::math::blas::level3::her2k(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L269">line 269</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+[[gnu::flatten]] inline constexpr void
+her2k(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>const VB &amp;B</code></li><li><code>T beta</code></li><li><code>VC C</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;op::op_tag OpA = op::none, blas_scalar T, typename VA, typename VB, typename VC&gt;
+[[gnu::flatten]] inline constexpr void
+her2k(T alpha, const VA &amp;A, const VB &amp;B, T beta, VC C) noexcept
+{
+  syr2k&lt;OpA, T&gt;(alpha, A, B, beta, C);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-bce1dbeb195483ab">syr2k&lt;OpA, T&gt;</a>.</p></section><section class="function-entry" id="f-1c9c52e40eac5ed8"><h3><code>micron::math::blas::level3::trmm(T alpha, const VA &amp;A, VB B) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L277">line 277</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;side::side_tag S = side::left, op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt;)
+[[gnu::flatten]] inline constexpr void
+trmm(T alpha, const VA &amp;A, VB B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>VB B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;side::side_tag S = side::left, op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt;)
+[[gnu::flatten]] inline constexpr void
+trmm(T alpha, const VA &amp;A, VB B) noexcept
+{
+  constexpr bool upper = micron::same_as&lt;typename VA::uplo_type, uplo::upper&gt;;
+  constexpr bool tr = micron::same_as&lt;Op, op::trans&gt; or micron::same_as&lt;Op, op::conj_trans&gt;;
+  constexpr bool unit_diag = micron::same_as&lt;typename VA::diag_type, diag::unit&gt;;
+  if constexpr ( micron::same_as&lt;S, side::left&gt; ) {
+    bits::trmm_left_kernel&lt;T&gt;(upper, tr, unit_diag, B.rows, B.cols, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data,
+                              __impl_level3::rs_of(B), __impl_level3::cs_of(B));
+  } else {
+    bits::trmm_right_kernel&lt;T&gt;(upper, tr, unit_diag, B.rows, B.cols, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A),
+                               B.data, __impl_level3::rs_of(B), __impl_level3::cs_of(B));
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-f29e8867d6c0ed6a">bits::trmm_left_kernel&lt;T&gt;</a>, <a href="level3.hpp.html#f-98252a0a1da541e6">__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">__impl_level3::cs_of</a>, <a href="bits/impl.hpp.html#f-04bd15862fe2877e">bits::trmm_right_kernel&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-5e2a99ee0e942032"><h3><code>micron::math::blas::level3::trsm(T alpha, const VA &amp;A, VB B) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L294">line 294</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;side::side_tag S = side::left, op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt;)
+[[gnu::flatten]] inline constexpr void
+trsm(T alpha, const VA &amp;A, VB B) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T alpha</code></li><li><code>const VA &amp;A</code></li><li><code>VB B</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;side::side_tag S = side::left, op::op_tag Op = op::none, blas_scalar T, typename VA, typename VB&gt;
+  requires(mat_view_like&lt;VA&gt; and mat_view_like&lt;VB&gt;)
+[[gnu::flatten]] inline constexpr void
+trsm(T alpha, const VA &amp;A, VB B) noexcept
+{
+  constexpr bool upper = micron::same_as&lt;typename VA::uplo_type, uplo::upper&gt;;
+  constexpr bool tr = micron::same_as&lt;Op, op::trans&gt; or micron::same_as&lt;Op, op::conj_trans&gt;;
+  constexpr bool unit_diag = micron::same_as&lt;typename VA::diag_type, diag::unit&gt;;
+  if constexpr ( micron::same_as&lt;S, side::left&gt; ) {
+    bits::trsm_left_kernel&lt;T&gt;(upper, tr, unit_diag, B.rows, B.cols, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A), B.data,
+                              __impl_level3::rs_of(B), __impl_level3::cs_of(B));
+  } else {
+    bits::trsm_right_kernel&lt;T&gt;(upper, tr, unit_diag, B.rows, B.cols, alpha, A.data, __impl_level3::rs_of(A), __impl_level3::cs_of(A),
+                               B.data, __impl_level3::rs_of(B), __impl_level3::cs_of(B));
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-a5fcfe932cdc017a">bits::trsm_left_kernel&lt;T&gt;</a>, <a href="level3.hpp.html#f-98252a0a1da541e6">__impl_level3::rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">__impl_level3::cs_of</a>, <a href="bits/impl.hpp.html#f-ac05794323b11ffd">bits::trsm_right_kernel&lt;T&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-aa26380727d999db"><h3><code>micron::math::blas::level3::__impl_level3::gemm_row_general(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;blas_scalar T&gt;
+[[gnu::noinline]] inline constexpr void
+gemm_row_general(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool trA</code></li><li><code>bool trB</code></li><li><code>usize m</code></li><li><code>usize n</code></li><li><code>usize k</code></li><li><code>T alpha</code></li><li><code>const T *A</code></li><li><code>usize lda</code></li><li><code>const T *B</code></li><li><code>usize ldb</code></li><li><code>T beta</code></li><li><code>T *C</code></li><li><code>usize ldc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;blas_scalar T&gt;
+[[gnu::noinline]] inline constexpr void
+gemm_row_general(bool trA, bool trB, usize m, usize n, usize k, T alpha, const T *A, usize lda, const T *B, usize ldb, T beta, T *C,
+                 usize ldc) noexcept
+{
+  bits::gemm_kernel&lt;T&gt;(trA, trB, m, n, k, alpha, A, ssize_t(lda), 1, B, ssize_t(ldb), 1, beta, C, ssize_t(ldc), 1);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-1b2426c09d278e36">bits::gemm_kernel&lt;T&gt;</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-98252a0a1da541e6"><h3><code>micron::math::blas::level3::__impl_level3::rs_of(const V &amp;v) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr ssize_t
+rs_of(const V &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const V &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr ssize_t
+rs_of(const V &amp;v) noexcept
+{
+  if constexpr ( row_view_like&lt;V&gt; )
+    return ssize_t(v.ld);
+  else
+    return 1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ssize_t(v.ld)</code></td><td><a href="../../../source/math/blas/level3.hpp.html#L60">line 60</a></td></tr><tr class="t-dsc"><td><code>1</code></td><td><a href="../../../source/math/blas/level3.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-a65c37c98ea4aec7"><h3><code>micron::math::blas::level3::__impl_level3::cs_of(const V &amp;v) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename V&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr ssize_t
+cs_of(const V &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const V &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename V&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr ssize_t
+cs_of(const V &amp;v) noexcept
+{
+  if constexpr ( row_view_like&lt;V&gt; )
+    return 1;
+  else
+    return ssize_t(v.ld);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>1</code></td><td><a href="../../../source/math/blas/level3.hpp.html#L70">line 70</a></td></tr><tr class="t-dsc"><td><code>ssize_t(v.ld)</code></td><td><a href="../../../source/math/blas/level3.hpp.html#L72">line 72</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><section class="function-entry" id="f-893f5c74f8cea606"><h3><code>micron::math::blas::level3::__impl_level3::view_overlaps(const Va &amp;a, const Vb &amp;b) noexcept</code></h3><p>Defined in <code>math/blas/level3.hpp</code>, <a href="../../../source/math/blas/level3.hpp.html#L77">line 77</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Va, typename Vb&gt;
+[[nodiscard, gnu::always_inline]] inline bool
+view_overlaps(const Va &amp;a, const Vb &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Va &amp;a</code></li><li><code>const Vb &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Va, typename Vb&gt;
+[[nodiscard, gnu::always_inline]] inline bool
+view_overlaps(const Va &amp;a, const Vb &amp;b) noexcept
+{
+  if ( a.rows == 0 || a.cols == 0 || b.rows == 0 || b.cols == 0 ) return false;
+  const ssize_t a_rs = rs_of(a);
+  const ssize_t a_cs = cs_of(a);
+  const ssize_t b_rs = rs_of(b);
+  const ssize_t b_cs = cs_of(b);
+  const ssize_t a_sz = ssize_t(sizeof(typename Va::value_type));
+  const ssize_t b_sz = ssize_t(sizeof(typename Vb::value_type));
+  const auto *a_lo = reinterpret_cast&lt;const unsigned char *&gt;(a.data);
+  const auto *b_lo = reinterpret_cast&lt;const unsigned char *&gt;(b.data);
+  const auto *a_hi = a_lo + (ssize_t(a.rows - 1) * a_rs + ssize_t(a.cols - 1) * a_cs) * a_sz + a_sz;
+  const auto *b_hi = b_lo + (ssize_t(b.rows - 1) * b_rs + ssize_t(b.cols - 1) * b_cs) * b_sz + b_sz;
+  return (a_lo &lt; b_hi) &amp;&amp; (b_lo &lt; a_hi);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/blas/level3.hpp.html#L79">line 79</a></td></tr><tr class="t-dsc"><td><code>(a_lo &lt; b_hi) &amp;&amp; (b_lo &lt; a_hi)</code></td><td><a href="../../../source/math/blas/level3.hpp.html#L90">line 90</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="level3.hpp.html#f-98252a0a1da541e6">rs_of</a>, <a href="level3.hpp.html#f-a65c37c98ea4aec7">cs_of</a>, <a href="../../types.hpp.html#s-4e2c674e257848da">ssize_t</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

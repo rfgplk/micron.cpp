@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/bits/wasm/futex.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/bits/wasm/futex.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/wasm.html">WebAssembly target</a></div><p>Defined in header <code>&lt;micron/bits/wasm/futex.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/bits/wasm/futex.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-544f2cf0587c0315">micron::wasm::futex(unsigned *addr, int op, unsigned expected, timespec_t *timeout, unsigned *other, unsigned mask) noexcept</a></td><td>function; line 11</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-544f2cf0587c0315"><h3><code>micron::wasm::futex(unsigned *addr, int op, unsigned expected, timespec_t *timeout, unsigned *other, unsigned mask) noexcept</code></h3><p>Defined in <code>bits/wasm/futex.hpp</code>, <a href="../../../source/bits/wasm/futex.hpp.html#L11">line 11</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline long
+futex(unsigned *addr, int op, unsigned expected, timespec_t *timeout, unsigned *other, unsigned mask) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>unsigned *addr</code></li><li><code>int op</code></li><li><code>unsigned expected</code></li><li><code>timespec_t *timeout</code></li><li><code>unsigned *other</code></li><li><code>unsigned mask</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline long
+futex(unsigned *addr, int op, unsigned expected, timespec_t *timeout, unsigned *other, unsigned mask) noexcept
+{
+  if ( other ) return -95;
+  const int command = op &amp; ~(128 | 256);
+  if ( command == 1 || command == 10 ) {
+    if ( command == 10 &amp;&amp; mask != 0xffffffffu ) return -95;
+    return wake32(addr, expected);
+  }
+  if ( command != 0 &amp;&amp; command != 9 ) return -95;
+  if ( command == 9 &amp;&amp; mask != 0xffffffffu ) return -95;
+  long long ns = -1;
+  if ( timeout ) {
+    if ( timeout-&gt;tv_sec &lt; 0 || timeout-&gt;tv_nsec &lt; 0 || timeout-&gt;tv_nsec &gt;= 1000000000LL
+         || timeout-&gt;tv_sec &gt; (0x7fffffffffffffffLL - timeout-&gt;tv_nsec) / 1000000000LL )
+      return -22;
+    ns = timeout-&gt;tv_sec * 1000000000LL + timeout-&gt;tv_nsec;
+    if ( command == 9 ) {
+      const long long now = __micron_wasm_host_clock(op &amp; 256 ? 0 : 1);
+      if ( now &lt; 0 ) return now;
+      ns = ns &gt; now ? ns - now : 0;
+    }
+  }
+  return wait32(addr, expected, ns);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/bits/wasm/futex.hpp.html#L13">line 13</a></td></tr><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/bits/wasm/futex.hpp.html#L16">line 16</a></td></tr><tr class="t-dsc"><td><code>wake32(addr, expected)</code></td><td><a href="../../../source/bits/wasm/futex.hpp.html#L17">line 17</a></td></tr><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/bits/wasm/futex.hpp.html#L19">line 19</a></td></tr><tr class="t-dsc"><td><code>-95</code></td><td><a href="../../../source/bits/wasm/futex.hpp.html#L20">line 20</a></td></tr><tr class="t-dsc"><td><code>-22</code></td><td><a href="../../../source/bits/wasm/futex.hpp.html#L25">line 25</a></td></tr><tr class="t-dsc"><td><code>now</code></td><td><a href="../../../source/bits/wasm/futex.hpp.html#L29">line 29</a></td></tr><tr class="t-dsc"><td><code>wait32(addr, expected, ns)</code></td><td><a href="../../../source/bits/wasm/futex.hpp.html#L33">line 33</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="runtime.hpp.html#f-33b3a8094dce5388">wake32</a>, <a href="host.hpp.html#f-5e8d6419c0d5502d">__micron_wasm_host_clock</a>, <a href="runtime.hpp.html#f-6a47fcf00668d5d3">wait32</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

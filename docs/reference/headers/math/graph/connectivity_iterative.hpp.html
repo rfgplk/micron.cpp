@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/connectivity_iterative.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/connectivity_iterative.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/connectivity_iterative.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/connectivity_iterative.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-8a60296642b6fa28">micron::math::graphs::strongly_connected_components_iterative::frame::node</code></td><td>member; line 24</td></tr><tr class="t-dsc"><td><code id="s-8c1153f7ff8682b9">micron::math::graphs::strongly_connected_components_iterative::frame::end</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><code id="s-cce14bbf12144dac">micron::math::graphs::strongly_connected_components_iterative::frame::next</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><a href="#f-a242e2a3590f8485">micron::math::graphs::strongly_connected_components_iterative(const G &amp;graph)</a></td><td>function; line 16</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a242e2a3590f8485"><h3><code>micron::math::graphs::strongly_connected_components_iterative(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity_iterative.hpp</code>, <a href="../../../source/math/graph/connectivity_iterative.hpp.html#L16">line 16</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] components_result&lt;typename G::index_type&gt;
+strongly_connected_components_iterative(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] components_result&lt;typename G::index_type&gt;
+strongly_connected_components_iterative(const G &amp;graph)
+{
+  using I = typename G::index_type;
+  using vertex = typename G::vertex_descriptor;
+  if constexpr ( !G::is_directed ) return connected_components(graph);
+  using iterator = decltype(graph.out_neighbors(vertex{}).begin());
+
+  struct frame {
+    vertex node;
+    iterator next, end;
+  };
+
+  const usize slots = graph.vertex_slots();
+  vector&lt;u8&gt; seen(slots, u8{ 0 });
+  vector&lt;vertex&gt; finish, pending;
+  vector&lt;frame&gt; frames;
+  finish.reserve(graph.vertices_count());
+  frames.reserve(graph.vertices_count());
+  pending.reserve(graph.vertices_count());
+  for ( const auto root : graph.vertices() ) {
+    if ( seen[root.value] ) continue;
+    seen[root.value] = 1;
+    const auto neighbors = graph.out_neighbors(root);
+    frames.push_back({ root, neighbors.begin(), neighbors.end() });
+    while ( !frames.empty() ) {
+      auto &amp;top = frames.back();
+      if ( top.next == top.end ) {
+        finish.push_back(top.node);
+        frames.pop_back();
+        continue;
+      }
+      const auto child = *top.next;
+      ++top.next;
+      if ( seen[child.value] ) continue;
+      seen[child.value] = 1;
+      const auto children = graph.out_neighbors(child);
+      frames.push_back({ child, children.begin(), children.end() });
+    }
+  }
+  const I none = numeric_limits&lt;I&gt;::max();
+  components_result&lt;I&gt; result{ algorithm_status::ok, 0, vector&lt;I, allocator_serial&lt;&gt;, false&gt;(slots, none) };
+  for ( usize i = finish.size(); i; --i ) {
+    const auto root = finish[i - 1];
+    if ( result.component[root.value] != none ) continue;
+    const I component = static_cast&lt;I&gt;(result.count++);
+    result.component[root.value] = component;
+    pending.push_back(root);
+    while ( !pending.empty() ) {
+      const auto node = pending.back();
+      pending.pop_back();
+      for ( const auto child : graph.in_neighbors(node) ) {
+        if ( result.component[child.value] != none ) continue;
+        result.component[child.value] = component;
+        pending.push_back(child);
+      }
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>connected_components(graph)</code></td><td><a href="../../../source/math/graph/connectivity_iterative.hpp.html#L20">line 20</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity_iterative.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-a355a7ec8f38f668">connected_components</a>, <a href="../../numerics.hpp.html#f-089d5d7e4cc4c66a">numeric_limits&lt;I&gt;::max</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

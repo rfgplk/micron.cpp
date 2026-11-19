@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/linalg/poly.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/linalg/poly.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/matrix.html">Matrices and linear algebra</a></div><p>Defined in header <code>&lt;micron/math/linalg/poly.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/linalg/poly.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-57b849865bf03fdf">micron::math::linalg::poly::roots_result</code></td><td>struct; line 131</td></tr><tr class="t-dsc"><td><code id="s-c71d4427cdc5f304">micron::math::linalg::poly::roots_result::re</code></td><td>member; line 132</td></tr><tr class="t-dsc"><td><code id="s-0ab5857de7e3739d">micron::math::linalg::poly::roots_result::im</code></td><td>member; line 133</td></tr><tr class="t-dsc"><td><code id="s-dc10e2b77d41e723">micron::math::linalg::poly::roots_result::converged</code></td><td>member; line 134</td></tr><tr class="t-dsc"><td><a href="#f-f369ea327c24e9bc">micron::math::linalg::poly::polyval(const dynvec&lt;F&gt; &amp;c, micron::__type_identity_t&lt;F&gt; x) noexcept</a></td><td>function; line 38</td></tr><tr class="t-dsc"><td><a href="#f-009417d251dfe977">micron::math::linalg::poly::polyval(const F *c, usize n, micron::__type_identity_t&lt;F&gt; x) noexcept</a></td><td>function; line 51</td></tr><tr class="t-dsc"><td><a href="#f-152cecf006baf2f9">micron::math::linalg::poly::polyder(const dynvec&lt;F&gt; &amp;c) noexcept</a></td><td>function; line 64</td></tr><tr class="t-dsc"><td><a href="#f-bfa9006522786daa">micron::math::linalg::poly::polyint(const dynvec&lt;F&gt; &amp;c, micron::__type_identity_t&lt;F&gt; k0 = F(0)) noexcept</a></td><td>function; line 79</td></tr><tr class="t-dsc"><td><a href="#f-de467b914ab4fedb">micron::math::linalg::poly::polyfit(const dynvec&lt;F&gt; &amp;x, const dynvec&lt;F&gt; &amp;y, usize deg) noexcept</a></td><td>function; line 94</td></tr><tr class="t-dsc"><td><a href="#f-29fbba32fa79b158">micron::math::linalg::poly::roots(const dynvec&lt;F&gt; &amp;c) noexcept</a></td><td>function; line 211</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f369ea327c24e9bc"><h3><code>micron::math::linalg::poly::polyval(const dynvec&lt;F&gt; &amp;c, micron::__type_identity_t&lt;F&gt; x) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L38">line 38</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+polyval(const dynvec&lt;F&gt; &amp;c, micron::__type_identity_t&lt;F&gt; x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynvec&lt;F&gt; &amp;c</code></li><li><code>micron::__type_identity_t&lt;F&gt; x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+polyval(const dynvec&lt;F&gt; &amp;c, micron::__type_identity_t&lt;F&gt; x) noexcept
+{
+  const usize N = c.size();
+  if ( N == 0 ) return F(0);
+  const F *__restrict__ p = c.data();
+  const F *__restrict__ end = p + N;
+  F acc = *p++;
+  while ( p != end ) acc = math::fma&lt;F&gt;(acc, F(x), *p++);
+  return acc;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L41">line 41</a></td></tr><tr class="t-dsc"><td><code>acc</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L46">line 46</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-009417d251dfe977"><h3><code>micron::math::linalg::poly::polyval(const F *c, usize n, micron::__type_identity_t&lt;F&gt; x) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L51">line 51</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+polyval(const F *c, usize n, micron::__type_identity_t&lt;F&gt; x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *c</code></li><li><code>usize n</code></li><li><code>micron::__type_identity_t&lt;F&gt; x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+polyval(const F *c, usize n, micron::__type_identity_t&lt;F&gt; x) noexcept
+{
+  if ( n == 0 ) return F(0);
+  const F *__restrict__ p = c;
+  const F *__restrict__ end = p + n;
+  F acc = *p++;
+  while ( p != end ) acc = math::fma&lt;F&gt;(acc, F(x), *p++);
+  return acc;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>acc</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L58">line 58</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-152cecf006baf2f9"><h3><code>micron::math::linalg::poly::polyder(const dynvec&lt;F&gt; &amp;c) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L64">line 64</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+polyder(const dynvec&lt;F&gt; &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynvec&lt;F&gt; &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+polyder(const dynvec&lt;F&gt; &amp;c) noexcept
+{
+  const usize N = c.size();
+  if ( N &lt;= 1 ) return dynvec&lt;F&gt;::zero(0);
+  dynvec&lt;F&gt; r(N - 1);
+  const F *__restrict__ src = c.data();
+  F *__restrict__ dst = r.data();
+  const usize deg = N - 1;
+  for ( usize i = 0; i &lt; deg; ++i ) *dst++ = F(deg - i) * *src++;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dynvec&lt;F&gt;::zero(0)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L67">line 67</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../quants/dynvec.hpp.html#f-1579cda0b5f5c46b">dynvec&lt;F&gt;::zero</a>.</p></section><section class="function-entry" id="f-bfa9006522786daa"><h3><code>micron::math::linalg::poly::polyint(const dynvec&lt;F&gt; &amp;c, micron::__type_identity_t&lt;F&gt; k0 = F(0)) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L79">line 79</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+polyint(const dynvec&lt;F&gt; &amp;c, micron::__type_identity_t&lt;F&gt; k0 = F(0)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynvec&lt;F&gt; &amp;c</code></li><li><code>micron::__type_identity_t&lt;F&gt; k0 = F(0)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+polyint(const dynvec&lt;F&gt; &amp;c, micron::__type_identity_t&lt;F&gt; k0 = F(0)) noexcept
+{
+  const usize N = c.size();
+  dynvec&lt;F&gt; r(N + 1);
+  const F *__restrict__ src = c.data();
+  F *__restrict__ dst = r.data();
+  const usize new_deg = N;
+  for ( usize i = 0; i &lt; N; ++i ) *dst++ = *src++ / F(new_deg - i);
+  *dst = k0;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L88">line 88</a></td></tr></tbody></table></section><section class="function-entry" id="f-de467b914ab4fedb"><h3><code>micron::math::linalg::poly::polyfit(const dynvec&lt;F&gt; &amp;x, const dynvec&lt;F&gt; &amp;y, usize deg) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L94">line 94</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+polyfit(const dynvec&lt;F&gt; &amp;x, const dynvec&lt;F&gt; &amp;y, usize deg) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynvec&lt;F&gt; &amp;x</code></li><li><code>const dynvec&lt;F&gt; &amp;y</code></li><li><code>usize deg</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline dynvec&lt;F&gt;
+polyfit(const dynvec&lt;F&gt; &amp;x, const dynvec&lt;F&gt; &amp;y, usize deg) noexcept
+{
+  const usize n = x.size();
+  const usize m = deg + 1;
+  dynmat&lt;F&gt; V(n, m);
+  const F *__restrict__ xp = x.data();
+  for ( usize i = 0; i &lt; n; ++i ) {
+    F xi = xp[i];
+    F p = F(1);
+    F *__restrict__ row = V.data() + i * V.ld;
+    F *__restrict__ rev = row + (m - 1);
+    for ( usize j = 0; j &lt; m; ++j ) {
+      *rev-- = p;
+      p *= xi;
+    }
+  }
+
+  auto qr = decomp::qr_householder(V);
+  dynvec&lt;F&gt; qty(n, F(0));
+  const F *__restrict__ yp = y.data();
+  for ( usize i = 0; i &lt; n; ++i ) {
+    F s = F(0);
+    const F *__restrict__ qcol = qr.Q.data() + i;
+    for ( usize k = 0; k &lt; n; ++k ) s = math::fma&lt;F&gt;(qcol[k * qr.Q.ld], yp[k], s);
+    qty[i] = s;
+  }
+  dynvec&lt;F&gt; c(m);
+  for ( usize ii = m; ii-- &gt; 0; ) {
+    F s = qty[ii];
+    const F *__restrict__ row = qr.R.data() + ii * qr.R.ld;
+    for ( usize j = ii + 1; j &lt; m; ++j ) s = math::fma&lt;F&gt;(-row[j], c[j], s);
+    c[ii] = s / row[ii];
+  }
+  return c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L127">line 127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="decomp.hpp.html#f-ceb5e478ecd60054">decomp::qr_householder</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-29fbba32fa79b158"><h3><code>micron::math::linalg::poly::roots(const dynvec&lt;F&gt; &amp;c) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline roots_result&lt;F&gt;
+roots(const dynvec&lt;F&gt; &amp;c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynvec&lt;F&gt; &amp;c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline roots_result&lt;F&gt;
+roots(const dynvec&lt;F&gt; &amp;c) noexcept
+{
+  usize lead = 0;
+  while ( lead &lt; c.size() &amp;&amp; c[lead] == F(0) ) ++lead;
+  const usize n_eff = (c.size() &gt; lead) ? (c.size() - lead - 1) : 0;
+  roots_result&lt;F&gt; r{ dynvec&lt;F&gt;(n_eff), dynvec&lt;F&gt;(n_eff), true };
+  if ( n_eff == 0 ) return r;
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; a(n_eff);
+  const F *__restrict__ cp = c.data() + lead;
+  const F inv_lead = F(1) / cp[0];
+  F *__restrict__ ap = a.data();
+  for ( usize k = 0; k &lt; n_eff; ++k ) ap[k] = cp[n_eff - k] * inv_lead;
+  r.converged = __impl_poly::dispatch_fixed_companion_eigen&lt;F&gt;(n_eff, ap, r.re.data(), r.im.data());
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L217">line 217</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L224">line 224</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="types.hpp.html#s-cfcae647c74796da">dynvec&lt;F&gt;</a>, <a href="poly.hpp.html#f-ebccb1da7d1a9d09">__impl_poly::dispatch_fixed_companion_eigen&lt;F&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-3357c7566ce8ced9"><h3><code>micron::math::linalg::poly::__impl_poly::companion_fixed(const F *a) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L142">line 142</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline mat&lt;F, N, N&gt;
+companion_fixed(const F *a) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline mat&lt;F, N, N&gt;
+companion_fixed(const F *a) noexcept
+{
+  mat&lt;F, N, N&gt; C = mat&lt;F, N, N&gt;::zero();
+  if constexpr ( N &gt;= 2 ) {
+    for ( usize i = 1; i &lt; N; ++i ) C.data[i * N + (i - 1)] = F(1);
+  }
+  for ( usize i = 0; i &lt; N; ++i ) C.data[i * N + (N - 1)] = -a[i];
+  return C;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>C</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L149">line 149</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, N, N&gt;::zero</a>.</p></section><section class="function-entry" id="f-a623ba0af6edc6cb"><h3><code>micron::math::linalg::poly::__impl_poly::fixed_companion_eigen(const F *a, F *re, F *im) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L154">line 154</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+inline bool
+fixed_companion_eigen(const F *a, F *re, F *im) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *a</code></li><li><code>F *re</code></li><li><code>F *im</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+inline bool
+fixed_companion_eigen(const F *a, F *re, F *im) noexcept
+{
+  if constexpr ( N == 1 ) {
+    re[0] = -a[0];
+    im[0] = F(0);
+    return true;
+  } else {
+    auto C = companion_fixed&lt;F, N&gt;(a);
+    auto er = decomp::eigen&lt;F, N&gt;(C);
+    F *__restrict__ rep = re;
+    F *__restrict__ imp = im;
+    const F *__restrict__ vre = er.values_re.data;
+    const F *__restrict__ vim = er.values_im.data;
+    for ( usize i = 0; i &lt; N; ++i ) {
+      rep[i] = vre[i];
+      imp[i] = vim[i];
+    }
+    return er.converged;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L159">line 159</a></td></tr><tr class="t-dsc"><td><code>er.converged</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L171">line 171</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="poly.hpp.html#f-3357c7566ce8ced9">companion_fixed&lt;F, N&gt;</a>, <a href="decomp_ext.hpp.html#f-9c747d4ca517dc5d">decomp::eigen&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-ebccb1da7d1a9d09"><h3><code>micron::math::linalg::poly::__impl_poly::dispatch_fixed_companion_eigen(usize n, const F *a, F *re, F *im) noexcept</code></h3><p>Defined in <code>math/linalg/poly.hpp</code>, <a href="../../../source/math/linalg/poly.hpp.html#L177">line 177</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline bool
+dispatch_fixed_companion_eigen(usize n, const F *a, F *re, F *im) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>const F *a</code></li><li><code>F *re</code></li><li><code>F *im</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline bool
+dispatch_fixed_companion_eigen(usize n, const F *a, F *re, F *im) noexcept
+{
+  switch ( n ) {
+  case 1:
+    return fixed_companion_eigen&lt;F, 1&gt;(a, re, im);
+  case 2:
+    return fixed_companion_eigen&lt;F, 2&gt;(a, re, im);
+  case 3:
+    return fixed_companion_eigen&lt;F, 3&gt;(a, re, im);
+  case 4:
+    return fixed_companion_eigen&lt;F, 4&gt;(a, re, im);
+  case 5:
+    return fixed_companion_eigen&lt;F, 5&gt;(a, re, im);
+  case 6:
+    return fixed_companion_eigen&lt;F, 6&gt;(a, re, im);
+  case 7:
+    return fixed_companion_eigen&lt;F, 7&gt;(a, re, im);
+  case 8:
+    return fixed_companion_eigen&lt;F, 8&gt;(a, re, im);
+  case 9:
+    return fixed_companion_eigen&lt;F, 9&gt;(a, re, im);
+  case 10:
+    return fixed_companion_eigen&lt;F, 10&gt;(a, re, im);
+  case 11:
+    return fixed_companion_eigen&lt;F, 11&gt;(a, re, im);
+  default:
+    return false;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 1&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L181">line 181</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 2&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L183">line 183</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 3&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L185">line 185</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 4&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 5&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L189">line 189</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 6&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L191">line 191</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 7&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L193">line 193</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 8&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L195">line 195</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 9&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L197">line 197</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 10&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L199">line 199</a></td></tr><tr class="t-dsc"><td><code>fixed_companion_eigen&lt;F, 11&gt;(a, re, im)</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L201">line 201</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/linalg/poly.hpp.html#L203">line 203</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 1&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 2&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 3&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 4&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 5&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 6&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 7&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 8&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 9&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 10&gt;</a>, <a href="poly.hpp.html#f-a623ba0af6edc6cb">fixed_companion_eigen&lt;F, 11&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

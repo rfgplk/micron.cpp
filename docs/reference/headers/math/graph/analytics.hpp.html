@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/analytics.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/analytics.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/analytics.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/analytics.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-6b53b5020ea3ef07">micron::math::graphs::iterative_scores_result</code></td><td>struct; line 127</td></tr><tr class="t-dsc"><td><code id="s-ae259cbff03d2f37">micron::math::graphs::iterative_scores_result::status</code></td><td>member; line 128</td></tr><tr class="t-dsc"><td><code id="s-c7491b1ca2a44e75">micron::math::graphs::iterative_scores_result::iterations</code></td><td>member; line 129</td></tr><tr class="t-dsc"><td><code id="s-40db0844dfb53e34">micron::math::graphs::iterative_scores_result::residual</code></td><td>member; line 130</td></tr><tr class="t-dsc"><td><code id="s-062c08a8ac053bb2">micron::math::graphs::iterative_scores_result::score</code></td><td>member; line 131</td></tr><tr class="t-dsc"><td><code id="s-d6ae37d8d5f5d3fe">micron::math::graphs::hits_result</code></td><td>struct; line 174</td></tr><tr class="t-dsc"><td><code id="s-957018acd36f2b93">micron::math::graphs::hits_result::status</code></td><td>member; line 175</td></tr><tr class="t-dsc"><td><code id="s-ca78c7b3644e4524">micron::math::graphs::hits_result::iterations</code></td><td>member; line 176</td></tr><tr class="t-dsc"><td><code id="s-102770ab31906866">micron::math::graphs::hits_result::residual</code></td><td>member; line 177</td></tr><tr class="t-dsc"><td><code id="s-56ca0b6fa3f6d1b2">micron::math::graphs::hits_result::hubs</code></td><td>member; line 178</td></tr><tr class="t-dsc"><td><code id="s-2b1559ddb0162812">micron::math::graphs::hits_result::authorities</code></td><td>member; line 179</td></tr><tr class="t-dsc"><td><code id="s-9c5fca3abba3009f">micron::math::graphs::distance_extrema_result</code></td><td>struct; line 344</td></tr><tr class="t-dsc"><td><code id="s-8ac92c4b6c00295d">micron::math::graphs::distance_extrema_result::status</code></td><td>member; line 345</td></tr><tr class="t-dsc"><td><code id="s-9a260ee43a23c2e1">micron::math::graphs::distance_extrema_result::radius</code></td><td>member; line 346</td></tr><tr class="t-dsc"><td><code id="s-fa7f3d5c97424c7d">micron::math::graphs::distance_extrema_result::diameter</code></td><td>member; line 347</td></tr><tr class="t-dsc"><td><code id="s-02f4d56d3c33269f">micron::math::graphs::distance_extrema_result::eccentricity</code></td><td>member; line 348</td></tr><tr class="t-dsc"><td><code id="s-265d22eab42f8fa8">micron::math::graphs::distance_extrema_result::centers</code></td><td>member; line 349</td></tr><tr class="t-dsc"><td><a href="#f-b8109d235e288b91">micron::math::graphs::density(const G &amp;graph) noexcept</a></td><td>function; line 16</td></tr><tr class="t-dsc"><td><a href="#f-10f732f43086d415">micron::math::graphs::degree_distribution(const G &amp;graph)</a></td><td>function; line 30</td></tr><tr class="t-dsc"><td><a href="#f-4f5686ba9bdf6307">micron::math::graphs::common_neighbors(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</a></td><td>function; line 42</td></tr><tr class="t-dsc"><td><a href="#f-531f6c080d9f41b8">micron::math::graphs::triangles(const G &amp;graph)</a></td><td>function; line 66</td></tr><tr class="t-dsc"><td><a href="#f-bb978daa8e067ca5">micron::math::graphs::clustering(const G &amp;graph, typename G::vertex_descriptor vertex)</a></td><td>function; line 83</td></tr><tr class="t-dsc"><td><a href="#f-8a3e0d63b394e331">micron::math::graphs::clustering(const G &amp;graph)</a></td><td>function; line 96</td></tr><tr class="t-dsc"><td><a href="#f-5c8f91a06ae2b628">micron::math::graphs::transitivity(const G &amp;graph)</a></td><td>function; line 105</td></tr><tr class="t-dsc"><td><a href="#f-1e97d64672284679">micron::math::graphs::reciprocity(const G &amp;graph)</a></td><td>function; line 117</td></tr><tr class="t-dsc"><td><a href="#f-69e3c540a8e7bd29">micron::math::graphs::pagerank(const G &amp;graph, f64 damping = 0.85, f64 tolerance = 1e-10, usize max_iterations = 100)</a></td><td>function; line 136</td></tr><tr class="t-dsc"><td><a href="#f-a39aea535c738339">micron::math::graphs::hits(const G &amp;graph, f64 tolerance = 1e-10, usize max_iterations = 100)</a></td><td>function; line 184</td></tr><tr class="t-dsc"><td><a href="#f-9a9998115e5a80e2">micron::math::graphs::degree_centrality(const G &amp;graph)</a></td><td>function; line 242</td></tr><tr class="t-dsc"><td><a href="#f-72e5314f8b358f7f">micron::math::graphs::closeness_centrality(const G &amp;graph)</a></td><td>function; line 254</td></tr><tr class="t-dsc"><td><a href="#f-7b06b224c42cfb90">micron::math::graphs::harmonic_centrality(const G &amp;graph)</a></td><td>function; line 273</td></tr><tr class="t-dsc"><td><a href="#f-6a62aa9f260b31e5">micron::math::graphs::betweenness_centrality(const G &amp;graph, bool normalized = true)</a></td><td>function; line 291</td></tr><tr class="t-dsc"><td><a href="#f-254ae186d3b6d5a7">micron::math::graphs::distance_extrema(const G &amp;graph)</a></td><td>function; line 354</td></tr><tr class="t-dsc"><td><a href="#f-364403f31d047aa8">micron::math::graphs::core_numbers(const G &amp;graph)</a></td><td>function; line 382</td></tr><tr class="t-dsc"><td><a href="#f-69d90fde0bf795cd">micron::math::graphs::jaccard_coefficient(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</a></td><td>function; line 416</td></tr><tr class="t-dsc"><td><a href="#f-50bbf7b0ebf692bd">micron::math::graphs::global_efficiency(const G &amp;graph)</a></td><td>function; line 425</td></tr><tr class="t-dsc"><td><a href="#f-06e2d214fc8b99db">micron::math::graphs::degree_assortativity(const G &amp;graph)</a></td><td>function; line 443</td></tr><tr class="t-dsc"><td><a href="#f-f9e86d6701d68ad4">micron::math::graphs::average_clustering(const G &amp;graph)</a></td><td>function; line 476</td></tr><tr class="t-dsc"><td><a href="#f-2c5ba7c240a979c8">micron::math::graphs::eigenvector_centrality(const G &amp;graph, f64 tolerance = 1e-10, usize max_iterations = 100)</a></td><td>function; line 486</td></tr><tr class="t-dsc"><td><a href="#f-840401862b3afaa6">micron::math::graphs::katz_centrality(const G &amp;graph, f64 alpha = 0.1, f64 beta = 1.0, f64 tolerance = 1e-10, usize max_iterations = 100)</a></td><td>function; line 527</td></tr><tr class="t-dsc"><td><a href="#f-712b496396a8df89">micron::math::graphs::k_core_vertices(const G &amp;graph, usize k)</a></td><td>function; line 567</td></tr><tr class="t-dsc"><td><a href="#f-61851c49ab01edc3">micron::math::graphs::k_shell_vertices(const G &amp;graph, usize k)</a></td><td>function; line 578</td></tr><tr class="t-dsc"><td><a href="#f-ff3644dba3c7bd9b">micron::math::graphs::rich_club_coefficient(const G &amp;graph, usize degree_threshold)</a></td><td>function; line 589</td></tr><tr class="t-dsc"><td><a href="#f-34b8720ecd994a0a">micron::math::graphs::adamic_adar_index(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</a></td><td>function; line 608</td></tr><tr class="t-dsc"><td><a href="#f-5d330d84fdba3417">micron::math::graphs::preferential_attachment_score(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</a></td><td>function; line 622</td></tr><tr class="t-dsc"><td><a href="#f-c5e9d349f6710b53">micron::math::graphs::resource_allocation_index(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</a></td><td>function; line 629</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-b8109d235e288b91"><h3><code>micron::math::graphs::density(const G &amp;graph) noexcept</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L16">line 16</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+density(const G &amp;graph) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+density(const G &amp;graph) noexcept
+{
+  const usize n = graph.vertices_count();
+  if ( n &lt; 2 &amp;&amp; !G::allows_loops ) return f64(0);
+  usize possible{};
+  if constexpr ( G::allows_loops )
+    possible = G::is_directed ? n * n : n * (n + 1) / 2;
+  else
+    possible = G::is_directed ? n * (n - 1) : n * (n - 1) / 2;
+  return possible ? static_cast&lt;f64&gt;(graph.edges_count()) / static_cast&lt;f64&gt;(possible) : f64(0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L19">line 19</a></td></tr><tr class="t-dsc"><td><code>possible ? static_cast&lt;f64&gt;(graph.edges_count()) / static_cast&lt;f64&gt;(possible) : f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L25">line 25</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-10f732f43086d415"><h3><code>micron::math::graphs::degree_distribution(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L30">line 30</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;
+degree_distribution(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;
+degree_distribution(const G &amp;graph)
+{
+  usize maximum = 0;
+  for ( auto vertex : graph.vertices() )
+    if ( graph.degree(vertex) &gt; maximum ) maximum = graph.degree(vertex);
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; result(maximum + 1, usize(0));
+  for ( auto vertex : graph.vertices() ) ++result.data()[graph.degree(vertex)];
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L37">line 37</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><section class="function-entry" id="f-4f5686ba9bdf6307"><h3><code>micron::math::graphs::common_neighbors(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L42">line 42</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] usize
+common_neighbors(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor a</code></li><li><code>typename G::vertex_descriptor b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] usize
+common_neighbors(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)
+{
+  if ( !graph.has_vertex(a) || !graph.has_vertex(b) ) return 0;
+  if constexpr ( bitset_neighbor_graph&lt;G&gt; ) {
+    const auto left = graph.neighbor_words(a);
+    const auto right = graph.neighbor_words(b);
+    const usize words = left.words &lt; right.words ? left.words : right.words;
+    usize result = 0;
+    for ( usize word = 0; word &lt; words; ++word ) result += static_cast&lt;usize&gt;(__builtin_popcountll(left.data[word] &amp; right.data[word]));
+    return result;
+  }
+  usize result = 0;
+  if constexpr ( matrix_adjacency_graph&lt;G&gt; ) {
+    for ( auto neighbor : graph.out_neighbors(a) )
+      if ( graph.matrix_has_edge(b, neighbor) || (!G::is_directed &amp;&amp; graph.matrix_has_edge(neighbor, b)) ) ++result;
+  } else {
+    for ( auto neighbor : graph.out_neighbors(a) )
+      if ( graph.has_edge(b, neighbor) || (!G::is_directed &amp;&amp; graph.has_edge(neighbor, b)) ) ++result;
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L44">line 44</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L51">line 51</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L61">line 61</a></td></tr></tbody></table></section><section class="function-entry" id="f-531f6c080d9f41b8"><h3><code>micron::math::graphs::triangles(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L66">line 66</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] usize
+triangles(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] usize
+triangles(const G &amp;graph)
+{
+  usize count = 0;
+  for ( auto u : graph.vertices() ) {
+    for ( auto v : graph.out_neighbors(u) ) {
+      if ( v.value &lt;= u.value ) continue;
+      for ( auto w : graph.out_neighbors(v) ) {
+        if ( w.value &lt;= v.value ) continue;
+        if ( graph.has_edge(u, w) ) ++count;
+      }
+    }
+  }
+  return count;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>count</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L78">line 78</a></td></tr></tbody></table></section><section class="function-entry" id="f-bb978daa8e067ca5"><h3><code>micron::math::graphs::clustering(const G &amp;graph, typename G::vertex_descriptor vertex)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L83">line 83</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+clustering(const G &amp;graph, typename G::vertex_descriptor vertex)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor vertex</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+clustering(const G &amp;graph, typename G::vertex_descriptor vertex)
+{
+  const usize degree = graph.out_degree(vertex);
+  if ( degree &lt; 2 ) return f64(0);
+  usize links = 0;
+  for ( auto a : graph.out_neighbors(vertex) )
+    for ( auto b : graph.out_neighbors(vertex) )
+      if ( a.value &lt; b.value &amp;&amp; (graph.has_edge(a, b) || graph.has_edge(b, a)) ) ++links;
+  return (f64(2) * static_cast&lt;f64&gt;(links)) / static_cast&lt;f64&gt;(degree * (degree - 1));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>(f64(2) * static_cast&lt;f64&gt;(links)) / static_cast&lt;f64&gt;(degree * (degree - 1))</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L91">line 91</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-8a3e0d63b394e331"><h3><code>micron::math::graphs::clustering(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L96">line 96</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+clustering(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+clustering(const G &amp;graph)
+{
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; result(graph.vertex_slots(), f64(0));
+  for ( auto vertex : graph.vertices() ) result.data()[static_cast&lt;usize&gt;(vertex.value)] = clustering(graph, vertex);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L100">line 100</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="analytics.hpp.html#f-bb978daa8e067ca5">clustering</a>.</p></section><section class="function-entry" id="f-5c8f91a06ae2b628"><h3><code>micron::math::graphs::transitivity(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L105">line 105</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+transitivity(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+transitivity(const G &amp;graph)
+{
+  usize triples = 0;
+  for ( auto vertex : graph.vertices() ) {
+    const usize degree = graph.out_degree(vertex);
+    triples += degree * (degree - 1) / 2;
+  }
+  return triples ? f64(3) * static_cast&lt;f64&gt;(triangles(graph)) / static_cast&lt;f64&gt;(triples) : f64(0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>triples ? f64(3) * static_cast&lt;f64&gt;(triangles(graph)) / static_cast&lt;f64&gt;(triples) : f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="analytics.hpp.html#f-531f6c080d9f41b8">triangles</a>.</p></section><section class="function-entry" id="f-1e97d64672284679"><h3><code>micron::math::graphs::reciprocity(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L117">line 117</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+reciprocity(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+reciprocity(const G &amp;graph)
+{
+  if constexpr ( !G::is_directed ) return graph.edges_count() ? f64(1) : f64(0);
+  if ( graph.edges_count() == 0 ) return f64(0);
+  usize reciprocal = 0;
+  for ( auto edge : graph.edges() )
+    if ( graph.has_edge(edge.target, edge.source) ) ++reciprocal;
+  return static_cast&lt;f64&gt;(reciprocal) / static_cast&lt;f64&gt;(graph.edges_count());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>graph.edges_count() ? f64(1) : f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;f64&gt;(reciprocal) / static_cast&lt;f64&gt;(graph.edges_count())</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L124">line 124</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-69e3c540a8e7bd29"><h3><code>micron::math::graphs::pagerank(const G &amp;graph, f64 damping = 0.85, f64 tolerance = 1e-10, usize max_iterations = 100)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L136">line 136</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] iterative_scores_result&lt;f64&gt;
+pagerank(const G &amp;graph, f64 damping = 0.85, f64 tolerance = 1e-10, usize max_iterations = 100)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>f64 damping = 0.85</code></li><li><code>f64 tolerance = 1e-10</code></li><li><code>usize max_iterations = 100</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] iterative_scores_result&lt;f64&gt;
+pagerank(const G &amp;graph, f64 damping = 0.85, f64 tolerance = 1e-10, usize max_iterations = 100)
+{
+  iterative_scores_result&lt;f64&gt; result;
+  const usize n = graph.vertices_count();
+  result.score = micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), f64(0));
+  if ( n == 0 ) return result;
+  const f64 initial = f64(1) / static_cast&lt;f64&gt;(n);
+  for ( auto vertex : graph.vertices() ) result.score.data()[static_cast&lt;usize&gt;(vertex.value)] = initial;
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; next(graph.vertex_slots(), f64(0));
+  for ( usize iteration = 0; iteration &lt; max_iterations; ++iteration ) {
+    f64 dangling = 0;
+    for ( auto vertex : graph.vertices() )
+      if ( graph.out_degree(vertex) == 0 ) dangling += result.score.data()[static_cast&lt;usize&gt;(vertex.value)];
+    const f64 base = (f64(1) - damping) / static_cast&lt;f64&gt;(n) + damping * dangling / static_cast&lt;f64&gt;(n);
+    next.fill(f64(0));
+    for ( auto vertex : graph.vertices() ) next.data()[static_cast&lt;usize&gt;(vertex.value)] = base;
+    for ( auto u : graph.vertices() ) {
+      const usize degree = graph.out_degree(u);
+      if ( degree == 0 ) continue;
+      const f64 share = damping * result.score.data()[static_cast&lt;usize&gt;(u.value)] / static_cast&lt;f64&gt;(degree);
+      for ( auto v : graph.out_neighbors(u) ) next.data()[static_cast&lt;usize&gt;(v.value)] += share;
+    }
+    f64 residual = 0;
+    for ( auto vertex : graph.vertices() ) {
+      const usize slot = static_cast&lt;usize&gt;(vertex.value);
+      f64 delta = next.data()[slot] - result.score.data()[slot];
+      if ( delta &lt; 0 ) delta = -delta;
+      residual += delta;
+      result.score.data()[slot] = next.data()[slot];
+    }
+    result.iterations = iteration + 1;
+    result.residual = residual;
+    if ( residual &lt;= tolerance ) return result;
+  }
+  result.status = algorithm_status::non_convergent;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L168">line 168</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L171">line 171</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-a39aea535c738339"><h3><code>micron::math::graphs::hits(const G &amp;graph, f64 tolerance = 1e-10, usize max_iterations = 100)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L184">line 184</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] hits_result&lt;f64&gt;
+hits(const G &amp;graph, f64 tolerance = 1e-10, usize max_iterations = 100)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>f64 tolerance = 1e-10</code></li><li><code>usize max_iterations = 100</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] hits_result&lt;f64&gt;
+hits(const G &amp;graph, f64 tolerance = 1e-10, usize max_iterations = 100)
+{
+  hits_result&lt;f64&gt; result;
+  const usize n = graph.vertices_count();
+  result.hubs = micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), f64(0));
+  result.authorities = micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), f64(0));
+  if ( n == 0 ) return result;
+  for ( auto vertex : graph.vertices() ) {
+    result.hubs.data()[static_cast&lt;usize&gt;(vertex.value)] = f64(1);
+    result.authorities.data()[static_cast&lt;usize&gt;(vertex.value)] = f64(1);
+  }
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; next_hub(graph.vertex_slots(), f64(0));
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; next_auth(graph.vertex_slots(), f64(0));
+  for ( usize iteration = 0; iteration &lt; max_iterations; ++iteration ) {
+    next_hub.fill(f64(0));
+    next_auth.fill(f64(0));
+    for ( auto edge : graph.edges() ) {
+      next_auth.data()[static_cast&lt;usize&gt;(edge.target.value)] += result.hubs.data()[static_cast&lt;usize&gt;(edge.source.value)];
+      next_hub.data()[static_cast&lt;usize&gt;(edge.source.value)] += result.authorities.data()[static_cast&lt;usize&gt;(edge.target.value)];
+      if constexpr ( !G::is_directed ) {
+        next_auth.data()[static_cast&lt;usize&gt;(edge.source.value)] += result.hubs.data()[static_cast&lt;usize&gt;(edge.target.value)];
+        next_hub.data()[static_cast&lt;usize&gt;(edge.target.value)] += result.authorities.data()[static_cast&lt;usize&gt;(edge.source.value)];
+      }
+    }
+    f64 hub_norm = 0;
+    f64 auth_norm = 0;
+    for ( auto vertex : graph.vertices() ) {
+      const usize slot = static_cast&lt;usize&gt;(vertex.value);
+      hub_norm += next_hub.data()[slot] * next_hub.data()[slot];
+      auth_norm += next_auth.data()[slot] * next_auth.data()[slot];
+    }
+    hub_norm = __builtin_sqrt(hub_norm);
+    auth_norm = __builtin_sqrt(auth_norm);
+    if ( hub_norm == 0 ) hub_norm = 1;
+    if ( auth_norm == 0 ) auth_norm = 1;
+    f64 residual = 0;
+    for ( auto vertex : graph.vertices() ) {
+      const usize slot = static_cast&lt;usize&gt;(vertex.value);
+      next_hub.data()[slot] /= hub_norm;
+      next_auth.data()[slot] /= auth_norm;
+      f64 dh = next_hub.data()[slot] - result.hubs.data()[slot];
+      f64 da = next_auth.data()[slot] - result.authorities.data()[slot];
+      if ( dh &lt; 0 ) dh = -dh;
+      if ( da &lt; 0 ) da = -da;
+      residual += dh + da;
+      result.hubs.data()[slot] = next_hub.data()[slot];
+      result.authorities.data()[slot] = next_auth.data()[slot];
+    }
+    result.iterations = iteration + 1;
+    result.residual = residual;
+    if ( residual &lt;= tolerance ) return result;
+  }
+  result.status = algorithm_status::non_convergent;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L190">line 190</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L234">line 234</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L237">line 237</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-9a9998115e5a80e2"><h3><code>micron::math::graphs::degree_centrality(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L242">line 242</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+degree_centrality(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+degree_centrality(const G &amp;graph)
+{
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; result(graph.vertex_slots(), f64(0));
+  const usize n = graph.vertices_count();
+  if ( n &lt; 2 ) return result;
+  for ( auto vertex : graph.vertices() )
+    result.data()[static_cast&lt;usize&gt;(vertex.value)] = static_cast&lt;f64&gt;(graph.degree(vertex)) / static_cast&lt;f64&gt;(n - 1);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L246">line 246</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L249">line 249</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-72e5314f8b358f7f"><h3><code>micron::math::graphs::closeness_centrality(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L254">line 254</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+closeness_centrality(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+closeness_centrality(const G &amp;graph)
+{
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; result(graph.vertex_slots(), f64(0));
+  for ( auto source : graph.vertices() ) {
+    auto paths = unweighted_shortest_paths(graph, source);
+    usize reached = 0;
+    usize sum = 0;
+    for ( auto target : graph.vertices() ) {
+      if ( target == source || !paths.contains(target) ) continue;
+      ++reached;
+      sum += paths.distance.data()[static_cast&lt;usize&gt;(target.value)];
+    }
+    if ( sum ) result.data()[static_cast&lt;usize&gt;(source.value)] = static_cast&lt;f64&gt;(reached) / static_cast&lt;f64&gt;(sum);
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L268">line 268</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="paths.hpp.html#f-dc6c7c79756173cd">unweighted_shortest_paths</a>.</p></section><section class="function-entry" id="f-7b06b224c42cfb90"><h3><code>micron::math::graphs::harmonic_centrality(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L273">line 273</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+harmonic_centrality(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+harmonic_centrality(const G &amp;graph)
+{
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; result(graph.vertex_slots(), f64(0));
+  for ( auto source : graph.vertices() ) {
+    auto paths = unweighted_shortest_paths(graph, source);
+    f64 sum = 0;
+    for ( auto target : graph.vertices() ) {
+      if ( target == source || !paths.contains(target) ) continue;
+      const usize distance = paths.distance.data()[static_cast&lt;usize&gt;(target.value)];
+      if ( distance ) sum += f64(1) / static_cast&lt;f64&gt;(distance);
+    }
+    result.data()[static_cast&lt;usize&gt;(source.value)] = sum;
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L286">line 286</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="paths.hpp.html#f-dc6c7c79756173cd">unweighted_shortest_paths</a>.</p></section><section class="function-entry" id="f-6a62aa9f260b31e5"><h3><code>micron::math::graphs::betweenness_centrality(const G &amp;graph, bool normalized = true)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L291">line 291</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+betweenness_centrality(const G &amp;graph, bool normalized = true)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>bool normalized = true</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;
+betweenness_centrality(const G &amp;graph, bool normalized = true)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  const usize slots = graph.vertex_slots();
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; centrality(slots, f64(0));
+  using predecessor_vector = micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt;;
+  for ( auto source : graph.vertices() ) {
+    micron::vector&lt;predecessor_vector, micron::allocator_serial&lt;&gt;, false&gt; predecessors(slots);
+    micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; sigma(slots, f64(0));
+    micron::vector&lt;max_t, micron::allocator_serial&lt;&gt;, false&gt; distance(slots, max_t(-1));
+    micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; queue;
+    micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; stack;
+    sigma.data()[static_cast&lt;usize&gt;(source.value)] = f64(1);
+    distance.data()[static_cast&lt;usize&gt;(source.value)] = 0;
+    queue.push_back(source);
+    usize head = 0;
+    while ( head &lt; queue.size() ) {
+      const vertex_descriptor u = queue.data()[head++];
+      stack.push_back(u);
+      for ( auto v : graph.out_neighbors(u) ) {
+        const usize vs = static_cast&lt;usize&gt;(v.value);
+        if ( distance.data()[vs] &lt; 0 ) {
+          distance.data()[vs] = distance.data()[static_cast&lt;usize&gt;(u.value)] + 1;
+          queue.push_back(v);
+        }
+        if ( distance.data()[vs] == distance.data()[static_cast&lt;usize&gt;(u.value)] + 1 ) {
+          sigma.data()[vs] += sigma.data()[static_cast&lt;usize&gt;(u.value)];
+          predecessors.data()[vs].push_back(u);
+        }
+      }
+    }
+    micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; dependency(slots, f64(0));
+    while ( !stack.empty() ) {
+      const vertex_descriptor w = stack.data()[stack.size() - 1];
+      stack.pop_back();
+      const usize ws = static_cast&lt;usize&gt;(w.value);
+      for ( auto v : predecessors.data()[ws] ) {
+        const usize vs = static_cast&lt;usize&gt;(v.value);
+        if ( sigma.data()[ws] != 0 ) dependency.data()[vs] += sigma.data()[vs] / sigma.data()[ws] * (f64(1) + dependency.data()[ws]);
+      }
+      if ( w != source ) centrality.data()[ws] += dependency.data()[ws];
+    }
+  }
+  if constexpr ( !G::is_directed )
+    for ( auto vertex : graph.vertices() ) centrality.data()[static_cast&lt;usize&gt;(vertex.value)] *= f64(0.5);
+  if ( normalized &amp;&amp; graph.vertices_count() &gt; 2 ) {
+    const f64 scale = G::is_directed ? f64(1) / static_cast&lt;f64&gt;((graph.vertices_count() - 1) * (graph.vertices_count() - 2))
+                                     : f64(2) / static_cast&lt;f64&gt;((graph.vertices_count() - 1) * (graph.vertices_count() - 2));
+    for ( auto vertex : graph.vertices() ) centrality.data()[static_cast&lt;usize&gt;(vertex.value)] *= scale;
+  }
+  return centrality;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>centrality</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L341">line 341</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="../../types.hpp.html#s-66025c3768325240">max_t</a>.</p></section><section class="function-entry" id="f-254ae186d3b6d5a7"><h3><code>micron::math::graphs::distance_extrema(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L354">line 354</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] distance_extrema_result&lt;typename G::index_type&gt;
+distance_extrema(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] distance_extrema_result&lt;typename G::index_type&gt;
+distance_extrema(const G &amp;graph)
+{
+  distance_extrema_result&lt;typename G::index_type&gt; result;
+  result.eccentricity = micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), usize(0));
+  bool first = true;
+  for ( auto source : graph.vertices() ) {
+    auto paths = unweighted_shortest_paths(graph, source);
+    usize eccentricity = 0;
+    for ( auto target : graph.vertices() ) {
+      if ( !paths.contains(target) ) {
+        result.status = algorithm_status::disconnected;
+        return result;
+      }
+      const usize distance = paths.distance.data()[static_cast&lt;usize&gt;(target.value)];
+      if ( distance &gt; eccentricity ) eccentricity = distance;
+    }
+    result.eccentricity.data()[static_cast&lt;usize&gt;(source.value)] = eccentricity;
+    if ( first || eccentricity &lt; result.radius ) result.radius = eccentricity;
+    if ( first || eccentricity &gt; result.diameter ) result.diameter = eccentricity;
+    first = false;
+  }
+  for ( auto vertex : graph.vertices() )
+    if ( result.eccentricity.data()[static_cast&lt;usize&gt;(vertex.value)] == result.radius ) result.centers.push_back(vertex);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L365">line 365</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L377">line 377</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="paths.hpp.html#f-dc6c7c79756173cd">unweighted_shortest_paths</a>.</p></section><section class="function-entry" id="f-364403f31d047aa8"><h3><code>micron::math::graphs::core_numbers(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L382">line 382</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;
+core_numbers(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt;
+core_numbers(const G &amp;graph)
+{
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; core(graph.vertex_slots(), usize(0));
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; degree(graph.vertex_slots(), usize(0));
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; active(graph.vertex_slots(), u8(0));
+  for ( auto vertex : graph.vertices() ) {
+    const usize slot = static_cast&lt;usize&gt;(vertex.value);
+    active.data()[slot] = 1;
+    degree.data()[slot] = graph.out_degree(vertex);
+  }
+  usize current_core = 0;
+  for ( usize removed = 0; removed &lt; graph.vertices_count(); ++removed ) {
+    using vertex_descriptor = typename G::vertex_descriptor;
+    vertex_descriptor selected = vertex_descriptor::invalid();
+    for ( auto vertex : graph.vertices() ) {
+      const usize slot = static_cast&lt;usize&gt;(vertex.value);
+      if ( !active.data()[slot] ) continue;
+      if ( !selected.valid() || degree.data()[slot] &lt; degree.data()[static_cast&lt;usize&gt;(selected.value)] ) selected = vertex;
+    }
+    if ( !selected.valid() ) break;
+    const usize ss = static_cast&lt;usize&gt;(selected.value);
+    if ( degree.data()[ss] &gt; current_core ) current_core = degree.data()[ss];
+    core.data()[ss] = current_core;
+    active.data()[ss] = 0;
+    for ( auto neighbor : graph.out_neighbors(selected) ) {
+      usize &amp;d = degree.data()[static_cast&lt;usize&gt;(neighbor.value)];
+      if ( active.data()[static_cast&lt;usize&gt;(neighbor.value)] &amp;&amp; d &gt; current_core ) --d;
+    }
+  }
+  return core;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>core</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L411">line 411</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-69d90fde0bf795cd"><h3><code>micron::math::graphs::jaccard_coefficient(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L416">line 416</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+jaccard_coefficient(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor a</code></li><li><code>typename G::vertex_descriptor b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+jaccard_coefficient(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)
+{
+  const usize intersection = common_neighbors(graph, a, b);
+  const usize total = graph.out_degree(a) + graph.out_degree(b) - intersection;
+  return total ? static_cast&lt;f64&gt;(intersection) / static_cast&lt;f64&gt;(total) : f64(0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total ? static_cast&lt;f64&gt;(intersection) / static_cast&lt;f64&gt;(total) : f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L420">line 420</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="analytics.hpp.html#f-4f5686ba9bdf6307">common_neighbors</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-50bbf7b0ebf692bd"><h3><code>micron::math::graphs::global_efficiency(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L425">line 425</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+global_efficiency(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+global_efficiency(const G &amp;graph)
+{
+  const usize n = graph.vertices_count();
+  if ( n &lt; 2 ) return f64(0);
+  f64 sum = 0;
+  for ( auto source : graph.vertices() ) {
+    auto paths = unweighted_shortest_paths(graph, source);
+    for ( auto target : graph.vertices() ) {
+      if ( target == source || !paths.contains(target) ) continue;
+      const usize distance = paths.distance.data()[static_cast&lt;usize&gt;(target.value)];
+      if ( distance ) sum += f64(1) / static_cast&lt;f64&gt;(distance);
+    }
+  }
+  return sum / static_cast&lt;f64&gt;(n * (n - 1));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L428">line 428</a></td></tr><tr class="t-dsc"><td><code>sum / static_cast&lt;f64&gt;(n * (n - 1))</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L438">line 438</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="paths.hpp.html#f-dc6c7c79756173cd">unweighted_shortest_paths</a>.</p></section><section class="function-entry" id="f-06e2d214fc8b99db"><h3><code>micron::math::graphs::degree_assortativity(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L443">line 443</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+degree_assortativity(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+degree_assortativity(const G &amp;graph)
+{
+  f64 sum_x = 0;
+  f64 sum_y = 0;
+  f64 sum_xx = 0;
+  f64 sum_yy = 0;
+  f64 sum_xy = 0;
+  usize samples = 0;
+  auto account = [&amp;](f64 x, f64 y) {
+    sum_x += x;
+    sum_y += y;
+    sum_xx += x * x;
+    sum_yy += y * y;
+    sum_xy += x * y;
+    ++samples;
+  };
+  for ( auto edge : graph.edges() ) {
+    const f64 source_degree = static_cast&lt;f64&gt;(G::is_directed ? graph.out_degree(edge.source) : graph.degree(edge.source));
+    const f64 target_degree = static_cast&lt;f64&gt;(G::is_directed ? graph.in_degree(edge.target) : graph.degree(edge.target));
+    account(source_degree, target_degree);
+    if constexpr ( !G::is_directed ) account(target_degree, source_degree);
+  }
+  if ( samples == 0 ) return f64(0);
+  const f64 count = static_cast&lt;f64&gt;(samples);
+  const f64 covariance = count * sum_xy - sum_x * sum_y;
+  const f64 variance_x = count * sum_xx - sum_x * sum_x;
+  const f64 variance_y = count * sum_yy - sum_y * sum_y;
+  const f64 denominator = __builtin_sqrt(variance_x * variance_y);
+  return denominator == f64(0) ? f64(0) : covariance / denominator;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L465">line 465</a></td></tr><tr class="t-dsc"><td><code>denominator == f64(0) ? f64(0) : covariance / denominator</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L471">line 471</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-f9e86d6701d68ad4"><h3><code>micron::math::graphs::average_clustering(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L476">line 476</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+average_clustering(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+average_clustering(const G &amp;graph)
+{
+  if ( graph.vertices_count() == 0 ) return f64(0);
+  f64 total = 0;
+  for ( auto vertex : graph.vertices() ) total += clustering(graph, vertex);
+  return total / static_cast&lt;f64&gt;(graph.vertices_count());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L478">line 478</a></td></tr><tr class="t-dsc"><td><code>total / static_cast&lt;f64&gt;(graph.vertices_count())</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L481">line 481</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="analytics.hpp.html#f-bb978daa8e067ca5">clustering</a>.</p></section><section class="function-entry" id="f-2c5ba7c240a979c8"><h3><code>micron::math::graphs::eigenvector_centrality(const G &amp;graph, f64 tolerance = 1e-10, usize max_iterations = 100)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L486">line 486</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] iterative_scores_result&lt;f64&gt;
+eigenvector_centrality(const G &amp;graph, f64 tolerance = 1e-10, usize max_iterations = 100)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>f64 tolerance = 1e-10</code></li><li><code>usize max_iterations = 100</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] iterative_scores_result&lt;f64&gt;
+eigenvector_centrality(const G &amp;graph, f64 tolerance = 1e-10, usize max_iterations = 100)
+{
+  iterative_scores_result&lt;f64&gt; result;
+  result.score = micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), f64(0));
+  if ( graph.vertices_count() == 0 ) return result;
+  const f64 initial = f64(1) / __builtin_sqrt(static_cast&lt;f64&gt;(graph.vertices_count()));
+  for ( auto vertex : graph.vertices() ) result.score.data()[static_cast&lt;usize&gt;(vertex.value)] = initial;
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; next(graph.vertex_slots(), f64(0));
+  for ( usize iteration = 0; iteration &lt; max_iterations; ++iteration ) {
+    next.fill(f64(0));
+    for ( auto edge : graph.edges() ) {
+      next.data()[static_cast&lt;usize&gt;(edge.target.value)] += result.score.data()[static_cast&lt;usize&gt;(edge.source.value)];
+      if constexpr ( !G::is_directed )
+        next.data()[static_cast&lt;usize&gt;(edge.source.value)] += result.score.data()[static_cast&lt;usize&gt;(edge.target.value)];
+    }
+    f64 norm = 0;
+    for ( auto vertex : graph.vertices() ) {
+      const f64 value = next.data()[static_cast&lt;usize&gt;(vertex.value)];
+      norm += value * value;
+    }
+    norm = __builtin_sqrt(norm);
+    if ( norm == f64(0) ) return result;
+    f64 residual = 0;
+    for ( auto vertex : graph.vertices() ) {
+      const usize slot = static_cast&lt;usize&gt;(vertex.value);
+      next.data()[slot] /= norm;
+      f64 difference = next.data()[slot] - result.score.data()[slot];
+      if ( difference &lt; 0 ) difference = -difference;
+      residual += difference;
+      result.score.data()[slot] = next.data()[slot];
+    }
+    result.iterations = iteration + 1;
+    result.residual = residual;
+    if ( residual &lt;= tolerance ) return result;
+  }
+  result.status = algorithm_status::non_convergent;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L490">line 490</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L507">line 507</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L519">line 519</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L522">line 522</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-840401862b3afaa6"><h3><code>micron::math::graphs::katz_centrality(const G &amp;graph, f64 alpha = 0.1, f64 beta = 1.0, f64 tolerance = 1e-10, usize max_iterations = 100)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L527">line 527</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] iterative_scores_result&lt;f64&gt;
+katz_centrality(const G &amp;graph, f64 alpha = 0.1, f64 beta = 1.0, f64 tolerance = 1e-10, usize max_iterations = 100)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>f64 alpha = 0.1</code></li><li><code>f64 beta = 1.0</code></li><li><code>f64 tolerance = 1e-10</code></li><li><code>usize max_iterations = 100</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] iterative_scores_result&lt;f64&gt;
+katz_centrality(const G &amp;graph, f64 alpha = 0.1, f64 beta = 1.0, f64 tolerance = 1e-10, usize max_iterations = 100)
+{
+  iterative_scores_result&lt;f64&gt; result;
+  result.score = micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), f64(0));
+  if ( __impl::nonfinite_weight(alpha) || __impl::nonfinite_weight(beta) || alpha &lt; f64(0) ) {
+    result.status = algorithm_status::invalid_weight;
+    return result;
+  }
+  for ( auto vertex : graph.vertices() ) result.score.data()[static_cast&lt;usize&gt;(vertex.value)] = beta;
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; next(graph.vertex_slots(), f64(0));
+  for ( usize iteration = 0; iteration &lt; max_iterations; ++iteration ) {
+    next.fill(f64(0));
+    for ( auto vertex : graph.vertices() ) next.data()[static_cast&lt;usize&gt;(vertex.value)] = beta;
+    for ( auto edge : graph.edges() ) {
+      next.data()[static_cast&lt;usize&gt;(edge.target.value)] += alpha * result.score.data()[static_cast&lt;usize&gt;(edge.source.value)];
+      if constexpr ( !G::is_directed )
+        next.data()[static_cast&lt;usize&gt;(edge.source.value)] += alpha * result.score.data()[static_cast&lt;usize&gt;(edge.target.value)];
+    }
+    f64 residual = 0;
+    for ( auto vertex : graph.vertices() ) {
+      const usize slot = static_cast&lt;usize&gt;(vertex.value);
+      if ( __impl::nonfinite_weight(next.data()[slot]) ) {
+        result.status = algorithm_status::overflow;
+        return result;
+      }
+      f64 difference = next.data()[slot] - result.score.data()[slot];
+      if ( difference &lt; 0 ) difference = -difference;
+      residual += difference;
+      result.score.data()[slot] = next.data()[slot];
+    }
+    result.iterations = iteration + 1;
+    result.residual = residual;
+    if ( residual &lt;= tolerance ) return result;
+  }
+  result.status = algorithm_status::non_convergent;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L533">line 533</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L550">line 550</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L559">line 559</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L562">line 562</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="paths.hpp.html#f-db1488364cb16b49">__impl::nonfinite_weight</a>.</p></section><section class="function-entry" id="f-712b496396a8df89"><h3><code>micron::math::graphs::k_core_vertices(const G &amp;graph, usize k)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L567">line 567</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt;
+k_core_vertices(const G &amp;graph, usize k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>usize k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt;
+k_core_vertices(const G &amp;graph, usize k)
+{
+  auto core = core_numbers(graph);
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; result;
+  for ( auto vertex : graph.vertices() )
+    if ( core.data()[static_cast&lt;usize&gt;(vertex.value)] &gt;= k ) result.push_back(vertex);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L573">line 573</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="analytics.hpp.html#f-364403f31d047aa8">core_numbers</a>.</p></section><section class="function-entry" id="f-61851c49ab01edc3"><h3><code>micron::math::graphs::k_shell_vertices(const G &amp;graph, usize k)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L578">line 578</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt;
+k_shell_vertices(const G &amp;graph, usize k)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>usize k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt;
+k_shell_vertices(const G &amp;graph, usize k)
+{
+  auto core = core_numbers(graph);
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; result;
+  for ( auto vertex : graph.vertices() )
+    if ( core.data()[static_cast&lt;usize&gt;(vertex.value)] == k ) result.push_back(vertex);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L584">line 584</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="analytics.hpp.html#f-364403f31d047aa8">core_numbers</a>.</p></section><section class="function-entry" id="f-ff3644dba3c7bd9b"><h3><code>micron::math::graphs::rich_club_coefficient(const G &amp;graph, usize degree_threshold)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L589">line 589</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+rich_club_coefficient(const G &amp;graph, usize degree_threshold)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>usize degree_threshold</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+rich_club_coefficient(const G &amp;graph, usize degree_threshold)
+{
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; selected(graph.vertex_slots(), u8(0));
+  usize vertices = 0;
+  for ( auto vertex : graph.vertices() )
+    if ( graph.degree(vertex) &gt; degree_threshold ) {
+      selected.data()[static_cast&lt;usize&gt;(vertex.value)] = 1;
+      ++vertices;
+    }
+  if ( vertices &lt; 2 ) return f64(0);
+  usize edges = 0;
+  for ( auto edge : graph.edges() )
+    if ( selected.data()[static_cast&lt;usize&gt;(edge.source.value)] &amp;&amp; selected.data()[static_cast&lt;usize&gt;(edge.target.value)] ) ++edges;
+  const usize possible = G::is_directed ? vertices * (vertices - 1) : vertices * (vertices - 1) / 2;
+  return possible ? static_cast&lt;f64&gt;(edges) / static_cast&lt;f64&gt;(possible) : f64(0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L598">line 598</a></td></tr><tr class="t-dsc"><td><code>possible ? static_cast&lt;f64&gt;(edges) / static_cast&lt;f64&gt;(possible) : f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L603">line 603</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-34b8720ecd994a0a"><h3><code>micron::math::graphs::adamic_adar_index(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L608">line 608</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+adamic_adar_index(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor a</code></li><li><code>typename G::vertex_descriptor b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+adamic_adar_index(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)
+{
+  if ( !graph.has_vertex(a) || !graph.has_vertex(b) ) return f64(0);
+  f64 result = 0;
+  for ( auto neighbor : graph.out_neighbors(a) ) {
+    if ( !graph.has_edge(b, neighbor) &amp;&amp; !graph.has_edge(neighbor, b) ) continue;
+    const usize degree = graph.degree(neighbor);
+    if ( degree &gt; 1 ) result += f64(1) / __builtin_log(static_cast&lt;f64&gt;(degree));
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L610">line 610</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L617">line 617</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-5d330d84fdba3417"><h3><code>micron::math::graphs::preferential_attachment_score(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L622">line 622</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] usize
+preferential_attachment_score(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor a</code></li><li><code>typename G::vertex_descriptor b</code></li></ul><h4>Effects</h4><p>Returns <code>graph.has_vertex(a) &amp;&amp; graph.has_vertex(b) ? graph.degree(a) * graph.degree(b) : 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] usize
+preferential_attachment_score(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)
+{
+  return graph.has_vertex(a) &amp;&amp; graph.has_vertex(b) ? graph.degree(a) * graph.degree(b) : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>graph.has_vertex(a) &amp;&amp; graph.has_vertex(b) ? graph.degree(a) * graph.degree(b) : 0</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L624">line 624</a></td></tr></tbody></table></section><section class="function-entry" id="f-c5e9d349f6710b53"><h3><code>micron::math::graphs::resource_allocation_index(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</code></h3><p>Defined in <code>math/graph/analytics.hpp</code>, <a href="../../../source/math/graph/analytics.hpp.html#L629">line 629</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] f64
+resource_allocation_index(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor a</code></li><li><code>typename G::vertex_descriptor b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] f64
+resource_allocation_index(const G &amp;graph, typename G::vertex_descriptor a, typename G::vertex_descriptor b)
+{
+  if ( !graph.has_vertex(a) || !graph.has_vertex(b) ) return f64(0);
+  f64 result = 0;
+  for ( auto neighbor : graph.out_neighbors(a) ) {
+    if ( !graph.has_edge(b, neighbor) &amp;&amp; !graph.has_edge(neighbor, b) ) continue;
+    const usize degree = graph.degree(neighbor);
+    if ( degree ) result += f64(1) / static_cast&lt;f64&gt;(degree);
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L631">line 631</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/analytics.hpp.html#L638">line 638</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

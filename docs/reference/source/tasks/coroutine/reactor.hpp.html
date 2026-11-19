@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tasks/coroutine/reactor.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">tasks/coroutine/reactor.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/tasks/coroutine/reactor.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../bits/__abc_mt.hpp&quot;      // autofires MICRON_ABC_MT; must precede abcmalloc</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #define __micron_coro_reactor_seen</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> </span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #if defined(MICRON_CORO_URING)</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> </span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #include &quot;../../atomic/atomic.hpp&quot;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../../kernel.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../../linux/sys/uring.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;../../memory/mman.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;../../sync/yield.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../../types.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> </span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;../coro_core.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> </span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> // io_uring reactor state (-DMICRON_CORO_URING) - per-worker rings</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> //</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> // NOTE: NOT libjkr</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> //</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> // enabled via -D/--def MICRON_CORO_URING</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> //</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> // (1.9.1) each engine worker owns one ring;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> // initialized on the worker thread (NUMA type first touch)</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> // submission to the rings is lockfree</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> </span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> namespace micron</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> {</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> namespace coro</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> {</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> </span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> #ifndef MICRON_CORO_URING_ENTRIES</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> #define MICRON_CORO_URING_ENTRIES 256u</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> #endif</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> </span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> inline constexpr u32 __io_sq_entries = MICRON_CORO_URING_ENTRIES;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> inline constexpr u32 __io_fb_entries = 64u;</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> </span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> #ifndef MICRON_CORO_FILE_SLOTS</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> #define MICRON_CORO_FILE_SLOTS 256u</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> #endif</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> inline constexpr u32 __io_file_slots = MICRON_CORO_FILE_SLOTS;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> static_assert(__io_file_slots != 0 &amp;&amp; (__io_file_slots % 64) == 0, &quot;file slot count must be a nonzero multiple of 64&quot;);</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> </span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> inline constexpr u32 __io_sq_reserve = 8u;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> </span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> // [63..56] tag, [55..0] payload (pointer or worker id)</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> inline constexpr u64 __io_ud_tag_shift = 56;</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> inline constexpr u8 __io_ud_op = 0x00;           // payload = __io_op*</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> inline constexpr u8 __io_ud_park = 0x01;         // payload = worker id (own-ring futex_wait park sqe)</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> inline constexpr u8 __io_ud_cancel = 0x02;       // async_cancel companion cqe; dropped</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> inline constexpr u8 __io_ud_ltimer = 0x03;       // link_timeout companion cqe; dropped</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> inline constexpr u8 __io_ud_mop = 0x04;          // payload = __io_mop* (multishot recv; many cqes per op)</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> inline constexpr u8 __io_ud_wop = 0x05;          // payload = __io_wop* (one staged sqe of a wave)</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> inline constexpr u8 __io_ud_reclaim = 0xfe;      // always ignored</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> </span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> [[gnu::always_inline]] inline constexpr u64</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> __io_ud_payload(u64 __ud) noexcept</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> {</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>   return __ud &amp; ((1ull &lt;&lt; __io_ud_tag_shift) - 1ull);</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> }</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> </span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> [[gnu::always_inline]] inline constexpr u64</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> __io_ud_make(u8 __tag, u64 __payload) noexcept</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> {</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>   return (static_cast&lt;u64&gt;(__tag) &lt;&lt; __io_ud_tag_shift) | __payload;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> }</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> </span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> [[gnu::always_inline]] inline constexpr u8</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> __io_ud_tag(u64 __ud) noexcept</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> {</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   return static_cast&lt;u8&gt;(__ud &gt;&gt; __io_ud_tag_shift);</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> }</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> </span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> // op completion handshake states</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> inline constexpr u32 __io_st_submitted = 0;</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> inline constexpr u32 __io_st_suspended = 1;</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> inline constexpr u32 __io_st_done_early = 2;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> inline constexpr u32 __io_st_resumed = 3;        // the completer took the handoff; the frame is running</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> inline constexpr u32 __io_st_abandoned = 4;      // ~wave() took it; nobody resumes, the owner frees</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> </span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> struct __io_op {</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>   __frame_base *__f = nullptr;</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>   micron::atomic_token&lt;u32&gt; __st{ __io_st_submitted };</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>   i32 __res = 0;</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> };</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> </span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> struct __io_ring_stats {</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   micron::atomic_token&lt;u64&gt; submits{ 0 };</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   micron::atomic_token&lt;u64&gt; enters{ 0 };</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   micron::atomic_token&lt;u64&gt; inline_completions{ 0 };</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   micron::atomic_token&lt;u64&gt; sqe_full_flushes{ 0 };</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>   micron::atomic_token&lt;u64&gt; parks{ 0 };</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   micron::atomic_token&lt;u64&gt; wakes{ 0 };</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   micron::atomic_token&lt;u64&gt; cancels{ 0 };</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> };</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> #endif</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> </span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> // multishot recv</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> //</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> // per worker ring buffer pool;</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> // user allocator, initialized lazily by the rings owner thread on first touch</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> // recycle() called by consumer coros</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> </span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> #ifndef MICRON_CORO_PBUF_ENTRIES</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> #define MICRON_CORO_PBUF_ENTRIES 256u</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> #endif</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> #ifndef MICRON_CORO_PBUF_SZ</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> #define MICRON_CORO_PBUF_SZ 8192u</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> #endif</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> inline constexpr u32 __io_pb_entries = MICRON_CORO_PBUF_ENTRIES;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> inline constexpr u32 __io_pb_sz = MICRON_CORO_PBUF_SZ;</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> inline constexpr u16 __io_pb_bgid = 7;</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> static_assert((__io_pb_entries &amp; (__io_pb_entries - 1)) == 0, &quot;MICRON_CORO_PBUF_ENTRIES must be a power of two&quot;);</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> </span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> struct __io_pbuf {</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>   micron::uring::buf_ring *__br = nullptr;</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>   byte *__arena = nullptr;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>   u32 __tail_shadow = 0;</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>   micron::atomic_token&lt;u32&gt; __lk{ 0 };</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   micron::atomic_token&lt;u32&gt; __state{ 0 };      // 0 untried / 1 live / 2 refused</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> };</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a> </span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> inline constexpr u8 __io_mev_buf = 1u &lt;&lt; 0;       // a provided buffer is attached (bid valid)</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> inline constexpr u8 __io_mev_more = 1u &lt;&lt; 1;      // the op is still armed after this event</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> </span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> struct __io_mev {</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>   i32 __res = 0;      // &gt;0 bytes in the buffer; 0 peer EOF; &lt;0 -errno</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>   u16 __bid = 0;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>   u8 __ring = 0xff;      // worker ring the buffer belongs to</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>   u8 __fl = 0;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> };</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> </span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> inline constexpr u32 __io_mop_qcap = 2u * __io_pb_entries;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> </span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> inline constexpr u32 __io_mop_idle = 0;</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> // consumer is inside await_suspend; owns the frame</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a> inline constexpr u32 __io_mop_parking = 1;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a> inline constexpr u32 __io_mop_parked = 2;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> // completed while the consumer was parking</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> inline constexpr u32 __io_mop_pending = 3;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> </span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> struct __io_mop {</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   __frame_base *__f = nullptr;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   micron::atomic_token&lt;u32&gt; __st{ __io_mop_idle };</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>   micron::atomic_token&lt;u32&gt; __live{ 0 };      // armed and the kernel still promises more</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>   micron::atomic_token&lt;u32&gt; __qh{ 0 };</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>   micron::atomic_token&lt;u32&gt; __qt{ 0 };</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   u8 __ring = 0xff;      // worker ring the op is armed on</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>   __io_mev __q[__io_mop_qcap];</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> </span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>   [[nodiscard]] bool</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>   __pop(__io_mev &amp;__out) noexcept      // single consumer</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>   {</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     const u32 __h = __qh.get(micron::memory_order_relaxed);</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     if ( __qt.get(micron::memory_order_acquire) == __h ) return false;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>     __out = __q[__h &amp; (__io_mop_qcap - 1u)];</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>     __qh.store(__h + 1u, micron::memory_order_release);</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>     return true;</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>   }</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a> </span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>   void</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>   __push(const __io_mev &amp;__e) noexcept      // dispatcher only; serialized by the ring&#x27;s __cq_lk</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>   {</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>     const u32 __t = __qt.get(micron::memory_order_relaxed);</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     if ( __t - __qh.get(micron::memory_order_acquire) &gt;= __io_mop_qcap ) [[unlikely]]</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>       __builtin_trap();      // see the capacity note above</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>     __q[__t &amp; (__io_mop_qcap - 1u)] = __e;</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>     // WARNING: must be seq_cst, not release; will cause cross read deadlocks otherwise</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>     __qt.store(__t + 1u, micron::memory_order_seq_cst);</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>   }</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> };</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a> </span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a> // waves</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a> // many logical ops staged into the sq</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a> //</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a> // WARNING: a wave may not be destroyed while __left != 0</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a> struct __io_wave;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a> </span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a> struct __io_wop {</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>   __io_wave *__w = nullptr;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   i32 __res = 0;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>   u16 __idx = 0;      // which logical item of the wave</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>   u8 __step = 0;      // which sqe of that item&#x27;s chain</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a> };</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> </span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a> struct __io_wave {</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   __frame_base *__f = nullptr;</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>   micron::atomic_token&lt;u32&gt; __left{ 0 };      // staged sqes not yet completed</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>   micron::atomic_token&lt;u32&gt; __st{ __io_st_submitted };</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>   micron::atomic_token&lt;u32&gt; __fin{ 0 };      // the resumed frame is done reading __nodes / writing the results</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> };</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> </span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a> // waves the owner had to walk away from</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a> inline micron::atomic_token&lt;u64&gt; __io_wave_stranded{ 0 };</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> </span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a> struct alignas(64) __wring {</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>   micron::uring::ring __r;</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   micron::atomic_token&lt;u32&gt; __sq_lk{ 0 };           // fallback ring only</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>   micron::atomic_token&lt;u32&gt; __cq_lk{ 0 };           // one reaper at a time</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>   micron::atomic_token&lt;u32&gt; __pending{ 0 };         // in-flight ops</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   micron::atomic_token&lt;u32&gt; __park_fired{ 0 };      // this ring&#x27;s park sqe cqe observed</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>   micron::atomic_token&lt;u32&gt; __live{ 0 };            // init succeeded</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>   micron::atomic_token&lt;u32&gt; __bufs_reg{ 0 };        // fixed-buffer slab registered into this ring (0 no / 1 yes / 2 refused)</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>   micron::atomic_token&lt;u32&gt; __files_reg{ 0 };       // sparse fixed-file table registered (0 no / 1 yes / 2 refused)</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   micron::atomic_token&lt;u32&gt; __file_lk{ 0 };         // guards __file_free</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   u64 __file_free[__io_file_slots / 64]{};          // bit i set = slot i busy</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>   u8 __defer = 0;                                   // ring came up with setup_defer_taskrun (n==1 mode)</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>   u32 __staged = 0;</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>   __io_pbuf __pb;</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>   __io_ring_stats __stat;</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> #endif</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a> };</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a> </span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a> inline __wring __io_rings[32];</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a> inline __wring __io_fb;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a> </span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a> struct __io_state {</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>   micron::atomic_token&lt;u32&gt; any_live{ 0 };      // &gt;=1 ring</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>   micron::atomic_token&lt;u32&gt; futex_ok{ 0 };      // (&gt;=6.7)</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>   micron::atomic_token&lt;i32&gt; watcher{ -1 };</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a> };</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> </span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> inline __io_state __io;</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> </span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a> [[gnu::always_inline]] inline void</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> __io_lock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> {</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>   u32 __e = 0;</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   while ( !__l.compare_exchange_weak(__e, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire) ) {</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>     __e = 0;</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>     micron::cpu_pause&lt;1&gt;();</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>   }</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a> }</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a> </span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a> [[gnu::always_inline]] inline bool</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a> __io_trylock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a> {</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>   u32 __e = 0;</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>   return __l.compare_exchange_strong(__e, 1u, micron::memory_order_acq_rel, micron::memory_order_acquire);</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> }</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a> </span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a> [[gnu::always_inline]] inline void</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a> __io_unlock(micron::atomic_token&lt;u32&gt; &amp;__l) noexcept</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a> {</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>   __l.store(0u, micron::memory_order_release);</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> }</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> </span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a> [[gnu::always_inline]] inline bool</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a> __io_cq_acquire(__wring &amp;__wr) noexcept</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a> {</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>   if ( __wr.__live.get(micron::memory_order_acquire) == 0 ) return false;</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>   if ( !__io_trylock(__wr.__cq_lk) ) return false;</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>   if ( __wr.__live.get(micron::memory_order_acquire) == 0 ) [[unlikely]] {      // died between the test and the lock</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>     __io_unlock(__wr.__cq_lk);</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>     return false;</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>   }</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>   return true;</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> }</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a> </span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> [[gnu::always_inline]] inline __wring *</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> __io_own_ring() noexcept</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> {</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>   worker *__w = current_worker();</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>   if ( __w == nullptr ) return nullptr;</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>   __wring &amp;__wr = __io_rings[__w-&gt;id];</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>   return __wr.__live.get(micron::memory_order_acquire) != 0 ? &amp;__wr : nullptr;</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a> }</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a> </span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> // staged submissions (-DMICRON_CORO_STAGED_SUBMIT)</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a> </span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a> #if defined(MICRON_CORO_STAGED_SUBMIT)</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a> inline constexpr u32 __io_stage_max = 16;</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a> #endif</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a> </span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> [[gnu::always_inline]] inline void</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a> __io_flush_staged(__wring &amp;__wr) noexcept</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a> {</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a> #if defined(MICRON_CORO_STAGED_SUBMIT)</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>   if ( __wr.__staged != 0 ) {</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a>     __wr.__staged = 0;</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>     (void)__wr.__r.enter(0);</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>     __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a> #endif</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>   }</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a> #else</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>   (void)__wr;</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> #endif</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a> }</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a> </span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a> [[gnu::always_inline]] inline void</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> __io_flush_own_staged() noexcept</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> {</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a> #if defined(MICRON_CORO_STAGED_SUBMIT)</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a>   __wring *__r = __io_own_ring();</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a>   if ( __r != nullptr ) __io_flush_staged(*__r);</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a> #endif</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a> }</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a> </span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a> // provided-buffer pool</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a> </span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a> inline i32</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a> __io_pb_init(__wring &amp;__wr) noexcept</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a> {</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>   const u32 __st = __wr.__pb.__state.get(micron::memory_order_acquire);</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>   if ( __st == 1u ) return 0;</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>   if ( __st == 2u ) return -95;      // EOPNOTSUPP: refused earlier</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>   const usize __rb = static_cast&lt;usize&gt;(__io_pb_entries) * sizeof(micron::uring::buf);</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>   auto *__br = micron::ptr_cast&lt;micron::uring::buf_ring *&gt;(</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a>       micron::mmap(nullptr, __rb, micron::prot_read | micron::prot_write, micron::map_private | micron::map_anonymous, -1, 0));</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>   if ( micron::mmap_failed(reinterpret_cast&lt;addr_t *&gt;(__br)) ) {</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a>     __wr.__pb.__state.store(2u, micron::memory_order_release);</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>     return -95;</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>   }</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>   byte *__ar</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>       = reinterpret_cast&lt;byte *&gt;(micron::mmap(nullptr, static_cast&lt;usize&gt;(__io_pb_entries) * __io_pb_sz,</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>                                               micron::prot_read | micron::prot_write, micron::map_private | micron::map_anonymous, -1, 0));</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>   if ( micron::mmap_failed(micron::ptr_cast&lt;addr_t *&gt;(__ar)) ) {</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>     micron::munmap(reinterpret_cast&lt;addr_t *&gt;(__br), __rb);</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>     __wr.__pb.__state.store(2u, micron::memory_order_release);</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>     return -95;</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>   }</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>   micron::uring::buf_reg __reg{};</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>   __reg.ring_addr = reinterpret_cast&lt;u64&gt;(__br);</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>   __reg.ring_entries = __io_pb_entries;</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>   __reg.bgid = __io_pb_bgid;</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>   if ( __wr.__r.register_pbuf_ring(__reg) &lt; 0 ) {</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>     micron::munmap(reinterpret_cast&lt;addr_t *&gt;(__br), __rb);</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>     micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(__ar), static_cast&lt;usize&gt;(__io_pb_entries) * __io_pb_sz);</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>     __wr.__pb.__state.store(2u, micron::memory_order_release);</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a>     return -95;</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a>   }</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>   for ( u32 __i = 0; __i &lt; __io_pb_entries; ++__i ) {</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>     micron::uring::buf *__b = &amp;__br-&gt;bufs()[__i];</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>     __b-&gt;addr = reinterpret_cast&lt;u64&gt;(__ar + static_cast&lt;usize&gt;(__i) * __io_pb_sz);</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>     __b-&gt;len = __io_pb_sz;</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a>     __b-&gt;bid = static_cast&lt;u16&gt;(__i);</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>   }</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a>   __wr.__pb.__br = __br;</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>   __wr.__pb.__arena = __ar;</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>   __wr.__pb.__tail_shadow = __io_pb_entries;</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>   micron::atom::store(&amp;__br-&gt;tail, static_cast&lt;u16&gt;(__io_pb_entries), __ATOMIC_RELEASE);</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>   __wr.__pb.__state.store(1u, micron::memory_order_release);      // publishes __br/__arena</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>   return 0;</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a> }</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a> </span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a> inline constexpr u8 __io_ring_cap = static_cast&lt;u8&gt;(sizeof(__io_rings) / sizeof(__io_rings[0]));</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a> </span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a> // __ring is 0xff on every synthesized event</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a> [[gnu::always_inline]] inline byte *</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a> __io_pb_data(u8 __ring, u16 __bid) noexcept</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a> {</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a>   if ( __ring &gt;= __io_ring_cap || __bid &gt;= __io_pb_entries ) [[unlikely]]</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>     return nullptr;</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>   byte *__a = __io_rings[__ring].__pb.__arena;</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>   return __a == nullptr ? nullptr : __a + static_cast&lt;usize&gt;(__bid) * __io_pb_sz;</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a> }</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a> </span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a> inline void</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a> __io_pb_recycle(u8 __ring, u16 __bid) noexcept</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a> {</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>   if ( __ring &gt;= __io_ring_cap || __bid &gt;= __io_pb_entries ) [[unlikely]]</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>     return;</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a>   __wring &amp;__wr = __io_rings[__ring];</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>   if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) return;</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>   __io_lock(__wr.__pb.__lk);</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>   if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) [[unlikely]] {      // died between the test and the lock</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a>     __io_unlock(__wr.__pb.__lk);</span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>     return;</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>   }</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>   micron::uring::buf *__b = &amp;__wr.__pb.__br-&gt;bufs()[__wr.__pb.__tail_shadow &amp; (__io_pb_entries - 1u)];</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>   __b-&gt;addr = reinterpret_cast&lt;u64&gt;(__wr.__pb.__arena + static_cast&lt;usize&gt;(__bid) * __io_pb_sz);</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a>   __b-&gt;len = __io_pb_sz;</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>   __b-&gt;bid = __bid;</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>   ++__wr.__pb.__tail_shadow;</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>   micron::atom::store(&amp;__wr.__pb.__br-&gt;tail, static_cast&lt;u16&gt;(__wr.__pb.__tail_shadow), __ATOMIC_RELEASE);</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>   __io_unlock(__wr.__pb.__lk);</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a> }</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a> </span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a> inline void</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a> __io_pb_shutdown(__wring &amp;__wr) noexcept      // owner thread, before the ring fd closes</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a> {</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>   if ( __wr.__pb.__state.get(micron::memory_order_acquire) != 1u ) return;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a>   __wr.__pb.__state.store(0u, micron::memory_order_release);</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a>   __io_lock(__wr.__pb.__lk);</span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a>   __io_unlock(__wr.__pb.__lk);</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>   (void)__wr.__r.unregister_pbuf_ring(__io_pb_bgid);</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>   micron::munmap(reinterpret_cast&lt;addr_t *&gt;(__wr.__pb.__br), static_cast&lt;usize&gt;(__io_pb_entries) * sizeof(micron::uring::buf));</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>   micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(__wr.__pb.__arena), static_cast&lt;usize&gt;(__io_pb_entries) * __io_pb_sz);</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>   __wr.__pb.__br = nullptr;</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a>   __wr.__pb.__arena = nullptr;</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>   __wr.__pb.__tail_shadow = 0;</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a> }</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a> </span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a> inline u32</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a> __io_ring_flags(u32 __nworkers) noexcept</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a> {</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>   // NOTE: we don&#x27;t do setup_single_issuer/defer_taskrun</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>   // kernel rejects io_uring_register from any other task on such rings;</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>   // would break crossthread SYNC_CANCELLing</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>   // submission must stay single producer</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>   (void)__nworkers;</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>   return micron::uring::setup_no_sqarray;</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a> }</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a> </span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a> inline void</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a> __io_worker_ring_init(u32 __id, u32 __nworkers) noexcept</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a> {</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>   __wring &amp;__wr = __io_rings[__id];</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>   if ( __wr.__r.init_best(__io_sq_entries, __io_ring_flags(__nworkers)) != 0 ) return;</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>   __wr.__defer = (__wr.__r.setup_flags &amp; micron::uring::setup_defer_taskrun) != 0 ? 1 : 0;</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>   (void)__wr.__r.register_ring_fd();</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>   __wr.__pending.store(0, micron::memory_order_relaxed);</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>   __wr.__park_fired.store(0, micron::memory_order_relaxed);</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>   __wr.__live.store(1, micron::memory_order_release);</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>   __io.any_live.store(1, micron::memory_order_release);</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a> }</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a> </span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a> inline void</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a> __io_worker_ring_shutdown(u32 __id) noexcept</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a> {</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>   __wring &amp;__wr = __io_rings[__id];</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a>   if ( __wr.__live.get(micron::memory_order_acquire) == 0 ) return;</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a>   __io_flush_staged(__wr);</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a>   __io_pb_shutdown(__wr);      // unregister before the ring fd closes</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a> </span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>   __wr.__live.store(0, micron::memory_order_release);</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>   __io_lock(__wr.__cq_lk);</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>   __wr.__r.shutdown();</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>   __wr.__defer = 0;</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>   __wr.__bufs_reg.store(0, micron::memory_order_relaxed);</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>   __wr.__files_reg.store(0, micron::memory_order_relaxed);</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>   for ( u32 __i = 0; __i &lt; __io_file_slots / 64; ++__i ) __wr.__file_free[__i] = 0;</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>   __io_unlock(__wr.__cq_lk);</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a> }</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a> </span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a> inline void</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a> __io_fb_init() noexcept</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a> {</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>   if ( __io_fb.__r.init_best(__io_fb_entries, 0) != 0 ) return;</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>   __io_fb.__pending.store(0, micron::memory_order_relaxed);</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>   __io_fb.__live.store(1, micron::memory_order_release);</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>   __io.any_live.store(1, micron::memory_order_release);</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a> }</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a> </span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a> inline void</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a> __io_fb_shutdown() noexcept</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a> {</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>   if ( __io_fb.__live.get(micron::memory_order_acquire) == 0 ) return;</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>   __io_fb.__live.store(0, micron::memory_order_release);</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>   __io_lock(__io_fb.__sq_lk);</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a>   __io_lock(__io_fb.__cq_lk);</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>   __io_fb.__r.shutdown();</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>   __io_fb.__defer = 0;</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>   __io_fb.__bufs_reg.store(0, micron::memory_order_relaxed);</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>   __io_unlock(__io_fb.__cq_lk);</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>   __io_unlock(__io_fb.__sq_lk);</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a> }</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a> </span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a> inline bool</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a> __io_submit_own(__wring &amp;__wr, const micron::uring::sqe &amp;__q, u64 __ud) noexcept</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a> {</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>   micron::uring::sqe *__s = __wr.__r.get_sqe();</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a>   if ( __s == nullptr ) [[unlikely]] {</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>     __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a> #endif</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a>     __wr.__staged = 0;</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>     (void)__wr.__r.enter(0);</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>     __s = __wr.__r.get_sqe();</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>     if ( __s == nullptr ) return false;</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>   }</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a>   *__s = __q;</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a>   __s-&gt;user_data = __ud;</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a>   __wr.__r.advance_sq();</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a> #if defined(MICRON_CORO_STAGED_SUBMIT)</span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a>   if ( ++__wr.__staged &lt; __io_stage_max ) {</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a>     __wr.__stat.submits.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a> #endif</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a>     return true;</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a>   }</span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a>   __wr.__staged = 0;</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a> #endif</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a>   (void)__wr.__r.enter(0);</span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a>   __wr.__stat.submits.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a>   __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a> #endif</span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a>   return true;</span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a> }</span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a> </span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a> inline bool</span>
+<span id="L508" class="source-line"><a class="line-number" href="#L508">508</a> __io_submit_fb(const micron::uring::sqe &amp;__q, u64 __ud) noexcept</span>
+<span id="L509" class="source-line"><a class="line-number" href="#L509">509</a> {</span>
+<span id="L510" class="source-line"><a class="line-number" href="#L510">510</a>   // spinlocked</span>
+<span id="L511" class="source-line"><a class="line-number" href="#L511">511</a>   __io_lock(__io_fb.__sq_lk);</span>
+<span id="L512" class="source-line"><a class="line-number" href="#L512">512</a>   if ( __io_fb.__live.get(micron::memory_order_acquire) == 0 ) [[unlikely]] {      // torn down under us</span>
+<span id="L513" class="source-line"><a class="line-number" href="#L513">513</a>     __io_unlock(__io_fb.__sq_lk);</span>
+<span id="L514" class="source-line"><a class="line-number" href="#L514">514</a>     return false;</span>
+<span id="L515" class="source-line"><a class="line-number" href="#L515">515</a>   }</span>
+<span id="L516" class="source-line"><a class="line-number" href="#L516">516</a>   micron::uring::sqe *__s = __io_fb.__r.get_sqe();</span>
+<span id="L517" class="source-line"><a class="line-number" href="#L517">517</a>   if ( __s == nullptr ) [[unlikely]] {</span>
+<span id="L518" class="source-line"><a class="line-number" href="#L518">518</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L519" class="source-line"><a class="line-number" href="#L519">519</a>     __io_fb.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L520" class="source-line"><a class="line-number" href="#L520">520</a> #endif</span>
+<span id="L521" class="source-line"><a class="line-number" href="#L521">521</a>     (void)__io_fb.__r.enter(0);</span>
+<span id="L522" class="source-line"><a class="line-number" href="#L522">522</a>     __s = __io_fb.__r.get_sqe();</span>
+<span id="L523" class="source-line"><a class="line-number" href="#L523">523</a>     if ( __s == nullptr ) {</span>
+<span id="L524" class="source-line"><a class="line-number" href="#L524">524</a>       __io_unlock(__io_fb.__sq_lk);</span>
+<span id="L525" class="source-line"><a class="line-number" href="#L525">525</a>       return false;</span>
+<span id="L526" class="source-line"><a class="line-number" href="#L526">526</a>     }</span>
+<span id="L527" class="source-line"><a class="line-number" href="#L527">527</a>   }</span>
+<span id="L528" class="source-line"><a class="line-number" href="#L528">528</a>   *__s = __q;</span>
+<span id="L529" class="source-line"><a class="line-number" href="#L529">529</a>   __s-&gt;user_data = __ud;</span>
+<span id="L530" class="source-line"><a class="line-number" href="#L530">530</a>   __io_fb.__r.advance_sq();</span>
+<span id="L531" class="source-line"><a class="line-number" href="#L531">531</a>   (void)__io_fb.__r.enter(0);</span>
+<span id="L532" class="source-line"><a class="line-number" href="#L532">532</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L533" class="source-line"><a class="line-number" href="#L533">533</a>   __io_fb.__stat.submits.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L534" class="source-line"><a class="line-number" href="#L534">534</a>   __io_fb.__stat.enters.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L535" class="source-line"><a class="line-number" href="#L535">535</a> #endif</span>
+<span id="L536" class="source-line"><a class="line-number" href="#L536">536</a>   __io_unlock(__io_fb.__sq_lk);</span>
+<span id="L537" class="source-line"><a class="line-number" href="#L537">537</a>   return true;</span>
+<span id="L538" class="source-line"><a class="line-number" href="#L538">538</a> }</span>
+<span id="L539" class="source-line"><a class="line-number" href="#L539">539</a> </span>
+<span id="L540" class="source-line"><a class="line-number" href="#L540">540</a> inline bool</span>
+<span id="L541" class="source-line"><a class="line-number" href="#L541">541</a> __io_submit_own2(__wring &amp;__wr, const micron::uring::sqe &amp;__a, u64 __ud_a, const micron::uring::sqe &amp;__b, u64 __ud_b) noexcept</span>
+<span id="L542" class="source-line"><a class="line-number" href="#L542">542</a> {</span>
+<span id="L543" class="source-line"><a class="line-number" href="#L543">543</a>   micron::uring::sqe *__s0 = __wr.__r.peek_sqe(0);</span>
+<span id="L544" class="source-line"><a class="line-number" href="#L544">544</a>   micron::uring::sqe *__s1 = __wr.__r.peek_sqe(1);</span>
+<span id="L545" class="source-line"><a class="line-number" href="#L545">545</a>   if ( __s0 == nullptr || __s1 == nullptr ) [[unlikely]] {</span>
+<span id="L546" class="source-line"><a class="line-number" href="#L546">546</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L547" class="source-line"><a class="line-number" href="#L547">547</a>     __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L548" class="source-line"><a class="line-number" href="#L548">548</a> #endif</span>
+<span id="L549" class="source-line"><a class="line-number" href="#L549">549</a>     __wr.__staged = 0;</span>
+<span id="L550" class="source-line"><a class="line-number" href="#L550">550</a>     (void)__wr.__r.enter(0);</span>
+<span id="L551" class="source-line"><a class="line-number" href="#L551">551</a>     __s0 = __wr.__r.peek_sqe(0);</span>
+<span id="L552" class="source-line"><a class="line-number" href="#L552">552</a>     __s1 = __wr.__r.peek_sqe(1);</span>
+<span id="L553" class="source-line"><a class="line-number" href="#L553">553</a>     if ( __s0 == nullptr || __s1 == nullptr ) return false;      // never silently submit untimed</span>
+<span id="L554" class="source-line"><a class="line-number" href="#L554">554</a>   }</span>
+<span id="L555" class="source-line"><a class="line-number" href="#L555">555</a>   *__s0 = __a;</span>
+<span id="L556" class="source-line"><a class="line-number" href="#L556">556</a>   __s0-&gt;user_data = __ud_a;</span>
+<span id="L557" class="source-line"><a class="line-number" href="#L557">557</a>   *__s1 = __b;</span>
+<span id="L558" class="source-line"><a class="line-number" href="#L558">558</a>   __s1-&gt;user_data = __ud_b;</span>
+<span id="L559" class="source-line"><a class="line-number" href="#L559">559</a>   __wr.__r.advance_sq(2);</span>
+<span id="L560" class="source-line"><a class="line-number" href="#L560">560</a> #if defined(MICRON_CORO_STAGED_SUBMIT)</span>
+<span id="L561" class="source-line"><a class="line-number" href="#L561">561</a>   __wr.__staged += 2;</span>
+<span id="L562" class="source-line"><a class="line-number" href="#L562">562</a>   if ( __wr.__staged &lt; __io_stage_max ) {</span>
+<span id="L563" class="source-line"><a class="line-number" href="#L563">563</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L564" class="source-line"><a class="line-number" href="#L564">564</a>     __wr.__stat.submits.fetch_add(2, micron::memory_order_relaxed);</span>
+<span id="L565" class="source-line"><a class="line-number" href="#L565">565</a> #endif</span>
+<span id="L566" class="source-line"><a class="line-number" href="#L566">566</a>     return true;</span>
+<span id="L567" class="source-line"><a class="line-number" href="#L567">567</a>   }</span>
+<span id="L568" class="source-line"><a class="line-number" href="#L568">568</a>   __wr.__staged = 0;</span>
+<span id="L569" class="source-line"><a class="line-number" href="#L569">569</a> #endif</span>
+<span id="L570" class="source-line"><a class="line-number" href="#L570">570</a>   (void)__wr.__r.enter(0);</span>
+<span id="L571" class="source-line"><a class="line-number" href="#L571">571</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L572" class="source-line"><a class="line-number" href="#L572">572</a>   __wr.__stat.submits.fetch_add(2, micron::memory_order_relaxed);</span>
+<span id="L573" class="source-line"><a class="line-number" href="#L573">573</a>   __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L574" class="source-line"><a class="line-number" href="#L574">574</a> #endif</span>
+<span id="L575" class="source-line"><a class="line-number" href="#L575">575</a>   return true;</span>
+<span id="L576" class="source-line"><a class="line-number" href="#L576">576</a> }</span>
+<span id="L577" class="source-line"><a class="line-number" href="#L577">577</a> </span>
+<span id="L578" class="source-line"><a class="line-number" href="#L578">578</a> inline bool</span>
+<span id="L579" class="source-line"><a class="line-number" href="#L579">579</a> __io_submit_own_n(__wring &amp;__wr, const micron::uring::sqe *__q, u32 __k) noexcept</span>
+<span id="L580" class="source-line"><a class="line-number" href="#L580">580</a> {</span>
+<span id="L581" class="source-line"><a class="line-number" href="#L581">581</a>   if ( __k == 0 ) return true;</span>
+<span id="L582" class="source-line"><a class="line-number" href="#L582">582</a>   for ( u32 __i = 0; __i &lt; __k; ++__i ) {</span>
+<span id="L583" class="source-line"><a class="line-number" href="#L583">583</a>     if ( __wr.__r.peek_sqe(__i) == nullptr ) [[unlikely]] {</span>
+<span id="L584" class="source-line"><a class="line-number" href="#L584">584</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L585" class="source-line"><a class="line-number" href="#L585">585</a>       __wr.__stat.sqe_full_flushes.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L586" class="source-line"><a class="line-number" href="#L586">586</a> #endif</span>
+<span id="L587" class="source-line"><a class="line-number" href="#L587">587</a>       __wr.__staged = 0;</span>
+<span id="L588" class="source-line"><a class="line-number" href="#L588">588</a>       (void)__wr.__r.enter(0);</span>
+<span id="L589" class="source-line"><a class="line-number" href="#L589">589</a>       for ( u32 __j = 0; __j &lt; __k; ++__j )</span>
+<span id="L590" class="source-line"><a class="line-number" href="#L590">590</a>         if ( __wr.__r.peek_sqe(__j) == nullptr ) return false;</span>
+<span id="L591" class="source-line"><a class="line-number" href="#L591">591</a>       break;</span>
+<span id="L592" class="source-line"><a class="line-number" href="#L592">592</a>     }</span>
+<span id="L593" class="source-line"><a class="line-number" href="#L593">593</a>   }</span>
+<span id="L594" class="source-line"><a class="line-number" href="#L594">594</a>   for ( u32 __i = 0; __i &lt; __k; ++__i ) *__wr.__r.peek_sqe(__i) = __q[__i];</span>
+<span id="L595" class="source-line"><a class="line-number" href="#L595">595</a>   __wr.__r.advance_sq(__k);</span>
+<span id="L596" class="source-line"><a class="line-number" href="#L596">596</a>   (void)__wr.__r.enter(0);</span>
+<span id="L597" class="source-line"><a class="line-number" href="#L597">597</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L598" class="source-line"><a class="line-number" href="#L598">598</a>   __wr.__stat.submits.fetch_add(__k, micron::memory_order_relaxed);</span>
+<span id="L599" class="source-line"><a class="line-number" href="#L599">599</a>   __wr.__stat.enters.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L600" class="source-line"><a class="line-number" href="#L600">600</a> #endif</span>
+<span id="L601" class="source-line"><a class="line-number" href="#L601">601</a>   return true;</span>
+<span id="L602" class="source-line"><a class="line-number" href="#L602">602</a> }</span>
+<span id="L603" class="source-line"><a class="line-number" href="#L603">603</a> </span>
+<span id="L604" class="source-line"><a class="line-number" href="#L604">604</a> // sqes a batch may take without eating the runtime&#x27;s reserve</span>
+<span id="L605" class="source-line"><a class="line-number" href="#L605">605</a> [[nodiscard]] inline u32</span>
+<span id="L606" class="source-line"><a class="line-number" href="#L606">606</a> __io_sq_room(__wring &amp;__wr) noexcept</span>
+<span id="L607" class="source-line"><a class="line-number" href="#L607">607</a> {</span>
+<span id="L608" class="source-line"><a class="line-number" href="#L608">608</a>   const u32 __free = __wr.__r.sq_space_left();</span>
+<span id="L609" class="source-line"><a class="line-number" href="#L609">609</a>   return __free &gt; __io_sq_reserve ? __free - __io_sq_reserve : 0u;</span>
+<span id="L610" class="source-line"><a class="line-number" href="#L610">610</a> }</span>
+<span id="L611" class="source-line"><a class="line-number" href="#L611">611</a> </span>
+<span id="L612" class="source-line"><a class="line-number" href="#L612">612</a> inline bool</span>
+<span id="L613" class="source-line"><a class="line-number" href="#L613">613</a> __io_submit_fb2(const micron::uring::sqe &amp;__a, u64 __ud_a, const micron::uring::sqe &amp;__b, u64 __ud_b) noexcept</span>
+<span id="L614" class="source-line"><a class="line-number" href="#L614">614</a> {</span>
+<span id="L615" class="source-line"><a class="line-number" href="#L615">615</a>   __io_lock(__io_fb.__sq_lk);</span>
+<span id="L616" class="source-line"><a class="line-number" href="#L616">616</a>   if ( __io_fb.__live.get(micron::memory_order_acquire) == 0 ) [[unlikely]] {</span>
+<span id="L617" class="source-line"><a class="line-number" href="#L617">617</a>     __io_unlock(__io_fb.__sq_lk);</span>
+<span id="L618" class="source-line"><a class="line-number" href="#L618">618</a>     return false;</span>
+<span id="L619" class="source-line"><a class="line-number" href="#L619">619</a>   }</span>
+<span id="L620" class="source-line"><a class="line-number" href="#L620">620</a>   micron::uring::sqe *__s0 = __io_fb.__r.peek_sqe(0);</span>
+<span id="L621" class="source-line"><a class="line-number" href="#L621">621</a>   micron::uring::sqe *__s1 = __io_fb.__r.peek_sqe(1);</span>
+<span id="L622" class="source-line"><a class="line-number" href="#L622">622</a>   if ( __s0 == nullptr || __s1 == nullptr ) [[unlikely]] {</span>
+<span id="L623" class="source-line"><a class="line-number" href="#L623">623</a>     (void)__io_fb.__r.enter(0);</span>
+<span id="L624" class="source-line"><a class="line-number" href="#L624">624</a>     __s0 = __io_fb.__r.peek_sqe(0);</span>
+<span id="L625" class="source-line"><a class="line-number" href="#L625">625</a>     __s1 = __io_fb.__r.peek_sqe(1);</span>
+<span id="L626" class="source-line"><a class="line-number" href="#L626">626</a>     if ( __s0 == nullptr || __s1 == nullptr ) {</span>
+<span id="L627" class="source-line"><a class="line-number" href="#L627">627</a>       __io_unlock(__io_fb.__sq_lk);</span>
+<span id="L628" class="source-line"><a class="line-number" href="#L628">628</a>       return false;</span>
+<span id="L629" class="source-line"><a class="line-number" href="#L629">629</a>     }</span>
+<span id="L630" class="source-line"><a class="line-number" href="#L630">630</a>   }</span>
+<span id="L631" class="source-line"><a class="line-number" href="#L631">631</a>   *__s0 = __a;</span>
+<span id="L632" class="source-line"><a class="line-number" href="#L632">632</a>   __s0-&gt;user_data = __ud_a;</span>
+<span id="L633" class="source-line"><a class="line-number" href="#L633">633</a>   *__s1 = __b;</span>
+<span id="L634" class="source-line"><a class="line-number" href="#L634">634</a>   __s1-&gt;user_data = __ud_b;</span>
+<span id="L635" class="source-line"><a class="line-number" href="#L635">635</a>   __io_fb.__r.advance_sq(2);</span>
+<span id="L636" class="source-line"><a class="line-number" href="#L636">636</a>   (void)__io_fb.__r.enter(0);</span>
+<span id="L637" class="source-line"><a class="line-number" href="#L637">637</a>   __io_unlock(__io_fb.__sq_lk);</span>
+<span id="L638" class="source-line"><a class="line-number" href="#L638">638</a>   return true;</span>
+<span id="L639" class="source-line"><a class="line-number" href="#L639">639</a> }</span>
+<span id="L640" class="source-line"><a class="line-number" href="#L640">640</a> </span>
+<span id="L641" class="source-line"><a class="line-number" href="#L641">641</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L642" class="source-line"><a class="line-number" href="#L642">642</a> // cancellation registry</span>
+<span id="L643" class="source-line"><a class="line-number" href="#L643">643</a> </span>
+<span id="L644" class="source-line"><a class="line-number" href="#L644">644</a> struct __io_cxl_node {</span>
+<span id="L645" class="source-line"><a class="line-number" href="#L645">645</a>   __io_cxl_node *__next = nullptr;</span>
+<span id="L646" class="source-line"><a class="line-number" href="#L646">646</a>   const micron::atomic_token&lt;u32&gt; *__flag = nullptr;</span>
+<span id="L647" class="source-line"><a class="line-number" href="#L647">647</a>   u64 __ud = 0;</span>
+<span id="L648" class="source-line"><a class="line-number" href="#L648">648</a>   i32 __ring_fd = -1;</span>
+<span id="L649" class="source-line"><a class="line-number" href="#L649">649</a> };</span>
+<span id="L650" class="source-line"><a class="line-number" href="#L650">650</a> </span>
+<span id="L651" class="source-line"><a class="line-number" href="#L651">651</a> inline __io_cxl_node *__io_cxl_head = nullptr;</span>
+<span id="L652" class="source-line"><a class="line-number" href="#L652">652</a> inline micron::atomic_token&lt;u32&gt; __io_cxl_lk{ 0 };</span>
+<span id="L653" class="source-line"><a class="line-number" href="#L653">653</a> </span>
+<span id="L654" class="source-line"><a class="line-number" href="#L654">654</a> inline void</span>
+<span id="L655" class="source-line"><a class="line-number" href="#L655">655</a> __io_cxl_push(__io_cxl_node *__n) noexcept</span>
+<span id="L656" class="source-line"><a class="line-number" href="#L656">656</a> {</span>
+<span id="L657" class="source-line"><a class="line-number" href="#L657">657</a>   __io_lock(__io_cxl_lk);</span>
+<span id="L658" class="source-line"><a class="line-number" href="#L658">658</a>   __n-&gt;__next = __io_cxl_head;</span>
+<span id="L659" class="source-line"><a class="line-number" href="#L659">659</a>   __io_cxl_head = __n;</span>
+<span id="L660" class="source-line"><a class="line-number" href="#L660">660</a>   __io_unlock(__io_cxl_lk);</span>
+<span id="L661" class="source-line"><a class="line-number" href="#L661">661</a> }</span>
+<span id="L662" class="source-line"><a class="line-number" href="#L662">662</a> </span>
+<span id="L663" class="source-line"><a class="line-number" href="#L663">663</a> inline void</span>
+<span id="L664" class="source-line"><a class="line-number" href="#L664">664</a> __io_cxl_unlink(__io_cxl_node *__n) noexcept</span>
+<span id="L665" class="source-line"><a class="line-number" href="#L665">665</a> {</span>
+<span id="L666" class="source-line"><a class="line-number" href="#L666">666</a>   __io_lock(__io_cxl_lk);</span>
+<span id="L667" class="source-line"><a class="line-number" href="#L667">667</a>   __io_cxl_node **__pp = &amp;__io_cxl_head;</span>
+<span id="L668" class="source-line"><a class="line-number" href="#L668">668</a>   while ( *__pp != nullptr ) {</span>
+<span id="L669" class="source-line"><a class="line-number" href="#L669">669</a>     if ( *__pp == __n ) {</span>
+<span id="L670" class="source-line"><a class="line-number" href="#L670">670</a>       *__pp = __n-&gt;__next;</span>
+<span id="L671" class="source-line"><a class="line-number" href="#L671">671</a>       break;</span>
+<span id="L672" class="source-line"><a class="line-number" href="#L672">672</a>     }</span>
+<span id="L673" class="source-line"><a class="line-number" href="#L673">673</a>     __pp = &amp;(*__pp)-&gt;__next;</span>
+<span id="L674" class="source-line"><a class="line-number" href="#L674">674</a>   }</span>
+<span id="L675" class="source-line"><a class="line-number" href="#L675">675</a>   __io_unlock(__io_cxl_lk);</span>
+<span id="L676" class="source-line"><a class="line-number" href="#L676">676</a> }</span>
+<span id="L677" class="source-line"><a class="line-number" href="#L677">677</a> </span>
+<span id="L678" class="source-line"><a class="line-number" href="#L678">678</a> inline void</span>
+<span id="L679" class="source-line"><a class="line-number" href="#L679">679</a> __io_sync_cancel_ud(i32 __ring_fd, u64 __ud) noexcept</span>
+<span id="L680" class="source-line"><a class="line-number" href="#L680">680</a> {</span>
+<span id="L681" class="source-line"><a class="line-number" href="#L681">681</a>   micron::uring::sync_cancel_reg __sc{};</span>
+<span id="L682" class="source-line"><a class="line-number" href="#L682">682</a>   __sc.addr = __ud;</span>
+<span id="L683" class="source-line"><a class="line-number" href="#L683">683</a>   __sc.fd = -1;</span>
+<span id="L684" class="source-line"><a class="line-number" href="#L684">684</a>   __sc.flags = 0;</span>
+<span id="L685" class="source-line"><a class="line-number" href="#L685">685</a>   (void)micron::uring::__io_uring_register(__ring_fd, micron::uring::reg_register_sync_cancel, &amp;__sc, 1);</span>
+<span id="L686" class="source-line"><a class="line-number" href="#L686">686</a> }</span>
+<span id="L687" class="source-line"><a class="line-number" href="#L687">687</a> </span>
+<span id="L688" class="source-line"><a class="line-number" href="#L688">688</a> inline void</span>
+<span id="L689" class="source-line"><a class="line-number" href="#L689">689</a> __io_cancel_walker(const micron::atomic_token&lt;u32&gt; *__flag) noexcept</span>
+<span id="L690" class="source-line"><a class="line-number" href="#L690">690</a> {</span>
+<span id="L691" class="source-line"><a class="line-number" href="#L691">691</a>   __io_lock(__io_cxl_lk);</span>
+<span id="L692" class="source-line"><a class="line-number" href="#L692">692</a>   for ( __io_cxl_node *__n = __io_cxl_head; __n != nullptr; __n = __n-&gt;__next )</span>
+<span id="L693" class="source-line"><a class="line-number" href="#L693">693</a>     if ( __n-&gt;__flag == __flag &amp;&amp; __n-&gt;__ring_fd &gt;= 0 ) {</span>
+<span id="L694" class="source-line"><a class="line-number" href="#L694">694</a>       __io_sync_cancel_ud(__n-&gt;__ring_fd, __n-&gt;__ud);</span>
+<span id="L695" class="source-line"><a class="line-number" href="#L695">695</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L696" class="source-line"><a class="line-number" href="#L696">696</a>       __io_fb.__stat.cancels.fetch_add(1, micron::memory_order_relaxed);</span>
+<span id="L697" class="source-line"><a class="line-number" href="#L697">697</a> #endif</span>
+<span id="L698" class="source-line"><a class="line-number" href="#L698">698</a>     }</span>
+<span id="L699" class="source-line"><a class="line-number" href="#L699">699</a>   __io_unlock(__io_cxl_lk);</span>
+<span id="L700" class="source-line"><a class="line-number" href="#L700">700</a> }</span>
+<span id="L701" class="source-line"><a class="line-number" href="#L701">701</a> </span>
+<span id="L702" class="source-line"><a class="line-number" href="#L702">702</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L703" class="source-line"><a class="line-number" href="#L703">703</a> // buffer pool</span>
+<span id="L704" class="source-line"><a class="line-number" href="#L704">704</a> // fixed</span>
+<span id="L705" class="source-line"><a class="line-number" href="#L705">705</a> // one global slab</span>
+<span id="L706" class="source-line"><a class="line-number" href="#L706">706</a> // lazily registered into each ring</span>
+<span id="L707" class="source-line"><a class="line-number" href="#L707">707</a> //</span>
+<span id="L708" class="source-line"><a class="line-number" href="#L708">708</a> // TODO: add a clone_buffers (6.12+) path</span>
+<span id="L709" class="source-line"><a class="line-number" href="#L709">709</a> </span>
+<span id="L710" class="source-line"><a class="line-number" href="#L710">710</a> inline constexpr u32 __io_fixed_slots = 8;</span>
+<span id="L711" class="source-line"><a class="line-number" href="#L711">711</a> inline constexpr usize __io_fixed_sz = 256 * 1024;</span>
+<span id="L712" class="source-line"><a class="line-number" href="#L712">712</a> </span>
+<span id="L713" class="source-line"><a class="line-number" href="#L713">713</a> struct __io_fixed_pool {</span>
+<span id="L714" class="source-line"><a class="line-number" href="#L714">714</a>   byte *__base = nullptr;</span>
+<span id="L715" class="source-line"><a class="line-number" href="#L715">715</a>   micron::atomic_token&lt;u32&gt; __map{ 0 };      // bit i set = slot busy</span>
+<span id="L716" class="source-line"><a class="line-number" href="#L716">716</a>   micron::atomic_token&lt;u32&gt; __lk{ 0 };</span>
+<span id="L717" class="source-line"><a class="line-number" href="#L717">717</a>   micron::atomic_token&lt;u32&gt; __ready{ 0 };</span>
+<span id="L718" class="source-line"><a class="line-number" href="#L718">718</a> };</span>
+<span id="L719" class="source-line"><a class="line-number" href="#L719">719</a> </span>
+<span id="L720" class="source-line"><a class="line-number" href="#L720">720</a> inline __io_fixed_pool __io_fixed;</span>
+<span id="L721" class="source-line"><a class="line-number" href="#L721">721</a> </span>
+<span id="L722" class="source-line"><a class="line-number" href="#L722">722</a> inline bool</span>
+<span id="L723" class="source-line"><a class="line-number" href="#L723">723</a> __io_fixed_ensure() noexcept</span>
+<span id="L724" class="source-line"><a class="line-number" href="#L724">724</a> {</span>
+<span id="L725" class="source-line"><a class="line-number" href="#L725">725</a>   if ( __io_fixed.__ready.get(micron::memory_order_acquire) != 0 ) return true;</span>
+<span id="L726" class="source-line"><a class="line-number" href="#L726">726</a>   __io_lock(__io_fixed.__lk);</span>
+<span id="L727" class="source-line"><a class="line-number" href="#L727">727</a>   if ( __io_fixed.__ready.get(micron::memory_order_acquire) != 0 ) {</span>
+<span id="L728" class="source-line"><a class="line-number" href="#L728">728</a>     __io_unlock(__io_fixed.__lk);</span>
+<span id="L729" class="source-line"><a class="line-number" href="#L729">729</a>     return true;</span>
+<span id="L730" class="source-line"><a class="line-number" href="#L730">730</a>   }</span>
+<span id="L731" class="source-line"><a class="line-number" href="#L731">731</a>   void *__p = micron::mmap(nullptr, __io_fixed_slots * __io_fixed_sz, prot_read | prot_write, map_private | map_anonymous, -1, 0);</span>
+<span id="L732" class="source-line"><a class="line-number" href="#L732">732</a>   if ( reinterpret_cast&lt;usize&gt;(__p) &gt;= static_cast&lt;usize&gt;(-4095) ) {</span>
+<span id="L733" class="source-line"><a class="line-number" href="#L733">733</a>     __io_unlock(__io_fixed.__lk);</span>
+<span id="L734" class="source-line"><a class="line-number" href="#L734">734</a>     return false;</span>
+<span id="L735" class="source-line"><a class="line-number" href="#L735">735</a>   }</span>
+<span id="L736" class="source-line"><a class="line-number" href="#L736">736</a>   __io_fixed.__base = reinterpret_cast&lt;byte *&gt;(__p);</span>
+<span id="L737" class="source-line"><a class="line-number" href="#L737">737</a>   __io_fixed.__ready.store(1, micron::memory_order_release);</span>
+<span id="L738" class="source-line"><a class="line-number" href="#L738">738</a>   __io_unlock(__io_fixed.__lk);</span>
+<span id="L739" class="source-line"><a class="line-number" href="#L739">739</a>   return true;</span>
+<span id="L740" class="source-line"><a class="line-number" href="#L740">740</a> }</span>
+<span id="L741" class="source-line"><a class="line-number" href="#L741">741</a> </span>
+<span id="L742" class="source-line"><a class="line-number" href="#L742">742</a> inline bool</span>
+<span id="L743" class="source-line"><a class="line-number" href="#L743">743</a> __io_fixed_reg(__wring &amp;__wr) noexcept</span>
+<span id="L744" class="source-line"><a class="line-number" href="#L744">744</a> {</span>
+<span id="L745" class="source-line"><a class="line-number" href="#L745">745</a>   const u32 __r0 = __wr.__bufs_reg.get(micron::memory_order_acquire);</span>
+<span id="L746" class="source-line"><a class="line-number" href="#L746">746</a>   if ( __r0 == 1 ) return true;</span>
+<span id="L747" class="source-line"><a class="line-number" href="#L747">747</a>   if ( __r0 == 2 ) return false;</span>
+<span id="L748" class="source-line"><a class="line-number" href="#L748">748</a>   __io_lock(__wr.__sq_lk);</span>
+<span id="L749" class="source-line"><a class="line-number" href="#L749">749</a>   const u32 __r1 = __wr.__bufs_reg.get(micron::memory_order_acquire);</span>
+<span id="L750" class="source-line"><a class="line-number" href="#L750">750</a>   if ( __r1 != 0 ) [[unlikely]] {      // another thread finished while we waited</span>
+<span id="L751" class="source-line"><a class="line-number" href="#L751">751</a>     __io_unlock(__wr.__sq_lk);</span>
+<span id="L752" class="source-line"><a class="line-number" href="#L752">752</a>     return __r1 == 1;</span>
+<span id="L753" class="source-line"><a class="line-number" href="#L753">753</a>   }</span>
+<span id="L754" class="source-line"><a class="line-number" href="#L754">754</a>   if ( !__io_fixed_ensure() ) {</span>
+<span id="L755" class="source-line"><a class="line-number" href="#L755">755</a>     __wr.__bufs_reg.store(2, micron::memory_order_release);</span>
+<span id="L756" class="source-line"><a class="line-number" href="#L756">756</a>     __io_unlock(__wr.__sq_lk);</span>
+<span id="L757" class="source-line"><a class="line-number" href="#L757">757</a>     return false;</span>
+<span id="L758" class="source-line"><a class="line-number" href="#L758">758</a>   }</span>
+<span id="L759" class="source-line"><a class="line-number" href="#L759">759</a>   micron::uring::iovec __iov[__io_fixed_slots];</span>
+<span id="L760" class="source-line"><a class="line-number" href="#L760">760</a>   for ( u32 __i = 0; __i &lt; __io_fixed_slots; ++__i ) {</span>
+<span id="L761" class="source-line"><a class="line-number" href="#L761">761</a>     __iov[__i].iov_base = __io_fixed.__base + static_cast&lt;usize&gt;(__i) * __io_fixed_sz;</span>
+<span id="L762" class="source-line"><a class="line-number" href="#L762">762</a>     __iov[__i].iov_len = __io_fixed_sz;</span>
+<span id="L763" class="source-line"><a class="line-number" href="#L763">763</a>   }</span>
+<span id="L764" class="source-line"><a class="line-number" href="#L764">764</a>   // RLIMIT_MEMLOCK or old kernel</span>
+<span id="L765" class="source-line"><a class="line-number" href="#L765">765</a>   const u32 __v = __wr.__r.register_buffers(__iov, __io_fixed_slots) != 0 ? 2u : 1u;</span>
+<span id="L766" class="source-line"><a class="line-number" href="#L766">766</a>   __wr.__bufs_reg.store(__v, micron::memory_order_release);</span>
+<span id="L767" class="source-line"><a class="line-number" href="#L767">767</a>   __io_unlock(__wr.__sq_lk);</span>
+<span id="L768" class="source-line"><a class="line-number" href="#L768">768</a>   return __v == 1;</span>
+<span id="L769" class="source-line"><a class="line-number" href="#L769">769</a> }</span>
+<span id="L770" class="source-line"><a class="line-number" href="#L770">770</a> </span>
+<span id="L771" class="source-line"><a class="line-number" href="#L771">771</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L772" class="source-line"><a class="line-number" href="#L772">772</a> // sparse fixed-file table (&gt;=5.19)</span>
+<span id="L773" class="source-line"><a class="line-number" href="#L773">773</a> </span>
+<span id="L774" class="source-line"><a class="line-number" href="#L774">774</a> inline bool</span>
+<span id="L775" class="source-line"><a class="line-number" href="#L775">775</a> __io_files_reg(__wring &amp;__wr) noexcept</span>
+<span id="L776" class="source-line"><a class="line-number" href="#L776">776</a> {</span>
+<span id="L777" class="source-line"><a class="line-number" href="#L777">777</a>   const u32 __r0 = __wr.__files_reg.get(micron::memory_order_acquire);</span>
+<span id="L778" class="source-line"><a class="line-number" href="#L778">778</a>   if ( __r0 == 1 ) return true;</span>
+<span id="L779" class="source-line"><a class="line-number" href="#L779">779</a>   if ( __r0 == 2 ) return false;</span>
+<span id="L780" class="source-line"><a class="line-number" href="#L780">780</a>   if ( !micron::kernel::has(micron::kernel::feature::uring_files_sparse) ) {</span>
+<span id="L781" class="source-line"><a class="line-number" href="#L781">781</a>     __wr.__files_reg.store(2, micron::memory_order_release);</span>
+<span id="L782" class="source-line"><a class="line-number" href="#L782">782</a>     return false;</span>
+<span id="L783" class="source-line"><a class="line-number" href="#L783">783</a>   }</span>
+<span id="L784" class="source-line"><a class="line-number" href="#L784">784</a>   __io_lock(__wr.__file_lk);</span>
+<span id="L785" class="source-line"><a class="line-number" href="#L785">785</a>   const u32 __r1 = __wr.__files_reg.get(micron::memory_order_acquire);</span>
+<span id="L786" class="source-line"><a class="line-number" href="#L786">786</a>   if ( __r1 != 0 ) [[unlikely]] {</span>
+<span id="L787" class="source-line"><a class="line-number" href="#L787">787</a>     __io_unlock(__wr.__file_lk);</span>
+<span id="L788" class="source-line"><a class="line-number" href="#L788">788</a>     return __r1 == 1;</span>
+<span id="L789" class="source-line"><a class="line-number" href="#L789">789</a>   }</span>
+<span id="L790" class="source-line"><a class="line-number" href="#L790">790</a>   const u32 __v = __wr.__r.register_files_sparse(__io_file_slots) != 0 ? 2u : 1u;</span>
+<span id="L791" class="source-line"><a class="line-number" href="#L791">791</a>   __wr.__files_reg.store(__v, micron::memory_order_release);</span>
+<span id="L792" class="source-line"><a class="line-number" href="#L792">792</a>   __io_unlock(__wr.__file_lk);</span>
+<span id="L793" class="source-line"><a class="line-number" href="#L793">793</a>   return __v == 1;</span>
+<span id="L794" class="source-line"><a class="line-number" href="#L794">794</a> }</span>
+<span id="L795" class="source-line"><a class="line-number" href="#L795">795</a> </span>
+<span id="L796" class="source-line"><a class="line-number" href="#L796">796</a> [[nodiscard]] inline i32</span>
+<span id="L797" class="source-line"><a class="line-number" href="#L797">797</a> __io_slot_acquire(__wring &amp;__wr) noexcept</span>
+<span id="L798" class="source-line"><a class="line-number" href="#L798">798</a> {</span>
+<span id="L799" class="source-line"><a class="line-number" href="#L799">799</a>   if ( !__io_files_reg(__wr) ) return -1;</span>
+<span id="L800" class="source-line"><a class="line-number" href="#L800">800</a>   __io_lock(__wr.__file_lk);</span>
+<span id="L801" class="source-line"><a class="line-number" href="#L801">801</a>   for ( u32 __w = 0; __w &lt; __io_file_slots / 64; ++__w ) {</span>
+<span id="L802" class="source-line"><a class="line-number" href="#L802">802</a>     if ( __wr.__file_free[__w] == ~0ull ) continue;</span>
+<span id="L803" class="source-line"><a class="line-number" href="#L803">803</a>     const u32 __b = static_cast&lt;u32&gt;(__builtin_ctzll(~__wr.__file_free[__w]));</span>
+<span id="L804" class="source-line"><a class="line-number" href="#L804">804</a>     __wr.__file_free[__w] |= (1ull &lt;&lt; __b);</span>
+<span id="L805" class="source-line"><a class="line-number" href="#L805">805</a>     __io_unlock(__wr.__file_lk);</span>
+<span id="L806" class="source-line"><a class="line-number" href="#L806">806</a>     return static_cast&lt;i32&gt;(__w * 64u + __b);</span>
+<span id="L807" class="source-line"><a class="line-number" href="#L807">807</a>   }</span>
+<span id="L808" class="source-line"><a class="line-number" href="#L808">808</a>   __io_unlock(__wr.__file_lk);</span>
+<span id="L809" class="source-line"><a class="line-number" href="#L809">809</a>   return -1;      // exhausted; the caller stops staging and reports the rest unstaged</span>
+<span id="L810" class="source-line"><a class="line-number" href="#L810">810</a> }</span>
+<span id="L811" class="source-line"><a class="line-number" href="#L811">811</a> </span>
+<span id="L812" class="source-line"><a class="line-number" href="#L812">812</a> inline void</span>
+<span id="L813" class="source-line"><a class="line-number" href="#L813">813</a> __io_slot_release(__wring &amp;__wr, i32 __slot) noexcept</span>
+<span id="L814" class="source-line"><a class="line-number" href="#L814">814</a> {</span>
+<span id="L815" class="source-line"><a class="line-number" href="#L815">815</a>   if ( __slot &lt; 0 || static_cast&lt;u32&gt;(__slot) &gt;= __io_file_slots ) return;</span>
+<span id="L816" class="source-line"><a class="line-number" href="#L816">816</a>   __io_lock(__wr.__file_lk);</span>
+<span id="L817" class="source-line"><a class="line-number" href="#L817">817</a>   __wr.__file_free[static_cast&lt;u32&gt;(__slot) / 64u] &amp;= ~(1ull &lt;&lt; (static_cast&lt;u32&gt;(__slot) % 64u));</span>
+<span id="L818" class="source-line"><a class="line-number" href="#L818">818</a>   __io_unlock(__wr.__file_lk);</span>
+<span id="L819" class="source-line"><a class="line-number" href="#L819">819</a> }</span>
+<span id="L820" class="source-line"><a class="line-number" href="#L820">820</a> </span>
+<span id="L821" class="source-line"><a class="line-number" href="#L821">821</a> [[nodiscard]] inline i32</span>
+<span id="L822" class="source-line"><a class="line-number" href="#L822">822</a> acquire_fixed() noexcept</span>
+<span id="L823" class="source-line"><a class="line-number" href="#L823">823</a> {</span>
+<span id="L824" class="source-line"><a class="line-number" href="#L824">824</a>   if ( !__io_fixed_ensure() ) return -1;</span>
+<span id="L825" class="source-line"><a class="line-number" href="#L825">825</a>   for ( ;; ) {</span>
+<span id="L826" class="source-line"><a class="line-number" href="#L826">826</a>     u32 __m = __io_fixed.__map.get(micron::memory_order_acquire);</span>
+<span id="L827" class="source-line"><a class="line-number" href="#L827">827</a>     if ( __m == (1u &lt;&lt; __io_fixed_slots) - 1u ) return -1;      // exhausted</span>
+<span id="L828" class="source-line"><a class="line-number" href="#L828">828</a>     const u32 __i = static_cast&lt;u32&gt;(__builtin_ctz(~__m));</span>
+<span id="L829" class="source-line"><a class="line-number" href="#L829">829</a>     if ( __io_fixed.__map.compare_exchange_weak(__m, __m | (1u &lt;&lt; __i), micron::memory_order_acq_rel, micron::memory_order_acquire) )</span>
+<span id="L830" class="source-line"><a class="line-number" href="#L830">830</a>       return static_cast&lt;i32&gt;(__i);</span>
+<span id="L831" class="source-line"><a class="line-number" href="#L831">831</a>   }</span>
+<span id="L832" class="source-line"><a class="line-number" href="#L832">832</a> }</span>
+<span id="L833" class="source-line"><a class="line-number" href="#L833">833</a> </span>
+<span id="L834" class="source-line"><a class="line-number" href="#L834">834</a> inline void</span>
+<span id="L835" class="source-line"><a class="line-number" href="#L835">835</a> release_fixed(i32 __slot) noexcept</span>
+<span id="L836" class="source-line"><a class="line-number" href="#L836">836</a> {</span>
+<span id="L837" class="source-line"><a class="line-number" href="#L837">837</a>   if ( __slot &lt; 0 || static_cast&lt;u32&gt;(__slot) &gt;= __io_fixed_slots ) return;</span>
+<span id="L838" class="source-line"><a class="line-number" href="#L838">838</a>   __io_fixed.__map.fetch_and(~(1u &lt;&lt; static_cast&lt;u32&gt;(__slot)), micron::memory_order_acq_rel);</span>
+<span id="L839" class="source-line"><a class="line-number" href="#L839">839</a> }</span>
+<span id="L840" class="source-line"><a class="line-number" href="#L840">840</a> </span>
+<span id="L841" class="source-line"><a class="line-number" href="#L841">841</a> [[nodiscard]] inline byte *</span>
+<span id="L842" class="source-line"><a class="line-number" href="#L842">842</a> fixed_ptr(i32 __slot) noexcept</span>
+<span id="L843" class="source-line"><a class="line-number" href="#L843">843</a> {</span>
+<span id="L844" class="source-line"><a class="line-number" href="#L844">844</a>   if ( __slot &lt; 0 || static_cast&lt;u32&gt;(__slot) &gt;= __io_fixed_slots || __io_fixed.__base == nullptr ) return nullptr;</span>
+<span id="L845" class="source-line"><a class="line-number" href="#L845">845</a>   return __io_fixed.__base + static_cast&lt;usize&gt;(__slot) * __io_fixed_sz;</span>
+<span id="L846" class="source-line"><a class="line-number" href="#L846">846</a> }</span>
+<span id="L847" class="source-line"><a class="line-number" href="#L847">847</a> </span>
+<span id="L848" class="source-line"><a class="line-number" href="#L848">848</a> [[nodiscard]] inline constexpr usize</span>
+<span id="L849" class="source-line"><a class="line-number" href="#L849">849</a> fixed_size() noexcept</span>
+<span id="L850" class="source-line"><a class="line-number" href="#L850">850</a> {</span>
+<span id="L851" class="source-line"><a class="line-number" href="#L851">851</a>   return __io_fixed_sz;</span>
+<span id="L852" class="source-line"><a class="line-number" href="#L852">852</a> }</span>
+<span id="L853" class="source-line"><a class="line-number" href="#L853">853</a> </span>
+<span id="L854" class="source-line"><a class="line-number" href="#L854">854</a> inline void</span>
+<span id="L855" class="source-line"><a class="line-number" href="#L855">855</a> __io_fixed_shutdown() noexcept</span>
+<span id="L856" class="source-line"><a class="line-number" href="#L856">856</a> {</span>
+<span id="L857" class="source-line"><a class="line-number" href="#L857">857</a>   if ( __io_fixed.__ready.get(micron::memory_order_acquire) == 0 ) return;</span>
+<span id="L858" class="source-line"><a class="line-number" href="#L858">858</a>   __io_fixed.__ready.store(0, micron::memory_order_release);</span>
+<span id="L859" class="source-line"><a class="line-number" href="#L859">859</a>   micron::munmap(micron::ptr_cast&lt;addr_t *&gt;(__io_fixed.__base), __io_fixed_slots * __io_fixed_sz);</span>
+<span id="L860" class="source-line"><a class="line-number" href="#L860">860</a>   __io_fixed.__base = nullptr;</span>
+<span id="L861" class="source-line"><a class="line-number" href="#L861">861</a>   __io_fixed.__map.store(0, micron::memory_order_relaxed);</span>
+<span id="L862" class="source-line"><a class="line-number" href="#L862">862</a> }</span>
+<span id="L863" class="source-line"><a class="line-number" href="#L863">863</a> </span>
+<span id="L864" class="source-line"><a class="line-number" href="#L864">864</a> inline u64</span>
+<span id="L865" class="source-line"><a class="line-number" href="#L865">865</a> __io_pending_total() noexcept</span>
+<span id="L866" class="source-line"><a class="line-number" href="#L866">866</a> {</span>
+<span id="L867" class="source-line"><a class="line-number" href="#L867">867</a>   u64 __t = __io_fb.__pending.get(micron::memory_order_acquire);</span>
+<span id="L868" class="source-line"><a class="line-number" href="#L868">868</a>   for ( u32 __i = 0; __i &lt; 32u; ++__i ) __t += __io_rings[__i].__pending.get(micron::memory_order_acquire);</span>
+<span id="L869" class="source-line"><a class="line-number" href="#L869">869</a>   return __t;</span>
+<span id="L870" class="source-line"><a class="line-number" href="#L870">870</a> }</span>
+<span id="L871" class="source-line"><a class="line-number" href="#L871">871</a> </span>
+<span id="L872" class="source-line"><a class="line-number" href="#L872">872</a> [[nodiscard]] inline u64</span>
+<span id="L873" class="source-line"><a class="line-number" href="#L873">873</a> io_pending() noexcept</span>
+<span id="L874" class="source-line"><a class="line-number" href="#L874">874</a> {</span>
+<span id="L875" class="source-line"><a class="line-number" href="#L875">875</a>   return __io_pending_total();</span>
+<span id="L876" class="source-line"><a class="line-number" href="#L876">876</a> }</span>
+<span id="L877" class="source-line"><a class="line-number" href="#L877">877</a> </span>
+<span id="L878" class="source-line"><a class="line-number" href="#L878">878</a> struct io_stats_t {</span>
+<span id="L879" class="source-line"><a class="line-number" href="#L879">879</a>   u64 submits = 0;</span>
+<span id="L880" class="source-line"><a class="line-number" href="#L880">880</a>   u64 enters = 0;</span>
+<span id="L881" class="source-line"><a class="line-number" href="#L881">881</a>   u64 inline_completions = 0;</span>
+<span id="L882" class="source-line"><a class="line-number" href="#L882">882</a>   u64 sqe_full_flushes = 0;</span>
+<span id="L883" class="source-line"><a class="line-number" href="#L883">883</a>   u64 parks = 0;</span>
+<span id="L884" class="source-line"><a class="line-number" href="#L884">884</a>   u64 wakes = 0;</span>
+<span id="L885" class="source-line"><a class="line-number" href="#L885">885</a>   u64 cancels = 0;</span>
+<span id="L886" class="source-line"><a class="line-number" href="#L886">886</a> };</span>
+<span id="L887" class="source-line"><a class="line-number" href="#L887">887</a> </span>
+<span id="L888" class="source-line"><a class="line-number" href="#L888">888</a> [[nodiscard]] inline io_stats_t</span>
+<span id="L889" class="source-line"><a class="line-number" href="#L889">889</a> io_stats() noexcept</span>
+<span id="L890" class="source-line"><a class="line-number" href="#L890">890</a> {</span>
+<span id="L891" class="source-line"><a class="line-number" href="#L891">891</a>   io_stats_t __o{};</span>
+<span id="L892" class="source-line"><a class="line-number" href="#L892">892</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L893" class="source-line"><a class="line-number" href="#L893">893</a>   auto __add = [&amp;__o](const __wring &amp;__wr) {</span>
+<span id="L894" class="source-line"><a class="line-number" href="#L894">894</a>     __o.submits += __wr.__stat.submits.get(micron::memory_order_relaxed);</span>
+<span id="L895" class="source-line"><a class="line-number" href="#L895">895</a>     __o.enters += __wr.__stat.enters.get(micron::memory_order_relaxed);</span>
+<span id="L896" class="source-line"><a class="line-number" href="#L896">896</a>     __o.inline_completions += __wr.__stat.inline_completions.get(micron::memory_order_relaxed);</span>
+<span id="L897" class="source-line"><a class="line-number" href="#L897">897</a>     __o.sqe_full_flushes += __wr.__stat.sqe_full_flushes.get(micron::memory_order_relaxed);</span>
+<span id="L898" class="source-line"><a class="line-number" href="#L898">898</a>     __o.parks += __wr.__stat.parks.get(micron::memory_order_relaxed);</span>
+<span id="L899" class="source-line"><a class="line-number" href="#L899">899</a>     __o.wakes += __wr.__stat.wakes.get(micron::memory_order_relaxed);</span>
+<span id="L900" class="source-line"><a class="line-number" href="#L900">900</a>     __o.cancels += __wr.__stat.cancels.get(micron::memory_order_relaxed);</span>
+<span id="L901" class="source-line"><a class="line-number" href="#L901">901</a>   };</span>
+<span id="L902" class="source-line"><a class="line-number" href="#L902">902</a>   for ( u32 __i = 0; __i &lt; 32u; ++__i ) __add(__io_rings[__i]);</span>
+<span id="L903" class="source-line"><a class="line-number" href="#L903">903</a>   __add(__io_fb);</span>
+<span id="L904" class="source-line"><a class="line-number" href="#L904">904</a> #endif</span>
+<span id="L905" class="source-line"><a class="line-number" href="#L905">905</a>   return __o;</span>
+<span id="L906" class="source-line"><a class="line-number" href="#L906">906</a> }</span>
+<span id="L907" class="source-line"><a class="line-number" href="#L907">907</a> </span>
+<span id="L908" class="source-line"><a class="line-number" href="#L908">908</a> #if defined(MICRON_CORO_STATS)</span>
+<span id="L909" class="source-line"><a class="line-number" href="#L909">909</a> inline void</span>
+<span id="L910" class="source-line"><a class="line-number" href="#L910">910</a> __io_stats_reset() noexcept</span>
+<span id="L911" class="source-line"><a class="line-number" href="#L911">911</a> {</span>
+<span id="L912" class="source-line"><a class="line-number" href="#L912">912</a>   auto __z = [](__wring &amp;__wr) {</span>
+<span id="L913" class="source-line"><a class="line-number" href="#L913">913</a>     __wr.__stat.submits.store(0, micron::memory_order_relaxed);</span>
+<span id="L914" class="source-line"><a class="line-number" href="#L914">914</a>     __wr.__stat.enters.store(0, micron::memory_order_relaxed);</span>
+<span id="L915" class="source-line"><a class="line-number" href="#L915">915</a>     __wr.__stat.inline_completions.store(0, micron::memory_order_relaxed);</span>
+<span id="L916" class="source-line"><a class="line-number" href="#L916">916</a>     __wr.__stat.sqe_full_flushes.store(0, micron::memory_order_relaxed);</span>
+<span id="L917" class="source-line"><a class="line-number" href="#L917">917</a>     __wr.__stat.parks.store(0, micron::memory_order_relaxed);</span>
+<span id="L918" class="source-line"><a class="line-number" href="#L918">918</a>     __wr.__stat.wakes.store(0, micron::memory_order_relaxed);</span>
+<span id="L919" class="source-line"><a class="line-number" href="#L919">919</a>     __wr.__stat.cancels.store(0, micron::memory_order_relaxed);</span>
+<span id="L920" class="source-line"><a class="line-number" href="#L920">920</a>   };</span>
+<span id="L921" class="source-line"><a class="line-number" href="#L921">921</a>   for ( u32 __i = 0; __i &lt; 32u; ++__i ) __z(__io_rings[__i]);</span>
+<span id="L922" class="source-line"><a class="line-number" href="#L922">922</a>   __z(__io_fb);</span>
+<span id="L923" class="source-line"><a class="line-number" href="#L923">923</a> }</span>
+<span id="L924" class="source-line"><a class="line-number" href="#L924">924</a> #endif</span>
+<span id="L925" class="source-line"><a class="line-number" href="#L925">925</a> </span>
+<span id="L926" class="source-line"><a class="line-number" href="#L926">926</a> };      // namespace coro</span>
+<span id="L927" class="source-line"><a class="line-number" href="#L927">927</a> };      // namespace micron</span>
+<span id="L928" class="source-line"><a class="line-number" href="#L928">928</a> </span>
+<span id="L929" class="source-line"><a class="line-number" href="#L929">929</a> #endif</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

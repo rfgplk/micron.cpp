@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/parallel/find.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/parallel/find.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/parallel.html">Parallel algorithms</a></div><p>Defined in header <code>&lt;micron/parallel/find.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/parallel/find.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-a52788aec35b3446">micron::parallel::find_if(It __first, It __last, Pred __pred)</a></td><td>function; line 40</td></tr><tr class="t-dsc"><td><a href="#f-1ac4afbd43fc00f5">micron::parallel::find_if_not(It __first, It __last, Pred __pred)</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-90c6555c9e779d84">micron::parallel::find(It __first, It __last, V __value)</a></td><td>function; line 68</td></tr><tr class="t-dsc"><td><a href="#f-b3abaf5eaafe17d9">micron::parallel::find_last_if(It __first, It __last, Pred __pred)</a></td><td>function; line 85</td></tr><tr class="t-dsc"><td><a href="#f-5f25593aae0a3fdb">micron::parallel::find_last(It __first, It __last, V __value)</a></td><td>function; line 100</td></tr><tr class="t-dsc"><td><a href="#f-1617202f78a4efff">micron::parallel::mismatch(It1 __f1, It1 __l1, It2 __f2)</a></td><td>function; line 116</td></tr><tr class="t-dsc"><td><a href="#f-5c71bdc990df7c17">micron::parallel::adjacent_find(It __first, It __last)</a></td><td>function; line 133</td></tr><tr class="t-dsc"><td><a href="#f-1f89f40200fa5df5">micron::parallel::search(It __first, It __last, It2 __pf, It2 __pl)</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-2d022699dae8f139">micron::parallel::search_n(It __first, It __last, usize __count, V __value)</a></td><td>function; line 175</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a52788aec35b3446"><h3><code>micron::parallel::find_if(It __first, It __last, Pred __pred)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L40">line 40</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find_if(It __first, It __last, Pred __pred)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Pred __pred</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find_if(It __first, It __last, Pred __pred)
+{
+  auto __leaf = [__first, __pred](It __a, It __b) -&gt; usize {
+    for ( It __p = __a; __p != __b; ++__p )
+      if ( __pred(*__p) ) return static_cast&lt;usize&gt;(__p - __first);
+    return __pfind_npos;
+  };
+  usize __i = co_await __pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;(__first, __last, __leaf, __pfind_left{},
+                                                                               __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+  co_return (__i == __pfind_npos) ? __last : (__first + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-1ac4afbd43fc00f5"><h3><code>micron::parallel::find_if_not(It __first, It __last, Pred __pred)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find_if_not(It __first, It __last, Pred __pred)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Pred __pred</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find_if_not(It __first, It __last, Pred __pred)
+{
+  auto __leaf = [__first, __pred](It __a, It __b) -&gt; usize {
+    for ( It __p = __a; __p != __b; ++__p )
+      if ( !__pred(*__p) ) return static_cast&lt;usize&gt;(__p - __first);
+    return __pfind_npos;
+  };
+  usize __i = co_await __pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;(__first, __last, __leaf, __pfind_left{},
+                                                                               __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+  co_return (__i == __pfind_npos) ? __last : (__first + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-90c6555c9e779d84"><h3><code>micron::parallel::find(It __first, It __last, V __value)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class V&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find(It __first, It __last, V __value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>V __value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class V&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find(It __first, It __last, V __value)
+{
+  auto __leaf = [__first, __value](It __a, It __b) -&gt; usize {
+    for ( It __p = __a; __p != __b; ++__p )
+      if ( *__p == __value ) return static_cast&lt;usize&gt;(__p - __first);
+    return __pfind_npos;
+  };
+  usize __i = co_await __pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;(__first, __last, __leaf, __pfind_left{},
+                                                                               __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+  co_return (__i == __pfind_npos) ? __last : (__first + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-b3abaf5eaafe17d9"><h3><code>micron::parallel::find_last_if(It __first, It __last, Pred __pred)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L85">line 85</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find_last_if(It __first, It __last, Pred __pred)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>Pred __pred</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class Pred&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find_last_if(It __first, It __last, Pred __pred)
+{
+  auto __leaf = [__first, __pred](It __a, It __b) -&gt; usize {
+    usize __r = __pfind_npos;
+    for ( It __p = __a; __p != __b; ++__p )
+      if ( __pred(*__p) ) __r = static_cast&lt;usize&gt;(__p - __first);
+    return __r;
+  };
+  usize __i = co_await __pmapreduce&lt;It, decltype(__leaf), __pfind_right, usize&gt;(__first, __last, __leaf, __pfind_right{},
+                                                                                __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+  co_return (__i == __pfind_npos) ? __last : (__first + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), __pfind_right, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-5f25593aae0a3fdb"><h3><code>micron::parallel::find_last(It __first, It __last, V __value)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L100">line 100</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class V&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find_last(It __first, It __last, V __value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>V __value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class V&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+find_last(It __first, It __last, V __value)
+{
+  auto __leaf = [__first, __value](It __a, It __b) -&gt; usize {
+    usize __r = __pfind_npos;
+    for ( It __p = __a; __p != __b; ++__p )
+      if ( *__p == __value ) __r = static_cast&lt;usize&gt;(__p - __first);
+    return __r;
+  };
+  usize __i = co_await __pmapreduce&lt;It, decltype(__leaf), __pfind_right, usize&gt;(__first, __last, __leaf, __pfind_right{},
+                                                                                __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+  co_return (__i == __pfind_npos) ? __last : (__first + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), __pfind_right, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-1617202f78a4efff"><h3><code>micron::parallel::mismatch(It1 __f1, It1 __l1, It2 __f2)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L116">line 116</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It1, class It2&gt;
+[[nodiscard]] micron::task&lt;It1&gt;
+mismatch(It1 __f1, It1 __l1, It2 __f2)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It1 __f1</code></li><li><code>It1 __l1</code></li><li><code>It2 __f2</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It1, class It2&gt;
+[[nodiscard]] micron::task&lt;It1&gt;
+mismatch(It1 __f1, It1 __l1, It2 __f2)
+{
+  auto __leaf = [__f1, __f2](It1 __a, It1 __b) -&gt; usize {
+    for ( It1 __p = __a; __p != __b; ++__p ) {
+      const usize __i = static_cast&lt;usize&gt;(__p - __f1);
+      if ( !(*__p == __f2[__i]) ) return __i;
+    }
+    return __pfind_npos;
+  };
+  usize __i = co_await __pmapreduce&lt;It1, decltype(__leaf), __pfind_left, usize&gt;(__f1, __l1, __leaf, __pfind_left{},
+                                                                                __grain_for(static_cast&lt;usize&gt;(__l1 - __f1)));
+  co_return (__i == __pfind_npos) ? __l1 : (__f1 + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It1, decltype(__leaf), __pfind_left, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-5c71bdc990df7c17"><h3><code>micron::parallel::adjacent_find(It __first, It __last)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L133">line 133</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+adjacent_find(It __first, It __last)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+adjacent_find(It __first, It __last)
+{
+  auto __leaf = [__first, __last](It __a, It __b) -&gt; usize {
+    for ( It __p = __a; __p != __b; ++__p ) {
+      It __q = __p + 1;
+      if ( __q != __last &amp;&amp; *__p == *__q ) return static_cast&lt;usize&gt;(__p - __first);
+    }
+    return __pfind_npos;
+  };
+  usize __i = co_await __pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;(__first, __last, __leaf, __pfind_left{},
+                                                                               __grain_for(static_cast&lt;usize&gt;(__last - __first)));
+  co_return (__i == __pfind_npos) ? __last : (__first + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-1f89f40200fa5df5"><h3><code>micron::parallel::search(It __first, It __last, It2 __pf, It2 __pl)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class It2&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+search(It __first, It __last, It2 __pf, It2 __pl)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>It2 __pf</code></li><li><code>It2 __pl</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class It2&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+search(It __first, It __last, It2 __pf, It2 __pl)
+{
+  const usize __plen = static_cast&lt;usize&gt;(__pl - __pf);
+  if ( __plen == 0 ) co_return __first;
+  const usize __n = static_cast&lt;usize&gt;(__last - __first);
+  if ( __plen &gt; __n ) co_return __last;
+  auto __leaf = [__first, __last, __pf, __plen](It __a, It __b) -&gt; usize {
+    for ( It __p = __a; __p != __b; ++__p ) {
+      if ( static_cast&lt;usize&gt;(__last - __p) &lt; __plen ) break;      // not enough room for a match
+      bool __m = true;
+      for ( usize __k = 0; __k &lt; __plen; ++__k )
+        if ( !(__p[__k] == __pf[__k]) ) {
+          __m = false;
+          break;
+        }
+      if ( __m ) return static_cast&lt;usize&gt;(__p - __first);
+    }
+    return __pfind_npos;
+  };
+  usize __i = co_await __pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;(__first, __last, __leaf, __pfind_left{}, __grain_for(__n));
+  co_return (__i == __pfind_npos) ? __last : (__first + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-2d022699dae8f139"><h3><code>micron::parallel::search_n(It __first, It __last, usize __count, V __value)</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L175">line 175</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class It, class V&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+search_n(It __first, It __last, usize __count, V __value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>It __first</code></li><li><code>It __last</code></li><li><code>usize __count</code></li><li><code>V __value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class It, class V&gt;
+[[nodiscard]] micron::task&lt;It&gt;
+search_n(It __first, It __last, usize __count, V __value)
+{
+  if ( __count == 0 ) co_return __first;
+  const usize __n = static_cast&lt;usize&gt;(__last - __first);
+  if ( __count &gt; __n ) co_return __last;
+  auto __leaf = [__first, __last, __count, __value](It __a, It __b) -&gt; usize {
+    for ( It __p = __a; __p != __b; ++__p ) {
+      if ( static_cast&lt;usize&gt;(__last - __p) &lt; __count ) break;
+      bool __m = true;
+      for ( usize __k = 0; __k &lt; __count; ++__k )
+        if ( !(__p[__k] == __value) ) {
+          __m = false;
+          break;
+        }
+      if ( __m ) return static_cast&lt;usize&gt;(__p - __first);
+    }
+    return __pfind_npos;
+  };
+  usize __i = co_await __pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;(__first, __last, __leaf, __pfind_left{}, __grain_for(__n));
+  co_return (__i == __pfind_npos) ? __last : (__first + __i);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-3b58344ab1e8b7e1">__pmapreduce&lt;It, decltype(__leaf), __pfind_left, usize&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-db949cd8ec20b7f4"><h3><code>micron::parallel::__pfind_left::operator()(usize __l, usize __r) const noexcept</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L22">line 22</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  operator()(usize __l, usize __r) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize __l</code></li><li><code>usize __r</code></li></ul><h4>Effects</h4><p>Returns <code>(__l != __pfind_npos) ? __l : __r</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  operator()(usize __l, usize __r) const noexcept
+  {
+    return (__l != __pfind_npos) ? __l : __r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__l != __pfind_npos) ? __l : __r</code></td><td><a href="../../source/parallel/find.hpp.html#L24">line 24</a></td></tr></tbody></table></section><section class="function-entry" id="f-036c9957c6891475"><h3><code>micron::parallel::__pfind_right::operator()(usize __l, usize __r) const noexcept</code></h3><p>Defined in <code>parallel/find.hpp</code>, <a href="../../source/parallel/find.hpp.html#L30">line 30</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  operator()(usize __l, usize __r) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize __l</code></li><li><code>usize __r</code></li></ul><h4>Effects</h4><p>Returns <code>(__r != __pfind_npos) ? __r : __l</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  operator()(usize __l, usize __r) const noexcept
+  {
+    return (__r != __pfind_npos) ? __r : __l;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__r != __pfind_npos) ? __r : __l</code></td><td><a href="../../source/parallel/find.hpp.html#L32">line 32</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

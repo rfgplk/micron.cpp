@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/string/conversions/zmij.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/string/conversions/zmij.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/strings.html">Strings</a></div><p>Defined in header <code>&lt;micron/string/conversions/zmij.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/string/conversions/zmij.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-6ff9028140a0b4d3"><h3><code>micron::__impl::__zmij::uint128::uint128(u64 h = 0, u64 l = 0) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L36">line 36</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr uint128(u64 h = 0, u64 l = 0) noexcept : hi(h), lo(l)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 h = 0</code></li><li><code>u64 l = 0</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr uint128(u64 h = 0, u64 l = 0) noexcept : hi(h), lo(l) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b8782090aca8f8bd"><h3><code>micron::__impl::__zmij::__umul192_hi128(u64 x_hi, u64 x_lo, u64 y) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L40">line 40</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr uint128
+__umul192_hi128(u64 x_hi, u64 x_lo, u64 y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 x_hi</code></li><li><code>u64 x_lo</code></li><li><code>u64 y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr uint128
+__umul192_hi128(u64 x_hi, u64 x_lo, u64 y) noexcept
+{
+  const __fmt_uint128_t p = umul128(x_hi, y);
+  const u64 lo = p.lo + umul128(x_lo, y).hi;
+  return { p.hi + (lo &lt; p.lo), lo };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ p.hi + (lo &lt; p.lo), lo }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L44">line 44</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f2813456e3b1b2dd">umul128</a>.</p></section><section class="function-entry" id="f-4a1b3e9ea21497c1"><h3><code>micron::__impl::__zmij::__compute_dec_exp(i32 bin_exp, bool regular = true) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L48">line 48</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i32
+__compute_dec_exp(i32 bin_exp, bool regular = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 bin_exp</code></li><li><code>bool regular = true</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i32
+__compute_dec_exp(i32 bin_exp, bool regular = true) noexcept
+{
+  constexpr i32 log10_3_over_4_sig = 131072;
+  constexpr i32 log10_2_sig = 315653;
+  constexpr i32 log10_2_exp = 20;
+  return (bin_exp * log10_2_sig - static_cast&lt;i32&gt;(!regular) * log10_3_over_4_sig) &gt;&gt; log10_2_exp;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(bin_exp * log10_2_sig - static_cast&lt;i32&gt;(!regular) * log10_3_over_4_sig) &gt;&gt; log10_2_exp</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L53">line 53</a></td></tr></tbody></table></section><section class="function-entry" id="f-abf96f742ac39a42"><h3><code>micron::__impl::__zmij::__compute_exp_shift(i32 bin_exp, i32 dec_exp) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i8
+__compute_exp_shift(i32 bin_exp, i32 dec_exp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 bin_exp</code></li><li><code>i32 dec_exp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i8
+__compute_exp_shift(i32 bin_exp, i32 dec_exp) noexcept
+{
+  constexpr i32 log2_pow10_sig = 217707;
+  constexpr i32 log2_pow10_exp = 16;
+  const i32 pow10_bin_exp = -dec_exp * log2_pow10_sig &gt;&gt; log2_pow10_exp;
+  return static_cast&lt;i8&gt;(bin_exp + pow10_bin_exp + 1);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i8&gt;(bin_exp + pow10_bin_exp + 1)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L62">line 62</a></td></tr></tbody></table></section><section class="function-entry" id="f-958ff2401cb8ef54"><h3><code>micron::__impl::__zmij::pow10_significand_table::compute(u32 i) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L122">line 122</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static constexpr uint128
+  compute(u32 i) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static constexpr uint128
+  compute(u32 i) noexcept
+  {
+    constexpr u32 stride = 28;
+    const u64 m = __pow10_minor[(i + 24) % stride];
+    const uint128 h = __pow10_major[(i + 24) / stride];
+    const u64 h1 = umul128(h.lo, m).hi;
+    const u64 c0 = h.lo * m;
+    const u64 c1 = h1 + h.hi * m;
+    const u64 c2 = (c1 &lt; h1) + umul128(h.hi, m).hi;
+    uint128 r = (c2 &gt;&gt; 63) != 0 ? uint128{ c2, c1 } : uint128{ c2 &lt;&lt; 1 | c1 &gt;&gt; 63, c1 &lt;&lt; 1 | c0 &gt;&gt; 63 };
+    r.lo -= (__pow10_fixups[i &gt;&gt; 5] &gt;&gt; (i &amp; 31)) &amp; 1u;
+    return r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L133">line 133</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f2813456e3b1b2dd">umul128</a>.</p></section><section class="function-entry" id="f-dab1acd3b2d28f49"><h3><code>micron::__impl::__zmij::pow10_significand_table::pow10_significand_table() noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L136">line 136</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr pow10_significand_table() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr pow10_significand_table() noexcept
+  {
+    if constexpr ( !compressed )
+      for ( i32 i = 0; i &lt; count; ++i ) table[i] = compute(static_cast&lt;u32&gt;(i));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-958ff2401cb8ef54">compute</a>.</p></section><section class="function-entry" id="f-1ad6d5c40e5fa491"><h3><code>micron::__impl::__zmij::pow10_significand_table::operator[](i32 dec_exp) const noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L143">line 143</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr uint128
+  operator[](i32 dec_exp) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 dec_exp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr uint128
+  operator[](i32 dec_exp) const noexcept
+  {
+    const u32 i = static_cast&lt;u32&gt;(dec_exp + 307);
+    if constexpr ( compressed ) return compute(i);
+    return table[i];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>compute(i)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L146">line 146</a></td></tr><tr class="t-dsc"><td><code>table[i]</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L147">line 147</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-958ff2401cb8ef54">compute</a>.</p></section><section class="function-entry" id="f-50388faaf2adbf02"><h3><code>micron::__impl::__zmij::exp_shift_table::exp_shift_table() noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L160">line 160</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr exp_shift_table() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr exp_shift_table() noexcept
+  {
+    if constexpr ( enabled ) {
+      for ( i32 raw_exp = 0; raw_exp &lt; 2048; ++raw_exp ) {
+        i32 bin_exp = raw_exp - 1075;
+        if ( raw_exp == 0 ) ++bin_exp;
+        const i32 dec_exp = __compute_dec_exp(bin_exp);
+        table[raw_exp] = static_cast&lt;u8&gt;(__compute_exp_shift(bin_exp, dec_exp + 1) + extra_shift);
+      }
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-4a1b3e9ea21497c1">__compute_dec_exp</a>, <a href="zmij.hpp.html#f-abf96f742ac39a42">__compute_exp_shift</a>.</p></section><section class="function-entry" id="f-dca79412a17772b8"><h3><code>micron::__impl::__zmij::__to_decimal(U bin_sig, i32 raw_exp, bool regular) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L213">line 213</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename U&gt;
+inline constexpr shortest_decimal
+__to_decimal(U bin_sig, i32 raw_exp, bool regular) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>U bin_sig</code></li><li><code>i32 raw_exp</code></li><li><code>bool regular</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename U&gt;
+inline constexpr shortest_decimal
+__to_decimal(U bin_sig, i32 raw_exp, bool regular) noexcept
+{
+  using T = traits&lt;F&gt;;
+  i32 bin_exp = raw_exp - T::exp_offset;
+  constexpr i32 extra_shift = exp_shift_table::extra_shift;
+
+  if ( !regular ) {
+    const i32 dec_exp = __compute_dec_exp(bin_exp, false);
+    const u8 shift = static_cast&lt;u8&gt;(__compute_exp_shift(bin_exp, dec_exp + 1) + extra_shift);
+    const uint128 pow10 = __data.pow10_significands[-dec_exp - 1];
+    const uint128 p = __umul192_hi128(pow10.hi, pow10.lo, static_cast&lt;u64&gt;(bin_sig) &lt;&lt; shift);
+    u64 integral = p.hi &gt;&gt; extra_shift;
+    const u64 fractional = p.hi &lt;&lt; (64 - extra_shift) | p.lo &gt;&gt; extra_shift;
+    const u64 half_ulp = pow10.hi &gt;&gt; (extra_shift + 1 - shift);
+    const bool round_up = half_ulp &gt; ~u64(0) - fractional;
+    const bool round_down = (half_ulp &gt;&gt; 1) &gt; fractional;
+    integral += round_up;
+    i32 digit = static_cast&lt;i32&gt;(umul128_add_hi64(fractional, 10, (1ull &lt;&lt; 63) - 1));
+    const i32 lo = static_cast&lt;i32&gt;(umul128_add_hi64(fractional - (half_ulp &gt;&gt; 1), 10, ~u64(0)));
+    if ( digit &lt; lo ) digit = lo;
+    return { integral, dec_exp, digit, (round_up + round_down) == 0 };
+  }
+
+  const i32 dec_exp = __compute_dec_exp(bin_exp);
+  u8 shift = exp_shift_table::enabled ? __data.exp_shifts.table[bin_exp + traits&lt;f64&gt;::exp_offset]
+                                      : static_cast&lt;u8&gt;(__compute_exp_shift(bin_exp, dec_exp + 1) + extra_shift);
+  const u64 even = 1 - (static_cast&lt;u64&gt;(bin_sig) &amp; 1);
+
+  if constexpr ( T::num_bits == 32 ) {
+    constexpr i32 float_shift = 34;
+    shift = static_cast&lt;u8&gt;(shift + float_shift - extra_shift);
+    const u64 pow10_hi = __data.pow10_significands[-dec_exp - 1].hi;
+    const u64 p = umul128(pow10_hi + 1, static_cast&lt;u64&gt;(bin_sig) &lt;&lt; shift).hi;
+    u64 integral = p &gt;&gt; float_shift;
+    const u64 fractional = p &amp; ((1ull &lt;&lt; float_shift) - 1);
+    const u64 half_ulp = (pow10_hi &gt;&gt; (65 - shift)) + even;
+    const bool round_up = (fractional + half_ulp) &gt;&gt; float_shift;
+    const bool round_down = half_ulp &gt; fractional;
+    integral += round_up;
+    i32 digit = static_cast&lt;i32&gt;((fractional * 10 + (1ull &lt;&lt; (float_shift - 1))) &gt;&gt; float_shift);
+    if ( fractional == (1ull &lt;&lt; (float_shift - 2)) ) digit = 2;
+    return { integral, dec_exp, digit, (round_up + round_down) == 0 };
+  } else {
+    const uint128 pow10 = __data.pow10_significands[-dec_exp - 1];
+    const uint128 p = __umul192_hi128(pow10.hi, pow10.lo, static_cast&lt;u64&gt;(bin_sig) &lt;&lt; shift);
+    u64 integral = p.hi &gt;&gt; extra_shift;
+    const u64 fractional = p.hi &lt;&lt; (64 - extra_shift) | p.lo &gt;&gt; extra_shift;
+    const u64 half_ulp = (pow10.hi &gt;&gt; (extra_shift + 1 - shift)) + even;
+    const bool round_up = fractional + half_ulp &lt; fractional;
+    const bool round_down = half_ulp &gt; fractional;
+    integral += round_up;
+    i32 digit = static_cast&lt;i32&gt;(umul128_add_hi64(fractional, 10, __data.biased_half));
+    if ( fractional == (1ull &lt;&lt; 62) ) digit = 2;
+    return { integral, dec_exp, digit, (round_up + round_down) == 0 };
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ integral, dec_exp, digit, (round_up + round_down) == 0 }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L233">line 233</a></td></tr><tr class="t-dsc"><td><code>{ integral, dec_exp, digit, (round_up + round_down) == 0 }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L254">line 254</a></td></tr><tr class="t-dsc"><td><code>{ integral, dec_exp, digit, (round_up + round_down) == 0 }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L266">line 266</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-4a1b3e9ea21497c1">__compute_dec_exp</a>, <a href="zmij.hpp.html#f-abf96f742ac39a42">__compute_exp_shift</a>, <a href="zmij.hpp.html#f-b8782090aca8f8bd">__umul192_hi128</a>, <a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="bits.hpp.html#f-a0239e0ae7d1caac">umul128_add_hi64</a>, <a href="bits.hpp.html#f-f2813456e3b1b2dd">umul128</a>.</p></section><section class="function-entry" id="f-e84ef7724773a06b"><h3><code>micron::__impl::__zmij::__to_decimal_untrimmed_bits(U bits, i32 &amp;last_digit, bool &amp;has_last_digit) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L280">line 280</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename U&gt;
+inline constexpr decimal_fp
+__to_decimal_untrimmed_bits(U bits, i32 &amp;last_digit, bool &amp;has_last_digit) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>U bits</code></li><li><code>i32 &amp;last_digit</code></li><li><code>bool &amp;has_last_digit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename U&gt;
+inline constexpr decimal_fp
+__to_decimal_untrimmed_bits(U bits, i32 &amp;last_digit, bool &amp;has_last_digit) noexcept
+{
+  using T = traits&lt;F&gt;;
+  i32 bin_exp = static_cast&lt;i32&gt;((bits &gt;&gt; T::num_sig_bits) &amp; static_cast&lt;U&gt;(T::exp_mask));
+  U bin_sig = bits &amp; (T::implicit_bit - 1);
+  const bool negative = (bits &gt;&gt; (T::num_bits - 1)) != 0;
+  if ( bin_exp == 0 || bin_exp == T::exp_mask ) {
+    if ( bin_exp != 0 ) return { static_cast&lt;u64&gt;(bin_sig), 0, negative, true, bin_sig != 0 };
+    if ( bin_sig == 0 ) return { 0, 0, negative, false, false };
+    bin_exp = 1;
+    bin_sig |= T::implicit_bit;
+  }
+  const shortest_decimal dec = __to_decimal&lt;F&gt;(bin_sig ^ T::implicit_bit, bin_exp, bin_sig != 0);
+  last_digit = dec.last_digit;
+  has_last_digit = dec.has_last_digit;
+  return { dec.sig, dec.exp, negative, false, false };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ static_cast&lt;u64&gt;(bin_sig), 0, negative, true, bin_sig != 0 }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L287">line 287</a></td></tr><tr class="t-dsc"><td><code>{ 0, 0, negative, false, false }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L288">line 288</a></td></tr><tr class="t-dsc"><td><code>{ dec.sig, dec.exp, negative, false, false }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L295">line 295</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-dca79412a17772b8">__to_decimal&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-36d713d3623dd6b6"><h3><code>micron::__impl::__zmij::__to_decimal_untrimmed(F value, i32 &amp;last_digit, bool &amp;has_last_digit) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L300">line 300</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+inline constexpr decimal_fp
+__to_decimal_untrimmed(F value, i32 &amp;last_digit, bool &amp;has_last_digit) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F value</code></li><li><code>i32 &amp;last_digit</code></li><li><code>bool &amp;has_last_digit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+inline constexpr decimal_fp
+__to_decimal_untrimmed(F value, i32 &amp;last_digit, bool &amp;has_last_digit) noexcept
+{
+  using U = typename traits&lt;F&gt;::sig_type;
+  return __to_decimal_untrimmed_bits&lt;F, U&gt;(micron::math::ieee::to_bits&lt;F&gt;(value), last_digit, has_last_digit);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__to_decimal_untrimmed_bits&lt;F, U&gt;(micron::math::ieee::to_bits&lt;F&gt;(value), last_digit, has_last_digit)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L303">line 303</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-e84ef7724773a06b">__to_decimal_untrimmed_bits&lt;F, U&gt;</a>, <a href="../../math/ieee.hpp.html#f-4ae309043c1a9124">micron::math::ieee::to_bits&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-5b491df7b6778ea3"><h3><code>micron::__impl::__zmij::__avx_set_u64(u64 x0, u64 x1, u64 x2, u64 x3) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L313">line 313</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __m256i
+__avx_set_u64(u64 x0, u64 x1, u64 x2, u64 x3) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 x0</code></li><li><code>u64 x1</code></li><li><code>u64 x2</code></li><li><code>u64 x3</code></li></ul><h4>Effects</h4><p>Returns <code>micron::simd::avx2::set_i64(static_cast&lt;i64&gt;(x3), static_cast&lt;i64&gt;(x2), static_cast&lt;i64&gt;(x1), static_cast&lt;i64&gt;(x0))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __m256i
+__avx_set_u64(u64 x0, u64 x1, u64 x2, u64 x3) noexcept
+{
+  return micron::simd::avx2::set_i64(static_cast&lt;i64&gt;(x3), static_cast&lt;i64&gt;(x2), static_cast&lt;i64&gt;(x1), static_cast&lt;i64&gt;(x0));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::simd::avx2::set_i64(static_cast&lt;i64&gt;(x3), static_cast&lt;i64&gt;(x2), static_cast&lt;i64&gt;(x1), static_cast&lt;i64&gt;(x0))</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L315">line 315</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../simd/aliases/avx2.hpp.html#f-e99f6b1a4df907b7">micron::simd::avx2::set_i64</a>.</p></section><section class="function-entry" id="f-00ef51099c4a4f3a"><h3><code>micron::__impl::__zmij::__avx_extract_u64(__m256i value) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L320">line 320</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int Lane&gt;
+inline u64
+__avx_extract_u64(__m256i value) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256i value</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;u64&gt;(micron::simd::avx2::extract_i64&lt;Lane&gt;(value))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int Lane&gt;
+inline u64
+__avx_extract_u64(__m256i value) noexcept
+{
+  return static_cast&lt;u64&gt;(micron::simd::avx2::extract_i64&lt;Lane&gt;(value));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u64&gt;(micron::simd::avx2::extract_i64&lt;Lane&gt;(value))</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L322">line 322</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../simd/aliases/avx2.hpp.html#f-d61c5ac0bf0c8516">micron::simd::avx2::extract_i64&lt;Lane&gt;</a>.</p></section><section class="function-entry" id="f-7ec2c6a829ea1b63"><h3><code>micron::__impl::__zmij::__avx_lt_u64(__m256i a, __m256i b) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L326">line 326</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __m256i
+__avx_lt_u64(__m256i a, __m256i b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256i a</code></li><li><code>__m256i b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __m256i
+__avx_lt_u64(__m256i a, __m256i b) noexcept
+{
+  const __m256i sign = micron::simd::avx2::splat_i64(-9223372036854775807ll - 1);
+  return micron::simd::avx2::gt_i64(micron::simd::avx2::xor_i256(b, sign), micron::simd::avx2::xor_i256(a, sign));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::simd::avx2::gt_i64(micron::simd::avx2::xor_i256(b, sign), micron::simd::avx2::xor_i256(a, sign))</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L329">line 329</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../simd/aliases/avx2.hpp.html#f-6b2b00671318447c">micron::simd::avx2::splat_i64</a>, <a href="../../simd/aliases/avx2.hpp.html#f-2bd0da6334e1ea65">micron::simd::avx2::gt_i64</a>, <a href="../../simd/aliases/avx2.hpp.html#f-532b3afe611fc76e">micron::simd::avx2::xor_i256</a>.</p></section><section class="function-entry" id="f-e128a4981e06bcb2"><h3><code>micron::__impl::__zmij::__avx_umul128(__m256i x, __m256i y) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L333">line 333</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __avx_uint128
+__avx_umul128(__m256i x, __m256i y) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256i x</code></li><li><code>__m256i y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __avx_uint128
+__avx_umul128(__m256i x, __m256i y) noexcept
+{
+  namespace av = micron::simd::avx2;
+  const __m256i mask32 = av::splat_i64(0xffffffffull);
+  const __m256i x_hi = av::shr_i64(x, 32);
+  const __m256i y_hi = av::shr_i64(y, 32);
+  const __m256i p00 = av::mul_2x32_to_2x64_u(x, y);
+  const __m256i p10 = av::mul_2x32_to_2x64_u(x_hi, y);
+  const __m256i p01 = av::mul_2x32_to_2x64_u(x, y_hi);
+  const __m256i p11 = av::mul_2x32_to_2x64_u(x_hi, y_hi);
+  const __m256i middle = av::add_i64(av::shr_i64(p00, 32), av::add_i64(av::and_i256(p10, mask32), av::and_i256(p01, mask32)));
+  const __m256i lo = av::or_i256(av::and_i256(p00, mask32), av::shl_i64(middle, 32));
+  const __m256i hi = av::add_i64(p11, av::add_i64(av::shr_i64(p10, 32), av::add_i64(av::shr_i64(p01, 32), av::shr_i64(middle, 32))));
+  return { hi, lo };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ hi, lo }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L346">line 346</a></td></tr></tbody></table></section><section class="function-entry" id="f-20ea4cdb9b3671e5"><h3><code>micron::__impl::__zmij::__avx_umul192_hi128(__m256i x_hi, __m256i x_lo, __m256i y) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L350">line 350</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __avx_uint128
+__avx_umul192_hi128(__m256i x_hi, __m256i x_lo, __m256i y) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256i x_hi</code></li><li><code>__m256i x_lo</code></li><li><code>__m256i y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __avx_uint128
+__avx_umul192_hi128(__m256i x_hi, __m256i x_lo, __m256i y) noexcept
+{
+  namespace av = micron::simd::avx2;
+  const __m256i one = av::splat_i64(1);
+  const __avx_uint128 p = __avx_umul128(x_hi, y);
+  const __m256i lo2 = __avx_umul128(x_lo, y).hi;
+  const __m256i lo = av::add_i64(p.lo, lo2);
+  const __m256i carry = av::and_i256(__avx_lt_u64(lo, p.lo), one);
+  return { av::add_i64(p.hi, carry), lo };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ av::add_i64(p.hi, carry), lo }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L358">line 358</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-e128a4981e06bcb2">__avx_umul128</a>, <a href="zmij.hpp.html#f-7ec2c6a829ea1b63">__avx_lt_u64</a>.</p></section><section class="function-entry" id="f-97a00576b153d17e"><h3><code>micron::__impl::__zmij::__to_decimal4_avx2(const f64 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L362">line 362</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__to_decimal4_avx2(const f64 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f64 *values</code></li><li><code>decimal_fp *dec</code></li><li><code>i32 *last_digit</code></li><li><code>bool *has_last_digit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__to_decimal4_avx2(const f64 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept
+{
+  namespace av = micron::simd::avx2;
+  if constexpr ( !exp_shift_table::enabled ) return false;
+  const u64 bits0 = micron::math::ieee::to_bits&lt;f64&gt;(values[0]);
+  const u64 bits1 = micron::math::ieee::to_bits&lt;f64&gt;(values[1]);
+  const u64 bits2 = micron::math::ieee::to_bits&lt;f64&gt;(values[2]);
+  const u64 bits3 = micron::math::ieee::to_bits&lt;f64&gt;(values[3]);
+  const u32 raw0 = static_cast&lt;u32&gt;(bits0 &gt;&gt; 52 &amp; 0x7ffu);
+  const u32 raw1 = static_cast&lt;u32&gt;(bits1 &gt;&gt; 52 &amp; 0x7ffu);
+  const u32 raw2 = static_cast&lt;u32&gt;(bits2 &gt;&gt; 52 &amp; 0x7ffu);
+  const u32 raw3 = static_cast&lt;u32&gt;(bits3 &gt;&gt; 52 &amp; 0x7ffu);
+  constexpr u64 sig_mask = (1ull &lt;&lt; 52) - 1;
+  const u64 sig0 = bits0 &amp; sig_mask;
+  const u64 sig1 = bits1 &amp; sig_mask;
+  const u64 sig2 = bits2 &amp; sig_mask;
+  const u64 sig3 = bits3 &amp; sig_mask;
+  const bool exceptional = ((raw0 - 1u) &gt;= 2046u) | ((raw1 - 1u) &gt;= 2046u) | ((raw2 - 1u) &gt;= 2046u) | ((raw3 - 1u) &gt;= 2046u) | (sig0 == 0)
+                           | (sig1 == 0) | (sig2 == 0) | (sig3 == 0);
+  if ( exceptional ) return false;
+
+  const i32 bin0 = static_cast&lt;i32&gt;(raw0) - 1075;
+  const i32 bin1 = static_cast&lt;i32&gt;(raw1) - 1075;
+  const i32 bin2 = static_cast&lt;i32&gt;(raw2) - 1075;
+  const i32 bin3 = static_cast&lt;i32&gt;(raw3) - 1075;
+  const i32 exp0 = __compute_dec_exp(bin0);
+  const i32 exp1 = __compute_dec_exp(bin1);
+  const i32 exp2 = __compute_dec_exp(bin2);
+  const i32 exp3 = __compute_dec_exp(bin3);
+  const u8 shift0 = __data.exp_shifts.table[raw0];
+  const u8 shift1 = __data.exp_shifts.table[raw1];
+  const u8 shift2 = __data.exp_shifts.table[raw2];
+  const u8 shift3 = __data.exp_shifts.table[raw3];
+  const uint128 pow0 = __data.pow10_significands[-exp0 - 1];
+  const uint128 pow1 = __data.pow10_significands[-exp1 - 1];
+  const uint128 pow2 = __data.pow10_significands[-exp2 - 1];
+  const uint128 pow3 = __data.pow10_significands[-exp3 - 1];
+
+  const __m256i sig = __avx_set_u64(sig0 | 1ull &lt;&lt; 52, sig1 | 1ull &lt;&lt; 52, sig2 | 1ull &lt;&lt; 52, sig3 | 1ull &lt;&lt; 52);
+  const __m256i shifts = __avx_set_u64(shift0, shift1, shift2, shift3);
+  const __m256i scaled_sig = av::shl_per_i64(sig, shifts);
+  const __avx_uint128 product = __avx_umul192_hi128(__avx_set_u64(pow0.hi, pow1.hi, pow2.hi, pow3.hi),
+                                                    __avx_set_u64(pow0.lo, pow1.lo, pow2.lo, pow3.lo), scaled_sig);
+  const __m256i integral0 = av::shr_i64(product.hi, 9);
+  const __m256i fractional = av::or_i256(av::shl_i64(product.hi, 55), av::shr_i64(product.lo, 9));
+  const __m256i half_shift = av::sub_i64(av::splat_i64(10), shifts);
+  const __m256i even = av::sub_i64(av::splat_i64(1), av::and_i256(sig, av::splat_i64(1)));
+  const __m256i half = av::add_i64(av::shr_per_i64(__avx_set_u64(pow0.hi, pow1.hi, pow2.hi, pow3.hi), half_shift), even);
+  const __m256i round_up_mask = __avx_lt_u64(av::add_i64(fractional, half), fractional);
+  const __m256i round_down_mask = __avx_lt_u64(fractional, half);
+  const __m256i integral = av::add_i64(integral0, av::and_i256(round_up_mask, av::splat_i64(1)));
+
+  const __avx_uint128 digit_product = __avx_umul128(fractional, av::splat_i64(10));
+  const __m256i digit_lo = av::add_i64(digit_product.lo, av::splat_i64(static_cast&lt;i64&gt;(__data.biased_half)));
+  __m256i digit = av::add_i64(digit_product.hi, av::and_i256(__avx_lt_u64(digit_lo, digit_product.lo), av::splat_i64(1)));
+  const __m256i quarter = av::splat_i64(1ull &lt;&lt; 62);
+  digit = av::blendv_i8(digit, av::splat_i64(2), av::eq_i64(fractional, quarter));
+
+  const __m256i rounded = av::or_i256(round_up_mask, round_down_mask);
+  dec[0] = { __avx_extract_u64&lt;0&gt;(integral), exp0, (bits0 &gt;&gt; 63) != 0, false, false };
+  dec[1] = { __avx_extract_u64&lt;1&gt;(integral), exp1, (bits1 &gt;&gt; 63) != 0, false, false };
+  dec[2] = { __avx_extract_u64&lt;2&gt;(integral), exp2, (bits2 &gt;&gt; 63) != 0, false, false };
+  dec[3] = { __avx_extract_u64&lt;3&gt;(integral), exp3, (bits3 &gt;&gt; 63) != 0, false, false };
+  last_digit[0] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;0&gt;(digit));
+  last_digit[1] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;1&gt;(digit));
+  last_digit[2] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;2&gt;(digit));
+  last_digit[3] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;3&gt;(digit));
+  has_last_digit[0] = __avx_extract_u64&lt;0&gt;(rounded) == 0;
+  has_last_digit[1] = __avx_extract_u64&lt;1&gt;(rounded) == 0;
+  has_last_digit[2] = __avx_extract_u64&lt;2&gt;(rounded) == 0;
+  has_last_digit[3] = __avx_extract_u64&lt;3&gt;(rounded) == 0;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L365">line 365</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L381">line 381</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L433">line 433</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../math/ieee.hpp.html#f-4ae309043c1a9124">micron::math::ieee::to_bits&lt;f64&gt;</a>, <a href="zmij.hpp.html#f-4a1b3e9ea21497c1">__compute_dec_exp</a>, <a href="zmij.hpp.html#f-5b491df7b6778ea3">__avx_set_u64</a>, <a href="zmij.hpp.html#f-20ea4cdb9b3671e5">__avx_umul192_hi128</a>, <a href="zmij.hpp.html#f-7ec2c6a829ea1b63">__avx_lt_u64</a>, <a href="zmij.hpp.html#f-e128a4981e06bcb2">__avx_umul128</a>, <a href="zmij.hpp.html#f-00ef51099c4a4f3a">__avx_extract_u64&lt;0&gt;</a>, <a href="zmij.hpp.html#f-00ef51099c4a4f3a">__avx_extract_u64&lt;1&gt;</a>, <a href="zmij.hpp.html#f-00ef51099c4a4f3a">__avx_extract_u64&lt;2&gt;</a>, <a href="zmij.hpp.html#f-00ef51099c4a4f3a">__avx_extract_u64&lt;3&gt;</a>.</p></section><section class="function-entry" id="f-ab35cfbe4247c0ca"><h3><code>micron::__impl::__zmij::__to_decimal4_avx2(const f32 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L437">line 437</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__to_decimal4_avx2(const f32 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_x86_avx2)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *values</code></li><li><code>decimal_fp *dec</code></li><li><code>i32 *last_digit</code></li><li><code>bool *has_last_digit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__to_decimal4_avx2(const f32 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept
+{
+  namespace av = micron::simd::avx2;
+  if constexpr ( !exp_shift_table::enabled ) return false;
+  const u32 bits0 = micron::math::ieee::to_bits&lt;f32&gt;(values[0]);
+  const u32 bits1 = micron::math::ieee::to_bits&lt;f32&gt;(values[1]);
+  const u32 bits2 = micron::math::ieee::to_bits&lt;f32&gt;(values[2]);
+  const u32 bits3 = micron::math::ieee::to_bits&lt;f32&gt;(values[3]);
+  const u32 raw0 = bits0 &gt;&gt; 23 &amp; 0xffu;
+  const u32 raw1 = bits1 &gt;&gt; 23 &amp; 0xffu;
+  const u32 raw2 = bits2 &gt;&gt; 23 &amp; 0xffu;
+  const u32 raw3 = bits3 &gt;&gt; 23 &amp; 0xffu;
+  constexpr u32 sig_mask = (1u &lt;&lt; 23) - 1;
+  const u32 sig0 = bits0 &amp; sig_mask;
+  const u32 sig1 = bits1 &amp; sig_mask;
+  const u32 sig2 = bits2 &amp; sig_mask;
+  const u32 sig3 = bits3 &amp; sig_mask;
+  const bool exceptional = ((raw0 - 1u) &gt;= 254u) | ((raw1 - 1u) &gt;= 254u) | ((raw2 - 1u) &gt;= 254u) | ((raw3 - 1u) &gt;= 254u) | (sig0 == 0)
+                           | (sig1 == 0) | (sig2 == 0) | (sig3 == 0);
+  if ( exceptional ) return false;
+
+  const i32 bin0 = static_cast&lt;i32&gt;(raw0) - 150;
+  const i32 bin1 = static_cast&lt;i32&gt;(raw1) - 150;
+  const i32 bin2 = static_cast&lt;i32&gt;(raw2) - 150;
+  const i32 bin3 = static_cast&lt;i32&gt;(raw3) - 150;
+  const i32 exp0 = __compute_dec_exp(bin0);
+  const i32 exp1 = __compute_dec_exp(bin1);
+  const i32 exp2 = __compute_dec_exp(bin2);
+  const i32 exp3 = __compute_dec_exp(bin3);
+  const u8 shift0 = static_cast&lt;u8&gt;(__data.exp_shifts.table[raw0 + 925] + 25);
+  const u8 shift1 = static_cast&lt;u8&gt;(__data.exp_shifts.table[raw1 + 925] + 25);
+  const u8 shift2 = static_cast&lt;u8&gt;(__data.exp_shifts.table[raw2 + 925] + 25);
+  const u8 shift3 = static_cast&lt;u8&gt;(__data.exp_shifts.table[raw3 + 925] + 25);
+  const u64 pow0 = __data.pow10_significands[-exp0 - 1].hi + 1;
+  const u64 pow1 = __data.pow10_significands[-exp1 - 1].hi + 1;
+  const u64 pow2 = __data.pow10_significands[-exp2 - 1].hi + 1;
+  const u64 pow3 = __data.pow10_significands[-exp3 - 1].hi + 1;
+
+  const __m256i sig = __avx_set_u64(sig0 | 1u &lt;&lt; 23, sig1 | 1u &lt;&lt; 23, sig2 | 1u &lt;&lt; 23, sig3 | 1u &lt;&lt; 23);
+  const __m256i shifts = __avx_set_u64(shift0, shift1, shift2, shift3);
+  const __m256i product = __avx_umul128(__avx_set_u64(pow0, pow1, pow2, pow3), av::shl_per_i64(sig, shifts)).hi;
+  const __m256i fractional = av::and_i256(product, av::splat_i64((1ull &lt;&lt; 34) - 1));
+  const __m256i even = av::sub_i64(av::splat_i64(1), av::and_i256(sig, av::splat_i64(1)));
+  const __m256i half
+      = av::add_i64(av::shr_per_i64(__avx_set_u64(pow0 - 1, pow1 - 1, pow2 - 1, pow3 - 1), av::sub_i64(av::splat_i64(65), shifts)), even);
+  const __m256i round_up = av::shr_i64(av::add_i64(fractional, half), 34);
+  const __m256i round_down_mask = __avx_lt_u64(fractional, half);
+  const __m256i integral = av::add_i64(av::shr_i64(product, 34), round_up);
+  __m256i digit = av::shr_i64(av::add_i64(__avx_umul128(fractional, av::splat_i64(10)).lo, av::splat_i64(1ull &lt;&lt; 33)), 34);
+  digit = av::blendv_i8(digit, av::splat_i64(2), av::eq_i64(fractional, av::splat_i64(1ull &lt;&lt; 32)));
+
+  dec[0] = { __avx_extract_u64&lt;0&gt;(integral), exp0, (bits0 &gt;&gt; 31) != 0, false, false };
+  dec[1] = { __avx_extract_u64&lt;1&gt;(integral), exp1, (bits1 &gt;&gt; 31) != 0, false, false };
+  dec[2] = { __avx_extract_u64&lt;2&gt;(integral), exp2, (bits2 &gt;&gt; 31) != 0, false, false };
+  dec[3] = { __avx_extract_u64&lt;3&gt;(integral), exp3, (bits3 &gt;&gt; 31) != 0, false, false };
+  last_digit[0] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;0&gt;(digit));
+  last_digit[1] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;1&gt;(digit));
+  last_digit[2] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;2&gt;(digit));
+  last_digit[3] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;3&gt;(digit));
+  has_last_digit[0] = (__avx_extract_u64&lt;0&gt;(round_up) | __avx_extract_u64&lt;0&gt;(round_down_mask)) == 0;
+  has_last_digit[1] = (__avx_extract_u64&lt;1&gt;(round_up) | __avx_extract_u64&lt;1&gt;(round_down_mask)) == 0;
+  has_last_digit[2] = (__avx_extract_u64&lt;2&gt;(round_up) | __avx_extract_u64&lt;2&gt;(round_down_mask)) == 0;
+  has_last_digit[3] = (__avx_extract_u64&lt;3&gt;(round_up) | __avx_extract_u64&lt;3&gt;(round_down_mask)) == 0;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L440">line 440</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L456">line 456</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L500">line 500</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../math/ieee.hpp.html#f-4ae309043c1a9124">micron::math::ieee::to_bits&lt;f32&gt;</a>, <a href="zmij.hpp.html#f-4a1b3e9ea21497c1">__compute_dec_exp</a>, <a href="zmij.hpp.html#f-5b491df7b6778ea3">__avx_set_u64</a>, <a href="zmij.hpp.html#f-e128a4981e06bcb2">__avx_umul128</a>, <a href="zmij.hpp.html#f-7ec2c6a829ea1b63">__avx_lt_u64</a>, <a href="zmij.hpp.html#f-00ef51099c4a4f3a">__avx_extract_u64&lt;0&gt;</a>, <a href="zmij.hpp.html#f-00ef51099c4a4f3a">__avx_extract_u64&lt;1&gt;</a>, <a href="zmij.hpp.html#f-00ef51099c4a4f3a">__avx_extract_u64&lt;2&gt;</a>, <a href="zmij.hpp.html#f-00ef51099c4a4f3a">__avx_extract_u64&lt;3&gt;</a>.</p></section><section class="function-entry" id="f-df4673a51b162f40"><h3><code>micron::__impl::__zmij::__to_decimal4_neon(const f32 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L506">line 506</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__to_decimal4_neon(const f32 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if ( defined(__micron_arch_arm32) || defined(__micron_arch_arm64) ) &amp;&amp; defined(__micron_arm_neon)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *values</code></li><li><code>decimal_fp *dec</code></li><li><code>i32 *last_digit</code></li><li><code>bool *has_last_digit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__to_decimal4_neon(const f32 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept
+{
+  u32 bits[4];
+  const uint32x4_t packed = micron::simd::neon::reinterpret_u32_from_f32(micron::simd::neon::load_f32(values));
+  micron::simd::neon::store_u32(bits, packed);
+  dec[0] = __to_decimal_untrimmed_bits&lt;f32, u32&gt;(bits[0], last_digit[0], has_last_digit[0]);
+  dec[1] = __to_decimal_untrimmed_bits&lt;f32, u32&gt;(bits[1], last_digit[1], has_last_digit[1]);
+  dec[2] = __to_decimal_untrimmed_bits&lt;f32, u32&gt;(bits[2], last_digit[2], has_last_digit[2]);
+  dec[3] = __to_decimal_untrimmed_bits&lt;f32, u32&gt;(bits[3], last_digit[3], has_last_digit[3]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../simd/aliases/neon.hpp.html#f-4521e92c5848ec4f">micron::simd::neon::reinterpret_u32_from_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-7c3e4f25ce4c109b">micron::simd::neon::load_f32</a>, <a href="../../simd/aliases/neon.hpp.html#f-5ad7a3c0b60da234">micron::simd::neon::store_u32</a>, <a href="zmij.hpp.html#f-e84ef7724773a06b">__to_decimal_untrimmed_bits&lt;f32, u32&gt;</a>.</p></section><section class="function-entry" id="f-3021abe3991be16e"><h3><code>micron::__impl::__zmij::__to_decimal4_neon(const f64 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L519">line 519</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__to_decimal4_neon(const f64 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if ( defined(__micron_arch_arm32) || defined(__micron_arch_arm64) ) &amp;&amp; defined(__micron_arm_neon)
+#if defined(__micron_arch_arm64)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f64 *values</code></li><li><code>decimal_fp *dec</code></li><li><code>i32 *last_digit</code></li><li><code>bool *has_last_digit</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__to_decimal4_neon(const f64 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept
+{
+  u64 bits[4];
+  micron::simd::neon::store_u64(bits, micron::simd::neon::reinterpret_u64_from_f64(micron::simd::neon::load_f64(values)));
+  micron::simd::neon::store_u64(bits + 2, micron::simd::neon::reinterpret_u64_from_f64(micron::simd::neon::load_f64(values + 2)));
+  dec[0] = __to_decimal_untrimmed_bits&lt;f64, u64&gt;(bits[0], last_digit[0], has_last_digit[0]);
+  dec[1] = __to_decimal_untrimmed_bits&lt;f64, u64&gt;(bits[1], last_digit[1], has_last_digit[1]);
+  dec[2] = __to_decimal_untrimmed_bits&lt;f64, u64&gt;(bits[2], last_digit[2], has_last_digit[2]);
+  dec[3] = __to_decimal_untrimmed_bits&lt;f64, u64&gt;(bits[3], last_digit[3], has_last_digit[3]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../simd/aliases/neon.hpp.html#f-aae78e55ab84456b">micron::simd::neon::store_u64</a>, <a href="../../simd/aliases/neon.hpp.html#f-f7419a6a755ae13e">micron::simd::neon::reinterpret_u64_from_f64</a>, <a href="../../simd/aliases/neon.hpp.html#f-d8226bad14b85e4f">micron::simd::neon::load_f64</a>, <a href="zmij.hpp.html#f-e84ef7724773a06b">__to_decimal_untrimmed_bits&lt;f64, u64&gt;</a>.</p></section><section class="function-entry" id="f-6a228d78910686bc"><h3><code>micron::__impl::__zmij::to_decimal(F value) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L534">line 534</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+inline constexpr decimal_fp
+to_decimal(F value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+inline constexpr decimal_fp
+to_decimal(F value) noexcept
+{
+  i32 last_digit = 0;
+  bool has_last_digit = false;
+  decimal_fp result = __to_decimal_untrimmed(value, last_digit, has_last_digit);
+  if ( result.nonfinite || (result.sig == 0 &amp;&amp; !has_last_digit) ) return result;
+  u64 sig = result.sig * 10 + static_cast&lt;u64&gt;(has_last_digit ? last_digit : 0);
+  i32 exp = result.exp;
+  while ( sig % 10 == 0 ) {
+    sig /= 10;
+    ++exp;
+  }
+  result.sig = sig;
+  result.exp = exp;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L539">line 539</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L548">line 548</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-36d713d3623dd6b6">__to_decimal_untrimmed</a>.</p></section><section class="function-entry" id="f-8d4bd54f488b68fa"><h3><code>micron::__impl::__zmij::__emit_special(const decimal_fp &amp;v, char *buf) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L552">line 552</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__emit_special(const decimal_fp &amp;v, char *buf) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const decimal_fp &amp;v</code></li><li><code>char *buf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__emit_special(const decimal_fp &amp;v, char *buf) noexcept
+{
+  if ( v.nan ) {
+    buf[0] = &#x27;N&#x27;;
+    buf[1] = &#x27;a&#x27;;
+    buf[2] = &#x27;N&#x27;;
+    return 3;
+  }
+  usize pos = 0;
+  if ( v.negative ) buf[pos++] = &#x27;-&#x27;;
+  buf[pos++] = &#x27;I&#x27;;
+  buf[pos++] = &#x27;n&#x27;;
+  buf[pos++] = &#x27;f&#x27;;
+  return pos;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>3</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L558">line 558</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L565">line 565</a></td></tr></tbody></table></section><section class="function-entry" id="f-41148e803705710f"><h3><code>micron::__impl::__zmij::__digits18(u64 value, char (&amp;digits)[18]) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L568">line 568</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void __digits18(u64 value, char (&amp;digits)[18]) noexcept;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 value</code></li><li><code>char (&amp;digits)[18]</code></li></ul><h4>Effects</h4><p>This is a declaration. Its body is supplied by the runtime, compiler, or host. The source declaration does not specify additional effects.</p></section><section class="function-entry" id="f-b886f234ba14af22"><h3><code>micron::__impl::__zmij::__digits_n(u64 value, u32 count, char (&amp;digits)[18]) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L569">line 569</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr char *__digits_n(u64 value, u32 count, char (&amp;digits)[18]) noexcept;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 value</code></li><li><code>u32 count</code></li><li><code>char (&amp;digits)[18]</code></li></ul><h4>Effects</h4><p>This is a declaration. Its body is supplied by the runtime, compiler, or host. The source declaration does not specify additional effects.</p></section><section class="function-entry" id="f-a3ee2945cf293d15"><h3><code>micron::__impl::__zmij::__emit_exp_digits(char *buf, usize pos, u32 exp) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L572">line 572</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__emit_exp_digits(char *buf, usize pos, u32 exp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *buf</code></li><li><code>usize pos</code></li><li><code>u32 exp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__emit_exp_digits(char *buf, usize pos, u32 exp) noexcept
+{
+  if ( exp &gt;= 100 ) {
+    buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + exp / 100);
+    exp %= 100;
+    buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + exp / 10);
+  } else if ( exp &gt;= 10 ) {
+    buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + exp / 10);
+  }
+  buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + exp % 10);
+  return pos;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L582">line 582</a></td></tr></tbody></table></section><section class="function-entry" id="f-e36f8a205814a7aa"><h3><code>micron::__impl::__zmij::__emit_d2s(decimal_fp dec, i32 last_digit, bool has_last_digit, char *buf) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L586">line 586</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__emit_d2s(decimal_fp dec, i32 last_digit, bool has_last_digit, char *buf) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>decimal_fp dec</code></li><li><code>i32 last_digit</code></li><li><code>bool has_last_digit</code></li><li><code>char *buf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__emit_d2s(decimal_fp dec, i32 last_digit, bool has_last_digit, char *buf) noexcept
+{
+  if ( dec.nonfinite ) return __emit_special(dec, buf);
+  usize pos = 0;
+  if ( dec.negative ) buf[pos++] = &#x27;-&#x27;;
+  if ( dec.sig == 0 &amp;&amp; !has_last_digit ) {
+    buf[pos++] = &#x27;0&#x27;;
+    buf[pos++] = &#x27;.&#x27;;
+    buf[pos++] = &#x27;0&#x27;;
+    return pos;
+  }
+
+  if ( has_last_digit )
+    dec.sig = dec.sig * 10 + static_cast&lt;u64&gt;(last_digit);
+  else
+    ++dec.exp;
+  char digits[18];
+  __digits18(dec.sig, digits);
+  usize len = __ryu::decimalLength(dec.sig);
+  char *start = digits + 18 - len;
+  while ( len &gt; 1 &amp;&amp; start[len - 1] == &#x27;0&#x27; ) {
+    --len;
+    ++dec.exp;
+  }
+  i32 exp = dec.exp;
+  i32 sci_exp = exp + static_cast&lt;i32&gt;(len) - 1;
+
+  if ( sci_exp &gt;= -3 &amp;&amp; sci_exp &lt;= 7 ) {
+    if ( exp &gt;= 0 ) {
+      for ( usize i = 0; i &lt; len; ++i ) buf[pos++] = start[i];
+      for ( i32 i = 0; i &lt; exp; ++i ) buf[pos++] = &#x27;0&#x27;;
+      buf[pos++] = &#x27;.&#x27;;
+      buf[pos++] = &#x27;0&#x27;;
+    } else if ( exp + static_cast&lt;i32&gt;(len) &gt; 0 ) {
+      const i32 whole = static_cast&lt;i32&gt;(len) + exp;
+      for ( i32 i = 0; i &lt; whole; ++i ) buf[pos++] = start[i];
+      buf[pos++] = &#x27;.&#x27;;
+      for ( usize i = static_cast&lt;usize&gt;(whole); i &lt; len; ++i ) buf[pos++] = start[i];
+    } else {
+      buf[pos++] = &#x27;0&#x27;;
+      buf[pos++] = &#x27;.&#x27;;
+      for ( i32 i = 0; i &lt; -(exp + static_cast&lt;i32&gt;(len)); ++i ) buf[pos++] = &#x27;0&#x27;;
+      for ( usize i = 0; i &lt; len; ++i ) buf[pos++] = start[i];
+    }
+    return pos;
+  }
+
+  buf[pos++] = start[0];
+  if ( len &gt; 1 ) {
+    buf[pos++] = &#x27;.&#x27;;
+    for ( usize i = 1; i &lt; len; ++i ) buf[pos++] = start[i];
+  }
+  buf[pos++] = &#x27;e&#x27;;
+  if ( sci_exp &gt;= 0 )
+    buf[pos++] = &#x27;+&#x27;;
+  else {
+    buf[pos++] = &#x27;-&#x27;;
+    sci_exp = -sci_exp;
+  }
+  return __emit_exp_digits(buf, pos, static_cast&lt;u32&gt;(sci_exp));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__emit_special(dec, buf)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L588">line 588</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L595">line 595</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L630">line 630</a></td></tr><tr class="t-dsc"><td><code>__emit_exp_digits(buf, pos, static_cast&lt;u32&gt;(sci_exp))</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L645">line 645</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-8d4bd54f488b68fa">__emit_special</a>, <a href="zmij.hpp.html#f-41148e803705710f">__digits18</a>, <a href="bits.hpp.html#f-21bd5882d4ea49a9">__ryu::decimalLength</a>, <a href="zmij.hpp.html#f-a3ee2945cf293d15">__emit_exp_digits</a>.</p></section><section class="function-entry" id="f-d092fa5ba21b6cee"><h3><code>micron::__impl::__zmij::d2s_buffered(f64 value, char *buf) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L649">line 649</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2s_buffered(f64 value, char *buf) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>char *buf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2s_buffered(f64 value, char *buf) noexcept
+{
+  i32 last_digit = 0;
+  bool has_last_digit = false;
+  const decimal_fp dec = __to_decimal_untrimmed(value, last_digit, has_last_digit);
+  return __emit_d2s(dec, last_digit, has_last_digit, buf);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__emit_d2s(dec, last_digit, has_last_digit, buf)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L654">line 654</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-36d713d3623dd6b6">__to_decimal_untrimmed</a>, <a href="zmij.hpp.html#f-e36f8a205814a7aa">__emit_d2s</a>.</p></section><section class="function-entry" id="f-ee15baccc782fd82"><h3><code>micron::__impl::__zmij::__emit_f2s(decimal_fp dec, i32 last_digit, bool has_last_digit, char *buf) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L658">line 658</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__emit_f2s(decimal_fp dec, i32 last_digit, bool has_last_digit, char *buf) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>decimal_fp dec</code></li><li><code>i32 last_digit</code></li><li><code>bool has_last_digit</code></li><li><code>char *buf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__emit_f2s(decimal_fp dec, i32 last_digit, bool has_last_digit, char *buf) noexcept
+{
+  if ( dec.nonfinite ) return __emit_special(dec, buf);
+  usize pos = 0;
+  if ( dec.negative ) buf[pos++] = &#x27;-&#x27;;
+  if ( dec.sig == 0 &amp;&amp; !has_last_digit ) {
+    buf[pos++] = &#x27;0&#x27;;
+    buf[pos++] = &#x27;E&#x27;;
+    buf[pos++] = &#x27;0&#x27;;
+    return pos;
+  }
+  if ( has_last_digit )
+    dec.sig = dec.sig * 10 + static_cast&lt;u64&gt;(last_digit);
+  else
+    ++dec.exp;
+  char digits[18];
+  usize len = __ryu::decimalLength(dec.sig);
+  char *start = __digits_n(dec.sig, static_cast&lt;u32&gt;(len), digits);
+  while ( len &gt; 1 &amp;&amp; start[len - 1] == &#x27;0&#x27; ) {
+    --len;
+    ++dec.exp;
+  }
+  i32 sci_exp = dec.exp + static_cast&lt;i32&gt;(len) - 1;
+  buf[pos++] = start[0];
+  if ( len &gt; 1 ) {
+    buf[pos++] = &#x27;.&#x27;;
+    for ( usize i = 1; i &lt; len; ++i ) buf[pos++] = start[i];
+  }
+  buf[pos++] = &#x27;E&#x27;;
+  if ( sci_exp &lt; 0 ) {
+    buf[pos++] = &#x27;-&#x27;;
+    sci_exp = -sci_exp;
+  }
+  return __emit_exp_digits(buf, pos, static_cast&lt;u32&gt;(sci_exp));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__emit_special(dec, buf)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L660">line 660</a></td></tr><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L667">line 667</a></td></tr><tr class="t-dsc"><td><code>__emit_exp_digits(buf, pos, static_cast&lt;u32&gt;(sci_exp))</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L691">line 691</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-8d4bd54f488b68fa">__emit_special</a>, <a href="bits.hpp.html#f-21bd5882d4ea49a9">__ryu::decimalLength</a>, <a href="zmij.hpp.html#f-b886f234ba14af22">__digits_n</a>, <a href="zmij.hpp.html#f-a3ee2945cf293d15">__emit_exp_digits</a>.</p></section><section class="function-entry" id="f-366131b77a8b4e6a"><h3><code>micron::__impl::__zmij::f2s_buffered(f32 value, char *buf) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L695">line 695</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+f2s_buffered(f32 value, char *buf) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 value</code></li><li><code>char *buf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+f2s_buffered(f32 value, char *buf) noexcept
+{
+  i32 last_digit = 0;
+  bool has_last_digit = false;
+  const decimal_fp dec = __to_decimal_untrimmed(value, last_digit, has_last_digit);
+  return __emit_f2s(dec, last_digit, has_last_digit, buf);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__emit_f2s(dec, last_digit, has_last_digit, buf)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L700">line 700</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-36d713d3623dd6b6">__to_decimal_untrimmed</a>, <a href="zmij.hpp.html#f-ee15baccc782fd82">__emit_f2s</a>.</p></section><section class="function-entry" id="f-7aa146547203997e"><h3><code>micron::__impl::__zmij::d2s_buffered4(const f64 *values, char *out, usize stride, usize *lengths) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L704">line 704</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+d2s_buffered4(const f64 *values, char *out, usize stride, usize *lengths) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f64 *values</code></li><li><code>char *out</code></li><li><code>usize stride</code></li><li><code>usize *lengths</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+d2s_buffered4(const f64 *values, char *out, usize stride, usize *lengths) noexcept
+{
+#if !defined(__micron_x86_avx2) &amp;&amp; !(defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon))
+  lengths[0] = d2s_buffered(values[0], out);
+  lengths[1] = d2s_buffered(values[1], out + stride);
+  lengths[2] = d2s_buffered(values[2], out + stride * 2);
+  lengths[3] = d2s_buffered(values[3], out + stride * 3);
+  return;
+#endif
+  decimal_fp dec[4];
+  i32 last[4] = {};
+  bool has_last[4] = {};
+#if defined(__micron_x86_avx2)
+  if !consteval {
+    if ( !__to_decimal4_avx2(values, dec, last, has_last) ) {
+      dec[0] = __to_decimal_untrimmed(values[0], last[0], has_last[0]);
+      dec[1] = __to_decimal_untrimmed(values[1], last[1], has_last[1]);
+      dec[2] = __to_decimal_untrimmed(values[2], last[2], has_last[2]);
+      dec[3] = __to_decimal_untrimmed(values[3], last[3], has_last[3]);
+    }
+  } else
+#elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)
+  if !consteval {
+    __to_decimal4_neon(values, dec, last, has_last);
+  } else
+#endif
+  {
+    dec[0] = __to_decimal_untrimmed(values[0], last[0], has_last[0]);
+    dec[1] = __to_decimal_untrimmed(values[1], last[1], has_last[1]);
+    dec[2] = __to_decimal_untrimmed(values[2], last[2], has_last[2]);
+    dec[3] = __to_decimal_untrimmed(values[3], last[3], has_last[3]);
+  }
+  lengths[0] = __emit_d2s(dec[0], last[0], has_last[0], out);
+  lengths[1] = __emit_d2s(dec[1], last[1], has_last[1], out + stride);
+  lengths[2] = __emit_d2s(dec[2], last[2], has_last[2], out + stride * 2);
+  lengths[3] = __emit_d2s(dec[3], last[3], has_last[3], out + stride * 3);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L711">line 711</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-d092fa5ba21b6cee">d2s_buffered</a>, <a href="zmij.hpp.html#f-97a00576b153d17e">__to_decimal4_avx2</a>, <a href="zmij.hpp.html#f-36d713d3623dd6b6">__to_decimal_untrimmed</a>, <a href="zmij.hpp.html#f-df4673a51b162f40">__to_decimal4_neon</a>, <a href="zmij.hpp.html#f-e36f8a205814a7aa">__emit_d2s</a>.</p></section><section class="function-entry" id="f-4ed672df70ac5daf"><h3><code>micron::__impl::__zmij::f2s_buffered4(const f32 *values, char *out, usize stride, usize *lengths) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L743">line 743</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+f2s_buffered4(const f32 *values, char *out, usize stride, usize *lengths) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *values</code></li><li><code>char *out</code></li><li><code>usize stride</code></li><li><code>usize *lengths</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+f2s_buffered4(const f32 *values, char *out, usize stride, usize *lengths) noexcept
+{
+#if !defined(__micron_x86_avx2) &amp;&amp; !((defined(__micron_arch_arm32) || defined(__micron_arch_arm64)) &amp;&amp; defined(__micron_arm_neon))
+  lengths[0] = f2s_buffered(values[0], out);
+  lengths[1] = f2s_buffered(values[1], out + stride);
+  lengths[2] = f2s_buffered(values[2], out + stride * 2);
+  lengths[3] = f2s_buffered(values[3], out + stride * 3);
+  return;
+#endif
+  decimal_fp dec[4];
+  i32 last[4] = {};
+  bool has_last[4] = {};
+#if defined(__micron_x86_avx2)
+  if !consteval {
+    if ( !__to_decimal4_avx2(values, dec, last, has_last) ) {
+      dec[0] = __to_decimal_untrimmed(values[0], last[0], has_last[0]);
+      dec[1] = __to_decimal_untrimmed(values[1], last[1], has_last[1]);
+      dec[2] = __to_decimal_untrimmed(values[2], last[2], has_last[2]);
+      dec[3] = __to_decimal_untrimmed(values[3], last[3], has_last[3]);
+    }
+  } else
+#elif (defined(__micron_arch_arm32) || defined(__micron_arch_arm64)) &amp;&amp; defined(__micron_arm_neon)
+  if !consteval {
+    __to_decimal4_neon(values, dec, last, has_last);
+  } else
+#endif
+  {
+    dec[0] = __to_decimal_untrimmed(values[0], last[0], has_last[0]);
+    dec[1] = __to_decimal_untrimmed(values[1], last[1], has_last[1]);
+    dec[2] = __to_decimal_untrimmed(values[2], last[2], has_last[2]);
+    dec[3] = __to_decimal_untrimmed(values[3], last[3], has_last[3]);
+  }
+  lengths[0] = __emit_f2s(dec[0], last[0], has_last[0], out);
+  lengths[1] = __emit_f2s(dec[1], last[1], has_last[1], out + stride);
+  lengths[2] = __emit_f2s(dec[2], last[2], has_last[2], out + stride * 2);
+  lengths[3] = __emit_f2s(dec[3], last[3], has_last[3], out + stride * 3);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L750">line 750</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-366131b77a8b4e6a">f2s_buffered</a>, <a href="zmij.hpp.html#f-97a00576b153d17e">__to_decimal4_avx2</a>, <a href="zmij.hpp.html#f-36d713d3623dd6b6">__to_decimal_untrimmed</a>, <a href="zmij.hpp.html#f-df4673a51b162f40">__to_decimal4_neon</a>, <a href="zmij.hpp.html#f-ee15baccc782fd82">__emit_f2s</a>.</p></section><section class="function-entry" id="f-9a85f061c48f8848"><h3><code>micron::__impl::__zmij::__scale(u64 bin_sig, i32 bin_exp, i32 dec_exp) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L787">line 787</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u64
+__scale(u64 bin_sig, i32 bin_exp, i32 dec_exp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 bin_sig</code></li><li><code>i32 bin_exp</code></li><li><code>i32 dec_exp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u64
+__scale(u64 bin_sig, i32 bin_exp, i32 dec_exp) noexcept
+{
+  constexpr i32 shift = 11;
+  const i32 point_shift = shift - __compute_exp_shift(bin_exp, dec_exp);
+  const uint128 pow10 = __data.pow10_significands[-dec_exp];
+  const uint128 p = __umul192_hi128(pow10.hi, pow10.lo + (dec_exp &lt; -55 || dec_exp &gt; 0), bin_sig &lt;&lt; shift);
+  const u64 integral = p.hi &gt;&gt; point_shift;
+  const u64 half = p.hi &gt;&gt; (point_shift - 1) &amp; 1;
+  const u64 tail = (p.hi &amp; ((1ull &lt;&lt; (point_shift - 1)) - 1)) | p.lo;
+  return integral &lt;&lt; 2 | half &lt;&lt; 1 | (tail != 0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>integral &lt;&lt; 2 | half &lt;&lt; 1 | (tail != 0)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L796">line 796</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-abf96f742ac39a42">__compute_exp_shift</a>, <a href="zmij.hpp.html#f-b8782090aca8f8bd">__umul192_hi128</a>.</p></section><section class="function-entry" id="f-20d000601f81577c"><h3><code>micron::__impl::__zmij::__round_even(u64 x) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L800">line 800</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u64
+__round_even(u64 x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 x</code></li></ul><h4>Effects</h4><p>Returns <code>(x + 1 + ((x &gt;&gt; 2) &amp; 1)) &gt;&gt; 2</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u64
+__round_even(u64 x) noexcept
+{
+  return (x + 1 + ((x &gt;&gt; 2) &amp; 1)) &gt;&gt; 2;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(x + 1 + ((x &gt;&gt; 2) &amp; 1)) &gt;&gt; 2</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L802">line 802</a></td></tr></tbody></table></section><section class="function-entry" id="f-c2f68d2820265fc4"><h3><code>micron::__impl::__zmij::__to_precision(u64 bin_sig, i32 bin_exp, i32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L806">line 806</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr precision_decimal
+__to_precision(u64 bin_sig, i32 bin_exp, i32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 bin_sig</code></li><li><code>i32 bin_exp</code></li><li><code>i32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr precision_decimal
+__to_precision(u64 bin_sig, i32 bin_exp, i32 precision) noexcept
+{
+  i32 dec_exp = __compute_dec_exp(bin_exp + 52) - (precision - 1);
+  const u64 scaled = __scale(bin_sig, bin_exp, dec_exp);
+  u64 dec_sig = __round_even(scaled);
+  if ( dec_sig &gt;= __pow10s[precision] ) {
+    dec_sig = __round_even(scaled / 10 | (scaled &amp; 1) | (scaled % 10 != 0));
+    ++dec_exp;
+  }
+  return { dec_sig * __pow10s[18 - precision], dec_exp + precision - 1 };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ dec_sig * __pow10s[18 - precision], dec_exp + precision - 1 }</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L815">line 815</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-4a1b3e9ea21497c1">__compute_dec_exp</a>, <a href="zmij.hpp.html#f-9a85f061c48f8848">__scale</a>, <a href="zmij.hpp.html#f-20d000601f81577c">__round_even</a>.</p></section><section class="function-entry" id="f-aad486c81c08cfb3"><h3><code>micron::__impl::__zmij::__digits18(u64 value, char (&amp;digits)[18]) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L819">line 819</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+__digits18(u64 value, char (&amp;digits)[18]) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 value</code></li><li><code>char (&amp;digits)[18]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+__digits18(u64 value, char (&amp;digits)[18]) noexcept
+{
+  if !consteval {
+#if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse2)
+    const u64 hi = value / 10000000000000000ull;
+    digits[0] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi / 10);
+    digits[1] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi % 10);
+    micron::simd::sse::decimal_digits_16(digits + 2, value - hi * 10000000000000000ull);
+    return;
+#elif (defined(__micron_arch_arm32) || defined(__micron_arch_arm64)) &amp;&amp; defined(__micron_arm_neon)
+    const u64 hi = value / 10000000000000000ull;
+    digits[0] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi / 10);
+    digits[1] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi % 10);
+    micron::simd::neon::decimal_digits_16(digits + 2, value - hi * 10000000000000000ull);
+    return;
+#endif
+  }
+  for ( i32 i = 18; i-- &gt; 0; ) {
+    digits[i] = static_cast&lt;char&gt;(&#x27;0&#x27; + value % 10);
+    value /= 10;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L827">line 827</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L833">line 833</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../simd/aliases/sse.hpp.html#f-3c89c58e78a00f26">micron::simd::sse::decimal_digits_16</a>, <a href="../../simd/aliases/neon.hpp.html#f-508fc807aca2585d">micron::simd::neon::decimal_digits_16</a>.</p></section><section class="function-entry" id="f-4e2a086f9fc099eb"><h3><code>micron::__impl::__zmij::__digits_n(u64 value, u32 count, char (&amp;digits)[18]) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L843">line 843</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr char *
+__digits_n(u64 value, u32 count, char (&amp;digits)[18]) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 value</code></li><li><code>u32 count</code></li><li><code>char (&amp;digits)[18]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr char *
+__digits_n(u64 value, u32 count, char (&amp;digits)[18]) noexcept
+{
+  char *const end = digits + 18;
+  if ( count &lt;= 8 ) {
+    micron::__impl::emit8_backward(end - 8, static_cast&lt;u32&gt;(value));
+  } else if ( count &lt;= 16 ) {
+    const u64 hi = micron::__impl::fast_div1e8(value);
+    micron::__impl::emit8_backward(end - 16, static_cast&lt;u32&gt;(hi));
+    micron::__impl::emit8_backward(end - 8, micron::__impl::fast_mod1e8(value, hi));
+  } else {
+    __digits18(value, digits);
+  }
+  return end - count;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>end - count</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L855">line 855</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-9ee2f9537df5aec1">micron::__impl::emit8_backward</a>, <a href="bits.hpp.html#f-0315d9db0a317b02">micron::__impl::fast_div1e8</a>, <a href="bits.hpp.html#f-e17dc023086e8825">micron::__impl::fast_mod1e8</a>, <a href="zmij.hpp.html#f-41148e803705710f">__digits18</a>.</p></section><section class="function-entry" id="f-2fa2610b4daa26b7"><h3><code>micron::__impl::__zmij::__normalize(u64 &amp;sig, i32 &amp;exp) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L859">line 859</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+__normalize(u64 &amp;sig, i32 &amp;exp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 &amp;sig</code></li><li><code>i32 &amp;exp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+__normalize(u64 &amp;sig, i32 &amp;exp) noexcept
+{
+  const i32 shift = static_cast&lt;i32&gt;(micron::__impl::clz64(sig)) - 11;
+  if ( shift &gt; 0 ) {
+    sig &lt;&lt;= shift;
+    exp -= shift;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-e27efe8bc790122c">micron::__impl::clz64</a>.</p></section><section class="function-entry" id="f-2e941dcac2f90cd8"><h3><code>micron::__impl::__zmij::bigint::bigint(u64 value) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L876">line 876</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr explicit bigint(u64 value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr explicit bigint(u64 value) noexcept
+  {
+    limbs[0] = static_cast&lt;u32&gt;(value);
+    limbs[1] = static_cast&lt;u32&gt;(value &gt;&gt; 32);
+    size = limbs[1] != 0 ? 2 : limbs[0] != 0 ? 1 : 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3043d723b8f86623"><h3><code>micron::__impl::__zmij::bigint::trim() noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L884">line 884</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  trim() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  trim() noexcept
+  {
+    while ( size &gt; 0 &amp;&amp; limbs[size - 1] == 0 ) --size;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e0ae5531d94fd730"><h3><code>micron::__impl::__zmij::bigint::shl(i32 bits) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L890">line 890</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  shl(i32 bits) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 bits</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  shl(i32 bits) noexcept
+  {
+    if ( size == 0 ) return;
+    const i32 words = bits &gt;&gt; 5;
+    const i32 shift = bits &amp; 31;
+    if ( shift == 0 ) {
+      for ( i32 i = size; i-- &gt; 0; ) limbs[i + words] = limbs[i];
+      size += words;
+    } else {
+      limbs[size + words] = limbs[size - 1] &gt;&gt; (32 - shift);
+      for ( i32 i = size - 1; i &gt; 0; --i ) limbs[i + words] = limbs[i] &lt;&lt; shift | limbs[i - 1] &gt;&gt; (32 - shift);
+      limbs[words] = limbs[0] &lt;&lt; shift;
+      size += words + 1;
+    }
+    for ( i32 i = 0; i &lt; words; ++i ) limbs[i] = 0;
+    trim();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L892">line 892</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-3043d723b8f86623">trim</a>.</p></section><section class="function-entry" id="f-3c8bcd7ce53edc0b"><h3><code>micron::__impl::__zmij::bigint::mul(u32 factor) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L909">line 909</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  mul(u32 factor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 factor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  mul(u32 factor) noexcept
+  {
+    u64 carry = 0;
+    for ( i32 i = 0; i &lt; size; ++i ) {
+      const u64 product = static_cast&lt;u64&gt;(limbs[i]) * factor + carry;
+      limbs[i] = static_cast&lt;u32&gt;(product);
+      carry = product &gt;&gt; 32;
+    }
+    if ( carry != 0 ) limbs[size++] = static_cast&lt;u32&gt;(carry);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-63ab3e4386657e5c"><h3><code>micron::__impl::__zmij::bigint::mul_pow5(i32 exp) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L921">line 921</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  mul_pow5(i32 exp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 exp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  mul_pow5(i32 exp) noexcept
+  {
+    constexpr u32 pow5[13] = { 1u, 5u, 25u, 125u, 625u, 3125u, 15625u, 78125u, 390625u, 1953125u, 9765625u, 48828125u, 244140625u };
+    while ( exp &gt;= 13 ) {
+      mul(1220703125u);
+      exp -= 13;
+    }
+    if ( exp != 0 ) mul(pow5[exp]);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-3c8bcd7ce53edc0b">mul</a>.</p></section><section class="function-entry" id="f-fd1a07b9c8238a09"><h3><code>micron::__impl::__zmij::bigint::divmod_1e9() noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L932">line 932</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr u32
+  divmod_1e9() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr u32
+  divmod_1e9() noexcept
+  {
+    u64 rem = 0;
+    for ( i32 i = size; i-- &gt; 0; ) {
+      const u64 value = rem &lt;&lt; 32 | limbs[i];
+      limbs[i] = static_cast&lt;u32&gt;(value / 1000000000u);
+      rem = value % 1000000000u;
+    }
+    trim();
+    return static_cast&lt;u32&gt;(rem);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u32&gt;(rem)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L941">line 941</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-3043d723b8f86623">trim</a>.</p></section><section class="function-entry" id="f-c531d277ac746222"><h3><code>micron::__impl::__zmij::__write_big_digits(bigint &amp;value, char *end) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L946">line 946</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::noinline]] inline constexpr char *
+__write_big_digits(bigint &amp;value, char *end) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bigint &amp;value</code></li><li><code>char *end</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::noinline]] inline constexpr char *
+__write_big_digits(bigint &amp;value, char *end) noexcept
+{
+  char *out = end;
+  u32 group = value.divmod_1e9();
+  while ( value.size != 0 ) {
+    out -= 9;
+    const u32 hi = group / 100000000u;
+    out[0] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi);
+    micron::__impl::emit8_backward(out + 1, group - hi * 100000000u);
+    group = value.divmod_1e9();
+  }
+  return micron::__impl::uint_to_buf_backward(out, group);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::__impl::uint_to_buf_backward(out, group)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L957">line 957</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-9ee2f9537df5aec1">micron::__impl::emit8_backward</a>, <a href="bits.hpp.html#f-8d02868078781426">micron::__impl::uint_to_buf_backward</a>.</p></section><section class="function-entry" id="f-493ffedc59be27cd"><h3><code>micron::__impl::__zmij::__exact_round(u64 sig, i32 exp, cut mode, i32 argument, char *digits, u32 &amp;count, i32 &amp;point) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L963">line 963</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::noinline]] inline constexpr void
+__exact_round(u64 sig, i32 exp, cut mode, i32 argument, char *digits, u32 &amp;count, i32 &amp;point) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 sig</code></li><li><code>i32 exp</code></li><li><code>cut mode</code></li><li><code>i32 argument</code></li><li><code>char *digits</code></li><li><code>u32 &amp;count</code></li><li><code>i32 &amp;point</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::noinline]] inline constexpr void
+__exact_round(u64 sig, i32 exp, cut mode, i32 argument, char *digits, u32 &amp;count, i32 &amp;point) noexcept
+{
+  bigint value(sig);
+  i32 base_exp = 0;
+  if ( exp &gt;= 0 )
+    value.shl(exp);
+  else {
+    value.mul_pow5(-exp);
+    base_exp = exp;
+  }
+
+  char exact[__ryu::__fx::__dig_cap];
+  char *start = __write_big_digits(value, exact + sizeof(exact));
+  const u32 exact_count = static_cast&lt;u32&gt;(exact + sizeof(exact) - start);
+  point = static_cast&lt;i32&gt;(exact_count) + base_exp;
+  count = 0;
+
+  const i32 keep = mode == cut::significant ? argument : point + argument;
+  if ( keep &lt; 0 ) return;
+  const u32 kept = static_cast&lt;u32&gt;(keep);
+  if ( kept &gt;= exact_count ) {
+    for ( u32 i = 0; i &lt; exact_count; ++i ) digits[i] = start[i];
+    count = exact_count;
+    return;
+  }
+
+  bool tail = false;
+  for ( u32 i = kept + 1; i &lt; exact_count; ++i ) tail |= start[i] != &#x27;0&#x27;;
+  const char dropped = start[kept];
+  const bool odd = kept != 0 &amp;&amp; ((start[kept - 1] - &#x27;0&#x27;) &amp; 1) != 0;
+  const bool up = dropped &gt; &#x27;5&#x27; || (dropped == &#x27;5&#x27; &amp;&amp; (tail || odd));
+  for ( u32 i = 0; i &lt; kept; ++i ) digits[i] = start[i];
+  count = kept;
+  if ( !up ) return;
+
+  for ( u32 i = kept; i-- &gt; 0; ) {
+    if ( digits[i] != &#x27;9&#x27; ) {
+      ++digits[i];
+      return;
+    }
+    digits[i] = &#x27;0&#x27;;
+  }
+  digits[0] = &#x27;1&#x27;;
+  if ( count == 0 ) count = 1;
+  ++point;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L981">line 981</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L986">line 986</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L996">line 996</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1001">line 1001</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-c531d277ac746222">__write_big_digits</a>.</p></section><section class="function-entry" id="f-04286c948e87a9e4"><h3><code>micron::__impl::__zmij::__d2f_exact(const __ryu::__fx::parts &amp;p, char *buf, usize cap, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1011">line 1011</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__d2f_exact(const __ryu::__fx::parts &amp;p, char *buf, usize cap, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __ryu::__fx::parts &amp;p</code></li><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__d2f_exact(const __ryu::__fx::parts &amp;p, char *buf, usize cap, u32 precision) noexcept
+{
+  char digits[__ryu::__fx::__dig_cap];
+  u32 count = 0;
+  i32 point = 0;
+  __exact_round(p.m2, p.e2, cut::fraction, static_cast&lt;i32&gt;(precision), digits, count, point);
+  return __ryu::__fx::__emit_fixed(buf, cap, p.neg, digits, count, point, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::__fx::__emit_fixed(buf, cap, p.neg, digits, count, point, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1017">line 1017</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-493ffedc59be27cd">__exact_round</a>, <a href="fixed.hpp.html#f-6abad70c02727a3a">__ryu::__fx::__emit_fixed</a>.</p></section><section class="function-entry" id="f-a1a498d12906eff6"><h3><code>micron::__impl::__zmij::__d2e_exact(const __ryu::__fx::parts &amp;p, char *buf, usize cap, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1021">line 1021</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__d2e_exact(const __ryu::__fx::parts &amp;p, char *buf, usize cap, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __ryu::__fx::parts &amp;p</code></li><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__d2e_exact(const __ryu::__fx::parts &amp;p, char *buf, usize cap, u32 precision) noexcept
+{
+  char digits[__ryu::__fx::__dig_cap];
+  u32 count = 0;
+  i32 point = 0;
+  __exact_round(p.m2, p.e2, cut::significant, static_cast&lt;i32&gt;(precision) + 1, digits, count, point);
+  return __ryu::__fx::__emit_sci(buf, cap, p.neg, digits, count, point - 1, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::__fx::__emit_sci(buf, cap, p.neg, digits, count, point - 1, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1027">line 1027</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-493ffedc59be27cd">__exact_round</a>, <a href="fixed.hpp.html#f-5a5a8e0271502148">__ryu::__fx::__emit_sci</a>.</p></section><section class="function-entry" id="f-9c6b3d7dfe25d558"><h3><code>micron::__impl::__zmij::d2f_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1031">line 1031</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept
+{
+  const __ryu::__fx::parts p = __ryu::__fx::__decompose(value);
+  if ( p.is_nan || p.is_inf ) return __ryu::__fx::__emit_special(p, buf, cap);
+  if ( p.is_zero ) return __ryu::__fx::__emit_fixed(buf, cap, p.neg, nullptr, 0, 0, precision);
+  if ( precision &gt; 18 ) return __d2f_exact(p, buf, cap, precision);
+
+  const i32 dec_exp = __compute_dec_exp(p.e2 + 52) - 17;
+  u64 scaled = __scale(p.m2, p.e2, dec_exp);
+  const u64 integral = scaled &gt;&gt; 2;
+  const i32 scaled_digits = 18 + static_cast&lt;i32&gt;(integral &gt;= __pow10s[18]);
+  i32 lead_exp = dec_exp + scaled_digits - 1;
+  const i32 num_digits = lead_exp + 1 + static_cast&lt;i32&gt;(precision);
+  if ( num_digits &lt;= 0 ) {
+    if ( num_digits &lt; 0 ) return __ryu::__fx::__emit_fixed(buf, cap, p.neg, nullptr, 0, 0, precision);
+    const u64 half = 5 * __pow10s[scaled_digits - 1];
+    const bool up = integral &gt; half || (integral == half &amp;&amp; (scaled &amp; 3) != 0);
+    const char one = &#x27;1&#x27;;
+    return __ryu::__fx::__emit_fixed(buf, cap, p.neg, up ? &amp;one : nullptr, static_cast&lt;u32&gt;(up), up ? 1 - static_cast&lt;i32&gt;(precision) : 0,
+                                     precision);
+  }
+  if ( num_digits &gt; 18 ) return __d2f_exact(p, buf, cap, precision);
+  if ( num_digits &lt; scaled_digits ) {
+    const u64 pow = __pow10s[scaled_digits - num_digits];
+    const u64 rem = integral % pow;
+    const u64 half = rem &gt;= pow / 2;
+    const u64 sticky = (rem != pow / 2) || ((scaled &amp; 3) != 0);
+    scaled = (integral / pow) &lt;&lt; 2 | half &lt;&lt; 1 | sticky;
+  }
+  u64 dec_sig = __round_even(scaled);
+  if ( dec_sig &gt;= __pow10s[num_digits] ) {
+    ++lead_exp;
+    dec_sig /= 10;
+  }
+  char digits[18];
+  char *const start = __digits_n(dec_sig, static_cast&lt;u32&gt;(num_digits), digits);
+  return __ryu::__fx::__emit_fixed(buf, cap, p.neg, start, static_cast&lt;u32&gt;(num_digits), lead_exp + 1, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::__fx::__emit_special(p, buf, cap)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1034">line 1034</a></td></tr><tr class="t-dsc"><td><code>__ryu::__fx::__emit_fixed(buf, cap, p.neg, nullptr, 0, 0, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1035">line 1035</a></td></tr><tr class="t-dsc"><td><code>__d2f_exact(p, buf, cap, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1036">line 1036</a></td></tr><tr class="t-dsc"><td><code>__ryu::__fx::__emit_fixed(buf, cap, p.neg, nullptr, 0, 0, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1045">line 1045</a></td></tr><tr class="t-dsc"><td><code>__ryu::__fx::__emit_fixed(buf, cap, p.neg, up ? &amp;one : nullptr, static_cast&lt;u32&gt;(up), up ? 1 - static_cast&lt;i32&gt;(precision) : 0,
+                                     precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1049">line 1049</a></td></tr><tr class="t-dsc"><td><code>__d2f_exact(p, buf, cap, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1052">line 1052</a></td></tr><tr class="t-dsc"><td><code>__ryu::__fx::__emit_fixed(buf, cap, p.neg, start, static_cast&lt;u32&gt;(num_digits), lead_exp + 1, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1067">line 1067</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-4ffe39a23d1eae88">__ryu::__fx::__decompose</a>, <a href="fixed.hpp.html#f-7e77a5cb350428dd">__ryu::__fx::__emit_special</a>, <a href="fixed.hpp.html#f-6abad70c02727a3a">__ryu::__fx::__emit_fixed</a>, <a href="zmij.hpp.html#f-04286c948e87a9e4">__d2f_exact</a>, <a href="zmij.hpp.html#f-4a1b3e9ea21497c1">__compute_dec_exp</a>, <a href="zmij.hpp.html#f-9a85f061c48f8848">__scale</a>, <a href="zmij.hpp.html#f-20d000601f81577c">__round_even</a>, <a href="zmij.hpp.html#f-b886f234ba14af22">__digits_n</a>.</p></section><section class="function-entry" id="f-cd35f27dac6ab8f5"><h3><code>micron::__impl::__zmij::d2e_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1071">line 1071</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2e_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2e_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept
+{
+  const __ryu::__fx::parts p = __ryu::__fx::__decompose(value);
+  if ( p.is_nan || p.is_inf ) return __ryu::__fx::__emit_special(p, buf, cap);
+  if ( p.is_zero ) return __ryu::__fx::__emit_sci(buf, cap, p.neg, nullptr, 0, 0, precision);
+  const u32 significant = precision + 1;
+  if ( significant &gt; 18 ) return __d2e_exact(p, buf, cap, precision);
+  u64 sig = p.m2;
+  i32 exp = p.e2;
+  __normalize(sig, exp);
+  const precision_decimal dec = __to_precision(sig, exp, static_cast&lt;i32&gt;(significant));
+  char digits[18];
+  __digits18(dec.sig, digits);
+  return __ryu::__fx::__emit_sci(buf, cap, p.neg, digits, 18, dec.lead_exp, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::__fx::__emit_special(p, buf, cap)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1074">line 1074</a></td></tr><tr class="t-dsc"><td><code>__ryu::__fx::__emit_sci(buf, cap, p.neg, nullptr, 0, 0, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1075">line 1075</a></td></tr><tr class="t-dsc"><td><code>__d2e_exact(p, buf, cap, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1077">line 1077</a></td></tr><tr class="t-dsc"><td><code>__ryu::__fx::__emit_sci(buf, cap, p.neg, digits, 18, dec.lead_exp, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1084">line 1084</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-4ffe39a23d1eae88">__ryu::__fx::__decompose</a>, <a href="fixed.hpp.html#f-7e77a5cb350428dd">__ryu::__fx::__emit_special</a>, <a href="fixed.hpp.html#f-5a5a8e0271502148">__ryu::__fx::__emit_sci</a>, <a href="zmij.hpp.html#f-a1a498d12906eff6">__d2e_exact</a>, <a href="zmij.hpp.html#f-2fa2610b4daa26b7">__normalize</a>, <a href="zmij.hpp.html#f-c2f68d2820265fc4">__to_precision</a>, <a href="zmij.hpp.html#f-41148e803705710f">__digits18</a>.</p></section><section class="function-entry" id="f-b59446ab3ac23e3d"><h3><code>micron::__impl::__zmij::__d2g_core(f64 value, char *buf, usize cap, u32 precision, bool alt, bool upper) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1088">line 1088</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+__d2g_core(f64 value, char *buf, usize cap, u32 precision, bool alt, bool upper) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u32 precision</code></li><li><code>bool alt</code></li><li><code>bool upper</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+__d2g_core(f64 value, char *buf, usize cap, u32 precision, bool alt, bool upper) noexcept
+{
+  const __ryu::__fx::parts p = __ryu::__fx::__decompose(value);
+  if ( p.is_nan || p.is_inf ) return __ryu::__fx::__emit_special(p, buf, cap);
+  const u32 significant = precision == 0 ? 1u : precision;
+  if ( significant &gt; 18 ) {
+    char digits[__ryu::__fx::__dig_cap];
+    u32 count = 0;
+    i32 point = 0;
+    __exact_round(p.m2, p.e2, cut::significant, static_cast&lt;i32&gt;(significant), digits, count, point);
+    const i32 lead_exp = point - 1;
+    usize len = 0;
+    if ( lead_exp &gt;= -4 &amp;&amp; lead_exp &lt; static_cast&lt;i32&gt;(significant) )
+      len = __ryu::__fx::__emit_fixed(buf, cap, p.neg, digits, count, point,
+                                      static_cast&lt;u32&gt;(static_cast&lt;i32&gt;(significant) - 1 - lead_exp));
+    else
+      len = __ryu::__fx::__emit_sci(buf, cap, p.neg, digits, count, lead_exp, significant - 1);
+    if ( len == 0 ) return 0;
+    if ( !alt ) {
+      usize dot = len;
+      usize exponent = len;
+      for ( usize i = 0; i &lt; len; ++i ) {
+        if ( buf[i] == &#x27;.&#x27; )
+          dot = i;
+        else if ( buf[i] == &#x27;e&#x27; ) {
+          exponent = i;
+          break;
+        }
+      }
+      if ( dot != len ) {
+        usize end = exponent;
+        while ( end &gt; dot + 1 &amp;&amp; buf[end - 1] == &#x27;0&#x27; ) --end;
+        if ( end == dot + 1 ) end = dot;
+        if ( end != exponent ) {
+          usize out = end;
+          for ( usize i = exponent; i &lt; len; ++i ) buf[out++] = buf[i];
+          len = out;
+        }
+      }
+    }
+    if ( upper )
+      for ( usize i = 0; i &lt; len; ++i )
+        if ( buf[i] == &#x27;e&#x27; ) buf[i] = &#x27;E&#x27;;
+    return len;
+  }
+  char digits[18];
+  for ( char &amp;digit : digits ) digit = &#x27;0&#x27;;
+  i32 lead_exp = 0;
+  if ( !p.is_zero ) {
+    u64 sig = p.m2;
+    i32 exp = p.e2;
+    __normalize(sig, exp);
+    const precision_decimal dec = __to_precision(sig, exp, static_cast&lt;i32&gt;(significant));
+    __digits18(dec.sig, digits);
+    lead_exp = dec.lead_exp;
+  }
+  usize len = 0;
+  if ( lead_exp &gt;= -4 &amp;&amp; lead_exp &lt; static_cast&lt;i32&gt;(significant) )
+    len = __ryu::__fx::__emit_fixed(buf, cap, p.neg, digits, 18, lead_exp + 1,
+                                    static_cast&lt;u32&gt;(static_cast&lt;i32&gt;(significant) - 1 - lead_exp));
+  else
+    len = __ryu::__fx::__emit_sci(buf, cap, p.neg, digits, 18, lead_exp, significant - 1);
+  if ( len == 0 ) return 0;
+  if ( !alt ) {
+    usize dot = len;
+    usize exponent = len;
+    for ( usize i = 0; i &lt; len; ++i ) {
+      if ( buf[i] == &#x27;.&#x27; )
+        dot = i;
+      else if ( buf[i] == &#x27;e&#x27; ) {
+        exponent = i;
+        break;
+      }
+    }
+    if ( dot != len ) {
+      usize end = exponent;
+      while ( end &gt; dot + 1 &amp;&amp; buf[end - 1] == &#x27;0&#x27; ) --end;
+      if ( end == dot + 1 ) end = dot;
+      if ( end != exponent ) {
+        usize out = end;
+        for ( usize i = exponent; i &lt; len; ++i ) buf[out++] = buf[i];
+        len = out;
+      }
+    }
+  }
+  if ( upper )
+    for ( usize i = 0; i &lt; len; ++i )
+      if ( buf[i] == &#x27;e&#x27; ) buf[i] = &#x27;E&#x27;;
+  return len;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::__fx::__emit_special(p, buf, cap)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1091">line 1091</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1105">line 1105</a></td></tr><tr class="t-dsc"><td><code>len</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1131">line 1131</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1150">line 1150</a></td></tr><tr class="t-dsc"><td><code>len</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1176">line 1176</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-4ffe39a23d1eae88">__ryu::__fx::__decompose</a>, <a href="fixed.hpp.html#f-7e77a5cb350428dd">__ryu::__fx::__emit_special</a>, <a href="zmij.hpp.html#f-493ffedc59be27cd">__exact_round</a>, <a href="fixed.hpp.html#f-6abad70c02727a3a">__ryu::__fx::__emit_fixed</a>, <a href="fixed.hpp.html#f-5a5a8e0271502148">__ryu::__fx::__emit_sci</a>, <a href="zmij.hpp.html#f-2fa2610b4daa26b7">__normalize</a>, <a href="zmij.hpp.html#f-c2f68d2820265fc4">__to_precision</a>, <a href="zmij.hpp.html#f-41148e803705710f">__digits18</a>.</p></section><section class="function-entry" id="f-ab1d13617c0ba867"><h3><code>micron::__impl::__zmij::d2g_buffered(f64 value, char *buf, usize cap, u32 precision, bool alt, bool upper) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1180">line 1180</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2g_buffered(f64 value, char *buf, usize cap, u32 precision, bool alt, bool upper) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u32 precision</code></li><li><code>bool alt</code></li><li><code>bool upper</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2g_buffered(f64 value, char *buf, usize cap, u32 precision, bool alt, bool upper) noexcept
+{
+  if ( precision &lt;= cap &amp;&amp; cap - precision &gt;= 8 ) return __d2g_core(value, buf, cap, precision, alt, upper);
+  char scratch[__ryu::__fmt_fixed_max];
+  const usize len = __d2g_core(value, scratch, sizeof(scratch), precision, alt, upper);
+  if ( len == 0 || len &gt; cap ) return 0;
+  for ( usize i = 0; i &lt; len; ++i ) buf[i] = scratch[i];
+  return len;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__d2g_core(value, buf, cap, precision, alt, upper)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1182">line 1182</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1185">line 1185</a></td></tr><tr class="t-dsc"><td><code>len</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1187">line 1187</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-b59446ab3ac23e3d">__d2g_core</a>.</p></section><section class="function-entry" id="f-c1dac518fbf83e2c"><h3><code>micron::__impl::__zmij::d2f_trim_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1191">line 1191</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_trim_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>char *buf</code></li><li><code>usize cap</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_trim_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept
+{
+  usize len = d2f_buffered(value, buf, cap, precision);
+  usize dot = len;
+  for ( usize i = 0; i &lt; len; ++i )
+    if ( buf[i] == &#x27;.&#x27; ) {
+      dot = i;
+      break;
+    }
+  usize end = len;
+  if ( dot != len ) {
+    while ( end &gt; dot + 1 &amp;&amp; buf[end - 1] == &#x27;0&#x27; ) --end;
+    if ( end == dot + 1 ) end = dot;
+  }
+  if ( end &gt; 0 &amp;&amp; buf[0] == &#x27;-&#x27; ) {
+    bool zero = true;
+    for ( usize i = 1; i &lt; end; ++i )
+      if ( buf[i] != &#x27;0&#x27; &amp;&amp; buf[i] != &#x27;.&#x27; ) zero = false;
+    if ( zero ) {
+      for ( usize i = 1; i &lt; end; ++i ) buf[i - 1] = buf[i];
+      --end;
+    }
+  }
+  return end;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>end</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1214">line 1214</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-9c6b3d7dfe25d558">d2f_buffered</a>.</p></section><section class="function-entry" id="f-f264b70de2dbf295"><h3><code>micron::__impl::__fpconv::d2f_size(f64 value, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1228">line 1228</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_size(f64 value, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2f_size(value, precision)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_size(f64 value, u32 precision) noexcept
+{
+  return __ryu::d2f_size(value, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2f_size(value, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1230">line 1230</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-ce7371b91ddc7bb8">__ryu::d2f_size</a>.</p></section><section class="function-entry" id="f-6ea46bf6846831b7"><h3><code>micron::__impl::__fpconv::d2e_size(f64 value, u32 precision) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1234">line 1234</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2e_size(f64 value, u32 precision) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>u32 precision</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2e_size(value, precision)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2e_size(f64 value, u32 precision) noexcept
+{
+  return __ryu::d2e_size(value, precision);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2e_size(value, precision)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1236">line 1236</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-c113c453a6179c0a">__ryu::d2e_size</a>.</p></section><section class="function-entry" id="f-9cffd2dbcaa1c854"><h3><code>micron::__impl::__fpconv::d2g_size(f64 value, u32 precision, bool alt) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1240">line 1240</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2g_size(f64 value, u32 precision, bool alt) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 value</code></li><li><code>u32 precision</code></li><li><code>bool alt</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2g_size(value, precision, alt)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2g_size(f64 value, u32 precision, bool alt) noexcept
+{
+  return __ryu::d2g_size(value, precision, alt);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2g_size(value, precision, alt)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1242">line 1242</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-3c2c3c69021016f3">__ryu::d2g_size</a>.</p></section><section class="function-entry" id="f-9a7a420df3fb0141"><h3><code>micron::__impl::__fpconv::d2s_buffered(f64 v, char *b) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1247">line 1247</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2s_buffered(f64 v, char *b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2s_buffered(v, b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2s_buffered(f64 v, char *b) noexcept
+{
+  return __ryu::d2s_buffered(v, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2s_buffered(v, b)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1249">line 1249</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-a4a3dbe0e5a2451f">__ryu::d2s_buffered</a>.</p></section><section class="function-entry" id="f-1c1589ebf383edd5"><h3><code>micron::__impl::__fpconv::f2s_buffered(f32 v, char *b) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1253">line 1253</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+f2s_buffered(f32 v, char *b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 v</code></li><li><code>char *b</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::__f32::f2s_buffered(v, b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+f2s_buffered(f32 v, char *b) noexcept
+{
+  return __ryu::__f32::f2s_buffered(v, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::__f32::f2s_buffered(v, b)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1255">line 1255</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-8e5abf55e2752f36">__ryu::__f32::f2s_buffered</a>.</p></section><section class="function-entry" id="f-751326fd4d8f3a48"><h3><code>micron::__impl::__fpconv::d2s_buffered4(const f64 *v, char *b, usize stride, usize *lengths) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1259">line 1259</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+d2s_buffered4(const f64 *v, char *b, usize stride, usize *lengths) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f64 *v</code></li><li><code>char *b</code></li><li><code>usize stride</code></li><li><code>usize *lengths</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+d2s_buffered4(const f64 *v, char *b, usize stride, usize *lengths) noexcept
+{
+  for ( usize i = 0; i &lt; 4; ++i ) lengths[i] = __ryu::d2s_buffered(v[i], b + i * stride);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-a4a3dbe0e5a2451f">__ryu::d2s_buffered</a>.</p></section><section class="function-entry" id="f-3728daa2cd2a1a01"><h3><code>micron::__impl::__fpconv::f2s_buffered4(const f32 *v, char *b, usize stride, usize *lengths) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1265">line 1265</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+f2s_buffered4(const f32 *v, char *b, usize stride, usize *lengths) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *v</code></li><li><code>char *b</code></li><li><code>usize stride</code></li><li><code>usize *lengths</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+f2s_buffered4(const f32 *v, char *b, usize stride, usize *lengths) noexcept
+{
+  for ( usize i = 0; i &lt; 4; ++i ) lengths[i] = __ryu::__f32::f2s_buffered(v[i], b + i * stride);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="floating_point.hpp.html#f-8e5abf55e2752f36">__ryu::__f32::f2s_buffered</a>.</p></section><section class="function-entry" id="f-0e8418daadaa0b6d"><h3><code>micron::__impl::__fpconv::d2f_buffered(f64 v, char *b, usize c, u32 p) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1271">line 1271</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_buffered(f64 v, char *b, usize c, u32 p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2f_buffered(v, b, c, p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_buffered(f64 v, char *b, usize c, u32 p) noexcept
+{
+  return __ryu::d2f_buffered(v, b, c, p);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2f_buffered(v, b, c, p)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1273">line 1273</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-f4eaed268a2b5416">__ryu::d2f_buffered</a>.</p></section><section class="function-entry" id="f-faa8e5074e4396e4"><h3><code>micron::__impl::__fpconv::d2f_trim_buffered(f64 v, char *b, usize c, u32 p) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1277">line 1277</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_trim_buffered(f64 v, char *b, usize c, u32 p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2f_trim_buffered(v, b, c, p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_trim_buffered(f64 v, char *b, usize c, u32 p) noexcept
+{
+  return __ryu::d2f_trim_buffered(v, b, c, p);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2f_trim_buffered(v, b, c, p)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1279">line 1279</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-46798ce2e238b229">__ryu::d2f_trim_buffered</a>.</p></section><section class="function-entry" id="f-a5cf96add402d03e"><h3><code>micron::__impl::__fpconv::d2e_buffered(f64 v, char *b, usize c, u32 p) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1283">line 1283</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2e_buffered(f64 v, char *b, usize c, u32 p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2e_buffered(v, b, c, p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2e_buffered(f64 v, char *b, usize c, u32 p) noexcept
+{
+  return __ryu::d2e_buffered(v, b, c, p);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2e_buffered(v, b, c, p)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1285">line 1285</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-275f14f344994627">__ryu::d2e_buffered</a>.</p></section><section class="function-entry" id="f-3f99d66a126ffa79"><h3><code>micron::__impl::__fpconv::d2g_buffered(f64 v, char *b, usize c, u32 p, bool a, bool u) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1289">line 1289</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2g_buffered(f64 v, char *b, usize c, u32 p, bool a, bool u) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li><li><code>bool a</code></li><li><code>bool u</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2g_buffered(v, b, c, p, a, u)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2g_buffered(f64 v, char *b, usize c, u32 p, bool a, bool u) noexcept
+{
+  return __ryu::d2g_buffered(v, b, c, p, a, u);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2g_buffered(v, b, c, p, a, u)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1291">line 1291</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-223b066aa5f3fd13">__ryu::d2g_buffered</a>.</p></section><section class="function-entry" id="f-fd5a44953bfcf874"><h3><code>micron::__impl::__fpconv::d2s_buffered(f64 v, char *b) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1295">line 1295</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2s_buffered(f64 v, char *b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li></ul><h4>Effects</h4><p>Returns <code>__zmij::d2s_buffered(v, b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2s_buffered(f64 v, char *b) noexcept
+{
+  return __zmij::d2s_buffered(v, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zmij::d2s_buffered(v, b)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1297">line 1297</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-d092fa5ba21b6cee">__zmij::d2s_buffered</a>.</p></section><section class="function-entry" id="f-ffb5af6eb63bb6c8"><h3><code>micron::__impl::__fpconv::f2s_buffered(f32 v, char *b) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1301">line 1301</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+f2s_buffered(f32 v, char *b) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f32 v</code></li><li><code>char *b</code></li></ul><h4>Effects</h4><p>Returns <code>__zmij::f2s_buffered(v, b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+f2s_buffered(f32 v, char *b) noexcept
+{
+  return __zmij::f2s_buffered(v, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zmij::f2s_buffered(v, b)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1303">line 1303</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-366131b77a8b4e6a">__zmij::f2s_buffered</a>.</p></section><section class="function-entry" id="f-0287a6b9a2185da7"><h3><code>micron::__impl::__fpconv::d2s_buffered4(const f64 *v, char *b, usize stride, usize *lengths) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1307">line 1307</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+d2s_buffered4(const f64 *v, char *b, usize stride, usize *lengths) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f64 *v</code></li><li><code>char *b</code></li><li><code>usize stride</code></li><li><code>usize *lengths</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+d2s_buffered4(const f64 *v, char *b, usize stride, usize *lengths) noexcept
+{
+  __zmij::d2s_buffered4(v, b, stride, lengths);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-7aa146547203997e">__zmij::d2s_buffered4</a>.</p></section><section class="function-entry" id="f-d48e46fbad8dc76b"><h3><code>micron::__impl::__fpconv::f2s_buffered4(const f32 *v, char *b, usize stride, usize *lengths) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1313">line 1313</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+f2s_buffered4(const f32 *v, char *b, usize stride, usize *lengths) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const f32 *v</code></li><li><code>char *b</code></li><li><code>usize stride</code></li><li><code>usize *lengths</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+f2s_buffered4(const f32 *v, char *b, usize stride, usize *lengths) noexcept
+{
+  __zmij::f2s_buffered4(v, b, stride, lengths);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-4ed672df70ac5daf">__zmij::f2s_buffered4</a>.</p></section><section class="function-entry" id="f-a685724ef6502e23"><h3><code>micron::__impl::__fpconv::d2f_buffered(f64 v, char *b, usize c, u32 p) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1319">line 1319</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_buffered(f64 v, char *b, usize c, u32 p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Returns <code>__zmij::d2f_buffered(v, b, c, p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_buffered(f64 v, char *b, usize c, u32 p) noexcept
+{
+  return __zmij::d2f_buffered(v, b, c, p);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zmij::d2f_buffered(v, b, c, p)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1321">line 1321</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-9c6b3d7dfe25d558">__zmij::d2f_buffered</a>.</p></section><section class="function-entry" id="f-6119573538462466"><h3><code>micron::__impl::__fpconv::d2f_trim_buffered(f64 v, char *b, usize c, u32 p) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1325">line 1325</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2f_trim_buffered(f64 v, char *b, usize c, u32 p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Returns <code>__zmij::d2f_trim_buffered(v, b, c, p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2f_trim_buffered(f64 v, char *b, usize c, u32 p) noexcept
+{
+  return __zmij::d2f_trim_buffered(v, b, c, p);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zmij::d2f_trim_buffered(v, b, c, p)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1327">line 1327</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-c1dac518fbf83e2c">__zmij::d2f_trim_buffered</a>.</p></section><section class="function-entry" id="f-a9fbe5bd28c6aa82"><h3><code>micron::__impl::__fpconv::d2e_buffered(f64 v, char *b, usize c, u32 p) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1331">line 1331</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2e_buffered(f64 v, char *b, usize c, u32 p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li></ul><h4>Effects</h4><p>Returns <code>__zmij::d2e_buffered(v, b, c, p)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2e_buffered(f64 v, char *b, usize c, u32 p) noexcept
+{
+  return __zmij::d2e_buffered(v, b, c, p);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zmij::d2e_buffered(v, b, c, p)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1333">line 1333</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-cd35f27dac6ab8f5">__zmij::d2e_buffered</a>.</p></section><section class="function-entry" id="f-96ee1c2978695aaa"><h3><code>micron::__impl::__fpconv::d2g_buffered(f64 v, char *b, usize c, u32 p, bool a, bool u) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1337">line 1337</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2g_buffered(f64 v, char *b, usize c, u32 p, bool a, bool u) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(MICRON_USE_RYU)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li><li><code>bool a</code></li><li><code>bool u</code></li></ul><h4>Effects</h4><p>Returns <code>__zmij::d2g_buffered(v, b, c, p, a, u)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2g_buffered(f64 v, char *b, usize c, u32 p, bool a, bool u) noexcept
+{
+  return __zmij::d2g_buffered(v, b, c, p, a, u);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zmij::d2g_buffered(v, b, c, p, a, u)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1339">line 1339</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zmij.hpp.html#f-ab1d13617c0ba867">__zmij::d2g_buffered</a>.</p></section><section class="function-entry" id="f-15d0e820c53a0c7c"><h3><code>micron::__impl::__fpconv::d2a_buffered(f64 v, char *b, usize c, u32 p, bool h, bool u) noexcept</code></h3><p>Defined in <code>string/conversions/zmij.hpp</code>, <a href="../../../source/string/conversions/zmij.hpp.html#L1344">line 1344</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr usize
+d2a_buffered(f64 v, char *b, usize c, u32 p, bool h, bool u) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 v</code></li><li><code>char *b</code></li><li><code>usize c</code></li><li><code>u32 p</code></li><li><code>bool h</code></li><li><code>bool u</code></li></ul><h4>Effects</h4><p>Returns <code>__ryu::d2a_buffered(v, b, c, p, h, u)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr usize
+d2a_buffered(f64 v, char *b, usize c, u32 p, bool h, bool u) noexcept
+{
+  return __ryu::d2a_buffered(v, b, c, p, h, u);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ryu::d2a_buffered(v, b, c, p, h, u)</code></td><td><a href="../../../source/string/conversions/zmij.hpp.html#L1346">line 1346</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fixed.hpp.html#f-f26f755ad92157db">__ryu::d2a_buffered</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

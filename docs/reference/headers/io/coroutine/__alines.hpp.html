@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/coroutine/__alines.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/coroutine/__alines.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/io/coroutine/__alines.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/io/coroutine/__alines.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-4f10a984f59a4b38"><h3><code>micron::io::coro::__aline_cursor::__aline_cursor(i32 fd, u64 off = 0, usize chunk_sz = __lines::chunk)</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L40">line 40</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit __aline_cursor(i32 fd, u64 off = 0, usize chunk_sz = __lines::chunk)
+      : __fd(fd), __off(off), __chunk(chunk_sz ? chunk_sz : __lines::chunk), __chunk_sz(chunk_sz ? chunk_sz : __lines::chunk),
+        __stream(off == static_cast&lt;u64&gt;(-1))</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 fd</code></li><li><code>u64 off = 0</code></li><li><code>usize chunk_sz = __lines::chunk</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit __aline_cursor(i32 fd, u64 off = 0, usize chunk_sz = __lines::chunk)
+      : __fd(fd), __off(off), __chunk(chunk_sz ? chunk_sz : __lines::chunk), __chunk_sz(chunk_sz ? chunk_sz : __lines::chunk),
+        __stream(off == static_cast&lt;u64&gt;(-1))
+  {
+    if ( __stream ) __off = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d07caeed646f547a"><h3><code>micron::io::coro::__aline_cursor::__aline_cursor(const __aline_cursor &amp;)</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L47">line 47</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__aline_cursor(const __aline_cursor &amp;) = delete;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __aline_cursor &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-7e6da4bce037a2fe"><h3><code>micron::io::coro::__aline_cursor::operator=(const __aline_cursor &amp;)</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L48">line 48</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__aline_cursor &amp;operator=(const __aline_cursor &amp;) = delete;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __aline_cursor &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-64fb3164ccf34a87"><h3><code>micron::io::coro::__aline_cursor::__aline_cursor(__aline_cursor &amp;&amp;)</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__aline_cursor(__aline_cursor &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__aline_cursor &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-187d9f30f43ad7e0"><h3><code>micron::io::coro::__aline_cursor::operator=(__aline_cursor &amp;&amp;)</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L50">line 50</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__aline_cursor &amp;operator=(__aline_cursor &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__aline_cursor &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-72c7977759474dc4"><h3><code>micron::io::coro::__aline_cursor::next(micron::string &amp;out)</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L53">line 53</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] micron::task&lt;bool&gt;
+  next(micron::string &amp;out)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>micron::string &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] micron::task&lt;bool&gt;
+  next(micron::string &amp;out)
+  {
+    if ( __eof || __err != 0 ) co_return false;
+    out.set_size(0);
+    const char *base = reinterpret_cast&lt;const char *&gt;(__chunk.data());
+    for ( ;; ) {
+      for ( usize i = __pos; i &lt; __valid; ++i ) {
+        if ( base[i] != &#x27;\n&#x27; ) continue;
+        if ( i &gt; __pos ) out.append(base + __pos, i - __pos);
+        __pos = i + 1;
+        if ( out.size() &amp;&amp; out[out.size() - 1] == &#x27;\r&#x27; ) out.set_size(out.size() - 1);
+        co_return true;
+      }
+      if ( __valid &gt; __pos ) out.append(base + __pos, __valid - __pos);
+      __pos = __valid;
+      const u64 at = __stream ? static_cast&lt;u64&gt;(-1) : __off;
+      i32 r = co_await micron::coro::io::read(__fd, __chunk.data(), static_cast&lt;u32&gt;(__chunk_sz), at);
+      if ( r &lt; 0 ) [[unlikely]] {
+        if ( r == -4 /*EINTR*/ ) continue;
+        const i32 a = co_await __impl::__retry_after(r, __fd, micron::uring::poll_in, __nb, __spun);
+        if ( a == 0 ) continue;
+        __err = a;
+        out.set_size(0);
+        co_return false;
+      }
+      if ( r == 0 ) {
+        __eof = true;
+        co_return !out.empty();      // final unterminated line, emitted once
+      }
+      __off += static_cast&lt;u64&gt;(r);
+      __pos = 0;
+      __valid = static_cast&lt;usize&gt;(r);
+      __spun = 0;
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../tasks/coroutine/aio.hpp.html#f-6987bdf54f8f07d3">micron::coro::io::read</a>, <a href="__acore.hpp.html#f-1143ad7e0e0a1e74">__impl::__retry_after</a>.</p></section><section class="function-entry" id="f-f1e22fd0cd7f0c7f"><h3><code>micron::io::coro::__aline_cursor::error() const noexcept</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L90">line 90</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] i32
+  error() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__err</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] i32
+  error() const noexcept
+  {
+    return __err;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__err</code></td><td><a href="../../../source/io/coroutine/__alines.hpp.html#L92">line 92</a></td></tr></tbody></table></section><section class="function-entry" id="f-dac9f98b8ab0fdff"><h3><code>micron::io::coro::__aline_cursor::at_eof() const noexcept</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L96">line 96</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  at_eof() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__eof</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  at_eof() const noexcept
+  {
+    return __eof;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__eof</code></td><td><a href="../../../source/io/coroutine/__alines.hpp.html#L98">line 98</a></td></tr></tbody></table></section><section class="function-entry" id="f-20ee5f7f35eb2444"><h3><code>micron::io::coro::__aline_cursor::offset() const noexcept</code></h3><p>Defined in <code>io/coroutine/__alines.hpp</code>, <a href="../../../source/io/coroutine/__alines.hpp.html#L102">line 102</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] u64
+  offset() const noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Effects</h4><p>Returns <code>__off - (__valid - __pos)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] u64
+  offset() const noexcept
+  {
+    return __off - (__valid - __pos);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__off - (__valid - __pos)</code></td><td><a href="../../../source/io/coroutine/__alines.hpp.html#L104">line 104</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

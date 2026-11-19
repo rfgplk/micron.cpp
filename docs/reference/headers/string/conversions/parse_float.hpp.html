@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/string/conversions/parse_float.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/string/conversions/parse_float.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/strings.html">Strings</a></div><p>Defined in header <code>&lt;micron/string/conversions/parse_float.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/string/conversions/parse_float.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-97ee3859892d1ec9">micron::group</code></td><td>variable; line 714</td></tr><tr class="t-dsc"><td><code id="s-e231bf89211c335e">micron::group</code></td><td>variable; line 727</td></tr><tr class="t-dsc"><td><code id="s-7478fbbc4d575251">micron::d</code></td><td>variable; line 736</td></tr><tr class="t-dsc"><td><a href="#f-79a5e6b23e6cc8ee">micron::try_parse_double(const T *p, usize n, f64 &amp;out)</a></td><td>function; line 1167</td></tr><tr class="t-dsc"><td><a href="#f-fc103e6856474483">micron::try_parse_float(const T *p, usize n, f32 &amp;out)</a></td><td>function; line 1179</td></tr><tr class="t-dsc"><td><a href="#f-1a2dd5745b9e85af">micron::try_string_to_double(const micron::hstring&lt;T&gt; &amp;buf, f64 &amp;out)</a></td><td>function; line 1191</td></tr><tr class="t-dsc"><td><a href="#f-3f44200f5e32076b">micron::try_string_to_float(const micron::hstring&lt;T&gt; &amp;buf, f32 &amp;out)</a></td><td>function; line 1196</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-79a5e6b23e6cc8ee"><h3><code>micron::try_parse_double(const T *p, usize n, f64 &amp;out)</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1167">line 1167</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T = char&gt; inline constexpr bool try_parse_double(const T *p, usize n, f64 &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *p</code></li><li><code>usize n</code></li><li><code>f64 &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T = char&gt; inline constexpr bool try_parse_double(const T *p, usize n, f64 &amp;out)
+  {
+    out = 0.0;
+    if ( p == nullptr || n == 0 ) return false;
+    const T *stop = nullptr;
+    f64 v = 0.0;
+    const __impl::__pf::__status st = __impl::__pf::__parse&lt;f64, true&gt;(p, p + n, v, stop);
+    if ( st == __impl::__pf::__status::invalid || stop != p + n ) return false;
+    out = v;
+    return st == __impl::__pf::__status::ok;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1170">line 1170</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1174">line 1174</a></td></tr><tr class="t-dsc"><td><code>st == __impl::__pf::__status::ok</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1176">line 1176</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-d66bec68b9ff5625">__impl::__pf::__parse&lt;f64, true&gt;</a>.</p></section><section class="function-entry" id="f-fc103e6856474483"><h3><code>micron::try_parse_float(const T *p, usize n, f32 &amp;out)</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1179">line 1179</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T = char&gt; inline constexpr bool try_parse_float(const T *p, usize n, f32 &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *p</code></li><li><code>usize n</code></li><li><code>f32 &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T = char&gt; inline constexpr bool try_parse_float(const T *p, usize n, f32 &amp;out)
+  {
+    out = 0.0f;
+    if ( p == nullptr || n == 0 ) return false;
+    const T *stop = nullptr;
+    f32 v = 0.0f;
+    const __impl::__pf::__status st = __impl::__pf::__parse&lt;f32, true&gt;(p, p + n, v, stop);
+    if ( st == __impl::__pf::__status::invalid || stop != p + n ) return false;
+    out = v;
+    return st == __impl::__pf::__status::ok;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1182">line 1182</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1186">line 1186</a></td></tr><tr class="t-dsc"><td><code>st == __impl::__pf::__status::ok</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1188">line 1188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-d66bec68b9ff5625">__impl::__pf::__parse&lt;f32, true&gt;</a>.</p></section><section class="function-entry" id="f-1a2dd5745b9e85af"><h3><code>micron::try_string_to_double(const micron::hstring&lt;T&gt; &amp;buf, f64 &amp;out)</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1191">line 1191</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T = char&gt; inline bool try_string_to_double(const micron::hstring&lt;T&gt; &amp;buf, f64 &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::hstring&lt;T&gt; &amp;buf</code></li><li><code>f64 &amp;out</code></li></ul><h4>Effects</h4><p>Returns <code>try_parse_double&lt;T&gt;(buf.cdata(), buf.size(), out)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T = char&gt; inline bool try_string_to_double(const micron::hstring&lt;T&gt; &amp;buf, f64 &amp;out)
+  {
+    return try_parse_double&lt;T&gt;(buf.cdata(), buf.size(), out);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>try_parse_double&lt;T&gt;(buf.cdata(), buf.size(), out)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1193">line 1193</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-79a5e6b23e6cc8ee">try_parse_double&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-3f44200f5e32076b"><h3><code>micron::try_string_to_float(const micron::hstring&lt;T&gt; &amp;buf, f32 &amp;out)</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1196">line 1196</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T = char&gt; inline bool try_string_to_float(const micron::hstring&lt;T&gt; &amp;buf, f32 &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::hstring&lt;T&gt; &amp;buf</code></li><li><code>f32 &amp;out</code></li></ul><h4>Effects</h4><p>Returns <code>try_parse_float&lt;T&gt;(buf.cdata(), buf.size(), out)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T = char&gt; inline bool try_string_to_float(const micron::hstring&lt;T&gt; &amp;buf, f32 &amp;out)
+  {
+    return try_parse_float&lt;T&gt;(buf.cdata(), buf.size(), out);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>try_parse_float&lt;T&gt;(buf.cdata(), buf.size(), out)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1198">line 1198</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-fc103e6856474483">try_parse_float&lt;T&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-a137cfb3aec895e0"><h3><code>micron::__impl::__pf::__is_digit(T c) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L423">line 423</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  inline constexpr bool
+  __is_digit(T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T c</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;u32&gt;(static_cast&lt;u32&gt;(c) - static_cast&lt;u32&gt;(&#x27;0&#x27;)) &lt;= 9u</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  inline constexpr bool
+  __is_digit(T c) noexcept
+  {
+    return static_cast&lt;u32&gt;(static_cast&lt;u32&gt;(c) - static_cast&lt;u32&gt;(&#x27;0&#x27;)) &lt;= 9u;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u32&gt;(static_cast&lt;u32&gt;(c) - static_cast&lt;u32&gt;(&#x27;0&#x27;)) &lt;= 9u</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L425">line 425</a></td></tr></tbody></table></section><section class="function-entry" id="f-9a32f6d3fe39dda6"><h3><code>micron::__impl::__pf::__digit_val(T c) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L430">line 430</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  inline constexpr u32
+  __digit_val(T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T c</code></li></ul><h4>Effects</h4><p>Returns <code>static_cast&lt;u32&gt;(c) - static_cast&lt;u32&gt;(&#x27;0&#x27;)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  inline constexpr u32
+  __digit_val(T c) noexcept
+  {
+    return static_cast&lt;u32&gt;(c) - static_cast&lt;u32&gt;(&#x27;0&#x27;);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;u32&gt;(c) - static_cast&lt;u32&gt;(&#x27;0&#x27;)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L432">line 432</a></td></tr></tbody></table></section><section class="function-entry" id="f-9b55bc8b0c1925ab"><h3><code>micron::__impl::__pf::__hex_val(T c) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L437">line 437</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  inline constexpr i32
+  __hex_val(T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  inline constexpr i32
+  __hex_val(T c) noexcept
+  {
+    u32 v = static_cast&lt;u32&gt;(c);
+    if ( v - static_cast&lt;u32&gt;(&#x27;0&#x27;) &lt;= 9u ) return static_cast&lt;i32&gt;(v - static_cast&lt;u32&gt;(&#x27;0&#x27;));
+    if ( v - static_cast&lt;u32&gt;(&#x27;a&#x27;) &lt;= 5u ) return static_cast&lt;i32&gt;(v - static_cast&lt;u32&gt;(&#x27;a&#x27;) + 10u);
+    if ( v - static_cast&lt;u32&gt;(&#x27;A&#x27;) &lt;= 5u ) return static_cast&lt;i32&gt;(v - static_cast&lt;u32&gt;(&#x27;A&#x27;) + 10u);
+    return -1;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(v - static_cast&lt;u32&gt;(&#x27;0&#x27;))</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L440">line 440</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(v - static_cast&lt;u32&gt;(&#x27;a&#x27;) + 10u)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L441">line 441</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i32&gt;(v - static_cast&lt;u32&gt;(&#x27;A&#x27;) + 10u)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L442">line 442</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L443">line 443</a></td></tr></tbody></table></section><section class="function-entry" id="f-395242a8ef15109e"><h3><code>micron::__impl::__pf::__lower(T c) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L449">line 449</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  inline constexpr char
+  __lower(T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  inline constexpr char
+  __lower(T c) noexcept
+  {
+    u32 v = static_cast&lt;u32&gt;(c);
+    return static_cast&lt;char&gt;(v - static_cast&lt;u32&gt;(&#x27;A&#x27;) &lt;= 25u ? v + 32u : v);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;char&gt;(v - static_cast&lt;u32&gt;(&#x27;A&#x27;) &lt;= 25u ? v + 32u : v)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L452">line 452</a></td></tr></tbody></table></section><section class="function-entry" id="f-e58e1205ea4427cf"><h3><code>micron::__impl::__pf::__live(const T *p, const T *e) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L457">line 457</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Bounded, typename T&gt;
+  inline constexpr bool
+  __live(const T *p, const T *e) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *p</code></li><li><code>const T *e</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Bounded, typename T&gt;
+  inline constexpr bool
+  __live(const T *p, const T *e) noexcept
+  {
+    if constexpr ( Bounded )
+      return p != e;
+    else
+      return *p != static_cast&lt;T&gt;(0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>p != e</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L460">line 460</a></td></tr><tr class="t-dsc"><td><code>*p != static_cast&lt;T&gt;(0)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L462">line 462</a></td></tr></tbody></table></section><section class="function-entry" id="f-dbfd569491903bab"><h3><code>micron::__impl::__pf::__scan_hex(const T *&amp;p, const T *e, __scan_t&lt;T&gt; &amp;s) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L489">line 489</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Bounded, typename T&gt;
+  inline constexpr bool
+  __scan_hex(const T *&amp;p, const T *e, __scan_t&lt;T&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *&amp;p</code></li><li><code>const T *e</code></li><li><code>__scan_t&lt;T&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Bounded, typename T&gt;
+  inline constexpr bool
+  __scan_hex(const T *&amp;p, const T *e, __scan_t&lt;T&gt; &amp;s) noexcept
+  {
+    const T *save = p;
+    p += 2;      // the caller matched &quot;0x&quot;
+    u64 mant = 0;
+    i64 bexp = 0;
+    bool any = false;
+    bool truncated = false;
+
+    while ( __live&lt;Bounded&gt;(p, e) ) {
+      i32 d = __hex_val(*p);
+      if ( d &lt; 0 ) break;
+      any = true;
+      if ( mant &lt;= (~0ull &gt;&gt; 4) )
+        mant = (mant &lt;&lt; 4) | static_cast&lt;u64&gt;(d);
+      else {
+        bexp += 4;
+        if ( d ) truncated = true;
+      }
+      ++p;
+    }
+    if ( __live&lt;Bounded&gt;(p, e) &amp;&amp; *p == static_cast&lt;T&gt;(&#x27;.&#x27;) ) {
+      ++p;
+      while ( __live&lt;Bounded&gt;(p, e) ) {
+        i32 d = __hex_val(*p);
+        if ( d &lt; 0 ) break;
+        any = true;
+        if ( mant &lt;= (~0ull &gt;&gt; 4) ) {
+          mant = (mant &lt;&lt; 4) | static_cast&lt;u64&gt;(d);
+          bexp -= 4;
+        } else if ( d )
+          truncated = true;
+        ++p;
+      }
+    }
+    if ( !any ) {      // &quot;0x&quot; with nothing after it is the integer 0 followed by an &#x27;x&#x27;
+      p = save;
+      return false;
+    }
+    // the binary-exponent part is optional here, as it is for from_chars
+    if ( __live&lt;Bounded&gt;(p, e) &amp;&amp; (*p == static_cast&lt;T&gt;(&#x27;p&#x27;) || *p == static_cast&lt;T&gt;(&#x27;P&#x27;)) ) {
+      const T *psave = p;
+      ++p;
+      bool eneg = false;
+      if ( __live&lt;Bounded&gt;(p, e) &amp;&amp; (*p == static_cast&lt;T&gt;(&#x27;+&#x27;) || *p == static_cast&lt;T&gt;(&#x27;-&#x27;)) ) {
+        eneg = (*p == static_cast&lt;T&gt;(&#x27;-&#x27;));
+        ++p;
+      }
+      if ( !__live&lt;Bounded&gt;(p, e) || !__is_digit(*p) )
+        p = psave;
+      else {
+        i64 v = 0;
+        while ( __live&lt;Bounded&gt;(p, e) &amp;&amp; __is_digit(*p) ) {
+          if ( v &lt; __exp_clamp ) v = v * 10 + static_cast&lt;i64&gt;(__digit_val(*p));
+          ++p;
+        }
+        bexp += eneg ? -v : v;
+      }
+    }
+    s.mant = mant;
+    s.exp10 = bexp;
+    s.truncated = truncated;
+    s.kind = __kind::hex;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L526">line 526</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L552">line 552</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-e58e1205ea4427cf">__live&lt;Bounded&gt;</a>, <a href="parse_float.hpp.html#f-9b55bc8b0c1925ab">__hex_val</a>, <a href="parse_float.hpp.html#f-a137cfb3aec895e0">__is_digit</a>, <a href="parse_float.hpp.html#f-9a32f6d3fe39dda6">__digit_val</a>.</p></section><section class="function-entry" id="f-f6e016c0dc555de8"><h3><code>micron::__impl::__pf::__match_word(const T *&amp;p, const T *e, const char *word) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L558">line 558</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Bounded, typename T&gt;
+  inline constexpr bool
+  __match_word(const T *&amp;p, const T *e, const char *word) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *&amp;p</code></li><li><code>const T *e</code></li><li><code>const char *word</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Bounded, typename T&gt;
+  inline constexpr bool
+  __match_word(const T *&amp;p, const T *e, const char *word) noexcept
+  {
+    const T *q = p;
+    for ( const char *w = word; *w; ++w ) {
+      if ( !__live&lt;Bounded&gt;(q, e) || __lower(*q) != *w ) return false;
+      ++q;
+    }
+    p = q;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L562">line 562</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L566">line 566</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-e58e1205ea4427cf">__live&lt;Bounded&gt;</a>, <a href="parse_float.hpp.html#f-395242a8ef15109e">__lower</a>.</p></section><section class="function-entry" id="f-81169e7bcc9c04f1"><h3><code>micron::__impl::__pf::__scan(const T *p, const T *e) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L571">line 571</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;bool Bounded, typename T&gt;
+  inline constexpr __scan_t&lt;T&gt;
+  __scan(const T *p, const T *e) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *p</code></li><li><code>const T *e</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;bool Bounded, typename T&gt;
+  inline constexpr __scan_t&lt;T&gt;
+  __scan(const T *p, const T *e) noexcept
+  {
+    __scan_t&lt;T&gt; s;
+    s.stop = p;
+
+    while ( __live&lt;Bounded&gt;(p, e) &amp;&amp; (*p == static_cast&lt;T&gt;(&#x27; &#x27;) || *p == static_cast&lt;T&gt;(&#x27;\t&#x27;)) ) ++p;
+
+    if ( __live&lt;Bounded&gt;(p, e) ) {
+      if ( *p == static_cast&lt;T&gt;(&#x27;-&#x27;) ) {
+        s.neg = true;
+        ++p;
+      } else if ( *p == static_cast&lt;T&gt;(&#x27;+&#x27;) )
+        ++p;
+    }
+    if ( !__live&lt;Bounded&gt;(p, e) ) return s;
+
+    // inf / infinity -- longest match wins
+    if ( __lower(*p) == &#x27;i&#x27; ) {
+      const T *q = p;
+      if ( __match_word&lt;Bounded&gt;(q, e, &quot;infinity&quot;) ) {
+        s.kind = __kind::inf;
+        s.stop = q;
+        return s;
+      }
+      q = p;
+      if ( __match_word&lt;Bounded&gt;(q, e, &quot;inf&quot;) ) {
+        s.kind = __kind::inf;
+        s.stop = q;
+      }
+      return s;
+    }
+    // nan, optionally nan(payload)
+    if ( __lower(*p) == &#x27;n&#x27; ) {
+      const T *q = p;
+      if ( !__match_word&lt;Bounded&gt;(q, e, &quot;nan&quot;) ) return s;
+      s.kind = __kind::nan;
+      s.stop = q;
+      if ( __live&lt;Bounded&gt;(q, e) &amp;&amp; *q == static_cast&lt;T&gt;(&#x27;(&#x27;) ) {
+        const T *r = q + 1;
+        const T *seq = r;
+        while ( __live&lt;Bounded&gt;(r, e) &amp;&amp; (__is_digit(*r) || static_cast&lt;u32&gt;(__lower(*r) - &#x27;a&#x27;) &lt;= 25u || *r == static_cast&lt;T&gt;(&#x27;_&#x27;)) ) ++r;
+        if ( __live&lt;Bounded&gt;(r, e) &amp;&amp; *r == static_cast&lt;T&gt;(&#x27;)&#x27;) ) {
+          const T *d = seq;
+          if ( r - d &gt;= 2 &amp;&amp; *d == static_cast&lt;T&gt;(&#x27;0&#x27;) &amp;&amp; (d[1] == static_cast&lt;T&gt;(&#x27;x&#x27;) || d[1] == static_cast&lt;T&gt;(&#x27;X&#x27;)) ) d += 2;
+          u64 pay = 0;
+          bool hex = (d != r);
+          for ( const T *k = d; k != r; ++k ) {
+            const i32 v = __hex_val(*k);
+            if ( v &lt; 0 ) {
+              hex = false;
+              break;
+            }
+            pay = (pay &lt;&lt; 4) | static_cast&lt;u64&gt;(v);
+          }
+          s.payload = hex ? pay : 0;
+          s.stop = r + 1;
+        }
+      }
+      return s;
+    }
+
+    // hex float
+    if ( *p == static_cast&lt;T&gt;(&#x27;0&#x27;) ) {
+      const T *q = p + 1;
+      if ( __live&lt;Bounded&gt;(q, e) &amp;&amp; (*q == static_cast&lt;T&gt;(&#x27;x&#x27;) || *q == static_cast&lt;T&gt;(&#x27;X&#x27;)) ) {
+        const T *h = p;
+        if ( __scan_hex&lt;Bounded&gt;(h, e, s) ) {
+          s.stop = h;
+          return s;
+        }
+      }
+    }
+
+    u64 mant = 0;
+    i64 exp10 = 0;
+    bool any = false;
+
+    s.int_first = p;
+    bool fraction_started = false;
+    if constexpr ( Bounded &amp;&amp; __is_same(T, char) ) {
+      if !consteval {
+        micron::__impl::__digits::__prefix16 prefix;
+        if ( e - p &gt;= 16 &amp;&amp; micron::__impl::__digits::read16(p, prefix) ) {
+          mant = prefix.mantissa;
+          any = true;
+          if ( prefix.point &lt; 16 ) {
+            s.int_last = p + prefix.point;
+            s.frac_first = s.int_last + 1;
+            exp10 = -static_cast&lt;i64&gt;(15 - prefix.point);
+            fraction_started = true;
+          }
+          p += 16;
+        }
+      }
+    }
+    if constexpr ( Bounded &amp;&amp; __is_same(T, char) ) {
+      if !consteval {
+        while ( !fraction_started &amp;&amp; e - p &gt;= 8 &amp;&amp; mant &lt;= (~u64{ 0 } - 99999999) / 100000000 ) {
+          u32 group;
+          if ( !micron::__impl::__digits::read8(p, group) ) break;
+          mant = mant * 100000000 + group;
+          p += 8;
+          any = true;
+        }
+      }
+    }
+    while ( !fraction_started &amp;&amp; __live&lt;Bounded&gt;(p, e) &amp;&amp; __is_digit(*p) ) {
+      if constexpr ( Bounded &amp;&amp; __is_same(T, char) ) {
+        if !consteval {
+          if ( mant &gt; __mant_cap &amp;&amp; e - p &gt;= 8 ) {
+            u32 group;
+            if ( micron::__impl::__digits::read8(p, group) ) {
+              exp10 += 8;
+              s.truncated |= group != 0;
+              p += 8;
+              continue;
+            }
+          }
+        }
+      }
+      u32 d = __digit_val(*p);
+      if ( mant &lt;= __mant_cap )
+        mant = mant * 10 + d;
+      else {
+        ++exp10;
+        if ( d ) s.truncated = true;
+      }
+      any = true;
+      ++p;
+    }
+    if ( !fraction_started ) {
+      s.int_last = p;
+      s.frac_first = p;
+    }
+    s.frac_last = p;
+    if ( fraction_started || (__live&lt;Bounded&gt;(p, e) &amp;&amp; *p == static_cast&lt;T&gt;(&#x27;.&#x27;)) ) {
+      if ( !fraction_started ) {
+        ++p;
+        s.frac_first = p;
+      }
+      if constexpr ( Bounded &amp;&amp; __is_same(T, char) ) {
+        if !consteval {
+          while ( e - p &gt;= 8 &amp;&amp; mant &lt;= (~u64{ 0 } - 99999999) / 100000000 ) {
+            u32 group;
+            if ( !micron::__impl::__digits::read8(p, group) ) break;
+            mant = mant * 100000000 + group;
+            exp10 -= 8;
+            p += 8;
+            any = true;
+          }
+        }
+      }
+      while ( __live&lt;Bounded&gt;(p, e) &amp;&amp; __is_digit(*p) ) {
+        if constexpr ( Bounded &amp;&amp; __is_same(T, char) ) {
+          if !consteval {
+            if ( mant &gt; __mant_cap &amp;&amp; e - p &gt;= 8 ) {
+              u32 group;
+              if ( micron::__impl::__digits::read8(p, group) ) {
+                s.truncated |= group != 0;
+                p += 8;
+                continue;
+              }
+            }
+          }
+        }
+        u32 d = __digit_val(*p);
+        if ( mant &lt;= __mant_cap ) {
+          mant = mant * 10 + d;
+          --exp10;
+        } else if ( d )
+          s.truncated = true;
+        any = true;
+        ++p;
+      }
+      s.frac_last = p;
+    }
+    if ( !any ) return s;
+
+    if ( __live&lt;Bounded&gt;(p, e) &amp;&amp; (*p == static_cast&lt;T&gt;(&#x27;e&#x27;) || *p == static_cast&lt;T&gt;(&#x27;E&#x27;)) ) {
+      const T *save = p;
+      ++p;
+      bool eneg = false;
+      if ( __live&lt;Bounded&gt;(p, e) &amp;&amp; (*p == static_cast&lt;T&gt;(&#x27;+&#x27;) || *p == static_cast&lt;T&gt;(&#x27;-&#x27;)) ) {
+        eneg = (*p == static_cast&lt;T&gt;(&#x27;-&#x27;));
+        ++p;
+      }
+      if ( !__live&lt;Bounded&gt;(p, e) || !__is_digit(*p) )
+        p = save;      // &quot;1e&quot; / &quot;1e+&quot;
+      else {
+        i64 v = 0;
+        while ( __live&lt;Bounded&gt;(p, e) &amp;&amp; __is_digit(*p) ) {
+          if ( v &lt; __exp_clamp ) v = v * 10 + static_cast&lt;i64&gt;(__digit_val(*p));      // clamp, never wrap
+          ++p;
+        }
+        s.exp_lit = eneg ? -v : v;
+        exp10 += s.exp_lit;
+      }
+    }
+
+    if ( exp10 &gt; __exp_clamp ) exp10 = __exp_clamp;
+    if ( exp10 &lt; -__exp_clamp ) exp10 = -__exp_clamp;
+
+    s.mant = mant;
+    s.exp10 = exp10;
+    s.kind = __kind::number;
+    s.stop = p;
+    return s;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L585">line 585</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L593">line 593</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L600">line 600</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L605">line 605</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L629">line 629</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L639">line 639</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L747">line 747</a></td></tr><tr class="t-dsc"><td><code>s</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L777">line 777</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-e58e1205ea4427cf">__live&lt;Bounded&gt;</a>, <a href="parse_float.hpp.html#f-395242a8ef15109e">__lower</a>, <a href="parse_float.hpp.html#f-f6e016c0dc555de8">__match_word&lt;Bounded&gt;</a>, <a href="parse_float.hpp.html#f-a137cfb3aec895e0">__is_digit</a>, <a href="parse_float.hpp.html#f-9b55bc8b0c1925ab">__hex_val</a>, <a href="parse_float.hpp.html#f-dbfd569491903bab">__scan_hex&lt;Bounded&gt;</a>, <a href="decimal_simd.hpp.html#f-d9ef7c2032ca7bb0">micron::__impl::__digits::read16</a>, <a href="decimal_simd.hpp.html#f-3151e5e652a96ef4">micron::__impl::__digits::read8</a>, <a href="parse_float.hpp.html#f-9a32f6d3fe39dda6">__digit_val</a>.</p></section><section class="function-entry" id="f-9d0dd22625bdf096"><h3><code>micron::__impl::__pf::__assemble(bool neg, u64 biased_exp, u64 mantissa) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L785">line 785</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline constexpr F
+  __assemble(bool neg, u64 biased_exp, u64 mantissa) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool neg</code></li><li><code>u64 biased_exp</code></li><li><code>u64 mantissa</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline constexpr F
+  __assemble(bool neg, u64 biased_exp, u64 mantissa) noexcept
+  {
+    using U = typename math::ieee::traits&lt;F&gt;::uint_type;
+    constexpr i32 mb = __fmt_traits&lt;F&gt;::mantissa_bits;
+    U u = static_cast&lt;U&gt;(mantissa) | (static_cast&lt;U&gt;(biased_exp) &lt;&lt; mb);
+    if ( neg ) u |= math::ieee::traits&lt;F&gt;::sign_mask;
+    return math::ieee::from_bits&lt;F&gt;(u);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::ieee::from_bits&lt;F&gt;(u)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L791">line 791</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../math/ieee.hpp.html#f-9132381805384236">math::ieee::from_bits&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-50270248a89e88ef"><h3><code>micron::__impl::__pf::__zero(bool neg) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L796">line 796</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline constexpr F
+  __zero(bool neg) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool neg</code></li></ul><h4>Effects</h4><p>Returns <code>__assemble&lt;F&gt;(neg, 0, 0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline constexpr F
+  __zero(bool neg) noexcept
+  {
+    return __assemble&lt;F&gt;(neg, 0, 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__assemble&lt;F&gt;(neg, 0, 0)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L798">line 798</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-9d0dd22625bdf096">__assemble&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-02591eead9502c29"><h3><code>micron::__impl::__pf::__inf(bool neg) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L803">line 803</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline constexpr F
+  __inf(bool neg) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool neg</code></li></ul><h4>Effects</h4><p>Returns <code>__assemble&lt;F&gt;(neg, static_cast&lt;u64&gt;(__fmt_traits&lt;F&gt;::infinite_power), 0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline constexpr F
+  __inf(bool neg) noexcept
+  {
+    return __assemble&lt;F&gt;(neg, static_cast&lt;u64&gt;(__fmt_traits&lt;F&gt;::infinite_power), 0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__assemble&lt;F&gt;(neg, static_cast&lt;u64&gt;(__fmt_traits&lt;F&gt;::infinite_power), 0)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L805">line 805</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-9d0dd22625bdf096">__assemble&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-4127bf72cfda023f"><h3><code>micron::__impl::__pf::__nan(bool neg, u64 payload) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L810">line 810</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline constexpr F
+  __nan(bool neg, u64 payload) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool neg</code></li><li><code>u64 payload</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline constexpr F
+  __nan(bool neg, u64 payload) noexcept
+  {
+    using U = typename math::ieee::traits&lt;F&gt;::uint_type;
+    U m = static_cast&lt;U&gt;(payload) &amp; static_cast&lt;U&gt;(math::ieee::traits&lt;F&gt;::mant_mask);
+    m |= static_cast&lt;U&gt;(math::ieee::traits&lt;F&gt;::quiet_nan_bit);
+    return __assemble&lt;F&gt;(neg, static_cast&lt;u64&gt;(__fmt_traits&lt;F&gt;::infinite_power), m);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__assemble&lt;F&gt;(neg, static_cast&lt;u64&gt;(__fmt_traits&lt;F&gt;::infinite_power), m)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L815">line 815</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-9d0dd22625bdf096">__assemble&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-e80c47a1dfe5cc27"><h3><code>micron::__impl::__pf::__exact(u64 mant, i64 exp10, bool neg, F &amp;out) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L820">line 820</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline constexpr bool
+  __exact(u64 mant, i64 exp10, bool neg, F &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 mant</code></li><li><code>i64 exp10</code></li><li><code>bool neg</code></li><li><code>F &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline constexpr bool
+  __exact(u64 mant, i64 exp10, bool neg, F &amp;out) noexcept
+  {
+    using TR = __fmt_traits&lt;F&gt;;
+    if constexpr ( !__fpu_evaluates_narrow )
+      return false;
+    else {
+      if ( mant &gt; TR::fast_path_max_mantissa ) return false;
+      if ( exp10 &lt; -TR::fast_path_max_exp ) return false;
+
+      if ( exp10 &gt; TR::fast_path_max_exp ) {
+        if ( exp10 &gt; TR::fast_path_scale_max ) return false;
+        const i64 shift = exp10 - TR::fast_path_max_exp;
+        if ( mant &gt; TR::fast_path_max_mantissa / __pow10_u64[shift] ) return false;
+        mant *= __pow10_u64[shift];
+        exp10 = TR::fast_path_max_exp;
+      }
+
+      f64 v = static_cast&lt;f64&gt;(mant);
+      if ( exp10 &gt; 0 )
+        v = v * __pow10_exact[exp10];
+      else if ( exp10 &lt; 0 )
+        v = v / __pow10_exact[-exp10];
+      out = neg ? -static_cast&lt;F&gt;(v) : static_cast&lt;F&gt;(v);
+      return true;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L824">line 824</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L826">line 826</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L827">line 827</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L830">line 830</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L832">line 832</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L843">line 843</a></td></tr></tbody></table></section><section class="function-entry" id="f-11b3ee24cc912044"><h3><code>micron::__impl::__pf::__log2_pow10(i32 q) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L852">line 852</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i32
+  __log2_pow10(i32 q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 q</code></li></ul><h4>Effects</h4><p>Returns <code>(217706 * q) &gt;&gt; 16</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i32
+  __log2_pow10(i32 q) noexcept
+  {
+    return (217706 * q) &gt;&gt; 16;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(217706 * q) &gt;&gt; 16</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L854">line 854</a></td></tr></tbody></table></section><section class="function-entry" id="f-cd0d563bcd1fdfa2"><h3><code>micron::__impl::__pf::__product(i64 q, u64 w) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L860">line 860</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i32 BitPrecision&gt;
+  inline constexpr __fmt_uint128_t
+  __product(i64 q, u64 w) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 q</code></li><li><code>u64 w</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i32 BitPrecision&gt;
+  inline constexpr __fmt_uint128_t
+  __product(i64 q, u64 w) noexcept
+  {
+    const i32 index = static_cast&lt;i32&gt;(q) - __pow5_128_min;
+    __fmt_uint128_t first = umul128(w, __pow5_128[index][1]);
+    constexpr u64 precision_mask = (BitPrecision &lt; 64) ? (0xFFFFFFFFFFFFFFFFull &gt;&gt; BitPrecision) : 0xFFFFFFFFFFFFFFFFull;
+    if ( (first.hi &amp; precision_mask) == precision_mask ) {
+      __fmt_uint128_t second = umul128(w, __pow5_128[index][0]);
+      u64 lo = first.lo + second.hi;
+      if ( second.hi &gt; lo ) ++first.hi;
+      first.lo = lo;
+    }
+    return first;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>first</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L871">line 871</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-f2813456e3b1b2dd">umul128</a>.</p></section><section class="function-entry" id="f-7dedf5971b763dba"><h3><code>micron::__impl::__pf::operator==(const __am &amp;a, const __am &amp;b) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L880">line 880</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr bool
+  operator==(const __am &amp;a, const __am &amp;b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __am &amp;a</code></li><li><code>const __am &amp;b</code></li></ul><h4>Effects</h4><p>Returns <code>a.mantissa == b.mantissa &amp;&amp; a.power2 == b.power2</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr bool
+  operator==(const __am &amp;a, const __am &amp;b) noexcept
+  {
+    return a.mantissa == b.mantissa &amp;&amp; a.power2 == b.power2;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a.mantissa == b.mantissa &amp;&amp; a.power2 == b.power2</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L882">line 882</a></td></tr></tbody></table></section><section class="function-entry" id="f-1b5ea00acad56e7c"><h3><code>micron::__impl::__pf::__eisel_lemire(i64 q, u64 w) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L887">line 887</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline constexpr __am
+  __eisel_lemire(i64 q, u64 w) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 q</code></li><li><code>u64 w</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline constexpr __am
+  __eisel_lemire(i64 q, u64 w) noexcept
+  {
+    using TR = __fmt_traits&lt;F&gt;;
+    __am a;
+
+    if ( w == 0 || q &lt; TR::smallest_power ) return a;      // +0
+    if ( q &gt; TR::largest_power ) {
+      a.power2 = TR::infinite_power;
+      return a;
+    }
+
+    const i32 lz = static_cast&lt;i32&gt;(clz64(w));
+    w &lt;&lt;= lz;
+
+    const __fmt_uint128_t prod = __product&lt;TR::mantissa_bits + 3&gt;(q, w);
+    // provably unreachable for f32/f64 over the supported range
+    if ( prod.lo == 0xFFFFFFFFFFFFFFFFull ) {
+      a.power2 = -1;
+      return a;
+    }
+
+    const i32 upperbit = static_cast&lt;i32&gt;(prod.hi &gt;&gt; 63);
+    u64 mantissa = prod.hi &gt;&gt; (upperbit + 64 - TR::mantissa_bits - 3);
+    i32 power2 = __log2_pow10(static_cast&lt;i32&gt;(q)) + 63 + upperbit - lz - TR::min_exponent;
+
+    if ( power2 &lt;= 0 ) {      // subnormal, or below it
+      if ( -power2 + 1 &gt;= 64 ) return a;
+      mantissa &gt;&gt;= -power2 + 1;
+      mantissa += (mantissa &amp; 1);
+      mantissa &gt;&gt;= 1;
+      a.mantissa = mantissa;
+      a.power2 = (mantissa &lt; (1ull &lt;&lt; TR::mantissa_bits)) ? 0 : 1;
+      return a;
+    }
+
+    if ( prod.lo &lt;= 1 &amp;&amp; q &gt;= -4 &amp;&amp; q &lt;= 23 &amp;&amp; (mantissa &amp; 3) == 1 ) {
+      if ( (mantissa &lt;&lt; (upperbit + 64 - TR::mantissa_bits - 3)) == prod.hi ) mantissa &amp;= ~1ull;
+    }
+
+    mantissa += (mantissa &amp; 1);
+    mantissa &gt;&gt;= 1;
+    if ( mantissa &gt;= (2ull &lt;&lt; TR::mantissa_bits) ) {
+      mantissa = (1ull &lt;&lt; TR::mantissa_bits);
+      ++power2;
+    }
+    mantissa &amp;= ~(1ull &lt;&lt; TR::mantissa_bits);
+    if ( power2 &gt;= TR::infinite_power ) {
+      a.mantissa = 0;
+      a.power2 = TR::infinite_power;
+      return a;
+    }
+    a.mantissa = mantissa;
+    a.power2 = power2;
+    return a;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L892">line 892</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L895">line 895</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L905">line 905</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L913">line 913</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L919">line 919</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L936">line 936</a></td></tr><tr class="t-dsc"><td><code>a</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L940">line 940</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits.hpp.html#f-e27efe8bc790122c">clz64</a>, <a href="parse_float.hpp.html#f-cd0d563bcd1fdfa2">__product&lt;TR::mantissa_bits + 3&gt;</a>, <a href="parse_float.hpp.html#f-11b3ee24cc912044">__log2_pow10</a>.</p></section><section class="function-entry" id="f-392aa2c9b77d78cf"><h3><code>micron::__impl::__pf::__dec_rounded(const __decimal &amp;v) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L948">line 948</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr u64
+  __dec_rounded(const __decimal &amp;v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __decimal &amp;v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr u64
+  __dec_rounded(const __decimal &amp;v) noexcept
+  {
+    if ( v.point &lt; 0 || v.ndigits == 0 ) return 0;
+    if ( v.point &gt; 20 ) return ~0ull;
+    const u32 np = static_cast&lt;u32&gt;(v.point);
+    u64 n = 0;
+    u32 i = 0;
+    for ( ; i &lt; np &amp;&amp; i &lt; v.ndigits; ++i ) n = n * 10 + v.d[i];
+    for ( ; i &lt; np; ++i ) n *= 10;
+    if ( __dec_round_up(v, np) ) ++n;
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L950">line 950</a></td></tr><tr class="t-dsc"><td><code>~0ull</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L951">line 951</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L958">line 958</a></td></tr></tbody></table></section><section class="function-entry" id="f-58f65e1d98594595"><h3><code>micron::__impl::__pf::__dec_load(__decimal &amp;v, const __scan_t&lt;T&gt; &amp;s) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L963">line 963</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  inline constexpr void
+  __dec_load(__decimal &amp;v, const __scan_t&lt;T&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__decimal &amp;v</code></li><li><code>const __scan_t&lt;T&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  inline constexpr void
+  __dec_load(__decimal &amp;v, const __scan_t&lt;T&gt; &amp;s) noexcept
+  {
+    u32 w = 0;
+    bool seen = false;
+    i32 point = 0;
+
+    for ( const T *p = s.int_first; p != s.int_last; ++p ) {
+      u8 d = static_cast&lt;u8&gt;(__digit_val(*p));
+      if ( !seen &amp;&amp; d == 0 ) continue;      // leading zeros carry nothing
+      seen = true;
+      if ( w &lt; __dec_cap )
+        v.d[w++] = d;
+      else if ( d )
+        v.truncated = true;
+      ++point;
+    }
+    for ( const T *p = s.frac_first; p != s.frac_last; ++p ) {
+      u8 d = static_cast&lt;u8&gt;(__digit_val(*p));
+      if ( !seen &amp;&amp; d == 0 ) {
+        --point;
+        continue;
+      }
+      seen = true;
+      if ( w &lt; __dec_cap )
+        v.d[w++] = d;
+      else if ( d )
+        v.truncated = true;
+    }
+    v.ndigits = w;
+    v.point = point;
+    __dec_trim(v);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-9a32f6d3fe39dda6">__digit_val</a>.</p></section><section class="function-entry" id="f-292faede83d8ebc2"><h3><code>micron::__impl::__pf::__dec_step(i32 distance) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L997">line 997</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr i32
+  __dec_step(i32 distance) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 distance</code></li></ul><h4>Effects</h4><p>Returns <code>(distance &gt;= static_cast&lt;i32&gt;(sizeof(__powtab))) ? 27 : static_cast&lt;i32&gt;(__powtab[distance])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr i32
+  __dec_step(i32 distance) noexcept
+  {
+    return (distance &gt;= static_cast&lt;i32&gt;(sizeof(__powtab))) ? 27 : static_cast&lt;i32&gt;(__powtab[distance]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(distance &gt;= static_cast&lt;i32&gt;(sizeof(__powtab))) ? 27 : static_cast&lt;i32&gt;(__powtab[distance])</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L999">line 999</a></td></tr></tbody></table></section><section class="function-entry" id="f-39fca92e2d4e8a1d"><h3><code>micron::__impl::__pf::__decimal_path(const __scan_t&lt;T&gt; &amp;s) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1004">line 1004</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, typename T&gt;
+  [[gnu::noinline, gnu::cold]] inline constexpr F
+  __decimal_path(const __scan_t&lt;T&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const __scan_t&lt;T&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, typename T&gt;
+  [[gnu::noinline, gnu::cold]] inline constexpr F
+  __decimal_path(const __scan_t&lt;T&gt; &amp;s) noexcept
+  {
+    using TR = __fmt_traits&lt;F&gt;;
+    __decimal v;
+    __dec_load(v, s);
+    if ( v.ndigits == 0 ) return __zero&lt;F&gt;(s.neg);
+
+    const i64 pt = static_cast&lt;i64&gt;(v.point) + s.exp_lit;
+    if ( pt &gt; TR::largest_power + 2 ) return __inf&lt;F&gt;(s.neg);
+    if ( pt &lt; TR::smallest_power - 2 ) return __zero&lt;F&gt;(s.neg);
+    v.point = static_cast&lt;i32&gt;(pt);
+
+    i32 exp2 = 0;
+    while ( v.ndigits != 0 &amp;&amp; v.point &gt; 0 ) {
+      const i32 n = __dec_step(v.point);
+      __dec_shift(v, -n);
+      exp2 += n;
+    }
+    while ( v.ndigits != 0 &amp;&amp; (v.point &lt; 0 || (v.point == 0 &amp;&amp; v.d[0] &lt; 5)) ) {
+      const i32 n = __dec_step(-v.point);
+      __dec_shift(v, n);
+      exp2 -= n;
+    }
+    if ( v.ndigits == 0 ) return __zero&lt;F&gt;(s.neg);
+    --exp2;      // [0.5, 1) -&gt; [1, 2)
+
+    const i32 bias = TR::min_exponent;
+    if ( exp2 &lt; bias + 1 ) {
+      const i32 n = bias + 1 - exp2;
+      __dec_shift(v, -n);
+      exp2 += n;
+    }
+    if ( exp2 - bias &gt;= TR::infinite_power ) return __inf&lt;F&gt;(s.neg);
+
+    __dec_shift(v, TR::mantissa_bits + 1);
+    u64 mant = __dec_rounded(v);
+    if ( mant == (2ull &lt;&lt; TR::mantissa_bits) ) {      // the rounding carried into a new binade
+      mant &gt;&gt;= 1;
+      ++exp2;
+      if ( exp2 - bias &gt;= TR::infinite_power ) return __inf&lt;F&gt;(s.neg);
+    }
+    if ( (mant &amp; (1ull &lt;&lt; TR::mantissa_bits)) == 0 ) exp2 = bias;      // stayed subnormal
+
+    return __assemble&lt;F&gt;(s.neg, static_cast&lt;u64&gt;(exp2 - bias), mant &amp; ((1ull &lt;&lt; TR::mantissa_bits) - 1));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zero&lt;F&gt;(s.neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1009">line 1009</a></td></tr><tr class="t-dsc"><td><code>__inf&lt;F&gt;(s.neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1012">line 1012</a></td></tr><tr class="t-dsc"><td><code>__zero&lt;F&gt;(s.neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1013">line 1013</a></td></tr><tr class="t-dsc"><td><code>__zero&lt;F&gt;(s.neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1027">line 1027</a></td></tr><tr class="t-dsc"><td><code>__inf&lt;F&gt;(s.neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1036">line 1036</a></td></tr><tr class="t-dsc"><td><code>__inf&lt;F&gt;(s.neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1043">line 1043</a></td></tr><tr class="t-dsc"><td><code>__assemble&lt;F&gt;(s.neg, static_cast&lt;u64&gt;(exp2 - bias), mant &amp; ((1ull &lt;&lt; TR::mantissa_bits) - 1))</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1047">line 1047</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-58f65e1d98594595">__dec_load</a>, <a href="parse_float.hpp.html#f-50270248a89e88ef">__zero&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-02591eead9502c29">__inf&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-292faede83d8ebc2">__dec_step</a>, <a href="parse_float.hpp.html#f-392aa2c9b77d78cf">__dec_rounded</a>, <a href="parse_float.hpp.html#f-9d0dd22625bdf096">__assemble&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-42d55df849e946bb"><h3><code>micron::__impl::__pf::__hex_value(u64 mant, i64 bexp, bool neg, bool sticky) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1055">line 1055</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline constexpr F
+  __hex_value(u64 mant, i64 bexp, bool neg, bool sticky) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 mant</code></li><li><code>i64 bexp</code></li><li><code>bool neg</code></li><li><code>bool sticky</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline constexpr F
+  __hex_value(u64 mant, i64 bexp, bool neg, bool sticky) noexcept
+  {
+    using TR = __fmt_traits&lt;F&gt;;
+    constexpr i32 mb = TR::mantissa_bits;
+    if ( mant == 0 ) return __zero&lt;F&gt;(neg);
+
+    const i32 lz = static_cast&lt;i32&gt;(clz64(mant));
+    const u64 w = mant &lt;&lt; lz;           // bit 63 set
+    const i64 e2 = bexp + 63 - lz;      // value == 1.f * 2^e2
+    i64 biased = e2 - TR::min_exponent;
+
+    i32 drop = 63 - mb;
+    if ( biased &lt;= 0 ) {      // subnormal
+      const i64 extra = 1 - biased;
+      if ( extra &gt;= 64 - drop ) return __zero&lt;F&gt;(neg);
+      drop += static_cast&lt;i32&gt;(extra);
+      biased = 0;
+    }
+
+    const u64 rest = w &amp; ((1ull &lt;&lt; drop) - 1);
+    u64 top = w &gt;&gt; drop;
+    const u64 half = 1ull &lt;&lt; (drop - 1);
+
+    bool up = false;
+    if ( rest &gt; half )
+      up = true;
+    else if ( rest == half )
+      up = sticky || (top &amp; 1) != 0;
+    if ( up ) ++top;
+
+    if ( top &gt;= (2ull &lt;&lt; mb) ) {
+      top &gt;&gt;= 1;
+      ++biased;
+    }
+    if ( biased &gt;= TR::infinite_power ) return __inf&lt;F&gt;(neg);
+    if ( biased &gt;= 1 ) top &amp;= ~(1ull &lt;&lt; mb);      // at biased == 0 the implicit bit promotes instead
+    return __assemble&lt;F&gt;(neg, static_cast&lt;u64&gt;(biased), top);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zero&lt;F&gt;(neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1059">line 1059</a></td></tr><tr class="t-dsc"><td><code>__zero&lt;F&gt;(neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1069">line 1069</a></td></tr><tr class="t-dsc"><td><code>__inf&lt;F&gt;(neg)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1089">line 1089</a></td></tr><tr class="t-dsc"><td><code>__assemble&lt;F&gt;(neg, static_cast&lt;u64&gt;(biased), top)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1091">line 1091</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-50270248a89e88ef">__zero&lt;F&gt;</a>, <a href="bits.hpp.html#f-e27efe8bc790122c">clz64</a>, <a href="parse_float.hpp.html#f-02591eead9502c29">__inf&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-9d0dd22625bdf096">__assemble&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-0c8aebdac203f1b5"><h3><code>micron::__impl::__pf::__range_of(F v) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1098">line 1098</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline constexpr __status
+  __range_of(F v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline constexpr __status
+  __range_of(F v) noexcept
+  {
+    using U = typename math::ieee::traits&lt;F&gt;::uint_type;
+    const U u = math::ieee::to_bits(v) &amp; static_cast&lt;U&gt;(~math::ieee::traits&lt;F&gt;::sign_mask);
+    if ( u == 0 || u == static_cast&lt;U&gt;(math::ieee::traits&lt;F&gt;::exp_mask) ) return __status::out_of_range;
+    return __status::ok;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__status::out_of_range</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1102">line 1102</a></td></tr><tr class="t-dsc"><td><code>__status::ok</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1103">line 1103</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../math/ieee.hpp.html#f-4ae309043c1a9124">math::ieee::to_bits</a>.</p></section><section class="function-entry" id="f-d66bec68b9ff5625"><h3><code>micron::__impl::__pf::__parse(const T *first, const T *last, F &amp;out, const T *&amp;stop) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1108">line 1108</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, bool Bounded, typename T&gt;
+  inline constexpr __status
+  __parse(const T *first, const T *last, F &amp;out, const T *&amp;stop) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li><li><code>F &amp;out</code></li><li><code>const T *&amp;stop</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, bool Bounded, typename T&gt;
+  inline constexpr __status
+  __parse(const T *first, const T *last, F &amp;out, const T *&amp;stop) noexcept
+  {
+    const __scan_t&lt;T&gt; s = __scan&lt;Bounded&gt;(first, last);
+    stop = s.stop;
+
+    switch ( s.kind ) {
+    case __kind::none:
+      out = __zero&lt;F&gt;(false);      // a total failure is +0, as strtod has it
+      return __status::invalid;
+    case __kind::inf:
+      out = __inf&lt;F&gt;(s.neg);
+      return __status::ok;
+    case __kind::nan:
+      out = __nan&lt;F&gt;(s.neg, s.payload);
+      return __status::ok;
+    case __kind::hex:
+      out = __hex_value&lt;F&gt;(s.mant, s.exp10, s.neg, s.truncated);
+      return s.mant == 0 ? __status::ok : __range_of(out);
+    default:
+      break;
+    }
+
+    if ( s.mant == 0 ) {      // &quot;0&quot;, &quot;0.000&quot;, &quot;0e999&quot; and every signed form of them
+      out = __zero&lt;F&gt;(s.neg);
+      return __status::ok;
+    }
+    if ( !s.truncated &amp;&amp; __exact&lt;F&gt;(s.mant, s.exp10, s.neg, out) ) return __status::ok;
+
+    __am a = __eisel_lemire&lt;F&gt;(s.exp10, s.mant);
+    bool punt = (a.power2 &lt; 0);
+    if ( !punt &amp;&amp; s.truncated ) {
+      punt = !(a == __eisel_lemire&lt;F&gt;(s.exp10, s.mant + 1));
+    }
+    if ( punt )
+      out = __decimal_path&lt;F&gt;(s);
+    else
+      out = __assemble&lt;F&gt;(s.neg, static_cast&lt;u64&gt;(a.power2), a.mantissa);
+    return __range_of(out);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__status::invalid</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1116">line 1116</a></td></tr><tr class="t-dsc"><td><code>__status::ok</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1119">line 1119</a></td></tr><tr class="t-dsc"><td><code>__status::ok</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1122">line 1122</a></td></tr><tr class="t-dsc"><td><code>s.mant == 0 ? __status::ok : __range_of(out)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1125">line 1125</a></td></tr><tr class="t-dsc"><td><code>__status::ok</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1132">line 1132</a></td></tr><tr class="t-dsc"><td><code>__status::ok</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1134">line 1134</a></td></tr><tr class="t-dsc"><td><code>__range_of(out)</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1145">line 1145</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-81169e7bcc9c04f1">__scan&lt;Bounded&gt;</a>, <a href="parse_float.hpp.html#f-50270248a89e88ef">__zero&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-02591eead9502c29">__inf&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-4127bf72cfda023f">__nan&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-42d55df849e946bb">__hex_value&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-0c8aebdac203f1b5">__range_of</a>, <a href="parse_float.hpp.html#f-e80c47a1dfe5cc27">__exact&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-1b5ea00acad56e7c">__eisel_lemire&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-39fca92e2d4e8a1d">__decimal_path&lt;F&gt;</a>, <a href="parse_float.hpp.html#f-9d0dd22625bdf096">__assemble&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3339d9204685478e"><h3><code>micron::__impl::__pf::__parse_prefix(const T *first, const T *last) noexcept</code></h3><p>Defined in <code>string/conversions/parse_float.hpp</code>, <a href="../../../source/string/conversions/parse_float.hpp.html#L1150">line 1150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, bool Bounded, typename T&gt;
+  inline constexpr F
+  __parse_prefix(const T *first, const T *last) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *first</code></li><li><code>const T *last</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, bool Bounded, typename T&gt;
+  inline constexpr F
+  __parse_prefix(const T *first, const T *last) noexcept
+  {
+    F v = static_cast&lt;F&gt;(0);
+    const T *stop = nullptr;
+    __parse&lt;F, Bounded&gt;(first, last, v, stop);
+    return v;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/string/conversions/parse_float.hpp.html#L1155">line 1155</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse_float.hpp.html#f-d66bec68b9ff5625">__parse&lt;F, Bounded&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

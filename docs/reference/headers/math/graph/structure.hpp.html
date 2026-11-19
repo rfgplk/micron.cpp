@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/structure.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/structure.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/structure.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/structure.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-2a91869002d8f417">micron::math::graphs::euler_result</code></td><td>struct; line 52</td></tr><tr class="t-dsc"><td><code id="s-7fc5abf9c1d57513">micron::math::graphs::euler_result::status</code></td><td>member; line 53</td></tr><tr class="t-dsc"><td><code id="s-a520bd5d26d345eb">micron::math::graphs::euler_result::circuit</code></td><td>member; line 54</td></tr><tr class="t-dsc"><td><code id="s-4006675aebe0e0e1">micron::math::graphs::euler_result::vertices</code></td><td>member; line 55</td></tr><tr class="t-dsc"><td><code id="s-be3def9039cda548">micron::math::graphs::euler_result::edges</code></td><td>member; line 56</td></tr><tr class="t-dsc"><td><code id="s-aa31e1b261145807">micron::math::graphs::is_graphical_degree_sequence::descending::value</code></td><td>member; line 264</td></tr><tr class="t-dsc"><td><code id="s-1d70e5ab50f9634a">micron::math::graphs::dominator_result</code></td><td>struct; line 348</td></tr><tr class="t-dsc"><td><code id="s-bc2891d5459f1868">micron::math::graphs::dominator_result::status</code></td><td>member; line 349</td></tr><tr class="t-dsc"><td><code id="s-179c4b1dc4121d75">micron::math::graphs::dominator_result::words</code></td><td>member; line 350</td></tr><tr class="t-dsc"><td><code id="s-0cef7967d7b0c6a6">micron::math::graphs::dominator_result::sets</code></td><td>member; line 351</td></tr><tr class="t-dsc"><td><code id="s-c754f62ef4735fa0">micron::math::graphs::dominator_result::immediate</code></td><td>member; line 352</td></tr><tr class="t-dsc"><td><a href="#f-ffb94596f9d9348e">micron::math::graphs::has_cycle(const G &amp;graph)</a></td><td>function; line 18</td></tr><tr class="t-dsc"><td><a href="#f-50caf483fbfde5c4">micron::math::graphs::eulerian_path(const G &amp;graph)</a></td><td>function; line 61</td></tr><tr class="t-dsc"><td><a href="#f-29841133d6a804f6">micron::math::graphs::is_eulerian(const G &amp;graph)</a></td><td>function; line 154</td></tr><tr class="t-dsc"><td><a href="#f-609ab012f11ce399">micron::math::graphs::transitive_closure(const G &amp;graph)</a></td><td>function; line 162</td></tr><tr class="t-dsc"><td><a href="#f-302a7d82da3af42d">micron::math::graphs::transitive_reduction(const G &amp;graph, algorithm_status *status = nullptr)</a></td><td>function; line 177</td></tr><tr class="t-dsc"><td><a href="#f-f9173def766e00b4">micron::math::graphs::is_chordal(const G &amp;graph)</a></td><td>function; line 218</td></tr><tr class="t-dsc"><td><a href="#f-91fa33264435f792">micron::math::graphs::is_graphical_degree_sequence(const Range &amp;input)</a></td><td>function; line 258</td></tr><tr class="t-dsc"><td><a href="#f-d69fa6f1573b0e0f">micron::math::graphs::weisfeiler_lehman_hash(const G &amp;graph, usize iterations = 3)</a></td><td>function; line 310</td></tr><tr class="t-dsc"><td><a href="#f-b6597b8707d36821">micron::math::graphs::trees_isomorphic(const A &amp;a, const B &amp;b)</a></td><td>function; line 341</td></tr><tr class="t-dsc"><td><a href="#f-9c30aa5325c4de47">micron::math::graphs::dominator_result::dominates(vertex_id&lt;I&gt; dominator, vertex_id&lt;I&gt; vertex) const noexcept</a></td><td>function; line 355</td></tr><tr class="t-dsc"><td><a href="#f-e83bc1ecfa4c6863">micron::math::graphs::dominators(const G &amp;graph, typename G::vertex_descriptor start)</a></td><td>function; line 365</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-ffb94596f9d9348e"><h3><code>micron::math::graphs::has_cycle(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L18">line 18</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] bool
+has_cycle(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] bool
+has_cycle(const G &amp;graph)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  using edge_descriptor = typename G::edge_descriptor;
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; color(graph.vertex_slots(), u8(0));
+  auto visit_directed = [&amp;](auto &amp;&amp;self, vertex_descriptor u) -&gt; bool {
+    color.data()[static_cast&lt;usize&gt;(u.value)] = 1;
+    for ( auto v : graph.out_neighbors(u) ) {
+      const u8 state = color.data()[static_cast&lt;usize&gt;(v.value)];
+      if ( state == 1 || (state == 0 &amp;&amp; self(self, v)) ) return true;
+    }
+    color.data()[static_cast&lt;usize&gt;(u.value)] = 2;
+    return false;
+  };
+  auto visit_undirected = [&amp;](auto &amp;&amp;self, vertex_descriptor u, edge_descriptor parent) -&gt; bool {
+    color.data()[static_cast&lt;usize&gt;(u.value)] = 1;
+    for ( auto edge : graph.out_edges(u) ) {
+      if ( edge == parent ) continue;
+      const vertex_descriptor v = graph.opposite(edge, u);
+      if ( color.data()[static_cast&lt;usize&gt;(v.value)] || self(self, v, edge) ) return true;
+    }
+    return false;
+  };
+  for ( auto root : graph.vertices() ) {
+    if ( color.data()[static_cast&lt;usize&gt;(root.value)] ) continue;
+    if constexpr ( G::is_directed ) {
+      if ( visit_directed(visit_directed, root) ) return true;
+    } else if ( visit_undirected(visit_undirected, root, edge_descriptor::invalid()) ) {
+      return true;
+    }
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L44">line 44</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L49">line 49</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-50caf483fbfde5c4"><h3><code>micron::math::graphs::eulerian_path(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L61">line 61</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] euler_result&lt;typename G::index_type&gt;
+eulerian_path(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] euler_result&lt;typename G::index_type&gt;
+eulerian_path(const G &amp;graph)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  using edge_descriptor = typename G::edge_descriptor;
+  euler_result&lt;typename G::index_type&gt; result;
+  if ( graph.edges_count() == 0 ) {
+    auto vertices = graph.vertices();
+    if ( vertices.begin() != vertices.end() ) result.vertices.push_back(*vertices.begin());
+    result.circuit = true;
+    return result;
+  }
+
+  vertex_descriptor start = vertex_descriptor::invalid();
+  if constexpr ( G::is_directed ) {
+    usize plus = 0;
+    usize minus = 0;
+    for ( auto vertex : graph.vertices() ) {
+      const usize out = graph.out_degree(vertex);
+      const usize in = graph.in_degree(vertex);
+      if ( out == in + 1 ) {
+        ++plus;
+        start = vertex;
+      } else if ( in == out + 1 ) {
+        ++minus;
+      } else if ( in != out ) {
+        result.status = algorithm_status::invalid_graph;
+        return result;
+      }
+      if ( !start.valid() &amp;&amp; out ) start = vertex;
+    }
+    if ( !((plus == 0 &amp;&amp; minus == 0) || (plus == 1 &amp;&amp; minus == 1)) ) {
+      result.status = algorithm_status::invalid_graph;
+      return result;
+    }
+    result.circuit = plus == 0;
+  } else {
+    usize odd = 0;
+    for ( auto vertex : graph.vertices() ) {
+      if ( graph.degree(vertex) &amp; 1u ) {
+        ++odd;
+        start = vertex;
+      } else if ( !start.valid() &amp;&amp; graph.degree(vertex) ) {
+        start = vertex;
+      }
+    }
+    if ( odd != 0 &amp;&amp; odd != 2 ) {
+      result.status = algorithm_status::invalid_graph;
+      return result;
+    }
+    result.circuit = odd == 0;
+  }
+
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; used(graph.edge_slots(), u8(0));
+  micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; vertex_stack;
+  micron::vector&lt;edge_descriptor, micron::allocator_serial&lt;&gt;, false&gt; edge_stack;
+  vertex_stack.push_back(start);
+  while ( !vertex_stack.empty() ) {
+    const vertex_descriptor u = vertex_stack.data()[vertex_stack.size() - 1];
+    edge_descriptor next_edge = edge_descriptor::invalid();
+    for ( auto edge : graph.out_edges(u) )
+      if ( !used.data()[static_cast&lt;usize&gt;(edge.value)] ) {
+        next_edge = edge;
+        break;
+      }
+    if ( next_edge.valid() ) {
+      used.data()[static_cast&lt;usize&gt;(next_edge.value)] = 1;
+      const vertex_descriptor v = G::is_directed ? graph.target(next_edge) : graph.opposite(next_edge, u);
+      vertex_stack.push_back(v);
+      edge_stack.push_back(next_edge);
+    } else {
+      result.vertices.push_back(u);
+      vertex_stack.pop_back();
+      if ( !edge_stack.empty() ) {
+        result.edges.push_back(edge_stack.data()[edge_stack.size() - 1]);
+        edge_stack.pop_back();
+      }
+    }
+  }
+  if ( result.edges.size() != graph.edges_count() ) {
+    result.status = algorithm_status::disconnected;
+    result.vertices.clear();
+    result.edges.clear();
+    return result;
+  }
+  for ( usize a = 0, b = result.vertices.size() ? result.vertices.size() - 1 : 0; a &lt; b; ++a, --b )
+    micron::swap(result.vertices.data()[a], result.vertices.data()[b]);
+  for ( usize a = 0, b = result.edges.size() ? result.edges.size() - 1 : 0; a &lt; b; ++a, --b )
+    micron::swap(result.edges.data()[a], result.edges.data()[b]);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L70">line 70</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L87">line 87</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L93">line 93</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L108">line 108</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L143">line 143</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L149">line 149</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="../../function.hpp.html#f-3ce300bc1d730480">micron::swap</a>.</p></section><section class="function-entry" id="f-29841133d6a804f6"><h3><code>micron::math::graphs::is_eulerian(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L154">line 154</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_eulerian(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_eulerian(const G &amp;graph)
+{
+  auto result = eulerian_path(graph);
+  return result.status == algorithm_status::ok &amp;&amp; result.circuit;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result.status == algorithm_status::ok &amp;&amp; result.circuit</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L157">line 157</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="structure.hpp.html#f-50caf483fbfde5c4">eulerian_path</a>.</p></section><section class="function-entry" id="f-609ab012f11ce399"><h3><code>micron::math::graphs::transitive_closure(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L162">line 162</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+transitive_closure(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+transitive_closure(const G &amp;graph)
+{
+  auto result = topology_vertices(graph);
+  for ( auto source : graph.vertices() ) {
+    auto reached = bfs(graph, source);
+    for ( auto target : reached.order ) {
+      if ( source == target &amp;&amp; !topology_graph_t&lt;G&gt;::allows_loops ) continue;
+      (void)result.add_edge(source, target);
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L172">line 172</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-2041922e3e7c1ff1">topology_vertices</a>, <a href="traversal.hpp.html#f-d8378cf269c3e10b">bfs</a>.</p></section><section class="function-entry" id="f-302a7d82da3af42d"><h3><code>micron::math::graphs::transitive_reduction(const G &amp;graph, algorithm_status *status = nullptr)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L177">line 177</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+transitive_reduction(const G &amp;graph, algorithm_status *status = nullptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>algorithm_status *status = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] topology_graph_t&lt;G&gt;
+transitive_reduction(const G &amp;graph, algorithm_status *status = nullptr)
+{
+  auto result = topology_vertices(graph);
+  auto order = topological_sort(graph);
+  if ( order.status != algorithm_status::ok ) {
+    if ( status ) *status = algorithm_status::not_a_dag;
+    return result;
+  }
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; seen(graph.vertex_slots(), u8(0));
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; queue;
+  for ( auto candidate : graph.edges() ) {
+    seen.fill(u8(0));
+    queue.clear();
+    queue.push_back(candidate.source);
+    seen.data()[static_cast&lt;usize&gt;(candidate.source.value)] = 1;
+    usize head = 0;
+    bool alternate = false;
+    while ( head &lt; queue.size() &amp;&amp; !alternate ) {
+      const auto u = queue.data()[head++];
+      for ( auto edge : graph.out_edges(u) ) {
+        if ( edge == candidate.id ) continue;
+        const auto v = graph.target(edge);
+        if ( v == candidate.target ) {
+          alternate = true;
+          break;
+        }
+        const usize slot = static_cast&lt;usize&gt;(v.value);
+        if ( !seen.data()[slot] ) {
+          seen.data()[slot] = 1;
+          queue.push_back(v);
+        }
+      }
+    }
+    if ( !alternate ) (void)result.add_edge(candidate.source, candidate.target);
+  }
+  if ( status ) *status = algorithm_status::ok;
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L183">line 183</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L213">line 213</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="generators.hpp.html#f-2041922e3e7c1ff1">topology_vertices</a>, <a href="paths.hpp.html#f-7dea7986da87ea19">topological_sort</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-f9173def766e00b4"><h3><code>micron::math::graphs::is_chordal(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L218">line 218</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_chordal(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_chordal(const G &amp;graph)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  if constexpr ( G::is_directed ) return false;
+  const usize n = graph.vertices_count();
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; label(graph.vertex_slots(), usize(0));
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; number(graph.vertex_slots(), usize(0));
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; selected(graph.vertex_slots(), u8(0));
+  for ( usize step = n; step &gt; 0; --step ) {
+    vertex_descriptor best = vertex_descriptor::invalid();
+    for ( auto vertex : graph.vertices() ) {
+      const usize slot = static_cast&lt;usize&gt;(vertex.value);
+      if ( selected.data()[slot] ) continue;
+      if ( !best.valid() || label.data()[static_cast&lt;usize&gt;(best.value)] &lt; label.data()[slot] ) best = vertex;
+    }
+    const usize bs = static_cast&lt;usize&gt;(best.value);
+    selected.data()[bs] = 1;
+    number.data()[bs] = step;
+    for ( auto neighbor : graph.out_neighbors(best) )
+      if ( !selected.data()[static_cast&lt;usize&gt;(neighbor.value)] ) ++label.data()[static_cast&lt;usize&gt;(neighbor.value)];
+  }
+  for ( auto vertex : graph.vertices() ) {
+    vertex_descriptor parent = vertex_descriptor::invalid();
+    for ( auto neighbor : graph.out_neighbors(vertex) ) {
+      if ( number.data()[static_cast&lt;usize&gt;(neighbor.value)] &lt;= number.data()[static_cast&lt;usize&gt;(vertex.value)] ) continue;
+      if ( !parent.valid() || number.data()[static_cast&lt;usize&gt;(neighbor.value)] &lt; number.data()[static_cast&lt;usize&gt;(parent.value)] )
+        parent = neighbor;
+    }
+    if ( !parent.valid() ) continue;
+    for ( auto neighbor : graph.out_neighbors(vertex) ) {
+      if ( neighbor == parent || number.data()[static_cast&lt;usize&gt;(neighbor.value)] &lt;= number.data()[static_cast&lt;usize&gt;(vertex.value)] )
+        continue;
+      if ( !graph.has_edge(parent, neighbor) ) return false;
+    }
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L221">line 221</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L250">line 250</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L253">line 253</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-91fa33264435f792"><h3><code>micron::math::graphs::is_graphical_degree_sequence(const Range &amp;input)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L258">line 258</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Range&gt;
+[[nodiscard]] bool
+is_graphical_degree_sequence(const Range &amp;input)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const Range &amp;input</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Range&gt;
+[[nodiscard]] bool
+is_graphical_degree_sequence(const Range &amp;input)
+{
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; degrees;
+  for ( auto value : input ) degrees.push_back(static_cast&lt;usize&gt;(value));
+
+  struct descending {
+    usize value;
+
+    [[nodiscard]] bool
+    operator&lt;(const descending &amp;other) const
+    {
+      return value &gt; other.value;
+    }
+  };
+
+  while ( !degrees.empty() ) {
+    micron::vector&lt;descending, micron::allocator_serial&lt;&gt;, false&gt; sorted;
+    sorted.reserve(degrees.size());
+    for ( usize value : degrees )
+      if ( value ) sorted.push_back({ value });
+    if ( sorted.empty() ) return true;
+    sorted.sort();
+    const usize degree = sorted.data()[0].value;
+    if ( degree &gt;= sorted.size() ) return false;
+    degrees.clear();
+    for ( usize i = 1; i &lt; sorted.size(); ++i ) {
+      usize value = sorted.data()[i].value;
+      if ( i &lt;= degree ) {
+        if ( value == 0 ) return false;
+        --value;
+      }
+      degrees.push_back(value);
+    }
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L278">line 278</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L281">line 281</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L286">line 286</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L292">line 292</a></td></tr></tbody></table></section><section class="function-entry" id="f-d69fa6f1573b0e0f"><h3><code>micron::math::graphs::weisfeiler_lehman_hash(const G &amp;graph, usize iterations = 3)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L310">line 310</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] u64
+weisfeiler_lehman_hash(const G &amp;graph, usize iterations = 3)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>usize iterations = 3</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] u64
+weisfeiler_lehman_hash(const G &amp;graph, usize iterations = 3)
+{
+  micron::vector&lt;u64, micron::allocator_serial&lt;&gt;, false&gt; color(graph.vertex_slots(), u64(0));
+  micron::vector&lt;u64, micron::allocator_serial&lt;&gt;, false&gt; next(graph.vertex_slots(), u64(0));
+  for ( auto vertex : graph.vertices() ) color.data()[static_cast&lt;usize&gt;(vertex.value)] = __impl::mix_color(graph.degree(vertex) + 1);
+  for ( usize iteration = 0; iteration &lt; iterations; ++iteration ) {
+    for ( auto vertex : graph.vertices() ) {
+      micron::vector&lt;u64, micron::allocator_serial&lt;&gt;, false&gt; neighbors;
+      neighbors.reserve(graph.degree(vertex));
+      for ( auto neighbor : graph.out_neighbors(vertex) ) neighbors.push_back(color.data()[static_cast&lt;usize&gt;(neighbor.value)]);
+      if constexpr ( G::is_directed )
+        for ( auto neighbor : graph.in_neighbors(vertex) )
+          neighbors.push_back(__impl::mix_color(color.data()[static_cast&lt;usize&gt;(neighbor.value)] ^ 0x9e3779b97f4a7c15ull));
+      neighbors.sort();
+      u64 hash = __impl::mix_color(color.data()[static_cast&lt;usize&gt;(vertex.value)] ^ static_cast&lt;u64&gt;(neighbors.size()));
+      for ( u64 value : neighbors ) hash = __impl::mix_color(hash ^ value);
+      next.data()[static_cast&lt;usize&gt;(vertex.value)] = hash;
+    }
+    color.swap(next);
+  }
+  micron::vector&lt;u64, micron::allocator_serial&lt;&gt;, false&gt; sorted;
+  sorted.reserve(graph.vertices_count());
+  for ( auto vertex : graph.vertices() ) sorted.push_back(color.data()[static_cast&lt;usize&gt;(vertex.value)]);
+  sorted.sort();
+  u64 result = __impl::mix_color(static_cast&lt;u64&gt;(graph.vertices_count()) ^ (static_cast&lt;u64&gt;(graph.edges_count()) &lt;&lt; 32u));
+  for ( u64 value : sorted ) result = __impl::mix_color(result ^ value);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L336">line 336</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="structure.hpp.html#f-597adec2525535aa">__impl::mix_color</a>.</p></section><section class="function-entry" id="f-b6597b8707d36821"><h3><code>micron::math::graphs::trees_isomorphic(const A &amp;a, const B &amp;b)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L341">line 341</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] bool
+trees_isomorphic(const A &amp;a, const B &amp;b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const A &amp;a</code></li><li><code>const B &amp;b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model A, graph_model B&gt;
+[[nodiscard]] bool
+trees_isomorphic(const A &amp;a, const B &amp;b)
+{
+  if ( a.vertices_count() != b.vertices_count() || a.edges_count() != b.edges_count() ) return false;
+  if ( a.vertices_count() &amp;&amp; (a.edges_count() + 1 != a.vertices_count() || !is_connected(a) || !is_connected(b)) ) return false;
+  return weisfeiler_lehman_hash(a, a.vertices_count()) == weisfeiler_lehman_hash(b, b.vertices_count());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L344">line 344</a></td></tr><tr class="t-dsc"><td><code>weisfeiler_lehman_hash(a, a.vertices_count()) == weisfeiler_lehman_hash(b, b.vertices_count())</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L345">line 345</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-f46a33b34c0b7666">is_connected</a>, <a href="structure.hpp.html#f-d69fa6f1573b0e0f">weisfeiler_lehman_hash</a>.</p></section><section class="function-entry" id="f-9c30aa5325c4de47"><h3><code>micron::math::graphs::dominator_result::dominates(vertex_id&lt;I&gt; dominator, vertex_id&lt;I&gt; vertex) const noexcept</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L355">line 355</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  dominates(vertex_id&lt;I&gt; dominator, vertex_id&lt;I&gt; vertex) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>vertex_id&lt;I&gt; dominator</code></li><li><code>vertex_id&lt;I&gt; vertex</code></li></ul><h4>Effects</h4><p>Returns <code>(sets.data()[static_cast&lt;usize&gt;(vertex.value) * words + (static_cast&lt;usize&gt;(dominator.value) &gt;&gt; 6u)]
+            &amp; (u64(1) &lt;&lt; (static_cast&lt;usize&gt;(dominator.value) &amp; 63u)))
+           != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  dominates(vertex_id&lt;I&gt; dominator, vertex_id&lt;I&gt; vertex) const noexcept
+  {
+    return (sets.data()[static_cast&lt;usize&gt;(vertex.value) * words + (static_cast&lt;usize&gt;(dominator.value) &gt;&gt; 6u)]
+            &amp; (u64(1) &lt;&lt; (static_cast&lt;usize&gt;(dominator.value) &amp; 63u)))
+           != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(sets.data()[static_cast&lt;usize&gt;(vertex.value) * words + (static_cast&lt;usize&gt;(dominator.value) &gt;&gt; 6u)]
+            &amp; (u64(1) &lt;&lt; (static_cast&lt;usize&gt;(dominator.value) &amp; 63u)))
+           != 0</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L357">line 357</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-e83bc1ecfa4c6863"><h3><code>micron::math::graphs::dominators(const G &amp;graph, typename G::vertex_descriptor start)</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L365">line 365</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] dominator_result&lt;typename G::index_type&gt;
+dominators(const G &amp;graph, typename G::vertex_descriptor start)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>typename G::vertex_descriptor start</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] dominator_result&lt;typename G::index_type&gt;
+dominators(const G &amp;graph, typename G::vertex_descriptor start)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  dominator_result&lt;typename G::index_type&gt; result;
+  if ( !graph.has_vertex(start) ) {
+    result.status = algorithm_status::invalid_vertex;
+    return result;
+  }
+  result.words = (graph.vertex_slots() + 63u) / 64u;
+  result.sets = micron::vector&lt;u64, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots() * result.words, u64(0));
+  result.immediate
+      = micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), vertex_descriptor::invalid());
+  micron::vector&lt;u64, micron::allocator_serial&lt;&gt;, false&gt; universe(result.words, u64(0));
+  for ( auto vertex : graph.vertices() )
+    universe.data()[static_cast&lt;usize&gt;(vertex.value) &gt;&gt; 6u] |= u64(1) &lt;&lt; (static_cast&lt;usize&gt;(vertex.value) &amp; 63u);
+  for ( auto vertex : graph.vertices() ) {
+    u64 *set = result.sets.data() + static_cast&lt;usize&gt;(vertex.value) * result.words;
+    if ( vertex == start )
+      set[static_cast&lt;usize&gt;(start.value) &gt;&gt; 6u] |= u64(1) &lt;&lt; (static_cast&lt;usize&gt;(start.value) &amp; 63u);
+    else
+      for ( usize word = 0; word &lt; result.words; ++word ) set[word] = universe.data()[word];
+  }
+  bool changed = true;
+  while ( changed ) {
+    changed = false;
+    for ( auto vertex : graph.vertices() ) {
+      if ( vertex == start ) continue;
+      micron::vector&lt;u64, micron::allocator_serial&lt;&gt;, false&gt; intersection = universe;
+      bool have_predecessor = false;
+      for ( auto predecessor : graph.in_neighbors(vertex) ) {
+        have_predecessor = true;
+        const u64 *set = result.sets.data() + static_cast&lt;usize&gt;(predecessor.value) * result.words;
+        for ( usize word = 0; word &lt; result.words; ++word ) intersection.data()[word] &amp;= set[word];
+      }
+      if ( !have_predecessor ) intersection.fill(u64(0));
+      intersection.data()[static_cast&lt;usize&gt;(vertex.value) &gt;&gt; 6u] |= u64(1) &lt;&lt; (static_cast&lt;usize&gt;(vertex.value) &amp; 63u);
+      u64 *current = result.sets.data() + static_cast&lt;usize&gt;(vertex.value) * result.words;
+      for ( usize word = 0; word &lt; result.words; ++word )
+        if ( current[word] != intersection.data()[word] ) {
+          current[word] = intersection.data()[word];
+          changed = true;
+        }
+    }
+  }
+  result.immediate.data()[static_cast&lt;usize&gt;(start.value)] = start;
+  for ( auto vertex : graph.vertices() ) {
+    if ( vertex == start ) continue;
+    vertex_descriptor best = vertex_descriptor::invalid();
+    for ( auto candidate : graph.vertices() ) {
+      if ( candidate == vertex || !result.dominates(candidate, vertex) ) continue;
+      if ( !best.valid() || result.dominates(best, candidate) ) best = candidate;
+    }
+    result.immediate.data()[static_cast&lt;usize&gt;(vertex.value)] = best;
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L371">line 371</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L419">line 419</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-cce93fc47849beb2"><h3><code>micron::math::graphs::descending::operator&lt;(const descending &amp;other) const</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L267">line 267</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+    operator&lt;(const descending &amp;other) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const descending &amp;other</code></li></ul><h4>Effects</h4><p>Returns <code>value &gt; other.value</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+    operator&lt;(const descending &amp;other) const
+    {
+      return value &gt; other.value;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value &gt; other.value</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L269">line 269</a></td></tr></tbody></table></section><section class="function-entry" id="f-597adec2525535aa"><h3><code>micron::math::graphs::__impl::mix_color(u64 value) noexcept</code></h3><p>Defined in <code>math/graph/structure.hpp</code>, <a href="../../../source/math/graph/structure.hpp.html#L298">line 298</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr u64
+mix_color(u64 value) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr u64
+mix_color(u64 value) noexcept
+{
+  value ^= value &gt;&gt; 30;
+  value *= 0xbf58476d1ce4e5b9ull;
+  value ^= value &gt;&gt; 27;
+  value *= 0x94d049bb133111ebull;
+  return value ^ (value &gt;&gt; 31);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value ^ (value &gt;&gt; 31)</code></td><td><a href="../../../source/math/graph/structure.hpp.html#L304">line 304</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

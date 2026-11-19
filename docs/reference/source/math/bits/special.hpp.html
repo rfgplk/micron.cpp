@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/bits/special.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/bits/special.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/bits/special.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> // specials live here (erf erfc tgamma lgamma)</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> </span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;../../bits.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> #include &quot;../../concepts.hpp&quot;</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;../../types.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #include &quot;../bits.hpp&quot;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #include &quot;../constants.hpp&quot;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../ieee.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #include &quot;coeff/lanczos.hpp&quot;</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #include &quot;exp.hpp&quot;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;log.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #include &quot;manip.hpp&quot;</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #include &quot;pow.hpp&quot;</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #include &quot;round.hpp&quot;</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #include &quot;sqrt.hpp&quot;</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> #include &quot;trig.hpp&quot;</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> </span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> #include &quot;../../bits/wasm/math/special.hpp&quot;</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> #endif</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> // NOTE: we __must__ disable fast-math and associated opts since reordering/collapsing fp operations will yield *wrong* results</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> __micron_push_options __micron_optimize_no_fast_math namespace micron</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> {</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a>   namespace math</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>   {</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>   namespace mkbits</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   {</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   namespace special_ns</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   {</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> </span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   namespace __erf_data</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   {</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>   // erf(x) ≈ x + x*P(z)/Q(z) z = x²</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   inline constexpr f64 efx = 1.28379167095512586316e-01;      // 2/sqrt(pi) - 1</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>   inline constexpr f64 pp[5] = { 1.28379167095512558561e-01, -3.25042107247001499370e-01, -2.84817495755985104766e-02,</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>                                  -5.77027029648944159157e-03, -2.37630166566501626084e-05 };</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>   inline constexpr f64 qq[6] = { 1.0,</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>                                  3.97917223959155352819e-01,</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>                                  6.50222499887672944485e-02,</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>                                  5.08130628187576562776e-03,</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>                                  1.32494738004321644526e-04,</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>                                  -3.96022827877536812320e-06 };</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> </span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   // erf(x) = 1 - erfc(x)</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   inline constexpr f64 erx = 8.45062911510467529297e-01;</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>   inline constexpr f64 pa[7]</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>       = { -2.36211856075265944077e-03, 4.14856118683748331666e-01, -3.72207876035701323847e-01, 3.18346619901161753674e-01,</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>           -1.10894694282396677476e-01, 3.54783043256182359371e-02, -2.16637559486879084300e-03 };</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a>   inline constexpr f64 qa[7] = { 1.0,</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a>                                  1.06420880400844228286e-01,</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>                                  5.40397917702171048937e-01,</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>                                  7.18286544141962662868e-02,</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>                                  1.26171219808761642112e-01,</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>                                  1.36370839120290507362e-02,</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>                                  1.19844998467991074170e-02 };</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> </span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   inline constexpr f64 ra[8]</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>       = { -9.86494403484714822705e-03, -6.93858572707181764372e-01, -1.05586262253232909814e+01, -6.23753324503260060396e+01,</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>           -1.62396669462573470355e+02, -1.84605092906711035994e+02, -8.12874355063065934246e+01, -9.81432934416256659757e+00 };</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>   inline constexpr f64 sa[9] = { 1.0,</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>                                  1.96512716674392571292e+01,</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>                                  1.37657754143519042600e+02,</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>                                  4.34565877475229228821e+02,</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>                                  6.45387271733267880336e+02,</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>                                  4.29008140027567833386e+02,</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>                                  1.08635005541779435134e+02,</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>                                  6.57024977031928170135e+00,</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>                                  -6.04244152148580987438e-02 };</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> </span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   // fdlibm s_erf.c far-tail constants for |x| in [1/0.35, 28)</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   inline constexpr f64 rb[7]</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>       = { -9.86494292470009928597e-03, -7.99283237680523006574e-01, -1.77579549177547519889e+01, -1.60636384855821916062e+02,</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>           -6.37566443368389627722e+02, -1.02509513161107724954e+03, -4.83519191608651397019e+02 };</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>   inline constexpr f64 sb[8] = { 1.0,</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>                                  3.03380607434824582924e+01,</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>                                  3.25792512996573918826e+02,</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>                                  1.53672958608443695994e+03,</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>                                  3.19985821950859553908e+03,</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>                                  2.55305040643316442583e+03,</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>                                  4.74528541206955367215e+02,</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>                                  -2.24409524465858183362e+01 };</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>   };      // namespace __erf_data</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> </span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>   erf_f64(f64 x) noexcept</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>   {</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>     using namespace __erf_data;</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>     if ( ieee::is_nan(x) ) return x;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>     if ( ieee::is_inf(x) ) return manip::copysign&lt;f64&gt;(1.0, x);</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>     f64 ax = manip::fabs(x);</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>     if ( ax &lt; 0x1.0p-28 ) return x + efx * x;      // tiny: erf(x) ≈ x*(1 + 2/sqrt(π))</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>     if ( ax &lt; 0.84375 ) {</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>       f64 z = x * x;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>       f64 r = pp[0] + z * (pp[1] + z * (pp[2] + z * (pp[3] + z * pp[4])));</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>       f64 s = qq[0] + z * (qq[1] + z * (qq[2] + z * (qq[3] + z * (qq[4] + z * qq[5]))));</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>       return x + x * (r / s);</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>     }</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>     if ( ax &lt; 1.25 ) {</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>       f64 s = ax - 1.0;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>       f64 P = pa[0] + s * (pa[1] + s * (pa[2] + s * (pa[3] + s * (pa[4] + s * (pa[5] + s * pa[6])))));</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>       f64 Q = qa[0] + s * (qa[1] + s * (qa[2] + s * (qa[3] + s * (qa[4] + s * (qa[5] + s * qa[6])))));</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>       f64 r = erx + P / Q;</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>       return manip::signbit(x) ? -r : r;</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>     }</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>     if ( ax &gt;= 6.0 ) return manip::copysign&lt;f64&gt;(1.0, x);</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     f64 s = 1.0 / (ax * ax);</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>     f64 R, S;</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>     if ( ax &lt; 2.857142857142857 ) {</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>       R = ra[0] + s * (ra[1] + s * (ra[2] + s * (ra[3] + s * (ra[4] + s * (ra[5] + s * (ra[6] + s * ra[7]))))));</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>       S = sa[0] + s * (sa[1] + s * (sa[2] + s * (sa[3] + s * (sa[4] + s * (sa[5] + s * (sa[6] + s * (sa[7] + s * sa[8])))))));</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>     } else {</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>       R = rb[0] + s * (rb[1] + s * (rb[2] + s * (rb[3] + s * (rb[4] + s * (rb[5] + s * rb[6])))));</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>       S = sb[0] + s * (sb[1] + s * (sb[2] + s * (sb[3] + s * (sb[4] + s * (sb[5] + s * (sb[6] + s * sb[7]))))));</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>     }</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>     f64 z_hi = ieee::from_bits&lt;f64&gt;(ieee::to_bits(ax) &amp; 0xffffffff00000000ULL);</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     f64 r = exp_ns::exp_f64(-z_hi * z_hi - 0.5625) * exp_ns::exp_f64((z_hi - ax) * (z_hi + ax) + R / S) / ax;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     f64 res = 1.0 - r;</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     return manip::signbit(x) ? -res : res;</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>   }</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> </span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   erfc_f64(f64 x) noexcept</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>   {</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>     using namespace __erf_data;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>     if ( ieee::is_nan(x) ) return x;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     if ( ieee::is_inf(x) ) return manip::signbit(x) ? 2.0 : 0.0;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>     f64 ax = manip::fabs(x);</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     if ( ax &lt; 0.84375 ) {</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>       if ( ax &lt; 0x1.0p-56 ) return 1.0 - x;      // tiny</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>       f64 z = x * x;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>       f64 r = pp[0] + z * (pp[1] + z * (pp[2] + z * (pp[3] + z * pp[4])));</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>       f64 s = qq[0] + z * (qq[1] + z * (qq[2] + z * (qq[3] + z * (qq[4] + z * qq[5]))));</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>       f64 y = r / s;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>       if ( ax &lt; 0.25 ) return 1.0 - (x + x * y);</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>       f64 r2 = x * y;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>       r2 += (x - 0.5);</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>       return 0.5 - r2;</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>     }</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>     if ( ax &lt; 1.25 ) {</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>       f64 s = ax - 1.0;</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>       f64 P = pa[0] + s * (pa[1] + s * (pa[2] + s * (pa[3] + s * (pa[4] + s * (pa[5] + s * pa[6])))));</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>       f64 Q = qa[0] + s * (qa[1] + s * (qa[2] + s * (qa[3] + s * (qa[4] + s * (qa[5] + s * qa[6])))));</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>       if ( manip::signbit(x) ) return 1.0 + (erx + P / Q);</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>       return 1.0 - erx - P / Q;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>     }</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>     if ( ax &gt;= 28.0 ) return manip::signbit(x) ? 2.0 : 0.0;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>     f64 s = 1.0 / (ax * ax);</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>     f64 R, S;</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>     if ( ax &lt; 2.857142857142857 ) {</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>       R = ra[0] + s * (ra[1] + s * (ra[2] + s * (ra[3] + s * (ra[4] + s * (ra[5] + s * (ra[6] + s * ra[7]))))));</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>       S = sa[0] + s * (sa[1] + s * (sa[2] + s * (sa[3] + s * (sa[4] + s * (sa[5] + s * (sa[6] + s * (sa[7] + s * sa[8])))))));</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     } else {</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>       R = rb[0] + s * (rb[1] + s * (rb[2] + s * (rb[3] + s * (rb[4] + s * (rb[5] + s * rb[6])))));</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>       S = sb[0] + s * (sb[1] + s * (sb[2] + s * (sb[3] + s * (sb[4] + s * (sb[5] + s * (sb[6] + s * sb[7]))))));</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>     }</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>     f64 z_hi = ieee::from_bits&lt;f64&gt;(ieee::to_bits(ax) &amp; 0xffffffff00000000ULL);</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>     f64 r = exp_ns::exp_f64(-z_hi * z_hi - 0.5625) * exp_ns::exp_f64((z_hi - ax) * (z_hi + ax) + R / S) / ax;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>     return manip::signbit(x) ? f64(2.0 - r) : r;</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>   }</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a> </span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   tgamma_f64(f64 x) noexcept</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>   {</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>     using namespace coeff::lanczos_data;</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a>     if ( ieee::is_nan(x) ) return x;</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>     if ( x == 0.0 ) return manip::copysign&lt;f64&gt;(ieee::inf_v&lt;f64&gt;(0), x);</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>     if ( ieee::is_inf(x) &amp;&amp; !manip::signbit(x) ) return x;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a> </span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>     if ( x &lt; 0.5 ) {</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a>       if ( x &lt;= 0.0 &amp;&amp; round_ns::floor&lt;f64&gt;(x) == x ) return ieee::qnan_v&lt;f64&gt;();</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>       f64 sin_pix = trig_ns::sin_f64(0x1.921fb54442d18p+1 * x);</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>       if ( sin_pix == 0.0 ) return ieee::qnan_v&lt;f64&gt;();</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>       return 0x1.921fb54442d18p+1 / (sin_pix * tgamma_f64(1.0 - x));</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>     }</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>     f64 z = x - 1.0;</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>     f64 a = p[0];</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>     for ( int i = 1; i &lt; 9; ++i ) a += p[i] / (z + f64(i));</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>     f64 t = z + g + 0.5;</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>     f64 sqrt_2pi = 0x1.40d931ff62705p+1;</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>     const f64 hp = pow_ns::pow&lt;f64&gt;(t, (z + 0.5) * 0.5);</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>     return hw::fp_barrier(f64(sqrt_2pi * hp * exp_ns::exp_f64(-t))) * hp * a;</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   }</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a> </span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>   lgamma_f64(f64 x) noexcept</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>   {</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>     using namespace coeff::lanczos_data;</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>     if ( ieee::is_nan(x) ) return x;</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>     if ( ieee::is_inf(x) ) return ieee::inf_v&lt;f64&gt;(0);</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>     if ( x == 0.0 ) return ieee::inf_v&lt;f64&gt;(0);</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a> </span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>     f64 ax = manip::fabs(x);</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>     if ( x &lt; 0.5 ) {</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>       if ( x &lt;= 0.0 ) {</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>         f64 fl = round_ns::floor&lt;f64&gt;(x);</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>         if ( fl == x ) return ieee::inf_v&lt;f64&gt;(0);      // negative integer</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>       }</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>       f64 sin_pix = trig_ns::sin_f64(0x1.921fb54442d18p+1 * x);</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>       f64 abs_sinpix = manip::fabs(sin_pix);</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>       return f64(1.1447298858494002) - log_ns::log_f64(abs_sinpix) - lgamma_f64(1.0 - x);</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>     }</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>     f64 z = x - 1.0;</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>     f64 a = p[0];</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>     for ( int i = 1; i &lt; 9; ++i ) a += p[i] / (z + f64(i));</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>     f64 t = z + g + 0.5;</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>     (void)ax;</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>     return 0.91893853320467267 + (z + 0.5) * log_ns::log_f64(t) - t + log_ns::log_f64(a);</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   }</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a> </span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a>   namespace __bessel</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>   {</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a> </span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>   inline constexpr f64 pi_quarter = 0x1.921fb54442d18p-1;</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>   inline constexpr f64 two_over_pi = 0x1.45f306dc9c883p-1;</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> </span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>   j0_small(f64 x) noexcept</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>   {</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>     const f64 z = 0.25 * x * x;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>     constexpr f64 C[21] = {</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>       1.0,</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>       -1.0,</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>       1.0 / 4.0,</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>       -1.0 / 36.0,</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>       1.0 / 576.0,</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>       -1.0 / 14400.0,</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a>       1.0 / 518400.0,</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>       -1.0 / 25401600.0,</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>       1.0 / 1625702400.0,</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>       -1.0 / 131681894400.0,</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>       1.0 / 13168189440000.0,</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>       -1.0 / 1593350922240000.0,</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>       1.0 / 229442532802560000.0,</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>       -1.0 / 38775788043632640000.0,</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>       1.0 / 7600054456551997440000.0,</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>       -1.0 / 1710012252724199424000000.0,</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>       1.0 / 437763136697395052544000000.0,</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>       -1.0 / 126513546505547170185216000000.0,</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>       0.0,</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>       0.0,</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>       0.0,</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>     };</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     f64 r = C[15];</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>     for ( int k = 14; k &gt;= 0; --k ) r = hw::fmadd_sd(r, z, C[k]);</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>     return r;</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>   }</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a> </span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>   j1_small(f64 x) noexcept</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>   {</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>     const f64 z = 0.25 * x * x;</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>     constexpr f64 C[16] = {</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>       1.0,</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>       -1.0 / 2.0,</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>       1.0 / 12.0,</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>       -1.0 / 144.0,</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>       1.0 / 2880.0,</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>       -1.0 / 86400.0,</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>       1.0 / 3628800.0,</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>       -1.0 / 203212800.0,</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>       1.0 / 14631321600.0,</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a>       -1.0 / 1316818944000.0,</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>       1.0 / 144850083840000.0,</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>       -1.0 / 19120211066880000.0,</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>       1.0 / 2982752926433280000.0,</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>       -1.0 / 542861032610856960000.0,      // (-1)^13 / (13! * 14!)</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>       0.0,</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>       0.0,</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>     };</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>     f64 r = C[13];</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>     for ( int k = 12; k &gt;= 0; --k ) r = hw::fmadd_sd(r, z, C[k]);</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>     return 0.5 * x * r;</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>   }</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> </span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>   // P = sum (-1)^k a_2k / z^2k, Q = sum (-1)^k a_{2k+1} / z^{2k+1}, with the Hankel</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>   // a_k(nu) = prod_{j=1..k} (4nu^2 - (2j-1)^2) / (k! 8^k); every one of these is exact in f64</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>   [[gnu::flatten]] inline constexpr f64</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>   hankel_PQ_j0(f64 x, f64 *P, f64 *Q) noexcept</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>   {</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a>     const f64 ax = manip::fabs(x);</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>     const f64 r = 1.0 / ax;</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>     const f64 u = r * r;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>     *P = 1.0 + u * (-0.0703125 + u * (0.112152099609375 + u * (-0.57250142097473145)));</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>     *Q = r * (-0.125 + u * (0.0732421875 + u * (-0.22710800170898438)));</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a>     return ax;</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>   }</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a> </span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>   [[gnu::flatten]] inline constexpr f64</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>   hankel_PQ_j1(f64 x, f64 *P, f64 *Q) noexcept</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>   {</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a>     const f64 ax = manip::fabs(x);</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>     const f64 r = 1.0 / ax;</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a>     const f64 u = r * r;</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>     *P = 1.0 + u * (0.1171875 + u * (-0.144195556640625 + u * (0.67659258842468262)));</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>     *Q = r * (0.375 + u * (-0.1025390625 + u * (0.27757644653320312)));</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>     return ax;</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a>   }</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> </span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a>   };      // namespace __bessel</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a> </span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a>   j0_f64(f64 x) noexcept</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a>   {</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a>     if ( ieee::is_nan(x) ) [[unlikely]]</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a>       return x;</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a>     if ( ieee::is_inf(x) ) [[unlikely]]</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>       return 0.0;</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>     const f64 ax = manip::fabs(x);</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a>     if ( ax &lt; 8.0 ) return __bessel::j0_small(x);</span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>     f64 P, Q;</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>     __bessel::hankel_PQ_j0(x, &amp;P, &amp;Q);</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>     const f64 beta = ax - __bessel::pi_quarter;</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>     f64 sb, cb;</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>     trig_ns::sincos_f64(beta, &amp;sb, &amp;cb);</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>     const f64 amp = sqrt_ns::sqrt&lt;f64&gt;(__bessel::two_over_pi / ax);</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a>     return amp * (P * cb - Q * sb);</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>   }</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a> </span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>   j1_f64(f64 x) noexcept</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>   {</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>     if ( ieee::is_nan(x) ) [[unlikely]]</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>       return x;</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>     if ( ieee::is_inf(x) ) [[unlikely]]</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>       return 0.0;</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>     const f64 ax = manip::fabs(x);</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>     if ( ax &lt; 8.0 ) return __bessel::j1_small(x);</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>     f64 P, Q;</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>     __bessel::hankel_PQ_j1(x, &amp;P, &amp;Q);</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>     const f64 beta = ax - 3.0 * __bessel::pi_quarter;</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>     f64 sb, cb;</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>     trig_ns::sincos_f64(beta, &amp;sb, &amp;cb);</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>     const f64 amp = sqrt_ns::sqrt&lt;f64&gt;(__bessel::two_over_pi / ax);</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>     const f64 r = amp * (P * cb - Q * sb);</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>     return manip::signbit(x) ? -r : r;</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>   }</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a> </span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a>   y0_f64(f64 x) noexcept</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a>   {</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a>     if ( ieee::is_nan(x) ) [[unlikely]]</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a>       return x;</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a>     if ( x == 0.0 ) [[unlikely]]</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>       return ieee::inf_v&lt;f64&gt;(1);</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a>     if ( x &lt; 0.0 ) [[unlikely]]</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>       return ieee::qnan_v&lt;f64&gt;();</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>     if ( ieee::is_inf(x) ) [[unlikely]]</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>       return 0.0;</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>     if ( x &lt; 8.0 ) {</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>       constexpr f64 gamma_e = 0.5772156649015329;</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a>       const f64 z = 0.25 * x * x;</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a>       f64 sum = 0.0;</span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a>       f64 z_pow = 1.0;</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a>       f64 fact_sq = 1.0;</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a>       f64 hk = 0.0;</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>       for ( int k = 1; k &lt; 25; ++k ) {</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a>         z_pow *= z;</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>         fact_sq *= f64(k) * f64(k);</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a>         hk += 1.0 / f64(k);</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>         const f64 sign = (k &amp; 1) ? 1.0 : -1.0;</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>         sum += sign * hk * z_pow / fact_sq;</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>       }</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a>       const f64 j0v = __bessel::j0_small(x);</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a>       return (__bessel::two_over_pi) * ((log_ns::log_f64(0.5 * x) + gamma_e) * j0v + sum);</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a>     }</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a>     f64 P, Q;</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>     __bessel::hankel_PQ_j0(x, &amp;P, &amp;Q);</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>     const f64 beta = x - __bessel::pi_quarter;</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>     f64 sb, cb;</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a>     trig_ns::sincos_f64(beta, &amp;sb, &amp;cb);</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>     const f64 amp = sqrt_ns::sqrt&lt;f64&gt;(__bessel::two_over_pi / x);</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>     return amp * (P * sb + Q * cb);</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>   }</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a> </span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>   [[nodiscard, gnu::flatten]] inline constexpr f64</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>   y1_f64(f64 x) noexcept</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>   {</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>     if ( ieee::is_nan(x) ) [[unlikely]]</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a>       return x;</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>     if ( x == 0.0 ) [[unlikely]]</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>       return ieee::inf_v&lt;f64&gt;(1);</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>     if ( x &lt; 0.0 ) [[unlikely]]</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>       return ieee::qnan_v&lt;f64&gt;();</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>     if ( ieee::is_inf(x) ) [[unlikely]]</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a>       return 0.0;</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>     if ( x &lt; 8.0 ) {</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a>       constexpr f64 gamma_e = 0.5772156649015329;</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a>       const f64 z = 0.25 * x * x;</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>       f64 sum = 0.0;</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a>       f64 z_pow_neg = 1.0;</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a>       f64 fact_prod = 1.0;</span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a>       f64 hk = 0.0;</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>       f64 hk1 = 1.0;</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>       for ( int k = 0; k &lt; 25; ++k ) {</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>         sum += (hk + hk1) * z_pow_neg / fact_prod;</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>         z_pow_neg *= -z;</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a>         fact_prod *= f64(k + 1) * f64(k + 2);</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>         hk = hk1;</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a>         hk1 += 1.0 / f64(k + 2);</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a>       }</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>       const f64 j1v = __bessel::j1_small(x);</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>       return (__bessel::two_over_pi) * (-1.0 / x + (log_ns::log_f64(0.5 * x) + gamma_e) * j1v - 0.25 * x * sum);</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a>     }</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>     f64 P, Q;</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a>     __bessel::hankel_PQ_j1(x, &amp;P, &amp;Q);</span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>     const f64 beta = x - 3.0 * __bessel::pi_quarter;</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>     f64 sb, cb;</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>     trig_ns::sincos_f64(beta, &amp;sb, &amp;cb);</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>     const f64 amp = sqrt_ns::sqrt&lt;f64&gt;(__bessel::two_over_pi / x);</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a>     return amp * (P * sb + Q * cb);</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a>   }</span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a> </span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>   template&lt;ieee754_floating F&gt;</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>   [[nodiscard, gnu::always_inline]] inline constexpr F</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>   j0(F x) noexcept</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>   {</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>     if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::j0(x);</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a> #endif</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>     if constexpr ( sizeof(F) == sizeof(f32) )</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>       return F(j0_f64(f64(x)));</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>     else</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>       return F(j0_f64(f64(x)));</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>   }</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a> </span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a>   template&lt;ieee754_floating F&gt;</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a>   [[nodiscard, gnu::always_inline]] inline constexpr F</span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a>   j1(F x) noexcept</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a>   {</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a>     if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::j1(x);</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a> #endif</span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>     if constexpr ( sizeof(F) == sizeof(f32) )</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>       return F(j1_f64(f64(x)));</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>     else</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>       return F(j1_f64(f64(x)));</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>   }</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a> </span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>   template&lt;ieee754_floating F&gt;</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>   [[nodiscard, gnu::always_inline]] inline constexpr F</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>   y0(F x) noexcept</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>   {</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>     if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::y0(x);</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a> #endif</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>     if constexpr ( sizeof(F) == sizeof(f32) )</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>       return F(y0_f64(f64(x)));</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>     else</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a>       return F(y0_f64(f64(x)));</span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>   }</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a> </span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a>   template&lt;ieee754_floating F&gt;</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>   [[nodiscard, gnu::always_inline]] inline constexpr F</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>   y1(F x) noexcept</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>   {</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>     if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::y1(x);</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a> #endif</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>     if constexpr ( sizeof(F) == sizeof(f32) )</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>       return F(y1_f64(f64(x)));</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>     else</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>       return F(y1_f64(f64(x)));</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>   }</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a> </span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a>   [[nodiscard, gnu::always_inline]] inline constexpr f32</span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a>   erf_f32(f32 x) noexcept</span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>   {</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>     return f32(erf_f64(f64(x)));</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>   }</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a> </span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a>   [[nodiscard, gnu::always_inline]] inline constexpr f32</span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>   erfc_f32(f32 x) noexcept</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a>   {</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a>     return f32(erfc_f64(f64(x)));</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>   }</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a> </span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>   [[nodiscard, gnu::always_inline]] inline constexpr f32</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>   tgamma_f32(f32 x) noexcept</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a>   {</span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a>     return f32(tgamma_f64(f64(x)));</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a>   }</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a> </span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a>   [[nodiscard, gnu::always_inline]] inline constexpr f32</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a>   lgamma_f32(f32 x) noexcept</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a>   {</span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a>     return f32(lgamma_f64(f64(x)));</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a>   }</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a> </span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a>   template&lt;ieee754_floating F&gt;</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a>   [[nodiscard, gnu::always_inline]] inline constexpr F</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a>   erf(F x) noexcept</span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a>   {</span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a>     if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::erf(x);</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a> #endif</span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a>     if constexpr ( sizeof(F) == sizeof(f32) )</span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a>       return F(erf_f32(f32(x)));</span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a>     else</span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a>       return F(erf_f64(f64(x)));</span>
+<span id="L508" class="source-line"><a class="line-number" href="#L508">508</a>   }</span>
+<span id="L509" class="source-line"><a class="line-number" href="#L509">509</a> </span>
+<span id="L510" class="source-line"><a class="line-number" href="#L510">510</a>   template&lt;ieee754_floating F&gt;</span>
+<span id="L511" class="source-line"><a class="line-number" href="#L511">511</a>   [[nodiscard, gnu::always_inline]] inline constexpr F</span>
+<span id="L512" class="source-line"><a class="line-number" href="#L512">512</a>   erfc(F x) noexcept</span>
+<span id="L513" class="source-line"><a class="line-number" href="#L513">513</a>   {</span>
+<span id="L514" class="source-line"><a class="line-number" href="#L514">514</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L515" class="source-line"><a class="line-number" href="#L515">515</a>     if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::erfc(x);</span>
+<span id="L516" class="source-line"><a class="line-number" href="#L516">516</a> #endif</span>
+<span id="L517" class="source-line"><a class="line-number" href="#L517">517</a>     if constexpr ( sizeof(F) == sizeof(f32) )</span>
+<span id="L518" class="source-line"><a class="line-number" href="#L518">518</a>       return F(erfc_f32(f32(x)));</span>
+<span id="L519" class="source-line"><a class="line-number" href="#L519">519</a>     else</span>
+<span id="L520" class="source-line"><a class="line-number" href="#L520">520</a>       return F(erfc_f64(f64(x)));</span>
+<span id="L521" class="source-line"><a class="line-number" href="#L521">521</a>   }</span>
+<span id="L522" class="source-line"><a class="line-number" href="#L522">522</a> </span>
+<span id="L523" class="source-line"><a class="line-number" href="#L523">523</a>   template&lt;ieee754_floating F&gt;</span>
+<span id="L524" class="source-line"><a class="line-number" href="#L524">524</a>   [[nodiscard, gnu::always_inline]] inline constexpr F</span>
+<span id="L525" class="source-line"><a class="line-number" href="#L525">525</a>   tgamma(F x) noexcept</span>
+<span id="L526" class="source-line"><a class="line-number" href="#L526">526</a>   {</span>
+<span id="L527" class="source-line"><a class="line-number" href="#L527">527</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L528" class="source-line"><a class="line-number" href="#L528">528</a>     if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::tgamma(x);</span>
+<span id="L529" class="source-line"><a class="line-number" href="#L529">529</a> #endif</span>
+<span id="L530" class="source-line"><a class="line-number" href="#L530">530</a>     if constexpr ( sizeof(F) == sizeof(f32) )</span>
+<span id="L531" class="source-line"><a class="line-number" href="#L531">531</a>       return F(tgamma_f32(f32(x)));</span>
+<span id="L532" class="source-line"><a class="line-number" href="#L532">532</a>     else</span>
+<span id="L533" class="source-line"><a class="line-number" href="#L533">533</a>       return F(tgamma_f64(f64(x)));</span>
+<span id="L534" class="source-line"><a class="line-number" href="#L534">534</a>   }</span>
+<span id="L535" class="source-line"><a class="line-number" href="#L535">535</a> </span>
+<span id="L536" class="source-line"><a class="line-number" href="#L536">536</a>   template&lt;ieee754_floating F&gt;</span>
+<span id="L537" class="source-line"><a class="line-number" href="#L537">537</a>   [[nodiscard, gnu::always_inline]] inline constexpr F</span>
+<span id="L538" class="source-line"><a class="line-number" href="#L538">538</a>   lgamma(F x) noexcept</span>
+<span id="L539" class="source-line"><a class="line-number" href="#L539">539</a>   {</span>
+<span id="L540" class="source-line"><a class="line-number" href="#L540">540</a> #if defined(__micron_arch_wasm_any)</span>
+<span id="L541" class="source-line"><a class="line-number" href="#L541">541</a>     if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::lgamma(x);</span>
+<span id="L542" class="source-line"><a class="line-number" href="#L542">542</a> #endif</span>
+<span id="L543" class="source-line"><a class="line-number" href="#L543">543</a>     if constexpr ( sizeof(F) == sizeof(f32) )</span>
+<span id="L544" class="source-line"><a class="line-number" href="#L544">544</a>       return F(lgamma_f32(f32(x)));</span>
+<span id="L545" class="source-line"><a class="line-number" href="#L545">545</a>     else</span>
+<span id="L546" class="source-line"><a class="line-number" href="#L546">546</a>       return F(lgamma_f64(f64(x)));</span>
+<span id="L547" class="source-line"><a class="line-number" href="#L547">547</a>   }</span>
+<span id="L548" class="source-line"><a class="line-number" href="#L548">548</a> </span>
+<span id="L549" class="source-line"><a class="line-number" href="#L549">549</a>   };      // namespace special_ns</span>
+<span id="L550" class="source-line"><a class="line-number" href="#L550">550</a>   };      // namespace mkbits</span>
+<span id="L551" class="source-line"><a class="line-number" href="#L551">551</a>   };      // namespace math</span>
+<span id="L552" class="source-line"><a class="line-number" href="#L552">552</a> };      // namespace micron</span>
+<span id="L553" class="source-line"><a class="line-number" href="#L553">553</a> </span>
+<span id="L554" class="source-line"><a class="line-number" href="#L554">554</a> __micron_pop_options</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

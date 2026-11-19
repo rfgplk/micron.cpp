@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/hgcd.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/hgcd.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/hgcd.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/hgcd.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-47e5429ec32ab9ca">micron::math::mpn::hgcd_mat</code></td><td>struct; line 36</td></tr><tr class="t-dsc"><td><code id="s-7d23fb448bd92fc4">micron::math::mpn::hgcd_mat::p</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-be4a1a1004dbb571">micron::math::mpn::hgcd_mat::n</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-220d4db614729b52">micron::math::mpn::hgcd_mat::alloc</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><a href="#f-ec5a23a4a8ebe3a5">micron::math::mpn::hgcd_mat_itch(usize n) noexcept</a></td><td>function; line 43</td></tr><tr class="t-dsc"><td><a href="#f-1ff26a01a70a2744">micron::math::mpn::hgcd_mat_init(hgcd_mat &amp;M, usize n, limb_t *space) noexcept</a></td><td>function; line 49</td></tr><tr class="t-dsc"><td><a href="#f-7d5da09b288beeab">micron::math::mpn::hgcd_mat_mul_1_itch(usize mn) noexcept</a></td><td>function; line 64</td></tr><tr class="t-dsc"><td><a href="#f-98094643bd2bd197">micron::math::mpn::hgcd_mat_mul_1(hgcd_mat &amp;M, const mat1 &amp;m1, limb_t *tp) noexcept</a></td><td>function; line 71</td></tr><tr class="t-dsc"><td><a href="#f-070ff6b61773441f">micron::math::mpn::matrix22_mul_itch(usize rn, usize mn) noexcept</a></td><td>function; line 91</td></tr><tr class="t-dsc"><td><a href="#f-5864e8d0c50f75b2">micron::math::mpn::matrix22_mul(hgcd_mat &amp;M, const hgcd_mat &amp;M1, limb_t *tp) noexcept</a></td><td>function; line 110</td></tr><tr class="t-dsc"><td><a href="#f-d66116964251af63">micron::math::mpn::hgcd_mat_adjust_itch(usize p, usize mn) noexcept</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-f724d6aea04ba8c4">micron::math::mpn::hgcd_mat_adjust(const hgcd_mat &amp;M, usize n, limb_t *ap, limb_t *bp, usize p, limb_t *tp) noexcept</a></td><td>function; line 166</td></tr><tr class="t-dsc"><td><a href="#f-9b9da5bcf1cd1e93">micron::math::mpn::hgcd_mat_update_q_itch(usize mn, usize qn) noexcept</a></td><td>function; line 201</td></tr><tr class="t-dsc"><td><a href="#f-6ce30454e5837502">micron::math::mpn::hgcd_mat_update_q(hgcd_mat &amp;M, const limb_t *qp, usize qn, limb_t *tp) noexcept</a></td><td>function; line 210</td></tr><tr class="t-dsc"><td><a href="#f-58dac215e7b4d16a">micron::math::mpn::subdiv_step_itch(usize n) noexcept</a></td><td>function; line 246</td></tr><tr class="t-dsc"><td><a href="#f-653ecd61325e49ea">micron::math::mpn::hgcd_mat_update_q_itch_max(usize n) noexcept</a></td><td>function; line 252</td></tr><tr class="t-dsc"><td><a href="#f-e5c8e8559396f74e">micron::math::mpn::hgcd_subdiv_pair_itch(usize n) noexcept</a></td><td>function; line 293</td></tr><tr class="t-dsc"><td><a href="#f-fe521c13ace3b2a6">micron::math::mpn::hgcd_subdiv_pair(limb_t *ap, limb_t *bp, usize n, hgcd_mat &amp;M, limb_t *tp) noexcept</a></td><td>function; line 301</td></tr><tr class="t-dsc"><td><a href="#f-a1b88f4a766ddff5">micron::math::mpn::hgcd_step_itch(usize n) noexcept</a></td><td>function; line 335</td></tr><tr class="t-dsc"><td><a href="#f-f4c4dd9c400ca8aa">micron::math::mpn::hgcd_step(usize n, limb_t *ap, limb_t *bp, usize s, hgcd_mat &amp;M, limb_t *tp) noexcept</a></td><td>function; line 343</td></tr><tr class="t-dsc"><td><a href="#f-82478947596b6087">micron::math::mpn::hgcd_itch(usize n) noexcept</a></td><td>function; line 386</td></tr><tr class="t-dsc"><td><a href="#f-722fd41f6b1540b3">micron::math::mpn::hgcd(limb_t *ap, limb_t *bp, usize n, hgcd_mat &amp;M, limb_t *tp) noexcept</a></td><td>function; line 418</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-ec5a23a4a8ebe3a5"><h3><code>micron::math::mpn::hgcd_mat_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L43">line 43</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>4u * (((n + 1u) / 2u) + 2u)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_itch(usize n) noexcept
+{
+  return 4u * (((n + 1u) / 2u) + 2u);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>4u * (((n + 1u) / 2u) + 2u)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L45">line 45</a></td></tr></tbody></table></section><section class="function-entry" id="f-1ff26a01a70a2744"><h3><code>micron::math::mpn::hgcd_mat_init(hgcd_mat &amp;M, usize n, limb_t *space) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L49">line 49</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline constexpr void
+hgcd_mat_init(hgcd_mat &amp;M, usize n, limb_t *space) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hgcd_mat &amp;M</code></li><li><code>usize n</code></li><li><code>limb_t *space</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline constexpr void
+hgcd_mat_init(hgcd_mat &amp;M, usize n, limb_t *space) noexcept
+{
+  const usize s = ((n + 1u) / 2u) + 2u;
+  zero(space, 4u * s);
+  M.alloc = s;
+  M.n = 1;
+  M.p[0][0] = space;
+  M.p[0][1] = space + s;
+  M.p[1][0] = space + 2u * s;
+  M.p[1][1] = space + 3u * s;
+  M.p[0][0][0] = 1;
+  M.p[1][1][0] = 1;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>.</p></section><section class="function-entry" id="f-7d5da09b288beeab"><h3><code>micron::math::mpn::hgcd_mat_mul_1_itch(usize mn) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L64">line 64</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_mul_1_itch(usize mn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize mn</code></li></ul><h4>Effects</h4><p>Returns <code>2u * (mn + 2u)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_mul_1_itch(usize mn) noexcept
+{
+  return 2u * (mn + 2u);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>2u * (mn + 2u)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L66">line 66</a></td></tr></tbody></table></section><section class="function-entry" id="f-98094643bd2bd197"><h3><code>micron::math::mpn::hgcd_mat_mul_1(hgcd_mat &amp;M, const mat1 &amp;m1, limb_t *tp) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L71">line 71</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::flatten]] inline constexpr void
+hgcd_mat_mul_1(hgcd_mat &amp;M, const mat1 &amp;m1, limb_t *tp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hgcd_mat &amp;M</code></li><li><code>const mat1 &amp;m1</code></li><li><code>limb_t *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::flatten]] inline constexpr void
+hgcd_mat_mul_1(hgcd_mat &amp;M, const mat1 &amp;m1, limb_t *tp) noexcept
+{
+  const mat1 t{ m1.u00, m1.u10, m1.u01, m1.u11 };
+
+  const usize w = M.n + 2u;
+  limb_t *const r0 = tp;
+  limb_t *const r1 = tp + w;
+
+  const usize n0 = mat1_mul_vector(t, r0, r1, M.p[0][0], M.p[0][1], M.n);
+  copyi(M.p[0][0], r0, w);
+  copyi(M.p[0][1], r1, w);
+
+  const usize n1 = mat1_mul_vector(t, r0, r1, M.p[1][0], M.p[1][1], M.n);
+  copyi(M.p[1][0], r0, w);
+  copyi(M.p[1][1], r1, w);
+
+  M.n = n0 &gt; n1 ? n0 : n1;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="hgcd2.hpp.html#f-602eb43c8ee2227b">mat1_mul_vector</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>.</p></section><section class="function-entry" id="f-070ff6b61773441f"><h3><code>micron::math::mpn::matrix22_mul_itch(usize rn, usize mn) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L91">line 91</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+matrix22_mul_itch(usize rn, usize mn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize rn</code></li><li><code>usize mn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+matrix22_mul_itch(usize rn, usize mn) noexcept
+{
+  const usize w = rn + mn + 1u;
+  const usize a = rn &gt; mn ? rn : mn;
+  const usize b = rn &gt; mn ? mn : rn;
+  return 4u * w + (rn + mn) + __mul_itch_bound(a, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>4u * w + (rn + mn) + __mul_itch_bound(a, b)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L96">line 96</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-d99d21f6c745b624">__mul_itch_bound</a>.</p></section><section class="function-entry" id="f-5864e8d0c50f75b2"><h3><code>micron::math::mpn::matrix22_mul(hgcd_mat &amp;M, const hgcd_mat &amp;M1, limb_t *tp) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L110">line 110</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+matrix22_mul(hgcd_mat &amp;M, const hgcd_mat &amp;M1, limb_t *tp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hgcd_mat &amp;M</code></li><li><code>const hgcd_mat &amp;M1</code></li><li><code>limb_t *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+matrix22_mul(hgcd_mat &amp;M, const hgcd_mat &amp;M1, limb_t *tp) noexcept
+{
+  const usize rn = M.n;
+  const usize mn = M1.n;
+  const usize pn = rn + mn;
+  const usize w = pn + 1u;
+
+  limb_t *const o00 = tp;
+  limb_t *const o01 = o00 + w;
+  limb_t *const o10 = o01 + w;
+  limb_t *const o11 = o10 + w;
+  limb_t *const prod = o11 + w;
+  limb_t *const work = prod + pn;
+
+  limb_t *const out[2][2] = { { o00, o01 }, { o10, o11 } };
+
+  for ( usize i = 0; i &lt; 2u; ++i ) {
+    for ( usize j = 0; j &lt; 2u; ++j ) {
+      limb_t *const o = out[i][j];
+      __mul_ord(o, M.p[i][0], rn, M1.p[0][j], mn, work);
+      __mul_ord(prod, M.p[i][1], rn, M1.p[1][j], mn, work);
+      o[pn] = add_n(o, o, prod, pn);
+    }
+  }
+
+  usize nn = 1;
+  for ( usize i = 0; i &lt; 2u; ++i ) {
+    for ( usize j = 0; j &lt; 2u; ++j ) {
+      const usize k = normalize(out[i][j], w);
+      if ( k &gt; nn ) nn = k;
+    }
+  }
+
+  for ( usize i = 0; i &lt; 2u; ++i )
+    for ( usize j = 0; j &lt; 2u; ++j ) copyi(M.p[i][j], out[i][j], w);
+
+  M.n = nn;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="hgcd.hpp.html#f-fc4ccd2be271e68f">__mul_ord</a>, <a href="mpn_core.hpp.html#f-5b9b8d30cd63fa29">add_n</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>.</p></section><section class="function-entry" id="f-d66116964251af63"><h3><code>micron::math::mpn::hgcd_mat_adjust_itch(usize p, usize mn) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_adjust_itch(usize p, usize mn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize p</code></li><li><code>usize mn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_adjust_itch(usize p, usize mn) noexcept
+{
+  const usize a = p &gt; mn ? p : mn;
+  const usize b = p &gt; mn ? mn : p;
+  return 3u * (p + mn) + __mul_itch_bound(a, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>3u * (p + mn) + __mul_itch_bound(a, b)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L154">line 154</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-d99d21f6c745b624">__mul_itch_bound</a>.</p></section><section class="function-entry" id="f-f724d6aea04ba8c4"><h3><code>micron::math::mpn::hgcd_mat_adjust(const hgcd_mat &amp;M, usize n, limb_t *ap, limb_t *bp, usize p, limb_t *tp) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L166">line 166</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+hgcd_mat_adjust(const hgcd_mat &amp;M, usize n, limb_t *ap, limb_t *bp, usize p, limb_t *tp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const hgcd_mat &amp;M</code></li><li><code>usize n</code></li><li><code>limb_t *ap</code></li><li><code>limb_t *bp</code></li><li><code>usize p</code></li><li><code>limb_t *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+hgcd_mat_adjust(const hgcd_mat &amp;M, usize n, limb_t *ap, limb_t *bp, usize p, limb_t *tp) noexcept
+{
+  const usize mn = M.n;
+  const usize w = p + mn;
+
+  limb_t *const t0 = tp;          // u11 * a_lo
+  limb_t *const t1 = t0 + w;      // u10 * a_lo
+  limb_t *const t2 = t1 + w;      // u01 * b_lo, then u00 * b_lo
+  limb_t *const work = t2 + w;
+
+  __mul_ord(t0, ap, p, M.p[1][1], mn, work);
+  __mul_ord(t1, ap, p, M.p[1][0], mn, work);
+  __mul_ord(t2, bp, p, M.p[0][1], mn, work);
+
+  // a &lt;- a_hi*B^p + t0 - t2
+  copyi(ap, t0, p);
+  limb_t ah = add(ap + p, ap + p, n - p, t0 + p, mn);
+  ah = static_cast&lt;limb_t&gt;(ah - sub(ap, ap, n, t2, w));
+
+  __mul_ord(t2, bp, p, M.p[0][0], mn, work);
+
+  // b &lt;- b_hi*B^p + t2 - t1
+  copyi(bp, t2, p);
+  limb_t bh = add(bp + p, bp + p, n - p, t2 + p, mn);
+  bh = static_cast&lt;limb_t&gt;(bh - sub(bp, bp, n, t1, w));
+
+  (void)ah;
+  (void)bh;
+
+  const usize an = normalize(ap, n);
+  const usize bn = normalize(bp, n);
+  return an &gt; bn ? an : bn;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>an &gt; bn ? an : bn</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L197">line 197</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd.hpp.html#f-fc4ccd2be271e68f">__mul_ord</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-7766a59ba519d780">add</a>, <a href="mpn_core.hpp.html#f-e845dacf002635a3">sub</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>.</p></section><section class="function-entry" id="f-9b9da5bcf1cd1e93"><h3><code>micron::math::mpn::hgcd_mat_update_q_itch(usize mn, usize qn) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L201">line 201</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_update_q_itch(usize mn, usize qn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize mn</code></li><li><code>usize qn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_update_q_itch(usize mn, usize qn) noexcept
+{
+  const usize a = mn &gt; qn ? mn : qn;
+  const usize b = mn &gt; qn ? qn : mn;
+  return (mn + qn + 1u) + __mul_itch_bound(a, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(mn + qn + 1u) + __mul_itch_bound(a, b)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L205">line 205</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-d99d21f6c745b624">__mul_itch_bound</a>.</p></section><section class="function-entry" id="f-6ce30454e5837502"><h3><code>micron::math::mpn::hgcd_mat_update_q(hgcd_mat &amp;M, const limb_t *qp, usize qn, limb_t *tp) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L210">line 210</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+hgcd_mat_update_q(hgcd_mat &amp;M, const limb_t *qp, usize qn, limb_t *tp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>hgcd_mat &amp;M</code></li><li><code>const limb_t *qp</code></li><li><code>usize qn</code></li><li><code>limb_t *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+hgcd_mat_update_q(hgcd_mat &amp;M, const limb_t *qp, usize qn, limb_t *tp) noexcept
+{
+  const usize mn = M.n;
+  const usize pn = mn + qn;
+  const usize w = pn + 1u;
+
+  limb_t *const t = tp;
+  limb_t *const work = t + w;
+
+  usize nn = 1;
+  for ( usize i = 0; i &lt; 2u; ++i ) {
+    __mul_ord(t, M.p[i][0], mn, qp, qn, work);
+    t[pn] = add(t, t, pn, M.p[i][1], mn);
+
+    copyi(M.p[i][1], M.p[i][0], mn);
+    copyi(M.p[i][0], t, w);
+
+    const usize k = normalize(t, w);
+    if ( k &gt; nn ) nn = k;
+  }
+  M.n = nn;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="hgcd.hpp.html#f-fc4ccd2be271e68f">__mul_ord</a>, <a href="mpn_core.hpp.html#f-7766a59ba519d780">add</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>.</p></section><section class="function-entry" id="f-58dac215e7b4d16a"><h3><code>micron::math::mpn::subdiv_step_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L246">line 246</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+subdiv_step_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>(n + 1u) + n + divrem_cap_itch(n, n)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+subdiv_step_itch(usize n) noexcept
+{
+  return (n + 1u) + n + divrem_cap_itch(n, n);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(n + 1u) + n + divrem_cap_itch(n, n)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L248">line 248</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="div_mu.hpp.html#f-d1e4cf8152d559a6">divrem_cap_itch</a>.</p></section><section class="function-entry" id="f-653ecd61325e49ea"><h3><code>micron::math::mpn::hgcd_mat_update_q_itch_max(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L252">line 252</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_update_q_itch_max(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_mat_update_q_itch_max(usize n) noexcept
+{
+  const usize mn = (n + 1u) / 2u + 2u;
+  return hgcd_mat_update_q_itch(mn, mn);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>hgcd_mat_update_q_itch(mn, mn)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L255">line 255</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd.hpp.html#f-9b9da5bcf1cd1e93">hgcd_mat_update_q_itch</a>.</p></section><section class="function-entry" id="f-e5c8e8559396f74e"><h3><code>micron::math::mpn::hgcd_subdiv_pair_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L293">line 293</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_subdiv_pair_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_subdiv_pair_itch(usize n) noexcept
+{
+  const usize d = divrem_cap_itch(n, n);
+  const usize u = hgcd_mat_update_q_itch_max(n);
+  return (n + 1u) + 3u * n + 2u + (d &gt; u ? d : u);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(n + 1u) + 3u * n + 2u + (d &gt; u ? d : u)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L297">line 297</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="div_mu.hpp.html#f-d1e4cf8152d559a6">divrem_cap_itch</a>, <a href="hgcd.hpp.html#f-653ecd61325e49ea">hgcd_mat_update_q_itch_max</a>.</p></section><section class="function-entry" id="f-fe521c13ace3b2a6"><h3><code>micron::math::mpn::hgcd_subdiv_pair(limb_t *ap, limb_t *bp, usize n, hgcd_mat &amp;M, limb_t *tp) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L301">line 301</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+hgcd_subdiv_pair(limb_t *ap, limb_t *bp, usize n, hgcd_mat &amp;M, limb_t *tp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *ap</code></li><li><code>limb_t *bp</code></li><li><code>usize n</code></li><li><code>hgcd_mat &amp;M</code></li><li><code>limb_t *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+hgcd_subdiv_pair(limb_t *ap, limb_t *bp, usize n, hgcd_mat &amp;M, limb_t *tp) noexcept
+{
+  const usize an = normalize(ap, n);
+  const usize bn = normalize(bp, n);
+  if ( bn == 0 || an &lt; bn ) return 0;
+
+  limb_t *const q1 = tp;                       // an - bn + 1
+  limb_t *const r1 = q1 + (an - bn + 1u);      // bn
+  limb_t *const q2 = r1 + bn;                  // bn + 1
+  limb_t *const r2 = q2 + bn + 1u;             // bn
+  limb_t *const work = r2 + bn;
+
+  divrem(q1, r1, ap, an, bp, bn, work);
+  const usize q1n = normalize(q1, an - bn + 1u);
+  const usize r1n = normalize(r1, bn);
+  if ( r1n == 0 ) return 0;
+
+  divrem(q2, r2, bp, bn, r1, r1n, work);
+  const usize q2n = normalize(q2, bn - r1n + 1u);
+  const usize r2n = normalize(r2, r1n);
+
+  if ( M.n + q1n + q2n + 2u &gt; M.alloc ) return 0;
+
+  hgcd_mat_update_q(M, q1, q1n, work);
+  hgcd_mat_update_q(M, q2, q2n, work);
+
+  copyi(ap, r1, r1n);
+  zero(ap + r1n, n - r1n);
+  copyi(bp, r2, r2n);
+  zero(bp + r2n, n - r2n);
+  return r1n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L305">line 305</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L316">line 316</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L322">line 322</a></td></tr><tr class="t-dsc"><td><code>r1n</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L331">line 331</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="div_mu.hpp.html#f-eeb8063a9a0ba734">divrem</a>, <a href="hgcd.hpp.html#f-6ce30454e5837502">hgcd_mat_update_q</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>.</p></section><section class="function-entry" id="f-a1b88f4a766ddff5"><h3><code>micron::math::mpn::hgcd_step_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L335">line 335</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_step_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+hgcd_step_itch(usize n) noexcept
+{
+  const usize win = 2u * n + hgcd_mat_mul_1_itch((n + 1u) / 2u + 2u);
+  const usize div = hgcd_subdiv_pair_itch(n);
+  return win &gt; div ? win : div;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>win &gt; div ? win : div</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L339">line 339</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd.hpp.html#f-7d5da09b288beeab">hgcd_mat_mul_1_itch</a>, <a href="hgcd.hpp.html#f-e5c8e8559396f74e">hgcd_subdiv_pair_itch</a>.</p></section><section class="function-entry" id="f-f4c4dd9c400ca8aa"><h3><code>micron::math::mpn::hgcd_step(usize n, limb_t *ap, limb_t *bp, usize s, hgcd_mat &amp;M, limb_t *tp) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L343">line 343</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+hgcd_step(usize n, limb_t *ap, limb_t *bp, usize s, hgcd_mat &amp;M, limb_t *tp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>limb_t *ap</code></li><li><code>limb_t *bp</code></li><li><code>usize s</code></li><li><code>hgcd_mat &amp;M</code></li><li><code>limb_t *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+hgcd_step(usize n, limb_t *ap, limb_t *bp, usize s, hgcd_mat &amp;M, limb_t *tp) noexcept
+{
+  const limb_t top = static_cast&lt;limb_t&gt;(ap[n - 1u] | bp[n - 1u]);
+  if ( top != 0 &amp;&amp; M.n + 2u &lt;= M.alloc &amp;&amp; cmp_var(ap, n, bp, n) &gt; 0 ) {
+    const usize sh = limb_clz(top);
+    limb_t ah = 0, al = 0, bh = 0, bl = 0;
+    __window2(ah, al, ap, n, sh);
+    __window2(bh, bl, bp, n, sh);
+
+    mat1 m1{};
+    if ( hgcd2_sel(m1, ah, al, bh, bl) &amp;&amp; __mat1_make_even(m1) ) {
+      limb_t *const t0 = tp;
+      limb_t *const t1 = tp + n;
+      usize n2 = 0;
+      if ( mat1_mul_inverse_vector(m1, t0, t1, ap, bp, n, n2) ) {
+        if ( n2 != 0 &amp;&amp; cmp_var(t0, n2, t1, n2) &gt; 0 ) {
+          const usize an = normalize(t0, n2);
+          if ( an &gt; s ) {
+            copyi(ap, t0, n);
+            copyi(bp, t1, n);
+            hgcd_mat_mul_1(M, m1, tp + 2u * n);
+            return an;
+          }
+        }
+      }
+    }
+  }
+
+  return hgcd_subdiv_pair(ap, bp, n, M, tp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>an</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td><code>hgcd_subdiv_pair(ap, bp, n, M, tp)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L371">line 371</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-5b9ddf144a5ad75c">cmp_var</a>, <a href="limb.hpp.html#f-58e660595c930a67">limb_clz</a>, <a href="hgcd2.hpp.html#f-3bbe0cb6bbe6981b">__window2</a>, <a href="hgcd2.hpp.html#f-fe02b444cad2b131">hgcd2_sel</a>, <a href="hgcd.hpp.html#f-56950b64a63140f5">__mat1_make_even</a>, <a href="hgcd2.hpp.html#f-aaf9bbe45c7c7e76">mat1_mul_inverse_vector</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="hgcd.hpp.html#f-98094643bd2bd197">hgcd_mat_mul_1</a>, <a href="hgcd.hpp.html#f-fe521c13ace3b2a6">hgcd_subdiv_pair</a>.</p></section><section class="function-entry" id="f-82478947596b6087"><h3><code>micron::math::mpn::hgcd_itch(usize n) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L386">line 386</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+hgcd_itch(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+hgcd_itch(usize n) noexcept
+{
+  const usize s = n / 2u + 1u;
+  if ( n &lt;= s ) return 0;
+
+  const usize step = hgcd_step_itch(n);
+  if ( n &lt; threshold::gcd_hgcd ) return step;
+
+  const usize p = n / 2u;
+  const usize h = n - p;                    // first sub-problem
+  const usize hn = (h + 1u) / 2u + 2u;      // widest matrix it may hand back
+
+  const usize sub = h &gt; p ? h : p;
+  const usize rec = hgcd_itch(sub);
+
+  usize m = rec;
+  const usize adj1 = hgcd_mat_adjust_itch(p, hn);
+  if ( adj1 &gt; m ) m = adj1;
+  if ( step &gt; m ) m = step;
+
+  const usize pn = (p + 1u) / 2u + 2u;
+  usize inner = rec;
+  const usize adj3 = hgcd_mat_adjust_itch(p, pn);
+  if ( adj3 &gt; inner ) inner = adj3;
+  const usize mm = matrix22_mul_itch((n + 1u) / 2u + 2u, pn);
+  if ( mm &gt; inner ) inner = mm;
+
+  const usize blk = hgcd_mat_itch(p) + inner;
+  return blk &gt; m ? blk : m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L389">line 389</a></td></tr><tr class="t-dsc"><td><code>step</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L392">line 392</a></td></tr><tr class="t-dsc"><td><code>blk &gt; m ? blk : m</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L414">line 414</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd.hpp.html#f-a1b88f4a766ddff5">hgcd_step_itch</a>, <a href="hgcd.hpp.html#f-d66116964251af63">hgcd_mat_adjust_itch</a>, <a href="hgcd.hpp.html#f-070ff6b61773441f">matrix22_mul_itch</a>, <a href="hgcd.hpp.html#f-ec5a23a4a8ebe3a5">hgcd_mat_itch</a>.</p></section><section class="function-entry" id="f-722fd41f6b1540b3"><h3><code>micron::math::mpn::hgcd(limb_t *ap, limb_t *bp, usize n, hgcd_mat &amp;M, limb_t *tp) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L418">line 418</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr usize
+hgcd(limb_t *ap, limb_t *bp, usize n, hgcd_mat &amp;M, limb_t *tp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *ap</code></li><li><code>limb_t *bp</code></li><li><code>usize n</code></li><li><code>hgcd_mat &amp;M</code></li><li><code>limb_t *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr usize
+hgcd(limb_t *ap, limb_t *bp, usize n, hgcd_mat &amp;M, limb_t *tp) noexcept
+{
+  const usize s = n / 2u + 1u;
+  if ( n &lt;= s ) return 0;
+
+  usize nn = n;
+  bool success = false;
+
+  if ( n &gt;= threshold::gcd_hgcd ) {
+    const usize p = n / 2u;
+    {
+      const usize h = n - p;
+      const usize save = M.alloc;
+
+      usize want = (h + 1u) / 2u + 2u;
+      if ( h &gt;= 2u &amp;&amp; want &gt; h - 1u ) want = h - 1u;
+      M.alloc = want &lt; save ? want : save;
+
+      const usize k = hgcd(ap + p, bp + p, h, M, tp);
+      M.alloc = save;
+      if ( k &gt; 0 ) {
+        nn = hgcd_mat_adjust(M, p + __adjust_width(k, M.n, h), ap, bp, p, tp);
+        success = true;
+      }
+    }
+
+    const usize n2 = (3u * n) / 4u + 1u;
+    while ( nn &gt; n2 ) {
+      if ( normalize(bp, nn) == 0 ) return success ? nn : 0;
+      const usize k = hgcd_step(nn, ap, bp, s, M, tp);
+      if ( k == 0 ) return success ? nn : 0;
+      nn = k;
+      success = true;
+    }
+
+    // reduce again, this time folding the result in with a matrix product
+    if ( nn &gt; s + 2u ) {
+      const usize p2 = 2u * s - nn + 1u;
+      const usize m = nn - p2;
+
+      // what M can still absorb
+      usize room = M.alloc &gt; M.n + 1u ? M.alloc - M.n - 1u : 0u;
+      if ( m &gt;= 2u &amp;&amp; room &gt; m - 1u ) room = m - 1u;
+      if ( m &gt;= 2u &amp;&amp; room &gt;= 3u ) {
+        hgcd_mat M1{};
+        hgcd_mat_init(M1, m, tp);
+        if ( M1.alloc &gt; room ) M1.alloc = room;
+        limb_t *const w = tp + hgcd_mat_itch(m);
+
+        const usize k = hgcd(ap + p2, bp + p2, m, M1, w);
+        if ( k &gt; 0 ) {
+          nn = hgcd_mat_adjust(M1, p2 + __adjust_width(k, M1.n, m), ap, bp, p2, w);
+          matrix22_mul(M, M1, w);
+          success = true;
+        }
+      }
+    }
+  }
+
+  for ( ;; ) {
+    if ( nn &lt;= s ) break;
+    if ( normalize(bp, nn) == 0 ) break;
+    const usize k = hgcd_step(nn, ap, bp, s, M, tp);
+    if ( k == 0 ) break;
+    nn = k;
+    success = true;
+  }
+
+  return success ? nn : 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L421">line 421</a></td></tr><tr class="t-dsc"><td><code>success ? nn : 0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L446">line 446</a></td></tr><tr class="t-dsc"><td><code>success ? nn : 0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L448">line 448</a></td></tr><tr class="t-dsc"><td><code>success ? nn : 0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L486">line 486</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="hgcd.hpp.html#f-f724d6aea04ba8c4">hgcd_mat_adjust</a>, <a href="hgcd.hpp.html#f-9bdad846c508ebfa">__adjust_width</a>, <a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="hgcd.hpp.html#f-f4c4dd9c400ca8aa">hgcd_step</a>, <a href="hgcd.hpp.html#f-1ff26a01a70a2744">hgcd_mat_init</a>, <a href="hgcd.hpp.html#f-ec5a23a4a8ebe3a5">hgcd_mat_itch</a>, <a href="hgcd.hpp.html#f-5864e8d0c50f75b2">matrix22_mul</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-fc4ccd2be271e68f"><h3><code>micron::math::mpn::__mul_ord(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, limb_t *sc) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L100">line 100</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline constexpr void
+__mul_ord(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, limb_t *sc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>const limb_t *ap</code></li><li><code>usize an</code></li><li><code>const limb_t *bp</code></li><li><code>usize bn</code></li><li><code>limb_t *sc</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline constexpr void
+__mul_ord(limb_t *rp, const limb_t *ap, usize an, const limb_t *bp, usize bn, limb_t *sc) noexcept
+{
+  if ( an &gt;= bn )
+    mul(rp, ap, an, bp, bn, sc);
+  else
+    mul(rp, bp, bn, ap, an, sc);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul.hpp.html#f-e7f7cb20e6b85f6a">mul</a>.</p></section><section class="function-entry" id="f-9bdad846c508ebfa"><h3><code>micron::math::mpn::__adjust_width(usize k, usize mn, usize h) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L158">line 158</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr usize
+__adjust_width(usize k, usize mn, usize h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize k</code></li><li><code>usize mn</code></li><li><code>usize h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr usize
+__adjust_width(usize k, usize mn, usize h) noexcept
+{
+  usize w = k &gt; mn + 1u ? k : mn + 1u;
+  if ( w &gt; h ) w = h;
+  return w;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>w</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L162">line 162</a></td></tr></tbody></table></section><section class="function-entry" id="f-56950b64a63140f5"><h3><code>micron::math::mpn::__mat1_make_even(mat1 &amp;m) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L234">line 234</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::always_inline]] inline constexpr bool
+__mat1_make_even(mat1 &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat1 &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::always_inline]] inline constexpr bool
+__mat1_make_even(mat1 &amp;m) noexcept
+{
+  if ( m.u00 &gt; m.u01 ) return true;
+
+  const limb_t q = static_cast&lt;limb_t&gt;(m.u01 / m.u00);
+  m.u01 = static_cast&lt;limb_t&gt;(m.u01 - q * m.u00);
+  m.u11 = static_cast&lt;limb_t&gt;(m.u11 - q * m.u10);
+
+  return !(m.u00 == 1u &amp;&amp; m.u01 == 0u &amp;&amp; m.u10 == 0u &amp;&amp; m.u11 == 1u);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L236">line 236</a></td></tr><tr class="t-dsc"><td><code>!(m.u00 == 1u &amp;&amp; m.u01 == 0u &amp;&amp; m.u10 == 0u &amp;&amp; m.u11 == 1u)</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L242">line 242</a></td></tr></tbody></table></section><section class="function-entry" id="f-a3184ead92f51569"><h3><code>micron::math::mpn::__gcd_hook::quotient(const limb_t *, usize) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L260">line 260</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr bool
+  quotient(const limb_t *, usize) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const limb_t *</code></li><li><code>usize</code></li></ul><h4>Effects</h4><p>Returns <code>true</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr bool
+  quotient(const limb_t *, usize) noexcept
+  {
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L262">line 262</a></td></tr></tbody></table></section><section class="function-entry" id="f-8e40128c737ec354"><h3><code>micron::math::mpn::__subdiv_step(limb_t *ap, limb_t *bp, usize n, Hook &amp;hook, limb_t *tp) noexcept</code></h3><p>Defined in <code>math/arbint/hgcd.hpp</code>, <a href="../../../source/math/arbint/hgcd.hpp.html#L268">line 268</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class Hook&gt;
+[[nodiscard]] inline constexpr usize
+__subdiv_step(limb_t *ap, limb_t *bp, usize n, Hook &amp;hook, limb_t *tp) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *ap</code></li><li><code>limb_t *bp</code></li><li><code>usize n</code></li><li><code>Hook &amp;hook</code></li><li><code>limb_t *tp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class Hook&gt;
+[[nodiscard]] inline constexpr usize
+__subdiv_step(limb_t *ap, limb_t *bp, usize n, Hook &amp;hook, limb_t *tp) noexcept
+{
+  const usize an = normalize(ap, n);
+  const usize bn = normalize(bp, n);
+  if ( bn == 0 || an &lt; bn ) return 0;
+
+  limb_t *const qp = tp;                       // an - bn + 1
+  limb_t *const rp = qp + (an - bn + 1u);      // bn
+  limb_t *const work = rp + bn;
+
+  divrem(qp, rp, ap, an, bp, bn, work);
+  const usize qn = normalize(qp, an - bn + 1u);
+  const usize rn = normalize(rp, bn);
+
+  // nothing has moved yet, so a refusal costs the division and no correctness
+  if ( !hook.quotient(qp, qn) ) return 0;
+
+  copyi(ap, bp, bn);
+  zero(ap + bn, n - bn);
+  copyi(bp, rp, rn);
+  zero(bp + rn, n - rn);
+  return bn;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L272">line 272</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L283">line 283</a></td></tr><tr class="t-dsc"><td><code>bn</code></td><td><a href="../../../source/math/arbint/hgcd.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="div_mu.hpp.html#f-eeb8063a9a0ba734">divrem</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

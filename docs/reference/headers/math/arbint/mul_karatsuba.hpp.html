@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/mul_karatsuba.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/mul_karatsuba.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/mul_karatsuba.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/mul_karatsuba.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-a90219ec6f1eb3b5">micron::math::mpn::karatsuba_force</code></td><td>variable; line 38</td></tr><tr class="t-dsc"><td><a href="#f-37cfdf23f68ccec2">micron::math::mpn::karatsuba_itch(usize n, usize cutoff = threshold::mul_karatsuba) noexcept</a></td><td>function; line 41</td></tr><tr class="t-dsc"><td><a href="#f-d9da202a48e4e577">micron::math::mpn::unbalanced_stage_itch(usize an, usize bn, usize cutoff) noexcept</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-0fe514ac3fdda673">micron::math::mpn::mul_karatsuba_n(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, const limb_t *__restrict__ bp, usize n, limb_t *scratch,
+                usize cutoff) noexcept</a></td><td>function; line 72</td></tr><tr class="t-dsc"><td><a href="#f-213273d52fef4b9b">micron::math::mpn::mul_karatsuba_unbalanced(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                         limb_t *scratch, usize cutoff) noexcept</a></td><td>function; line 116</td></tr><tr class="t-dsc"><td><a href="#f-5474a93d50edac85">micron::math::mpn::mul_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch,
+              usize cutoff = threshold::mul_karatsuba) noexcept</a></td><td>function; line 157</td></tr><tr class="t-dsc"><td><a href="#f-5487820eb96a9ad1">micron::math::mpn::mul_karatsuba_top(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                  limb_t *scratch) noexcept</a></td><td>function; line 164</td></tr><tr class="t-dsc"><td><a href="#f-bd3f18ac592ef42e">micron::math::mpn::sqr_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch,
+                                    usize cutoff) noexcept</a></td><td>function; line 177</td></tr><tr class="t-dsc"><td><a href="#f-02ad61341d15521e">micron::math::mpn::sqr_karatsuba_n(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch, usize cutoff) noexcept</a></td><td>function; line 181</td></tr><tr class="t-dsc"><td><a href="#f-9e1b073dcdf47a29">micron::math::mpn::sqr_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch,
+              usize cutoff = threshold::sqr_karatsuba) noexcept</a></td><td>function; line 208</td></tr><tr class="t-dsc"><td><a href="#f-7130814f90db535c">micron::math::mpn::sqr_karatsuba_top(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</a></td><td>function; line 220</td></tr><tr class="t-dsc"><td><a href="#f-9345b4873ac97a10">micron::math::mpn::sqr_karatsuba_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept</a></td><td>function; line 230</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-37cfdf23f68ccec2"><h3><code>micron::math::mpn::karatsuba_itch(usize n, usize cutoff = threshold::mul_karatsuba) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L41">line 41</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+karatsuba_itch(usize n, usize cutoff = threshold::mul_karatsuba) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>usize cutoff = threshold::mul_karatsuba</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+karatsuba_itch(usize n, usize cutoff = threshold::mul_karatsuba) noexcept
+{
+  if ( cutoff &lt; 2u ) cutoff = 2u;
+  usize total = 0;
+  while ( n &gt;= cutoff &amp;&amp; n &gt;= 2u ) {
+    const usize k = (n + 1u) / 2u;
+    total += 6u * k + 1u;
+    n = k;
+  }
+  return total;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total</code></td><td><a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L50">line 50</a></td></tr></tbody></table></section><section class="function-entry" id="f-d9da202a48e4e577"><h3><code>micron::math::mpn::unbalanced_stage_itch(usize an, usize bn, usize cutoff) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+unbalanced_stage_itch(usize an, usize bn, usize cutoff) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize bn</code></li><li><code>usize cutoff</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+unbalanced_stage_itch(usize an, usize bn, usize cutoff) noexcept
+{
+  if ( cutoff &lt; 2u ) cutoff = 2u;
+  usize total = 0;
+  while ( an &gt; bn &amp;&amp; bn &gt;= cutoff &amp;&amp; bn &gt;= 2u ) {
+    total += 2u * bn;
+    const usize take = an % bn;
+    if ( take == 0 ) break;
+    an = bn;
+    bn = take;
+  }
+  return total;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total</code></td><td><a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L65">line 65</a></td></tr></tbody></table></section><section class="function-entry" id="f-0fe514ac3fdda673"><h3><code>micron::math::mpn::mul_karatsuba_n(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, const limb_t *__restrict__ bp, usize n, limb_t *scratch,
+                usize cutoff) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L72">line 72</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+mul_karatsuba_n(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, const limb_t *__restrict__ bp, usize n, limb_t *scratch,
+                usize cutoff) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li><li><code>usize cutoff</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+mul_karatsuba_n(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, const limb_t *__restrict__ bp, usize n, limb_t *scratch,
+                usize cutoff) noexcept
+{
+  const usize k = (n + 1u) / 2u;
+  const usize h = n - k;
+
+  limb_t *const asm1 = scratch;          // k
+  limb_t *const bsm1 = asm1 + k;         // k
+  limb_t *const vm1 = bsm1 + k;          // 2k
+  limb_t *const mid = vm1 + 2u * k;      // 2k + 1
+  limb_t *const rec = mid + 2u * k + 1u;
+
+  // |a0 - a1|, and the same for b
+  copyi(asm1, ap + k, h);
+  zero(asm1 + h, k - h);
+  const bool asign = cmp(ap, asm1, k) &lt; 0;
+  if ( asign )
+    (void)sub_n(asm1, asm1, ap, k);
+  else
+    (void)sub_n(asm1, ap, asm1, k);
+
+  copyi(bsm1, bp + k, h);
+  zero(bsm1 + h, k - h);
+  const bool bsign = cmp(bp, bsm1, k) &lt; 0;
+  if ( bsign )
+    (void)sub_n(bsm1, bsm1, bp, k);
+  else
+    (void)sub_n(bsm1, bp, bsm1, k);
+
+  __mul_rec(rp, ap, k, bp, k, rec, cutoff);                       // z0 -&gt; rp[0, 2k)
+  __mul_rec(rp + 2u * k, ap + k, h, bp + k, h, rec, cutoff);      // z2 -&gt; rp[2k, 2n)
+  __mul_rec(vm1, asm1, k, bsm1, k, rec, cutoff);                  // |a0-a1| * |b0-b1|
+
+  mid[2u * k] = add(mid, rp, 2u * k, rp + 2u * k, 2u * h);
+  if ( asign == bsign )
+    (void)sub(mid, mid, 2u * k + 1u, vm1, 2u * k);
+  else
+    (void)add(mid, mid, 2u * k + 1u, vm1, 2u * k);
+
+  const limb_t cy = add(rp + k, rp + k, 2u * n - k, mid, n + 1u);
+  (void)cy;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mpn_core.hpp.html#f-f2b616d01668414d">cmp</a>, <a href="mpn_core.hpp.html#f-e077a5c4963fab6b">sub_n</a>, <a href="mul_karatsuba.hpp.html#f-dcd9fa03f8695c5b">__mul_rec</a>, <a href="mpn_core.hpp.html#f-7766a59ba519d780">add</a>, <a href="mpn_core.hpp.html#f-e845dacf002635a3">sub</a>.</p></section><section class="function-entry" id="f-213273d52fef4b9b"><h3><code>micron::math::mpn::mul_karatsuba_unbalanced(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                         limb_t *scratch, usize cutoff) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L116">line 116</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+mul_karatsuba_unbalanced(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                         limb_t *scratch, usize cutoff) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li><li><code>usize cutoff</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+mul_karatsuba_unbalanced(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                         limb_t *scratch, usize cutoff) noexcept
+{
+  limb_t *const block = scratch;      // 2*bn
+  limb_t *const rec = block + 2u * bn;
+
+  usize done = bn &lt; an ? bn : an;
+  __mul_rec(rp, ap, done, bp, bn, rec, cutoff);
+  zero(rp + done + bn, an - done);
+
+  while ( done &lt; an ) {
+    const usize take = (an - done) &lt; bn ? (an - done) : bn;
+    __mul_rec(block, bp, bn, ap + done, take, rec, cutoff);
+    const limb_t cy = add(rp + done, rp + done, an + bn - done, block, take + bn);
+    (void)cy;
+    done += take;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul_karatsuba.hpp.html#f-dcd9fa03f8695c5b">__mul_rec</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mpn_core.hpp.html#f-7766a59ba519d780">add</a>.</p></section><section class="function-entry" id="f-5474a93d50edac85"><h3><code>micron::math::mpn::mul_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch,
+              usize cutoff = threshold::mul_karatsuba) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L157">line 157</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+mul_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch,
+              usize cutoff = threshold::mul_karatsuba) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li><li><code>usize cutoff = threshold::mul_karatsuba</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+mul_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch,
+              usize cutoff = threshold::mul_karatsuba) noexcept
+{
+  __mul_rec(rp, ap, an, bp, bn, scratch, cutoff &lt; 2u ? 2u : cutoff);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mul_karatsuba.hpp.html#f-dcd9fa03f8695c5b">__mul_rec</a>.</p></section><section class="function-entry" id="f-5487820eb96a9ad1"><h3><code>micron::math::mpn::mul_karatsuba_top(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                  limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L164">line 164</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+mul_karatsuba_top(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                  limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+mul_karatsuba_top(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                  limb_t *scratch) noexcept
+{
+  if ( bn &lt; 2u ) {
+    __mul_rec(rp, ap, an, bp, bn, scratch, threshold::mul_karatsuba);
+    return;
+  }
+  if ( an == bn )
+    mul_karatsuba_n(rp, ap, bp, an, scratch, threshold::mul_karatsuba);
+  else
+    mul_karatsuba_unbalanced(rp, ap, an, bp, bn, scratch, threshold::mul_karatsuba);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L169">line 169</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_karatsuba.hpp.html#f-dcd9fa03f8695c5b">__mul_rec</a>, <a href="mul_karatsuba.hpp.html#f-0fe514ac3fdda673">mul_karatsuba_n</a>, <a href="mul_karatsuba.hpp.html#f-213273d52fef4b9b">mul_karatsuba_unbalanced</a>.</p></section><section class="function-entry" id="f-bd3f18ac592ef42e"><h3><code>micron::math::mpn::sqr_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch,
+                                    usize cutoff) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L177">line 177</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void sqr_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch,
+                                    usize cutoff) noexcept;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li><li><code>usize cutoff</code></li></ul><h4>Effects</h4><p>See <a href="mul_karatsuba.hpp.html#f-9e1b073dcdf47a29">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-02ad61341d15521e"><h3><code>micron::math::mpn::sqr_karatsuba_n(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch, usize cutoff) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L181">line 181</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+sqr_karatsuba_n(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch, usize cutoff) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li><li><code>usize cutoff</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+sqr_karatsuba_n(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch, usize cutoff) noexcept
+{
+  const usize k = (n + 1u) / 2u;
+  const usize h = n - k;
+
+  limb_t *const asm1 = scratch;
+  limb_t *const vm1 = asm1 + k;
+  limb_t *const mid = vm1 + 2u * k;
+  limb_t *const rec = mid + 2u * k + 1u;
+
+  copyi(asm1, ap + k, h);
+  zero(asm1 + h, k - h);
+  if ( cmp(ap, asm1, k) &lt; 0 )
+    (void)sub_n(asm1, asm1, ap, k);
+  else
+    (void)sub_n(asm1, ap, asm1, k);
+
+  sqr_karatsuba(rp, ap, k, rec, cutoff);
+  sqr_karatsuba(rp + 2u * k, ap + k, h, rec, cutoff);
+  sqr_karatsuba(vm1, asm1, k, rec, cutoff);
+
+  mid[2u * k] = add(mid, rp, 2u * k, rp + 2u * k, 2u * h);
+  (void)sub(mid, mid, 2u * k + 1u, vm1, 2u * k);      // (a0-a1)^2 is never negative
+  (void)add(rp + k, rp + k, 2u * n - k, mid, n + 1u);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="mpn_core.hpp.html#f-f2b616d01668414d">cmp</a>, <a href="mpn_core.hpp.html#f-e077a5c4963fab6b">sub_n</a>, <a href="mul_karatsuba.hpp.html#f-9e1b073dcdf47a29">sqr_karatsuba</a>, <a href="mpn_core.hpp.html#f-7766a59ba519d780">add</a>, <a href="mpn_core.hpp.html#f-e845dacf002635a3">sub</a>.</p></section><section class="function-entry" id="f-9e1b073dcdf47a29"><h3><code>micron::math::mpn::sqr_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch,
+              usize cutoff = threshold::sqr_karatsuba) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L208">line 208</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+sqr_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch,
+              usize cutoff = threshold::sqr_karatsuba) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li><li><code>usize cutoff = threshold::sqr_karatsuba</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+sqr_karatsuba(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch,
+              usize cutoff = threshold::sqr_karatsuba) noexcept
+{
+  if ( cutoff &lt; 2u ) cutoff = 2u;
+  if ( n &lt; cutoff || n &lt; 2u ) {
+    sqr_basecase(rp, ap, n);
+    return;
+  }
+  sqr_karatsuba_n(rp, ap, n, scratch, cutoff);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L214">line 214</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_basecase.hpp.html#f-7c64e70840e2558d">sqr_basecase</a>, <a href="mul_karatsuba.hpp.html#f-02ad61341d15521e">sqr_karatsuba_n</a>.</p></section><section class="function-entry" id="f-7130814f90db535c"><h3><code>micron::math::mpn::sqr_karatsuba_top(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L220">line 220</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+sqr_karatsuba_top(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize n</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+sqr_karatsuba_top(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize n, limb_t *scratch) noexcept
+{
+  if ( n &lt; 2u ) {
+    sqr_basecase(rp, ap, n);
+    return;
+  }
+  sqr_karatsuba_n(rp, ap, n, scratch, threshold::sqr_karatsuba);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L224">line 224</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mul_basecase.hpp.html#f-7c64e70840e2558d">sqr_basecase</a>, <a href="mul_karatsuba.hpp.html#f-02ad61341d15521e">sqr_karatsuba_n</a>.</p></section><section class="function-entry" id="f-9345b4873ac97a10"><h3><code>micron::math::mpn::sqr_karatsuba_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L230">line 230</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_karatsuba_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>usize cutoff = threshold::sqr_karatsuba</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+sqr_karatsuba_itch(usize n, usize cutoff = threshold::sqr_karatsuba) noexcept
+{
+  if ( cutoff &lt; 2u ) cutoff = 2u;
+  usize total = 0;
+  while ( n &gt;= cutoff &amp;&amp; n &gt;= 2u ) {
+    const usize k = (n + 1u) / 2u;
+    total += 5u * k + 1u;
+    n = k;
+  }
+  return total;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>total</code></td><td><a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L239">line 239</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-dcd9fa03f8695c5b"><h3><code>micron::math::mpn::__mul_rec(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                                limb_t *scratch, usize cutoff) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L68">line 68</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void __mul_rec(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn,
+                                limb_t *scratch, usize cutoff) noexcept;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li><li><code>usize cutoff</code></li></ul><h4>Effects</h4><p>This is a declaration. Its body is supplied by the runtime, compiler, or host. The source declaration does not specify additional effects.</p></section><section class="function-entry" id="f-af59ca5ab2ac83f7"><h3><code>micron::math::mpn::__mul_rec(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch,
+          usize cutoff) noexcept</code></h3><p>Defined in <code>math/arbint/mul_karatsuba.hpp</code>, <a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L136">line 136</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+__mul_rec(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch,
+          usize cutoff) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *__restrict__ rp</code></li><li><code>const limb_t *__restrict__ ap</code></li><li><code>usize an</code></li><li><code>const limb_t *__restrict__ bp</code></li><li><code>usize bn</code></li><li><code>limb_t *scratch</code></li><li><code>usize cutoff</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+__mul_rec(limb_t *__restrict__ rp, const limb_t *__restrict__ ap, usize an, const limb_t *__restrict__ bp, usize bn, limb_t *scratch,
+          usize cutoff) noexcept
+{
+  if ( bn == 1 ) {
+    rp[an] = mul_1(rp, ap, an, bp[0]);
+    return;
+  }
+  if ( bn &lt; cutoff ) {
+    if ( bn &lt; threshold::mul_comba )
+      mul_basecase(rp, ap, an, bp, bn);
+    else
+      mul_comba(rp, ap, an, bp, bn);
+    return;
+  }
+  if ( an == bn )
+    mul_karatsuba_n(rp, ap, bp, an, scratch, cutoff);
+  else
+    mul_karatsuba_unbalanced(rp, ap, an, bp, bn, scratch, cutoff);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L141">line 141</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/arbint/mul_karatsuba.hpp.html#L148">line 148</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-3b73931b0fe4109c">mul_1</a>, <a href="mul_basecase.hpp.html#f-b800a0c791e5e7d5">mul_basecase</a>, <a href="mul_basecase.hpp.html#f-c693bcab2601fa30">mul_comba</a>, <a href="mul_karatsuba.hpp.html#f-0fe514ac3fdda673">mul_karatsuba_n</a>, <a href="mul_karatsuba.hpp.html#f-213273d52fef4b9b">mul_karatsuba_unbalanced</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

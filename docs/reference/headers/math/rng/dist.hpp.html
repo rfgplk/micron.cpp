@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/rng/dist.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/rng/dist.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/random.html">Random numbers</a></div><p>Defined in header <code>&lt;micron/math/rng/dist.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/rng/dist.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-33ea575d79cc93f6">micron::math::rng::dist::uniform_open_real(Rng &amp;g) noexcept</a></td><td>function; line 36</td></tr><tr class="t-dsc"><td><a href="#f-d9f2bc9bae7b7d44">micron::math::rng::dist::uniform_real(Rng &amp;g) noexcept</a></td><td>function; line 105</td></tr><tr class="t-dsc"><td><a href="#f-c1f234414e789a3d">micron::math::rng::dist::uniform_real(Rng &amp;g, F lo, F hi) noexcept</a></td><td>function; line 118</td></tr><tr class="t-dsc"><td><a href="#f-c18065f35a50631b">micron::math::rng::dist::uniform_open_real(Rng &amp;g) noexcept</a></td><td>function; line 127</td></tr><tr class="t-dsc"><td><a href="#f-aa8f5e954e6e20c9">micron::math::rng::dist::uniform_uint_below(Rng &amp;g, U range) noexcept</a></td><td>function; line 143</td></tr><tr class="t-dsc"><td><a href="#f-ca595ff19d0deb1d">micron::math::rng::dist::uniform_int(Rng &amp;g, T lo, T hi) noexcept</a></td><td>function; line 178</td></tr><tr class="t-dsc"><td><a href="#f-d390527292a5b6fc">micron::math::rng::dist::bernoulli(Rng &amp;g, f64 p = 0.5) noexcept</a></td><td>function; line 197</td></tr><tr class="t-dsc"><td><a href="#f-ee7611bbd1791258">micron::math::rng::dist::normal(Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</a></td><td>function; line 210</td></tr><tr class="t-dsc"><td><a href="#f-d4fe8b85090f12c0">micron::math::rng::dist::exp_dist(Rng &amp;g, F lambda = F(1)) noexcept</a></td><td>function; line 219</td></tr><tr class="t-dsc"><td><a href="#f-699bfd7fedc638d4">micron::math::rng::dist::poisson(Rng &amp;g, f64 lambda) noexcept</a></td><td>function; line 230</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-33ea575d79cc93f6"><h3><code>micron::math::rng::dist::uniform_open_real(Rng &amp;g) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L36">line 36</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, rng_concept Rng&gt; [[nodiscard]] inline F uniform_open_real(Rng &amp;g) noexcept;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li></ul><h4>Effects</h4><p>See <a href="dist.hpp.html#f-c18065f35a50631b">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-d9f2bc9bae7b7d44"><h3><code>micron::math::rng::dist::uniform_real(Rng &amp;g) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L105">line 105</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline F
+uniform_real(Rng &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline F
+uniform_real(Rng &amp;g) noexcept
+{
+  if constexpr ( sizeof(F) == 8 ) {
+    const u64 r = rng::__impl::next64(g);
+    return F(static_cast&lt;double&gt;(r &gt;&gt; 11) * 0x1.0p-53);
+  } else {
+    const u32 r = rng::__impl::next32(g);
+    return F(static_cast&lt;float&gt;(r &gt;&gt; 8) * 0x1.0p-24f);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(static_cast&lt;double&gt;(r &gt;&gt; 11) * 0x1.0p-53)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L109">line 109</a></td></tr><tr class="t-dsc"><td><code>F(static_cast&lt;float&gt;(r &gt;&gt; 8) * 0x1.0p-24f)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engines.hpp.html#f-102ea355b87ec387">rng::__impl::next64</a>, <a href="engines.hpp.html#f-2ad93f759a8489b6">rng::__impl::next32</a>.</p></section><section class="function-entry" id="f-c1f234414e789a3d"><h3><code>micron::math::rng::dist::uniform_real(Rng &amp;g, F lo, F hi) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L118">line 118</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline F
+uniform_real(Rng &amp;g, F lo, F hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>F lo</code></li><li><code>F hi</code></li></ul><h4>Effects</h4><p>Returns <code>lo + (hi - lo) * uniform_real&lt;F&gt;(g)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline F
+uniform_real(Rng &amp;g, F lo, F hi) noexcept
+{
+  return lo + (hi - lo) * uniform_real&lt;F&gt;(g);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lo + (hi - lo) * uniform_real&lt;F&gt;(g)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L120">line 120</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="dist.hpp.html#f-d9f2bc9bae7b7d44">uniform_real&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c18065f35a50631b"><h3><code>micron::math::rng::dist::uniform_open_real(Rng &amp;g) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L127">line 127</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline F
+uniform_open_real(Rng &amp;g) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline F
+uniform_open_real(Rng &amp;g) noexcept
+{
+  if constexpr ( sizeof(F) == 8 ) {
+    const u64 odd = ((rng::__impl::next64(g) &gt;&gt; 12) &lt;&lt; 1) | 1ULL;
+    return F(odd * 0x1.0p-53);
+  } else {
+    const u32 odd = ((rng::__impl::next32(g) &gt;&gt; 9) &lt;&lt; 1) | 1u;
+    return F(odd * 0x1.0p-24f);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(odd * 0x1.0p-53)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L131">line 131</a></td></tr><tr class="t-dsc"><td><code>F(odd * 0x1.0p-24f)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L134">line 134</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engines.hpp.html#f-102ea355b87ec387">rng::__impl::next64</a>, <a href="engines.hpp.html#f-2ad93f759a8489b6">rng::__impl::next32</a>.</p></section><section class="function-entry" id="f-aa8f5e954e6e20c9"><h3><code>micron::math::rng::dist::uniform_uint_below(Rng &amp;g, U range) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L143">line 143</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename U, rng_concept Rng&gt;
+  requires(micron::is_unsigned_v&lt;U&gt; &amp;&amp; micron::is_integral_v&lt;U&gt;)
+[[nodiscard, gnu::always_inline]] inline U
+uniform_uint_below(Rng &amp;g, U range) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>U range</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename U, rng_concept Rng&gt;
+  requires(micron::is_unsigned_v&lt;U&gt; &amp;&amp; micron::is_integral_v&lt;U&gt;)
+[[nodiscard, gnu::always_inline]] inline U
+uniform_uint_below(Rng &amp;g, U range) noexcept
+{
+  if ( range == 0 ) return 0;
+  if constexpr ( sizeof(U) &lt;= 4 ) {
+    u32 x = rng::__impl::next32(g);
+    u64 m = u64(x) * u64(range);
+    u32 l = u32(m);
+    if ( l &lt; range ) {
+      u32 t = u32(-range) % range;
+      while ( l &lt; t ) {
+        x = rng::__impl::next32(g);
+        m = u64(x) * u64(range);
+        l = u32(m);
+      }
+    }
+    return U(m &gt;&gt; 32);
+  } else {
+    u64 x = rng::__impl::next64(g);
+    u128 m = u128(x) * u128(range);
+    u64 l = u64(m);
+    if ( l &lt; range ) {
+      u64 t = u64(0 - range) % range;
+      while ( l &lt; t ) {
+        x = rng::__impl::next64(g);
+        m = u128(x) * u128(range);
+        l = u64(m);
+      }
+    }
+    return U(u64(m &gt;&gt; 64));
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>U(m &gt;&gt; 32)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L158">line 158</a></td></tr><tr class="t-dsc"><td><code>U(u64(m &gt;&gt; 64))</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L171">line 171</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engines.hpp.html#f-2ad93f759a8489b6">rng::__impl::next32</a>, <a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="../../types.hpp.html#s-f3fe2e99a2368c8e">u32</a>, <a href="engines.hpp.html#f-102ea355b87ec387">rng::__impl::next64</a>, <a href="../../types.hpp.html#s-da7d8b11a3cdd64b">u128</a>.</p></section><section class="function-entry" id="f-ca595ff19d0deb1d"><h3><code>micron::math::rng::dist::uniform_int(Rng &amp;g, T lo, T hi) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L178">line 178</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, rng_concept Rng&gt;
+  requires(micron::is_integral_v&lt;T&gt;)
+[[nodiscard, gnu::always_inline]] inline T
+uniform_int(Rng &amp;g, T lo, T hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>T lo</code></li><li><code>T hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, rng_concept Rng&gt;
+  requires(micron::is_integral_v&lt;T&gt;)
+[[nodiscard, gnu::always_inline]] inline T
+uniform_int(Rng &amp;g, T lo, T hi) noexcept
+{
+  if ( hi &lt;= lo ) return lo;
+  using U = micron::make_unsigned_t&lt;T&gt;;
+  const U span = U(hi) - U(lo);
+  if ( span == U(~U(0)) ) {
+    if constexpr ( sizeof(U) &lt;= 4 )
+      return T(U(rng::__impl::next32(g)));
+    else
+      return T(U(rng::__impl::next64(g)));
+  }
+  const U range = span + U(1);
+  return T(U(lo) + uniform_uint_below&lt;U&gt;(g, range));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lo</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L180">line 180</a></td></tr><tr class="t-dsc"><td><code>T(U(rng::__impl::next32(g)))</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L185">line 185</a></td></tr><tr class="t-dsc"><td><code>T(U(rng::__impl::next64(g)))</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>T(U(lo) + uniform_uint_below&lt;U&gt;(g, range))</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L190">line 190</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engines.hpp.html#f-2ad93f759a8489b6">rng::__impl::next32</a>, <a href="engines.hpp.html#f-102ea355b87ec387">rng::__impl::next64</a>, <a href="dist.hpp.html#f-aa8f5e954e6e20c9">uniform_uint_below&lt;U&gt;</a>.</p></section><section class="function-entry" id="f-d390527292a5b6fc"><h3><code>micron::math::rng::dist::bernoulli(Rng &amp;g, f64 p = 0.5) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L197">line 197</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline bool
+bernoulli(Rng &amp;g, f64 p = 0.5) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>f64 p = 0.5</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline bool
+bernoulli(Rng &amp;g, f64 p = 0.5) noexcept
+{
+  if ( p &lt;= 0.0 ) return false;
+  if ( p &gt;= 1.0 ) return true;
+  if ( p == 0.5 ) return (rng::__impl::next32(g) &gt;&gt; 31) != 0;
+  return uniform_real&lt;f64&gt;(g) &lt; p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L199">line 199</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L200">line 200</a></td></tr><tr class="t-dsc"><td><code>(rng::__impl::next32(g) &gt;&gt; 31) != 0</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L201">line 201</a></td></tr><tr class="t-dsc"><td><code>uniform_real&lt;f64&gt;(g) &lt; p</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L202">line 202</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engines.hpp.html#f-2ad93f759a8489b6">rng::__impl::next32</a>, <a href="dist.hpp.html#f-d9f2bc9bae7b7d44">uniform_real&lt;f64&gt;</a>.</p></section><section class="function-entry" id="f-ee7611bbd1791258"><h3><code>micron::math::rng::dist::normal(Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L210">line 210</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard]] inline F
+normal(Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>F mu = F(0)</code></li><li><code>F sigma = F(1)</code></li></ul><h4>Effects</h4><p>Returns <code>normal_ziggurat&lt;F&gt;(g, mu, sigma)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard]] inline F
+normal(Rng &amp;g, F mu = F(0), F sigma = F(1)) noexcept
+{
+  return normal_ziggurat&lt;F&gt;(g, mu, sigma);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>normal_ziggurat&lt;F&gt;(g, mu, sigma)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L212">line 212</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ziggurat.hpp.html#f-bb15f36770a9edd4">normal_ziggurat&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d4fe8b85090f12c0"><h3><code>micron::math::rng::dist::exp_dist(Rng &amp;g, F lambda = F(1)) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L219">line 219</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline F
+exp_dist(Rng &amp;g, F lambda = F(1)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>F lambda = F(1)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F = f64, rng_concept Rng&gt;
+[[nodiscard, gnu::always_inline]] inline F
+exp_dist(Rng &amp;g, F lambda = F(1)) noexcept
+{
+  // domain guard
+  if ( lambda &lt;= F(0) ) return math::ieee::inf_v&lt;F&gt;(0);
+  return -math::flog(uniform_open_real&lt;F&gt;(g)) / lambda;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::ieee::inf_v&lt;F&gt;(0)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L222">line 222</a></td></tr><tr class="t-dsc"><td><code>-math::flog(uniform_open_real&lt;F&gt;(g)) / lambda</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L223">line 223</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-b6ef3d91075bfc55">math::ieee::inf_v&lt;F&gt;</a>, <a href="../log.hpp.html#f-5933060d9f19f698">math::flog</a>, <a href="dist.hpp.html#f-c18065f35a50631b">uniform_open_real&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-699bfd7fedc638d4"><h3><code>micron::math::rng::dist::poisson(Rng &amp;g, f64 lambda) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L230">line 230</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I = i64, rng_concept Rng&gt;
+[[nodiscard]] inline I
+poisson(Rng &amp;g, f64 lambda) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>f64 lambda</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I = i64, rng_concept Rng&gt;
+[[nodiscard]] inline I
+poisson(Rng &amp;g, f64 lambda) noexcept
+{
+  const __impl::__poisson_cache cache(lambda);
+  return __impl::__poisson_cached&lt;I&gt;(g, cache);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__poisson_cached&lt;I&gt;(g, cache)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L233">line 233</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="dist.hpp.html#f-cc5fc006af954777">__impl::__poisson_cached&lt;I&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-154bbe98bdfc3d40"><h3><code>micron::math::rng::dist::__impl::__poisson_cache::__poisson_cache(f64 rate) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L52">line 52</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr explicit __poisson_cache(f64 rate) noexcept
+      : lambda(rate), cutoff(0.0), log_lambda(0.0), b(0.0), a(0.0), inv_alpha(0.0), vr(0.0),
+        valid(rate &gt; 0.0 &amp;&amp; math::ieee::is_finite(rate)), small(rate &lt; 10.0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>f64 rate</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr explicit __poisson_cache(f64 rate) noexcept
+      : lambda(rate), cutoff(0.0), log_lambda(0.0), b(0.0), a(0.0), inv_alpha(0.0), vr(0.0),
+        valid(rate &gt; 0.0 &amp;&amp; math::ieee::is_finite(rate)), small(rate &lt; 10.0)
+  {
+    if ( !valid ) return;
+    if ( small ) {
+      cutoff = math::fexp(-rate);
+      return;
+    }
+    const f64 root = math::fsqrt(rate);
+    log_lambda = math::flog(rate);
+    b = 0.931 + 2.53 * root;
+    a = -0.059 + 0.02483 * b;
+    inv_alpha = 1.1239 + 1.1328 / (b - 3.4);
+    vr = 0.9277 - 3.6224 / (b - 2.0);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/rng/dist.hpp.html#L56">line 56</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/rng/dist.hpp.html#L59">line 59</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-fe0d92c394047e3e">math::fexp</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../log.hpp.html#f-5933060d9f19f698">math::flog</a>.</p></section><section class="function-entry" id="f-cc5fc006af954777"><h3><code>micron::math::rng::dist::__impl::__poisson_cached(Rng &amp;g, const __poisson_cache &amp;p) noexcept</code></h3><p>Defined in <code>math/rng/dist.hpp</code>, <a href="../../../source/math/rng/dist.hpp.html#L72">line 72</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I, rng_concept Rng&gt;
+[[nodiscard]] inline I
+__poisson_cached(Rng &amp;g, const __poisson_cache &amp;p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Rng &amp;g</code></li><li><code>const __poisson_cache &amp;p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I, rng_concept Rng&gt;
+[[nodiscard]] inline I
+__poisson_cached(Rng &amp;g, const __poisson_cache &amp;p) noexcept
+{
+  if ( !p.valid ) return I(0);
+  if ( p.small ) {
+    I k = 0;
+    f64 product = 1.0;
+    do {
+      ++k;
+      product *= uniform_open_real&lt;f64&gt;(g);
+    } while ( product &gt; p.cutoff );
+    return I(k - 1);
+  }
+
+  for ( ;; ) {
+    const f64 u = uniform_open_real&lt;f64&gt;(g) - 0.5;
+    const f64 v = uniform_open_real&lt;f64&gt;(g);
+    const f64 us = 0.5 - (u &lt; 0.0 ? -u : u);
+    const i64 k = i64(math::ffloor((2.0 * p.a / us + p.b) * u + p.lambda + 0.43));
+    if ( k &lt; 0 ) continue;
+    if ( us &gt;= 0.07 &amp;&amp; v &lt;= p.vr ) return I(k);
+    if ( us &lt; 0.013 &amp;&amp; v &gt; us ) continue;
+    const f64 lhs = math::flog(v) + math::flog(p.inv_alpha) - math::flog(p.a / (us * us) + p.b);
+    const f64 rhs = -p.lambda + f64(k) * p.log_lambda - math::mk::special::lgamma&lt;f64&gt;(f64(k + 1));
+    if ( lhs &lt;= rhs ) return I(k);
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>I(0)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L74">line 74</a></td></tr><tr class="t-dsc"><td><code>I(k - 1)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L82">line 82</a></td></tr><tr class="t-dsc"><td><code>I(k)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L91">line 91</a></td></tr><tr class="t-dsc"><td><code>I(k)</code></td><td><a href="../../../source/math/rng/dist.hpp.html#L95">line 95</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="dist.hpp.html#f-c18065f35a50631b">uniform_open_real&lt;f64&gt;</a>, <a href="../../types.hpp.html#s-e4e8792a62ffa8d0">i64</a>, <a href="../generic.hpp.html#f-a1d3940fce4834d3">math::ffloor</a>, <a href="../log.hpp.html#f-5933060d9f19f698">math::flog</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="../mk.hpp.html#f-c03c6547d7d38a4b">math::mk::special::lgamma&lt;f64&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

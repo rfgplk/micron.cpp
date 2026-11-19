@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/queue/disruptor.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/queue/disruptor.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/queues.html">Queues</a></div><p>Defined in header <code>&lt;micron/queue/disruptor.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/queue/disruptor.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-f9584dcd08e4b82e">micron::disruptor</code></td><td>class; line 29</td></tr><tr class="t-dsc"><td><code id="s-a9f2c27214af8692">micron::disruptor::category_type</code></td><td>typedef; line 77</td></tr><tr class="t-dsc"><td><code id="s-a04c9375d8c4e14f">micron::disruptor::mutability_type</code></td><td>typedef; line 78</td></tr><tr class="t-dsc"><td><code id="s-29d568dde489ba15">micron::disruptor::memory_type</code></td><td>typedef; line 79</td></tr><tr class="t-dsc"><td><code id="s-17047c87a24c9635">micron::disruptor::value_type</code></td><td>typedef; line 80</td></tr><tr class="t-dsc"><td><code id="s-b970cf0c1a8f4a48">micron::disruptor::reference</code></td><td>typedef; line 81</td></tr><tr class="t-dsc"><td><code id="s-bdad7aa7518c15a1">micron::disruptor::const_reference</code></td><td>typedef; line 82</td></tr><tr class="t-dsc"><td><code id="s-52c0556ac36e84f0">micron::disruptor::pointer</code></td><td>typedef; line 83</td></tr><tr class="t-dsc"><td><code id="s-254bcbc9856ff0ec">micron::disruptor::const_pointer</code></td><td>typedef; line 84</td></tr><tr class="t-dsc"><td><a href="#f-29a16af366919924">micron::disruptor::~disruptor()</a></td><td>function; line 86</td></tr><tr class="t-dsc"><td><a href="#f-eaab5a3ac59ec1df">micron::disruptor::disruptor()</a></td><td>function; line 88</td></tr><tr class="t-dsc"><td><a href="#f-48763d5b244b472f">micron::disruptor::disruptor(const disruptor &amp;)</a></td><td>function; line 90</td></tr><tr class="t-dsc"><td><a href="#f-803dc8be99ffc5e6">micron::disruptor::disruptor(disruptor &amp;&amp;)</a></td><td>function; line 91</td></tr><tr class="t-dsc"><td><a href="#f-2175889ed4c66876">micron::disruptor::operator=(const disruptor &amp;)</a></td><td>function; line 92</td></tr><tr class="t-dsc"><td><a href="#f-6e5e61c9902162d9">micron::disruptor::operator=(disruptor &amp;&amp;)</a></td><td>function; line 93</td></tr><tr class="t-dsc"><td><a href="#f-c398a69c5f13b44a">micron::disruptor::capacity() const noexcept</a></td><td>function; line 96</td></tr><tr class="t-dsc"><td><a href="#f-d8d5d996003dce1c">micron::disruptor::max_size() const noexcept</a></td><td>function; line 102</td></tr><tr class="t-dsc"><td><a href="#f-bcc90e9fc3bd1029">micron::disruptor::size() const noexcept</a></td><td>function; line 108</td></tr><tr class="t-dsc"><td><a href="#f-2632f1603ca86aa3">micron::disruptor::empty() const noexcept</a></td><td>function; line 117</td></tr><tr class="t-dsc"><td><a href="#f-1a1051792960d024">micron::disruptor::clear()</a></td><td>function; line 124</td></tr><tr class="t-dsc"><td><a href="#f-85d5b0c6dad5b968">micron::disruptor::publish(const T &amp;val)</a></td><td>function; line 138</td></tr><tr class="t-dsc"><td><a href="#f-396ea6c2d8ea863a">micron::disruptor::publish(T &amp;&amp;val)</a></td><td>function; line 158</td></tr><tr class="t-dsc"><td><a href="#f-4fd358a6911988e2">micron::disruptor::try_publish_batch(const T *items, usize count)</a></td><td>function; line 178</td></tr><tr class="t-dsc"><td><a href="#f-6399c1ffe3109bb3">micron::disruptor::consume(T &amp;out)</a></td><td>function; line 211</td></tr><tr class="t-dsc"><td><a href="#f-4315d14fe1c9b303">micron::disruptor::try_consume_batch(T *items, usize count)</a></td><td>function; line 230</td></tr><tr class="t-dsc"><td><a href="#f-daa34e5f63272244">micron::disruptor::peek(T &amp;out) const</a></td><td>function; line 265</td></tr><tr class="t-dsc"><td><a href="#f-aef058ded0c4ba57">micron::disruptor::pub_cursor() const noexcept</a></td><td>function; line 275</td></tr><tr class="t-dsc"><td><a href="#f-aa3c6a7992d44820">micron::disruptor::cons_cursor() const noexcept</a></td><td>function; line 281</td></tr><tr class="t-dsc"><td><a href="#f-b71da856dd42456d">micron::disruptor::push(const T &amp;val)</a></td><td>function; line 287</td></tr><tr class="t-dsc"><td><a href="#f-c2a5b4867fc48a80">micron::disruptor::push(T &amp;&amp;val)</a></td><td>function; line 293</td></tr><tr class="t-dsc"><td><a href="#f-ec952b84b684cfc6">micron::disruptor::pop(T &amp;out)</a></td><td>function; line 299</td></tr><tr class="t-dsc"><td><a href="#f-65633769fbde127c">micron::disruptor::emplace(Args &amp;&amp;...args)</a></td><td>function; line 306</td></tr><tr class="t-dsc"><td><a href="#f-9743c5fa05e1b915">micron::disruptor::front()</a></td><td>function; line 322</td></tr><tr class="t-dsc"><td><a href="#f-7138b650c00ea8c9">micron::disruptor::front() const</a></td><td>function; line 328</td></tr><tr class="t-dsc"><td><a href="#f-5ea95231977b5375">micron::disruptor::last()</a></td><td>function; line 334</td></tr><tr class="t-dsc"><td><a href="#f-2208b06403420ba2">micron::disruptor::last() const</a></td><td>function; line 340</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-29a16af366919924"><h3><code>micron::disruptor::~disruptor()</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L86">line 86</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~disruptor()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~disruptor() { clear(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="disruptor.hpp.html#f-1a1051792960d024">clear</a>.</p></section><section class="function-entry" id="f-eaab5a3ac59ec1df"><h3><code>micron::disruptor::disruptor()</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L88">line 88</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>disruptor() : __mem(__capacity), __producer{ 0, 0 }, __consumer{ 0, 0 }</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">disruptor() : __mem(__capacity), __producer{ 0, 0 }, __consumer{ 0, 0 } { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-48763d5b244b472f"><h3><code>micron::disruptor::disruptor(const disruptor &amp;)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L90">line 90</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>disruptor(const disruptor &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const disruptor &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-803dc8be99ffc5e6"><h3><code>micron::disruptor::disruptor(disruptor &amp;&amp;)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L91">line 91</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>disruptor(disruptor &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>disruptor &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-2175889ed4c66876"><h3><code>micron::disruptor::operator=(const disruptor &amp;)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L92">line 92</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>disruptor &amp;operator=(const disruptor &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const disruptor &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-6e5e61c9902162d9"><h3><code>micron::disruptor::operator=(disruptor &amp;&amp;)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L93">line 93</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>disruptor &amp;operator=(disruptor &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>disruptor &amp;&amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-c398a69c5f13b44a"><h3><code>micron::disruptor::capacity() const noexcept</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L96">line 96</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  capacity() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__capacity</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  capacity() const noexcept
+  {
+    return __capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__capacity</code></td><td><a href="../../source/queue/disruptor.hpp.html#L98">line 98</a></td></tr></tbody></table></section><section class="function-entry" id="f-d8d5d996003dce1c"><h3><code>micron::disruptor::max_size() const noexcept</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L102">line 102</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  max_size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__capacity</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  max_size() const noexcept
+  {
+    return __capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__capacity</code></td><td><a href="../../source/queue/disruptor.hpp.html#L104">line 104</a></td></tr></tbody></table></section><section class="function-entry" id="f-bcc90e9fc3bd1029"><h3><code>micron::disruptor::size() const noexcept</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L108">line 108</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  size() const noexcept
+  {
+    const usize c = __consumer.consumed.get(memory_order_acquire);
+    const usize p = __producer.published.get(memory_order_acquire);
+    const usize n = p - c;
+    return n &lt; __capacity ? n : __capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n &lt; __capacity ? n : __capacity</code></td><td><a href="../../source/queue/disruptor.hpp.html#L113">line 113</a></td></tr></tbody></table></section><section class="function-entry" id="f-2632f1603ca86aa3"><h3><code>micron::disruptor::empty() const noexcept</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L117">line 117</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+  empty() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+  empty() const noexcept
+  {
+    const usize c = __consumer.consumed.get(memory_order_acquire);
+    return c == __producer.published.get(memory_order_acquire);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c == __producer.published.get(memory_order_acquire)</code></td><td><a href="../../source/queue/disruptor.hpp.html#L120">line 120</a></td></tr></tbody></table></section><section class="function-entry" id="f-1a1051792960d024"><h3><code>micron::disruptor::clear()</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L124">line 124</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  clear()
+  {
+    const usize p = __producer.published.get(memory_order_relaxed);
+    const usize c = __consumer.consumed.get(memory_order_relaxed);
+    if constexpr ( !micron::is_trivially_destructible_v&lt;T&gt; ) {
+      for ( usize s = c; s != p; ++s ) (__mem::memory)[s &amp; __mask].~T();
+    }
+    __producer.published.store(0, memory_order_relaxed);
+    __consumer.consumed.store(0, memory_order_relaxed);
+    __producer.cached_consumer = 0;
+    __consumer.cached_published = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-85d5b0c6dad5b968"><h3><code>micron::disruptor::publish(const T &amp;val)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L138">line 138</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  publish(const T &amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  publish(const T &amp;val)
+  {
+    const usize p = __producer.published.get(memory_order_relaxed);
+    usize avail = __capacity - (p - __producer.cached_consumer);
+    if ( avail == 0 ) [[unlikely]] {
+      __producer.cached_consumer = __consumer.consumed.get(memory_order_acquire);
+      avail = __capacity - (p - __producer.cached_consumer);
+      if ( avail == 0 ) return false;
+    }
+    const usize idx = p &amp; __mask;
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_constructible_v&lt;T&gt; ) {
+      new (micron::addr(__mem::memory[idx])) T{ val };
+    } else {
+      __mem::memory[idx] = val;
+    }
+    __producer.published.store(p + 1u, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/disruptor.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/disruptor.hpp.html#L154">line 154</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-396ea6c2d8ea863a"><h3><code>micron::disruptor::publish(T &amp;&amp;val)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L158">line 158</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  publish(T &amp;&amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  publish(T &amp;&amp;val)
+  {
+    const usize p = __producer.published.get(memory_order_relaxed);
+    usize avail = __capacity - (p - __producer.cached_consumer);
+    if ( avail == 0 ) [[unlikely]] {
+      __producer.cached_consumer = __consumer.consumed.get(memory_order_acquire);
+      avail = __capacity - (p - __producer.cached_consumer);
+      if ( avail == 0 ) return false;
+    }
+    const usize idx = p &amp; __mask;
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_constructible_v&lt;T&gt; ) {
+      new (micron::addr(__mem::memory[idx])) T{ micron::move(val) };
+    } else {
+      __mem::memory[idx] = micron::move(val);
+    }
+    __producer.published.store(p + 1u, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/disruptor.hpp.html#L165">line 165</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/disruptor.hpp.html#L174">line 174</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-4fd358a6911988e2"><h3><code>micron::disruptor::try_publish_batch(const T *items, usize count)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L178">line 178</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline usize
+  try_publish_batch(const T *items, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *items</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline usize
+  try_publish_batch(const T *items, usize count)
+  {
+    const usize p = __producer.published.get(memory_order_relaxed);
+    usize avail = __capacity - (p - __producer.cached_consumer);
+    if ( avail &lt; count ) [[unlikely]] {
+      __producer.cached_consumer = __consumer.consumed.get(memory_order_acquire);
+      avail = __capacity - (p - __producer.cached_consumer);
+    }
+    const usize n = avail &lt; count ? avail : count;
+    if ( n == 0 ) return 0;
+    const usize idx = p &amp; __mask;
+    const usize first = n &lt; (__capacity - idx) ? n : (__capacity - idx);
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+      micron::memcpy(micron::addressof(__mem::memory[idx]), items, first);
+      if ( first != n ) micron::memcpy(__mem::memory, items + first, n - first);
+    } else {
+      usize made = 0;
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      try {
+#endif
+        for ( ; made &lt; n; ++made ) new (micron::addr(__mem::memory[(p + made) &amp; __mask])) T(items[made]);
+#if !defined(__micron_freestanding) || defined(__micron_eh)
+      } catch ( ... ) {
+        for ( usize i = 0; i &lt; made; ++i ) __mem::memory[(p + i) &amp; __mask].~T();
+        throw;
+      }
+#endif
+    }
+    __producer.published.store(p + n, memory_order_release);
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/queue/disruptor.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/queue/disruptor.hpp.html#L207">line 207</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>throw;</code></td><td><a href="../../source/queue/disruptor.hpp.html#L202">line 202</a><br>Within <code>else of ( micron::is_trivially_copyable_v&lt;T&gt; )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>.</p></section><section class="function-entry" id="f-6399c1ffe3109bb3"><h3><code>micron::disruptor::consume(T &amp;out)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L211">line 211</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  consume(T &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  consume(T &amp;out)
+  {
+    const usize c = __consumer.consumed.get(memory_order_relaxed);
+    if ( c == __consumer.cached_published ) {
+      __consumer.cached_published = __producer.published.get(memory_order_acquire);
+      if ( c == __consumer.cached_published ) return false;
+    }
+    const usize idx = c &amp; __mask;
+    if constexpr ( micron::is_class_v&lt;T&gt; or !micron::is_trivially_copyable_v&lt;T&gt; ) {
+      __assign(out, __mem::memory[idx]);
+      __mem::memory[idx].~T();
+    } else {
+      out = __mem::memory[idx];
+    }
+    __consumer.consumed.store(c + 1u, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/disruptor.hpp.html#L216">line 216</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/disruptor.hpp.html#L226">line 226</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="disruptor.hpp.html#f-7bce1bc1a7698457">__assign</a>.</p></section><section class="function-entry" id="f-4315d14fe1c9b303"><h3><code>micron::disruptor::try_consume_batch(T *items, usize count)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L230">line 230</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline usize
+  try_consume_batch(T *items, usize count)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *items</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline usize
+  try_consume_batch(T *items, usize count)
+  {
+    const usize c = __consumer.consumed.get(memory_order_relaxed);
+    usize avail = __consumer.cached_published - c;
+    if ( avail &lt; count ) {
+      __consumer.cached_published = __producer.published.get(memory_order_acquire);
+      avail = __consumer.cached_published - c;
+    }
+    const usize n = avail &lt; count ? avail : count;
+    if ( n == 0 ) return 0;
+    const usize idx = c &amp; __mask;
+    const usize first = n &lt; (__capacity - idx) ? n : (__capacity - idx);
+    if constexpr ( micron::is_trivially_copyable_v&lt;T&gt; ) {
+      micron::memcpy(items, micron::addressof(__mem::memory[idx]), first);
+      if ( first != n ) micron::memcpy(items + first, __mem::memory, n - first);
+      __consumer.consumed.store(c + n, memory_order_release);
+    } else if constexpr ( __assign_nothrow ) {
+      for ( usize i = 0; i &lt; n; ++i ) {
+        T &amp;v = __mem::memory[(c + i) &amp; __mask];
+        __assign(items[i], v);
+        v.~T();
+      }
+      __consumer.consumed.store(c + n, memory_order_release);
+    } else {
+      for ( usize i = 0; i &lt; n; ++i ) {
+        T &amp;v = __mem::memory[(c + i) &amp; __mask];
+        __assign(items[i], v);
+        v.~T();
+        __consumer.consumed.store(c + i + 1, memory_order_release);
+      }
+    }
+    return n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/queue/disruptor.hpp.html#L239">line 239</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/queue/disruptor.hpp.html#L261">line 261</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/addr.hpp.html#f-8fae118a5e9cd4e0">micron::addressof</a>, <a href="disruptor.hpp.html#f-7bce1bc1a7698457">__assign</a>.</p></section><section class="function-entry" id="f-daa34e5f63272244"><h3><code>micron::disruptor::peek(T &amp;out) const</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L265">line 265</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  peek(T &amp;out) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  peek(T &amp;out) const
+  {
+    const usize c = __consumer.consumed.get(memory_order_relaxed);
+    const usize p = __producer.published.get(memory_order_acquire);
+    if ( c == p ) return false;
+    out = __mem::memory[c &amp; __mask];
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/disruptor.hpp.html#L269">line 269</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/disruptor.hpp.html#L271">line 271</a></td></tr></tbody></table></section><section class="function-entry" id="f-aef058ded0c4ba57"><h3><code>micron::disruptor::pub_cursor() const noexcept</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L275">line 275</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  pub_cursor() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__producer.published.get(memory_order_acquire)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  pub_cursor() const noexcept
+  {
+    return __producer.published.get(memory_order_acquire);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__producer.published.get(memory_order_acquire)</code></td><td><a href="../../source/queue/disruptor.hpp.html#L277">line 277</a></td></tr></tbody></table></section><section class="function-entry" id="f-aa3c6a7992d44820"><h3><code>micron::disruptor::cons_cursor() const noexcept</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L281">line 281</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  cons_cursor() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__consumer.consumed.get(memory_order_acquire)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  cons_cursor() const noexcept
+  {
+    return __consumer.consumed.get(memory_order_acquire);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__consumer.consumed.get(memory_order_acquire)</code></td><td><a href="../../source/queue/disruptor.hpp.html#L283">line 283</a></td></tr></tbody></table></section><section class="function-entry" id="f-b71da856dd42456d"><h3><code>micron::disruptor::push(const T &amp;val)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L287">line 287</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  push(const T &amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;val</code></li></ul><h4>Effects</h4><p>Returns <code>publish(val)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  push(const T &amp;val)
+  {
+    return publish(val);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>publish(val)</code></td><td><a href="../../source/queue/disruptor.hpp.html#L289">line 289</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="disruptor.hpp.html#f-85d5b0c6dad5b968">publish</a>.</p></section><section class="function-entry" id="f-c2a5b4867fc48a80"><h3><code>micron::disruptor::push(T &amp;&amp;val)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L293">line 293</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  push(T &amp;&amp;val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;val</code></li></ul><h4>Effects</h4><p>Returns <code>publish(micron::move(val))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  push(T &amp;&amp;val)
+  {
+    return publish(micron::move(val));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>publish(micron::move(val))</code></td><td><a href="../../source/queue/disruptor.hpp.html#L295">line 295</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="disruptor.hpp.html#f-85d5b0c6dad5b968">publish</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-ec952b84b684cfc6"><h3><code>micron::disruptor::pop(T &amp;out)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L299">line 299</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline bool
+  pop(T &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li></ul><h4>Effects</h4><p>Returns <code>consume(out)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline bool
+  pop(T &amp;out)
+  {
+    return consume(out);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>consume(out)</code></td><td><a href="../../source/queue/disruptor.hpp.html#L301">line 301</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="disruptor.hpp.html#f-6399c1ffe3109bb3">consume</a>.</p></section><section class="function-entry" id="f-65633769fbde127c"><h3><code>micron::disruptor::emplace(Args &amp;&amp;...args)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L306">line 306</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename... Args&gt;
+  __attribute__((always_inline)) inline bool
+  emplace(Args &amp;&amp;...args)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Args &amp;&amp;...args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename... Args&gt;
+  __attribute__((always_inline)) inline bool
+  emplace(Args &amp;&amp;...args)
+  {
+    const usize p = __producer.published.get(memory_order_relaxed);
+    usize avail = __capacity - (p - __producer.cached_consumer);
+    if ( avail == 0 ) [[unlikely]] {
+      __producer.cached_consumer = __consumer.consumed.get(memory_order_acquire);
+      avail = __capacity - (p - __producer.cached_consumer);
+      if ( avail == 0 ) return false;
+    }
+    const usize idx = p &amp; __mask;
+    new (micron::addr(__mem::memory[idx])) T{ micron::forward&lt;Args&gt;(args)... };
+    __producer.published.store(p + 1u, memory_order_release);
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/queue/disruptor.hpp.html#L313">line 313</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/queue/disruptor.hpp.html#L318">line 318</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-dc43f813f212103d">micron::addr</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Args&gt;</a>.</p></section><section class="function-entry" id="f-9743c5fa05e1b915"><h3><code>micron::disruptor::front()</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L322">line 322</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline T &amp;
+  front()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory[__consumer.consumed.get(memory_order_relaxed) &amp; __mask]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline T &amp;
+  front()
+  {
+    return __mem::memory[__consumer.consumed.get(memory_order_relaxed) &amp; __mask];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[__consumer.consumed.get(memory_order_relaxed) &amp; __mask]</code></td><td><a href="../../source/queue/disruptor.hpp.html#L324">line 324</a></td></tr></tbody></table></section><section class="function-entry" id="f-7138b650c00ea8c9"><h3><code>micron::disruptor::front() const</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L328">line 328</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline const T &amp;
+  front() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory[__consumer.consumed.get(memory_order_relaxed) &amp; __mask]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline const T &amp;
+  front() const
+  {
+    return __mem::memory[__consumer.consumed.get(memory_order_relaxed) &amp; __mask];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[__consumer.consumed.get(memory_order_relaxed) &amp; __mask]</code></td><td><a href="../../source/queue/disruptor.hpp.html#L330">line 330</a></td></tr></tbody></table></section><section class="function-entry" id="f-5ea95231977b5375"><h3><code>micron::disruptor::last()</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L334">line 334</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline T &amp;
+  last()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory[(__producer.published.get(memory_order_relaxed) - 1u) &amp; __mask]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline T &amp;
+  last()
+  {
+    return __mem::memory[(__producer.published.get(memory_order_relaxed) - 1u) &amp; __mask];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[(__producer.published.get(memory_order_relaxed) - 1u) &amp; __mask]</code></td><td><a href="../../source/queue/disruptor.hpp.html#L336">line 336</a></td></tr></tbody></table></section><section class="function-entry" id="f-2208b06403420ba2"><h3><code>micron::disruptor::last() const</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L340">line 340</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline const T &amp;
+  last() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory[(__producer.published.get(memory_order_relaxed) - 1u) &amp; __mask]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline const T &amp;
+  last() const
+  {
+    return __mem::memory[(__producer.published.get(memory_order_relaxed) - 1u) &amp; __mask];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory[(__producer.published.get(memory_order_relaxed) - 1u) &amp; __mask]</code></td><td><a href="../../source/queue/disruptor.hpp.html#L342">line 342</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-fc9d2e4a29992242"><h3><code>micron::disruptor::__next_pow2(usize n)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L32">line 32</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr static usize
+  __next_pow2(usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr static usize
+  __next_pow2(usize n)
+  {
+    n--;
+    n |= n &gt;&gt; 1;
+    n |= n &gt;&gt; 2;
+    n |= n &gt;&gt; 4;
+    n |= n &gt;&gt; 8;
+    n |= n &gt;&gt; 16;
+    if constexpr ( sizeof(usize) &gt; 4 ) {
+      constexpr usize __hi_shift = sizeof(usize) * 8u / 2u;
+      n |= n &gt;&gt; __hi_shift;
+    }
+    return n + 1;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n + 1</code></td><td><a href="../../source/queue/disruptor.hpp.html#L44">line 44</a></td></tr></tbody></table></section><section class="function-entry" id="f-7bce1bc1a7698457"><h3><code>micron::disruptor::__assign(T &amp;out, T &amp;value) noexcept(__assign_nothrow)</code></h3><p>Defined in <code>queue/disruptor.hpp</code>, <a href="../../source/queue/disruptor.hpp.html#L68">line 68</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline void
+  __assign(T &amp;out, T &amp;value) noexcept(__assign_nothrow)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;out</code></li><li><code>T &amp;value</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline void
+  __assign(T &amp;out, T &amp;value) noexcept(__assign_nothrow)
+  {
+    if constexpr ( micron::is_move_assignable_v&lt;T&gt; )
+      out = micron::move(value);
+    else
+      out = value;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

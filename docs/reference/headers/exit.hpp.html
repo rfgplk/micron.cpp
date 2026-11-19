@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/exit.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../assets/cppreference2/screen.css"><link rel="stylesheet" href="../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../index.html">Reference</a> <a href="index.html">Headers</a> <a href="../functions/index.html">Functions</a> <a href="../symbols/index.html">Symbols</a> <a href="../source/index.html">Source</a> <a href="../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/exit.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../index.html">micron reference</a> › <a href="../modules/errors.html">Errors and exceptions</a></div><p>Defined in header <code>&lt;micron/exit.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../source/exit.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-2c9bc3e7dd4a209a">micron::exit_ok</code></td><td>variable; line 52<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><code id="s-ad99623f135e5746">MICRON_ATEXIT_CAP</code></td><td>macro; line 104<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#ifndef MICRON_ATEXIT_CAP</code></small></td></tr><tr class="t-dsc"><td><a href="#f-77ffa0937a289b54">micron::sys_exit(int ret)</a></td><td>function; line 32<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-7f4fb45e23edea94">micron::sys_group_exit(int ret)</a></td><td>function; line 39<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-69681e30a6409fb3">micron::_Exit(int s = exit_ok)</a></td><td>function; line 55<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-f051c7d8402441bf">micron::proc_exit(const int s)</a></td><td>function; line 62<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-eb2efeff320d0424">micron::quick_exit(const int s)</a></td><td>function; line 69<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-6980559c7644f805">micron::abort(void)</a></td><td>function; line 77<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-16eba2d0227b3766">micron::abort(int ret)</a></td><td>function; line 85<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-d0626fcd0c29c30c">micron::atexit(void (*fn)()) noexcept</a></td><td>function; line 180<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-eccf22dba9f5d035">micron::exit(int s = exit_ok)</a></td><td>function; line 294<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-325a52dda27268a2">micron::group_exit(int s = exit_ok)</a></td><td>function; line 310<br><small><code>#else of #if defined(__micron_arch_wasm32)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-77ffa0937a289b54"><h3><code>micron::sys_exit(int ret)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L32">line 32</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+sys_exit(int ret)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int ret</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+sys_exit(int ret)
+{
+  micron::syscall(SYS_exit, ret);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-7f4fb45e23edea94"><h3><code>micron::sys_group_exit(int ret)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L39">line 39</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+sys_group_exit(int ret)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int ret</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+sys_group_exit(int ret)
+{
+#if defined(__micron_attach_capable)
+  // WARNING: an attached guest must NEVER SYS_exit_group the host.
+  if ( micron::__micron_attach_fatal ) {
+    micron::__micron_attach_fatal(ret);
+    for ( ;; ) micron::syscall(SYS_exit, ret);
+  }
+#endif
+  micron::syscall(SYS_exit_group, ret);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>.</p></section><section class="function-entry" id="f-69681e30a6409fb3"><h3><code>micron::_Exit(int s = exit_ok)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+_Exit(int s = exit_ok)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int s = exit_ok</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+_Exit(int s = exit_ok)
+{
+  sys_exit(s);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-77ffa0937a289b54">sys_exit</a>.</p></section><section class="function-entry" id="f-f051c7d8402441bf"><h3><code>micron::proc_exit(const int s)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+proc_exit(const int s)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const int s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+proc_exit(const int s)
+{
+  sys_group_exit(s);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-7f4fb45e23edea94">sys_group_exit</a>.</p></section><section class="function-entry" id="f-eb2efeff320d0424"><h3><code>micron::quick_exit(const int s)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+quick_exit(const int s)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const int s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+quick_exit(const int s)
+{
+  sys_exit(s);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-77ffa0937a289b54">sys_exit</a>.</p></section><section class="function-entry" id="f-6980559c7644f805"><h3><code>micron::abort(void)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L77">line 77</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+abort(void)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+abort(void)
+{
+  if ( __shutdown_io_buffers ) __shutdown_io_buffers();
+  sys_group_exit(6);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-9f0cbffe0e982f03">__shutdown_io_buffers</a>, <a href="exit.hpp.html#f-7f4fb45e23edea94">sys_group_exit</a>.</p></section><section class="function-entry" id="f-16eba2d0227b3766"><h3><code>micron::abort(int ret)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L85">line 85</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+abort(int ret)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int ret</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+abort(int ret)
+{
+  if ( __shutdown_io_buffers ) __shutdown_io_buffers();
+  sys_group_exit(ret);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-9f0cbffe0e982f03">__shutdown_io_buffers</a>, <a href="exit.hpp.html#f-7f4fb45e23edea94">sys_group_exit</a>.</p></section><section class="function-entry" id="f-d0626fcd0c29c30c"><h3><code>micron::atexit(void (*fn)()) noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L180">line 180</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+atexit(void (*fn)()) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void (*fn)()</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+atexit(void (*fn)()) noexcept
+{
+  if ( fn == nullptr ) return -1;
+  return __exit_internal::__push(__exit_internal::__atexit_thunk, reinterpret_cast&lt;void *&gt;(fn));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../source/exit.hpp.html#L182">line 182</a></td></tr><tr class="t-dsc"><td><code>__exit_internal::__push(__exit_internal::__atexit_thunk, reinterpret_cast&lt;void *&gt;(fn))</code></td><td><a href="../source/exit.hpp.html#L183">line 183</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/wasm/exit.hpp.html#f-c1b47acb68dc8937">__exit_internal::__push</a>.</p></section><section class="function-entry" id="f-eccf22dba9f5d035"><h3><code>micron::exit(int s = exit_ok)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L294">line 294</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+exit(int s = exit_ok)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int s = exit_ok</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+exit(int s = exit_ok)
+{
+  using namespace __exit_internal;
+
+  bool expected = false;
+  if ( !micron::atom::compare_exchange(&amp;__exit_in_progress, &amp;expected, true, false, micron::atomic_seq_cst, __ATOMIC_RELAXED) ) {
+    sys_exit(s);
+  }
+
+  __run_exit_sequence();
+
+  sys_exit(s);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="atomic/intrin.hpp.html#f-0e439b0657fa7347">micron::atom::compare_exchange</a>, <a href="exit.hpp.html#f-77ffa0937a289b54">sys_exit</a>, <a href="bits/wasm/exit.hpp.html#f-75ca3ee38f5b6efe">__run_exit_sequence</a>.</p></section><section class="function-entry" id="f-325a52dda27268a2"><h3><code>micron::group_exit(int s = exit_ok)</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L310">line 310</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((noreturn)) inline void
+group_exit(int s = exit_ok)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int s = exit_ok</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((noreturn)) inline void
+group_exit(int s = exit_ok)
+{
+  using namespace __exit_internal;
+
+  bool expected = false;
+  if ( !micron::atom::compare_exchange(&amp;__exit_in_progress, &amp;expected, true, false, micron::atomic_seq_cst, __ATOMIC_RELAXED) ) {
+    sys_group_exit(s);
+  }
+
+  __run_exit_sequence();
+
+  proc_exit(s);
+  __builtin_unreachable();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="atomic/intrin.hpp.html#f-0e439b0657fa7347">micron::atom::compare_exchange</a>, <a href="exit.hpp.html#f-7f4fb45e23edea94">sys_group_exit</a>, <a href="bits/wasm/exit.hpp.html#f-75ca3ee38f5b6efe">__run_exit_sequence</a>, <a href="exit.hpp.html#f-f051c7d8402441bf">proc_exit</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-9f0cbffe0e982f03"><h3><code>__shutdown_io_buffers(void) __attribute__((weak))</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L24">line 24</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>extern void __shutdown_io_buffers(void) __attribute__((weak));</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>This is a declaration. Its body is supplied by the runtime, compiler, or host. The source declaration does not specify additional effects.</p></section><section class="function-entry" id="f-7392036137435bd9"><h3><code>micron::__exit_internal::__published(u32 idx) noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L123">line 123</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline bool
+__published(u32 idx) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 idx</code></li></ul><h4>Effects</h4><p>Returns <code>(__atomic_load_n(&amp;__atexit_pub[idx / 64], __ATOMIC_ACQUIRE) &amp; (1ull &lt;&lt; (idx % 64))) != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline bool
+__published(u32 idx) noexcept
+{
+  return (__atomic_load_n(&amp;__atexit_pub[idx / 64], __ATOMIC_ACQUIRE) &amp; (1ull &lt;&lt; (idx % 64))) != 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__atomic_load_n(&amp;__atexit_pub[idx / 64], __ATOMIC_ACQUIRE) &amp; (1ull &lt;&lt; (idx % 64))) != 0</code></td><td><a href="../source/exit.hpp.html#L125">line 125</a></td></tr></tbody></table></section><section class="function-entry" id="f-bf5d096683969420"><h3><code>micron::__exit_internal::__atexit_thunk(void *p) noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L129">line 129</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__atexit_thunk(void *p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__atexit_thunk(void *p) noexcept
+{
+  using __noarg_fn = void (*)();
+  (reinterpret_cast&lt;__noarg_fn&gt;(p))();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e888316096ea0242"><h3><code>micron::__exit_internal::__push(__atexit_fn_t func, void *arg, void *dso = nullptr) noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L136">line 136</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+__push(__atexit_fn_t func, void *arg, void *dso = nullptr) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__atexit_fn_t func</code></li><li><code>void *arg</code></li><li><code>void *dso = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+__push(__atexit_fn_t func, void *arg, void *dso = nullptr) noexcept
+{
+  u32 idx = micron::atom::load(&amp;__atexit_count, micron::atomic_acquire);
+  for ( ;; ) {
+    if ( idx &gt;= __atexit_cap ) return -1;
+    if ( micron::atom::compare_exchange(&amp;__atexit_count, &amp;idx, idx + 1u, false, micron::atomic_acq_rel, __ATOMIC_ACQUIRE) ) break;
+  }
+  __atexit_table[idx].arg = arg;
+  __atexit_table[idx].dso = dso;
+  __atomic_store_n(&amp;__atexit_table[idx].func, func, __ATOMIC_RELAXED);
+  __atomic_fetch_or(&amp;__atexit_pub[idx / 64], 1ull &lt;&lt; (idx % 64), __ATOMIC_ACQ_REL);      // releases both fields
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../source/exit.hpp.html#L140">line 140</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../source/exit.hpp.html#L147">line 147</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="atomic/intrin.hpp.html#f-751f0c5aa5b6a558">micron::atom::load</a>, <a href="atomic/intrin.hpp.html#f-0e439b0657fa7347">micron::atom::compare_exchange</a>.</p></section><section class="function-entry" id="f-7696c943c48980e2"><h3><code>micron::__exit_internal::__claim(u32 idx) noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L152">line 152</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline __atexit_fn_t
+__claim(u32 idx) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 idx</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline __atexit_fn_t
+__claim(u32 idx) noexcept
+{
+  if ( !__published(idx) ) return nullptr;
+  return __atomic_exchange_n(&amp;__atexit_table[idx].func, static_cast&lt;__atexit_fn_t&gt;(nullptr), __ATOMIC_ACQ_REL);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../source/exit.hpp.html#L154">line 154</a></td></tr><tr class="t-dsc"><td><code>__atomic_exchange_n(&amp;__atexit_table[idx].func, static_cast&lt;__atexit_fn_t&gt;(nullptr), __ATOMIC_ACQ_REL)</code></td><td><a href="../source/exit.hpp.html#L155">line 155</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-7392036137435bd9">__published</a>.</p></section><section class="function-entry" id="f-61e1207a5f2e172c"><h3><code>micron::__exit_internal::__finalize_dso(void *dso) noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L160">line 160</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__finalize_dso(void *dso) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>void *dso</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__finalize_dso(void *dso) noexcept
+{
+  for ( ;; ) {
+    const u32 count = micron::atom::load(&amp;__atexit_count, micron::atomic_acquire);
+    bool called = false;
+    for ( u32 i = count; i-- &gt; 0; ) {
+      if ( !__published(i) || (dso &amp;&amp; __atexit_table[i].dso != dso) ) continue;
+      if ( auto function = __claim(i); function ) {
+        function(__atexit_table[i].arg);
+        called = true;
+        break;      // NOTE: destructors registered by this callback precede the remaining older ones
+      }
+    }
+    if ( !called ) return;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/exit.hpp.html#L173">line 173</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="atomic/intrin.hpp.html#f-751f0c5aa5b6a558">micron::atom::load</a>, <a href="exit.hpp.html#f-7392036137435bd9">__published</a>, <a href="exit.hpp.html#f-7696c943c48980e2">__claim</a>, <a href="function.hpp.html#s-7550b9f815730761">function</a>.</p></section><section class="function-entry" id="f-c002be6d496d5735"><h3><code>micron::__drain_atexit_table() noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L192">line 192</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__drain_atexit_table() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__drain_atexit_table() noexcept
+{
+  using namespace __exit_internal;
+  u32 lo = 0;
+  u32 hi = micron::atom::load(&amp;__atexit_count, micron::atomic_acquire);
+  u32 stall = 0;
+  while ( lo != hi ) {
+    u32 pending = hi;      // lowest index seen reserved but unpublished this pass
+    bool progress = false;
+    bool restart = false;
+    for ( u32 i = hi; i-- != lo; ) {
+      if ( !__published(i) ) {
+        pending = i;
+        continue;
+      }
+      __atexit_fn_t f = __claim(i);
+      if ( f == nullptr ) continue;      // another drainer got there first
+      progress = true;
+      f(__atexit_table[i].arg);      // arg is safe to read
+      const u32 next = micron::atom::load(&amp;__atexit_count, micron::atomic_acquire);
+      if ( next != hi ) {
+        hi = next;
+        restart = true;
+        break;      // new registrations precede the remaining older callbacks
+      }
+    }
+    if ( restart ) {
+      stall = 0;
+      continue;
+    }
+    const u32 next = micron::atom::load(&amp;__atexit_count, micron::atomic_acquire);
+    if ( pending == hi ) {      // everything below hi is accounted for
+      if ( next == hi ) break;
+      lo = hi;
+      hi = next;
+      stall = 0;
+      continue;
+    }
+    if ( !progress &amp;&amp; next == hi ) {      // only unpublished entries left and nobody moved
+      if ( ++stall &gt; __atexit_publish_rounds ) {
+        for ( u32 i = pending; i &lt; hi; ++i )
+          if ( !__published(i) ) __atomic_fetch_add(&amp;__atexit_dropped, 1u, __ATOMIC_RELAXED);
+        break;
+      }
+      __cpu_pause();
+    } else {
+      stall = 0;
+    }
+    lo = pending;
+    hi = next;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="atomic/intrin.hpp.html#f-751f0c5aa5b6a558">micron::atom::load</a>, <a href="bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-d5e5897c9b055ffe"><h3><code>micron::__run_fini_array() noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L246">line 246</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__run_fini_array() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__run_fini_array() noexcept
+{
+#if !defined(MICRON_ATTACH_MODULE)
+  using namespace __exit_internal;
+  bool __fini_expected = false;
+  if ( !micron::atom::compare_exchange(&amp;__fini_fired, &amp;__fini_expected, true, false, micron::atomic_seq_cst, __ATOMIC_RELAXED) ) return;
+  if ( __fini_array_start &amp;&amp; __fini_array_end ) {
+    for ( void (**p)(void) = __fini_array_end; p &gt; __fini_array_start; ) {
+      --p;
+      if ( *p ) (*p)();
+    }
+  }
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/exit.hpp.html#L251">line 251</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="atomic/intrin.hpp.html#f-0e439b0657fa7347">micron::atom::compare_exchange</a>.</p></section><section class="function-entry" id="f-8eb74ffe188818c0"><h3><code>micron::__settle_exit_callbacks() noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L262">line 262</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__settle_exit_callbacks() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__settle_exit_callbacks() noexcept
+{
+  for ( ;; ) {
+    const u32 before = micron::atom::load(&amp;__exit_internal::__atexit_count, micron::atomic_acquire);
+    __drain_atexit_table();
+#if !defined(MICRON_ATTACH_MODULE)
+    micron::__run_thread_dtors();
+#endif
+    if ( micron::atom::load(&amp;__exit_internal::__atexit_count, micron::atomic_acquire) == before ) return;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../source/exit.hpp.html#L270">line 270</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="atomic/intrin.hpp.html#f-751f0c5aa5b6a558">micron::atom::load</a>, <a href="exit.hpp.html#f-c002be6d496d5735">__drain_atexit_table</a>, <a href="bits/__thread_exit_hook.hpp.html#f-b5b82ee89d36a3e6">micron::__run_thread_dtors</a>.</p></section><section class="function-entry" id="f-7181e8d2fa8eff8f"><h3><code>micron::__run_exit_sequence(void) noexcept</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L279">line 279</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) inline void
+__run_exit_sequence(void) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) inline void
+__run_exit_sequence(void) noexcept
+{
+#if !defined(MICRON_ATTACH_MODULE)
+  micron::__run_thread_dtors();
+#endif
+  __settle_exit_callbacks();
+  __run_fini_array();
+  __settle_exit_callbacks();
+#if !defined(MICRON_ATTACH_MODULE)
+  if ( micron::__dynamic_tls_exit_hook ) micron::__dynamic_tls_exit_hook();
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="bits/__thread_exit_hook.hpp.html#f-b5b82ee89d36a3e6">micron::__run_thread_dtors</a>, <a href="exit.hpp.html#f-8eb74ffe188818c0">__settle_exit_callbacks</a>, <a href="exit.hpp.html#f-d5e5897c9b055ffe">__run_fini_array</a>.</p></section><section class="function-entry" id="f-1e4aafbcc5288e24"><h3><code>__aeabi_unwind_cpp_pr0()</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L334">line 334</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr0()</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_freestanding)
+#if defined(__clang__) &amp;&amp; defined(__micron_arch_arm32) &amp;&amp; !defined(__micron_eh)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr0()
+{
+  micron::abort(6);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::abort(6)</code></td><td><a href="../source/exit.hpp.html#L336">line 336</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-6980559c7644f805">micron::abort</a>.</p></section><section class="function-entry" id="f-9d414b07b06aab3b"><h3><code>__aeabi_unwind_cpp_pr1()</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L340">line 340</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr1()</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_freestanding)
+#if defined(__clang__) &amp;&amp; defined(__micron_arch_arm32) &amp;&amp; !defined(__micron_eh)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr1()
+{
+  micron::abort(6);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::abort(6)</code></td><td><a href="../source/exit.hpp.html#L342">line 342</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-6980559c7644f805">micron::abort</a>.</p></section><section class="function-entry" id="f-459c4b00050c4951"><h3><code>__aeabi_unwind_cpp_pr2()</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L346">line 346</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr2()</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_freestanding)
+#if defined(__clang__) &amp;&amp; defined(__micron_arch_arm32) &amp;&amp; !defined(__micron_eh)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::used, noreturn]] inline void
+__aeabi_unwind_cpp_pr2()
+{
+  micron::abort(6);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::abort(6)</code></td><td><a href="../source/exit.hpp.html#L348">line 348</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="exit.hpp.html#f-6980559c7644f805">micron::abort</a>.</p></section><section class="function-entry" id="f-9747fd748cd757b6"><h3><code>__cxa_pure_virtual()</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L353">line 353</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[noreturn]] inline void
+__cxa_pure_virtual()</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_freestanding)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[noreturn]] inline void
+__cxa_pure_virtual()
+{
+  static const char msg[] = &quot;pure virtual function called\n&quot;;
+  micron::syscall(SYS_write, 2, msg, sizeof(msg) - 1);
+  micron::abort(6);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::abort(6)</code></td><td><a href="../source/exit.hpp.html#L357">line 357</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>, <a href="exit.hpp.html#f-6980559c7644f805">micron::abort</a>.</p></section><section class="function-entry" id="f-7a4a7fc382eae16e"><h3><code>__cxa_deleted_virtual()</code></h3><p>Defined in <code>exit.hpp</code>, <a href="../source/exit.hpp.html#L361">line 361</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[noreturn]] inline void
+__cxa_deleted_virtual()</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(__micron_freestanding)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[noreturn]] inline void
+__cxa_deleted_virtual()
+{
+  static const char msg[] = &quot;deleted virtual function called\n&quot;;
+  micron::syscall(SYS_write, 2, msg, sizeof(msg) - 1);
+  micron::abort(6);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::abort(6)</code></td><td><a href="../source/exit.hpp.html#L365">line 365</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>, <a href="exit.hpp.html#f-6980559c7644f805">micron::abort</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../about.html">Attribution and licenses</a> · <a href="../index.html">Contents</a></p></div></div>
+</body></html>

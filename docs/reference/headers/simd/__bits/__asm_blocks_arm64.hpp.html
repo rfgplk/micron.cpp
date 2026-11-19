@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/simd/__bits/__asm_blocks_arm64.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/simd/__bits/__asm_blocks_arm64.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/simd/__bits/__asm_blocks_arm64.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-71f69232f7617a4b"><h3><code>micron::simd::__bits::__block_copy_16(u8 *__restrict d, const u8 *__restrict s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L31">line 31</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline, gnu::artificial]] static inline
+
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // 16-byte copy (LDR Q / STR Q)
+    __inline_g void __block_copy_16(u8 *__restrict d, const u8 *__restrict s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline, gnu::artificial]] static inline
+
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    // 16-byte copy (LDR Q / STR Q)
+    __inline_g void __block_copy_16(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t;
+  __asm__(&quot;ldr %q0, %1&quot; : &quot;=w&quot;(t) : &quot;Q&quot;(*reinterpret_cast&lt;const uint8x16_t *&gt;(s)));
+  __asm__(&quot;str %q1, %0&quot; : &quot;=Q&quot;(*reinterpret_cast&lt;uint8x16_t *&gt;(d)) : &quot;w&quot;(t));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-68d06b0016a86df6"><h3><code>micron::simd::__bits::__block_copy_16_a(u8 *__restrict d, const u8 *__restrict s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L39">line 39</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_copy_16_a(u8 *__restrict d, const u8 *__restrict s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_copy_16_a(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t;
+  __asm__(&quot;ldr %q0, %1&quot; : &quot;=w&quot;(t) : &quot;Q&quot;(*reinterpret_cast&lt;const uint8x16_t *&gt;(s)));
+  __asm__(&quot;str %q1, %0&quot; : &quot;=Q&quot;(*reinterpret_cast&lt;uint8x16_t *&gt;(d)) : &quot;w&quot;(t));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fc0cfe2adc5413ac"><h3><code>micron::simd::__bits::__block_copy_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L47">line 47</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_copy_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_copy_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t;
+  __asm__(&quot;ldr %q0, %1&quot; : &quot;=w&quot;(t) : &quot;Q&quot;(*reinterpret_cast&lt;const uint8x16_t *&gt;(s)));
+  __asm__(&quot;str %q1, %0&quot; : &quot;=Q&quot;(*reinterpret_cast&lt;uint8x16_t *&gt;(d)) : &quot;w&quot;(t));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5d154ceecd108eb8"><h3><code>micron::simd::__bits::__block_move_16(u8 *d, const u8 *s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L55">line 55</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_move_16(u8 *d, const u8 *s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *d</code></li><li><code>const u8 *s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_move_16(u8 *d, const u8 *s) noexcept
+{
+  uint8x16_t t;
+  __asm__(&quot;ldr %q0, %1&quot; : &quot;=w&quot;(t) : &quot;Q&quot;(*reinterpret_cast&lt;const uint8x16_t *&gt;(s)));
+  __asm__(&quot;str %q1, %0&quot; : &quot;=Q&quot;(*reinterpret_cast&lt;uint8x16_t *&gt;(d)) : &quot;w&quot;(t));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-728a50774f357c4b"><h3><code>micron::simd::__bits::__block_move_pair_16(u8 *d, const u8 *s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L63">line 63</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_move_pair_16(u8 *d, const u8 *s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *d</code></li><li><code>const u8 *s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_move_pair_16(u8 *d, const u8 *s) noexcept
+{
+  uint8x16_t t0, t1;
+  __asm__(&quot;ldp %q0, %q1, [%2]&quot; : &quot;=w&quot;(t0), &quot;=w&quot;(t1) : &quot;r&quot;(s), &quot;m&quot;(*reinterpret_cast&lt;const u8(*)[32]&gt;(s)));
+  __asm__(&quot;stp %q2, %q3, [%1]&quot; : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[32]&gt;(d)) : &quot;r&quot;(d), &quot;w&quot;(t0), &quot;w&quot;(t1));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-42344124ce7bbf33"><h3><code>micron::simd::__bits::__block_copy_pair_16(u8 *__restrict d, const u8 *__restrict s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L73">line 73</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_copy_pair_16(u8 *__restrict d, const u8 *__restrict s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_copy_pair_16(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t0, t1;
+  __asm__(&quot;ldp %q0, %q1, [%2]&quot; : &quot;=w&quot;(t0), &quot;=w&quot;(t1) : &quot;r&quot;(s), &quot;m&quot;(*reinterpret_cast&lt;const u8(*)[32]&gt;(s)));
+  __asm__(&quot;stp %q2, %q3, [%1]&quot; : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[32]&gt;(d)) : &quot;r&quot;(d), &quot;w&quot;(t0), &quot;w&quot;(t1));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4382ac1b76fc7a55"><h3><code>micron::simd::__bits::__block_copy_pair_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_copy_pair_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_copy_pair_16_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t0, t1;
+  __asm__(&quot;ldp %q0, %q1, [%2]&quot; : &quot;=w&quot;(t0), &quot;=w&quot;(t1) : &quot;r&quot;(s), &quot;m&quot;(*reinterpret_cast&lt;const u8(*)[32]&gt;(s)));
+  __asm__(&quot;stnp %q2, %q3, [%1]&quot; : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[32]&gt;(d)) : &quot;r&quot;(d), &quot;w&quot;(t0), &quot;w&quot;(t1));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6afd2ba5a4beb4f8"><h3><code>micron::simd::__bits::__broadcast_byte_16(u8 b) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L91">line 91</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>uint8x16_t
+__broadcast_byte_16(u8 b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">uint8x16_t
+__broadcast_byte_16(u8 b) noexcept
+{
+  uint8x16_t v;
+  __asm__(&quot;dup %0.16b, %w1&quot; : &quot;=w&quot;(v) : &quot;r&quot;(static_cast&lt;u32&gt;(b)));
+  return v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L95">line 95</a></td></tr></tbody></table></section><section class="function-entry" id="f-acacf9c4ed04191e"><h3><code>micron::simd::__bits::__broadcast_word_16(u64 w) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L101">line 101</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>uint8x16_t
+__broadcast_word_16(u64 w) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 w</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">uint8x16_t
+__broadcast_word_16(u64 w) noexcept
+{
+  uint8x16_t v;
+  __asm__(&quot;dup %0.2d, %1&quot; : &quot;=w&quot;(v) : &quot;r&quot;(w));
+  return v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L105">line 105</a></td></tr></tbody></table></section><section class="function-entry" id="f-dc59cc3f996d0ad4"><h3><code>micron::simd::__bits::__block_set_16(u8 *__restrict d, uint8x16_t v) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L109">line 109</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_set_16(u8 *__restrict d, uint8x16_t v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>uint8x16_t v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_set_16(u8 *__restrict d, uint8x16_t v) noexcept
+{
+  __asm__(&quot;str %q1, %0&quot; : &quot;=Q&quot;(*reinterpret_cast&lt;uint8x16_t *&gt;(d)) : &quot;w&quot;(v));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-6eb03b9785fec5a9"><h3><code>micron::simd::__bits::__block_set_16_a(u8 *__restrict d, uint8x16_t v) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L115">line 115</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_set_16_a(u8 *__restrict d, uint8x16_t v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>uint8x16_t v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_set_16_a(u8 *__restrict d, uint8x16_t v) noexcept
+{
+  __asm__(&quot;str %q1, %0&quot; : &quot;=Q&quot;(*reinterpret_cast&lt;uint8x16_t *&gt;(d)) : &quot;w&quot;(v));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-14c1b8fc7b744437"><h3><code>micron::simd::__bits::__block_set_pair_16_nt(u8 *__restrict d, uint8x16_t v) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L121">line 121</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_set_pair_16_nt(u8 *__restrict d, uint8x16_t v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>uint8x16_t v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_set_pair_16_nt(u8 *__restrict d, uint8x16_t v) noexcept
+{
+  __asm__(&quot;stnp %q2, %q2, [%1]&quot; : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[32]&gt;(d)) : &quot;r&quot;(d), &quot;w&quot;(v));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8163d04e32e92226"><h3><code>micron::simd::__bits::__block_set_pair_16(u8 *__restrict d, uint8x16_t v) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L129">line 129</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_set_pair_16(u8 *__restrict d, uint8x16_t v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>uint8x16_t v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_set_pair_16(u8 *__restrict d, uint8x16_t v) noexcept
+{
+  __asm__(&quot;stp %q2, %q2, [%1]&quot; : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[32]&gt;(d)) : &quot;r&quot;(d), &quot;w&quot;(v));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-92d28c2e5d272eca"><h3><code>micron::simd::__bits::__block_set_quad_16(u8 *__restrict d, uint8x16_t v) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L135">line 135</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_set_quad_16(u8 *__restrict d, uint8x16_t v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>uint8x16_t v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_set_quad_16(u8 *__restrict d, uint8x16_t v) noexcept
+{
+  __asm__(&quot;stp %q2, %q2, [%1]\n\t&quot;
+          &quot;stp %q2, %q2, [%1, #32]&quot;
+          : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[64]&gt;(d))
+          : &quot;r&quot;(d), &quot;w&quot;(v));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-460063cc8560fc24"><h3><code>micron::simd::__bits::__block_copy_64(u8 *__restrict d, const u8 *__restrict s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L146">line 146</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_copy_64(u8 *__restrict d, const u8 *__restrict s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_copy_64(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t0, t1, t2, t3;
+  __asm__(&quot;ldp %q0, %q1, [%4]\n\t&quot;
+          &quot;ldp %q2, %q3, [%4, #32]&quot;
+          : &quot;=w&quot;(t0), &quot;=w&quot;(t1), &quot;=w&quot;(t2), &quot;=w&quot;(t3)
+          : &quot;r&quot;(s), &quot;m&quot;(*reinterpret_cast&lt;const u8(*)[64]&gt;(s)));
+  __asm__(&quot;stp %q2, %q3, [%1]\n\t&quot;
+          &quot;stp %q4, %q5, [%1, #32]&quot;
+          : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[64]&gt;(d))
+          : &quot;r&quot;(d), &quot;w&quot;(t0), &quot;w&quot;(t1), &quot;w&quot;(t2), &quot;w&quot;(t3));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-bdf9f18a37fbafa5"><h3><code>micron::simd::__bits::__block_move_64(u8 *d, const u8 *s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L160">line 160</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_move_64(u8 *d, const u8 *s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *d</code></li><li><code>const u8 *s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_move_64(u8 *d, const u8 *s) noexcept
+{
+  uint8x16_t t0, t1, t2, t3;
+  __asm__(&quot;ldp %q0, %q1, [%4]\n\t&quot;
+          &quot;ldp %q2, %q3, [%4, #32]&quot;
+          : &quot;=w&quot;(t0), &quot;=w&quot;(t1), &quot;=w&quot;(t2), &quot;=w&quot;(t3)
+          : &quot;r&quot;(s), &quot;m&quot;(*reinterpret_cast&lt;const u8(*)[64]&gt;(s)));
+  __asm__(&quot;stp %q2, %q3, [%1]\n\t&quot;
+          &quot;stp %q4, %q5, [%1, #32]&quot;
+          : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[64]&gt;(d))
+          : &quot;r&quot;(d), &quot;w&quot;(t0), &quot;w&quot;(t1), &quot;w&quot;(t2), &quot;w&quot;(t3));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-14c189a86e0e1227"><h3><code>micron::simd::__bits::__block_copy_64_nt(u8 *__restrict d, const u8 *__restrict s) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L174">line 174</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__block_copy_64_nt(u8 *__restrict d, const u8 *__restrict s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *__restrict d</code></li><li><code>const u8 *__restrict s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__block_copy_64_nt(u8 *__restrict d, const u8 *__restrict s) noexcept
+{
+  uint8x16_t t0, t1, t2, t3;
+  __asm__(&quot;ldp %q0, %q1, [%4]\n\t&quot;
+          &quot;ldp %q2, %q3, [%4, #32]&quot;
+          : &quot;=w&quot;(t0), &quot;=w&quot;(t1), &quot;=w&quot;(t2), &quot;=w&quot;(t3)
+          : &quot;r&quot;(s), &quot;m&quot;(*reinterpret_cast&lt;const u8(*)[64]&gt;(s)));
+  __asm__(&quot;stnp %q2, %q3, [%1]\n\t&quot;
+          &quot;stnp %q4, %q5, [%1, #32]&quot;
+          : &quot;=m&quot;(*reinterpret_cast&lt;u8(*)[64]&gt;(d))
+          : &quot;r&quot;(d), &quot;w&quot;(t0), &quot;w&quot;(t1), &quot;w&quot;(t2), &quot;w&quot;(t3));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-eb494238da4544b0"><h3><code>micron::simd::__bits::__read_dczid(void) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L190">line 190</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>u64
+__read_dczid(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">u64
+__read_dczid(void) noexcept
+{
+  u64 v;
+  __asm__(&quot;mrs %0, dczid_el0&quot; : &quot;=r&quot;(v));
+  return v;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>v</code></td><td><a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L194">line 194</a></td></tr></tbody></table></section><section class="function-entry" id="f-3172ce919215d807"><h3><code>micron::simd::__bits::__dc_zva_64(u8 *p) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L200">line 200</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+__dc_zva_64(u8 *p) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+__dc_zva_64(u8 *p) noexcept
+{
+  __asm__ __volatile__(&quot;dc zva, %0&quot; : : &quot;r&quot;(p) : &quot;memory&quot;);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-e5fbb46fba2216f8"><h3><code>micron::simd::__bits::__block_all_eq_16(const u8 *a, const u8 *b) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L208">line 208</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+__block_all_eq_16(const u8 *a, const u8 *b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *a</code></li><li><code>const u8 *b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+__block_all_eq_16(const u8 *a, const u8 *b) noexcept
+{
+  uint8x16_t va, vb, ceq;
+  __asm__(&quot;ldr %q0, %1&quot; : &quot;=w&quot;(va) : &quot;Q&quot;(*reinterpret_cast&lt;const uint8x16_t *&gt;(a)));
+  __asm__(&quot;ldr %q0, %1&quot; : &quot;=w&quot;(vb) : &quot;Q&quot;(*reinterpret_cast&lt;const uint8x16_t *&gt;(b)));
+  __asm__(&quot;cmeq %0.16b, %1.16b, %2.16b&quot; : &quot;=w&quot;(ceq) : &quot;w&quot;(va), &quot;w&quot;(vb));
+  uint8x16_t minv;
+  __asm__(&quot;uminv %b0, %1.16b&quot; : &quot;=w&quot;(minv) : &quot;w&quot;(ceq));
+  return reinterpret_cast&lt;const u8 *&gt;(&amp;minv)[0] == 0xFFu;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;const u8 *&gt;(&amp;minv)[0] == 0xFFu</code></td><td><a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L216">line 216</a></td></tr></tbody></table></section><section class="function-entry" id="f-83a197b19b476982"><h3><code>micron::simd::__bits::__block_eq_mask_16(const u8 *p, u8 c) noexcept</code></h3><p>Defined in <code>simd/__bits/__asm_blocks_arm64.hpp</code>, <a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L224">line 224</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>u64
+__block_eq_mask_16(const u8 *p, u8 c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li><li><code>u8 c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">u64
+__block_eq_mask_16(const u8 *p, u8 c) noexcept
+{
+  uint8x16_t v, bc, ceq;
+  __asm__(&quot;dup %0.16b, %w1&quot; : &quot;=w&quot;(bc) : &quot;r&quot;(static_cast&lt;u32&gt;(c)));
+  __asm__(&quot;ldr %q0, %1&quot; : &quot;=w&quot;(v) : &quot;Q&quot;(*reinterpret_cast&lt;const uint8x16_t *&gt;(p)));
+  __asm__(&quot;cmeq %0.16b, %1.16b, %2.16b&quot; : &quot;=w&quot;(ceq) : &quot;w&quot;(v), &quot;w&quot;(bc));
+  uint8x16_t narrowed;
+  __asm__(&quot;shrn %0.8b, %1.8h, #4&quot; : &quot;=w&quot;(narrowed) : &quot;w&quot;(ceq));
+  u64 m;
+  __asm__(&quot;umov %0, %1.d[0]&quot; : &quot;=r&quot;(m) : &quot;w&quot;(narrowed));
+  return m;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>m</code></td><td><a href="../../../source/simd/__bits/__asm_blocks_arm64.hpp.html#L234">line 234</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

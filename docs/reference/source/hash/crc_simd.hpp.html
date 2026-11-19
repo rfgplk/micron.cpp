@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hash/crc_simd.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">hash/crc_simd.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/hash/crc_simd.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> // carry-less-multiply CRC64 folding</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> //</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> // WARNING: crc_simd depends on crc.hpps tables, it will not compile without them</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #include &quot;../types.hpp&quot;</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> // crc_simd code</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> //  .. __micron_crc_clmul   crc64 normal-form fold; pclmul</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> //  .. __micron_crc32_clmul reflected crc32 fold; hard requires SSE4.1</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> // NOTE: apparently every x86 part that has PCLMUL (&gt;Westmere) also has SSE4.1, so this never actually excludes a real</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> // CPU</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> #if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_pclmul)</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #define __micron_crc_clmul 1</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> #if defined(__micron_x86_sse4_1)</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> #define __micron_crc32_clmul 1</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> #endif</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> #include &quot;../simd/aliases/aes.hpp&quot;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> #include &quot;../simd/aliases/sse.hpp&quot;</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> #elif (defined(__micron_arch_arm64) || defined(__micron_arch_arm32)) &amp;&amp; defined(__micron_arm_pmull) &amp;&amp; defined(__micron_arm_neon)</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> #define __micron_crc_clmul 1</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> #define __micron_crc32_clmul 1</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> #include &quot;../simd/aliases/neon.hpp&quot;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> #include &quot;../simd/aliases/neon_aes.hpp&quot;</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> #endif</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> </span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> namespace micron</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> {</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> namespace crc</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> {</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> namespace __simd</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> {</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> </span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> // x^n mod P, where P = x^64 + poly</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> consteval u64</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> __xpow_mod(usize n, u64 poly) noexcept</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> {</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>   u64 r = 1;      // x^0</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>   for ( usize i = 0; i &lt; n; ++i ) r = (r &lt;&lt; 1) ^ ((r &gt;&gt; 63) ? poly : 0ull);</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>   return r;</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> }</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> </span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> template&lt;u64 Poly, usize N&gt; struct __fold_k {</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   static constexpr u64 lo = __xpow_mod(N, Poly);</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   static constexpr u64 hi = __xpow_mod(N + 64, Poly);</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> };</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> </span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> #if defined(__micron_crc_clmul)</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> </span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> [[gnu::always_inline]] static inline u64</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> __norm_byte(u64 crc, u8 b, const u64 *lut) noexcept</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> {</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>   return (crc &lt;&lt; 8) ^ lut[((crc &gt;&gt; 56) ^ b) &amp; 0xFFu];</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> }</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> </span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> #if defined(__micron_arch_x86_any)</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> </span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> namespace __sse = micron::simd::sse;</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> namespace __clm = micron::simd::aes;</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> </span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> using __v128 = __m128i;</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> </span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> [[gnu::always_inline, gnu::target(&quot;ssse3&quot;)]] static inline __v128</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> __bswap128(__v128 v) noexcept</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> {</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>   const __v128 rev = __sse::setr_i8(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>   return __sse::shuffle_v_i8(v, rev);</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> }</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> </span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> [[gnu::always_inline, gnu::target(&quot;ssse3&quot;)]] static inline __v128</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> __ld_be(const u8 *p) noexcept</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> {</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>   return __bswap128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p)));</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> }</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> </span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> template&lt;u64 Poly, usize N&gt;</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> [[gnu::always_inline, gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline __v128</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> __kconst() noexcept</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> {</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>   // { lo, hi } in memory order -&gt; low qword = lo, high qword = hi</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>   const u64 k[2] = { __fold_k&lt;Poly, N&gt;::lo, __fold_k&lt;Poly, N&gt;::hi };</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>   return __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(k));</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> }</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> </span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> // acc * x^N mod P, kept as 128 bits (congruent, not reduced)</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> [[gnu::always_inline, gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline __v128</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> __fold(__v128 acc, __v128 k) noexcept</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> {</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   const __v128 h = __clm::clmul_64&lt;0x11&gt;(acc, k);      // acc_hi (x) k_hi</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   const __v128 l = __clm::clmul_64&lt;0x00&gt;(acc, k);      // acc_lo (x) k_lo</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   return __sse::xor_i128(h, l);</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> }</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> </span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> template&lt;u64 Poly&gt;</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> [[gnu::target(&quot;pclmul,sse4.1,ssse3&quot;)]] static inline u64</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> __crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> {</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   usize nc = len / 16;      // whole 16-byte chunks</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   const u8 *p = buf;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> </span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>   u8 head[16];</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   for ( usize i = 0; i &lt; 16; ++i ) head[i] = p[i];</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   for ( usize i = 0; i &lt; 8; ++i ) head[i] ^= static_cast&lt;u8&gt;(init &gt;&gt; (56 - 8 * i));</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> </span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>   const __v128 k1 = __kconst&lt;Poly, 128&gt;();      // advance 1 chunk</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>   __v128 acc;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> </span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   if ( nc &gt;= 8 ) {</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>     const __v128 k4 = __kconst&lt;Poly, 512&gt;();      // advance 4 chunks</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>     __v128 a0 = __ld_be(head);                    // chunk 0 (carries init)</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>     __v128 a1 = __ld_be(p + 16);</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>     __v128 a2 = __ld_be(p + 32);</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>     __v128 a3 = __ld_be(p + 48);</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>     p += 64;</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>     nc -= 4;</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> </span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     while ( nc &gt;= 4 ) {</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>       a0 = __sse::xor_i128(__fold(a0, k4), __ld_be(p + 0));</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>       a1 = __sse::xor_i128(__fold(a1, k4), __ld_be(p + 16));</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>       a2 = __sse::xor_i128(__fold(a2, k4), __ld_be(p + 32));</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>       a3 = __sse::xor_i128(__fold(a3, k4), __ld_be(p + 48));</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>       p += 64;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>       nc -= 4;</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>     }</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> </span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     // recombine: acc0 is 3 chunks behind acc3, acc1 two, acc2 one.</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>     const __v128 k2 = __kconst&lt;Poly, 256&gt;();</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>     const __v128 k3 = __kconst&lt;Poly, 384&gt;();</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     acc = __sse::xor_i128(__sse::xor_i128(__fold(a0, k3), __fold(a1, k2)), __sse::xor_i128(__fold(a2, k1), a3));</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>   } else {</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>     acc = __ld_be(head);</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>     p += 16;</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a>     --nc;</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>   }</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> </span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>   while ( nc &gt; 0 ) {</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     acc = __sse::xor_i128(__fold(acc, k1), __ld_be(p));</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>     p += 16;</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>     --nc;</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>   }</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> </span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>   u8 tmp[16];</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>   __sse::storeu_i128(reinterpret_cast&lt;__m128i_u *&gt;(tmp), __bswap128(acc));</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> </span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   u64 crc = 0;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>   for ( usize i = 0; i &lt; 16; ++i ) crc = __norm_byte(crc, tmp[i], lut);</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a> </span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>   // the &lt; 16-byte remainder just continues the scalar recurrence</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>   for ( usize i = 0; i &lt; (len % 16); ++i ) crc = __norm_byte(crc, p[i], lut);</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   return crc;</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> }</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> </span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a> #if defined(__micron_crc32_clmul)</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a> </span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a> // reflected CRC-32 (gzip poly), 4-way 64 B/iter fold + Barrett reduction (spliced in from czlib)</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a> //</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a> // NOTE: do not merge these with __fold_k; you will get a plausible looking wrong answer</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a> [[gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline u32</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a> __crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a> {</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>   // the (long long) casts are the declared parameter type of set_i64, not a width assumption</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   const __v128 mults = __sse::set_i64((long long)0xccaa009eULL, (long long)0xae689191ULL);</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a>   const __v128 mults4 = __sse::set_i64((long long)0x1d9513d7ULL, (long long)0x8f352d95ULL);</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>   const __v128 barrett = __sse::set_i64((long long)0x1db710641ULL, (long long)0xb4e5b025f7011641ULL);</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> </span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   __v128 x0 = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p));</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>   x0 = __sse::xor_i128(x0, __sse::broadcast_i32_to_i128((int)(init ^ 0xFFFFFFFFu)));</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>   p += 16;</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>   len -= 16;</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> </span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>   if ( len &gt;= 48 ) {</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>     __v128 x1 = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p));</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>     __v128 x2 = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 16));</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>     __v128 x3 = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 32));</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>     p += 48;</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a>     len -= 48;</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>     while ( len &gt;= 64 ) {</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>       x0 = __sse::xor_i128(__sse::xor_i128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p)), __clm::clmul_64&lt;0x00&gt;(x0, mults4)),</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>                            __clm::clmul_64&lt;0x11&gt;(x0, mults4));</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>       x1 = __sse::xor_i128(</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>           __sse::xor_i128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 16)), __clm::clmul_64&lt;0x00&gt;(x1, mults4)),</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>           __clm::clmul_64&lt;0x11&gt;(x1, mults4));</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>       x2 = __sse::xor_i128(</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a>           __sse::xor_i128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 32)), __clm::clmul_64&lt;0x00&gt;(x2, mults4)),</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>           __clm::clmul_64&lt;0x11&gt;(x2, mults4));</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>       x3 = __sse::xor_i128(</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>           __sse::xor_i128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 48)), __clm::clmul_64&lt;0x00&gt;(x3, mults4)),</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>           __clm::clmul_64&lt;0x11&gt;(x3, mults4));</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>       p += 64;</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>       len -= 64;</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>     }</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>     x0 = __sse::xor_i128(__sse::xor_i128(x1, __clm::clmul_64&lt;0x00&gt;(x0, mults)), __clm::clmul_64&lt;0x11&gt;(x0, mults));</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>     x0 = __sse::xor_i128(__sse::xor_i128(x2, __clm::clmul_64&lt;0x00&gt;(x0, mults)), __clm::clmul_64&lt;0x11&gt;(x0, mults));</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>     x0 = __sse::xor_i128(__sse::xor_i128(x3, __clm::clmul_64&lt;0x00&gt;(x0, mults)), __clm::clmul_64&lt;0x11&gt;(x0, mults));</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>   }</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   while ( len &gt;= 16 ) {</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>     const __v128 d = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p));</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>     x0 = __sse::xor_i128(__sse::xor_i128(d, __clm::clmul_64&lt;0x00&gt;(x0, mults)), __clm::clmul_64&lt;0x11&gt;(x0, mults));</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>     p += 16;</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>     len -= 16;</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   }</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a>   x0 = __sse::xor_i128(__clm::clmul_64&lt;0x10&gt;(x0, mults), __sse::bsrl_i128&lt;8&gt;(x0));</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>   __v128 x1 = __clm::clmul_64&lt;0x00&gt;(x0, barrett);</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a>   x1 = __clm::clmul_64&lt;0x10&gt;(x1, barrett);</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a>   x0 = __sse::xor_i128(x0, x1);</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a>   const u32 r = (u32)__sse::extract_i32_imm&lt;2&gt;(x0);</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a> </span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   return __crc32_refl_slice8(p, len, r) ^ 0xFFFFFFFFu;</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a> }</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a> </span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a> #endif</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a> </span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a> #else</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a> </span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> // ARM branch</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a> </span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a> namespace __nc = micron::simd::neon_crypto;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a> namespace __neon = micron::simd::neon;</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a> </span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a> using __v128 = uint8x16_t;</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a> </span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a> [[gnu::always_inline]] static inline __v128</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a> __ld_be(const u8 *p) noexcept</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a> {</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>   return __nc::rev_bytes_q(__nc::load_u8q(p));</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> }</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> </span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> template&lt;u64 Poly, usize N&gt;</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a> [[gnu::always_inline]] static inline __v128</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> __kconst() noexcept</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> {</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a>   const u64 k[2] = { __fold_k&lt;Poly, N&gt;::lo, __fold_k&lt;Poly, N&gt;::hi };</span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   return __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k));</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a> }</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a> </span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a> [[gnu::always_inline]] static inline __v128</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a> __fold(__v128 acc, __v128 k) noexcept</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a> {</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>   // identical identity to x86: acc_hi (x) k_hi  ^  acc_lo (x) k_lo</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>   const __v128 h = __nc::clmul_hi(acc, k);</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>   const __v128 l = __nc::clmul_lo(acc, k);</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>   return __nc::xor_q(h, l);</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a> }</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> </span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a> template&lt;u64 Poly&gt;</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a> static inline u64</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a> __crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a> {</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>   usize nc_ = len / 16;</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>   const u8 *p = buf;</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> </span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>   u8 head[16];</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>   for ( usize i = 0; i &lt; 16; ++i ) head[i] = p[i];</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>   for ( usize i = 0; i &lt; 8; ++i ) head[i] ^= static_cast&lt;u8&gt;(init &gt;&gt; (56 - 8 * i));</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a> </span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>   const __v128 k1 = __kconst&lt;Poly, 128&gt;();</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>   __v128 acc;</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a> </span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>   if ( nc_ &gt;= 8 ) {</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a>     const __v128 k4 = __kconst&lt;Poly, 512&gt;();</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a>     __v128 a0 = __ld_be(head);</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a>     __v128 a1 = __ld_be(p + 16);</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>     __v128 a2 = __ld_be(p + 32);</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>     __v128 a3 = __ld_be(p + 48);</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>     p += 64;</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>     nc_ -= 4;</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a> </span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a>     while ( nc_ &gt;= 4 ) {</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a>       a0 = __nc::xor_q(__fold(a0, k4), __ld_be(p + 0));</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a>       a1 = __nc::xor_q(__fold(a1, k4), __ld_be(p + 16));</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a>       a2 = __nc::xor_q(__fold(a2, k4), __ld_be(p + 32));</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a>       a3 = __nc::xor_q(__fold(a3, k4), __ld_be(p + 48));</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a>       p += 64;</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a>       nc_ -= 4;</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>     }</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a> </span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>     const __v128 k2 = __kconst&lt;Poly, 256&gt;();</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>     const __v128 k3 = __kconst&lt;Poly, 384&gt;();</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>     acc = __nc::xor_q(__nc::xor_q(__fold(a0, k3), __fold(a1, k2)), __nc::xor_q(__fold(a2, k1), a3));</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a>   } else {</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>     acc = __ld_be(head);</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>     p += 16;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>     --nc_;</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>   }</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> </span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>   while ( nc_ &gt; 0 ) {</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>     acc = __nc::xor_q(__fold(acc, k1), __ld_be(p));</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a>     p += 16;</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a>     --nc_;</span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a>   }</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a> </span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a>   u8 tmp[16];</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a>   __nc::store_u8q(tmp, __nc::rev_bytes_q(acc));</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a> </span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>   u64 crc = 0;</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a>   for ( usize i = 0; i &lt; 16; ++i ) crc = __norm_byte(crc, tmp[i], lut);</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a>   for ( usize i = 0; i &lt; (len % 16); ++i ) crc = __norm_byte(crc, p[i], lut);</span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a>   return crc;</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a> }</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a> </span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a> // reflected CRC-32, 16 B/iter PMULL fold</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a> static inline u32</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a> __crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept</span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a> {</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a>   alignas(16) static constexpr u64 k_mults[2] = { 0xae689191ULL, 0xccaa009eULL };      // x^159, x^95</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a>   alignas(16) static constexpr u64 k_x95[2] = { 0xccaa009eULL, 0 };                    // x^95 mod G</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>   alignas(16) static constexpr u64 k_mu[2] = { 0xb4e5b025f7011641ULL, 0 };             // floor(x^95 / G)</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a>   alignas(16) static constexpr u64 k_g[2] = { 0x1db710641ULL, 0 };                     // G(x)</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a> </span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a>   const __v128 mults = __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k_mults));</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a>   const __v128 m_x95 = __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k_x95));</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a>   const __v128 b_mu = __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k_mu));</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a>   const __v128 b_g = __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k_g));</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a> </span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a>   __v128 x0 = __nc::load_u8q(p);</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a>   const uint32x4_t xi = __neon::set_lane_u32&lt;0&gt;(init ^ 0xFFFFFFFFu, __neon::splat_u32(0));</span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a>   x0 = __nc::xor_q(x0, (__v128)xi);      // fold the conditioned register into the first 4 bytes</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a>   p += 16;</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a>   len -= 16;</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>   while ( len &gt;= 16 ) {</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>     const __v128 d = __nc::load_u8q(p);</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a>     x0 = __nc::xor_q(__nc::xor_q(d, __nc::clmul_lo(x0, mults)), __nc::clmul_hi(x0, mults));</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a>     p += 16;</span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a>     len -= 16;</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a>   }</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a>   x0 = __nc::xor_q(__nc::clmul_lo(x0, m_x95), __neon::ext_u8&lt;8&gt;(x0, __neon::splat_u8(0)));</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>   __v128 t = __nc::clmul_lo(x0, b_mu);</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>   t = __nc::clmul_lo(t, b_g);</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>   x0 = __nc::xor_q(x0, t);</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>   const u32 r = __neon::get_lane_u32&lt;2&gt;((uint32x4_t)x0);</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a> </span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>   return __crc32_refl_slice8(p, len, r) ^ 0xFFFFFFFFu;</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a> }</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a> </span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a> #endif</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a> </span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a> inline constexpr usize __clmul_min = 64;</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a> inline constexpr usize __clmul32_min = 16;</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a> </span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a> #endif</span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a> </span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a> };      // namespace __simd</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a> };      // namespace crc</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

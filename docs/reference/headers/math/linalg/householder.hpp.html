@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/linalg/householder.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/linalg/householder.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/matrix.html">Matrices and linear algebra</a></div><p>Defined in header <code>&lt;micron/math/linalg/householder.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/linalg/householder.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-ff8f6d9f9f19505a">micron::math::linalg::decomp::householder_t</code></td><td>struct; line 30</td></tr><tr class="t-dsc"><td><code id="s-3a1a57d0d34ca236">micron::math::linalg::decomp::householder_t::v</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-6d0b303aa40922ff">micron::math::linalg::decomp::householder_t::beta</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-188dc5a02a86d4a5">micron::math::linalg::decomp::householder_t::k0</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-60cb66b2cfcebd55">micron::math::linalg::decomp::givens_t</code></td><td>struct; line 117</td></tr><tr class="t-dsc"><td><code id="s-68c8013c4bfbfa42">micron::math::linalg::decomp::givens_t::c</code></td><td>member; line 118</td></tr><tr class="t-dsc"><td><code id="s-b90c0a9b3f17fae6">micron::math::linalg::decomp::givens_t::s</code></td><td>member; line 119</td></tr><tr class="t-dsc"><td><code id="s-30f47dcb69acf198">micron::math::linalg::decomp::hess_result</code></td><td>struct; line 154</td></tr><tr class="t-dsc"><td><code id="s-6305f151a3be7f33">micron::math::linalg::decomp::hess_result::H</code></td><td>member; line 155</td></tr><tr class="t-dsc"><td><code id="s-e92a35b090894366">micron::math::linalg::decomp::hess_result::Q</code></td><td>member; line 156</td></tr><tr class="t-dsc"><td><code id="s-b6c12d8aa70b27ca">micron::math::linalg::decomp::tridiag_result</code></td><td>struct; line 180</td></tr><tr class="t-dsc"><td><code id="s-95b471d35f006970">micron::math::linalg::decomp::tridiag_result::diag</code></td><td>member; line 181</td></tr><tr class="t-dsc"><td><code id="s-a4ab8c5a67ad5327">micron::math::linalg::decomp::tridiag_result::subdiag</code></td><td>member; line 182</td></tr><tr class="t-dsc"><td><code id="s-6fed365c3bb7a410">micron::math::linalg::decomp::tridiag_result::Q</code></td><td>member; line 183</td></tr><tr class="t-dsc"><td><code id="s-34a319c6fc0fd0db">micron::math::linalg::decomp::bidiag_result</code></td><td>struct; line 200</td></tr><tr class="t-dsc"><td><code id="s-c5c8b057a937a9c6">micron::math::linalg::decomp::bidiag_result::B</code></td><td>member; line 201</td></tr><tr class="t-dsc"><td><code id="s-358769d3738dffb4">micron::math::linalg::decomp::bidiag_result::U</code></td><td>member; line 202</td></tr><tr class="t-dsc"><td><code id="s-fb35b91e18beb449">micron::math::linalg::decomp::bidiag_result::V</code></td><td>member; line 203</td></tr><tr class="t-dsc"><td><a href="#f-08df425cb4c5f10f">micron::math::linalg::decomp::householder_reflector(const vec&lt;F, N&gt; &amp;x, usize k0) noexcept</a></td><td>function; line 38</td></tr><tr class="t-dsc"><td><a href="#f-2ed122114fe7bcb5">micron::math::linalg::decomp::apply_householder_left(mat&lt;F, R, C&gt; &amp;A, const vec&lt;F, R&gt; &amp;v, F beta, usize k0) noexcept</a></td><td>function; line 78</td></tr><tr class="t-dsc"><td><a href="#f-a5404b9d89429eca">micron::math::linalg::decomp::apply_householder_right(mat&lt;F, R, C&gt; &amp;A, const vec&lt;F, C&gt; &amp;v, F beta, usize k0) noexcept</a></td><td>function; line 100</td></tr><tr class="t-dsc"><td><a href="#f-7520951c00ac899d">micron::math::linalg::decomp::givens_rotation(F a, F b) noexcept</a></td><td>function; line 124</td></tr><tr class="t-dsc"><td><a href="#f-2dd4698f3bda6a61">micron::math::linalg::decomp::hessenberg(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 161</td></tr><tr class="t-dsc"><td><a href="#f-6ed75a5e9a31b465">micron::math::linalg::decomp::tridiagonalize_sym(const mat&lt;F, N, N&gt; &amp;A) noexcept</a></td><td>function; line 188</td></tr><tr class="t-dsc"><td><a href="#f-126d9726f5298291">micron::math::linalg::decomp::bidiagonalize(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</a></td><td>function; line 208</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-08df425cb4c5f10f"><h3><code>micron::math::linalg::decomp::householder_reflector(const vec&lt;F, N&gt; &amp;x, usize k0) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L38">line 38</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline householder_t&lt;F, N&gt;
+householder_reflector(const vec&lt;F, N&gt; &amp;x, usize k0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const vec&lt;F, N&gt; &amp;x</code></li><li><code>usize k0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline householder_t&lt;F, N&gt;
+householder_reflector(const vec&lt;F, N&gt; &amp;x, usize k0) noexcept
+{
+  householder_t&lt;F, N&gt; h{};
+  h.k0 = k0;
+  for ( usize i = 0; i &lt; N; ++i ) h.v.data[i] = F(0);
+  if ( k0 &gt;= N ) {
+    h.beta = F(0);
+    return h;
+  }
+  F xmax = F(0);
+  for ( usize i = k0; i &lt; N; ++i ) {
+    F a = math::fabs(x.data[i]);
+    if ( a &gt; xmax ) xmax = a;
+  }
+  if ( xmax == F(0) ) {
+    h.beta = F(0);
+    return h;
+  }
+  F sum = F(0);
+  F inv_xmax = F(1) / xmax;
+  for ( usize i = k0; i &lt; N; ++i ) {
+    F s = x.data[i] * inv_xmax;
+    sum = math::fma&lt;F&gt;(s, s, sum);
+  }
+  F norm_x = xmax * math::fsqrt(sum);
+  // pick alpha such that v[k0] = x[k0]
+  F xk = x.data[k0];
+  F sign_xk = (xk &gt;= F(0)) ? F(1) : F(-1);
+  F alpha = -sign_xk * norm_x;
+  // v[k0] = x[k0] - alpha
+  h.v.data[k0] = xk - alpha;
+  for ( usize i = k0 + 1; i &lt; N; ++i ) h.v.data[i] = x.data[i];
+  F vv = h.v.data[k0] * h.v.data[k0];
+  for ( usize i = k0 + 1; i &lt; N; ++i ) vv = math::fma&lt;F&gt;(h.v.data[i], h.v.data[i], vv);
+  h.beta = (vv &gt; F(0)) ? F(2) / vv : F(0);
+  return h;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>h</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L45">line 45</a></td></tr><tr class="t-dsc"><td><code>h</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L54">line 54</a></td></tr><tr class="t-dsc"><td><code>h</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L73">line 73</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-2ed122114fe7bcb5"><h3><code>micron::math::linalg::decomp::apply_householder_left(mat&lt;F, R, C&gt; &amp;A, const vec&lt;F, R&gt; &amp;v, F beta, usize k0) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R, usize C&gt;
+inline void
+apply_householder_left(mat&lt;F, R, C&gt; &amp;A, const vec&lt;F, R&gt; &amp;v, F beta, usize k0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat&lt;F, R, C&gt; &amp;A</code></li><li><code>const vec&lt;F, R&gt; &amp;v</code></li><li><code>F beta</code></li><li><code>usize k0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R, usize C&gt;
+inline void
+apply_householder_left(mat&lt;F, R, C&gt; &amp;A, const vec&lt;F, R&gt; &amp;v, F beta, usize k0) noexcept
+{
+  if ( beta == F(0) ) return;
+  F w[C];
+  for ( usize j = 0; j &lt; C; ++j ) w[j] = F(0);
+  for ( usize i = k0; i &lt; R; ++i ) {
+    F vi = v.data[i];
+    if ( vi == F(0) ) continue;
+    F *__restrict__ row = A.data + i * C;
+    for ( usize j = 0; j &lt; C; ++j ) w[j] = math::fma&lt;F&gt;(vi, row[j], w[j]);
+  }
+  for ( usize i = k0; i &lt; R; ++i ) {
+    F vi = v.data[i];
+    if ( vi == F(0) ) continue;
+    F bvi = beta * vi;
+    F *__restrict__ row = A.data + i * C;
+    for ( usize j = 0; j &lt; C; ++j ) row[j] -= bvi * w[j];
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/linalg/householder.hpp.html#L80">line 80</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a5404b9d89429eca"><h3><code>micron::math::linalg::decomp::apply_householder_right(mat&lt;F, R, C&gt; &amp;A, const vec&lt;F, C&gt; &amp;v, F beta, usize k0) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L100">line 100</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R, usize C&gt;
+inline void
+apply_householder_right(mat&lt;F, R, C&gt; &amp;A, const vec&lt;F, C&gt; &amp;v, F beta, usize k0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat&lt;F, R, C&gt; &amp;A</code></li><li><code>const vec&lt;F, C&gt; &amp;v</code></li><li><code>F beta</code></li><li><code>usize k0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R, usize C&gt;
+inline void
+apply_householder_right(mat&lt;F, R, C&gt; &amp;A, const vec&lt;F, C&gt; &amp;v, F beta, usize k0) noexcept
+{
+  if ( beta == F(0) ) return;
+  F w[R];
+  for ( usize i = 0; i &lt; R; ++i ) {
+    F acc = F(0);
+    F *__restrict__ row = A.data + i * C;
+    for ( usize j = k0; j &lt; C; ++j ) acc = math::fma&lt;F&gt;(row[j], v.data[j], acc);
+    w[i] = acc;
+  }
+  for ( usize i = 0; i &lt; R; ++i ) {
+    F bwi = beta * w[i];
+    F *__restrict__ row = A.data + i * C;
+    for ( usize j = k0; j &lt; C; ++j ) row[j] -= bwi * v.data[j];
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/linalg/householder.hpp.html#L102">line 102</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-7520951c00ac899d"><h3><code>micron::math::linalg::decomp::givens_rotation(F a, F b) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L124">line 124</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline givens_t&lt;F&gt;
+givens_rotation(F a, F b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline givens_t&lt;F&gt;
+givens_rotation(F a, F b) noexcept
+{
+  givens_t&lt;F&gt; g{};
+  if ( b == F(0) ) {
+    g.c = (a &gt;= F(0)) ? F(1) : F(-1);
+    g.s = F(0);
+    return g;
+  }
+  if ( a == F(0) ) {
+    g.c = F(0);
+    g.s = (b &gt;= F(0)) ? F(1) : F(-1);
+    return g;
+  }
+  if ( math::fabs(b) &gt; math::fabs(a) ) {
+    F t = a / b;
+    F u = math::fsqrt(F(1) + t * t);
+    if ( b &lt; F(0) ) u = -u;
+    g.s = F(1) / u;
+    g.c = g.s * t;
+  } else {
+    F t = b / a;
+    F u = math::fsqrt(F(1) + t * t);
+    if ( a &lt; F(0) ) u = -u;
+    g.c = F(1) / u;
+    g.s = g.c * t;
+  }
+  return g;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>g</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L130">line 130</a></td></tr><tr class="t-dsc"><td><code>g</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L135">line 135</a></td></tr><tr class="t-dsc"><td><code>g</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L150">line 150</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><section class="function-entry" id="f-2dd4698f3bda6a61"><h3><code>micron::math::linalg::decomp::hessenberg(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L161">line 161</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline hess_result&lt;F, N&gt;
+hessenberg(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline hess_result&lt;F, N&gt;
+hessenberg(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  hess_result&lt;F, N&gt; r{ A, mat&lt;F, N, N&gt;::identity() };
+  if constexpr ( N &lt;= 2 ) return r;
+
+  for ( usize k = 0; k + 2 &lt; N; ++k ) {
+    vec&lt;F, N&gt; x{};
+    for ( usize i = 0; i &lt; N; ++i ) x.data[i] = F(0);
+    for ( usize i = k + 1; i &lt; N; ++i ) x.data[i] = r.H.data[i * N + k];
+    auto h = householder_reflector&lt;F, N&gt;(x, k + 1);
+    if ( h.beta == F(0) ) continue;
+    apply_householder_left&lt;F, N, N&gt;(r.H, h.v, h.beta, k + 1);
+    apply_householder_right&lt;F, N, N&gt;(r.H, h.v, h.beta, k + 1);
+    apply_householder_right&lt;F, N, N&gt;(r.Q, h.v, h.beta, k + 1);
+    for ( usize i = k + 2; i &lt; N; ++i ) r.H.data[i * N + k] = F(0);
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L164">line 164</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L177">line 177</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-7ed1904ce493336f">mat&lt;F, N, N&gt;::identity</a>, <a href="householder.hpp.html#f-08df425cb4c5f10f">householder_reflector&lt;F, N&gt;</a>, <a href="householder.hpp.html#f-2ed122114fe7bcb5">apply_householder_left&lt;F, N, N&gt;</a>, <a href="householder.hpp.html#f-a5404b9d89429eca">apply_householder_right&lt;F, N, N&gt;</a>.</p></section><section class="function-entry" id="f-6ed75a5e9a31b465"><h3><code>micron::math::linalg::decomp::tridiagonalize_sym(const mat&lt;F, N, N&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L188">line 188</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline tridiag_result&lt;F, N&gt;
+tridiagonalize_sym(const mat&lt;F, N, N&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, N, N&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize N&gt;
+[[nodiscard]] inline tridiag_result&lt;F, N&gt;
+tridiagonalize_sym(const mat&lt;F, N, N&gt; &amp;A) noexcept
+{
+  auto h = hessenberg&lt;F, N&gt;(A);
+  tridiag_result&lt;F, N&gt; r{};
+  for ( usize i = 0; i &lt; N; ++i ) r.diag.data[i] = h.H.data[i * N + i];
+  for ( usize i = 0; i + 1 &lt; N; ++i ) r.subdiag.data[i] = h.H.data[(i + 1) * N + i];
+  if constexpr ( N &gt;= 1 ) r.subdiag.data[N - 1] = F(0);
+  r.Q = h.Q;
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L196">line 196</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="householder.hpp.html#f-2dd4698f3bda6a61">hessenberg&lt;F, N&gt;</a>.</p></section><section class="function-entry" id="f-126d9726f5298291"><h3><code>micron::math::linalg::decomp::bidiagonalize(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L208">line 208</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline bidiag_result&lt;F, R_, C_&gt;
+bidiagonalize(const mat&lt;F, R_, C_&gt; &amp;A) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;F, R_, C_&gt; &amp;A</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F, usize R_, usize C_&gt;
+[[nodiscard]] inline bidiag_result&lt;F, R_, C_&gt;
+bidiagonalize(const mat&lt;F, R_, C_&gt; &amp;A) noexcept
+{
+  bidiag_result&lt;F, R_, C_&gt; r{ A, mat&lt;F, R_, R_&gt;::identity(), mat&lt;F, C_, C_&gt;::identity() };
+  constexpr usize K = (R_ &lt; C_) ? R_ : C_;
+  for ( usize k = 0; k &lt; K; ++k ) {
+    {
+      vec&lt;F, R_&gt; x{};
+      for ( usize i = 0; i &lt; R_; ++i ) x.data[i] = F(0);
+      for ( usize i = k; i &lt; R_; ++i ) x.data[i] = r.B.data[i * C_ + k];
+      auto h = householder_reflector&lt;F, R_&gt;(x, k);
+      if ( h.beta != F(0) ) {
+        apply_householder_left&lt;F, R_, C_&gt;(r.B, h.v, h.beta, k);
+        apply_householder_right&lt;F, R_, R_&gt;(r.U, h.v, h.beta, k);
+        for ( usize i = k + 1; i &lt; R_; ++i ) r.B.data[i * C_ + k] = F(0);
+      }
+    }
+    if ( k + 2 &lt;= C_ ) {
+      vec&lt;F, C_&gt; y{};
+      for ( usize j = 0; j &lt; C_; ++j ) y.data[j] = F(0);
+      for ( usize j = k + 1; j &lt; C_; ++j ) y.data[j] = r.B.data[k * C_ + j];
+      auto h = householder_reflector&lt;F, C_&gt;(y, k + 1);
+      if ( h.beta != F(0) ) {
+        apply_householder_right&lt;F, R_, C_&gt;(r.B, h.v, h.beta, k + 1);
+        apply_householder_right&lt;F, C_, C_&gt;(r.V, h.v, h.beta, k + 1);
+        for ( usize j = k + 2; j &lt; C_; ++j ) r.B.data[k * C_ + j] = F(0);
+      }
+    }
+  }
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L236">line 236</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-7ed1904ce493336f">mat&lt;F, R_, R_&gt;::identity</a>, <a href="../matrix/mat.hpp.html#f-7ed1904ce493336f">mat&lt;F, C_, C_&gt;::identity</a>, <a href="householder.hpp.html#f-08df425cb4c5f10f">householder_reflector&lt;F, R_&gt;</a>, <a href="householder.hpp.html#f-2ed122114fe7bcb5">apply_householder_left&lt;F, R_, C_&gt;</a>, <a href="householder.hpp.html#f-a5404b9d89429eca">apply_householder_right&lt;F, R_, R_&gt;</a>, <a href="householder.hpp.html#f-08df425cb4c5f10f">householder_reflector&lt;F, C_&gt;</a>, <a href="householder.hpp.html#f-a5404b9d89429eca">apply_householder_right&lt;F, R_, C_&gt;</a>, <a href="householder.hpp.html#f-a5404b9d89429eca">apply_householder_right&lt;F, C_, C_&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-3c4226801713e256"><h3><code>micron::math::linalg::decomp::__impl_decomp::apply_householder_left_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L244">line 244</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+apply_householder_left_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *__restrict__ A</code></li><li><code>usize R</code></li><li><code>usize C</code></li><li><code>usize ld_A</code></li><li><code>const F *v</code></li><li><code>F beta</code></li><li><code>usize k0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+apply_householder_left_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept
+{
+  if ( beta == F(0) ) return;
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; w(C, F(0));
+  for ( usize i = k0; i &lt; R; ++i ) {
+    F vi = v[i];
+    if ( vi == F(0) ) continue;
+    const F *row = A + i * ld_A;
+    for ( usize j = 0; j &lt; C; ++j ) w.data()[j] = math::fma&lt;F&gt;(vi, row[j], w.data()[j]);
+  }
+  for ( usize i = k0; i &lt; R; ++i ) {
+    F vi = v[i];
+    if ( vi == F(0) ) continue;
+    F bvi = beta * vi;
+    F *row = A + i * ld_A;
+    for ( usize j = 0; j &lt; C; ++j ) row[j] -= bvi * w.data()[j];
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/linalg/householder.hpp.html#L246">line 246</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2e02f32bea4d10ee"><h3><code>micron::math::linalg::decomp::__impl_decomp::apply_householder_right_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L265">line 265</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+apply_householder_right_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *__restrict__ A</code></li><li><code>usize R</code></li><li><code>usize C</code></li><li><code>usize ld_A</code></li><li><code>const F *v</code></li><li><code>F beta</code></li><li><code>usize k0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+apply_householder_right_dyn(F *__restrict__ A, usize R, usize C, usize ld_A, const F *v, F beta, usize k0) noexcept
+{
+  if ( beta == F(0) ) return;
+  micron::vector&lt;F, micron::allocator_serial&lt;&gt;, false&gt; w(R, F(0));
+  for ( usize i = 0; i &lt; R; ++i ) {
+    F acc = F(0);
+    const F *row = A + i * ld_A;
+    for ( usize j = k0; j &lt; C; ++j ) acc = math::fma&lt;F&gt;(row[j], v[j], acc);
+    w.data()[i] = acc;
+  }
+  for ( usize i = 0; i &lt; R; ++i ) {
+    F bwi = beta * w.data()[i];
+    F *row = A + i * ld_A;
+    for ( usize j = k0; j &lt; C; ++j ) row[j] -= bwi * v[j];
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/linalg/householder.hpp.html#L267">line 267</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-7836e5300fbf1cd1"><h3><code>micron::math::linalg::decomp::__impl_decomp::householder_reflector_dyn(const F *x, usize R, usize k0, F *v_out) noexcept</code></h3><p>Defined in <code>math/linalg/householder.hpp</code>, <a href="../../../source/math/linalg/householder.hpp.html#L284">line 284</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline F
+householder_reflector_dyn(const F *x, usize R, usize k0, F *v_out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *x</code></li><li><code>usize R</code></li><li><code>usize k0</code></li><li><code>F *v_out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline F
+householder_reflector_dyn(const F *x, usize R, usize k0, F *v_out) noexcept
+{
+  for ( usize i = 0; i &lt; R; ++i ) v_out[i] = F(0);
+  if ( k0 &gt;= R ) return F(0);
+  F xmax = F(0);
+  for ( usize i = k0; i &lt; R; ++i ) {
+    F a = math::fabs(x[i]);
+    if ( a &gt; xmax ) xmax = a;
+  }
+  if ( xmax == F(0) ) return F(0);
+  F sum = F(0);
+  F inv_xmax = F(1) / xmax;
+  for ( usize i = k0; i &lt; R; ++i ) {
+    F s = x[i] * inv_xmax;
+    sum = math::fma&lt;F&gt;(s, s, sum);
+  }
+  F norm_x = xmax * math::fsqrt(sum);
+  F xk = x[k0];
+  F sign_xk = (xk &gt;= F(0)) ? F(1) : F(-1);
+  F alpha = -sign_xk * norm_x;
+  v_out[k0] = xk - alpha;
+  for ( usize i = k0 + 1; i &lt; R; ++i ) v_out[i] = x[i];
+  F vv = v_out[k0] * v_out[k0];
+  for ( usize i = k0 + 1; i &lt; R; ++i ) vv = math::fma&lt;F&gt;(v_out[i], v_out[i], vv);
+  return (vv &gt; F(0)) ? F(2) / vv : F(0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L287">line 287</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L293">line 293</a></td></tr><tr class="t-dsc"><td><code>(vv &gt; F(0)) ? F(2) / vv : F(0)</code></td><td><a href="../../../source/math/linalg/householder.hpp.html#L308">line 308</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

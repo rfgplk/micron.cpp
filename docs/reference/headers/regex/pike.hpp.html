@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/regex/pike.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/regex/pike.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/regex.html">Regular expressions</a></div><p>Defined in header <code>&lt;micron/regex/pike.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/regex/pike.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-bd1a9b7daa769585">micron::rgx::vm</code></td><td>struct; line 20</td></tr><tr class="t-dsc"><td><code id="s-61a206b0c309eae3">micron::rgx::vm::pv</code></td><td>member; line 21</td></tr><tr class="t-dsc"><td><code id="s-1b96a6d1eb65e919">micron::rgx::vm::nslots</code></td><td>member; line 22</td></tr><tr class="t-dsc"><td><code id="s-3f5665a0bec52338">micron::rgx::vm::cap</code></td><td>member; line 23</td></tr><tr class="t-dsc"><td><code id="s-f2d1a1d061e0cc42">micron::rgx::vm::in</code></td><td>member; line 24</td></tr><tr class="t-dsc"><td><code id="s-50617faa724ec103">micron::rgx::vm::n</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><code id="s-a809e9582d4149c6">micron::rgx::vm::anchored</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-45413431aea98fc7">micron::rgx::vm::start_at</code></td><td>member; line 27</td></tr><tr class="t-dsc"><td><code id="s-71d46f5bdce569ee">micron::rgx::vm::a_pc</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-ecbe9c0866ae1bad">micron::rgx::vm::a_sav</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-85c0da84713732e5">micron::rgx::vm::a_n</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-7ff0152959bd32e5">micron::rgx::vm::b_pc</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-616c6ca9889d3ff2">micron::rgx::vm::b_sav</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-32476585f029ce79">micron::rgx::vm::b_n</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-3439a2ab396fb89a">micron::rgx::vm::seen</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-488f177b322f7b95">micron::rgx::vm::gen</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-d5a8199c2217daf8">micron::rgx::vm::work</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-1dc36e81b7b1aa8f">micron::rgx::vm::mcaps</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-175e7db50a28da7a">micron::rgx::vm::matched</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-238ebae02747f94c">micron::rgx::vm::mstart</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-bc891b797573cf22">micron::rgx::vm::mend</code></td><td>member; line 42</td></tr><tr class="t-dsc"><td><a href="#f-6904c71e8a022082">micron::rgx::vm::addthread(u32 *lpc, i64 *lsav, usize &amp;ln, u32 pc, usize sp, i64 *sav) noexcept</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-8e536f35cc13392a">micron::rgx::vm::run() noexcept</a></td><td>function; line 85</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-6904c71e8a022082"><h3><code>micron::rgx::vm::addthread(u32 *lpc, i64 *lsav, usize &amp;ln, u32 pc, usize sp, i64 *sav) noexcept</code></h3><p>Defined in <code>regex/pike.hpp</code>, <a href="../../source/regex/pike.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  addthread(u32 *lpc, i64 *lsav, usize &amp;ln, u32 pc, usize sp, i64 *sav) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 *lpc</code></li><li><code>i64 *lsav</code></li><li><code>usize &amp;ln</code></li><li><code>u32 pc</code></li><li><code>usize sp</code></li><li><code>i64 *sav</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  addthread(u32 *lpc, i64 *lsav, usize &amp;ln, u32 pc, usize sp, i64 *sav) noexcept
+  {
+    if ( seen[pc] == gen ) return;
+    seen[pc] = gen;
+    const inst &amp;I = pv.code[pc];
+    switch ( I.code ) {
+    case op::Jmp:
+      addthread(lpc, lsav, ln, I.x, sp, sav);
+      break;
+    case op::Split:
+      addthread(lpc, lsav, ln, I.x, sp, sav);
+      addthread(lpc, lsav, ln, I.y, sp, sav);
+      break;
+    case op::Save:
+      if ( I.x &lt; nslots ) {
+        i64 old = sav[I.x];
+        sav[I.x] = (i64)sp;
+        addthread(lpc, lsav, ln, pc + 1, sp, sav);
+        sav[I.x] = old;
+      } else {
+        addthread(lpc, lsav, ln, pc + 1, sp, sav);
+      }
+      break;
+    case op::Bol:
+      if ( sp == 0 ) addthread(lpc, lsav, ln, pc + 1, sp, sav);
+      break;
+    case op::Eol:
+      if ( sp == n ) addthread(lpc, lsav, ln, pc + 1, sp, sav);
+      break;
+    default:
+      if ( ln &lt; cap ) {
+        lpc[ln] = pc;
+        for ( usize s = 0; s &lt; nslots; ++s ) lsav[ln * nslots + s] = sav[s];
+        ++ln;
+      }
+      break;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/regex/pike.hpp.html#L47">line 47</a></td></tr></tbody></table></section><section class="function-entry" id="f-8e536f35cc13392a"><h3><code>micron::rgx::vm::run() noexcept</code></h3><p>Defined in <code>regex/pike.hpp</code>, <a href="../../source/regex/pike.hpp.html#L85">line 85</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  run() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  run() noexcept
+  {
+    for ( usize s = 0; s &lt; nslots; ++s ) {
+      work[s] = -1;
+      mcaps[s] = -1;
+    }
+    matched = false;
+    a_n = 0;
+    b_n = 0;
+    ++gen;
+    addthread(a_pc, a_sav, a_n, 0, start_at, work);
+
+    for ( usize sp = start_at;; ++sp ) {
+      if ( a_n == 0 &amp;&amp; (matched || anchored) ) break;
+      int c = (sp &lt; n) ? (int)(unsigned char)in[sp] : -1;
+      ++gen;
+      b_n = 0;
+      for ( usize i = 0; i &lt; a_n; ++i ) {
+        u32 pc = a_pc[i];
+        i64 *sav = &amp;a_sav[i * nslots];
+        const inst &amp;I = pv.code[pc];
+        switch ( I.code ) {
+        case op::Char:
+          if ( c == (int)I.x ) addthread(b_pc, b_sav, b_n, pc + 1, sp + 1, sav);
+          break;
+        case op::Class:
+          if ( c &gt;= 0 &amp;&amp; pv.cls[I.x].test((unsigned char)c) ) addthread(b_pc, b_sav, b_n, pc + 1, sp + 1, sav);
+          break;
+        case op::Any:
+          if ( c &gt;= 0 ) addthread(b_pc, b_sav, b_n, pc + 1, sp + 1, sav);
+          break;
+        case op::Match: {
+          i64 st = sav[0], en = (i64)sp;
+          if ( !matched || st &lt; mstart || (st == mstart &amp;&amp; en &gt; mend) ) {
+            for ( usize s = 0; s &lt; nslots; ++s ) mcaps[s] = sav[s];
+            mstart = st;
+            mend = en;
+            matched = true;
+          }
+          break;
+        }
+        default:
+          break;
+        }
+      }
+      if ( !matched &amp;&amp; !anchored &amp;&amp; (sp + 1) &lt;= n ) addthread(b_pc, b_sav, b_n, 0, sp + 1, work);
+
+      u32 *tp = a_pc;
+      a_pc = b_pc;
+      b_pc = tp;
+      i64 *ts = a_sav;
+      a_sav = b_sav;
+      b_sav = ts;
+      a_n = b_n;
+
+      if ( c &lt; 0 ) break;
+    }
+    return matched;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>matched</code></td><td><a href="../../source/regex/pike.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="pike.hpp.html#f-6904c71e8a022082">addthread</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

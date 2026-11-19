@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/kernels.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/kernels.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/kernels.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/kernels.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-682bd72ef02fea70">micron::math::graphs::kernels::set_union(u64 *out, const u64 *a, const u64 *b, usize words) noexcept</a></td><td>function; line 25</td></tr><tr class="t-dsc"><td><a href="#f-6fe5bda3014bfaff">micron::math::graphs::kernels::set_intersection(u64 *out, const u64 *a, const u64 *b, usize words) noexcept</a></td><td>function; line 35</td></tr><tr class="t-dsc"><td><a href="#f-c221316dc3578a97">micron::math::graphs::kernels::popcount_reduce(const u64 *words, usize count) noexcept</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-60c7c3548d2c8b60">micron::math::graphs::kernels::common_neighbor_count(const u64 *a, const u64 *b, usize words) noexcept</a></td><td>function; line 55</td></tr><tr class="t-dsc"><td><a href="#f-2f22415061d4b28f">micron::math::graphs::kernels::expand_frontier(u64 *out, const u64 *frontier, const u64 *adjacency_rows, usize vertices) noexcept</a></td><td>function; line 65</td></tr><tr class="t-dsc"><td><a href="#f-64a0f5aab6930169">micron::math::graphs::kernels::masked_slot_scan(const u64 *mask, usize slots, I *out, usize capacity) noexcept</a></td><td>function; line 78</td></tr><tr class="t-dsc"><td><a href="#f-d50dd7d91c4e1548">micron::math::graphs::kernels::dense_boolean_product(const u8 *a, const u8 *b, u8 *out, usize n) noexcept</a></td><td>function; line 95</td></tr><tr class="t-dsc"><td><a href="#f-4036596c0d5c9047">micron::math::graphs::kernels::csr_prefix_sum(const I *counts, I *outer, usize rows) noexcept</a></td><td>function; line 108</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-682bd72ef02fea70"><h3><code>micron::math::graphs::kernels::set_union(u64 *out, const u64 *a, const u64 *b, usize words) noexcept</code></h3><p>Defined in <code>math/graph/kernels.hpp</code>, <a href="../../../source/math/graph/kernels.hpp.html#L25">line 25</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+set_union(u64 *out, const u64 *a, const u64 *b, usize words) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 *out</code></li><li><code>const u64 *a</code></li><li><code>const u64 *b</code></li><li><code>usize words</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+set_union(u64 *out, const u64 *a, const u64 *b, usize words) noexcept
+{
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)
+  __impl::word_union_arch(out, a, b, words);
+#else
+  __impl::word_union_scalar(out, a, b, words);
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="kernels/arch/bitset_amd64.hpp.html#f-b217e66767e14d7b">__impl::word_union_arch</a>, <a href="kernels/scalar.hpp.html#f-c8f030bbe999d7e9">__impl::word_union_scalar</a>.</p></section><section class="function-entry" id="f-6fe5bda3014bfaff"><h3><code>micron::math::graphs::kernels::set_intersection(u64 *out, const u64 *a, const u64 *b, usize words) noexcept</code></h3><p>Defined in <code>math/graph/kernels.hpp</code>, <a href="../../../source/math/graph/kernels.hpp.html#L35">line 35</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+set_intersection(u64 *out, const u64 *a, const u64 *b, usize words) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 *out</code></li><li><code>const u64 *a</code></li><li><code>const u64 *b</code></li><li><code>usize words</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+set_intersection(u64 *out, const u64 *a, const u64 *b, usize words) noexcept
+{
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)
+  __impl::word_intersection_arch(out, a, b, words);
+#else
+  __impl::word_intersection_scalar(out, a, b, words);
+#endif
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="kernels/arch/bitset_amd64.hpp.html#f-5290005c1de7fbb9">__impl::word_intersection_arch</a>, <a href="kernels/scalar.hpp.html#f-52a5bd881dbdf8d5">__impl::word_intersection_scalar</a>.</p></section><section class="function-entry" id="f-c221316dc3578a97"><h3><code>micron::math::graphs::kernels::popcount_reduce(const u64 *words, usize count) noexcept</code></h3><p>Defined in <code>math/graph/kernels.hpp</code>, <a href="../../../source/math/graph/kernels.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline usize
+popcount_reduce(const u64 *words, usize count) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u64 *words</code></li><li><code>usize count</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline usize
+popcount_reduce(const u64 *words, usize count) noexcept
+{
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)
+  return __impl::popcount_arch(words, count);
+#else
+  return __impl::popcount_scalar(words, count);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::popcount_arch(words, count)</code></td><td><a href="../../../source/math/graph/kernels.hpp.html#L48">line 48</a></td></tr><tr class="t-dsc"><td><code>__impl::popcount_scalar(words, count)</code></td><td><a href="../../../source/math/graph/kernels.hpp.html#L50">line 50</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="kernels/arch/bitset_amd64.hpp.html#f-8898f80e5c4c22bb">__impl::popcount_arch</a>, <a href="kernels/scalar.hpp.html#f-d164ba0c5fe9580a">__impl::popcount_scalar</a>.</p></section><section class="function-entry" id="f-60c7c3548d2c8b60"><h3><code>micron::math::graphs::kernels::common_neighbor_count(const u64 *a, const u64 *b, usize words) noexcept</code></h3><p>Defined in <code>math/graph/kernels.hpp</code>, <a href="../../../source/math/graph/kernels.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline usize
+common_neighbor_count(const u64 *a, const u64 *b, usize words) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u64 *a</code></li><li><code>const u64 *b</code></li><li><code>usize words</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline usize
+common_neighbor_count(const u64 *a, const u64 *b, usize words) noexcept
+{
+#if defined(__micron_arch_amd64) || defined(__micron_arch_x86) || defined(__micron_arch_arm32) || defined(__micron_arch_arm64)
+  return __impl::intersection_popcount_arch(a, b, words);
+#else
+  return __impl::intersection_popcount_scalar(a, b, words);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::intersection_popcount_arch(a, b, words)</code></td><td><a href="../../../source/math/graph/kernels.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>__impl::intersection_popcount_scalar(a, b, words)</code></td><td><a href="../../../source/math/graph/kernels.hpp.html#L60">line 60</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="kernels/arch/bitset_amd64.hpp.html#f-5f09e9f38acd21c2">__impl::intersection_popcount_arch</a>, <a href="kernels/scalar.hpp.html#f-62b24d9ba2dab9b5">__impl::intersection_popcount_scalar</a>.</p></section><section class="function-entry" id="f-2f22415061d4b28f"><h3><code>micron::math::graphs::kernels::expand_frontier(u64 *out, const u64 *frontier, const u64 *adjacency_rows, usize vertices) noexcept</code></h3><p>Defined in <code>math/graph/kernels.hpp</code>, <a href="../../../source/math/graph/kernels.hpp.html#L65">line 65</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+expand_frontier(u64 *out, const u64 *frontier, const u64 *adjacency_rows, usize vertices) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 *out</code></li><li><code>const u64 *frontier</code></li><li><code>const u64 *adjacency_rows</code></li><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+expand_frontier(u64 *out, const u64 *frontier, const u64 *adjacency_rows, usize vertices) noexcept
+{
+  const usize words = (vertices + 63u) / 64u;
+  for ( usize word = 0; word &lt; words; ++word ) out[word] = 0;
+  for ( usize vertex = 0; vertex &lt; vertices; ++vertex ) {
+    if ( (frontier[vertex &gt;&gt; 6u] &amp; (u64(1) &lt;&lt; (vertex &amp; 63u))) == 0 ) continue;
+    const u64 *row = adjacency_rows + vertex * words;
+    set_union(out, out, row, words);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>, <a href="kernels.hpp.html#f-682bd72ef02fea70">set_union</a>.</p></section><section class="function-entry" id="f-64a0f5aab6930169"><h3><code>micron::math::graphs::kernels::masked_slot_scan(const u64 *mask, usize slots, I *out, usize capacity) noexcept</code></h3><p>Defined in <code>math/graph/kernels.hpp</code>, <a href="../../../source/math/graph/kernels.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;micron::integral I&gt;
+[[nodiscard]] inline usize
+masked_slot_scan(const u64 *mask, usize slots, I *out, usize capacity) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u64 *mask</code></li><li><code>usize slots</code></li><li><code>I *out</code></li><li><code>usize capacity</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;micron::integral I&gt;
+[[nodiscard]] inline usize
+masked_slot_scan(const u64 *mask, usize slots, I *out, usize capacity) noexcept
+{
+  usize count = 0;
+  const usize words = (slots + 63u) / 64u;
+  for ( usize word = 0; word &lt; words; ++word ) {
+    u64 bits = mask[word];
+    while ( bits ) {
+      const usize bit = static_cast&lt;usize&gt;(__builtin_ctzll(bits));
+      const usize slot = word * 64u + bit;
+      if ( slot &lt; slots &amp;&amp; count &lt; capacity ) out[count++] = static_cast&lt;I&gt;(slot);
+      bits &amp;= bits - 1;
+    }
+  }
+  return count;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>count</code></td><td><a href="../../../source/math/graph/kernels.hpp.html#L91">line 91</a></td></tr></tbody></table></section><section class="function-entry" id="f-d50dd7d91c4e1548"><h3><code>micron::math::graphs::kernels::dense_boolean_product(const u8 *a, const u8 *b, u8 *out, usize n) noexcept</code></h3><p>Defined in <code>math/graph/kernels.hpp</code>, <a href="../../../source/math/graph/kernels.hpp.html#L95">line 95</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+dense_boolean_product(const u8 *a, const u8 *b, u8 *out, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *a</code></li><li><code>const u8 *b</code></li><li><code>u8 *out</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+dense_boolean_product(const u8 *a, const u8 *b, u8 *out, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) {
+    for ( usize j = 0; j &lt; n; ++j ) {
+      u8 value = 0;
+      for ( usize k = 0; k &lt; n; ++k ) value |= static_cast&lt;u8&gt;(a[i * n + k] &amp;&amp; b[k * n + j]);
+      out[i * n + j] = static_cast&lt;u8&gt;(value != 0);
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4036596c0d5c9047"><h3><code>micron::math::graphs::kernels::csr_prefix_sum(const I *counts, I *outer, usize rows) noexcept</code></h3><p>Defined in <code>math/graph/kernels.hpp</code>, <a href="../../../source/math/graph/kernels.hpp.html#L108">line 108</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;micron::integral I&gt;
+[[nodiscard]] inline bool
+csr_prefix_sum(const I *counts, I *outer, usize rows) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const I *counts</code></li><li><code>I *outer</code></li><li><code>usize rows</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;micron::integral I&gt;
+[[nodiscard]] inline bool
+csr_prefix_sum(const I *counts, I *outer, usize rows) noexcept
+{
+  outer[0] = I(0);
+  for ( usize row = 0; row &lt; rows; ++row ) {
+    I next{};
+    if ( __builtin_add_overflow(outer[row], counts[row], &amp;next) ) return false;
+    outer[row + 1] = next;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/kernels.hpp.html#L113">line 113</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/kernels.hpp.html#L116">line 116</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

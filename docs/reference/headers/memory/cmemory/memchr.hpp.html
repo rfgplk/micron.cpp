@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/memory/cmemory/memchr.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/memory/cmemory/memchr.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/memory.html">Memory operations</a></div><p>Defined in header <code>&lt;micron/memory/cmemory/memchr.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/memory/cmemory/memchr.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-6fc3f2884c3ba7ab">micron::memchr(const T &amp;restrict src, byte c, u64 n) noexcept</a></td><td>function; line 20</td></tr><tr class="t-dsc"><td><a href="#f-966026f1950942f4">micron::memchr(const T *restrict src, byte c, u64 n) noexcept</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-fc75e7016ef236e4">micron::memrchr(const T *restrict src, byte c, u64 n) noexcept</a></td><td>function; line 73</td></tr><tr class="t-dsc"><td><a href="#f-35a13d90ed66849a">micron::memmem(const T *restrict hay, u64 hlen, const T *restrict nee, u64 nlen) noexcept</a></td><td>function; line 101</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-6fc3f2884c3ba7ab"><h3><code>micron::memchr(const T &amp;restrict src, byte c, u64 n) noexcept</code></h3><p>Defined in <code>memory/cmemory/memchr.hpp</code>, <a href="../../../source/memory/cmemory/memchr.hpp.html#L20">line 20</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires(!micron::is_null_pointer_v&lt;T&gt;)
+T *
+memchr(const T &amp;restrict src, byte c, u64 n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;restrict src</code></li><li><code>byte c</code></li><li><code>u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires(!micron::is_null_pointer_v&lt;T&gt;)
+T *
+memchr(const T &amp;restrict src, byte c, u64 n) noexcept
+{
+  if ( src == nullptr ) return nullptr;
+  if constexpr ( sizeof(T) == 1 ) {
+    const u64 bytes = n;
+    if ( bytes &lt; __simd_dispatch_threshold ) {
+      for ( u64 i = 0; i &lt; bytes; i++ )
+        if ( src[i] == static_cast&lt;T&gt;(c) ) return const_cast&lt;T *&gt;(src + i);
+      return nullptr;
+    }
+#if defined(__micron_x86_avx2)
+    return simd::memchr256&lt;T&gt;(src, c, n);
+#else
+    return simd::memchr128&lt;T&gt;(src, c, n);
+#endif
+  } else {
+    for ( u64 i = 0; i &lt; n; i++ )
+      if ( src[i] == c ) return const_cast&lt;T *&gt;(src + i);
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L22">line 22</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(src + i)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L27">line 27</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L28">line 28</a></td></tr><tr class="t-dsc"><td><code>simd::memchr256&lt;T&gt;(src, c, n)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L31">line 31</a></td></tr><tr class="t-dsc"><td><code>simd::memchr128&lt;T&gt;(src, c, n)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L33">line 33</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(src + i)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L37">line 37</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L38">line 38</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/memory.hpp.html#f-973230825a3af62e">simd::memchr256&lt;T&gt;</a>, <a href="../../bits/wasm/simd/memory.hpp.html#f-3a7307bac6acc65d">simd::memchr128&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-966026f1950942f4"><h3><code>micron::memchr(const T *restrict src, byte c, u64 n) noexcept</code></h3><p>Defined in <code>memory/cmemory/memchr.hpp</code>, <a href="../../../source/memory/cmemory/memchr.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires(!micron::is_null_pointer_v&lt;T&gt;)
+T *
+memchr(const T *restrict src, byte c, u64 n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>byte c</code></li><li><code>u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires(!micron::is_null_pointer_v&lt;T&gt;)
+T *
+memchr(const T *restrict src, byte c, u64 n) noexcept
+{
+  if ( src == nullptr ) return nullptr;
+  if constexpr ( sizeof(T) == 1 ) {
+    const u64 bytes = n;
+    if ( bytes &lt; __simd_dispatch_threshold ) {
+      for ( u64 i = 0; i &lt; bytes; i++ )
+        if ( src[i] == static_cast&lt;T&gt;(c) ) return const_cast&lt;T *&gt;(src + i);
+      return nullptr;
+    }
+#if defined(__micron_x86_avx2)
+    return simd::memchr256&lt;T&gt;(src, c, n);
+#else
+    return simd::memchr128&lt;T&gt;(src, c, n);
+#endif
+  } else {
+    for ( u64 i = 0; i &lt; n; i++ )
+      if ( src[i] == c ) return const_cast&lt;T *&gt;(src + i);
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(src + i)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L52">line 52</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>simd::memchr256&lt;T&gt;(src, c, n)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L56">line 56</a></td></tr><tr class="t-dsc"><td><code>simd::memchr128&lt;T&gt;(src, c, n)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(src + i)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L62">line 62</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L63">line 63</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/memory.hpp.html#f-973230825a3af62e">simd::memchr256&lt;T&gt;</a>, <a href="../../bits/wasm/simd/memory.hpp.html#f-3a7307bac6acc65d">simd::memchr128&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-fc75e7016ef236e4"><h3><code>micron::memrchr(const T *restrict src, byte c, u64 n) noexcept</code></h3><p>Defined in <code>memory/cmemory/memchr.hpp</code>, <a href="../../../source/memory/cmemory/memchr.hpp.html#L73">line 73</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires(!micron::is_null_pointer_v&lt;T&gt;)
+T *
+memrchr(const T *restrict src, byte c, u64 n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>byte c</code></li><li><code>u64 n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires(!micron::is_null_pointer_v&lt;T&gt;)
+T *
+memrchr(const T *restrict src, byte c, u64 n) noexcept
+{
+  if ( src == nullptr ) return nullptr;
+  if constexpr ( sizeof(T) == 1 ) {
+    const u64 bytes = n;
+    if ( bytes &lt; __simd_dispatch_threshold ) {
+      for ( u64 i = bytes; i &gt; 0; i-- )
+        if ( src[i - 1] == static_cast&lt;T&gt;(c) ) return const_cast&lt;T *&gt;(src + i - 1);
+      return nullptr;
+    }
+#if defined(__micron_x86_avx2)
+    return simd::memrchr256&lt;T&gt;(src, c, n);
+#else
+    return simd::memrchr128&lt;T&gt;(src, c, n);
+#endif
+  } else {
+    for ( u64 i = n; i &gt; 0; i-- )
+      if ( src[i - 1] == c ) return const_cast&lt;T *&gt;(src + i - 1);
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L75">line 75</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(src + i - 1)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L81">line 81</a></td></tr><tr class="t-dsc"><td><code>simd::memrchr256&lt;T&gt;(src, c, n)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L84">line 84</a></td></tr><tr class="t-dsc"><td><code>simd::memrchr128&lt;T&gt;(src, c, n)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(src + i - 1)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L90">line 90</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L91">line 91</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/memory.hpp.html#f-cb928b226797d2cb">simd::memrchr256&lt;T&gt;</a>, <a href="../../bits/wasm/simd/memory.hpp.html#f-af4b8368fc4af1af">simd::memrchr128&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-35a13d90ed66849a"><h3><code>micron::memmem(const T *restrict hay, u64 hlen, const T *restrict nee, u64 nlen) noexcept</code></h3><p>Defined in <code>memory/cmemory/memchr.hpp</code>, <a href="../../../source/memory/cmemory/memchr.hpp.html#L101">line 101</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+  requires(!micron::is_null_pointer_v&lt;T&gt;)
+T *
+memmem(const T *restrict hay, u64 hlen, const T *restrict nee, u64 nlen) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict hay</code></li><li><code>u64 hlen</code></li><li><code>const T *restrict nee</code></li><li><code>u64 nlen</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+  requires(!micron::is_null_pointer_v&lt;T&gt;)
+T *
+memmem(const T *restrict hay, u64 hlen, const T *restrict nee, u64 nlen) noexcept
+{
+  if ( hay == nullptr ) return nullptr;
+  if ( nlen == 0 ) return const_cast&lt;T *&gt;(hay);
+  if ( nee == nullptr ) return nullptr;
+  if ( nlen &gt; hlen ) return nullptr;
+
+  if constexpr ( sizeof(T) == 1 ) {
+    const u64 hbytes = hlen;
+    if ( hbytes &lt; __simd_dispatch_threshold ) {
+      const u64 limit = hbytes - nlen + 1;
+      for ( u64 i = 0; i &lt; limit; i++ ) {
+        bool match = true;
+        for ( u64 j = 0; j &lt; nlen; j++ )
+          if ( hay[i + j] != nee[j] ) {
+            match = false;
+            break;
+          }
+        if ( match ) return const_cast&lt;T *&gt;(hay + i);
+      }
+      return nullptr;
+    }
+#if defined(__micron_x86_avx2)
+    return simd::memmem256&lt;T&gt;(hay, hlen, nee, nlen);
+#else
+    return simd::memmem128&lt;T&gt;(hay, hlen, nee, nlen);
+#endif
+  } else {
+    const u64 limit = hlen - nlen + 1;
+    for ( u64 i = 0; i &lt; limit; i++ ) {
+      bool match = true;
+      for ( u64 j = 0; j &lt; nlen; j++ )
+        if ( hay[i + j] != nee[j] ) {
+          match = false;
+          break;
+        }
+      if ( match ) return const_cast&lt;T *&gt;(hay + i);
+    }
+    return nullptr;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L103">line 103</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(hay)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L105">line 105</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(hay + i)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L121">line 121</a></td></tr><tr class="t-dsc"><td><code>simd::memmem256&lt;T&gt;(hay, hlen, nee, nlen)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L124">line 124</a></td></tr><tr class="t-dsc"><td><code>simd::memmem128&lt;T&gt;(hay, hlen, nee, nlen)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L126">line 126</a></td></tr><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(hay + i)</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L137">line 137</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../source/memory/cmemory/memchr.hpp.html#L139">line 139</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/memory.hpp.html#f-2a3f1e3261a38184">simd::memmem256&lt;T&gt;</a>, <a href="../../bits/wasm/simd/memory.hpp.html#f-049978beae0fb5bf">simd::memmem128&lt;T&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

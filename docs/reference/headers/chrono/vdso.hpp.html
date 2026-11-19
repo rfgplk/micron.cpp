@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/chrono/vdso.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/chrono/vdso.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/chrono.html">Date and time</a></div><p>Defined in header <code>&lt;micron/chrono/vdso.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/chrono/vdso.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-51d9e411f1f085b0">micron::chrono::vdso::clock_gettime_fn</code></td><td>typedef; line 30</td></tr><tr class="t-dsc"><td><code id="s-aff1a67d27850f04">micron::chrono::vdso::getcpu_fn</code></td><td>typedef; line 31</td></tr><tr class="t-dsc"><td><code id="s-951183de71c0e48c">micron::chrono::vdso::supported</code></td><td>variable; line 33</td></tr><tr class="t-dsc"><td><code id="s-d8343dc0a6dd03e5">micron::chrono::vdso::resolved</code></td><td>struct; line 35</td></tr><tr class="t-dsc"><td><code id="s-3999f78837343f28">micron::chrono::vdso::resolved::clock_gettime</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-7ef6126597dcad8b">micron::chrono::vdso::resolved::getcpu</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-4964f46a491c6ac4">micron::chrono::vdso::resolved::tried</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><a href="#f-cc6b48653b1953d5">micron::chrono::vdso::info(void) noexcept</a></td><td>function; line 161</td></tr><tr class="t-dsc"><td><a href="#f-7444d24c86f849c4">micron::chrono::vdso::available(void) noexcept</a></td><td>function; line 169</td></tr><tr class="t-dsc"><td><a href="#f-abd4961d483952db">micron::chrono::vdso::clock_gettime(clockid_t clk, timespec_t &amp;ts) noexcept</a></td><td>function; line 175</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-cc6b48653b1953d5"><h3><code>micron::chrono::vdso::info(void) noexcept</code></h3><p>Defined in <code>chrono/vdso.hpp</code>, <a href="../../source/chrono/vdso.hpp.html#L161">line 161</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const resolved &amp;
+info(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const resolved &amp;
+info(void) noexcept
+{
+  if ( __atomic_load_n(&amp;__impl::__state, __ATOMIC_ACQUIRE) == 0u ) [[unlikely]]
+    __impl::__resolve();
+  return __impl::__slot;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__impl::__slot</code></td><td><a href="../../source/chrono/vdso.hpp.html#L165">line 165</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vdso.hpp.html#f-baeb6e5eaeaf42fb">__impl::__resolve</a>.</p></section><section class="function-entry" id="f-7444d24c86f849c4"><h3><code>micron::chrono::vdso::available(void) noexcept</code></h3><p>Defined in <code>chrono/vdso.hpp</code>, <a href="../../source/chrono/vdso.hpp.html#L169">line 169</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+available(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>info().clock_gettime != nullptr</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+available(void) noexcept
+{
+  return info().clock_gettime != nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>info().clock_gettime != nullptr</code></td><td><a href="../../source/chrono/vdso.hpp.html#L171">line 171</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vdso.hpp.html#f-cc6b48653b1953d5">info</a>.</p></section><section class="function-entry" id="f-abd4961d483952db"><h3><code>micron::chrono::vdso::clock_gettime(clockid_t clk, timespec_t &amp;ts) noexcept</code></h3><p>Defined in <code>chrono/vdso.hpp</code>, <a href="../../source/chrono/vdso.hpp.html#L175">line 175</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] inline ssize_t
+clock_gettime(clockid_t clk, timespec_t &amp;ts) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>clockid_t clk</code></li><li><code>timespec_t &amp;ts</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] inline ssize_t
+clock_gettime(clockid_t clk, timespec_t &amp;ts) noexcept
+{
+  const clock_gettime_fn f = info().clock_gettime;
+  if ( f ) [[likely]]
+    return static_cast&lt;ssize_t&gt;(f(clk, &amp;ts));
+  return micron::clock_gettime(clk, ts);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;ssize_t&gt;(f(clk, &amp;ts))</code></td><td><a href="../../source/chrono/vdso.hpp.html#L179">line 179</a></td></tr><tr class="t-dsc"><td><code>micron::clock_gettime(clk, ts)</code></td><td><a href="../../source/chrono/vdso.hpp.html#L180">line 180</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="vdso.hpp.html#f-cc6b48653b1953d5">info</a>, <a href="../linux/sys/time.hpp.html#f-50f28f374b0aa921">micron::clock_gettime</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-0e025f0dff256e12"><h3><code>micron::chrono::vdso::__impl::__scan(unsigned long base_addr) noexcept</code></h3><p>Defined in <code>chrono/vdso.hpp</code>, <a href="../../source/chrono/vdso.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold, gnu::noinline]] inline scan_out
+__scan(unsigned long base_addr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>unsigned long base_addr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold, gnu::noinline]] inline scan_out
+__scan(unsigned long base_addr) noexcept
+{
+  scan_out o{};
+  if ( base_addr == 0 ) return o;
+  const u8 *base = reinterpret_cast&lt;const u8 *&gt;(base_addr);
+
+  const elf::nehdr_t *eh = micron::ptr_cast&lt;const elf::nehdr_t *&gt;(base);
+  if ( eh-&gt;ident[0] != 0x7f || eh-&gt;ident[1] != &#x27;E&#x27; || eh-&gt;ident[2] != &#x27;L&#x27; || eh-&gt;ident[3] != &#x27;F&#x27; ) return o;
+  if ( eh-&gt;phoff == 0 || eh-&gt;phentsize == 0 || eh-&gt;phnum == 0 ) return o;
+
+  const u8 *ph = base + eh-&gt;phoff;
+  const elf::ndyn_t *dyn = nullptr;
+
+  for ( elf::half i = 0; i &lt; eh-&gt;phnum; ++i ) {
+    const elf::nphdr_t *p = micron::ptr_cast&lt;const elf::nphdr_t *&gt;(ph + static_cast&lt;usize&gt;(i) * eh-&gt;phentsize);
+    if ( p-&gt;type == elf::pt_load &amp;&amp; o.bias == nullptr ) {
+      o.bias = reinterpret_cast&lt;const u8 *&gt;(base_addr + static_cast&lt;unsigned long&gt;(p-&gt;offset) - static_cast&lt;unsigned long&gt;(p-&gt;vaddr));
+    } else if ( p-&gt;type == elf::pt_dynamic ) {
+      dyn = micron::ptr_cast&lt;const elf::ndyn_t *&gt;(base + p-&gt;offset);
+    }
+  }
+  if ( !dyn || !o.bias ) return o;
+
+  for ( const elf::ndyn_t *d = dyn; d-&gt;tag != elf::dt_null; ++d ) {
+    switch ( d-&gt;tag ) {
+    case elf::dt_strtab:
+      o.dyn.strtab = reinterpret_cast&lt;const char *&gt;(o.bias + d-&gt;un.ptr);
+      break;
+    case elf::dt_symtab:
+      o.dyn.symtab = micron::ptr_cast&lt;const elf::nsym_t *&gt;(o.bias + d-&gt;un.ptr);
+      break;
+    case elf::dt_hash:
+      o.dyn.hash = micron::ptr_cast&lt;const elf::word *&gt;(o.bias + d-&gt;un.ptr);
+      break;
+    case elf::dt_gnu_hash:
+      o.dyn.gnu_hash = micron::ptr_cast&lt;const elf::word *&gt;(o.bias + d-&gt;un.ptr);
+      break;
+    default:
+      break;
+    }
+  }
+  if ( !o.dyn.symtab || !o.dyn.strtab ) return o;
+  if ( !o.dyn.hash &amp;&amp; !o.dyn.gnu_hash ) return o;
+  o.dyn.symcount = elf::count_dynsyms(o.dyn);
+  o.ok = true;
+  return o;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>o</code></td><td><a href="../../source/chrono/vdso.hpp.html#L84">line 84</a></td></tr><tr class="t-dsc"><td><code>o</code></td><td><a href="../../source/chrono/vdso.hpp.html#L88">line 88</a></td></tr><tr class="t-dsc"><td><code>o</code></td><td><a href="../../source/chrono/vdso.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>o</code></td><td><a href="../../source/chrono/vdso.hpp.html#L102">line 102</a></td></tr><tr class="t-dsc"><td><code>o</code></td><td><a href="../../source/chrono/vdso.hpp.html#L122">line 122</a></td></tr><tr class="t-dsc"><td><code>o</code></td><td><a href="../../source/chrono/vdso.hpp.html#L123">line 123</a></td></tr><tr class="t-dsc"><td><code>o</code></td><td><a href="../../source/chrono/vdso.hpp.html#L126">line 126</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const elf::nehdr_t *&gt;</a>, <a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const elf::nphdr_t *&gt;</a>, <a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const elf::ndyn_t *&gt;</a>, <a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const elf::nsym_t *&gt;</a>, <a href="../memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;const elf::word *&gt;</a>, <a href="../linux/elf/hash.hpp.html#f-d0994343c13cf149">elf::count_dynsyms</a>.</p></section><section class="function-entry" id="f-baeb6e5eaeaf42fb"><h3><code>micron::chrono::vdso::__impl::__resolve(void) noexcept</code></h3><p>Defined in <code>chrono/vdso.hpp</code>, <a href="../../source/chrono/vdso.hpp.html#L130">line 130</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::cold, gnu::noinline]] inline void
+__resolve(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::cold, gnu::noinline]] inline void
+__resolve(void) noexcept
+{
+  resolved r{};
+  r.tried = true;
+
+  const scan_out o = __scan(micron::getauxval(micron::at_sysinfo_ehdr));
+  if ( o.ok ) {
+    for ( const char *n : __cgt_names ) {
+      const elf::nsym_t *s = elf::lookup_sym(o.dyn, n);
+      if ( s &amp;&amp; s-&gt;value != 0 ) {
+        r.clock_gettime = reinterpret_cast&lt;clock_gettime_fn&gt;(const_cast&lt;u8 *&gt;(o.bias) + s-&gt;value);
+        break;
+      }
+    }
+    for ( const char *n : __getcpu_names ) {
+      if ( n[0] == 0 ) break;      // this arch&#x27;s vDSO exports no getcpu
+      const elf::nsym_t *s = elf::lookup_sym(o.dyn, n);
+      if ( s &amp;&amp; s-&gt;value != 0 ) {
+        r.getcpu = reinterpret_cast&lt;getcpu_fn&gt;(const_cast&lt;u8 *&gt;(o.bias) + s-&gt;value);
+        break;
+      }
+    }
+  }
+
+  __slot = r;
+  __atomic_store_n(&amp;__state, 1u, __ATOMIC_RELEASE);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="vdso.hpp.html#f-0e025f0dff256e12">__scan</a>, <a href="../linux/elf/auxval.hpp.html#f-85445bdc43919f42">micron::getauxval</a>, <a href="../linux/elf/hash.hpp.html#f-607cfcdb980d22e8">elf::lookup_sym</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/async_channel.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/async_channel.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/async_channel.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/tasks/async_channel.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-550178fe16cb9907">micron::chan_status</code></td><td>enum; line 23</td></tr><tr class="t-dsc"><td><code id="s-1807e978aa7fe661">micron::chan_status::closed</code></td><td>enumerator; line 23</td></tr><tr class="t-dsc"><td><code id="s-36d9ac1f303aff83">micron::chan_status::empty</code></td><td>enumerator; line 23</td></tr><tr class="t-dsc"><td><code id="s-78710f50e5efad6a">micron::chan_status::ok</code></td><td>enumerator; line 23</td></tr><tr class="t-dsc"><td><code id="s-bdd51e94e2d74ab5">micron::chan_pull</code></td><td>struct; line 25</td></tr><tr class="t-dsc"><td><code id="s-7fc4b4bc377197e9">micron::chan_pull::ok</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-1ffe4dfea195fb49">micron::chan_pull::value</code></td><td>member; line 27</td></tr><tr class="t-dsc"><td><code id="s-613de294c5baf9be">micron::async_channel</code></td><td>class; line 30</td></tr><tr class="t-dsc"><td><a href="#f-64c0160b5b1f96a5">micron::async_channel::async_channel()</a></td><td>function; line 38</td></tr><tr class="t-dsc"><td><a href="#f-4ec98fc92f9dd107">micron::async_channel::async_channel(const async_channel &amp;)</a></td><td>function; line 39</td></tr><tr class="t-dsc"><td><a href="#f-48cbfa52c2c2ece1">micron::async_channel::operator=(const async_channel &amp;)</a></td><td>function; line 40</td></tr><tr class="t-dsc"><td><a href="#f-4abe52f787354cd6">micron::async_channel::push(T __v)</a></td><td>function; line 43</td></tr><tr class="t-dsc"><td><a href="#f-bb19c5977576f16a">micron::async_channel::pull()</a></td><td>function; line 53</td></tr><tr class="t-dsc"><td><a href="#f-64a6356ad645fca9">micron::async_channel::push_bulk(const T *__src, usize __n)</a></td><td>function; line 71</td></tr><tr class="t-dsc"><td><a href="#f-7b33558b2fe61c50">micron::async_channel::pull_bulk(T *__dst, usize __n)</a></td><td>function; line 95</td></tr><tr class="t-dsc"><td><a href="#f-3821d901d0b4de28">micron::async_channel::post(T __v) noexcept</a></td><td>function; line 130</td></tr><tr class="t-dsc"><td><a href="#f-eca538988f614a18">micron::async_channel::try_pull(T &amp;__out) noexcept</a></td><td>function; line 140</td></tr><tr class="t-dsc"><td><a href="#f-158c57da9d25599f">micron::async_channel::close() noexcept</a></td><td>function; line 158</td></tr><tr class="t-dsc"><td><a href="#f-8aaf3371b5f91b6f">micron::async_channel::is_closed() const noexcept</a></td><td>function; line 166</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-64c0160b5b1f96a5"><h3><code>micron::async_channel::async_channel()</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L38">line 38</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>async_channel() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-4ec98fc92f9dd107"><h3><code>micron::async_channel::async_channel(const async_channel &amp;)</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L39">line 39</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>async_channel(const async_channel &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const async_channel &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-48cbfa52c2c2ece1"><h3><code>micron::async_channel::operator=(const async_channel &amp;)</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L40">line 40</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>async_channel &amp;operator=(const async_channel &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const async_channel &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-4abe52f787354cd6"><h3><code>micron::async_channel::push(T __v)</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L43">line 43</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>micron::task&lt;bool&gt;
+  push(T __v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T __v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">micron::task&lt;bool&gt;
+  push(T __v)
+  {
+    co_await __space.acquire();
+    if ( __closed.get(memory_order_acquire) ) co_return false;
+    while ( !__ring.push(micron::move(__v)) ) __cpu_pause();      // holds a space permit -&gt; succeeds
+    __items.release();
+    co_return true;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-bb19c5977576f16a"><h3><code>micron::async_channel::pull()</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L53">line 53</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>micron::task&lt;chan_pull&lt;T&gt;&gt;
+  pull()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">micron::task&lt;chan_pull&lt;T&gt;&gt;
+  pull()
+  {
+    const bool __got = co_await __items.acquire();
+    T __v{};
+    if ( __got ) {
+      while ( !__ring.pop(__v) ) __cpu_pause();      // permit held -&gt; an item is guaranteed (may be mid-publish)
+      __space.release();
+      co_return chan_pull&lt;T&gt;{ true, micron::move(__v) };
+    }
+    // aborted/closed: no permit
+    if ( __ring.pop(__v) ) {
+      __space.release();
+      co_return chan_pull&lt;T&gt;{ true, micron::move(__v) };
+    }
+    co_return chan_pull&lt;T&gt;{ false, T{} };      // empty -&gt; closed &amp; drained
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-64a6356ad645fca9"><h3><code>micron::async_channel::push_bulk(const T *__src, usize __n)</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L71">line 71</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>micron::task&lt;usize&gt;
+  push_bulk(const T *__src, usize __n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__src</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">micron::task&lt;usize&gt;
+  push_bulk(const T *__src, usize __n)
+  {
+    usize __done = 0;
+    while ( __done &lt; __n ) {
+      if ( __closed.get(memory_order_acquire) ) break;
+      const i64 __got = __space.try_acquire_many(static_cast&lt;i64&gt;(__n - __done));
+      if ( __got &gt; 0 ) {
+        for ( i64 __k = 0; __k &lt; __got; ++__k ) {
+          while ( !__ring.push(__src[__done]) ) __cpu_pause();
+          ++__done;
+        }
+        __items.release(__got);
+      } else {
+        co_await __space.acquire();      // backpressure: block for one permit
+        if ( __closed.get(memory_order_acquire) ) break;
+        while ( !__ring.push(__src[__done]) ) __cpu_pause();
+        ++__done;
+        __items.release(1);
+      }
+    }
+    co_return __done;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-7b33558b2fe61c50"><h3><code>micron::async_channel::pull_bulk(T *__dst, usize __n)</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L95">line 95</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>micron::task&lt;usize&gt;
+  pull_bulk(T *__dst, usize __n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__dst</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">micron::task&lt;usize&gt;
+  pull_bulk(T *__dst, usize __n)
+  {
+    usize __done = 0;
+    while ( __done &lt; __n ) {
+      const i64 __got = __items.try_acquire_many(static_cast&lt;i64&gt;(__n - __done));
+      if ( __got &gt; 0 ) {
+        for ( i64 __k = 0; __k &lt; __got; ++__k ) {
+          T __v{};
+          while ( !__ring.pop(__v) ) __cpu_pause();
+          __dst[__done] = micron::move(__v);
+          ++__done;
+        }
+        __space.release(__got);
+      } else {
+        const bool __got_one = co_await __items.acquire();      // block for one item (or wake on close)
+        T __v{};
+        if ( __got_one ) {
+          while ( !__ring.pop(__v) ) __cpu_pause();      // permit held -&gt; an item is guaranteed
+          __dst[__done] = micron::move(__v);
+          ++__done;
+          __space.release(1);
+        } else if ( __ring.pop(__v) ) {      // closed: drain any still-buffered item
+          __dst[__done] = micron::move(__v);
+          ++__done;
+          __space.release(1);
+        } else {
+          break;      // closed &amp; drained
+        }
+      }
+    }
+    co_return __done;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-3821d901d0b4de28"><h3><code>micron::async_channel::post(T __v) noexcept</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L130">line 130</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  post(T __v) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T __v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  post(T __v) noexcept
+  {
+    if ( __closed.get(memory_order_acquire) || !__space.try_acquire() ) return false;
+    while ( !__ring.push(micron::move(__v)) ) __cpu_pause();
+    __items.release();
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/tasks/async_channel.hpp.html#L132">line 132</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/tasks/async_channel.hpp.html#L135">line 135</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-eca538988f614a18"><h3><code>micron::async_channel::try_pull(T &amp;__out) noexcept</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L140">line 140</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>chan_status
+  try_pull(T &amp;__out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;__out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">chan_status
+  try_pull(T &amp;__out) noexcept
+  {
+    if ( __items.try_acquire() ) {
+      while ( !__ring.pop(__out) ) __cpu_pause();      // permit held -&gt; an item is guaranteed
+      __space.release();
+      return chan_status::ok;
+    }
+    if ( __closed.get(memory_order_acquire) ) {
+      if ( __ring.pop(__out) ) {
+        __space.release();
+        return chan_status::ok;
+      }
+      return chan_status::closed;
+    }
+    return chan_status::empty;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>chan_status::ok</code></td><td><a href="../../source/tasks/async_channel.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>chan_status::ok</code></td><td><a href="../../source/tasks/async_channel.hpp.html#L150">line 150</a></td></tr><tr class="t-dsc"><td><code>chan_status::closed</code></td><td><a href="../../source/tasks/async_channel.hpp.html#L152">line 152</a></td></tr><tr class="t-dsc"><td><code>chan_status::empty</code></td><td><a href="../../source/tasks/async_channel.hpp.html#L154">line 154</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-158c57da9d25599f"><h3><code>micron::async_channel::close() noexcept</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L158">line 158</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  close() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  close() noexcept
+  {
+    __closed.store(1, memory_order_release);
+    __items.abort();
+    __space.abort();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-8aaf3371b5f91b6f"><h3><code>micron::async_channel::is_closed() const noexcept</code></h3><p>Defined in <code>tasks/async_channel.hpp</code>, <a href="../../source/tasks/async_channel.hpp.html#L166">line 166</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  is_closed() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__closed.get(memory_order_acquire) != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  is_closed() const noexcept
+  {
+    return __closed.get(memory_order_acquire) != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__closed.get(memory_order_acquire) != 0</code></td><td><a href="../../source/tasks/async_channel.hpp.html#L168">line 168</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

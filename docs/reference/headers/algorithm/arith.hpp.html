@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/arith.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/arith.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/algorithms.html">Algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/arith.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/algorithm/arith.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-9bd481da48f3bda3">micron::pow(T &amp;cont, const Y y) noexcept</a></td><td>function; line 25</td></tr><tr class="t-dsc"><td><a href="#f-92c4c68caed6cf46">micron::pow(T &amp;cont, const Y y) noexcept</a></td><td>function; line 35</td></tr><tr class="t-dsc"><td><a href="#f-7a770316e8309407">micron::pow(T &amp;cont, const Y y) noexcept</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-719519ebd0f4f1ab">micron::pow(T *__restrict first, T *__restrict end, const Y y) noexcept</a></td><td>function; line 55</td></tr><tr class="t-dsc"><td><a href="#f-fde40bd1d9b671c8">micron::pow(T *__restrict first, T *__restrict end, const Y y) noexcept</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-1b0dc9a24d13a388">micron::add(T &amp;cont, const typename T::value_type y) noexcept</a></td><td>function; line 70</td></tr><tr class="t-dsc"><td><a href="#f-c43aace35b2d35ce">micron::multiply(T &amp;cont) noexcept</a></td><td>function; line 79</td></tr><tr class="t-dsc"><td><a href="#f-49766faab12b8700">micron::multiply(T &amp;cont, const typename T::value_type y) noexcept</a></td><td>function; line 90</td></tr><tr class="t-dsc"><td><a href="#f-69d1000cb0d5b7e7">micron::mul(T &amp;cont) noexcept</a></td><td>function; line 99</td></tr><tr class="t-dsc"><td><a href="#f-be4bb6929d3872f2">micron::mul(T &amp;cont, const typename T::value_type y) noexcept</a></td><td>function; line 106</td></tr><tr class="t-dsc"><td><a href="#f-79467cb31c7c82d9">micron::divide(T &amp;cont, const Y y) noexcept</a></td><td>function; line 114</td></tr><tr class="t-dsc"><td><a href="#f-38fa8bacff039aba">micron::subtract(T &amp;cont, const Y y) noexcept</a></td><td>function; line 124</td></tr><tr class="t-dsc"><td><a href="#f-3023f3d943444590">micron::add(T &amp;cont, const Args *__restrict... args) noexcept</a></td><td>function; line 133</td></tr><tr class="t-dsc"><td><a href="#f-a92a68aced989fd5">micron::multiply(T &amp;cont, const Args *__restrict... args) noexcept</a></td><td>function; line 142</td></tr><tr class="t-dsc"><td><a href="#f-3a06a3a64919247d">micron::divide(T &amp;cont, const Args *__restrict... args) noexcept</a></td><td>function; line 151</td></tr><tr class="t-dsc"><td><a href="#f-fa7edbf2fc068a8a">micron::subtract(T &amp;cont, const Args *__restrict... args) noexcept</a></td><td>function; line 160</td></tr><tr class="t-dsc"><td><a href="#f-9fdf657b772a10e3">micron::add(T *first, T *end, const Y y) noexcept</a></td><td>function; line 170</td></tr><tr class="t-dsc"><td><a href="#f-36dfa044a6abd51e">micron::multiply(T *first, T *end, const Y y) noexcept</a></td><td>function; line 178</td></tr><tr class="t-dsc"><td><a href="#f-c97c77108ee456b2">micron::divide(T *first, T *end, const Y y) noexcept</a></td><td>function; line 186</td></tr><tr class="t-dsc"><td><a href="#f-a6cd1a86e0014412">micron::subtract(T *first, T *end, const Y y) noexcept</a></td><td>function; line 194</td></tr><tr class="t-dsc"><td><a href="#f-7ca2385057a41add">micron::add(usize n, T *__restrict first, const Args *__restrict... args) noexcept</a></td><td>function; line 201</td></tr><tr class="t-dsc"><td><a href="#f-c129bff7b3d7dc43">micron::multiply(usize n, T *__restrict first, const Args *__restrict... args) noexcept</a></td><td>function; line 208</td></tr><tr class="t-dsc"><td><a href="#f-a90d287ea0f20e82">micron::divide(usize n, T *__restrict first, const Args *__restrict... args) noexcept</a></td><td>function; line 215</td></tr><tr class="t-dsc"><td><a href="#f-b5e662560e33b90f">micron::subtract(usize n, T *__restrict first, const Args *__restrict... args) noexcept</a></td><td>function; line 222</td></tr><tr class="t-dsc"><td><a href="#f-9011ff71ee2560c7">micron::add(M &amp;m, const Y y) noexcept</a></td><td>function; line 232</td></tr><tr class="t-dsc"><td><a href="#f-4a9a7a34eb38a811">micron::subtract(M &amp;m, const Y y) noexcept</a></td><td>function; line 240</td></tr><tr class="t-dsc"><td><a href="#f-ef44b14190252542">micron::multiply(M &amp;m, const Y y) noexcept</a></td><td>function; line 248</td></tr><tr class="t-dsc"><td><a href="#f-75aa3cced773ef44">micron::divide(M &amp;m, const Y y) noexcept</a></td><td>function; line 256</td></tr><tr class="t-dsc"><td><a href="#f-dd33fe300d3d5f7c">micron::multiply(const M &amp;m) noexcept</a></td><td>function; line 263</td></tr><tr class="t-dsc"><td><a href="#f-15dce2651bcd7a39">micron::pow(M &amp;m, const Y y) noexcept</a></td><td>function; line 273</td></tr><tr class="t-dsc"><td><a href="#f-cbe00cd784cf58ad">micron::pow(M &amp;m, const Y y) noexcept</a></td><td>function; line 281</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-9bd481da48f3bda3"><h3><code>micron::pow(T &amp;cont, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L25">line 25</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Y&gt;
+  requires micron::is_floating_point_v&lt;Y&gt;
+void
+pow(T &amp;cont, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Y&gt;
+  requires micron::is_floating_point_v&lt;Y&gt;
+void
+pow(T &amp;cont, const Y y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first ) *first = math::powerf(*first, y);      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../math/generic.hpp.html#f-d4831ecd6092b88e">math::powerf</a>.</p></section><section class="function-entry" id="f-92c4c68caed6cf46"><h3><code>micron::pow(T &amp;cont, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L35">line 35</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Y&gt;
+  requires(micron::is_floating_point_v&lt;typename T::value_type&gt; and micron::is_integral_v&lt;Y&gt;)
+void
+pow(T &amp;cont, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Y&gt;
+  requires(micron::is_floating_point_v&lt;typename T::value_type&gt; and micron::is_integral_v&lt;Y&gt;)
+void
+pow(T &amp;cont, const Y y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first ) *first = math::powerf(*first, y);      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../math/generic.hpp.html#f-d4831ecd6092b88e">math::powerf</a>.</p></section><section class="function-entry" id="f-7a770316e8309407"><h3><code>micron::pow(T &amp;cont, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Y&gt;
+  requires(micron::is_integral_v&lt;typename T::value_type&gt; and micron::is_integral_v&lt;Y&gt;)
+void
+pow(T &amp;cont, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Y&gt;
+  requires(micron::is_integral_v&lt;typename T::value_type&gt; and micron::is_integral_v&lt;Y&gt;)
+void
+pow(T &amp;cont, const Y y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first ) *first = math::power(*first, y);      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../math/generic.hpp.html#f-56d8edf7e06a06f8">math::power</a>.</p></section><section class="function-entry" id="f-719519ebd0f4f1ab"><h3><code>micron::pow(T *__restrict first, T *__restrict end, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L55">line 55</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Y&gt;
+  requires micron::is_floating_point_v&lt;Y&gt;
+void
+pow(T *__restrict first, T *__restrict end, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict first</code></li><li><code>T *__restrict end</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Y&gt;
+  requires micron::is_floating_point_v&lt;Y&gt;
+void
+pow(T *__restrict first, T *__restrict end, const Y y) noexcept
+{
+  for ( ; first != end; ++first ) *first = math::powerf(*first, y);      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../math/generic.hpp.html#f-d4831ecd6092b88e">math::powerf</a>.</p></section><section class="function-entry" id="f-fde40bd1d9b671c8"><h3><code>micron::pow(T *__restrict first, T *__restrict end, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename Y&gt;
+  requires micron::is_integral_v&lt;Y&gt;
+void
+pow(T *__restrict first, T *__restrict end, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__restrict first</code></li><li><code>T *__restrict end</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename Y&gt;
+  requires micron::is_integral_v&lt;Y&gt;
+void
+pow(T *__restrict first, T *__restrict end, const Y y) noexcept
+{
+  for ( ; first != end; ++first ) *first = math::power(*first, y);      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../math/generic.hpp.html#f-56d8edf7e06a06f8">math::power</a>.</p></section><section class="function-entry" id="f-1b0dc9a24d13a388"><h3><code>micron::add(T &amp;cont, const typename T::value_type y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L70">line 70</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+void
+add(T &amp;cont, const typename T::value_type y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const typename T::value_type y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+void
+add(T &amp;cont, const typename T::value_type y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first ) *first = *first + y;      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c43aace35b2d35ce"><h3><code>micron::multiply(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L79">line 79</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+auto
+multiply(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+auto
+multiply(T &amp;cont) noexcept
+{
+  typename T::value_type r = 1;
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first ) r *= *first;      // for clarity
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/algorithm/arith.hpp.html#L85">line 85</a></td></tr></tbody></table></section><section class="function-entry" id="f-49766faab12b8700"><h3><code>micron::multiply(T &amp;cont, const typename T::value_type y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L90">line 90</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+void
+multiply(T &amp;cont, const typename T::value_type y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const typename T::value_type y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+void
+multiply(T &amp;cont, const typename T::value_type y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first ) *first = *first * y;      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-69d1000cb0d5b7e7"><h3><code>micron::mul(T &amp;cont) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L99">line 99</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+auto
+mul(T &amp;cont) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li></ul><h4>Effects</h4><p>Returns <code>multiply(cont)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+auto
+mul(T &amp;cont) noexcept
+{
+  return multiply(cont);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>multiply(cont)</code></td><td><a href="../../source/algorithm/arith.hpp.html#L101">line 101</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="arith.hpp.html#f-c43aace35b2d35ce">multiply</a>.</p></section><section class="function-entry" id="f-be4bb6929d3872f2"><h3><code>micron::mul(T &amp;cont, const typename T::value_type y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L106">line 106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+void
+mul(T &amp;cont, const typename T::value_type y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const typename T::value_type y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+void
+mul(T &amp;cont, const typename T::value_type y) noexcept
+{
+  multiply(cont, y);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="arith.hpp.html#f-c43aace35b2d35ce">multiply</a>.</p></section><section class="function-entry" id="f-79467cb31c7c82d9"><h3><code>micron::divide(T &amp;cont, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L114">line 114</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+divide(T &amp;cont, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+divide(T &amp;cont, const Y y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first ) *first = *first / y;      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-38fa8bacff039aba"><h3><code>micron::subtract(T &amp;cont, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L124">line 124</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+subtract(T &amp;cont, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+subtract(T &amp;cont, const Y y) noexcept
+{
+  auto *first = cont.begin();
+  auto *end = cont.end();
+  for ( ; first != end; ++first ) *first = *first - y;      // for clarity
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3023f3d943444590"><h3><code>micron::add(T &amp;cont, const Args *__restrict... args) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L133">line 133</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename... Args&gt;
+void
+add(T &amp;cont, const Args *__restrict... args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Args *__restrict... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename... Args&gt;
+void
+add(T &amp;cont, const Args *__restrict... args) noexcept
+{
+  auto *first = cont.begin();
+  auto n = cont.size();
+  for ( usize i = 0; i &lt; n; i++ ) (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a92a68aced989fd5"><h3><code>micron::multiply(T &amp;cont, const Args *__restrict... args) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L142">line 142</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename... Args&gt;
+void
+multiply(T &amp;cont, const Args *__restrict... args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Args *__restrict... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename... Args&gt;
+void
+multiply(T &amp;cont, const Args *__restrict... args) noexcept
+{
+  auto *first = cont.begin();
+  auto n = cont.size();
+  for ( usize i = 0; i &lt; n; i++ ) (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3a06a3a64919247d"><h3><code>micron::divide(T &amp;cont, const Args *__restrict... args) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L151">line 151</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename... Args&gt;
+void
+divide(T &amp;cont, const Args *__restrict... args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Args *__restrict... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename... Args&gt;
+void
+divide(T &amp;cont, const Args *__restrict... args) noexcept
+{
+  auto *first = cont.begin();
+  auto n = cont.size();
+  for ( usize i = 0; i &lt; n; i++ ) (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fa7edbf2fc068a8a"><h3><code>micron::subtract(T &amp;cont, const Args *__restrict... args) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L160">line 160</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename... Args&gt;
+void
+subtract(T &amp;cont, const Args *__restrict... args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;cont</code></li><li><code>const Args *__restrict... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename... Args&gt;
+void
+subtract(T &amp;cont, const Args *__restrict... args) noexcept
+{
+  auto *first = cont.begin();
+  auto n = cont.size();
+  for ( usize i = 0; i &lt; n; i++ ) (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9fdf657b772a10e3"><h3><code>micron::add(T *first, T *end, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L170">line 170</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+add(T *first, T *end, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *first</code></li><li><code>T *end</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+add(T *first, T *end, const Y y) noexcept
+{
+  for ( ; first != end; ++first ) *first = *first + y;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-36dfa044a6abd51e"><h3><code>micron::multiply(T *first, T *end, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L178">line 178</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+multiply(T *first, T *end, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *first</code></li><li><code>T *end</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+multiply(T *first, T *end, const Y y) noexcept
+{
+  for ( ; first != end; ++first ) *first = *first * y;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c97c77108ee456b2"><h3><code>micron::divide(T *first, T *end, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L186">line 186</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+divide(T *first, T *end, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *first</code></li><li><code>T *end</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+divide(T *first, T *end, const Y y) noexcept
+{
+  for ( ; first != end; ++first ) *first = *first / y;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a6cd1a86e0014412"><h3><code>micron::subtract(T *first, T *end, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L194">line 194</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+subtract(T *first, T *end, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *first</code></li><li><code>T *end</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+subtract(T *first, T *end, const Y y) noexcept
+{
+  for ( ; first != end; ++first ) *first = *first - y;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-7ca2385057a41add"><h3><code>micron::add(usize n, T *__restrict first, const Args *__restrict... args) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L201">line 201</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename... Args&gt;
+void
+add(usize n, T *__restrict first, const Args *__restrict... args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>T *__restrict first</code></li><li><code>const Args *__restrict... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename... Args&gt;
+void
+add(usize n, T *__restrict first, const Args *__restrict... args) noexcept
+{
+  for ( usize i = 0; i &lt; n; i++ ) (*(first + i)) = (*(first + i)) + (... + (*(args + i)));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c129bff7b3d7dc43"><h3><code>micron::multiply(usize n, T *__restrict first, const Args *__restrict... args) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L208">line 208</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename... Args&gt;
+void
+multiply(usize n, T *__restrict first, const Args *__restrict... args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>T *__restrict first</code></li><li><code>const Args *__restrict... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename... Args&gt;
+void
+multiply(usize n, T *__restrict first, const Args *__restrict... args) noexcept
+{
+  for ( usize i = 0; i &lt; n; i++ ) (*(first + i)) = (*(first + i)) * (... + (*(args + i)));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-a90d287ea0f20e82"><h3><code>micron::divide(usize n, T *__restrict first, const Args *__restrict... args) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L215">line 215</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename... Args&gt;
+void
+divide(usize n, T *__restrict first, const Args *__restrict... args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>T *__restrict first</code></li><li><code>const Args *__restrict... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename... Args&gt;
+void
+divide(usize n, T *__restrict first, const Args *__restrict... args) noexcept
+{
+  for ( usize i = 0; i &lt; n; i++ ) (*(first + i)) = (*(first + i)) / (... + (*(args + i)));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b5e662560e33b90f"><h3><code>micron::subtract(usize n, T *__restrict first, const Args *__restrict... args) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L222">line 222</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, typename... Args&gt;
+void
+subtract(usize n, T *__restrict first, const Args *__restrict... args) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>T *__restrict first</code></li><li><code>const Args *__restrict... args</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, typename... Args&gt;
+void
+subtract(usize n, T *__restrict first, const Args *__restrict... args) noexcept
+{
+  for ( usize i = 0; i &lt; n; i++ ) (*(first + i)) = (*(first + i)) - (... + (*(args + i)));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9011ff71ee2560c7"><h3><code>micron::add(M &amp;m, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L232">line 232</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+add(M &amp;m, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+add(M &amp;m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&amp;](const auto &amp;, auto &amp;v) { v = v + y; });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-4a9a7a34eb38a811"><h3><code>micron::subtract(M &amp;m, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L240">line 240</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+subtract(M &amp;m, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+subtract(M &amp;m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&amp;](const auto &amp;, auto &amp;v) { v = v - y; });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-ef44b14190252542"><h3><code>micron::multiply(M &amp;m, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L248">line 248</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+multiply(M &amp;m, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+multiply(M &amp;m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&amp;](const auto &amp;, auto &amp;v) { v = v * y; });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-75aa3cced773ef44"><h3><code>micron::divide(M &amp;m, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L256">line 256</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+divide(M &amp;m, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_arithmetic_v&lt;Y&gt;
+void
+divide(M &amp;m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&amp;](const auto &amp;, auto &amp;v) { v = v / y; });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-dd33fe300d3d5f7c"><h3><code>micron::multiply(const M &amp;m) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L263">line 263</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_map_class M&gt;
+typename M::mapped_type
+multiply(const M &amp;m) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const M &amp;m</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_map_class M&gt;
+typename M::mapped_type
+multiply(const M &amp;m) noexcept
+{
+  typename M::mapped_type r = 1;
+  __impl::visit_kv(m, [&amp;](const auto &amp;, const auto &amp;v) { r *= v; });
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/algorithm/arith.hpp.html#L267">line 267</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-15dce2651bcd7a39"><h3><code>micron::pow(M &amp;m, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L273">line 273</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_floating_point_v&lt;typename M::mapped_type&gt;
+void
+pow(M &amp;m, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_floating_point_v&lt;typename M::mapped_type&gt;
+void
+pow(M &amp;m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&amp;](const auto &amp;, auto &amp;v) { v = math::powerf(v, y); });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><section class="function-entry" id="f-cbe00cd784cf58ad"><h3><code>micron::pow(M &amp;m, const Y y) noexcept</code></h3><p>Defined in <code>algorithm/arith.hpp</code>, <a href="../../source/algorithm/arith.hpp.html#L281">line 281</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_integral_v&lt;typename M::mapped_type&gt;
+void
+pow(M &amp;m, const Y y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>M &amp;m</code></li><li><code>const Y y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_mutable_map M, typename Y&gt;
+  requires micron::is_integral_v&lt;typename M::mapped_type&gt;
+void
+pow(M &amp;m, const Y y) noexcept
+{
+  __impl::visit_kv(m, [&amp;](const auto &amp;, auto &amp;v) { v = math::power(v, y); });
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__visit_kv.hpp.html#f-be98e619d53b25f7">__impl::visit_kv</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

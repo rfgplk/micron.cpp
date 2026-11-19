@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/coroutine/fp.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/coroutine/fp.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/io_coro.html">Coroutine I/O</a></div><p>Defined in header <code>&lt;micron/io/coroutine/fp.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/io/coroutine/fp.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-d91f6d2e53b544f3">micron::io::coro::with_file::micron::move</code></td><td>member; line 40<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-85fc231d81df3605">micron::io::coro::with_file(io::path_t p, modes m, Fn fn)
+    -&gt; micron::task&lt;micron::option&lt;__unit_if_void_t&lt;micron::conditional_t&lt;__impl::__is_task_v&lt;micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;,
+                                                                          __impl::__task_inner_t&lt;micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;,
+                                                                          micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;&gt;,
+                                   io::error_t&gt;&gt;</a></td><td>function; line 25<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-903eacf2a657c239">micron::io::coro::with_file(io::path_t p, Fn fn)</a></td><td>function; line 59<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-43ae6892f73244e4">micron::io::coro::modify(io::path_t p, Fn fn)</a></td><td>function; line 68<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-b6aa547fdaedd431">micron::io::coro::read_lines(io::path_t p)</a></td><td>function; line 80<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-2fde49a7124c5859">micron::io::coro::read_lines(io::path_t p, C &amp;target)</a></td><td>function; line 102<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-fbc13977dd0b92f1">micron::io::coro::interact(Fn fn)</a></td><td>function; line 124<br><small><code>#if defined(MICRON_CORO_URING)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-85fc231d81df3605"><h3><code>micron::io::coro::with_file(io::path_t p, modes m, Fn fn)
+    -&gt; micron::task&lt;micron::option&lt;__unit_if_void_t&lt;micron::conditional_t&lt;__impl::__is_task_v&lt;micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;,
+                                                                          __impl::__task_inner_t&lt;micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;,
+                                                                          micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;&gt;,
+                                   io::error_t&gt;&gt;</code></h3><p>Defined in <code>io/coroutine/fp.hpp</code>, <a href="../../../source/io/coroutine/fp.hpp.html#L25">line 25</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, file &amp;&gt;
+[[nodiscard]] auto
+with_file(io::path_t p, modes m, Fn fn)
+    -&gt; micron::task&lt;micron::option&lt;__unit_if_void_t&lt;micron::conditional_t&lt;__impl::__is_task_v&lt;micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;,
+                                                                          __impl::__task_inner_t&lt;micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;,
+                                                                          micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;&gt;,
+                                   io::error_t&gt;&gt;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>io::path_t p</code></li><li><code>modes m</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, file &amp;&gt;
+[[nodiscard]] auto
+with_file(io::path_t p, modes m, Fn fn)
+    -&gt; micron::task&lt;micron::option&lt;__unit_if_void_t&lt;micron::conditional_t&lt;__impl::__is_task_v&lt;micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;,
+                                                                          __impl::__task_inner_t&lt;micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;,
+                                                                          micron::invoke_result_t&lt;Fn, file &amp;&gt;&gt;&gt;,
+                                   io::error_t&gt;&gt;
+{
+  using R0 = micron::invoke_result_t&lt;Fn, file &amp;&gt;;
+  using RV = micron::conditional_t&lt;__impl::__is_task_v&lt;R0&gt;, __impl::__task_inner_t&lt;R0&gt;, R0&gt;;
+  using Ret = micron::option&lt;__unit_if_void_t&lt;RV&gt;, io::error_t&gt;;
+  file f = co_await coro::open_file(micron::move(p), m);
+  if ( !f.valid() ) [[unlikely]]
+    co_return Ret{ io::error_t(f.raw_fd()) };
+  if constexpr ( __impl::__is_task_v&lt;R0&gt; ) {
+    R0 t = fn(f);
+    if constexpr ( micron::is_void_v&lt;RV&gt; ) {
+      co_await micron::move(t);
+      co_return Ret{ unit_t{} };
+    } else {
+      RV v = co_await micron::move(t);
+      co_return Ret{ micron::move(v) };
+    }
+  } else {
+    if constexpr ( micron::is_void_v&lt;R0&gt; ) {
+      fn(f);
+      co_return Ret{ unit_t{} };
+    } else {
+      co_return Ret{ fn(f) };
+    }
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fsys.hpp.html#f-fd0bcd26ed23f416">coro::open_file</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../bits.hpp.html#s-427ae3b819587d96">io::error_t</a>.</p></section><section class="function-entry" id="f-903eacf2a657c239"><h3><code>micron::io::coro::with_file(io::path_t p, Fn fn)</code></h3><p>Defined in <code>io/coroutine/fp.hpp</code>, <a href="../../../source/io/coroutine/fp.hpp.html#L59">line 59</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, file &amp;&gt;
+[[nodiscard]] auto
+with_file(io::path_t p, Fn fn)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>io::path_t p</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Returns <code>coro::with_file(micron::move(p), modes::read, micron::move(fn))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, file &amp;&gt;
+[[nodiscard]] auto
+with_file(io::path_t p, Fn fn)
+{
+
+  return coro::with_file(micron::move(p), modes::read, micron::move(fn));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>coro::with_file(micron::move(p), modes::read, micron::move(fn))</code></td><td><a href="../../../source/io/coroutine/fp.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="fp.hpp.html#f-85fc231d81df3605">coro::with_file</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-43ae6892f73244e4"><h3><code>micron::io::coro::modify(io::path_t p, Fn fn)</code></h3><p>Defined in <code>io/coroutine/fp.hpp</code>, <a href="../../../source/io/coroutine/fp.hpp.html#L68">line 68</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  requires requires(file &amp;f, Fn fn) { f.modify(micron::move(fn)); }
+[[nodiscard]] micron::task&lt;max_t&gt;
+modify(io::path_t p, Fn fn)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>io::path_t p</code></li><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  requires requires(file &amp;f, Fn fn) { f.modify(micron::move(fn)); }
+[[nodiscard]] micron::task&lt;max_t&gt;
+modify(io::path_t p, Fn fn)
+{
+  file f = co_await coro::open_file(micron::move(p), modes::readwrite);
+  if ( !f.valid() ) [[unlikely]]
+    co_return f.raw_fd();
+  max_t r = co_await f.modify(micron::move(fn));
+  co_return r;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fsys.hpp.html#f-fd0bcd26ed23f416">coro::open_file</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-b6aa547fdaedd431"><h3><code>micron::io::coro::read_lines(io::path_t p)</code></h3><p>Defined in <code>io/coroutine/fp.hpp</code>, <a href="../../../source/io/coroutine/fp.hpp.html#L80">line 80</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = micron::vector&lt;micron::string&gt;&gt;
+  requires requires(C c, micron::string s) { c.push_back(micron::move(s)); }
+[[nodiscard]] micron::task&lt;micron::option&lt;C, io::error_t&gt;&gt;
+read_lines(io::path_t p)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>io::path_t p</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = micron::vector&lt;micron::string&gt;&gt;
+  requires requires(C c, micron::string s) { c.push_back(micron::move(s)); }
+[[nodiscard]] micron::task&lt;micron::option&lt;C, io::error_t&gt;&gt;
+read_lines(io::path_t p)
+{
+  using Ret = micron::option&lt;C, io::error_t&gt;;
+  file f = co_await coro::open_file(micron::move(p));
+  if ( !f.valid() ) [[unlikely]]
+    co_return Ret{ io::error_t(f.raw_fd()) };
+  C out{};
+  __aline_cursor cur = f.lines();
+  micron::string ln;
+  for ( ;; ) {
+    bool more = co_await cur.next(ln);
+    if ( !more ) break;
+    out.push_back(ln);
+  }
+  if ( i32 e = cur.error() ) [[unlikely]]
+    co_return Ret{ io::error_t(e) };
+  co_return Ret{ micron::move(out) };
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fsys.hpp.html#f-fd0bcd26ed23f416">coro::open_file</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../bits.hpp.html#s-427ae3b819587d96">io::error_t</a>.</p></section><section class="function-entry" id="f-2fde49a7124c5859"><h3><code>micron::io::coro::read_lines(io::path_t p, C &amp;target)</code></h3><p>Defined in <code>io/coroutine/fp.hpp</code>, <a href="../../../source/io/coroutine/fp.hpp.html#L102">line 102</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C&gt;
+  requires requires(C c, micron::string s) { c.push_back(micron::move(s)); }
+[[nodiscard]] micron::task&lt;max_t&gt;
+read_lines(io::path_t p, C &amp;target)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>io::path_t p</code></li><li><code>C &amp;target</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C&gt;
+  requires requires(C c, micron::string s) { c.push_back(micron::move(s)); }
+[[nodiscard]] micron::task&lt;max_t&gt;
+read_lines(io::path_t p, C &amp;target)
+{
+  file f = co_await coro::open_file(micron::move(p));
+  if ( !f.valid() ) [[unlikely]]
+    co_return f.raw_fd();
+  __aline_cursor cur = f.lines();
+  micron::string ln;
+  max_t count = 0;
+  for ( ;; ) {
+    bool more = co_await cur.next(ln);
+    if ( !more ) break;
+    target.push_back(ln);
+    ++count;
+  }
+  if ( i32 e = cur.error() ) [[unlikely]]
+    co_return e;
+  co_return count;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="fsys.hpp.html#f-fd0bcd26ed23f416">coro::open_file</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-fbc13977dd0b92f1"><h3><code>micron::io::coro::interact(Fn fn)</code></h3><p>Defined in <code>io/coroutine/fp.hpp</code>, <a href="../../../source/io/coroutine/fp.hpp.html#L124">line 124</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  requires(micron::is_invocable_v&lt;Fn, micron::string &amp;&amp;&gt; &amp;&amp; is_string&lt;micron::invoke_result_t&lt;Fn, micron::string &amp;&amp;&gt;&gt;)
+[[nodiscard]] micron::task&lt;max_t&gt;
+interact(Fn fn)</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(MICRON_CORO_URING)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Fn fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  requires(micron::is_invocable_v&lt;Fn, micron::string &amp;&amp;&gt; &amp;&amp; is_string&lt;micron::invoke_result_t&lt;Fn, micron::string &amp;&amp;&gt;&gt;)
+[[nodiscard]] micron::task&lt;max_t&gt;
+interact(Fn fn)
+{
+  micron::string in{};
+  micron::buffer chunk(__lines::chunk);
+  i32 nb = __impl::__nb_unknown;
+  u32 spun = 0;
+  for ( ;; ) {
+    i32 r = co_await micron::coro::io::read(0, chunk.data(), static_cast&lt;u32&gt;(chunk.size()));
+    if ( r &lt; 0 ) [[unlikely]] {
+      if ( r == -4 /*EINTR*/ ) continue;
+      const i32 a = co_await __impl::__retry_after(r, 0, micron::uring::poll_in, nb, spun);
+      if ( a == 0 ) continue;
+      co_return static_cast&lt;max_t&gt;(a);
+    }
+    if ( r == 0 ) break;
+    in.append(reinterpret_cast&lt;const char *&gt;(chunk.data()), static_cast&lt;usize&gt;(r));
+    spun = 0;
+  }
+  auto out = fn(micron::move(in));
+  max_t w = co_await __impl::__write_full(1, out.c_str(), out.size() * sizeof(typename decltype(out)::value_type), static_cast&lt;u64&gt;(-1));
+  co_return w;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../tasks/coroutine/aio.hpp.html#f-6987bdf54f8f07d3">micron::coro::io::read</a>, <a href="__acore.hpp.html#f-1143ad7e0e0a1e74">__impl::__retry_after</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="__acore.hpp.html#f-f5b729b95825b3dd">__impl::__write_full</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/cuts.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/cuts.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/cuts.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/cuts.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-69186936e207a48a">micron::math::graphs::gomory_hu_workspace</code></td><td>struct; line 13</td></tr><tr class="t-dsc"><td><code id="s-fcd05e8aa5e116ad">micron::math::graphs::gomory_hu_workspace::base</code></td><td>member; line 14</td></tr><tr class="t-dsc"><td><code id="s-8dd0000b45a01933">micron::math::graphs::gomory_hu_workspace::residual</code></td><td>member; line 15</td></tr><tr class="t-dsc"><td><code id="s-2cfc88114291bc63">micron::math::graphs::gomory_hu_workspace::level</code></td><td>member; line 16</td></tr><tr class="t-dsc"><td><code id="s-64b07bfe9cc3114a">micron::math::graphs::gomory_hu_workspace::next</code></td><td>member; line 17</td></tr><tr class="t-dsc"><td><code id="s-da4ab21224117243">micron::math::graphs::gomory_hu_workspace::queue</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><code id="s-2eaa481c57fbbce2">micron::math::graphs::gomory_hu_workspace::side</code></td><td>member; line 19</td></tr><tr class="t-dsc"><td><code id="s-5fb1abd9b41fbeab">micron::math::graphs::gomory_hu_result</code></td><td>struct; line 35</td></tr><tr class="t-dsc"><td><code id="s-6ebf9682323722e9">micron::math::graphs::gomory_hu_result::status</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-5439bbeae62c2159">micron::math::graphs::gomory_hu_result::parent</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-d58f6a65ec3284f1">micron::math::graphs::gomory_hu_result::cut</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-b1482d6c3408d176">micron::math::graphs::gomory_hu_result::tree</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-2d22b0b14b9a0ec9">micron::math::graphs::gomory_hu_result::dense_to_vertex</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-6991974cca20e1b9">micron::math::graphs::gomory_hu_result::vertex_to_dense</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-38b1318f800eefba">micron::math::graphs::gomory_hu_result::cut_side</code></td><td>member; line 42</td></tr><tr class="t-dsc"><td><a href="#f-98bfbf3ac1ea8400">micron::math::graphs::gomory_hu_workspace::reserve(usize vertices)</a></td><td>function; line 22</td></tr><tr class="t-dsc"><td><a href="#f-85d8f2a097b95b5d">micron::math::graphs::gomory_hu_result::side_contains(usize tree_child, usize dense_vertex) const noexcept</a></td><td>function; line 45</td></tr><tr class="t-dsc"><td><a href="#f-cf54ff8c9dfe443d">micron::math::graphs::gomory_hu(const G &amp;graph, CapacityMap capacity_map,
+          gomory_hu_workspace&lt;typename G::index_type,
+                              micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                             micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace)</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-e28a2b2d787ac34d">micron::math::graphs::gomory_hu(const G &amp;graph, CapacityMap capacity_map)</a></td><td>function; line 235</td></tr><tr class="t-dsc"><td><a href="#f-0b4a0527893cdfcf">micron::math::graphs::gomory_hu(const G &amp;graph)</a></td><td>function; line 244</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-98bfbf3ac1ea8400"><h3><code>micron::math::graphs::gomory_hu_workspace::reserve(usize vertices)</code></h3><p>Defined in <code>math/graph/cuts.hpp</code>, <a href="../../../source/math/graph/cuts.hpp.html#L22">line 22</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  reserve(usize vertices)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize vertices</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  reserve(usize vertices)
+  {
+    if ( vertices == 0 || vertices &lt;= micron::numeric_limits&lt;usize&gt;::max() / vertices ) {
+      base.reserve(vertices * vertices);
+      residual.reserve(vertices * vertices);
+    }
+    level.reserve(vertices);
+    next.reserve(vertices);
+    queue.reserve(vertices);
+    side.reserve(vertices);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;usize&gt;::max</a>.</p></section><section class="function-entry" id="f-85d8f2a097b95b5d"><h3><code>micron::math::graphs::gomory_hu_result::side_contains(usize tree_child, usize dense_vertex) const noexcept</code></h3><p>Defined in <code>math/graph/cuts.hpp</code>, <a href="../../../source/math/graph/cuts.hpp.html#L45">line 45</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  side_contains(usize tree_child, usize dense_vertex) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize tree_child</code></li><li><code>usize dense_vertex</code></li></ul><h4>Effects</h4><p>Returns <code>tree_child &lt; cut_side.size() &amp;&amp; dense_vertex / 64 &lt; cut_side.data()[tree_child].size()
+           &amp;&amp; (cut_side.data()[tree_child].data()[dense_vertex / 64] &amp; (u64(1) &lt;&lt; (dense_vertex &amp; 63))) != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  side_contains(usize tree_child, usize dense_vertex) const noexcept
+  {
+    return tree_child &lt; cut_side.size() &amp;&amp; dense_vertex / 64 &lt; cut_side.data()[tree_child].size()
+           &amp;&amp; (cut_side.data()[tree_child].data()[dense_vertex / 64] &amp; (u64(1) &lt;&lt; (dense_vertex &amp; 63))) != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tree_child &lt; cut_side.size() &amp;&amp; dense_vertex / 64 &lt; cut_side.data()[tree_child].size()
+           &amp;&amp; (cut_side.data()[tree_child].data()[dense_vertex / 64] &amp; (u64(1) &lt;&lt; (dense_vertex &amp; 63))) != 0</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L47">line 47</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-cf54ff8c9dfe443d"><h3><code>micron::math::graphs::gomory_hu(const G &amp;graph, CapacityMap capacity_map,
+          gomory_hu_workspace&lt;typename G::index_type,
+                              micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                             micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace)</code></h3><p>Defined in <code>math/graph/cuts.hpp</code>, <a href="../../../source/math/graph/cuts.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+gomory_hu(const G &amp;graph, CapacityMap capacity_map,
+          gomory_hu_workspace&lt;typename G::index_type,
+                              micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                             micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>CapacityMap capacity_map</code></li><li><code>gomory_hu_workspace&lt;typename G::index_type,
+                              micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                             micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+gomory_hu(const G &amp;graph, CapacityMap capacity_map,
+          gomory_hu_workspace&lt;typename G::index_type,
+                              micron::remove_cvref_t&lt;decltype(__impl::weight(micron::declval&lt;CapacityMap &amp;&gt;(), micron::declval&lt;const G &amp;&gt;(),
+                                                                             micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;&gt; &amp;workspace)
+{
+  using I = typename G::index_type;
+  using C = micron::remove_cvref_t&lt;decltype(__impl::weight(capacity_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+  gomory_hu_result&lt;I, C&gt; result;
+  if constexpr ( G::is_directed ) {
+    result.status = algorithm_status::invalid_graph;
+    return result;
+  }
+  auto mapping = __dense_vertex_mapping(graph);
+  result.dense_to_vertex = micron::move(mapping.dense_to_vertex);
+  result.vertex_to_dense = micron::move(mapping.vertex_to_dense);
+  const usize n = result.dense_to_vertex.size();
+  if ( n != 0 &amp;&amp; n &gt; micron::numeric_limits&lt;usize&gt;::max() / n ) {
+    result.status = algorithm_status::overflow;
+    return result;
+  }
+  workspace.reserve(n);
+  workspace.base.resize(n * n, C{});
+  workspace.base.fill(C{});
+  for ( auto edge : graph.edges() ) {
+    const C capacity = static_cast&lt;C&gt;(__impl::weight(capacity_map, graph, edge.id));
+    if ( __impl::invalid_weight(capacity) ) {
+      result.status = algorithm_status::invalid_weight;
+      return result;
+    }
+    const usize u = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.source.value)]);
+    const usize v = static_cast&lt;usize&gt;(result.vertex_to_dense.data()[static_cast&lt;usize&gt;(edge.target.value)]);
+    if ( u == v ) continue;
+    C sum{};
+    if ( !__impl::add_distance(workspace.base.data()[u * n + v], capacity, sum) ) {
+      result.status = algorithm_status::overflow;
+      return result;
+    }
+    workspace.base.data()[u * n + v] = sum;
+    if ( !__impl::add_distance(workspace.base.data()[v * n + u], capacity, sum) ) {
+      result.status = algorithm_status::overflow;
+      return result;
+    }
+    workspace.base.data()[v * n + u] = sum;
+  }
+
+  result.parent.resize(n, vertex_id&lt;I&gt;::invalid());
+  result.cut.resize(n, C{});
+  for ( usize vertex = 1; vertex &lt; n; ++vertex ) result.parent.data()[vertex] = vertex_id&lt;I&gt;(I(0));
+  workspace.level.resize(n, max_t(-1));
+  workspace.next.resize(n, usize(0));
+  workspace.side.resize(n, u8(0));
+
+  auto max_flow = [&amp;](usize source, usize sink, C &amp;value) {
+    workspace.residual = workspace.base;
+    value = C{};
+    auto build_levels = [&amp;]() {
+      workspace.level.fill(max_t(-1));
+      workspace.queue.clear();
+      workspace.queue.push_back(source);
+      workspace.level.data()[source] = 0;
+      usize head = 0;
+      while ( head &lt; workspace.queue.size() ) {
+        const usize u = workspace.queue.data()[head++];
+        for ( usize v = 0; v &lt; n; ++v )
+          if ( workspace.residual.data()[u * n + v] &gt; C{} &amp;&amp; workspace.level.data()[v] &lt; 0 ) {
+            workspace.level.data()[v] = workspace.level.data()[u] + 1;
+            workspace.queue.push_back(v);
+          }
+      }
+      return workspace.level.data()[sink] &gt;= 0;
+    };
+    bool overflow = false;
+    auto send = [&amp;](auto &amp;&amp;self, usize u, C offered) -&gt; C {
+      if ( u == sink || offered == C{} ) return offered;
+      for ( usize &amp;v = workspace.next.data()[u]; v &lt; n; ++v ) {
+        C &amp;capacity = workspace.residual.data()[u * n + v];
+        if ( capacity &lt;= C{} || workspace.level.data()[v] != workspace.level.data()[u] + 1 ) continue;
+        const C pushed = self(self, v, offered &lt; capacity ? offered : capacity);
+        if ( pushed == C{} ) continue;
+        C reverse{};
+        if ( !__impl::add_distance(workspace.residual.data()[v * n + u], pushed, reverse) ) {
+          overflow = true;
+          return C{};
+        }
+        capacity -= pushed;
+        workspace.residual.data()[v * n + u] = reverse;
+        return pushed;
+      }
+      return C{};
+    };
+    C bound{};
+    for ( usize v = 0; v &lt; n; ++v ) {
+      C sum{};
+      if ( !__impl::add_distance(bound, workspace.base.data()[source * n + v], sum) ) return algorithm_status::overflow;
+      bound = sum;
+    }
+    while ( build_levels() ) {
+      workspace.next.fill(usize(0));
+      for ( ;; ) {
+        const C pushed = send(send, source, bound);
+        if ( overflow ) return algorithm_status::overflow;
+        if ( pushed == C{} ) break;
+        C total{};
+        if ( !__impl::add_distance(value, pushed, total) ) return algorithm_status::overflow;
+        value = total;
+      }
+    }
+    workspace.side.fill(u8(0));
+    workspace.queue.clear();
+    workspace.queue.push_back(source);
+    workspace.side.data()[source] = 1;
+    for ( usize head = 0; head &lt; workspace.queue.size(); ++head ) {
+      const usize u = workspace.queue.data()[head];
+      for ( usize v = 0; v &lt; n; ++v )
+        if ( workspace.residual.data()[u * n + v] &gt; C{} &amp;&amp; !workspace.side.data()[v] ) {
+          workspace.side.data()[v] = 1;
+          workspace.queue.push_back(v);
+        }
+    }
+    return algorithm_status::ok;
+  };
+
+  for ( usize source = 1; source &lt; n; ++source ) {
+    const usize sink = static_cast&lt;usize&gt;(result.parent.data()[source].value);
+    C value{};
+    result.status = max_flow(source, sink, value);
+    if ( result.status != algorithm_status::ok ) return result;
+    for ( usize vertex = source + 1; vertex &lt; n; ++vertex )
+      if ( result.parent.data()[vertex].value == static_cast&lt;I&gt;(sink) &amp;&amp; workspace.side.data()[vertex] )
+        result.parent.data()[vertex] = vertex_id&lt;I&gt;(static_cast&lt;I&gt;(source));
+    if ( sink != 0 ) {
+      const usize sink_parent = static_cast&lt;usize&gt;(result.parent.data()[sink].value);
+      if ( workspace.side.data()[sink_parent] ) {
+        result.parent.data()[source] = result.parent.data()[sink];
+        result.parent.data()[sink] = vertex_id&lt;I&gt;(static_cast&lt;I&gt;(source));
+        result.cut.data()[source] = result.cut.data()[sink];
+        result.cut.data()[sink] = value;
+        continue;
+      }
+    }
+    result.cut.data()[source] = value;
+  }
+
+  (void)result.tree.add_vertices(n);
+  for ( usize child = 1; child &lt; n; ++child )
+    (void)result.tree.add_edge(static_cast&lt;I&gt;(child), result.parent.data()[child].value, result.cut.data()[child]);
+
+  const usize words = (n + 63) / 64;
+  result.cut_side.resize(n);
+  for ( usize child = 1; child &lt; n; ++child ) {
+    auto &amp;bits = result.cut_side.data()[child];
+    bits.resize(words, u64(0));
+    workspace.side.fill(u8(0));
+    workspace.queue.clear();
+    workspace.queue.push_back(child);
+    workspace.side.data()[child] = 1;
+    for ( usize head = 0; head &lt; workspace.queue.size(); ++head ) {
+      const usize u = workspace.queue.data()[head];
+      bits.data()[u / 64] |= u64(1) &lt;&lt; (u &amp; 63);
+      if ( u != 0 ) {
+        const usize p = static_cast&lt;usize&gt;(result.parent.data()[u].value);
+        if ( !((u == child &amp;&amp; p == static_cast&lt;usize&gt;(result.parent.data()[child].value))
+               || (p == child &amp;&amp; u == static_cast&lt;usize&gt;(result.parent.data()[child].value)))
+             &amp;&amp; !workspace.side.data()[p] ) {
+          workspace.side.data()[p] = 1;
+          workspace.queue.push_back(p);
+        }
+      }
+      for ( usize v = 1; v &lt; n; ++v ) {
+        const usize p = static_cast&lt;usize&gt;(result.parent.data()[v].value);
+        if ( p != u || (v == child &amp;&amp; u == static_cast&lt;usize&gt;(result.parent.data()[child].value)) || workspace.side.data()[v] ) continue;
+        workspace.side.data()[v] = 1;
+        workspace.queue.push_back(v);
+      }
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L64">line 64</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L72">line 72</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L81">line 81</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L94">line 94</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L180">line 180</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L230">line 230</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="matrix.hpp.html#f-44fac56732d2d13c">__dense_vertex_mapping</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;usize&gt;::max</a>, <a href="paths.hpp.html#f-aa602021f094bd1f">__impl::invalid_weight</a>, <a href="paths.hpp.html#f-9a610a726936d64e">__impl::add_distance</a>, <a href="descriptors.hpp.html#f-67b6ee49c7d91c89">vertex_id&lt;I&gt;::invalid</a>, <a href="descriptors.hpp.html#s-ce35bc541c6871bd">vertex_id&lt;I&gt;</a>, <a href="../../types.hpp.html#s-66025c3768325240">max_t</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="../../types.hpp.html#s-9ac781f5f0bab6cd">u64</a>.</p></section><section class="function-entry" id="f-e28a2b2d787ac34d"><h3><code>micron::math::graphs::gomory_hu(const G &amp;graph, CapacityMap capacity_map)</code></h3><p>Defined in <code>math/graph/cuts.hpp</code>, <a href="../../../source/math/graph/cuts.hpp.html#L235">line 235</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+gomory_hu(const G &amp;graph, CapacityMap capacity_map)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>CapacityMap capacity_map</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename CapacityMap&gt;
+[[nodiscard]] auto
+gomory_hu(const G &amp;graph, CapacityMap capacity_map)
+{
+  using C = micron::remove_cvref_t&lt;decltype(__impl::weight(capacity_map, graph, micron::declval&lt;typename G::edge_descriptor&gt;()))&gt;;
+  gomory_hu_workspace&lt;typename G::index_type, C&gt; workspace;
+  return gomory_hu(graph, capacity_map, workspace);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>gomory_hu(graph, capacity_map, workspace)</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L239">line 239</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="paths.hpp.html#f-bb8ec79a0c86961b">__impl::weight</a>, <a href="../../type_traits.hpp.html#f-df426a657dbfae24">micron::declval&lt;typename G::edge_descriptor&gt;</a>, <a href="cuts.hpp.html#f-cf54ff8c9dfe443d">gomory_hu</a>.</p></section><section class="function-entry" id="f-0b4a0527893cdfcf"><h3><code>micron::math::graphs::gomory_hu(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/cuts.hpp</code>, <a href="../../../source/math/graph/cuts.hpp.html#L244">line 244</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+gomory_hu(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Returns <code>gomory_hu(graph, intrinsic_edge_weight{})</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+gomory_hu(const G &amp;graph)
+{
+  return gomory_hu(graph, intrinsic_edge_weight{});
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>gomory_hu(graph, intrinsic_edge_weight{})</code></td><td><a href="../../../source/math/graph/cuts.hpp.html#L246">line 246</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="cuts.hpp.html#f-cf54ff8c9dfe443d">gomory_hu</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

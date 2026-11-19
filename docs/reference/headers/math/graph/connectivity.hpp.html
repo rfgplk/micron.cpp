@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/connectivity.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/connectivity.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/connectivity.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/connectivity.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-06299a06c10a1050">micron::math::graphs::components_result</code></td><td>struct; line 16</td></tr><tr class="t-dsc"><td><code id="s-c84194856c2cadfd">micron::math::graphs::components_result::status</code></td><td>member; line 17</td></tr><tr class="t-dsc"><td><code id="s-368bd16d5622d4d3">micron::math::graphs::components_result::count</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><code id="s-b2d6a7461d13e079">micron::math::graphs::components_result::component</code></td><td>member; line 19</td></tr><tr class="t-dsc"><td><code id="s-7cd4f014ec559ba2">micron::math::graphs::condensation_result</code></td><td>struct; line 186</td></tr><tr class="t-dsc"><td><code id="s-afa07cf337c9203a">micron::math::graphs::condensation_result::index_type</code></td><td>typedef; line 187</td></tr><tr class="t-dsc"><td><code id="s-71c41db606a2008f">micron::math::graphs::condensation_result::value</code></td><td>member; line 188</td></tr><tr class="t-dsc"><td><code id="s-f555d9ffcc5c0158">micron::math::graphs::condensation_result::components</code></td><td>member; line 189</td></tr><tr class="t-dsc"><td><code id="s-b450ecdd899eceda">micron::math::graphs::bipartite_result</code></td><td>struct; line 226</td></tr><tr class="t-dsc"><td><code id="s-779b52860096c2a9">micron::math::graphs::bipartite_result::status</code></td><td>member; line 227</td></tr><tr class="t-dsc"><td><code id="s-9ff9e993138156aa">micron::math::graphs::bipartite_result::bipartite</code></td><td>member; line 228</td></tr><tr class="t-dsc"><td><code id="s-8f1f4b43b7a2b400">micron::math::graphs::bipartite_result::color</code></td><td>member; line 229</td></tr><tr class="t-dsc"><td><code id="s-4d5da85a13eee2ed">micron::math::graphs::bipartite_result::conflict_a</code></td><td>member; line 230</td></tr><tr class="t-dsc"><td><code id="s-33ed9451fd418b9e">micron::math::graphs::bipartite_result::conflict_b</code></td><td>member; line 231</td></tr><tr class="t-dsc"><td><code id="s-dd87a0b1d6d7b75e">micron::math::graphs::union_find</code></td><td>class; line 279</td></tr><tr class="t-dsc"><td><code id="s-c7bda491ace9da39">micron::math::graphs::cut_structure_result</code></td><td>struct; line 343</td></tr><tr class="t-dsc"><td><code id="s-ae078a4616d9be01">micron::math::graphs::cut_structure_result::articulation_points</code></td><td>member; line 344</td></tr><tr class="t-dsc"><td><code id="s-692f27336e2b8b89">micron::math::graphs::cut_structure_result::bridges</code></td><td>member; line 345</td></tr><tr class="t-dsc"><td><code id="s-f1086640dd271d6a">micron::math::graphs::biconnected_result</code></td><td>struct; line 403</td></tr><tr class="t-dsc"><td><code id="s-f6b94e3ea5c62517">micron::math::graphs::biconnected_result::status</code></td><td>member; line 404</td></tr><tr class="t-dsc"><td><code id="s-c5e81c5311c73b58">micron::math::graphs::biconnected_result::blocks</code></td><td>member; line 405</td></tr><tr class="t-dsc"><td><code id="s-8368d4dc4eb064d4">micron::math::graphs::biconnected_result::articulation</code></td><td>member; line 406</td></tr><tr class="t-dsc"><td><a href="#f-2f8d18861a27712a">micron::math::graphs::components_result::operator[](vertex_id&lt;I&gt; vertex) const noexcept</a></td><td>function; line 22</td></tr><tr class="t-dsc"><td><a href="#f-a355a7ec8f38f668">micron::math::graphs::connected_components(const G &amp;graph)</a></td><td>function; line 30</td></tr><tr class="t-dsc"><td><a href="#f-3fa531a5f68d855f">micron::math::graphs::weakly_connected_components(const G &amp;graph)</a></td><td>function; line 69</td></tr><tr class="t-dsc"><td><a href="#f-6484286d24bfb3b4">micron::math::graphs::strongly_connected_components(const G &amp;graph)</a></td><td>function; line 76</td></tr><tr class="t-dsc"><td><a href="#f-88d9e63d2bcff909">micron::math::graphs::kosaraju_scc(const G &amp;graph)</a></td><td>function; line 114</td></tr><tr class="t-dsc"><td><a href="#f-086e02e7dc1f183d">micron::math::graphs::tarjan_scc(const G &amp;graph)</a></td><td>function; line 121</td></tr><tr class="t-dsc"><td><a href="#f-f46a33b34c0b7666">micron::math::graphs::is_connected(const G &amp;graph)</a></td><td>function; line 172</td></tr><tr class="t-dsc"><td><a href="#f-29b6f8d80299e63b">micron::math::graphs::is_strongly_connected(const G &amp;graph)</a></td><td>function; line 180</td></tr><tr class="t-dsc"><td><a href="#f-876b5d748eb66f78">micron::math::graphs::condensation(const G &amp;graph)</a></td><td>function; line 194</td></tr><tr class="t-dsc"><td><a href="#f-f1b51ee3f539fa85">micron::math::graphs::attracting_components(const G &amp;graph)</a></td><td>function; line 210</td></tr><tr class="t-dsc"><td><a href="#f-02de2fc1fb539608">micron::math::graphs::bipartite_test(const G &amp;graph)</a></td><td>function; line 236</td></tr><tr class="t-dsc"><td><a href="#f-c78d5bd2fcf82ab6">micron::math::graphs::is_bipartite(const G &amp;graph)</a></td><td>function; line 274</td></tr><tr class="t-dsc"><td><a href="#f-f332bceeffb36884">micron::math::graphs::union_find::union_find()</a></td><td>function; line 286</td></tr><tr class="t-dsc"><td><a href="#f-3040f1abbf7434ea">micron::math::graphs::union_find::union_find(usize size)</a></td><td>function; line 288</td></tr><tr class="t-dsc"><td><a href="#f-d54e028dc7035650">micron::math::graphs::union_find::size() const noexcept</a></td><td>function; line 294</td></tr><tr class="t-dsc"><td><a href="#f-f00e3ecd11d68231">micron::math::graphs::union_find::sets_count() const noexcept</a></td><td>function; line 300</td></tr><tr class="t-dsc"><td><a href="#f-878a3c726cac5d2d">micron::math::graphs::union_find::find(I item) noexcept</a></td><td>function; line 306</td></tr><tr class="t-dsc"><td><a href="#f-a802acda48eb2166">micron::math::graphs::union_find::unite(I a, I b) noexcept</a></td><td>function; line 319</td></tr><tr class="t-dsc"><td><a href="#f-d8a0045b86fdc9af">micron::math::graphs::union_find::connected(I a, I b) noexcept</a></td><td>function; line 337</td></tr><tr class="t-dsc"><td><a href="#f-b5e6a3123ab51a8c">micron::math::graphs::cut_structure(const G &amp;graph)</a></td><td>function; line 350</td></tr><tr class="t-dsc"><td><a href="#f-b02478dfb6059e09">micron::math::graphs::articulation_points(const G &amp;graph)</a></td><td>function; line 391</td></tr><tr class="t-dsc"><td><a href="#f-2318cc986dbb53d7">micron::math::graphs::bridges(const G &amp;graph)</a></td><td>function; line 398</td></tr><tr class="t-dsc"><td><a href="#f-6c7b77dda37b337d">micron::math::graphs::biconnected_components(const G &amp;graph)</a></td><td>function; line 411</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-2f8d18861a27712a"><h3><code>micron::math::graphs::components_result::operator[](vertex_id&lt;I&gt; vertex) const noexcept</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L22">line 22</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] I
+  operator[](vertex_id&lt;I&gt; vertex) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>vertex_id&lt;I&gt; vertex</code></li></ul><h4>Effects</h4><p>Returns <code>component.data()[static_cast&lt;usize&gt;(vertex.value)]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] I
+  operator[](vertex_id&lt;I&gt; vertex) const noexcept
+  {
+    return component.data()[static_cast&lt;usize&gt;(vertex.value)];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>component.data()[static_cast&lt;usize&gt;(vertex.value)]</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L24">line 24</a></td></tr></tbody></table></section><section class="function-entry" id="f-a355a7ec8f38f668"><h3><code>micron::math::graphs::connected_components(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L30">line 30</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] components_result&lt;typename G::index_type&gt;
+connected_components(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] components_result&lt;typename G::index_type&gt;
+connected_components(const G &amp;graph)
+{
+  using I = typename G::index_type;
+  using vertex_descriptor = typename G::vertex_descriptor;
+  const I none = micron::numeric_limits&lt;I&gt;::max();
+  components_result&lt;I&gt; result{ algorithm_status::ok, 0, micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), none) };
+  micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; queue;
+  queue.reserve(graph.vertices_count());
+
+  for ( auto root : graph.vertices() ) {
+    if ( result.component.data()[static_cast&lt;usize&gt;(root.value)] != none ) continue;
+    const I component_id = static_cast&lt;I&gt;(result.count++);
+    queue.clear();
+    queue.push_back(root);
+    result.component.data()[static_cast&lt;usize&gt;(root.value)] = component_id;
+    usize head = 0;
+    while ( head &lt; queue.size() ) {
+      const vertex_descriptor u = queue.data()[head++];
+      for ( auto v : graph.out_neighbors(u) ) {
+        const usize slot = static_cast&lt;usize&gt;(v.value);
+        if ( result.component.data()[slot] != none ) continue;
+        result.component.data()[slot] = component_id;
+        queue.push_back(v);
+      }
+      if constexpr ( G::is_directed ) {
+        for ( auto v : graph.in_neighbors(u) ) {
+          const usize slot = static_cast&lt;usize&gt;(v.value);
+          if ( result.component.data()[slot] != none ) continue;
+          result.component.data()[slot] = component_id;
+          queue.push_back(v);
+        }
+      }
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L64">line 64</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;I&gt;::max</a>.</p></section><section class="function-entry" id="f-3fa531a5f68d855f"><h3><code>micron::math::graphs::weakly_connected_components(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L69">line 69</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+weakly_connected_components(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Returns <code>connected_components(graph)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+weakly_connected_components(const G &amp;graph)
+{
+  return connected_components(graph);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>connected_components(graph)</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L71">line 71</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-a355a7ec8f38f668">connected_components</a>.</p></section><section class="function-entry" id="f-6484286d24bfb3b4"><h3><code>micron::math::graphs::strongly_connected_components(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] components_result&lt;typename G::index_type&gt;
+strongly_connected_components(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] components_result&lt;typename G::index_type&gt;
+strongly_connected_components(const G &amp;graph)
+{
+  using I = typename G::index_type;
+  using vertex_descriptor = typename G::vertex_descriptor;
+  if constexpr ( !G::is_directed ) return connected_components(graph);
+
+  const usize slots = graph.vertex_slots();
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; seen(slots, u8(0));
+  micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; finish;
+  finish.reserve(graph.vertices_count());
+
+  auto visit_out = [&amp;](auto &amp;&amp;self, vertex_descriptor u) -&gt; void {
+    seen.data()[static_cast&lt;usize&gt;(u.value)] = 1;
+    for ( auto v : graph.out_neighbors(u) )
+      if ( !seen.data()[static_cast&lt;usize&gt;(v.value)] ) self(self, v);
+    finish.push_back(u);
+  };
+  for ( auto vertex : graph.vertices() )
+    if ( !seen.data()[static_cast&lt;usize&gt;(vertex.value)] ) visit_out(visit_out, vertex);
+
+  const I none = micron::numeric_limits&lt;I&gt;::max();
+  components_result&lt;I&gt; result{ algorithm_status::ok, 0, micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt;(slots, none) };
+  auto visit_in = [&amp;](auto &amp;&amp;self, vertex_descriptor u, I component_id) -&gt; void {
+    result.component.data()[static_cast&lt;usize&gt;(u.value)] = component_id;
+    for ( auto v : graph.in_neighbors(u) )
+      if ( result.component.data()[static_cast&lt;usize&gt;(v.value)] == none ) self(self, v, component_id);
+  };
+  for ( usize i = finish.size(); i &gt; 0; --i ) {
+    const vertex_descriptor root = finish.data()[i - 1];
+    if ( result.component.data()[static_cast&lt;usize&gt;(root.value)] != none ) continue;
+    const I component_id = static_cast&lt;I&gt;(result.count++);
+    visit_in(visit_in, root, component_id);
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>connected_components(graph)</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L109">line 109</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-a355a7ec8f38f668">connected_components</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;I&gt;::max</a>.</p></section><section class="function-entry" id="f-88d9e63d2bcff909"><h3><code>micron::math::graphs::kosaraju_scc(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L114">line 114</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+kosaraju_scc(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Returns <code>strongly_connected_components(graph)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+kosaraju_scc(const G &amp;graph)
+{
+  return strongly_connected_components(graph);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>strongly_connected_components(graph)</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L116">line 116</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-6484286d24bfb3b4">strongly_connected_components</a>.</p></section><section class="function-entry" id="f-086e02e7dc1f183d"><h3><code>micron::math::graphs::tarjan_scc(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L121">line 121</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+tarjan_scc(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+tarjan_scc(const G &amp;graph)
+{
+  using I = typename G::index_type;
+  using vertex_descriptor = typename G::vertex_descriptor;
+  if constexpr ( !G::is_directed ) return connected_components(graph);
+
+  const usize slots = graph.vertex_slots();
+  const I none = micron::numeric_limits&lt;I&gt;::max();
+  components_result&lt;I&gt; result{ algorithm_status::ok, 0, micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt;(slots, none) };
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; discovery(slots, usize(0));
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; low(slots, usize(0));
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; on_stack(slots, u8(0));
+  micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; stack;
+  stack.reserve(graph.vertices_count());
+  usize time = 0;
+
+  auto visit = [&amp;](auto &amp;&amp;self, vertex_descriptor u) -&gt; void {
+    const usize us = static_cast&lt;usize&gt;(u.value);
+    discovery.data()[us] = low.data()[us] = ++time;
+    stack.push_back(u);
+    on_stack.data()[us] = 1;
+
+    for ( auto v : graph.out_neighbors(u) ) {
+      const usize vs = static_cast&lt;usize&gt;(v.value);
+      if ( discovery.data()[vs] == 0 ) {
+        self(self, v);
+        if ( low.data()[vs] &lt; low.data()[us] ) low.data()[us] = low.data()[vs];
+      } else if ( on_stack.data()[vs] &amp;&amp; discovery.data()[vs] &lt; low.data()[us] ) {
+        low.data()[us] = discovery.data()[vs];
+      }
+    }
+
+    if ( low.data()[us] != discovery.data()[us] ) return;
+    const I component_id = static_cast&lt;I&gt;(result.count++);
+    for ( ;; ) {
+      const vertex_descriptor member = stack.back();
+      stack.pop_back();
+      const usize slot = static_cast&lt;usize&gt;(member.value);
+      on_stack.data()[slot] = 0;
+      result.component.data()[slot] = component_id;
+      if ( member == u ) break;
+    }
+  };
+
+  for ( auto vertex : graph.vertices() )
+    if ( discovery.data()[static_cast&lt;usize&gt;(vertex.value)] == 0 ) visit(visit, vertex);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>connected_components(graph)</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L125">line 125</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L167">line 167</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-a355a7ec8f38f668">connected_components</a>, <a href="../../numerics.hpp.html#f-089d5d7e4cc4c66a">micron::numeric_limits&lt;I&gt;::max</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-f46a33b34c0b7666"><h3><code>micron::math::graphs::is_connected(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L172">line 172</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_connected(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_connected(const G &amp;graph)
+{
+  if ( graph.vertices_count() &lt; 2 ) return true;
+  return connected_components(graph).count == 1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L174">line 174</a></td></tr><tr class="t-dsc"><td><code>connected_components(graph).count == 1</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L175">line 175</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-a355a7ec8f38f668">connected_components</a>.</p></section><section class="function-entry" id="f-29b6f8d80299e63b"><h3><code>micron::math::graphs::is_strongly_connected(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L180">line 180</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_strongly_connected(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_strongly_connected(const G &amp;graph)
+{
+  if ( graph.vertices_count() &lt; 2 ) return true;
+  return strongly_connected_components(graph).count == 1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L182">line 182</a></td></tr><tr class="t-dsc"><td><code>strongly_connected_components(graph).count == 1</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L183">line 183</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-6484286d24bfb3b4">strongly_connected_components</a>.</p></section><section class="function-entry" id="f-876b5d748eb66f78"><h3><code>micron::math::graphs::condensation(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L194">line 194</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] condensation_result&lt;G&gt;
+condensation(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] condensation_result&lt;G&gt;
+condensation(const G &amp;graph)
+{
+  using I = typename G::index_type;
+  condensation_result&lt;G&gt; result;
+  result.components = strongly_connected_components(graph);
+  (void)result.value.add_vertices(result.components.count);
+  for ( auto edge : graph.edges() ) {
+    const I a = result.components.component.data()[static_cast&lt;usize&gt;(edge.source.value)];
+    const I b = result.components.component.data()[static_cast&lt;usize&gt;(edge.target.value)];
+    if ( a != b ) (void)result.value.add_edge(a, b);
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L205">line 205</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-6484286d24bfb3b4">strongly_connected_components</a>.</p></section><section class="function-entry" id="f-f1b51ee3f539fa85"><h3><code>micron::math::graphs::attracting_components(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L210">line 210</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;typename G::index_type, micron::allocator_serial&lt;&gt;, false&gt;
+attracting_components(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] micron::vector&lt;typename G::index_type, micron::allocator_serial&lt;&gt;, false&gt;
+attracting_components(const G &amp;graph)
+{
+  using I = typename G::index_type;
+  auto scc = strongly_connected_components(graph);
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; attracting(scc.count, u8(1));
+  for ( auto edge : graph.edges() ) {
+    const I a = scc.component.data()[static_cast&lt;usize&gt;(edge.source.value)];
+    const I b = scc.component.data()[static_cast&lt;usize&gt;(edge.target.value)];
+    if ( a != b ) attracting.data()[static_cast&lt;usize&gt;(a)] = 0;
+  }
+  micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; result;
+  for ( usize i = 0; i &lt; attracting.size(); ++i )
+    if ( attracting.data()[i] ) result.push_back(static_cast&lt;I&gt;(i));
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L223">line 223</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-6484286d24bfb3b4">strongly_connected_components</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-02de2fc1fb539608"><h3><code>micron::math::graphs::bipartite_test(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L236">line 236</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] bipartite_result&lt;typename G::index_type&gt;
+bipartite_test(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] bipartite_result&lt;typename G::index_type&gt;
+bipartite_test(const G &amp;graph)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  bipartite_result&lt;typename G::index_type&gt; result;
+  result.color = micron::vector&lt;i8, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), i8(-1));
+  micron::vector&lt;vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; queue;
+  queue.reserve(graph.vertices_count());
+  for ( auto root : graph.vertices() ) {
+    if ( result.color.data()[static_cast&lt;usize&gt;(root.value)] != -1 ) continue;
+    result.color.data()[static_cast&lt;usize&gt;(root.value)] = 0;
+    queue.clear();
+    queue.push_back(root);
+    usize head = 0;
+    while ( head &lt; queue.size() ) {
+      const vertex_descriptor u = queue.data()[head++];
+      const i8 next_color = static_cast&lt;i8&gt;(1 - result.color.data()[static_cast&lt;usize&gt;(u.value)]);
+      auto inspect = [&amp;](vertex_descriptor v) {
+        i8 &amp;color = result.color.data()[static_cast&lt;usize&gt;(v.value)];
+        if ( color == -1 ) {
+          color = next_color;
+          queue.push_back(v);
+        } else if ( color != next_color ) {
+          result.bipartite = false;
+          result.conflict_a = u;
+          result.conflict_b = v;
+        }
+      };
+      for ( auto v : graph.out_neighbors(u) ) inspect(v);
+      if constexpr ( G::is_directed )
+        for ( auto v : graph.in_neighbors(u) ) inspect(v);
+      if ( !result.bipartite ) return result;
+    }
+  }
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L266">line 266</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L269">line 269</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-40e2e07d274ffbdd">i8</a>.</p></section><section class="function-entry" id="f-c78d5bd2fcf82ab6"><h3><code>micron::math::graphs::is_bipartite(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L274">line 274</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_bipartite(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Returns <code>bipartite_test(graph).bipartite</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] bool
+is_bipartite(const G &amp;graph)
+{
+  return bipartite_test(graph).bipartite;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>bipartite_test(graph).bipartite</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L276">line 276</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-02de2fc1fb539608">bipartite_test</a>.</p></section><section class="function-entry" id="f-f332bceeffb36884"><h3><code>micron::math::graphs::union_find::union_find()</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L286">line 286</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>union_find() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-3040f1abbf7434ea"><h3><code>micron::math::graphs::union_find::union_find(usize size)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L288">line 288</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>explicit union_find(usize size) : __parent(size), __rank(size, u8(0)), __sets(size)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize size</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">explicit union_find(usize size) : __parent(size), __rank(size, u8(0)), __sets(size)
+  {
+    for ( usize i = 0; i &lt; size; ++i ) __parent.data()[i] = static_cast&lt;I&gt;(i);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d54e028dc7035650"><h3><code>micron::math::graphs::union_find::size() const noexcept</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L294">line 294</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  size() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__parent.size()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  size() const noexcept
+  {
+    return __parent.size();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__parent.size()</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L296">line 296</a></td></tr></tbody></table></section><section class="function-entry" id="f-f00e3ecd11d68231"><h3><code>micron::math::graphs::union_find::sets_count() const noexcept</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L300">line 300</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  sets_count() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__sets</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  sets_count() const noexcept
+  {
+    return __sets;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sets</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L302">line 302</a></td></tr></tbody></table></section><section class="function-entry" id="f-878a3c726cac5d2d"><h3><code>micron::math::graphs::union_find::find(I item) noexcept</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L306">line 306</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>I
+  find(I item) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I item</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">I
+  find(I item) noexcept
+  {
+    I root = item;
+    while ( __parent.data()[static_cast&lt;usize&gt;(root)] != root ) root = __parent.data()[static_cast&lt;usize&gt;(root)];
+    while ( __parent.data()[static_cast&lt;usize&gt;(item)] != item ) {
+      const I next = __parent.data()[static_cast&lt;usize&gt;(item)];
+      __parent.data()[static_cast&lt;usize&gt;(item)] = root;
+      item = next;
+    }
+    return root;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>root</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L315">line 315</a></td></tr></tbody></table></section><section class="function-entry" id="f-a802acda48eb2166"><h3><code>micron::math::graphs::union_find::unite(I a, I b) noexcept</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L319">line 319</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  unite(I a, I b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I a</code></li><li><code>I b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  unite(I a, I b) noexcept
+  {
+    a = find(a);
+    b = find(b);
+    if ( a == b ) return false;
+    u8 &amp;rank_a = __rank.data()[static_cast&lt;usize&gt;(a)];
+    u8 &amp;rank_b = __rank.data()[static_cast&lt;usize&gt;(b)];
+    if ( rank_a &lt; rank_b )
+      __parent.data()[static_cast&lt;usize&gt;(a)] = b;
+    else {
+      __parent.data()[static_cast&lt;usize&gt;(b)] = a;
+      if ( rank_a == rank_b ) ++rank_a;
+    }
+    --__sets;
+    return true;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L323">line 323</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L333">line 333</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-878a3c726cac5d2d">find</a>.</p></section><section class="function-entry" id="f-d8a0045b86fdc9af"><h3><code>micron::math::graphs::union_find::connected(I a, I b) noexcept</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L337">line 337</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  connected(I a, I b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I a</code></li><li><code>I b</code></li></ul><h4>Effects</h4><p>Returns <code>find(a) == find(b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  connected(I a, I b) noexcept
+  {
+    return find(a) == find(b);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>find(a) == find(b)</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L339">line 339</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-878a3c726cac5d2d">find</a>.</p></section><section class="function-entry" id="f-b5e6a3123ab51a8c"><h3><code>micron::math::graphs::cut_structure(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L350">line 350</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] cut_structure_result&lt;typename G::index_type&gt;
+cut_structure(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] cut_structure_result&lt;typename G::index_type&gt;
+cut_structure(const G &amp;graph)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  using edge_descriptor = typename G::edge_descriptor;
+  const usize slots = graph.vertex_slots();
+  cut_structure_result&lt;typename G::index_type&gt; result;
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; discovery(slots, usize(0));
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; low(slots, usize(0));
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; articulation(slots, u8(0));
+  usize time = 0;
+
+  auto visit = [&amp;](auto &amp;&amp;self, vertex_descriptor u, edge_descriptor parent_edge) -&gt; void {
+    const usize us = static_cast&lt;usize&gt;(u.value);
+    discovery.data()[us] = low.data()[us] = ++time;
+    usize children = 0;
+    for ( auto edge : graph.out_edges(u) ) {
+      if ( edge == parent_edge ) continue;
+      const vertex_descriptor v = G::is_directed ? graph.target(edge) : graph.opposite(edge, u);
+      const usize vs = static_cast&lt;usize&gt;(v.value);
+      if ( discovery.data()[vs] == 0 ) {
+        ++children;
+        self(self, v, edge);
+        if ( low.data()[vs] &lt; low.data()[us] ) low.data()[us] = low.data()[vs];
+        if ( parent_edge.valid() &amp;&amp; low.data()[vs] &gt;= discovery.data()[us] ) articulation.data()[us] = 1;
+        if ( low.data()[vs] &gt; discovery.data()[us] ) result.bridges.push_back(edge);
+      } else if ( discovery.data()[vs] &lt; low.data()[us] ) {
+        low.data()[us] = discovery.data()[vs];
+      }
+    }
+    if ( !parent_edge.valid() &amp;&amp; children &gt; 1 ) articulation.data()[us] = 1;
+  };
+
+  for ( auto root : graph.vertices() )
+    if ( discovery.data()[static_cast&lt;usize&gt;(root.value)] == 0 ) visit(visit, root, edge_descriptor::invalid());
+  for ( auto vertex : graph.vertices() )
+    if ( articulation.data()[static_cast&lt;usize&gt;(vertex.value)] ) result.articulation_points.push_back(vertex);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L386">line 386</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-b02478dfb6059e09"><h3><code>micron::math::graphs::articulation_points(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L391">line 391</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+articulation_points(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Returns <code>cut_structure(graph).articulation_points</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+articulation_points(const G &amp;graph)
+{
+  return cut_structure(graph).articulation_points;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cut_structure(graph).articulation_points</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L393">line 393</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-b5e6a3123ab51a8c">cut_structure</a>.</p></section><section class="function-entry" id="f-2318cc986dbb53d7"><h3><code>micron::math::graphs::bridges(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L398">line 398</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+bridges(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Returns <code>cut_structure(graph).bridges</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+bridges(const G &amp;graph)
+{
+  return cut_structure(graph).bridges;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>cut_structure(graph).bridges</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L400">line 400</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="connectivity.hpp.html#f-b5e6a3123ab51a8c">cut_structure</a>.</p></section><section class="function-entry" id="f-6c7b77dda37b337d"><h3><code>micron::math::graphs::biconnected_components(const G &amp;graph)</code></h3><p>Defined in <code>math/graph/connectivity.hpp</code>, <a href="../../../source/math/graph/connectivity.hpp.html#L411">line 411</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] biconnected_result&lt;typename G::index_type&gt;
+biconnected_components(const G &amp;graph)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] biconnected_result&lt;typename G::index_type&gt;
+biconnected_components(const G &amp;graph)
+{
+  using vertex_descriptor = typename G::vertex_descriptor;
+  using edge_descriptor = typename G::edge_descriptor;
+  biconnected_result&lt;typename G::index_type&gt; result;
+  if constexpr ( G::is_directed ) {
+    result.status = algorithm_status::invalid_graph;
+    return result;
+  }
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; discovery(graph.vertex_slots(), usize(0));
+  micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; low(graph.vertex_slots(), usize(0));
+  micron::vector&lt;edge_descriptor, micron::allocator_serial&lt;&gt;, false&gt; stack;
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; loop_seen(graph.edge_slots(), u8(0));
+  usize time = 0;
+  auto visit = [&amp;](auto &amp;&amp;self, vertex_descriptor vertex, edge_descriptor parent) -&gt; void {
+    const usize slot = static_cast&lt;usize&gt;(vertex.value);
+    discovery.data()[slot] = low.data()[slot] = ++time;
+    for ( auto edge : graph.out_edges(vertex) ) {
+      if ( graph.source(edge) == graph.target(edge) ) {
+        const usize es = static_cast&lt;usize&gt;(edge.value);
+        if ( !loop_seen.data()[es] ) {
+          loop_seen.data()[es] = 1;
+          micron::vector&lt;edge_descriptor, micron::allocator_serial&lt;&gt;, false&gt; block;
+          block.push_back(edge);
+          result.blocks.push_back(micron::move(block));
+        }
+        continue;
+      }
+      if ( edge == parent ) continue;
+      const vertex_descriptor neighbor = graph.opposite(edge, vertex);
+      const usize ns = static_cast&lt;usize&gt;(neighbor.value);
+      if ( discovery.data()[ns] == 0 ) {
+        stack.push_back(edge);
+        self(self, neighbor, edge);
+        if ( low.data()[ns] &lt; low.data()[slot] ) low.data()[slot] = low.data()[ns];
+        if ( low.data()[ns] &gt;= discovery.data()[slot] ) {
+          micron::vector&lt;edge_descriptor, micron::allocator_serial&lt;&gt;, false&gt; block;
+          for ( ;; ) {
+            const edge_descriptor member = stack.data()[stack.size() - 1];
+            stack.pop_back();
+            block.push_back(member);
+            if ( member == edge ) break;
+          }
+          result.blocks.push_back(micron::move(block));
+        }
+      } else if ( discovery.data()[ns] &lt; discovery.data()[slot] ) {
+        stack.push_back(edge);
+        if ( discovery.data()[ns] &lt; low.data()[slot] ) low.data()[slot] = discovery.data()[ns];
+      }
+    }
+  };
+  for ( auto root : graph.vertices() )
+    if ( discovery.data()[static_cast&lt;usize&gt;(root.value)] == 0 ) visit(visit, root, edge_descriptor::invalid());
+  result.articulation = articulation_points(graph);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L418">line 418</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/connectivity.hpp.html#L465">line 465</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="connectivity.hpp.html#f-b02478dfb6059e09">articulation_points</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

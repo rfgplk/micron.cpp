@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/attach/landlord.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/attach/landlord.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/attach.html">Module attachment</a></div><p>Defined in header <code>&lt;micron/attach/landlord.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/attach/landlord.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-384462ebf9d5dbb8"><h3><code>micron::__attach_lock_acquire() noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L46">line 46</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+__attach_lock_acquire() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+__attach_lock_acquire() noexcept
+{
+  while ( __attach_lock.test_and_set(memory_order::acquire) ) __cpu_pause();
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-96605b284f728fde"><h3><code>micron::__attach_lock_release() noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L52">line 52</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline __attribute__((always_inline)) void
+__attach_lock_release() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline __attribute__((always_inline)) void
+__attach_lock_release() noexcept
+{
+  __attach_lock.clear(memory_order::release);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-f6088fa29ab8ecb1"><h3><code>micron::__attach_find_hole(u64 memsz, u64 a, u64 *out_off) noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L58">line 58</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+__attach_find_hole(u64 memsz, u64 a, u64 *out_off) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 memsz</code></li><li><code>u64 a</code></li><li><code>u64 *out_off</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+__attach_find_hole(u64 memsz, u64 a, u64 *out_off) noexcept
+{
+  u64 off = 0;
+  for ( u32 guard = 0; guard &lt;= __micron_attach_max_modules; ++guard ) {
+    off = __attach_round_up(off, a);
+    if ( off &gt; __micron_tls_surplus || memsz &gt; __micron_tls_surplus - off ) return false;
+    bool clash = false;
+    for ( u32 i = 0; i &lt; __micron_attach_max_modules; ++i ) {
+      const __attach_slot &amp;s = __attach_slots[i];
+      if ( s.in_use.get(memory_order::acquire) == 0 ) continue;
+      const u64 lo = s.surplus_off;
+      const u64 hi = lo + s.memsz;
+      if ( off &lt; hi &amp;&amp; lo &lt; off + memsz ) {
+        off = hi;      // skip past the occupant and retry from there
+        clash = true;
+        break;
+      }
+    }
+    if ( !clash ) {
+      *out_off = off;
+      return true;
+    }
+  }
+  return false;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/attach/landlord.hpp.html#L63">line 63</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/attach/landlord.hpp.html#L78">line 78</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/attach/landlord.hpp.html#L81">line 81</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="surplus.hpp.html#f-1318735f69d1c63c">__attach_round_up</a>.</p></section><section class="function-entry" id="f-f58ca7058f5611ab"><h3><code>micron::__attach_tls_assign(const void *tdata, u64 filesz, u64 memsz, u64 align, u64 *out_token, i64 *out_tp_bias, u64 *out_surplus_off) noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L85">line 85</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+__attach_tls_assign(const void *tdata, u64 filesz, u64 memsz, u64 align, u64 *out_token, i64 *out_tp_bias, u64 *out_surplus_off) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const void *tdata</code></li><li><code>u64 filesz</code></li><li><code>u64 memsz</code></li><li><code>u64 align</code></li><li><code>u64 *out_token</code></li><li><code>i64 *out_tp_bias</code></li><li><code>u64 *out_surplus_off</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+__attach_tls_assign(const void *tdata, u64 filesz, u64 memsz, u64 align, u64 *out_token, i64 *out_tp_bias, u64 *out_surplus_off) noexcept
+{
+  if ( out_token ) *out_token = 0;
+  const u64 a = align &lt; 16 ? 16 : align;
+  if ( a &gt; __micron_tls_surplus_align ) return -1;
+  // WARNING: every seeding copy runs over filesz, but only memsz is bounded by the surplus below
+  if ( filesz &gt; memsz ) return -1;
+  if ( filesz != 0 &amp;&amp; tdata == nullptr ) return -1;
+  __attach_lock_acquire();
+  if ( !__attach_host_tls_ready() ) {
+    __attach_lock_release();
+    return -1;
+  }
+  u64 off = 0;
+  if ( !__attach_find_hole(memsz, a, &amp;off) ) {
+    __attach_lock_release();
+    return -1;
+  }
+  u32 idx = __micron_attach_max_modules;
+  for ( u32 i = 0; i &lt; __micron_attach_max_modules; ++i ) {
+    if ( __attach_slots[i].in_use.get(memory_order::acquire) == 0 ) {
+      idx = i;
+      break;
+    }
+  }
+  if ( idx == __micron_attach_max_modules ) {
+    __attach_lock_release();
+    return -1;
+  }
+  __attach_slot &amp;s = __attach_slots[idx];
+  s.surplus_off = off;
+  s.tp_bias = __attach_tp_bias(off);
+  s.tdata = static_cast&lt;const byte *&gt;(tdata);
+  s.filesz = filesz;
+  s.memsz = memsz;
+  s.align = a;
+  s.in_use.store(1, memory_order::release);
+#if defined(MICRON_ENABLE_ATTACH)
+  const u64 base_off = __attach_surplus_base_off();
+  __attach_frames_lock();
+  for ( u32 i = 0; i &lt; __attach_frame_hi; ++i ) {
+    byte *base = __attach_frames[i];
+    if ( base == nullptr ) continue;
+    byte *dst = base + base_off + off;
+    for ( u64 k = 0; k &lt; filesz; ++k ) dst[k] = s.tdata[k];
+  }
+  __attach_frames_unlock();
+#endif
+  __attach_lock_release();
+  if ( out_token ) *out_token = static_cast&lt;u64&gt;(idx) + 1;
+  if ( out_tp_bias ) *out_tp_bias = s.tp_bias;
+  if ( out_surplus_off ) *out_surplus_off = off;
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L91">line 91</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L92">line 92</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L112">line 112</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/attach/landlord.hpp.html#L137">line 137</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="landlord.hpp.html#f-384462ebf9d5dbb8">__attach_lock_acquire</a>, <a href="surplus.hpp.html#f-8fa527d134612713">__attach_host_tls_ready</a>, <a href="landlord.hpp.html#f-96605b284f728fde">__attach_lock_release</a>, <a href="landlord.hpp.html#f-f6088fa29ab8ecb1">__attach_find_hole</a>, <a href="surplus.hpp.html#f-12d45ed59d09dfce">__attach_tp_bias</a>, <a href="surplus.hpp.html#f-fcf94d285c4d1dec">__attach_surplus_base_off</a>, <a href="surplus.hpp.html#f-b692f2198e7fc5a6">__attach_frames_lock</a>, <a href="surplus.hpp.html#f-e2103f83447d2cd8">__attach_frames_unlock</a>.</p></section><section class="function-entry" id="f-044984c5088bb4f1"><h3><code>micron::__attach_tls_release(u64 token) noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L141">line 141</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__attach_tls_release(u64 token) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 token</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__attach_tls_release(u64 token) noexcept
+{
+  if ( token == 0 || token &gt; __micron_attach_max_modules ) return;
+  __attach_lock_acquire();
+  __attach_slot &amp;s = __attach_slots[token - 1];
+  s.tdata = nullptr;
+  s.filesz = 0;
+  s.memsz = 0;
+  s.in_use.store(0, memory_order::release);
+  __attach_lock_release();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/attach/landlord.hpp.html#L143">line 143</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="landlord.hpp.html#f-384462ebf9d5dbb8">__attach_lock_acquire</a>, <a href="landlord.hpp.html#f-96605b284f728fde">__attach_lock_release</a>.</p></section><section class="function-entry" id="f-2d9f5d55d271da67"><h3><code>micron::__attach_copy_registered_tdata(byte *frame_base) noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L154">line 154</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+__attach_copy_registered_tdata(byte *frame_base) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>byte *frame_base</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+__attach_copy_registered_tdata(byte *frame_base) noexcept
+{
+  if ( !__attach_host_tls_ready() || frame_base == nullptr ) return;
+  byte *surplus_base = frame_base + __attach_surplus_base_off();
+  __attach_lock_acquire();
+  for ( u32 i = 0; i &lt; __micron_attach_max_modules; ++i ) {
+    __attach_slot &amp;s = __attach_slots[i];
+    if ( s.in_use.get(memory_order::acquire) == 0 ) continue;
+    byte *dst = surplus_base + s.surplus_off;
+    for ( u64 k = 0; k &lt; s.filesz; ++k ) dst[k] = s.tdata[k];
+  }
+  __attach_lock_release();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/attach/landlord.hpp.html#L156">line 156</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="surplus.hpp.html#f-8fa527d134612713">__attach_host_tls_ready</a>, <a href="surplus.hpp.html#f-fcf94d285c4d1dec">__attach_surplus_base_off</a>, <a href="landlord.hpp.html#f-384462ebf9d5dbb8">__attach_lock_acquire</a>, <a href="landlord.hpp.html#f-96605b284f728fde">__attach_lock_release</a>.</p></section><section class="function-entry" id="f-c1d53d4f8ac99557"><h3><code>micron::__attach_read_tp() noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L171">line 171</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline byte *
+__attach_read_tp() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline byte *
+__attach_read_tp() noexcept
+{
+  byte *tp = nullptr;
+#if defined(__micron_arch_amd64)
+  asm volatile(&quot;mov %%fs:0, %0&quot; : &quot;=r&quot;(tp));
+#elif defined(__micron_arch_x86)
+  asm volatile(&quot;mov %%gs:0, %0&quot; : &quot;=r&quot;(tp));
+#elif defined(__micron_arch_arm32)
+  asm volatile(&quot;mrc p15, 0, %0, c13, c0, 3&quot; : &quot;=r&quot;(tp));
+#elif defined(__micron_arch_arm64)
+  asm volatile(&quot;mrs %0, tpidr_el0&quot; : &quot;=r&quot;(tp));
+#endif
+  return tp;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>tp</code></td><td><a href="../../source/attach/landlord.hpp.html#L183">line 183</a></td></tr></tbody></table></section><section class="function-entry" id="f-7f6e8da19b0f650e"><h3><code>micron::__attach_current_surplus_base() noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L190">line 190</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline byte *
+__attach_current_surplus_base() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline byte *
+__attach_current_surplus_base() noexcept
+{
+#if defined(MICRON_ENABLE_ATTACH)
+  return &amp;__micron_attach_surplus[0];
+#else
+  return nullptr;      // a guest is seated in its hosts surplus
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;__micron_attach_surplus[0]</code></td><td><a href="../../source/attach/landlord.hpp.html#L193">line 193</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/attach/landlord.hpp.html#L195">line 195</a></td></tr></tbody></table></section><section class="function-entry" id="f-78740cf48f8cc23a"><h3><code>micron::__attach_tls_seed_current(u64 token) noexcept</code></h3><p>Defined in <code>attach/landlord.hpp</code>, <a href="../../source/attach/landlord.hpp.html#L200">line 200</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline int
+__attach_tls_seed_current(u64 token) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 token</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline int
+__attach_tls_seed_current(u64 token) noexcept
+{
+  if ( token == 0 || token &gt; __micron_attach_max_modules || __micron_tls_surplus == 0 ) return -1;
+  __attach_slot &amp;s = __attach_slots[token - 1];
+  if ( s.in_use.get(memory_order::acquire) == 0 ) return -1;
+  byte *surplus_base = __attach_current_surplus_base();
+  if ( surplus_base == nullptr ) return -1;      // this thread has no surplus: refuse, never scribble
+  byte *dst = surplus_base + s.surplus_off;
+  for ( u64 k = 0; k &lt; s.filesz; ++k ) dst[k] = s.tdata[k];
+  return 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L202">line 202</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L204">line 204</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/attach/landlord.hpp.html#L206">line 206</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/attach/landlord.hpp.html#L209">line 209</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="landlord.hpp.html#f-7f6e8da19b0f650e">__attach_current_surplus_base</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

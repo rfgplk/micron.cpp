@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/splines/piecewise_1d.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/splines/piecewise_1d.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/splines.html">Splines and interpolation</a></div><p>Defined in header <code>&lt;micron/math/splines/piecewise_1d.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/splines/piecewise_1d.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-cd8303af0c14fca6">micron::math::splines::constant_1d</code></td><td>struct; line 146</td></tr><tr class="t-dsc"><td><code id="s-b959e705a26b49e9">micron::math::splines::constant_1d::xs</code></td><td>member; line 147</td></tr><tr class="t-dsc"><td><code id="s-979160da425c43d6">micron::math::splines::constant_1d::ys</code></td><td>member; line 148</td></tr><tr class="t-dsc"><td><code id="s-fc36c51c039f89cd">micron::math::splines::constant_1d::last_hit</code></td><td>member; line 149</td></tr><tr class="t-dsc"><td><code id="s-f3f7d10639a15820">micron::math::splines::constant_1d::side</code></td><td>member; line 150</td></tr><tr class="t-dsc"><td><code id="s-30e170c93d8d89a7">micron::math::splines::constant_1d::mode</code></td><td>member; line 151</td></tr><tr class="t-dsc"><td><code id="s-672628ca17a58665">micron::math::splines::quadratic_spline_1d</code></td><td>struct; line 229</td></tr><tr class="t-dsc"><td><code id="s-4e762169bbd7743a">micron::math::splines::quadratic_spline_1d::xs</code></td><td>member; line 230</td></tr><tr class="t-dsc"><td><code id="s-c4db0b9d75ce9637">micron::math::splines::quadratic_spline_1d::seg</code></td><td>member; line 231</td></tr><tr class="t-dsc"><td><code id="s-576ce28a1da5a053">micron::math::splines::quadratic_spline_1d::last_hit</code></td><td>member; line 232</td></tr><tr class="t-dsc"><td><code id="s-f18884c2d24bc3b5">micron::math::splines::quadratic_spline_1d::boundary</code></td><td>member; line 233</td></tr><tr class="t-dsc"><td><code id="s-fb7f2945c3358ef5">micron::math::splines::quadratic_spline_1d::mode</code></td><td>member; line 234</td></tr><tr class="t-dsc"><td><code id="s-507dbe27d2e3a6dd">micron::math::splines::quintic_spline_1d</code></td><td>struct; line 491</td></tr><tr class="t-dsc"><td><code id="s-6da3fe682f1521d2">micron::math::splines::quintic_spline_1d::xs</code></td><td>member; line 492</td></tr><tr class="t-dsc"><td><code id="s-c4d48a7ae49f8045">micron::math::splines::quintic_spline_1d::seg</code></td><td>member; line 493</td></tr><tr class="t-dsc"><td><code id="s-7610a1d9d2165a65">micron::math::splines::quintic_spline_1d::last_hit</code></td><td>member; line 494</td></tr><tr class="t-dsc"><td><code id="s-45bf8dfde00d4fa1">micron::math::splines::quintic_spline_1d::mode</code></td><td>member; line 495</td></tr><tr class="t-dsc"><td><code id="s-3f303468d424b69a">micron::math::splines::piecewise_polynomial_1d</code></td><td>struct; line 630</td></tr><tr class="t-dsc"><td><code id="s-dd7d66a23362b074">micron::math::splines::piecewise_polynomial_1d::degree</code></td><td>member; line 631</td></tr><tr class="t-dsc"><td><code id="s-00f8955f19e255bc">micron::math::splines::piecewise_polynomial_1d::breaks</code></td><td>member; line 632</td></tr><tr class="t-dsc"><td><code id="s-3af9621ab0fe3032">micron::math::splines::piecewise_polynomial_1d::coeff</code></td><td>member; line 633</td></tr><tr class="t-dsc"><td><code id="s-c5438985e6599d8d">micron::math::splines::piecewise_polynomial_1d::last_hit</code></td><td>member; line 634</td></tr><tr class="t-dsc"><td><code id="s-3ad63aed0364744b">micron::math::splines::piecewise_polynomial_1d::mode</code></td><td>member; line 635</td></tr><tr class="t-dsc"><td><code id="s-583c4b700eadf74d">micron::math::splines::periodic_cubic_spline_1d</code></td><td>struct; line 972</td></tr><tr class="t-dsc"><td><code id="s-d99df8cfb9f32bf3">micron::math::splines::periodic_cubic_spline_1d::spline</code></td><td>member; line 973</td></tr><tr class="t-dsc"><td><code id="s-2bfdbf8434a4e2ca">micron::math::splines::periodic_cubic_spline_1d::period</code></td><td>member; line 974</td></tr><tr class="t-dsc"><td><a href="#f-a5296ab2513577c3">micron::math::splines::make_constant(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, constant_side side = constant_side::nearest,
+              build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 156</td></tr><tr class="t-dsc"><td><a href="#f-9ac89b0341804a90">micron::math::splines::evaluate(const constant_1d&lt;F&gt; &amp;s, F x) noexcept</a></td><td>function; line 174</td></tr><tr class="t-dsc"><td><a href="#f-b4654a09c3947cd8">micron::math::splines::evaluate(const constant_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 195</td></tr><tr class="t-dsc"><td><a href="#f-ed856944a9cd9ec9">micron::math::splines::evaluate(const constant_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</a></td><td>function; line 214</td></tr><tr class="t-dsc"><td><a href="#f-f296a05eefb4c9f8">micron::math::splines::derivative(const constant_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</a></td><td>function; line 221</td></tr><tr class="t-dsc"><td><a href="#f-5090125157244c0d">micron::math::splines::make_quadratic(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, quadratic_boundary boundary = quadratic_boundary::minimum_curvature,
+               F boundary_slope = F(0), build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 239</td></tr><tr class="t-dsc"><td><a href="#f-51e87dcba0172638">micron::math::splines::evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</a></td><td>function; line 287</td></tr><tr class="t-dsc"><td><a href="#f-505b31041b7d5e13">micron::math::splines::evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 317</td></tr><tr class="t-dsc"><td><a href="#f-ce9ec4b6dc854f2c">micron::math::splines::derivative(const quadratic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</a></td><td>function; line 346</td></tr><tr class="t-dsc"><td><a href="#f-e3dd9c4b2f5bb949">micron::math::splines::evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</a></td><td>function; line 375</td></tr><tr class="t-dsc"><td><a href="#f-bc49fa904174ec2e">micron::math::splines::make_cubic_hermite(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; dydx, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 385</td></tr><tr class="t-dsc"><td><a href="#f-e150b89bfa362534">micron::math::splines::make_akima(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, akima_kind kind = akima_kind::akima, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 398</td></tr><tr class="t-dsc"><td><a href="#f-f08c52bce1bd8699">micron::math::splines::make_cardinal(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, F tension = F(0), build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 433</td></tr><tr class="t-dsc"><td><a href="#f-3fa4c2c4c12af754">micron::math::splines::make_catmull_rom(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 453</td></tr><tr class="t-dsc"><td><a href="#f-63fddccc319c36a2">micron::math::splines::make_steffen(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 460</td></tr><tr class="t-dsc"><td><a href="#f-98cc905d514ac065">micron::math::splines::make_quintic_hermite(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; dydx, raw_slice&lt;const F&gt; d2ydx2,
+                     build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 500</td></tr><tr class="t-dsc"><td><a href="#f-21acfc149e4d6771">micron::math::splines::evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</a></td><td>function; line 537</td></tr><tr class="t-dsc"><td><a href="#f-ffc85498f7ebd673">micron::math::splines::evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 567</td></tr><tr class="t-dsc"><td><a href="#f-64858788ed03895e">micron::math::splines::derivative(const quintic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</a></td><td>function; line 598</td></tr><tr class="t-dsc"><td><a href="#f-e066fa5fd79254ab">micron::math::splines::evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</a></td><td>function; line 622</td></tr><tr class="t-dsc"><td><a href="#f-be0fd6cb395b6fa6">micron::math::splines::domain(const piecewise_polynomial_1d&lt;F&gt; &amp;s) noexcept</a></td><td>function; line 640</td></tr><tr class="t-dsc"><td><a href="#f-6b244bb81bdcb6ba">micron::math::splines::make_piecewise_polynomial(raw_slice&lt;const F&gt; breaks, raw_slice&lt;const F&gt; coeff, u32 degree, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 647</td></tr><tr class="t-dsc"><td><a href="#f-1478400e1fd11843">micron::math::splines::to_power_basis(const cubic_spline_1d&lt;F&gt; &amp;s) noexcept</a></td><td>function; line 677</td></tr><tr class="t-dsc"><td><a href="#f-17aab88a835edada">micron::math::splines::to_power_basis(const quadratic_spline_1d&lt;F&gt; &amp;s) noexcept</a></td><td>function; line 694</td></tr><tr class="t-dsc"><td><a href="#f-2bc97c3e88a99f7b">micron::math::splines::to_power_basis(const quintic_spline_1d&lt;F&gt; &amp;s) noexcept</a></td><td>function; line 709</td></tr><tr class="t-dsc"><td><a href="#f-1894de07a86eda20">micron::math::splines::evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x) noexcept</a></td><td>function; line 724</td></tr><tr class="t-dsc"><td><a href="#f-a91ec5d372038094">micron::math::splines::evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 753</td></tr><tr class="t-dsc"><td><a href="#f-eaceb7b7c057896d">micron::math::splines::derivative(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</a></td><td>function; line 783</td></tr><tr class="t-dsc"><td><a href="#f-563e263098bfaa96">micron::math::splines::evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</a></td><td>function; line 809</td></tr><tr class="t-dsc"><td><a href="#f-a5b442536b3bcd58">micron::math::splines::derivative_spline(const piecewise_polynomial_1d&lt;F&gt; &amp;s, u32 order = 1) noexcept</a></td><td>function; line 816</td></tr><tr class="t-dsc"><td><a href="#f-7d74d71fd81c53f1">micron::math::splines::antiderivative_spline(const piecewise_polynomial_1d&lt;F&gt; &amp;s) noexcept</a></td><td>function; line 839</td></tr><tr class="t-dsc"><td><a href="#f-0b2d1b1928e71be3">micron::math::splines::integral(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F a, F b) noexcept</a></td><td>function; line 861</td></tr><tr class="t-dsc"><td><a href="#f-2c7d1f3f4abbd87c">micron::math::splines::integral(const quadratic_spline_1d&lt;F&gt; &amp;s, F a, F b) noexcept</a></td><td>function; line 870</td></tr><tr class="t-dsc"><td><a href="#f-8a491ddb1d4fe402">micron::math::splines::integral(const quintic_spline_1d&lt;F&gt; &amp;s, F a, F b) noexcept</a></td><td>function; line 877</td></tr><tr class="t-dsc"><td><a href="#f-a5fd8874e54ef990">micron::math::splines::roots(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F target = F(0), F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</a></td><td>function; line 938</td></tr><tr class="t-dsc"><td><a href="#f-2aed10667bcf7d3f">micron::math::splines::solve(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F target, F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</a></td><td>function; line 957</td></tr><tr class="t-dsc"><td><a href="#f-eb5a49d805e1e8e0">micron::math::splines::roots(const cubic_spline_1d&lt;F&gt; &amp;s, F target = F(0), F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</a></td><td>function; line 964</td></tr><tr class="t-dsc"><td><a href="#f-997e78f324f0bdc0">micron::math::splines::make_periodic_cubic(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</a></td><td>function; line 979</td></tr><tr class="t-dsc"><td><a href="#f-c2cafe48e093179f">micron::math::splines::evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</a></td><td>function; line 1049</td></tr><tr class="t-dsc"><td><a href="#f-7a455fc46e7d681d">micron::math::splines::evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</a></td><td>function; line 1058</td></tr><tr class="t-dsc"><td><a href="#f-ce7d7f712fb21a6b">micron::math::splines::derivative(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</a></td><td>function; line 1069</td></tr><tr class="t-dsc"><td><a href="#f-65634ffed87d5829">micron::math::splines::evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</a></td><td>function; line 1078</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a5296ab2513577c3"><h3><code>micron::math::splines::make_constant(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, constant_side side = constant_side::nearest,
+              build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L156">line 156</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constant_1d&lt;F&gt;
+make_constant(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, constant_side side = constant_side::nearest,
+              build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>constant_side side = constant_side::nearest</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline constant_1d&lt;F&gt;
+make_constant(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, constant_side side = constant_side::nearest,
+              build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  constant_1d&lt;F&gt; out{};
+  out.side = side;
+  if ( !__impl_piecewise_1d::validate_xy&lt;F&gt;(xs, ys, 2, info) ) return out;
+  out.xs.reserve(xs.size());
+  out.ys.reserve(ys.size());
+  for ( usize i = 0; i &lt; xs.size(); ++i ) {
+    out.xs.emplace_back(xs[i]);
+    out.ys.emplace_back(ys[i]);
+  }
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L161">line 161</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L169">line 169</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-20f3609334c2d4d1">__impl_piecewise_1d::validate_xy&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-9ac89b0341804a90"><h3><code>micron::math::splines::evaluate(const constant_1d&lt;F&gt; &amp;s, F x) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L174">line 174</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+evaluate(const constant_1d&lt;F&gt; &amp;s, F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const constant_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+evaluate(const constant_1d&lt;F&gt; &amp;s, F x) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n == 0 ) return F(0);
+  if ( n == 1 ) return s.ys[0];
+  const F *xs = s.xs.data();
+  const F *ys = s.ys.data();
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( x &lt;= xs[0] ) return s.mode == extension_mode::zero &amp;&amp; x &lt; xs[0] ? F(0) : ys[0];
+  if ( x &gt;= xs[n - 1] ) return s.mode == extension_mode::zero &amp;&amp; x &gt; xs[n - 1] ? F(0) : ys[n - 1];
+  const usize i = __impl_splines_bits::locate_segment&lt;F&gt;(xs, n, x, s.last_hit);
+  if ( x == xs[i] ) return ys[i];
+  if ( x == xs[i + 1] ) return ys[i + 1];
+  if ( s.side == constant_side::previous ) return ys[i];
+  if ( s.side == constant_side::next ) return ys[i + 1];
+  return ((x + x) &lt; (xs[i] + xs[i + 1])) ? ys[i] : ys[i + 1];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L177">line 177</a></td></tr><tr class="t-dsc"><td><code>s.ys[0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L178">line 178</a></td></tr><tr class="t-dsc"><td><code>s.mode == extension_mode::zero &amp;&amp; x &lt; xs[0] ? F(0) : ys[0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L183">line 183</a></td></tr><tr class="t-dsc"><td><code>s.mode == extension_mode::zero &amp;&amp; x &gt; xs[n - 1] ? F(0) : ys[n - 1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L184">line 184</a></td></tr><tr class="t-dsc"><td><code>ys[i]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L186">line 186</a></td></tr><tr class="t-dsc"><td><code>ys[i + 1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L187">line 187</a></td></tr><tr class="t-dsc"><td><code>ys[i]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L188">line 188</a></td></tr><tr class="t-dsc"><td><code>ys[i + 1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L189">line 189</a></td></tr><tr class="t-dsc"><td><code>((x + x) &lt; (xs[i] + xs[i + 1])) ? ys[i] : ys[i + 1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L190">line 190</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-b4654a09c3947cd8"><h3><code>micron::math::splines::evaluate(const constant_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L195">line 195</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const constant_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const constant_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const constant_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) return n ? s.ys[0] : F(0);
+  const F *xs = s.xs.data();
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( x &lt;= xs[0] ) return s.mode == extension_mode::zero &amp;&amp; x &lt; xs[0] ? F(0) : s.ys[0];
+  if ( x &gt;= xs[n - 1] ) return s.mode == extension_mode::zero &amp;&amp; x &gt; xs[n - 1] ? F(0) : s.ys[n - 1];
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(xs, n, x, cursor.segment);
+  if ( x == xs[segment] ) return s.ys[segment];
+  if ( x == xs[segment + 1] ) return s.ys[segment + 1];
+  if ( s.side == constant_side::previous ) return s.ys[segment];
+  if ( s.side == constant_side::next ) return s.ys[segment + 1];
+  return ((x + x) &lt; (xs[segment] + xs[segment + 1])) ? s.ys[segment] : s.ys[segment + 1];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n ? s.ys[0] : F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L198">line 198</a></td></tr><tr class="t-dsc"><td><code>s.mode == extension_mode::zero &amp;&amp; x &lt; xs[0] ? F(0) : s.ys[0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L202">line 202</a></td></tr><tr class="t-dsc"><td><code>s.mode == extension_mode::zero &amp;&amp; x &gt; xs[n - 1] ? F(0) : s.ys[n - 1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L203">line 203</a></td></tr><tr class="t-dsc"><td><code>s.ys[segment]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L205">line 205</a></td></tr><tr class="t-dsc"><td><code>s.ys[segment + 1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L206">line 206</a></td></tr><tr class="t-dsc"><td><code>s.ys[segment]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L207">line 207</a></td></tr><tr class="t-dsc"><td><code>s.ys[segment + 1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L208">line 208</a></td></tr><tr class="t-dsc"><td><code>((x + x) &lt; (xs[segment] + xs[segment + 1])) ? s.ys[segment] : s.ys[segment + 1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L209">line 209</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ed856944a9cd9ec9"><h3><code>micron::math::splines::evaluate(const constant_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L214">line 214</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const constant_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const constant_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const constant_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f296a05eefb4c9f8"><h3><code>micron::math::splines::derivative(const constant_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L221">line 221</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const constant_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const constant_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>u32 order = 1</code></li></ul><h4>Effects</h4><p>Returns <code>order == 0 ? evaluate&lt;F&gt;(s, x) : F(0)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const constant_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept
+{
+  return order == 0 ? evaluate&lt;F&gt;(s, x) : F(0);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>order == 0 ? evaluate&lt;F&gt;(s, x) : F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L223">line 223</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-5090125157244c0d"><h3><code>micron::math::splines::make_quadratic(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, quadratic_boundary boundary = quadratic_boundary::minimum_curvature,
+               F boundary_slope = F(0), build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L239">line 239</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline quadratic_spline_1d&lt;F&gt;
+make_quadratic(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, quadratic_boundary boundary = quadratic_boundary::minimum_curvature,
+               F boundary_slope = F(0), build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>quadratic_boundary boundary = quadratic_boundary::minimum_curvature</code></li><li><code>F boundary_slope = F(0)</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline quadratic_spline_1d&lt;F&gt;
+make_quadratic(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, quadratic_boundary boundary = quadratic_boundary::minimum_curvature,
+               F boundary_slope = F(0), build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  quadratic_spline_1d&lt;F&gt; out{};
+  out.boundary = boundary;
+  if ( !__impl_piecewise_1d::validate_xy&lt;F&gt;(xs, ys, 2, info) ) return out;
+  const usize n = xs.size();
+  vector&lt;F&gt; delta;
+  delta.reserve(n - 1);
+  for ( usize i = 0; i + 1 &lt; n; ++i ) delta.emplace_back((ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]));
+
+  F first_slope = boundary_slope;
+  if ( boundary == quadratic_boundary::right_slope ) {
+    F a = (n &amp; 1) ? F(1) : F(-1);
+    F b = F(0);
+    for ( usize i = 0; i + 1 &lt; n; ++i ) b = F(2) * delta[i] - b;
+    first_slope = (boundary_slope - b) / a;
+  } else if ( boundary == quadratic_boundary::minimum_curvature ) {
+    F numerator = F(0);
+    F denominator = F(0);
+    F a = F(1);
+    F b = F(0);
+    for ( usize i = 0; i + 1 &lt; n; ++i ) {
+      const F inv_h = F(1) / (xs[i + 1] - xs[i]);
+      numerator += a * (delta[i] - b) * inv_h;
+      denominator += inv_h;
+      b = F(2) * delta[i] - b;
+      a = -a;
+    }
+    first_slope = denominator &gt; F(0) ? numerator / denominator : delta[0];
+  }
+
+  out.xs.reserve(n);
+  out.seg.reserve(n - 1);
+  for ( usize i = 0; i &lt; n; ++i ) out.xs.emplace_back(xs[i]);
+  F slope = first_slope;
+  for ( usize i = 0; i + 1 &lt; n; ++i ) {
+    const F inv_h = F(1) / (xs[i + 1] - xs[i]);
+    poly_coeffs&lt;F, 2&gt; p{ { ys[i], slope, (delta[i] - slope) * inv_h } };
+    out.seg.emplace_back(p);
+    slope = F(2) * delta[i] - slope;
+  }
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L244">line 244</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L282">line 282</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-20f3609334c2d4d1">__impl_piecewise_1d::validate_xy&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-51e87dcba0172638"><h3><code>micron::math::splines::evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L287">line 287</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quadratic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, F x) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) return F(0);
+  const F *xs = s.xs.data();
+  const auto *seg = s.seg.data();
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( x &lt;= xs[0] ) {
+    if ( s.mode == extension_mode::zero &amp;&amp; x &lt; xs[0] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return seg[0][0];
+    const F t = x - xs[0];
+    if ( s.mode == extension_mode::linear ) return math::fma&lt;F&gt;(seg[0][1], t, seg[0][0]);
+    return math::horner&lt;F, 2&gt;(seg[0], t);
+  }
+  if ( x &gt;= xs[n - 1] ) {
+    const auto &amp;p = seg[n - 2];
+    const F h = xs[n - 1] - xs[n - 2];
+    const F y = math::horner&lt;F, 2&gt;(p, h);
+    if ( s.mode == extension_mode::zero &amp;&amp; x &gt; xs[n - 1] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return y;
+    if ( s.mode == extension_mode::linear ) return math::fma&lt;F&gt;(p[1] + F(2) * p[2] * h, x - xs[n - 1], y);
+    return math::horner&lt;F, 2&gt;(p, x - xs[n - 2]);
+  }
+  const usize i = __impl_splines_bits::locate_segment&lt;F&gt;(xs, n, x, s.last_hit);
+  return math::horner&lt;F, 2&gt;(seg[i], x - xs[i]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L290">line 290</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L296">line 296</a></td></tr><tr class="t-dsc"><td><code>seg[0][0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L297">line 297</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(seg[0][1], t, seg[0][0])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L299">line 299</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 2&gt;(seg[0], t)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L300">line 300</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L306">line 306</a></td></tr><tr class="t-dsc"><td><code>y</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L307">line 307</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(p[1] + F(2) * p[2] * h, x - xs[n - 1], y)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L308">line 308</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 2&gt;(p, x - xs[n - 2])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L309">line 309</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 2&gt;(seg[i], x - xs[i])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L312">line 312</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../numeric.hpp.html#f-279c412cf4c41012">math::horner&lt;F, 2&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-505b31041b7d5e13"><h3><code>micron::math::splines::evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L317">line 317</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quadratic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) return F(0);
+  const F *xs = s.xs.data();
+  const auto *segments = s.seg.data();
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( x &lt;= xs[0] ) {
+    if ( s.mode == extension_mode::zero &amp;&amp; x &lt; xs[0] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return segments[0][0];
+    const F local = x - xs[0];
+    return s.mode == extension_mode::linear ? math::fma&lt;F&gt;(segments[0][1], local, segments[0][0]) : math::horner&lt;F, 2&gt;(segments[0], local);
+  }
+  if ( x &gt;= xs[n - 1] ) {
+    const auto &amp;polynomial = segments[n - 2];
+    const F width = xs[n - 1] - xs[n - 2];
+    const F value = math::horner&lt;F, 2&gt;(polynomial, width);
+    if ( s.mode == extension_mode::zero &amp;&amp; x &gt; xs[n - 1] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return value;
+    if ( s.mode == extension_mode::linear ) return math::fma&lt;F&gt;(polynomial[1] + F(2) * polynomial[2] * width, x - xs[n - 1], value);
+    return math::horner&lt;F, 2&gt;(polynomial, x - xs[n - 2]);
+  }
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(xs, n, x, cursor.segment);
+  return math::horner&lt;F, 2&gt;(segments[segment], x - xs[segment]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L320">line 320</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L326">line 326</a></td></tr><tr class="t-dsc"><td><code>segments[0][0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L327">line 327</a></td></tr><tr class="t-dsc"><td><code>s.mode == extension_mode::linear ? math::fma&lt;F&gt;(segments[0][1], local, segments[0][0]) : math::horner&lt;F, 2&gt;(segments[0], local)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L329">line 329</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L335">line 335</a></td></tr><tr class="t-dsc"><td><code>value</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L336">line 336</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(polynomial[1] + F(2) * polynomial[2] * width, x - xs[n - 1], value)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L337">line 337</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 2&gt;(polynomial, x - xs[n - 2])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L338">line 338</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 2&gt;(segments[segment], x - xs[segment])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L341">line 341</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../numeric.hpp.html#f-279c412cf4c41012">math::horner&lt;F, 2&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ce9ec4b6dc854f2c"><h3><code>micron::math::splines::derivative(const quadratic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L346">line 346</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const quadratic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quadratic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>u32 order = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const quadratic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 || order &gt; 2 ) return F(0);
+  if ( order == 0 ) return evaluate&lt;F&gt;(s, x);
+  const F *xs = s.xs.data();
+  const bool outside = x &lt; xs[0] || x &gt; xs[n - 1];
+  if ( outside &amp;&amp; (s.mode == extension_mode::zero || s.mode == extension_mode::clamp) ) return F(0);
+  if ( outside &amp;&amp; s.mode == extension_mode::linear ) {
+    if ( order != 1 ) return F(0);
+    if ( x &lt; xs[0] ) return s.seg[0][1];
+    const F width = xs[n - 1] - xs[n - 2];
+    return math::fma&lt;F&gt;(F(2) * s.seg[n - 2][2], width, s.seg[n - 2][1]);
+  }
+  const F sign = s.mode == extension_mode::reflect ? __impl_piecewise_1d::reflection_derivative_sign&lt;F&gt;(x, xs[0], xs[n - 1], order) : F(1);
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, xs[0], xs[n - 1]);
+  usize i = 0;
+  if ( x &gt;= xs[n - 1] )
+    i = n - 2;
+  else if ( x &gt; xs[0] )
+    i = __impl_splines_bits::locate_segment&lt;F&gt;(xs, n, x, s.last_hit);
+  const F t = x - xs[i];
+  const F value = order == 1 ? math::fma&lt;F&gt;(F(2) * s.seg[i][2], t, s.seg[i][1]) : F(2) * s.seg[i][2];
+  return sign * value;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L349">line 349</a></td></tr><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(s, x)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L350">line 350</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L353">line 353</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L355">line 355</a></td></tr><tr class="t-dsc"><td><code>s.seg[0][1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L356">line 356</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(F(2) * s.seg[n - 2][2], width, s.seg[n - 2][1])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L358">line 358</a></td></tr><tr class="t-dsc"><td><code>sign * value</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L370">line 370</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-0f4f77192e94760d">__impl_piecewise_1d::reflection_derivative_sign&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-e3dd9c4b2f5bb949"><h3><code>micron::math::splines::evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L375">line 375</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quadratic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const quadratic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-bc49fa904174ec2e"><h3><code>micron::math::splines::make_cubic_hermite(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; dydx, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L385">line 385</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_cubic_hermite(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; dydx, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>raw_slice&lt;const F&gt; dydx</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_cubic_hermite(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; dydx, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  cubic_spline_1d&lt;F&gt; out{};
+  if ( !__impl_piecewise_1d::validate_xy&lt;F&gt;(xs, ys, 2, info) ) return out;
+  if ( dydx.size() != xs.size() ) {
+    if ( info ) info-&gt;status = build_status::size_mismatch;
+    return out;
+  }
+  return __impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, dydx.ptr, info);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L388">line 388</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L391">line 391</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, dydx.ptr, info)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L393">line 393</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-20f3609334c2d4d1">__impl_piecewise_1d::validate_xy&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-4bf679c43b42216a">__impl_piecewise_1d::make_from_slopes&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-e150b89bfa362534"><h3><code>micron::math::splines::make_akima(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, akima_kind kind = akima_kind::akima, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L398">line 398</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_akima(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, akima_kind kind = akima_kind::akima, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>akima_kind kind = akima_kind::akima</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_akima(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, akima_kind kind = akima_kind::akima, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  cubic_spline_1d&lt;F&gt; out{};
+  if ( !__impl_piecewise_1d::validate_xy&lt;F&gt;(xs, ys, 2, info) ) return out;
+  const usize n = xs.size();
+  vector&lt;F&gt; slopes(n, F(0));
+  slopes.set_size(n);
+  if ( n == 2 ) {
+    const F value = (ys[1] - ys[0]) / (xs[1] - xs[0]);
+    slopes[0] = slopes[1] = value;
+    return __impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, slopes.data(), info);
+  }
+
+  vector&lt;F&gt; ext(n + 3, F(0));
+  ext.set_size(n + 3);
+  for ( usize i = 0; i + 1 &lt; n; ++i ) ext[i + 2] = (ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]);
+  ext[1] = F(2) * ext[2] - ext[3];
+  ext[0] = F(2) * ext[1] - ext[2];
+  ext[n + 1] = F(2) * ext[n] - ext[n - 1];
+  ext[n + 2] = F(2) * ext[n + 1] - ext[n];
+  for ( usize i = 0; i &lt; n; ++i ) {
+    F w1 = __impl_piecewise_1d::abs_value&lt;F&gt;(ext[i + 3] - ext[i + 2]);
+    F w2 = __impl_piecewise_1d::abs_value&lt;F&gt;(ext[i + 1] - ext[i]);
+    if ( kind == akima_kind::makima ) {
+      w1 += F(0.5) * __impl_piecewise_1d::abs_value&lt;F&gt;(ext[i + 3] + ext[i + 2]);
+      w2 += F(0.5) * __impl_piecewise_1d::abs_value&lt;F&gt;(ext[i + 1] + ext[i]);
+    }
+    const F sum = w1 + w2;
+    slopes[i] = sum &gt; F(0) ? (w1 * ext[i + 1] + w2 * ext[i + 2]) / sum : F(0.5) * (ext[i + 1] + ext[i + 2]);
+  }
+  return __impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, slopes.data(), info);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L401">line 401</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, slopes.data(), info)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L408">line 408</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, slopes.data(), info)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L428">line 428</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-20f3609334c2d4d1">__impl_piecewise_1d::validate_xy&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-4bf679c43b42216a">__impl_piecewise_1d::make_from_slopes&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-7770d118d2d419f4">__impl_piecewise_1d::abs_value&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f08c52bce1bd8699"><h3><code>micron::math::splines::make_cardinal(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, F tension = F(0), build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L433">line 433</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_cardinal(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, F tension = F(0), build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>F tension = F(0)</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_cardinal(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, F tension = F(0), build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  cubic_spline_1d&lt;F&gt; out{};
+  if ( !__impl_piecewise_1d::validate_xy&lt;F&gt;(xs, ys, 2, info) ) return out;
+  if ( tension &lt; F(0) || tension &gt; F(1) ) {
+    if ( info ) info-&gt;status = build_status::invalid_argument;
+    return out;
+  }
+  const usize n = xs.size();
+  vector&lt;F&gt; slopes(n, F(0));
+  slopes.set_size(n);
+  const F scale = F(1) - tension;
+  slopes[0] = scale * (ys[1] - ys[0]) / (xs[1] - xs[0]);
+  for ( usize i = 1; i + 1 &lt; n; ++i ) slopes[i] = scale * (ys[i + 1] - ys[i - 1]) / (xs[i + 1] - xs[i - 1]);
+  slopes[n - 1] = scale * (ys[n - 1] - ys[n - 2]) / (xs[n - 1] - xs[n - 2]);
+  return __impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, slopes.data(), info);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L436">line 436</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L439">line 439</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, slopes.data(), info)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L448">line 448</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-20f3609334c2d4d1">__impl_piecewise_1d::validate_xy&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-4bf679c43b42216a">__impl_piecewise_1d::make_from_slopes&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-3fa4c2c4c12af754"><h3><code>micron::math::splines::make_catmull_rom(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L453">line 453</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_catmull_rom(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Returns <code>make_cardinal&lt;F&gt;(xs, ys, F(0), info)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_catmull_rom(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  return make_cardinal&lt;F&gt;(xs, ys, F(0), info);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>make_cardinal&lt;F&gt;(xs, ys, F(0), info)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L455">line 455</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-f08c52bce1bd8699">make_cardinal&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-63fddccc319c36a2"><h3><code>micron::math::splines::make_steffen(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L460">line 460</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_steffen(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_steffen(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  cubic_spline_1d&lt;F&gt; out{};
+  if ( !__impl_piecewise_1d::validate_xy&lt;F&gt;(xs, ys, 2, info) ) return out;
+  const usize n = xs.size();
+  vector&lt;F&gt; slopes(n, F(0));
+  slopes.set_size(n);
+  __impl_splines_bits::pchip_slopes&lt;F&gt;(xs.ptr, ys.ptr, slopes.data(), n);
+  for ( usize i = 1; i + 1 &lt; n; ++i ) {
+    const F h0 = xs[i] - xs[i - 1];
+    const F h1 = xs[i + 1] - xs[i];
+    const F d0 = (ys[i] - ys[i - 1]) / h0;
+    const F d1 = (ys[i + 1] - ys[i]) / h1;
+    if ( d0 * d1 &lt;= F(0) ) {
+      slopes[i] = F(0);
+      continue;
+    }
+    const F p = (d0 * h1 + d1 * h0) / (h0 + h1);
+    F limit = __impl_piecewise_1d::abs_value&lt;F&gt;(d0);
+    const F ad1 = __impl_piecewise_1d::abs_value&lt;F&gt;(d1);
+    const F ap2 = F(0.5) * __impl_piecewise_1d::abs_value&lt;F&gt;(p);
+    if ( ad1 &lt; limit ) limit = ad1;
+    if ( ap2 &lt; limit ) limit = ap2;
+    slopes[i] = (d0 &gt; F(0) ? F(2) : F(-2)) * limit;
+  }
+  return __impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, slopes.data(), info);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L463">line 463</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::make_from_slopes&lt;F&gt;(xs, ys, slopes.data(), info)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L485">line 485</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-20f3609334c2d4d1">__impl_piecewise_1d::validate_xy&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d30123df2e47ee8d">__impl_splines_bits::pchip_slopes&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-7770d118d2d419f4">__impl_piecewise_1d::abs_value&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-4bf679c43b42216a">__impl_piecewise_1d::make_from_slopes&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-98cc905d514ac065"><h3><code>micron::math::splines::make_quintic_hermite(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; dydx, raw_slice&lt;const F&gt; d2ydx2,
+                     build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L500">line 500</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline quintic_spline_1d&lt;F&gt;
+make_quintic_hermite(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; dydx, raw_slice&lt;const F&gt; d2ydx2,
+                     build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>raw_slice&lt;const F&gt; dydx</code></li><li><code>raw_slice&lt;const F&gt; d2ydx2</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline quintic_spline_1d&lt;F&gt;
+make_quintic_hermite(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, raw_slice&lt;const F&gt; dydx, raw_slice&lt;const F&gt; d2ydx2,
+                     build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  quintic_spline_1d&lt;F&gt; out{};
+  if ( !__impl_piecewise_1d::validate_xy&lt;F&gt;(xs, ys, 2, info) ) return out;
+  if ( dydx.size() != xs.size() || d2ydx2.size() != xs.size() ) {
+    if ( info ) info-&gt;status = build_status::size_mismatch;
+    return out;
+  }
+  const usize n = xs.size();
+  out.xs.reserve(n);
+  out.seg.reserve(n - 1);
+  for ( usize i = 0; i &lt; n; ++i ) out.xs.emplace_back(xs[i]);
+  for ( usize i = 0; i + 1 &lt; n; ++i ) {
+    const F h = xs[i + 1] - xs[i];
+    const F h2 = h * h;
+    const F inv_h = F(1) / h;
+    const F inv_h2 = inv_h * inv_h;
+    const F inv_h3 = inv_h2 * inv_h;
+    const F A = ys[i + 1] - (ys[i] + dydx[i] * h + F(0.5) * d2ydx2[i] * h2);
+    const F B = dydx[i + 1] - (dydx[i] + d2ydx2[i] * h);
+    const F C = d2ydx2[i + 1] - d2ydx2[i];
+    poly_coeffs&lt;F, 5&gt; p{};
+    p[0] = ys[i];
+    p[1] = dydx[i];
+    p[2] = F(0.5) * d2ydx2[i];
+    p[3] = (F(10) * A - F(4) * B * h + F(0.5) * C * h2) * inv_h3;
+    p[4] = (-F(15) * A + F(7) * B * h - C * h2) * inv_h3 * inv_h;
+    p[5] = (F(6) * A - F(3) * B * h + F(0.5) * C * h2) * inv_h3 * inv_h2;
+    out.seg.emplace_back(p);
+  }
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L504">line 504</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L507">line 507</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L532">line 532</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-20f3609334c2d4d1">__impl_piecewise_1d::validate_xy&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-21acfc149e4d6771"><h3><code>micron::math::splines::evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L537">line 537</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quintic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, F x) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) return F(0);
+  const F *xs = s.xs.data();
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, xs[0], xs[n - 1]);
+  usize i = 0;
+  if ( x &lt;= xs[0] ) {
+    if ( s.mode == extension_mode::zero &amp;&amp; x &lt; xs[0] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return s.seg[0][0];
+    if ( s.mode == extension_mode::linear ) return math::fma&lt;F&gt;(s.seg[0][1], x - xs[0], s.seg[0][0]);
+  } else if ( x &gt;= xs[n - 1] ) {
+    i = n - 2;
+    const F h = xs[n - 1] - xs[i];
+    const F y = math::horner&lt;F, 5&gt;(s.seg[i], h);
+    if ( s.mode == extension_mode::zero &amp;&amp; x &gt; xs[n - 1] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return y;
+    if ( s.mode == extension_mode::linear ) {
+      const F slope = __impl_piecewise_1d::eval_power_derivative&lt;F&gt;(s.seg[i].data, 5, h, 1);
+      return math::fma&lt;F&gt;(slope, x - xs[n - 1], y);
+    }
+  } else {
+    i = __impl_splines_bits::locate_segment&lt;F&gt;(xs, n, x, s.last_hit);
+  }
+  return math::horner&lt;F, 5&gt;(s.seg[i], x - xs[i]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L540">line 540</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L546">line 546</a></td></tr><tr class="t-dsc"><td><code>s.seg[0][0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L547">line 547</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(s.seg[0][1], x - xs[0], s.seg[0][0])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L548">line 548</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L553">line 553</a></td></tr><tr class="t-dsc"><td><code>y</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L554">line 554</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(slope, x - xs[n - 1], y)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L557">line 557</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 5&gt;(s.seg[i], x - xs[i])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L562">line 562</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../numeric.hpp.html#f-279c412cf4c41012">math::horner&lt;F, 5&gt;</a>, <a href="piecewise_1d.hpp.html#f-e4cbf9637b9912be">__impl_piecewise_1d::eval_power_derivative&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ffc85498f7ebd673"><h3><code>micron::math::splines::evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L567">line 567</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quintic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) return F(0);
+  const F *xs = s.xs.data();
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( x &lt;= xs[0] ) {
+    if ( s.mode == extension_mode::zero &amp;&amp; x &lt; xs[0] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return s.seg[0][0];
+    if ( s.mode == extension_mode::linear ) return math::fma&lt;F&gt;(s.seg[0][1], x - xs[0], s.seg[0][0]);
+    return math::horner&lt;F, 5&gt;(s.seg[0], x - xs[0]);
+  }
+  if ( x &gt;= xs[n - 1] ) {
+    const usize segment = n - 2;
+    const F width = xs[n - 1] - xs[segment];
+    const F value = math::horner&lt;F, 5&gt;(s.seg[segment], width);
+    if ( s.mode == extension_mode::zero &amp;&amp; x &gt; xs[n - 1] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return value;
+    if ( s.mode == extension_mode::linear ) {
+      const F slope = __impl_piecewise_1d::eval_power_derivative&lt;F&gt;(s.seg[segment].data, 5, width, 1);
+      return math::fma&lt;F&gt;(slope, x - xs[n - 1], value);
+    }
+    return math::horner&lt;F, 5&gt;(s.seg[segment], x - xs[segment]);
+  }
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(xs, n, x, cursor.segment);
+  return math::horner&lt;F, 5&gt;(s.seg[segment], x - xs[segment]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L570">line 570</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L575">line 575</a></td></tr><tr class="t-dsc"><td><code>s.seg[0][0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L576">line 576</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(s.seg[0][1], x - xs[0], s.seg[0][0])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L577">line 577</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 5&gt;(s.seg[0], x - xs[0])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L578">line 578</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L584">line 584</a></td></tr><tr class="t-dsc"><td><code>value</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L585">line 585</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(slope, x - xs[n - 1], value)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L588">line 588</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 5&gt;(s.seg[segment], x - xs[segment])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L590">line 590</a></td></tr><tr class="t-dsc"><td><code>math::horner&lt;F, 5&gt;(s.seg[segment], x - xs[segment])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L593">line 593</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../numeric.hpp.html#f-279c412cf4c41012">math::horner&lt;F, 5&gt;</a>, <a href="piecewise_1d.hpp.html#f-e4cbf9637b9912be">__impl_piecewise_1d::eval_power_derivative&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-64858788ed03895e"><h3><code>micron::math::splines::derivative(const quintic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L598">line 598</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const quintic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quintic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>u32 order = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const quintic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept
+{
+  const usize n = s.xs.size();
+  if ( n &lt; 2 ) return F(0);
+  if ( order == 0 ) return evaluate&lt;F&gt;(s, x);
+  const F *xs = s.xs.data();
+  const bool outside = x &lt; xs[0] || x &gt; xs[n - 1];
+  if ( outside &amp;&amp; (s.mode == extension_mode::zero || s.mode == extension_mode::clamp) ) return F(0);
+  if ( outside &amp;&amp; s.mode == extension_mode::linear ) {
+    if ( order != 1 ) return F(0);
+    if ( x &lt; xs[0] ) return s.seg[0][1];
+    const usize segment = n - 2;
+    return __impl_piecewise_1d::eval_power_derivative&lt;F&gt;(s.seg[segment].data, 5, xs[n - 1] - xs[segment], 1);
+  }
+  const F sign = s.mode == extension_mode::reflect ? __impl_piecewise_1d::reflection_derivative_sign&lt;F&gt;(x, xs[0], xs[n - 1], order) : F(1);
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, xs[0], xs[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, xs[0], xs[n - 1]);
+  usize i = x &gt;= xs[n - 1] ? n - 2 : 0;
+  if ( x &gt; xs[0] &amp;&amp; x &lt; xs[n - 1] ) i = __impl_splines_bits::locate_segment&lt;F&gt;(xs, n, x, s.last_hit);
+  return sign * __impl_piecewise_1d::eval_power_derivative&lt;F&gt;(s.seg[i].data, 5, x - xs[i], order);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L601">line 601</a></td></tr><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(s, x)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L602">line 602</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L605">line 605</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L607">line 607</a></td></tr><tr class="t-dsc"><td><code>s.seg[0][1]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L608">line 608</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::eval_power_derivative&lt;F&gt;(s.seg[segment].data, 5, xs[n - 1] - xs[segment], 1)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L610">line 610</a></td></tr><tr class="t-dsc"><td><code>sign * __impl_piecewise_1d::eval_power_derivative&lt;F&gt;(s.seg[i].data, 5, x - xs[i], order)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L617">line 617</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-e4cbf9637b9912be">__impl_piecewise_1d::eval_power_derivative&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-0f4f77192e94760d">__impl_piecewise_1d::reflection_derivative_sign&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-e066fa5fd79254ab"><h3><code>micron::math::splines::evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L622">line 622</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quintic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const quintic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-be0fd6cb395b6fa6"><h3><code>micron::math::splines::domain(const piecewise_polynomial_1d&lt;F&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L640">line 640</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline spline_domain&lt;F&gt;
+domain(const piecewise_polynomial_1d&lt;F&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Returns <code>s.breaks.size() ? spline_domain&lt;F&gt;{ s.breaks[0], s.breaks[s.breaks.size() - 1], true } : spline_domain&lt;F&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline spline_domain&lt;F&gt;
+domain(const piecewise_polynomial_1d&lt;F&gt; &amp;s) noexcept
+{
+  return s.breaks.size() ? spline_domain&lt;F&gt;{ s.breaks[0], s.breaks[s.breaks.size() - 1], true } : spline_domain&lt;F&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s.breaks.size() ? spline_domain&lt;F&gt;{ s.breaks[0], s.breaks[s.breaks.size() - 1], true } : spline_domain&lt;F&gt;{}</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L642">line 642</a></td></tr></tbody></table></section><section class="function-entry" id="f-6b244bb81bdcb6ba"><h3><code>micron::math::splines::make_piecewise_polynomial(raw_slice&lt;const F&gt; breaks, raw_slice&lt;const F&gt; coeff, u32 degree, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L647">line 647</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+make_piecewise_polynomial(raw_slice&lt;const F&gt; breaks, raw_slice&lt;const F&gt; coeff, u32 degree, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; breaks</code></li><li><code>raw_slice&lt;const F&gt; coeff</code></li><li><code>u32 degree</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+make_piecewise_polynomial(raw_slice&lt;const F&gt; breaks, raw_slice&lt;const F&gt; coeff, u32 degree, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  piecewise_polynomial_1d&lt;F&gt; out{};
+  out.degree = degree;
+  if ( degree &gt; 16 ) {
+    if ( info ) info-&gt;status = build_status::invalid_argument;
+    return out;
+  }
+  if ( breaks.size() &lt; 2 ) {
+    if ( info ) info-&gt;status = build_status::too_few_points;
+    return out;
+  }
+  if ( coeff.size() != (breaks.size() - 1) * usize(degree + 1) ) {
+    if ( info ) info-&gt;status = build_status::size_mismatch;
+    return out;
+  }
+  if ( !__impl_splines_bits::strictly_increasing&lt;F&gt;(breaks.ptr, breaks.size()) ) {
+    if ( info ) info-&gt;status = build_status::non_monotonic_x;
+    return out;
+  }
+  out.breaks.reserve(breaks.size());
+  out.coeff.reserve(coeff.size());
+  for ( usize i = 0; i &lt; breaks.size(); ++i ) out.breaks.emplace_back(breaks[i]);
+  for ( usize i = 0; i &lt; coeff.size(); ++i ) out.coeff.emplace_back(coeff[i]);
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L653">line 653</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L657">line 657</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L661">line 661</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L665">line 665</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L672">line 672</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="bits/impl.hpp.html#f-c21f6140604e40e0">__impl_splines_bits::strictly_increasing&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-1478400e1fd11843"><h3><code>micron::math::splines::to_power_basis(const cubic_spline_1d&lt;F&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L677">line 677</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+to_power_basis(const cubic_spline_1d&lt;F&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cubic_spline_1d&lt;F&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+to_power_basis(const cubic_spline_1d&lt;F&gt; &amp;s) noexcept
+{
+  piecewise_polynomial_1d&lt;F&gt; out{};
+  out.degree = 3;
+  out.mode = s.mode == extrap::clamp_to_endpoints ? extension_mode::clamp
+             : s.mode == extrap::linear_continue  ? extension_mode::linear
+                                                  : extension_mode::zero;
+  out.breaks.reserve(s.xs.size());
+  out.coeff.reserve(s.seg.size() * 4);
+  for ( usize i = 0; i &lt; s.xs.size(); ++i ) out.breaks.emplace_back(s.xs[i]);
+  for ( usize i = 0; i &lt; s.seg.size(); ++i )
+    for ( usize k = 0; k &lt; 4; ++k ) out.coeff.emplace_back(s.seg[i][k]);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L689">line 689</a></td></tr></tbody></table></section><section class="function-entry" id="f-17aab88a835edada"><h3><code>micron::math::splines::to_power_basis(const quadratic_spline_1d&lt;F&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L694">line 694</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+to_power_basis(const quadratic_spline_1d&lt;F&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quadratic_spline_1d&lt;F&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+to_power_basis(const quadratic_spline_1d&lt;F&gt; &amp;s) noexcept
+{
+  piecewise_polynomial_1d&lt;F&gt; out{};
+  out.degree = 2;
+  out.mode = s.mode;
+  out.breaks.reserve(s.xs.size());
+  out.coeff.reserve(s.seg.size() * 3);
+  for ( usize i = 0; i &lt; s.xs.size(); ++i ) out.breaks.emplace_back(s.xs[i]);
+  for ( usize i = 0; i &lt; s.seg.size(); ++i )
+    for ( usize k = 0; k &lt; 3; ++k ) out.coeff.emplace_back(s.seg[i][k]);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L704">line 704</a></td></tr></tbody></table></section><section class="function-entry" id="f-2bc97c3e88a99f7b"><h3><code>micron::math::splines::to_power_basis(const quintic_spline_1d&lt;F&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L709">line 709</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+to_power_basis(const quintic_spline_1d&lt;F&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quintic_spline_1d&lt;F&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+to_power_basis(const quintic_spline_1d&lt;F&gt; &amp;s) noexcept
+{
+  piecewise_polynomial_1d&lt;F&gt; out{};
+  out.degree = 5;
+  out.mode = s.mode;
+  out.breaks.reserve(s.xs.size());
+  out.coeff.reserve(s.seg.size() * 6);
+  for ( usize i = 0; i &lt; s.xs.size(); ++i ) out.breaks.emplace_back(s.xs[i]);
+  for ( usize i = 0; i &lt; s.seg.size(); ++i )
+    for ( usize k = 0; k &lt; 6; ++k ) out.coeff.emplace_back(s.seg[i][k]);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L719">line 719</a></td></tr></tbody></table></section><section class="function-entry" id="f-1894de07a86eda20"><h3><code>micron::math::splines::evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L724">line 724</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::flatten]] inline F
+evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x) noexcept
+{
+  const usize n = s.breaks.size();
+  if ( n &lt; 2 ) return F(0);
+  const F *breaks = s.breaks.data();
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, breaks[0], breaks[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, breaks[0], breaks[n - 1]);
+  usize i = 0;
+  if ( x &lt;= breaks[0] ) {
+    if ( s.mode == extension_mode::zero &amp;&amp; x &lt; breaks[0] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return s.coeff[0];
+    if ( s.mode == extension_mode::linear ) return math::fma&lt;F&gt;(s.degree ? s.coeff[1] : F(0), x - breaks[0], s.coeff[0]);
+  } else if ( x &gt;= breaks[n - 1] ) {
+    i = n - 2;
+    const F h = breaks[n - 1] - breaks[i];
+    const F *p = s.coeff.data() + i * usize(s.degree + 1);
+    const F y = __impl_piecewise_1d::eval_power&lt;F&gt;(p, s.degree, h);
+    if ( s.mode == extension_mode::zero &amp;&amp; x &gt; breaks[n - 1] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return y;
+    if ( s.mode == extension_mode::linear )
+      return math::fma&lt;F&gt;(__impl_piecewise_1d::eval_power_derivative&lt;F&gt;(p, s.degree, h, 1), x - breaks[n - 1], y);
+  } else {
+    i = __impl_splines_bits::locate_segment&lt;F&gt;(breaks, n, x, s.last_hit);
+  }
+  return __impl_piecewise_1d::eval_power&lt;F&gt;(s.coeff.data() + i * usize(s.degree + 1), s.degree, x - breaks[i]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L727">line 727</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L733">line 733</a></td></tr><tr class="t-dsc"><td><code>s.coeff[0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L734">line 734</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(s.degree ? s.coeff[1] : F(0), x - breaks[0], s.coeff[0])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L735">line 735</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L741">line 741</a></td></tr><tr class="t-dsc"><td><code>y</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L742">line 742</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(__impl_piecewise_1d::eval_power_derivative&lt;F&gt;(p, s.degree, h, 1), x - breaks[n - 1], y)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L744">line 744</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::eval_power&lt;F&gt;(s.coeff.data() + i * usize(s.degree + 1), s.degree, x - breaks[i])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L748">line 748</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="piecewise_1d.hpp.html#f-d3440aa94f8c21f7">__impl_piecewise_1d::eval_power&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-e4cbf9637b9912be">__impl_piecewise_1d::eval_power_derivative&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a91ec5d372038094"><h3><code>micron::math::splines::evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L753">line 753</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  const usize n = s.breaks.size();
+  if ( n &lt; 2 ) return F(0);
+  const F *breaks = s.breaks.data();
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, breaks[0], breaks[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, breaks[0], breaks[n - 1]);
+  if ( x &lt;= breaks[0] ) {
+    if ( s.mode == extension_mode::zero &amp;&amp; x &lt; breaks[0] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return s.coeff[0];
+    if ( s.mode == extension_mode::linear ) return math::fma&lt;F&gt;(s.degree ? s.coeff[1] : F(0), x - breaks[0], s.coeff[0]);
+    return __impl_piecewise_1d::eval_power&lt;F&gt;(s.coeff.data(), s.degree, x - breaks[0]);
+  }
+  if ( x &gt;= breaks[n - 1] ) {
+    const usize segment = n - 2;
+    const F width = breaks[n - 1] - breaks[segment];
+    const F *polynomial = s.coeff.data() + segment * usize(s.degree + 1);
+    const F value = __impl_piecewise_1d::eval_power&lt;F&gt;(polynomial, s.degree, width);
+    if ( s.mode == extension_mode::zero &amp;&amp; x &gt; breaks[n - 1] ) return F(0);
+    if ( s.mode == extension_mode::clamp ) return value;
+    if ( s.mode == extension_mode::linear )
+      return math::fma&lt;F&gt;(__impl_piecewise_1d::eval_power_derivative&lt;F&gt;(polynomial, s.degree, width, 1), x - breaks[n - 1], value);
+    return __impl_piecewise_1d::eval_power&lt;F&gt;(polynomial, s.degree, x - breaks[segment]);
+  }
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(breaks, n, x, cursor.segment);
+  return __impl_piecewise_1d::eval_power&lt;F&gt;(s.coeff.data() + segment * usize(s.degree + 1), s.degree, x - breaks[segment]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L756">line 756</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L761">line 761</a></td></tr><tr class="t-dsc"><td><code>s.coeff[0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L762">line 762</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(s.degree ? s.coeff[1] : F(0), x - breaks[0], s.coeff[0])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L763">line 763</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::eval_power&lt;F&gt;(s.coeff.data(), s.degree, x - breaks[0])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L764">line 764</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L771">line 771</a></td></tr><tr class="t-dsc"><td><code>value</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L772">line 772</a></td></tr><tr class="t-dsc"><td><code>math::fma&lt;F&gt;(__impl_piecewise_1d::eval_power_derivative&lt;F&gt;(polynomial, s.degree, width, 1), x - breaks[n - 1], value)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L774">line 774</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::eval_power&lt;F&gt;(polynomial, s.degree, x - breaks[segment])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L775">line 775</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::eval_power&lt;F&gt;(s.coeff.data() + segment * usize(s.degree + 1), s.degree, x - breaks[segment])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L778">line 778</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-d3440aa94f8c21f7">__impl_piecewise_1d::eval_power&lt;F&gt;</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="piecewise_1d.hpp.html#f-e4cbf9637b9912be">__impl_piecewise_1d::eval_power_derivative&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-eaceb7b7c057896d"><h3><code>micron::math::splines::derivative(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L783">line 783</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>u32 order = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept
+{
+  const usize n = s.breaks.size();
+  if ( n &lt; 2 ) return F(0);
+  if ( order == 0 ) return evaluate&lt;F&gt;(s, x);
+  const F *breaks = s.breaks.data();
+  const bool outside = x &lt; breaks[0] || x &gt; breaks[n - 1];
+  if ( outside &amp;&amp; (s.mode == extension_mode::zero || s.mode == extension_mode::clamp) ) return F(0);
+  if ( outside &amp;&amp; s.mode == extension_mode::linear ) {
+    if ( order != 1 ) return F(0);
+    if ( x &lt; breaks[0] ) return s.degree ? s.coeff[1] : F(0);
+    const usize segment = n - 2;
+    const F *polynomial = s.coeff.data() + segment * usize(s.degree + 1);
+    return __impl_piecewise_1d::eval_power_derivative&lt;F&gt;(polynomial, s.degree, breaks[n - 1] - breaks[segment], 1);
+  }
+  const F sign
+      = s.mode == extension_mode::reflect ? __impl_piecewise_1d::reflection_derivative_sign&lt;F&gt;(x, breaks[0], breaks[n - 1], order) : F(1);
+  if ( s.mode == extension_mode::periodic ) x = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, breaks[0], breaks[n - 1]);
+  if ( s.mode == extension_mode::reflect ) x = __impl_piecewise_1d::map_reflect&lt;F&gt;(x, breaks[0], breaks[n - 1]);
+  usize i = x &gt;= breaks[n - 1] ? n - 2 : 0;
+  if ( x &gt; breaks[0] &amp;&amp; x &lt; breaks[n - 1] ) i = __impl_splines_bits::locate_segment&lt;F&gt;(breaks, n, x, s.last_hit);
+  return sign * __impl_piecewise_1d::eval_power_derivative&lt;F&gt;(s.coeff.data() + i * usize(s.degree + 1), s.degree, x - breaks[i], order);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L786">line 786</a></td></tr><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(s, x)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L787">line 787</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L790">line 790</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L792">line 792</a></td></tr><tr class="t-dsc"><td><code>s.degree ? s.coeff[1] : F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L793">line 793</a></td></tr><tr class="t-dsc"><td><code>__impl_piecewise_1d::eval_power_derivative&lt;F&gt;(polynomial, s.degree, breaks[n - 1] - breaks[segment], 1)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L796">line 796</a></td></tr><tr class="t-dsc"><td><code>sign * __impl_piecewise_1d::eval_power_derivative&lt;F&gt;(s.coeff.data() + i * usize(s.degree + 1), s.degree, x - breaks[i], order)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L804">line 804</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="piecewise_1d.hpp.html#f-e4cbf9637b9912be">__impl_piecewise_1d::eval_power_derivative&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-0f4f77192e94760d">__impl_piecewise_1d::reflection_derivative_sign&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-f34092e21da0f2bb">__impl_piecewise_1d::map_reflect&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-563e263098bfaa96"><h3><code>micron::math::splines::evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L809">line 809</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const piecewise_polynomial_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a5b442536b3bcd58"><h3><code>micron::math::splines::derivative_spline(const piecewise_polynomial_1d&lt;F&gt; &amp;s, u32 order = 1) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L816">line 816</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+derivative_spline(const piecewise_polynomial_1d&lt;F&gt; &amp;s, u32 order = 1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li><li><code>u32 order = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+derivative_spline(const piecewise_polynomial_1d&lt;F&gt; &amp;s, u32 order = 1) noexcept
+{
+  piecewise_polynomial_1d&lt;F&gt; out{};
+  if ( s.breaks.size() &lt; 2 ) return out;
+  out.degree = order &gt; s.degree ? 0 : s.degree - order;
+  out.mode = s.mode;
+  out.breaks.reserve(s.breaks.size());
+  for ( usize i = 0; i &lt; s.breaks.size(); ++i ) out.breaks.emplace_back(s.breaks[i]);
+  const usize width = usize(out.degree + 1);
+  out.coeff.reserve((s.breaks.size() - 1) * width);
+  for ( usize i = 0; i + 1 &lt; s.breaks.size(); ++i ) {
+    const F *p = s.coeff.data() + i * usize(s.degree + 1);
+    for ( u32 k = 0; k &lt;= out.degree; ++k ) {
+      F scale = F(1);
+      for ( u32 j = 0; j &lt; order; ++j ) scale *= F(k + order - j);
+      out.coeff.emplace_back(order &gt; s.degree ? F(0) : scale * p[k + order]);
+    }
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L819">line 819</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L834">line 834</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>.</p></section><section class="function-entry" id="f-7d74d71fd81c53f1"><h3><code>micron::math::splines::antiderivative_spline(const piecewise_polynomial_1d&lt;F&gt; &amp;s) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L839">line 839</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+antiderivative_spline(const piecewise_polynomial_1d&lt;F&gt; &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline piecewise_polynomial_1d&lt;F&gt;
+antiderivative_spline(const piecewise_polynomial_1d&lt;F&gt; &amp;s) noexcept
+{
+  piecewise_polynomial_1d&lt;F&gt; out{};
+  if ( s.breaks.size() &lt; 2 || s.degree &gt;= 16 ) return out;
+  out.degree = s.degree + 1;
+  out.mode = extension_mode::polynomial;
+  out.breaks.reserve(s.breaks.size());
+  for ( usize i = 0; i &lt; s.breaks.size(); ++i ) out.breaks.emplace_back(s.breaks[i]);
+  out.coeff.reserve((s.breaks.size() - 1) * usize(out.degree + 1));
+  F carry = F(0);
+  for ( usize i = 0; i + 1 &lt; s.breaks.size(); ++i ) {
+    const F *p = s.coeff.data() + i * usize(s.degree + 1);
+    out.coeff.emplace_back(carry);
+    for ( u32 k = 0; k &lt;= s.degree; ++k ) out.coeff.emplace_back(p[k] / F(k + 1));
+    const F h = s.breaks[i + 1] - s.breaks[i];
+    carry = __impl_piecewise_1d::eval_power&lt;F&gt;(out.coeff.data() + i * usize(out.degree + 1), out.degree, h);
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L842">line 842</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L856">line 856</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="piecewise_1d.hpp.html#f-d3440aa94f8c21f7">__impl_piecewise_1d::eval_power&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-0b2d1b1928e71be3"><h3><code>micron::math::splines::integral(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F a, F b) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L861">line 861</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+integral(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F a, F b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li><li><code>F a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+integral(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F a, F b) noexcept
+{
+  if ( a == b ) return F(0);
+  const auto anti = antiderivative_spline&lt;F&gt;(s);
+  return evaluate&lt;F&gt;(anti, b) - evaluate&lt;F&gt;(anti, a);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L863">line 863</a></td></tr><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(anti, b) - evaluate&lt;F&gt;(anti, a)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L865">line 865</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-f1f31bb571bca04c">antiderivative_spline&lt;F&gt;</a>, <a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2c7d1f3f4abbd87c"><h3><code>micron::math::splines::integral(const quadratic_spline_1d&lt;F&gt; &amp;s, F a, F b) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L870">line 870</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+integral(const quadratic_spline_1d&lt;F&gt; &amp;s, F a, F b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quadratic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Returns <code>integral&lt;F&gt;(to_power_basis&lt;F&gt;(s), a, b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+integral(const quadratic_spline_1d&lt;F&gt; &amp;s, F a, F b) noexcept
+{
+  return integral&lt;F&gt;(to_power_basis&lt;F&gt;(s), a, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>integral&lt;F&gt;(to_power_basis&lt;F&gt;(s), a, b)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L872">line 872</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-89ff3ca33d75b432">integral&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-1478400e1fd11843">to_power_basis&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-8a491ddb1d4fe402"><h3><code>micron::math::splines::integral(const quintic_spline_1d&lt;F&gt; &amp;s, F a, F b) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L877">line 877</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+integral(const quintic_spline_1d&lt;F&gt; &amp;s, F a, F b) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quintic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Returns <code>integral&lt;F&gt;(to_power_basis&lt;F&gt;(s), a, b)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+integral(const quintic_spline_1d&lt;F&gt; &amp;s, F a, F b) noexcept
+{
+  return integral&lt;F&gt;(to_power_basis&lt;F&gt;(s), a, b);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>integral&lt;F&gt;(to_power_basis&lt;F&gt;(s), a, b)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L879">line 879</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bspline_helpers.hpp.html#f-89ff3ca33d75b432">integral&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-1478400e1fd11843">to_power_basis&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-a5fd8874e54ef990"><h3><code>micron::math::splines::roots(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F target = F(0), F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L938">line 938</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+roots(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F target = F(0), F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li><li><code>F target = F(0)</code></li><li><code>F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+roots(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F target = F(0), F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept
+{
+  vector&lt;F&gt; out;
+  if ( s.breaks.size() &lt; 2 || !(tolerance &gt; F(0)) ) return out;
+  F coeff[17]{};
+  for ( usize segment = 0; segment + 1 &lt; s.breaks.size(); ++segment ) {
+    const F *source = s.coeff.data() + segment * usize(s.degree + 1);
+    for ( u32 k = 0; k &lt;= s.degree; ++k ) coeff[k] = source[k];
+    coeff[0] -= target;
+    vector&lt;F&gt; local;
+    const F width = s.breaks[segment + 1] - s.breaks[segment];
+    __impl_piecewise_roots::polynomial_roots_interval&lt;F&gt;(coeff, s.degree, F(0), width, tolerance, local);
+    for ( usize i = 0; i &lt; local.size(); ++i ) __impl_piecewise_roots::append_unique&lt;F&gt;(out, s.breaks[segment] + local[i], tolerance);
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L941">line 941</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L952">line 952</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="piecewise_1d.hpp.html#f-6708a42d6979df70">__impl_piecewise_roots::polynomial_roots_interval&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-0c003f79a271f3ef">__impl_piecewise_roots::append_unique&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-2aed10667bcf7d3f"><h3><code>micron::math::splines::solve(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F target, F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L957">line 957</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+solve(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F target, F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const piecewise_polynomial_1d&lt;F&gt; &amp;s</code></li><li><code>F target</code></li><li><code>F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)</code></li></ul><h4>Effects</h4><p>Returns <code>roots&lt;F&gt;(s, target, tolerance)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+solve(const piecewise_polynomial_1d&lt;F&gt; &amp;s, F target, F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept
+{
+  return roots&lt;F&gt;(s, target, tolerance);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>roots&lt;F&gt;(s, target, tolerance)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L959">line 959</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-a5fd8874e54ef990">roots&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-eb5a49d805e1e8e0"><h3><code>micron::math::splines::roots(const cubic_spline_1d&lt;F&gt; &amp;s, F target = F(0), F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L964">line 964</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+roots(const cubic_spline_1d&lt;F&gt; &amp;s, F target = F(0), F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F target = F(0)</code></li><li><code>F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)</code></li></ul><h4>Effects</h4><p>Returns <code>roots&lt;F&gt;(to_power_basis&lt;F&gt;(s), target, tolerance)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline vector&lt;F&gt;
+roots(const cubic_spline_1d&lt;F&gt; &amp;s, F target = F(0), F tolerance = sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) noexcept
+{
+  return roots&lt;F&gt;(to_power_basis&lt;F&gt;(s), target, tolerance);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>roots&lt;F&gt;(to_power_basis&lt;F&gt;(s), target, tolerance)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L966">line 966</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-a5fd8874e54ef990">roots&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-1478400e1fd11843">to_power_basis&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-997e78f324f0bdc0"><h3><code>micron::math::splines::make_periodic_cubic(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L979">line 979</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline periodic_cubic_spline_1d&lt;F&gt;
+make_periodic_cubic(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>build_info&lt;F&gt; *info = nullptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline periodic_cubic_spline_1d&lt;F&gt;
+make_periodic_cubic(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, build_info&lt;F&gt; *info = nullptr) noexcept
+{
+  periodic_cubic_spline_1d&lt;F&gt; out{};
+  if ( !__impl_piecewise_1d::validate_xy&lt;F&gt;(xs, ys, 4, info) ) return out;
+  const usize n = xs.size();
+  const F scale = F(1) + __impl_piecewise_1d::abs_value&lt;F&gt;(ys[0]) + __impl_piecewise_1d::abs_value&lt;F&gt;(ys[n - 1]);
+  const F tolerance = (sizeof(F) &lt;= 4 ? F(1e-5) : F(1e-12)) * scale;
+  if ( __impl_piecewise_1d::abs_value&lt;F&gt;(ys[0] - ys[n - 1]) &gt; tolerance ) {
+    if ( info ) info-&gt;status = build_status::degenerate;
+    return out;
+  }
+
+  const usize m = n - 1;
+  vector&lt;F&gt; a(m - 1, F(0)), b(m, F(0)), c(m - 1, F(0)), rhs(m, F(0));
+  a.set_size(m - 1);
+  b.set_size(m);
+  c.set_size(m - 1);
+  rhs.set_size(m);
+  for ( usize i = 0; i &lt; m; ++i ) {
+    const usize prev = i == 0 ? m - 1 : i - 1;
+    const usize next = i + 1 == m ? 0 : i + 1;
+    const F hp = i == 0 ? xs[n - 1] - xs[n - 2] : xs[i] - xs[i - 1];
+    const F hn = xs[i + 1] - xs[i];
+    const F dp = i == 0 ? (ys[n - 1] - ys[n - 2]) / hp : (ys[i] - ys[i - 1]) / hp;
+    const F dn = (ys[i + 1] - ys[i]) / hn;
+    (void)prev;
+    (void)next;
+    b[i] = F(2) * (hp + hn);
+    rhs[i] = F(6) * (dn - dp);
+    if ( i &gt; 0 ) a[i - 1] = hp;
+    if ( i + 1 &lt; m ) c[i] = hn;
+  }
+  const F alpha = xs[n - 1] - xs[n - 2];
+  const F beta = alpha;
+  const F gamma = -b[0];
+  b[0] -= gamma;
+  b[m - 1] -= alpha * beta / gamma;
+
+  vector&lt;F&gt; aa = a, bb = b, cc = c, solution = rhs;
+  linalg::tridiag_solve&lt;F&gt;(aa.data(), bb.data(), cc.data(), solution.data(), m);
+  vector&lt;F&gt; z(m, F(0));
+  z.set_size(m);
+  z[0] = gamma;
+  z[m - 1] = alpha;
+  aa = a;
+  bb = b;
+  cc = c;
+  linalg::tridiag_solve&lt;F&gt;(aa.data(), bb.data(), cc.data(), z.data(), m);
+  const F factor = (solution[0] + beta * solution[m - 1] / gamma) / (F(1) + z[0] + beta * z[m - 1] / gamma);
+  for ( usize i = 0; i &lt; m; ++i ) solution[i] -= factor * z[i];
+
+  out.spline.bc = bc_kind::natural;
+  out.spline.mode = extrap::clamp_to_endpoints;
+  out.spline.xs.reserve(n);
+  out.spline.seg.reserve(n - 1);
+  for ( usize i = 0; i &lt; n; ++i ) out.spline.xs.emplace_back(xs[i]);
+  const poly_coeffs&lt;F, 3&gt; zero{ { F(0), F(0), F(0), F(0) } };
+  for ( usize i = 1; i &lt; n; ++i ) out.spline.seg.emplace_back(zero);
+  vector&lt;F&gt; moments(n, F(0));
+  moments.set_size(n);
+  for ( usize i = 0; i &lt; m; ++i ) moments[i] = solution[i];
+  moments[n - 1] = moments[0];
+  __impl_splines_bits::build_cubic_segments&lt;F&gt;(xs.ptr, ys.ptr, moments.data(), out.spline.seg.data(), n);
+  out.period = xs[n - 1] - xs[0];
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L982">line 982</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L988">line 988</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L1044">line 1044</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-20f3609334c2d4d1">__impl_piecewise_1d::validate_xy&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-7770d118d2d419f4">__impl_piecewise_1d::abs_value&lt;F&gt;</a>, <a href="../linalg/banded.hpp.html#f-04bd4a947e868d56">linalg::tridiag_solve&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-64d36855769f0d67">__impl_splines_bits::build_cubic_segments&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-c2cafe48e093179f"><h3><code>micron::math::splines::evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L1049">line 1049</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const periodic_cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x) noexcept
+{
+  if ( s.spline.xs.size() &lt; 2 ) return F(0);
+  const F mapped = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, s.spline.xs[0], s.spline.xs[s.spline.xs.size() - 1]);
+  return evaluate&lt;F&gt;(s.spline, mapped);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L1051">line 1051</a></td></tr><tr class="t-dsc"><td><code>evaluate&lt;F&gt;(s.spline, mapped)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L1053">line 1053</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-7a455fc46e7d681d"><h3><code>micron::math::splines::evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L1058">line 1058</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const periodic_cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>spline_cursor &amp;cursor</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x, spline_cursor &amp;cursor) noexcept
+{
+  if ( s.spline.xs.size() &lt; 2 ) return F(0);
+  const F mapped = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, s.spline.xs[0], s.spline.xs[s.spline.xs.size() - 1]);
+  if ( mapped &lt;= s.spline.xs[0] ) return s.spline.seg[0][0];
+  const usize segment = __impl_splines_bits::locate_segment&lt;F&gt;(s.spline.xs.data(), s.spline.xs.size(), mapped, cursor.segment);
+  return __impl_splines_bits::eval_cubic_local&lt;F&gt;(s.spline.seg[segment], mapped - s.spline.xs[segment]);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L1060">line 1060</a></td></tr><tr class="t-dsc"><td><code>s.spline.seg[0][0]</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L1062">line 1062</a></td></tr><tr class="t-dsc"><td><code>__impl_splines_bits::eval_cubic_local&lt;F&gt;(s.spline.seg[segment], mapped - s.spline.xs[segment])</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L1064">line 1064</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-d9371a1079a29294">__impl_splines_bits::locate_segment&lt;F&gt;</a>, <a href="bits/impl.hpp.html#f-a7018121eee8f27a">__impl_splines_bits::eval_cubic_local&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-ce7d7f712fb21a6b"><h3><code>micron::math::splines::derivative(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L1069">line 1069</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const periodic_cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>F x</code></li><li><code>u32 order = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline F
+derivative(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, F x, u32 order = 1) noexcept
+{
+  if ( s.spline.xs.size() &lt; 2 ) return F(0);
+  const F mapped = __impl_piecewise_1d::map_periodic&lt;F&gt;(x, s.spline.xs[0], s.spline.xs[s.spline.xs.size() - 1]);
+  return derivative&lt;F&gt;(s.spline, mapped, order);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L1071">line 1071</a></td></tr><tr class="t-dsc"><td><code>derivative&lt;F&gt;(s.spline, mapped, order)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L1073">line 1073</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-5d470a659e962e23">__impl_piecewise_1d::map_periodic&lt;F&gt;</a>, <a href="batch.hpp.html#f-36f641503adeb4e8">derivative&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-65634ffed87d5829"><h3><code>micron::math::splines::evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L1078">line 1078</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const periodic_cubic_spline_1d&lt;F&gt; &amp;s</code></li><li><code>const F *__restrict__ xq</code></li><li><code>F *__restrict__ out</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+evaluate(const periodic_cubic_spline_1d&lt;F&gt; &amp;s, const F *__restrict__ xq, F *__restrict__ out, usize n) noexcept
+{
+  for ( usize i = 0; i &lt; n; ++i ) out[i] = evaluate&lt;F&gt;(s, xq[i]);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="batch.hpp.html#f-4a501829b1d847ac">evaluate&lt;F&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-7770d118d2d419f4"><h3><code>micron::math::splines::__impl_piecewise_1d::abs_value(F x) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L35">line 35</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+abs_value(F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Returns <code>x &lt; F(0) ? -x : x</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+abs_value(F x) noexcept
+{
+  return x &lt; F(0) ? -x : x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>x &lt; F(0) ? -x : x</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L37">line 37</a></td></tr></tbody></table></section><section class="function-entry" id="f-5d470a659e962e23"><h3><code>micron::math::splines::__impl_piecewise_1d::map_periodic(F x, F lo, F hi) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L42">line 42</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+map_periodic(F x, F lo, F hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li><li><code>F lo</code></li><li><code>F hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+map_periodic(F x, F lo, F hi) noexcept
+{
+  const F span = hi - lo;
+  if ( !(span &gt; F(0)) ) return lo;
+  const F turns = math::mk::round_ns::floor&lt;F&gt;((x - lo) / span);
+  F out = x - turns * span;
+  if ( out &lt; lo ) out += span;
+  if ( !(out &lt; hi) ) out = lo;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lo</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L45">line 45</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L50">line 50</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-1059d10f36c84876">math::mk::round_ns::floor&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-f34092e21da0f2bb"><h3><code>micron::math::splines::__impl_piecewise_1d::map_reflect(F x, F lo, F hi) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L55">line 55</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+map_reflect(F x, F lo, F hi) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li><li><code>F lo</code></li><li><code>F hi</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+map_reflect(F x, F lo, F hi) noexcept
+{
+  const F span = hi - lo;
+  if ( !(span &gt; F(0)) ) return lo;
+  const F period = span + span;
+  const F turns = math::mk::round_ns::floor&lt;F&gt;((x - lo) / period);
+  F out = x - turns * period;
+  if ( out &lt; lo ) out += period;
+  if ( out &gt; hi ) out = hi - (out - hi);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>lo</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L64">line 64</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-1059d10f36c84876">math::mk::round_ns::floor&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-0f4f77192e94760d"><h3><code>micron::math::splines::__impl_piecewise_1d::reflection_derivative_sign(F x, F lo, F hi, u32 order) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L69">line 69</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+reflection_derivative_sign(F x, F lo, F hi, u32 order) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li><li><code>F lo</code></li><li><code>F hi</code></li><li><code>u32 order</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+reflection_derivative_sign(F x, F lo, F hi, u32 order) noexcept
+{
+  if ( (order &amp; 1u) == 0 || (x &gt;= lo &amp;&amp; x &lt;= hi) ) return F(1);
+  const F width = hi - lo;
+  if ( !(width &gt; F(0)) ) return F(1);
+  const F cell = math::mk::round_ns::floor&lt;F&gt;((x - lo) / width);
+  const F half = math::mk::round_ns::floor&lt;F&gt;(cell * F(0.5));
+  return cell - F(2) * half != F(0) ? F(-1) : F(1);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(1)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L71">line 71</a></td></tr><tr class="t-dsc"><td><code>F(1)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L73">line 73</a></td></tr><tr class="t-dsc"><td><code>cell - F(2) * half != F(0) ? F(-1) : F(1)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L76">line 76</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-1059d10f36c84876">math::mk::round_ns::floor&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-20f3609334c2d4d1"><h3><code>micron::math::splines::__impl_piecewise_1d::validate_xy(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, usize minimum, build_info&lt;F&gt; *info) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L81">line 81</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bool
+validate_xy(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, usize minimum, build_info&lt;F&gt; *info) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>usize minimum</code></li><li><code>build_info&lt;F&gt; *info</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline bool
+validate_xy(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, usize minimum, build_info&lt;F&gt; *info) noexcept
+{
+  if ( xs.size() != ys.size() ) {
+    if ( info ) info-&gt;status = build_status::size_mismatch;
+    return false;
+  }
+  if ( xs.size() &lt; minimum ) {
+    if ( info ) info-&gt;status = build_status::too_few_points;
+    return false;
+  }
+  if ( !__impl_splines_bits::strictly_increasing&lt;F&gt;(xs.ptr, xs.size()) ) {
+    if ( info ) info-&gt;status = build_status::non_monotonic_x;
+    return false;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L85">line 85</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L89">line 89</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L93">line 93</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L95">line 95</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-c21f6140604e40e0">__impl_splines_bits::strictly_increasing&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-4bf679c43b42216a"><h3><code>micron::math::splines::__impl_piecewise_1d::make_from_slopes(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, const F *slopes, build_info&lt;F&gt; *info) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L100">line 100</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_from_slopes(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, const F *slopes, build_info&lt;F&gt; *info) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>raw_slice&lt;const F&gt; xs</code></li><li><code>raw_slice&lt;const F&gt; ys</code></li><li><code>const F *slopes</code></li><li><code>build_info&lt;F&gt; *info</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline cubic_spline_1d&lt;F&gt;
+make_from_slopes(raw_slice&lt;const F&gt; xs, raw_slice&lt;const F&gt; ys, const F *slopes, build_info&lt;F&gt; *info) noexcept
+{
+  cubic_spline_1d&lt;F&gt; out{};
+  out.bc = bc_kind::clamped;
+  const usize n = xs.size();
+  out.xs.reserve(n);
+  out.seg.reserve(n - 1);
+  for ( usize i = 0; i &lt; n; ++i ) out.xs.emplace_back(xs[i]);
+  const poly_coeffs&lt;F, 3&gt; zero{ { F(0), F(0), F(0), F(0) } };
+  for ( usize i = 1; i &lt; n; ++i ) out.seg.emplace_back(zero);
+  __impl_splines_bits::build_cubic_segments_from_slopes&lt;F&gt;(xs.ptr, ys.ptr, slopes, out.seg.data(), n);
+  if ( info ) info-&gt;status = build_status::ok;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="bits/impl.hpp.html#f-e77a1f512186f244">__impl_splines_bits::build_cubic_segments_from_slopes&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-d3440aa94f8c21f7"><h3><code>micron::math::splines::__impl_piecewise_1d::eval_power(const F *coeff, u32 degree, F x) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L117">line 117</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_power(const F *coeff, u32 degree, F x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *coeff</code></li><li><code>u32 degree</code></li><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_power(const F *coeff, u32 degree, F x) noexcept
+{
+  F value = coeff[degree];
+  for ( u32 k = degree; k-- &gt; 0; ) value = math::fma&lt;F&gt;(value, x, coeff[k]);
+  return value;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>value</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L121">line 121</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-e4cbf9637b9912be"><h3><code>micron::math::splines::__impl_piecewise_1d::eval_power_derivative(const F *coeff, u32 degree, F x, u32 order) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L126">line 126</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_power_derivative(const F *coeff, u32 degree, F x, u32 order) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *coeff</code></li><li><code>u32 degree</code></li><li><code>F x</code></li><li><code>u32 order</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard, gnu::always_inline]] inline F
+eval_power_derivative(const F *coeff, u32 degree, F x, u32 order) noexcept
+{
+  if ( order == 0 ) return eval_power&lt;F&gt;(coeff, degree, x);
+  if ( order &gt; degree ) return F(0);
+  F value = F(1);
+  for ( u32 j = 0; j &lt; order; ++j ) value *= F(degree - j);
+  value *= coeff[degree];
+  for ( u32 k = degree; k-- &gt; order; ) {
+    F scale = F(1);
+    for ( u32 j = 0; j &lt; order; ++j ) scale *= F(k - j);
+    value = math::fma&lt;F&gt;(value, x, scale * coeff[k]);
+  }
+  return value;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>eval_power&lt;F&gt;(coeff, degree, x)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L128">line 128</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L129">line 129</a></td></tr><tr class="t-dsc"><td><code>value</code></td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L138">line 138</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-d3440aa94f8c21f7">eval_power&lt;F&gt;</a>, <a href="../bits/impl.hpp.html#f-bd16f1c2c11ab06c">math::fma&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-0c003f79a271f3ef"><h3><code>micron::math::splines::__impl_piecewise_roots::append_unique(vector&lt;F&gt; &amp;out, F value, F tolerance) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L887">line 887</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+append_unique(vector&lt;F&gt; &amp;out, F value, F tolerance) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>vector&lt;F&gt; &amp;out</code></li><li><code>F value</code></li><li><code>F tolerance</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+append_unique(vector&lt;F&gt; &amp;out, F value, F tolerance) noexcept
+{
+  if ( out.size() == 0 || __impl_piecewise_1d::abs_value&lt;F&gt;(out[out.size() - 1] - value) &gt; tolerance ) out.emplace_back(value);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-7770d118d2d419f4">__impl_piecewise_1d::abs_value&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-6708a42d6979df70"><h3><code>micron::math::splines::__impl_piecewise_roots::polynomial_roots_interval(const F *coeff, u32 degree, F lo, F hi, F tolerance, vector&lt;F&gt; &amp;out) noexcept</code></h3><p>Defined in <code>math/splines/piecewise_1d.hpp</code>, <a href="../../../source/math/splines/piecewise_1d.hpp.html#L894">line 894</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+polynomial_roots_interval(const F *coeff, u32 degree, F lo, F hi, F tolerance, vector&lt;F&gt; &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *coeff</code></li><li><code>u32 degree</code></li><li><code>F lo</code></li><li><code>F hi</code></li><li><code>F tolerance</code></li><li><code>vector&lt;F&gt; &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+polynomial_roots_interval(const F *coeff, u32 degree, F lo, F hi, F tolerance, vector&lt;F&gt; &amp;out) noexcept
+{
+  while ( degree &gt; 0 &amp;&amp; __impl_piecewise_1d::abs_value&lt;F&gt;(coeff[degree]) &lt;= tolerance ) --degree;
+  if ( degree == 0 ) return;
+  if ( degree == 1 ) {
+    const F root = -coeff[0] / coeff[1];
+    if ( root &gt;= lo - tolerance &amp;&amp; root &lt;= hi + tolerance ) append_unique&lt;F&gt;(out, root &lt; lo ? lo : (root &gt; hi ? hi : root), tolerance);
+    return;
+  }
+
+  F deriv[17]{};
+  for ( u32 i = 1; i &lt;= degree; ++i ) deriv[i - 1] = F(i) * coeff[i];
+  vector&lt;F&gt; stationary;
+  polynomial_roots_interval&lt;F&gt;(deriv, degree - 1, lo, hi, tolerance, stationary);
+  F left = lo;
+  F f_left = __impl_piecewise_1d::eval_power&lt;F&gt;(coeff, degree, left);
+  if ( __impl_piecewise_1d::abs_value&lt;F&gt;(f_left) &lt;= tolerance ) append_unique&lt;F&gt;(out, left, tolerance);
+  for ( usize boundary = 0; boundary &lt;= stationary.size(); ++boundary ) {
+    const F right = boundary &lt; stationary.size() ? stationary[boundary] : hi;
+    const F f_right = __impl_piecewise_1d::eval_power&lt;F&gt;(coeff, degree, right);
+    if ( f_left * f_right &lt; F(0) ) {
+      F a = left, b = right, fa = f_left;
+      for ( u32 iteration = 0; iteration &lt; 72; ++iteration ) {
+        const F middle = F(0.5) * (a + b);
+        const F fm = __impl_piecewise_1d::eval_power&lt;F&gt;(coeff, degree, middle);
+        if ( fa * fm &lt;= F(0) )
+          b = middle;
+        else {
+          a = middle;
+          fa = fm;
+        }
+      }
+      append_unique&lt;F&gt;(out, F(0.5) * (a + b), tolerance);
+    }
+    if ( __impl_piecewise_1d::abs_value&lt;F&gt;(f_right) &lt;= tolerance ) append_unique&lt;F&gt;(out, right, tolerance);
+    left = right;
+    f_left = f_right;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L897">line 897</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/math/splines/piecewise_1d.hpp.html#L901">line 901</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="piecewise_1d.hpp.html#f-7770d118d2d419f4">__impl_piecewise_1d::abs_value&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-0c003f79a271f3ef">append_unique&lt;F&gt;</a>, <a href="piecewise_1d.hpp.html#f-d3440aa94f8c21f7">__impl_piecewise_1d::eval_power&lt;F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

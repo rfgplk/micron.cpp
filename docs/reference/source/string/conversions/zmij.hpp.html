@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>string/conversions/zmij.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">string/conversions/zmij.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/string/conversions/zmij.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  A double-to-string conversion library: https://github.com/vitaut/zmij/</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Copyright (c) 2025-present, Victor Zverovich</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  Copyright (c) 2026- David Lucius Severus</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #pragma once</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> </span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;fixed.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> #if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse2)</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> #include &quot;../../simd/aliases/sse.hpp&quot;</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> #if defined(__micron_x86_avx2)</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> #include &quot;../../simd/aliases/avx2.hpp&quot;</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> #endif</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> #elif (defined(__micron_arch_arm32) || defined(__micron_arch_arm64)) &amp;&amp; defined(__micron_arm_neon)</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> #include &quot;../../simd/aliases/neon.hpp&quot;</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> #endif</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> </span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> // Schubfach/zmij float -&gt; decimal</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> </span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> namespace micron</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> {</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> namespace __impl</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> {</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> namespace __zmij</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> {</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> </span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> struct uint128 {</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a>   u64 hi;</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a>   u64 lo;</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> </span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   constexpr uint128(u64 h = 0, u64 l = 0) noexcept : hi(h), lo(l) { }</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> };</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> </span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> inline constexpr uint128</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> __umul192_hi128(u64 x_hi, u64 x_lo, u64 y) noexcept</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> {</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   const __fmt_uint128_t p = umul128(x_hi, y);</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a>   const u64 lo = p.lo + umul128(x_lo, y).hi;</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>   return { p.hi + (lo &lt; p.lo), lo };</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> }</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> </span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> inline constexpr i32</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> __compute_dec_exp(i32 bin_exp, bool regular = true) noexcept</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> {</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>   constexpr i32 log10_3_over_4_sig = 131072;</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   constexpr i32 log10_2_sig = 315653;</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   constexpr i32 log10_2_exp = 20;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>   return (bin_exp * log10_2_sig - static_cast&lt;i32&gt;(!regular) * log10_3_over_4_sig) &gt;&gt; log10_2_exp;</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> }</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> </span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> inline constexpr i8</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> __compute_exp_shift(i32 bin_exp, i32 dec_exp) noexcept</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> {</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a>   constexpr i32 log2_pow10_sig = 217707;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a>   constexpr i32 log2_pow10_exp = 16;</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a>   const i32 pow10_bin_exp = -dec_exp * log2_pow10_sig &gt;&gt; log2_pow10_exp;</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>   return static_cast&lt;i8&gt;(bin_exp + pow10_bin_exp + 1);</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> }</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> </span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> inline constexpr u64 __pow10s[19] = { 1ull,</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>                                       10ull,</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>                                       100ull,</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>                                       1000ull,</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a>                                       10000ull,</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>                                       100000ull,</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>                                       1000000ull,</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>                                       10000000ull,</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>                                       100000000ull,</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>                                       1000000000ull,</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>                                       10000000000ull,</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>                                       100000000000ull,</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>                                       1000000000000ull,</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>                                       10000000000000ull,</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>                                       100000000000000ull,</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>                                       1000000000000000ull,</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>                                       10000000000000000ull,</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>                                       100000000000000000ull,</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>                                       1000000000000000000ull };</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> </span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a> inline constexpr u64 __pow10_minor[28]</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>     = { 0x8000000000000000ull, 0xa000000000000000ull, 0xc800000000000000ull, 0xfa00000000000000ull, 0x9c40000000000000ull,</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>         0xc350000000000000ull, 0xf424000000000000ull, 0x9896800000000000ull, 0xbebc200000000000ull, 0xee6b280000000000ull,</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>         0x9502f90000000000ull, 0xba43b74000000000ull, 0xe8d4a51000000000ull, 0x9184e72a00000000ull, 0xb5e620f480000000ull,</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>         0xe35fa931a0000000ull, 0x8e1bc9bf04000000ull, 0xb1a2bc2ec5000000ull, 0xde0b6b3a76400000ull, 0x8ac7230489e80000ull,</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>         0xad78ebc5ac620000ull, 0xd8d726b7177a8000ull, 0x878678326eac9000ull, 0xa968163f0a57b400ull, 0xd3c21bcecceda100ull,</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>         0x84595161401484a0ull, 0xa56fa5b99019a5c8ull, 0xcecb8f27f4200f3aull };</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> </span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> inline constexpr uint128 __pow10_major[25]</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>     = { { 0xaddcb9e83c6b1793ull, 0xdf4abe242a1bbf3eull }, { 0xaf8e5410288e1b6full, 0x07ecf0ae5ee44ddaull },</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>         { 0xb1442798f49ffb4aull, 0x99cd11cfdf41779dull }, { 0xb2fe3f0b8599ef07ull, 0x861fa7e6dcb4aa15ull },</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>         { 0xb4bca50b065abe63ull, 0x0fed077a756b53aaull }, { 0xb67f6455292cbf08ull, 0x1a3bc84c17b1d543ull },</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>         { 0xb84687c269ef3bfbull, 0x3d5d514f40eea742ull }, { 0xba121a4650e4ddebull, 0x92f34d62616ce413ull },</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>         { 0xbbe226efb628afeaull, 0x890489f70a55368cull }, { 0xbdb6b8e905cb600full, 0x5400e987bbc1c921ull },</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>         { 0xbf8fdb78849a5f96ull, 0xde98520472bdd034ull }, { 0xc16d9a0095928a27ull, 0x75b7053c0f178294ull },</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>         { 0xc350000000000000ull, 0x0000000000000000ull }, { 0xc5371912364ce305ull, 0x6c28000000000000ull },</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>         { 0xc722f0ef9d80aad6ull, 0x424d3ad2b7b97ef6ull }, { 0xc913936dd571c84cull, 0x03bc3a19cd1e38eaull },</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>         { 0xcb090c8001ab551cull, 0x5cadf5bfd3072cc6ull }, { 0xcd036837130890a1ull, 0x36dba887c37a8c10ull },</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>         { 0xcf02b2c21207ef2eull, 0x94f967e45e03f4bcull }, { 0xd106f86e69d785c7ull, 0xe13336d701beba52ull },</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>         { 0xd31045a8341ca07cull, 0x1ede48111209a051ull }, { 0xd51ea6fa85785631ull, 0x552a74227f3ea566ull },</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>         { 0xd732290fbacaf133ull, 0xa97c177947ad4096ull }, { 0xd94ad8b1c7380874ull, 0x18375281ae7822bdull },</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>         { 0xdb68c2ca82ed2a05ull, 0xa67398db9f6820e1ull } };</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> </span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> inline constexpr u32 __pow10_fixups[21] = { 0x8d8fc810u, 0x06100293u, 0x19000000u, 0x00100000u, 0x00000908u, 0x00000000u, 0x04e00300u,</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>                                             0x3807e0b2u, 0x3d83d793u, 0x0006f5ccu, 0x00000000u, 0xffff0000u, 0x8076337du, 0x4ff45ba0u,</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>                                             0x09405033u, 0x034376d9u, 0x09000000u, 0x4e100501u, 0x076d14dcu, 0xf964f45eu, 0x0000003du };</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> </span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> struct pow10_significand_table {</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> #if defined(__OPTIMIZE_SIZE__)</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>   static constexpr bool compressed = true;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> #else</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   static constexpr bool compressed = false;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> #endif</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>   static constexpr i32 count = 649;</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>   uint128 table[compressed ? 1 : count]{};</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> </span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>   static constexpr uint128</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>   compute(u32 i) noexcept</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>   {</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     constexpr u32 stride = 28;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>     const u64 m = __pow10_minor[(i + 24) % stride];</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a>     const uint128 h = __pow10_major[(i + 24) / stride];</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>     const u64 h1 = umul128(h.lo, m).hi;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>     const u64 c0 = h.lo * m;</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a>     const u64 c1 = h1 + h.hi * m;</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>     const u64 c2 = (c1 &lt; h1) + umul128(h.hi, m).hi;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a>     uint128 r = (c2 &gt;&gt; 63) != 0 ? uint128{ c2, c1 } : uint128{ c2 &lt;&lt; 1 | c1 &gt;&gt; 63, c1 &lt;&lt; 1 | c0 &gt;&gt; 63 };</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>     r.lo -= (__pow10_fixups[i &gt;&gt; 5] &gt;&gt; (i &amp; 31)) &amp; 1u;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>     return r;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>   }</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> </span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>   constexpr pow10_significand_table() noexcept</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>   {</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>     if constexpr ( !compressed )</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a>       for ( i32 i = 0; i &lt; count; ++i ) table[i] = compute(static_cast&lt;u32&gt;(i));</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a>   }</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> </span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a>   constexpr uint128</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>   operator[](i32 dec_exp) const noexcept</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>   {</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>     const u32 i = static_cast&lt;u32&gt;(dec_exp + 307);</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>     if constexpr ( compressed ) return compute(i);</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>     return table[i];</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>   }</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> };</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> </span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> struct exp_shift_table {</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> #if defined(__OPTIMIZE_SIZE__)</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>   static constexpr bool enabled = false;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a> #else</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>   static constexpr bool enabled = true;</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a> #endif</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>   static constexpr i32 extra_shift = 9;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>   u8 table[enabled ? 2048 : 1]{};</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> </span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>   constexpr exp_shift_table() noexcept</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>   {</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>     if constexpr ( enabled ) {</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a>       for ( i32 raw_exp = 0; raw_exp &lt; 2048; ++raw_exp ) {</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a>         i32 bin_exp = raw_exp - 1075;</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a>         if ( raw_exp == 0 ) ++bin_exp;</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>         const i32 dec_exp = __compute_dec_exp(bin_exp);</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>         table[raw_exp] = static_cast&lt;u8&gt;(__compute_exp_shift(bin_exp, dec_exp + 1) + extra_shift);</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a>       }</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     }</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a>   }</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> };</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a> </span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> struct data {</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a>   u64 threshold = 1000000000000000ull;</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>   u64 biased_half = (1ull &lt;&lt; 63) + 6;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a>   exp_shift_table exp_shifts{};</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>   alignas(64) pow10_significand_table pow10_significands{};</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> };</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> </span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> inline constexpr data __data{};</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> </span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a> template&lt;typename F&gt; struct traits;</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> </span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a> template&lt;&gt; struct traits&lt;f32&gt; {</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   using sig_type = u32;</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>   static constexpr i32 num_sig_bits = 23;</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>   static constexpr i32 num_bits = 32;</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>   static constexpr i32 exp_mask = 255;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>   static constexpr i32 exp_offset = 150;</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a>   static constexpr u32 implicit_bit = 1u &lt;&lt; 23;</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a>   static constexpr i32 max_digits10 = 9;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a> };</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a> </span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a> template&lt;&gt; struct traits&lt;f64&gt; {</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   using sig_type = u64;</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a>   static constexpr i32 num_sig_bits = 52;</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a>   static constexpr i32 num_bits = 64;</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a>   static constexpr i32 exp_mask = 2047;</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>   static constexpr i32 exp_offset = 1075;</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>   static constexpr u64 implicit_bit = 1ull &lt;&lt; 52;</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>   static constexpr i32 max_digits10 = 17;</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> };</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> </span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a> struct shortest_decimal {</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>   u64 sig;</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a>   i32 exp;</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>   i32 last_digit;</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a>   bool has_last_digit;</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a> };</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a> </span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a> template&lt;typename F, typename U&gt;</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a> inline constexpr shortest_decimal</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a> __to_decimal(U bin_sig, i32 raw_exp, bool regular) noexcept</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a> {</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a>   using T = traits&lt;F&gt;;</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a>   i32 bin_exp = raw_exp - T::exp_offset;</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a>   constexpr i32 extra_shift = exp_shift_table::extra_shift;</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a> </span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a>   if ( !regular ) {</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a>     const i32 dec_exp = __compute_dec_exp(bin_exp, false);</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a>     const u8 shift = static_cast&lt;u8&gt;(__compute_exp_shift(bin_exp, dec_exp + 1) + extra_shift);</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a>     const uint128 pow10 = __data.pow10_significands[-dec_exp - 1];</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a>     const uint128 p = __umul192_hi128(pow10.hi, pow10.lo, static_cast&lt;u64&gt;(bin_sig) &lt;&lt; shift);</span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a>     u64 integral = p.hi &gt;&gt; extra_shift;</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a>     const u64 fractional = p.hi &lt;&lt; (64 - extra_shift) | p.lo &gt;&gt; extra_shift;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a>     const u64 half_ulp = pow10.hi &gt;&gt; (extra_shift + 1 - shift);</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a>     const bool round_up = half_ulp &gt; ~u64(0) - fractional;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a>     const bool round_down = (half_ulp &gt;&gt; 1) &gt; fractional;</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a>     integral += round_up;</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a>     i32 digit = static_cast&lt;i32&gt;(umul128_add_hi64(fractional, 10, (1ull &lt;&lt; 63) - 1));</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a>     const i32 lo = static_cast&lt;i32&gt;(umul128_add_hi64(fractional - (half_ulp &gt;&gt; 1), 10, ~u64(0)));</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a>     if ( digit &lt; lo ) digit = lo;</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a>     return { integral, dec_exp, digit, (round_up + round_down) == 0 };</span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a>   }</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> </span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a>   const i32 dec_exp = __compute_dec_exp(bin_exp);</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a>   u8 shift = exp_shift_table::enabled ? __data.exp_shifts.table[bin_exp + traits&lt;f64&gt;::exp_offset]</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a>                                       : static_cast&lt;u8&gt;(__compute_exp_shift(bin_exp, dec_exp + 1) + extra_shift);</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a>   const u64 even = 1 - (static_cast&lt;u64&gt;(bin_sig) &amp; 1);</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> </span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a>   if constexpr ( T::num_bits == 32 ) {</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a>     constexpr i32 float_shift = 34;</span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a>     shift = static_cast&lt;u8&gt;(shift + float_shift - extra_shift);</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a>     const u64 pow10_hi = __data.pow10_significands[-dec_exp - 1].hi;</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a>     const u64 p = umul128(pow10_hi + 1, static_cast&lt;u64&gt;(bin_sig) &lt;&lt; shift).hi;</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a>     u64 integral = p &gt;&gt; float_shift;</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a>     const u64 fractional = p &amp; ((1ull &lt;&lt; float_shift) - 1);</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a>     const u64 half_ulp = (pow10_hi &gt;&gt; (65 - shift)) + even;</span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a>     const bool round_up = (fractional + half_ulp) &gt;&gt; float_shift;</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a>     const bool round_down = half_ulp &gt; fractional;</span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a>     integral += round_up;</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a>     i32 digit = static_cast&lt;i32&gt;((fractional * 10 + (1ull &lt;&lt; (float_shift - 1))) &gt;&gt; float_shift);</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a>     if ( fractional == (1ull &lt;&lt; (float_shift - 2)) ) digit = 2;</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a>     return { integral, dec_exp, digit, (round_up + round_down) == 0 };</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>   } else {</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>     const uint128 pow10 = __data.pow10_significands[-dec_exp - 1];</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>     const uint128 p = __umul192_hi128(pow10.hi, pow10.lo, static_cast&lt;u64&gt;(bin_sig) &lt;&lt; shift);</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a>     u64 integral = p.hi &gt;&gt; extra_shift;</span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a>     const u64 fractional = p.hi &lt;&lt; (64 - extra_shift) | p.lo &gt;&gt; extra_shift;</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a>     const u64 half_ulp = (pow10.hi &gt;&gt; (extra_shift + 1 - shift)) + even;</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a>     const bool round_up = fractional + half_ulp &lt; fractional;</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a>     const bool round_down = half_ulp &gt; fractional;</span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a>     integral += round_up;</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a>     i32 digit = static_cast&lt;i32&gt;(umul128_add_hi64(fractional, 10, __data.biased_half));</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a>     if ( fractional == (1ull &lt;&lt; 62) ) digit = 2;</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a>     return { integral, dec_exp, digit, (round_up + round_down) == 0 };</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a>   }</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a> }</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> </span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> struct decimal_fp {</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a>   u64 sig;</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a>   i32 exp;</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a>   bool negative;</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a>   bool nonfinite;</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>   bool nan;</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> };</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a> </span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a> template&lt;typename F, typename U&gt;</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a> inline constexpr decimal_fp</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a> __to_decimal_untrimmed_bits(U bits, i32 &amp;last_digit, bool &amp;has_last_digit) noexcept</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a> {</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a>   using T = traits&lt;F&gt;;</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>   i32 bin_exp = static_cast&lt;i32&gt;((bits &gt;&gt; T::num_sig_bits) &amp; static_cast&lt;U&gt;(T::exp_mask));</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a>   U bin_sig = bits &amp; (T::implicit_bit - 1);</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a>   const bool negative = (bits &gt;&gt; (T::num_bits - 1)) != 0;</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a>   if ( bin_exp == 0 || bin_exp == T::exp_mask ) {</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a>     if ( bin_exp != 0 ) return { static_cast&lt;u64&gt;(bin_sig), 0, negative, true, bin_sig != 0 };</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a>     if ( bin_sig == 0 ) return { 0, 0, negative, false, false };</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a>     bin_exp = 1;</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a>     bin_sig |= T::implicit_bit;</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>   }</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a>   const shortest_decimal dec = __to_decimal&lt;F&gt;(bin_sig ^ T::implicit_bit, bin_exp, bin_sig != 0);</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a>   last_digit = dec.last_digit;</span>
+<span id="L294" class="source-line"><a class="line-number" href="#L294">294</a>   has_last_digit = dec.has_last_digit;</span>
+<span id="L295" class="source-line"><a class="line-number" href="#L295">295</a>   return { dec.sig, dec.exp, negative, false, false };</span>
+<span id="L296" class="source-line"><a class="line-number" href="#L296">296</a> }</span>
+<span id="L297" class="source-line"><a class="line-number" href="#L297">297</a> </span>
+<span id="L298" class="source-line"><a class="line-number" href="#L298">298</a> template&lt;typename F&gt;</span>
+<span id="L299" class="source-line"><a class="line-number" href="#L299">299</a> inline constexpr decimal_fp</span>
+<span id="L300" class="source-line"><a class="line-number" href="#L300">300</a> __to_decimal_untrimmed(F value, i32 &amp;last_digit, bool &amp;has_last_digit) noexcept</span>
+<span id="L301" class="source-line"><a class="line-number" href="#L301">301</a> {</span>
+<span id="L302" class="source-line"><a class="line-number" href="#L302">302</a>   using U = typename traits&lt;F&gt;::sig_type;</span>
+<span id="L303" class="source-line"><a class="line-number" href="#L303">303</a>   return __to_decimal_untrimmed_bits&lt;F, U&gt;(micron::math::ieee::to_bits&lt;F&gt;(value), last_digit, has_last_digit);</span>
+<span id="L304" class="source-line"><a class="line-number" href="#L304">304</a> }</span>
+<span id="L305" class="source-line"><a class="line-number" href="#L305">305</a> </span>
+<span id="L306" class="source-line"><a class="line-number" href="#L306">306</a> #if defined(__micron_x86_avx2)</span>
+<span id="L307" class="source-line"><a class="line-number" href="#L307">307</a> struct __avx_uint128 {</span>
+<span id="L308" class="source-line"><a class="line-number" href="#L308">308</a>   __m256i hi;</span>
+<span id="L309" class="source-line"><a class="line-number" href="#L309">309</a>   __m256i lo;</span>
+<span id="L310" class="source-line"><a class="line-number" href="#L310">310</a> };</span>
+<span id="L311" class="source-line"><a class="line-number" href="#L311">311</a> </span>
+<span id="L312" class="source-line"><a class="line-number" href="#L312">312</a> inline __m256i</span>
+<span id="L313" class="source-line"><a class="line-number" href="#L313">313</a> __avx_set_u64(u64 x0, u64 x1, u64 x2, u64 x3) noexcept</span>
+<span id="L314" class="source-line"><a class="line-number" href="#L314">314</a> {</span>
+<span id="L315" class="source-line"><a class="line-number" href="#L315">315</a>   return micron::simd::avx2::set_i64(static_cast&lt;i64&gt;(x3), static_cast&lt;i64&gt;(x2), static_cast&lt;i64&gt;(x1), static_cast&lt;i64&gt;(x0));</span>
+<span id="L316" class="source-line"><a class="line-number" href="#L316">316</a> }</span>
+<span id="L317" class="source-line"><a class="line-number" href="#L317">317</a> </span>
+<span id="L318" class="source-line"><a class="line-number" href="#L318">318</a> template&lt;int Lane&gt;</span>
+<span id="L319" class="source-line"><a class="line-number" href="#L319">319</a> inline u64</span>
+<span id="L320" class="source-line"><a class="line-number" href="#L320">320</a> __avx_extract_u64(__m256i value) noexcept</span>
+<span id="L321" class="source-line"><a class="line-number" href="#L321">321</a> {</span>
+<span id="L322" class="source-line"><a class="line-number" href="#L322">322</a>   return static_cast&lt;u64&gt;(micron::simd::avx2::extract_i64&lt;Lane&gt;(value));</span>
+<span id="L323" class="source-line"><a class="line-number" href="#L323">323</a> }</span>
+<span id="L324" class="source-line"><a class="line-number" href="#L324">324</a> </span>
+<span id="L325" class="source-line"><a class="line-number" href="#L325">325</a> inline __m256i</span>
+<span id="L326" class="source-line"><a class="line-number" href="#L326">326</a> __avx_lt_u64(__m256i a, __m256i b) noexcept</span>
+<span id="L327" class="source-line"><a class="line-number" href="#L327">327</a> {</span>
+<span id="L328" class="source-line"><a class="line-number" href="#L328">328</a>   const __m256i sign = micron::simd::avx2::splat_i64(-9223372036854775807ll - 1);</span>
+<span id="L329" class="source-line"><a class="line-number" href="#L329">329</a>   return micron::simd::avx2::gt_i64(micron::simd::avx2::xor_i256(b, sign), micron::simd::avx2::xor_i256(a, sign));</span>
+<span id="L330" class="source-line"><a class="line-number" href="#L330">330</a> }</span>
+<span id="L331" class="source-line"><a class="line-number" href="#L331">331</a> </span>
+<span id="L332" class="source-line"><a class="line-number" href="#L332">332</a> inline __avx_uint128</span>
+<span id="L333" class="source-line"><a class="line-number" href="#L333">333</a> __avx_umul128(__m256i x, __m256i y) noexcept</span>
+<span id="L334" class="source-line"><a class="line-number" href="#L334">334</a> {</span>
+<span id="L335" class="source-line"><a class="line-number" href="#L335">335</a>   namespace av = micron::simd::avx2;</span>
+<span id="L336" class="source-line"><a class="line-number" href="#L336">336</a>   const __m256i mask32 = av::splat_i64(0xffffffffull);</span>
+<span id="L337" class="source-line"><a class="line-number" href="#L337">337</a>   const __m256i x_hi = av::shr_i64(x, 32);</span>
+<span id="L338" class="source-line"><a class="line-number" href="#L338">338</a>   const __m256i y_hi = av::shr_i64(y, 32);</span>
+<span id="L339" class="source-line"><a class="line-number" href="#L339">339</a>   const __m256i p00 = av::mul_2x32_to_2x64_u(x, y);</span>
+<span id="L340" class="source-line"><a class="line-number" href="#L340">340</a>   const __m256i p10 = av::mul_2x32_to_2x64_u(x_hi, y);</span>
+<span id="L341" class="source-line"><a class="line-number" href="#L341">341</a>   const __m256i p01 = av::mul_2x32_to_2x64_u(x, y_hi);</span>
+<span id="L342" class="source-line"><a class="line-number" href="#L342">342</a>   const __m256i p11 = av::mul_2x32_to_2x64_u(x_hi, y_hi);</span>
+<span id="L343" class="source-line"><a class="line-number" href="#L343">343</a>   const __m256i middle = av::add_i64(av::shr_i64(p00, 32), av::add_i64(av::and_i256(p10, mask32), av::and_i256(p01, mask32)));</span>
+<span id="L344" class="source-line"><a class="line-number" href="#L344">344</a>   const __m256i lo = av::or_i256(av::and_i256(p00, mask32), av::shl_i64(middle, 32));</span>
+<span id="L345" class="source-line"><a class="line-number" href="#L345">345</a>   const __m256i hi = av::add_i64(p11, av::add_i64(av::shr_i64(p10, 32), av::add_i64(av::shr_i64(p01, 32), av::shr_i64(middle, 32))));</span>
+<span id="L346" class="source-line"><a class="line-number" href="#L346">346</a>   return { hi, lo };</span>
+<span id="L347" class="source-line"><a class="line-number" href="#L347">347</a> }</span>
+<span id="L348" class="source-line"><a class="line-number" href="#L348">348</a> </span>
+<span id="L349" class="source-line"><a class="line-number" href="#L349">349</a> inline __avx_uint128</span>
+<span id="L350" class="source-line"><a class="line-number" href="#L350">350</a> __avx_umul192_hi128(__m256i x_hi, __m256i x_lo, __m256i y) noexcept</span>
+<span id="L351" class="source-line"><a class="line-number" href="#L351">351</a> {</span>
+<span id="L352" class="source-line"><a class="line-number" href="#L352">352</a>   namespace av = micron::simd::avx2;</span>
+<span id="L353" class="source-line"><a class="line-number" href="#L353">353</a>   const __m256i one = av::splat_i64(1);</span>
+<span id="L354" class="source-line"><a class="line-number" href="#L354">354</a>   const __avx_uint128 p = __avx_umul128(x_hi, y);</span>
+<span id="L355" class="source-line"><a class="line-number" href="#L355">355</a>   const __m256i lo2 = __avx_umul128(x_lo, y).hi;</span>
+<span id="L356" class="source-line"><a class="line-number" href="#L356">356</a>   const __m256i lo = av::add_i64(p.lo, lo2);</span>
+<span id="L357" class="source-line"><a class="line-number" href="#L357">357</a>   const __m256i carry = av::and_i256(__avx_lt_u64(lo, p.lo), one);</span>
+<span id="L358" class="source-line"><a class="line-number" href="#L358">358</a>   return { av::add_i64(p.hi, carry), lo };</span>
+<span id="L359" class="source-line"><a class="line-number" href="#L359">359</a> }</span>
+<span id="L360" class="source-line"><a class="line-number" href="#L360">360</a> </span>
+<span id="L361" class="source-line"><a class="line-number" href="#L361">361</a> inline bool</span>
+<span id="L362" class="source-line"><a class="line-number" href="#L362">362</a> __to_decimal4_avx2(const f64 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</span>
+<span id="L363" class="source-line"><a class="line-number" href="#L363">363</a> {</span>
+<span id="L364" class="source-line"><a class="line-number" href="#L364">364</a>   namespace av = micron::simd::avx2;</span>
+<span id="L365" class="source-line"><a class="line-number" href="#L365">365</a>   if constexpr ( !exp_shift_table::enabled ) return false;</span>
+<span id="L366" class="source-line"><a class="line-number" href="#L366">366</a>   const u64 bits0 = micron::math::ieee::to_bits&lt;f64&gt;(values[0]);</span>
+<span id="L367" class="source-line"><a class="line-number" href="#L367">367</a>   const u64 bits1 = micron::math::ieee::to_bits&lt;f64&gt;(values[1]);</span>
+<span id="L368" class="source-line"><a class="line-number" href="#L368">368</a>   const u64 bits2 = micron::math::ieee::to_bits&lt;f64&gt;(values[2]);</span>
+<span id="L369" class="source-line"><a class="line-number" href="#L369">369</a>   const u64 bits3 = micron::math::ieee::to_bits&lt;f64&gt;(values[3]);</span>
+<span id="L370" class="source-line"><a class="line-number" href="#L370">370</a>   const u32 raw0 = static_cast&lt;u32&gt;(bits0 &gt;&gt; 52 &amp; 0x7ffu);</span>
+<span id="L371" class="source-line"><a class="line-number" href="#L371">371</a>   const u32 raw1 = static_cast&lt;u32&gt;(bits1 &gt;&gt; 52 &amp; 0x7ffu);</span>
+<span id="L372" class="source-line"><a class="line-number" href="#L372">372</a>   const u32 raw2 = static_cast&lt;u32&gt;(bits2 &gt;&gt; 52 &amp; 0x7ffu);</span>
+<span id="L373" class="source-line"><a class="line-number" href="#L373">373</a>   const u32 raw3 = static_cast&lt;u32&gt;(bits3 &gt;&gt; 52 &amp; 0x7ffu);</span>
+<span id="L374" class="source-line"><a class="line-number" href="#L374">374</a>   constexpr u64 sig_mask = (1ull &lt;&lt; 52) - 1;</span>
+<span id="L375" class="source-line"><a class="line-number" href="#L375">375</a>   const u64 sig0 = bits0 &amp; sig_mask;</span>
+<span id="L376" class="source-line"><a class="line-number" href="#L376">376</a>   const u64 sig1 = bits1 &amp; sig_mask;</span>
+<span id="L377" class="source-line"><a class="line-number" href="#L377">377</a>   const u64 sig2 = bits2 &amp; sig_mask;</span>
+<span id="L378" class="source-line"><a class="line-number" href="#L378">378</a>   const u64 sig3 = bits3 &amp; sig_mask;</span>
+<span id="L379" class="source-line"><a class="line-number" href="#L379">379</a>   const bool exceptional = ((raw0 - 1u) &gt;= 2046u) | ((raw1 - 1u) &gt;= 2046u) | ((raw2 - 1u) &gt;= 2046u) | ((raw3 - 1u) &gt;= 2046u) | (sig0 == 0)</span>
+<span id="L380" class="source-line"><a class="line-number" href="#L380">380</a>                            | (sig1 == 0) | (sig2 == 0) | (sig3 == 0);</span>
+<span id="L381" class="source-line"><a class="line-number" href="#L381">381</a>   if ( exceptional ) return false;</span>
+<span id="L382" class="source-line"><a class="line-number" href="#L382">382</a> </span>
+<span id="L383" class="source-line"><a class="line-number" href="#L383">383</a>   const i32 bin0 = static_cast&lt;i32&gt;(raw0) - 1075;</span>
+<span id="L384" class="source-line"><a class="line-number" href="#L384">384</a>   const i32 bin1 = static_cast&lt;i32&gt;(raw1) - 1075;</span>
+<span id="L385" class="source-line"><a class="line-number" href="#L385">385</a>   const i32 bin2 = static_cast&lt;i32&gt;(raw2) - 1075;</span>
+<span id="L386" class="source-line"><a class="line-number" href="#L386">386</a>   const i32 bin3 = static_cast&lt;i32&gt;(raw3) - 1075;</span>
+<span id="L387" class="source-line"><a class="line-number" href="#L387">387</a>   const i32 exp0 = __compute_dec_exp(bin0);</span>
+<span id="L388" class="source-line"><a class="line-number" href="#L388">388</a>   const i32 exp1 = __compute_dec_exp(bin1);</span>
+<span id="L389" class="source-line"><a class="line-number" href="#L389">389</a>   const i32 exp2 = __compute_dec_exp(bin2);</span>
+<span id="L390" class="source-line"><a class="line-number" href="#L390">390</a>   const i32 exp3 = __compute_dec_exp(bin3);</span>
+<span id="L391" class="source-line"><a class="line-number" href="#L391">391</a>   const u8 shift0 = __data.exp_shifts.table[raw0];</span>
+<span id="L392" class="source-line"><a class="line-number" href="#L392">392</a>   const u8 shift1 = __data.exp_shifts.table[raw1];</span>
+<span id="L393" class="source-line"><a class="line-number" href="#L393">393</a>   const u8 shift2 = __data.exp_shifts.table[raw2];</span>
+<span id="L394" class="source-line"><a class="line-number" href="#L394">394</a>   const u8 shift3 = __data.exp_shifts.table[raw3];</span>
+<span id="L395" class="source-line"><a class="line-number" href="#L395">395</a>   const uint128 pow0 = __data.pow10_significands[-exp0 - 1];</span>
+<span id="L396" class="source-line"><a class="line-number" href="#L396">396</a>   const uint128 pow1 = __data.pow10_significands[-exp1 - 1];</span>
+<span id="L397" class="source-line"><a class="line-number" href="#L397">397</a>   const uint128 pow2 = __data.pow10_significands[-exp2 - 1];</span>
+<span id="L398" class="source-line"><a class="line-number" href="#L398">398</a>   const uint128 pow3 = __data.pow10_significands[-exp3 - 1];</span>
+<span id="L399" class="source-line"><a class="line-number" href="#L399">399</a> </span>
+<span id="L400" class="source-line"><a class="line-number" href="#L400">400</a>   const __m256i sig = __avx_set_u64(sig0 | 1ull &lt;&lt; 52, sig1 | 1ull &lt;&lt; 52, sig2 | 1ull &lt;&lt; 52, sig3 | 1ull &lt;&lt; 52);</span>
+<span id="L401" class="source-line"><a class="line-number" href="#L401">401</a>   const __m256i shifts = __avx_set_u64(shift0, shift1, shift2, shift3);</span>
+<span id="L402" class="source-line"><a class="line-number" href="#L402">402</a>   const __m256i scaled_sig = av::shl_per_i64(sig, shifts);</span>
+<span id="L403" class="source-line"><a class="line-number" href="#L403">403</a>   const __avx_uint128 product = __avx_umul192_hi128(__avx_set_u64(pow0.hi, pow1.hi, pow2.hi, pow3.hi),</span>
+<span id="L404" class="source-line"><a class="line-number" href="#L404">404</a>                                                     __avx_set_u64(pow0.lo, pow1.lo, pow2.lo, pow3.lo), scaled_sig);</span>
+<span id="L405" class="source-line"><a class="line-number" href="#L405">405</a>   const __m256i integral0 = av::shr_i64(product.hi, 9);</span>
+<span id="L406" class="source-line"><a class="line-number" href="#L406">406</a>   const __m256i fractional = av::or_i256(av::shl_i64(product.hi, 55), av::shr_i64(product.lo, 9));</span>
+<span id="L407" class="source-line"><a class="line-number" href="#L407">407</a>   const __m256i half_shift = av::sub_i64(av::splat_i64(10), shifts);</span>
+<span id="L408" class="source-line"><a class="line-number" href="#L408">408</a>   const __m256i even = av::sub_i64(av::splat_i64(1), av::and_i256(sig, av::splat_i64(1)));</span>
+<span id="L409" class="source-line"><a class="line-number" href="#L409">409</a>   const __m256i half = av::add_i64(av::shr_per_i64(__avx_set_u64(pow0.hi, pow1.hi, pow2.hi, pow3.hi), half_shift), even);</span>
+<span id="L410" class="source-line"><a class="line-number" href="#L410">410</a>   const __m256i round_up_mask = __avx_lt_u64(av::add_i64(fractional, half), fractional);</span>
+<span id="L411" class="source-line"><a class="line-number" href="#L411">411</a>   const __m256i round_down_mask = __avx_lt_u64(fractional, half);</span>
+<span id="L412" class="source-line"><a class="line-number" href="#L412">412</a>   const __m256i integral = av::add_i64(integral0, av::and_i256(round_up_mask, av::splat_i64(1)));</span>
+<span id="L413" class="source-line"><a class="line-number" href="#L413">413</a> </span>
+<span id="L414" class="source-line"><a class="line-number" href="#L414">414</a>   const __avx_uint128 digit_product = __avx_umul128(fractional, av::splat_i64(10));</span>
+<span id="L415" class="source-line"><a class="line-number" href="#L415">415</a>   const __m256i digit_lo = av::add_i64(digit_product.lo, av::splat_i64(static_cast&lt;i64&gt;(__data.biased_half)));</span>
+<span id="L416" class="source-line"><a class="line-number" href="#L416">416</a>   __m256i digit = av::add_i64(digit_product.hi, av::and_i256(__avx_lt_u64(digit_lo, digit_product.lo), av::splat_i64(1)));</span>
+<span id="L417" class="source-line"><a class="line-number" href="#L417">417</a>   const __m256i quarter = av::splat_i64(1ull &lt;&lt; 62);</span>
+<span id="L418" class="source-line"><a class="line-number" href="#L418">418</a>   digit = av::blendv_i8(digit, av::splat_i64(2), av::eq_i64(fractional, quarter));</span>
+<span id="L419" class="source-line"><a class="line-number" href="#L419">419</a> </span>
+<span id="L420" class="source-line"><a class="line-number" href="#L420">420</a>   const __m256i rounded = av::or_i256(round_up_mask, round_down_mask);</span>
+<span id="L421" class="source-line"><a class="line-number" href="#L421">421</a>   dec[0] = { __avx_extract_u64&lt;0&gt;(integral), exp0, (bits0 &gt;&gt; 63) != 0, false, false };</span>
+<span id="L422" class="source-line"><a class="line-number" href="#L422">422</a>   dec[1] = { __avx_extract_u64&lt;1&gt;(integral), exp1, (bits1 &gt;&gt; 63) != 0, false, false };</span>
+<span id="L423" class="source-line"><a class="line-number" href="#L423">423</a>   dec[2] = { __avx_extract_u64&lt;2&gt;(integral), exp2, (bits2 &gt;&gt; 63) != 0, false, false };</span>
+<span id="L424" class="source-line"><a class="line-number" href="#L424">424</a>   dec[3] = { __avx_extract_u64&lt;3&gt;(integral), exp3, (bits3 &gt;&gt; 63) != 0, false, false };</span>
+<span id="L425" class="source-line"><a class="line-number" href="#L425">425</a>   last_digit[0] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;0&gt;(digit));</span>
+<span id="L426" class="source-line"><a class="line-number" href="#L426">426</a>   last_digit[1] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;1&gt;(digit));</span>
+<span id="L427" class="source-line"><a class="line-number" href="#L427">427</a>   last_digit[2] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;2&gt;(digit));</span>
+<span id="L428" class="source-line"><a class="line-number" href="#L428">428</a>   last_digit[3] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;3&gt;(digit));</span>
+<span id="L429" class="source-line"><a class="line-number" href="#L429">429</a>   has_last_digit[0] = __avx_extract_u64&lt;0&gt;(rounded) == 0;</span>
+<span id="L430" class="source-line"><a class="line-number" href="#L430">430</a>   has_last_digit[1] = __avx_extract_u64&lt;1&gt;(rounded) == 0;</span>
+<span id="L431" class="source-line"><a class="line-number" href="#L431">431</a>   has_last_digit[2] = __avx_extract_u64&lt;2&gt;(rounded) == 0;</span>
+<span id="L432" class="source-line"><a class="line-number" href="#L432">432</a>   has_last_digit[3] = __avx_extract_u64&lt;3&gt;(rounded) == 0;</span>
+<span id="L433" class="source-line"><a class="line-number" href="#L433">433</a>   return true;</span>
+<span id="L434" class="source-line"><a class="line-number" href="#L434">434</a> }</span>
+<span id="L435" class="source-line"><a class="line-number" href="#L435">435</a> </span>
+<span id="L436" class="source-line"><a class="line-number" href="#L436">436</a> inline bool</span>
+<span id="L437" class="source-line"><a class="line-number" href="#L437">437</a> __to_decimal4_avx2(const f32 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</span>
+<span id="L438" class="source-line"><a class="line-number" href="#L438">438</a> {</span>
+<span id="L439" class="source-line"><a class="line-number" href="#L439">439</a>   namespace av = micron::simd::avx2;</span>
+<span id="L440" class="source-line"><a class="line-number" href="#L440">440</a>   if constexpr ( !exp_shift_table::enabled ) return false;</span>
+<span id="L441" class="source-line"><a class="line-number" href="#L441">441</a>   const u32 bits0 = micron::math::ieee::to_bits&lt;f32&gt;(values[0]);</span>
+<span id="L442" class="source-line"><a class="line-number" href="#L442">442</a>   const u32 bits1 = micron::math::ieee::to_bits&lt;f32&gt;(values[1]);</span>
+<span id="L443" class="source-line"><a class="line-number" href="#L443">443</a>   const u32 bits2 = micron::math::ieee::to_bits&lt;f32&gt;(values[2]);</span>
+<span id="L444" class="source-line"><a class="line-number" href="#L444">444</a>   const u32 bits3 = micron::math::ieee::to_bits&lt;f32&gt;(values[3]);</span>
+<span id="L445" class="source-line"><a class="line-number" href="#L445">445</a>   const u32 raw0 = bits0 &gt;&gt; 23 &amp; 0xffu;</span>
+<span id="L446" class="source-line"><a class="line-number" href="#L446">446</a>   const u32 raw1 = bits1 &gt;&gt; 23 &amp; 0xffu;</span>
+<span id="L447" class="source-line"><a class="line-number" href="#L447">447</a>   const u32 raw2 = bits2 &gt;&gt; 23 &amp; 0xffu;</span>
+<span id="L448" class="source-line"><a class="line-number" href="#L448">448</a>   const u32 raw3 = bits3 &gt;&gt; 23 &amp; 0xffu;</span>
+<span id="L449" class="source-line"><a class="line-number" href="#L449">449</a>   constexpr u32 sig_mask = (1u &lt;&lt; 23) - 1;</span>
+<span id="L450" class="source-line"><a class="line-number" href="#L450">450</a>   const u32 sig0 = bits0 &amp; sig_mask;</span>
+<span id="L451" class="source-line"><a class="line-number" href="#L451">451</a>   const u32 sig1 = bits1 &amp; sig_mask;</span>
+<span id="L452" class="source-line"><a class="line-number" href="#L452">452</a>   const u32 sig2 = bits2 &amp; sig_mask;</span>
+<span id="L453" class="source-line"><a class="line-number" href="#L453">453</a>   const u32 sig3 = bits3 &amp; sig_mask;</span>
+<span id="L454" class="source-line"><a class="line-number" href="#L454">454</a>   const bool exceptional = ((raw0 - 1u) &gt;= 254u) | ((raw1 - 1u) &gt;= 254u) | ((raw2 - 1u) &gt;= 254u) | ((raw3 - 1u) &gt;= 254u) | (sig0 == 0)</span>
+<span id="L455" class="source-line"><a class="line-number" href="#L455">455</a>                            | (sig1 == 0) | (sig2 == 0) | (sig3 == 0);</span>
+<span id="L456" class="source-line"><a class="line-number" href="#L456">456</a>   if ( exceptional ) return false;</span>
+<span id="L457" class="source-line"><a class="line-number" href="#L457">457</a> </span>
+<span id="L458" class="source-line"><a class="line-number" href="#L458">458</a>   const i32 bin0 = static_cast&lt;i32&gt;(raw0) - 150;</span>
+<span id="L459" class="source-line"><a class="line-number" href="#L459">459</a>   const i32 bin1 = static_cast&lt;i32&gt;(raw1) - 150;</span>
+<span id="L460" class="source-line"><a class="line-number" href="#L460">460</a>   const i32 bin2 = static_cast&lt;i32&gt;(raw2) - 150;</span>
+<span id="L461" class="source-line"><a class="line-number" href="#L461">461</a>   const i32 bin3 = static_cast&lt;i32&gt;(raw3) - 150;</span>
+<span id="L462" class="source-line"><a class="line-number" href="#L462">462</a>   const i32 exp0 = __compute_dec_exp(bin0);</span>
+<span id="L463" class="source-line"><a class="line-number" href="#L463">463</a>   const i32 exp1 = __compute_dec_exp(bin1);</span>
+<span id="L464" class="source-line"><a class="line-number" href="#L464">464</a>   const i32 exp2 = __compute_dec_exp(bin2);</span>
+<span id="L465" class="source-line"><a class="line-number" href="#L465">465</a>   const i32 exp3 = __compute_dec_exp(bin3);</span>
+<span id="L466" class="source-line"><a class="line-number" href="#L466">466</a>   const u8 shift0 = static_cast&lt;u8&gt;(__data.exp_shifts.table[raw0 + 925] + 25);</span>
+<span id="L467" class="source-line"><a class="line-number" href="#L467">467</a>   const u8 shift1 = static_cast&lt;u8&gt;(__data.exp_shifts.table[raw1 + 925] + 25);</span>
+<span id="L468" class="source-line"><a class="line-number" href="#L468">468</a>   const u8 shift2 = static_cast&lt;u8&gt;(__data.exp_shifts.table[raw2 + 925] + 25);</span>
+<span id="L469" class="source-line"><a class="line-number" href="#L469">469</a>   const u8 shift3 = static_cast&lt;u8&gt;(__data.exp_shifts.table[raw3 + 925] + 25);</span>
+<span id="L470" class="source-line"><a class="line-number" href="#L470">470</a>   const u64 pow0 = __data.pow10_significands[-exp0 - 1].hi + 1;</span>
+<span id="L471" class="source-line"><a class="line-number" href="#L471">471</a>   const u64 pow1 = __data.pow10_significands[-exp1 - 1].hi + 1;</span>
+<span id="L472" class="source-line"><a class="line-number" href="#L472">472</a>   const u64 pow2 = __data.pow10_significands[-exp2 - 1].hi + 1;</span>
+<span id="L473" class="source-line"><a class="line-number" href="#L473">473</a>   const u64 pow3 = __data.pow10_significands[-exp3 - 1].hi + 1;</span>
+<span id="L474" class="source-line"><a class="line-number" href="#L474">474</a> </span>
+<span id="L475" class="source-line"><a class="line-number" href="#L475">475</a>   const __m256i sig = __avx_set_u64(sig0 | 1u &lt;&lt; 23, sig1 | 1u &lt;&lt; 23, sig2 | 1u &lt;&lt; 23, sig3 | 1u &lt;&lt; 23);</span>
+<span id="L476" class="source-line"><a class="line-number" href="#L476">476</a>   const __m256i shifts = __avx_set_u64(shift0, shift1, shift2, shift3);</span>
+<span id="L477" class="source-line"><a class="line-number" href="#L477">477</a>   const __m256i product = __avx_umul128(__avx_set_u64(pow0, pow1, pow2, pow3), av::shl_per_i64(sig, shifts)).hi;</span>
+<span id="L478" class="source-line"><a class="line-number" href="#L478">478</a>   const __m256i fractional = av::and_i256(product, av::splat_i64((1ull &lt;&lt; 34) - 1));</span>
+<span id="L479" class="source-line"><a class="line-number" href="#L479">479</a>   const __m256i even = av::sub_i64(av::splat_i64(1), av::and_i256(sig, av::splat_i64(1)));</span>
+<span id="L480" class="source-line"><a class="line-number" href="#L480">480</a>   const __m256i half</span>
+<span id="L481" class="source-line"><a class="line-number" href="#L481">481</a>       = av::add_i64(av::shr_per_i64(__avx_set_u64(pow0 - 1, pow1 - 1, pow2 - 1, pow3 - 1), av::sub_i64(av::splat_i64(65), shifts)), even);</span>
+<span id="L482" class="source-line"><a class="line-number" href="#L482">482</a>   const __m256i round_up = av::shr_i64(av::add_i64(fractional, half), 34);</span>
+<span id="L483" class="source-line"><a class="line-number" href="#L483">483</a>   const __m256i round_down_mask = __avx_lt_u64(fractional, half);</span>
+<span id="L484" class="source-line"><a class="line-number" href="#L484">484</a>   const __m256i integral = av::add_i64(av::shr_i64(product, 34), round_up);</span>
+<span id="L485" class="source-line"><a class="line-number" href="#L485">485</a>   __m256i digit = av::shr_i64(av::add_i64(__avx_umul128(fractional, av::splat_i64(10)).lo, av::splat_i64(1ull &lt;&lt; 33)), 34);</span>
+<span id="L486" class="source-line"><a class="line-number" href="#L486">486</a>   digit = av::blendv_i8(digit, av::splat_i64(2), av::eq_i64(fractional, av::splat_i64(1ull &lt;&lt; 32)));</span>
+<span id="L487" class="source-line"><a class="line-number" href="#L487">487</a> </span>
+<span id="L488" class="source-line"><a class="line-number" href="#L488">488</a>   dec[0] = { __avx_extract_u64&lt;0&gt;(integral), exp0, (bits0 &gt;&gt; 31) != 0, false, false };</span>
+<span id="L489" class="source-line"><a class="line-number" href="#L489">489</a>   dec[1] = { __avx_extract_u64&lt;1&gt;(integral), exp1, (bits1 &gt;&gt; 31) != 0, false, false };</span>
+<span id="L490" class="source-line"><a class="line-number" href="#L490">490</a>   dec[2] = { __avx_extract_u64&lt;2&gt;(integral), exp2, (bits2 &gt;&gt; 31) != 0, false, false };</span>
+<span id="L491" class="source-line"><a class="line-number" href="#L491">491</a>   dec[3] = { __avx_extract_u64&lt;3&gt;(integral), exp3, (bits3 &gt;&gt; 31) != 0, false, false };</span>
+<span id="L492" class="source-line"><a class="line-number" href="#L492">492</a>   last_digit[0] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;0&gt;(digit));</span>
+<span id="L493" class="source-line"><a class="line-number" href="#L493">493</a>   last_digit[1] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;1&gt;(digit));</span>
+<span id="L494" class="source-line"><a class="line-number" href="#L494">494</a>   last_digit[2] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;2&gt;(digit));</span>
+<span id="L495" class="source-line"><a class="line-number" href="#L495">495</a>   last_digit[3] = static_cast&lt;i32&gt;(__avx_extract_u64&lt;3&gt;(digit));</span>
+<span id="L496" class="source-line"><a class="line-number" href="#L496">496</a>   has_last_digit[0] = (__avx_extract_u64&lt;0&gt;(round_up) | __avx_extract_u64&lt;0&gt;(round_down_mask)) == 0;</span>
+<span id="L497" class="source-line"><a class="line-number" href="#L497">497</a>   has_last_digit[1] = (__avx_extract_u64&lt;1&gt;(round_up) | __avx_extract_u64&lt;1&gt;(round_down_mask)) == 0;</span>
+<span id="L498" class="source-line"><a class="line-number" href="#L498">498</a>   has_last_digit[2] = (__avx_extract_u64&lt;2&gt;(round_up) | __avx_extract_u64&lt;2&gt;(round_down_mask)) == 0;</span>
+<span id="L499" class="source-line"><a class="line-number" href="#L499">499</a>   has_last_digit[3] = (__avx_extract_u64&lt;3&gt;(round_up) | __avx_extract_u64&lt;3&gt;(round_down_mask)) == 0;</span>
+<span id="L500" class="source-line"><a class="line-number" href="#L500">500</a>   return true;</span>
+<span id="L501" class="source-line"><a class="line-number" href="#L501">501</a> }</span>
+<span id="L502" class="source-line"><a class="line-number" href="#L502">502</a> #endif</span>
+<span id="L503" class="source-line"><a class="line-number" href="#L503">503</a> </span>
+<span id="L504" class="source-line"><a class="line-number" href="#L504">504</a> #if ( defined(__micron_arch_arm32) || defined(__micron_arch_arm64) ) &amp;&amp; defined(__micron_arm_neon)</span>
+<span id="L505" class="source-line"><a class="line-number" href="#L505">505</a> inline void</span>
+<span id="L506" class="source-line"><a class="line-number" href="#L506">506</a> __to_decimal4_neon(const f32 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</span>
+<span id="L507" class="source-line"><a class="line-number" href="#L507">507</a> {</span>
+<span id="L508" class="source-line"><a class="line-number" href="#L508">508</a>   u32 bits[4];</span>
+<span id="L509" class="source-line"><a class="line-number" href="#L509">509</a>   const uint32x4_t packed = micron::simd::neon::reinterpret_u32_from_f32(micron::simd::neon::load_f32(values));</span>
+<span id="L510" class="source-line"><a class="line-number" href="#L510">510</a>   micron::simd::neon::store_u32(bits, packed);</span>
+<span id="L511" class="source-line"><a class="line-number" href="#L511">511</a>   dec[0] = __to_decimal_untrimmed_bits&lt;f32, u32&gt;(bits[0], last_digit[0], has_last_digit[0]);</span>
+<span id="L512" class="source-line"><a class="line-number" href="#L512">512</a>   dec[1] = __to_decimal_untrimmed_bits&lt;f32, u32&gt;(bits[1], last_digit[1], has_last_digit[1]);</span>
+<span id="L513" class="source-line"><a class="line-number" href="#L513">513</a>   dec[2] = __to_decimal_untrimmed_bits&lt;f32, u32&gt;(bits[2], last_digit[2], has_last_digit[2]);</span>
+<span id="L514" class="source-line"><a class="line-number" href="#L514">514</a>   dec[3] = __to_decimal_untrimmed_bits&lt;f32, u32&gt;(bits[3], last_digit[3], has_last_digit[3]);</span>
+<span id="L515" class="source-line"><a class="line-number" href="#L515">515</a> }</span>
+<span id="L516" class="source-line"><a class="line-number" href="#L516">516</a> </span>
+<span id="L517" class="source-line"><a class="line-number" href="#L517">517</a> #if defined(__micron_arch_arm64)</span>
+<span id="L518" class="source-line"><a class="line-number" href="#L518">518</a> inline void</span>
+<span id="L519" class="source-line"><a class="line-number" href="#L519">519</a> __to_decimal4_neon(const f64 *values, decimal_fp *dec, i32 *last_digit, bool *has_last_digit) noexcept</span>
+<span id="L520" class="source-line"><a class="line-number" href="#L520">520</a> {</span>
+<span id="L521" class="source-line"><a class="line-number" href="#L521">521</a>   u64 bits[4];</span>
+<span id="L522" class="source-line"><a class="line-number" href="#L522">522</a>   micron::simd::neon::store_u64(bits, micron::simd::neon::reinterpret_u64_from_f64(micron::simd::neon::load_f64(values)));</span>
+<span id="L523" class="source-line"><a class="line-number" href="#L523">523</a>   micron::simd::neon::store_u64(bits + 2, micron::simd::neon::reinterpret_u64_from_f64(micron::simd::neon::load_f64(values + 2)));</span>
+<span id="L524" class="source-line"><a class="line-number" href="#L524">524</a>   dec[0] = __to_decimal_untrimmed_bits&lt;f64, u64&gt;(bits[0], last_digit[0], has_last_digit[0]);</span>
+<span id="L525" class="source-line"><a class="line-number" href="#L525">525</a>   dec[1] = __to_decimal_untrimmed_bits&lt;f64, u64&gt;(bits[1], last_digit[1], has_last_digit[1]);</span>
+<span id="L526" class="source-line"><a class="line-number" href="#L526">526</a>   dec[2] = __to_decimal_untrimmed_bits&lt;f64, u64&gt;(bits[2], last_digit[2], has_last_digit[2]);</span>
+<span id="L527" class="source-line"><a class="line-number" href="#L527">527</a>   dec[3] = __to_decimal_untrimmed_bits&lt;f64, u64&gt;(bits[3], last_digit[3], has_last_digit[3]);</span>
+<span id="L528" class="source-line"><a class="line-number" href="#L528">528</a> }</span>
+<span id="L529" class="source-line"><a class="line-number" href="#L529">529</a> #endif</span>
+<span id="L530" class="source-line"><a class="line-number" href="#L530">530</a> #endif</span>
+<span id="L531" class="source-line"><a class="line-number" href="#L531">531</a> </span>
+<span id="L532" class="source-line"><a class="line-number" href="#L532">532</a> template&lt;typename F&gt;</span>
+<span id="L533" class="source-line"><a class="line-number" href="#L533">533</a> inline constexpr decimal_fp</span>
+<span id="L534" class="source-line"><a class="line-number" href="#L534">534</a> to_decimal(F value) noexcept</span>
+<span id="L535" class="source-line"><a class="line-number" href="#L535">535</a> {</span>
+<span id="L536" class="source-line"><a class="line-number" href="#L536">536</a>   i32 last_digit = 0;</span>
+<span id="L537" class="source-line"><a class="line-number" href="#L537">537</a>   bool has_last_digit = false;</span>
+<span id="L538" class="source-line"><a class="line-number" href="#L538">538</a>   decimal_fp result = __to_decimal_untrimmed(value, last_digit, has_last_digit);</span>
+<span id="L539" class="source-line"><a class="line-number" href="#L539">539</a>   if ( result.nonfinite || (result.sig == 0 &amp;&amp; !has_last_digit) ) return result;</span>
+<span id="L540" class="source-line"><a class="line-number" href="#L540">540</a>   u64 sig = result.sig * 10 + static_cast&lt;u64&gt;(has_last_digit ? last_digit : 0);</span>
+<span id="L541" class="source-line"><a class="line-number" href="#L541">541</a>   i32 exp = result.exp;</span>
+<span id="L542" class="source-line"><a class="line-number" href="#L542">542</a>   while ( sig % 10 == 0 ) {</span>
+<span id="L543" class="source-line"><a class="line-number" href="#L543">543</a>     sig /= 10;</span>
+<span id="L544" class="source-line"><a class="line-number" href="#L544">544</a>     ++exp;</span>
+<span id="L545" class="source-line"><a class="line-number" href="#L545">545</a>   }</span>
+<span id="L546" class="source-line"><a class="line-number" href="#L546">546</a>   result.sig = sig;</span>
+<span id="L547" class="source-line"><a class="line-number" href="#L547">547</a>   result.exp = exp;</span>
+<span id="L548" class="source-line"><a class="line-number" href="#L548">548</a>   return result;</span>
+<span id="L549" class="source-line"><a class="line-number" href="#L549">549</a> }</span>
+<span id="L550" class="source-line"><a class="line-number" href="#L550">550</a> </span>
+<span id="L551" class="source-line"><a class="line-number" href="#L551">551</a> inline constexpr usize</span>
+<span id="L552" class="source-line"><a class="line-number" href="#L552">552</a> __emit_special(const decimal_fp &amp;v, char *buf) noexcept</span>
+<span id="L553" class="source-line"><a class="line-number" href="#L553">553</a> {</span>
+<span id="L554" class="source-line"><a class="line-number" href="#L554">554</a>   if ( v.nan ) {</span>
+<span id="L555" class="source-line"><a class="line-number" href="#L555">555</a>     buf[0] = &#x27;N&#x27;;</span>
+<span id="L556" class="source-line"><a class="line-number" href="#L556">556</a>     buf[1] = &#x27;a&#x27;;</span>
+<span id="L557" class="source-line"><a class="line-number" href="#L557">557</a>     buf[2] = &#x27;N&#x27;;</span>
+<span id="L558" class="source-line"><a class="line-number" href="#L558">558</a>     return 3;</span>
+<span id="L559" class="source-line"><a class="line-number" href="#L559">559</a>   }</span>
+<span id="L560" class="source-line"><a class="line-number" href="#L560">560</a>   usize pos = 0;</span>
+<span id="L561" class="source-line"><a class="line-number" href="#L561">561</a>   if ( v.negative ) buf[pos++] = &#x27;-&#x27;;</span>
+<span id="L562" class="source-line"><a class="line-number" href="#L562">562</a>   buf[pos++] = &#x27;I&#x27;;</span>
+<span id="L563" class="source-line"><a class="line-number" href="#L563">563</a>   buf[pos++] = &#x27;n&#x27;;</span>
+<span id="L564" class="source-line"><a class="line-number" href="#L564">564</a>   buf[pos++] = &#x27;f&#x27;;</span>
+<span id="L565" class="source-line"><a class="line-number" href="#L565">565</a>   return pos;</span>
+<span id="L566" class="source-line"><a class="line-number" href="#L566">566</a> }</span>
+<span id="L567" class="source-line"><a class="line-number" href="#L567">567</a> </span>
+<span id="L568" class="source-line"><a class="line-number" href="#L568">568</a> inline constexpr void __digits18(u64 value, char (&amp;digits)[18]) noexcept;</span>
+<span id="L569" class="source-line"><a class="line-number" href="#L569">569</a> inline constexpr char *__digits_n(u64 value, u32 count, char (&amp;digits)[18]) noexcept;</span>
+<span id="L570" class="source-line"><a class="line-number" href="#L570">570</a> </span>
+<span id="L571" class="source-line"><a class="line-number" href="#L571">571</a> inline constexpr usize</span>
+<span id="L572" class="source-line"><a class="line-number" href="#L572">572</a> __emit_exp_digits(char *buf, usize pos, u32 exp) noexcept</span>
+<span id="L573" class="source-line"><a class="line-number" href="#L573">573</a> {</span>
+<span id="L574" class="source-line"><a class="line-number" href="#L574">574</a>   if ( exp &gt;= 100 ) {</span>
+<span id="L575" class="source-line"><a class="line-number" href="#L575">575</a>     buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + exp / 100);</span>
+<span id="L576" class="source-line"><a class="line-number" href="#L576">576</a>     exp %= 100;</span>
+<span id="L577" class="source-line"><a class="line-number" href="#L577">577</a>     buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + exp / 10);</span>
+<span id="L578" class="source-line"><a class="line-number" href="#L578">578</a>   } else if ( exp &gt;= 10 ) {</span>
+<span id="L579" class="source-line"><a class="line-number" href="#L579">579</a>     buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + exp / 10);</span>
+<span id="L580" class="source-line"><a class="line-number" href="#L580">580</a>   }</span>
+<span id="L581" class="source-line"><a class="line-number" href="#L581">581</a>   buf[pos++] = static_cast&lt;char&gt;(&#x27;0&#x27; + exp % 10);</span>
+<span id="L582" class="source-line"><a class="line-number" href="#L582">582</a>   return pos;</span>
+<span id="L583" class="source-line"><a class="line-number" href="#L583">583</a> }</span>
+<span id="L584" class="source-line"><a class="line-number" href="#L584">584</a> </span>
+<span id="L585" class="source-line"><a class="line-number" href="#L585">585</a> inline constexpr usize</span>
+<span id="L586" class="source-line"><a class="line-number" href="#L586">586</a> __emit_d2s(decimal_fp dec, i32 last_digit, bool has_last_digit, char *buf) noexcept</span>
+<span id="L587" class="source-line"><a class="line-number" href="#L587">587</a> {</span>
+<span id="L588" class="source-line"><a class="line-number" href="#L588">588</a>   if ( dec.nonfinite ) return __emit_special(dec, buf);</span>
+<span id="L589" class="source-line"><a class="line-number" href="#L589">589</a>   usize pos = 0;</span>
+<span id="L590" class="source-line"><a class="line-number" href="#L590">590</a>   if ( dec.negative ) buf[pos++] = &#x27;-&#x27;;</span>
+<span id="L591" class="source-line"><a class="line-number" href="#L591">591</a>   if ( dec.sig == 0 &amp;&amp; !has_last_digit ) {</span>
+<span id="L592" class="source-line"><a class="line-number" href="#L592">592</a>     buf[pos++] = &#x27;0&#x27;;</span>
+<span id="L593" class="source-line"><a class="line-number" href="#L593">593</a>     buf[pos++] = &#x27;.&#x27;;</span>
+<span id="L594" class="source-line"><a class="line-number" href="#L594">594</a>     buf[pos++] = &#x27;0&#x27;;</span>
+<span id="L595" class="source-line"><a class="line-number" href="#L595">595</a>     return pos;</span>
+<span id="L596" class="source-line"><a class="line-number" href="#L596">596</a>   }</span>
+<span id="L597" class="source-line"><a class="line-number" href="#L597">597</a> </span>
+<span id="L598" class="source-line"><a class="line-number" href="#L598">598</a>   if ( has_last_digit )</span>
+<span id="L599" class="source-line"><a class="line-number" href="#L599">599</a>     dec.sig = dec.sig * 10 + static_cast&lt;u64&gt;(last_digit);</span>
+<span id="L600" class="source-line"><a class="line-number" href="#L600">600</a>   else</span>
+<span id="L601" class="source-line"><a class="line-number" href="#L601">601</a>     ++dec.exp;</span>
+<span id="L602" class="source-line"><a class="line-number" href="#L602">602</a>   char digits[18];</span>
+<span id="L603" class="source-line"><a class="line-number" href="#L603">603</a>   __digits18(dec.sig, digits);</span>
+<span id="L604" class="source-line"><a class="line-number" href="#L604">604</a>   usize len = __ryu::decimalLength(dec.sig);</span>
+<span id="L605" class="source-line"><a class="line-number" href="#L605">605</a>   char *start = digits + 18 - len;</span>
+<span id="L606" class="source-line"><a class="line-number" href="#L606">606</a>   while ( len &gt; 1 &amp;&amp; start[len - 1] == &#x27;0&#x27; ) {</span>
+<span id="L607" class="source-line"><a class="line-number" href="#L607">607</a>     --len;</span>
+<span id="L608" class="source-line"><a class="line-number" href="#L608">608</a>     ++dec.exp;</span>
+<span id="L609" class="source-line"><a class="line-number" href="#L609">609</a>   }</span>
+<span id="L610" class="source-line"><a class="line-number" href="#L610">610</a>   i32 exp = dec.exp;</span>
+<span id="L611" class="source-line"><a class="line-number" href="#L611">611</a>   i32 sci_exp = exp + static_cast&lt;i32&gt;(len) - 1;</span>
+<span id="L612" class="source-line"><a class="line-number" href="#L612">612</a> </span>
+<span id="L613" class="source-line"><a class="line-number" href="#L613">613</a>   if ( sci_exp &gt;= -3 &amp;&amp; sci_exp &lt;= 7 ) {</span>
+<span id="L614" class="source-line"><a class="line-number" href="#L614">614</a>     if ( exp &gt;= 0 ) {</span>
+<span id="L615" class="source-line"><a class="line-number" href="#L615">615</a>       for ( usize i = 0; i &lt; len; ++i ) buf[pos++] = start[i];</span>
+<span id="L616" class="source-line"><a class="line-number" href="#L616">616</a>       for ( i32 i = 0; i &lt; exp; ++i ) buf[pos++] = &#x27;0&#x27;;</span>
+<span id="L617" class="source-line"><a class="line-number" href="#L617">617</a>       buf[pos++] = &#x27;.&#x27;;</span>
+<span id="L618" class="source-line"><a class="line-number" href="#L618">618</a>       buf[pos++] = &#x27;0&#x27;;</span>
+<span id="L619" class="source-line"><a class="line-number" href="#L619">619</a>     } else if ( exp + static_cast&lt;i32&gt;(len) &gt; 0 ) {</span>
+<span id="L620" class="source-line"><a class="line-number" href="#L620">620</a>       const i32 whole = static_cast&lt;i32&gt;(len) + exp;</span>
+<span id="L621" class="source-line"><a class="line-number" href="#L621">621</a>       for ( i32 i = 0; i &lt; whole; ++i ) buf[pos++] = start[i];</span>
+<span id="L622" class="source-line"><a class="line-number" href="#L622">622</a>       buf[pos++] = &#x27;.&#x27;;</span>
+<span id="L623" class="source-line"><a class="line-number" href="#L623">623</a>       for ( usize i = static_cast&lt;usize&gt;(whole); i &lt; len; ++i ) buf[pos++] = start[i];</span>
+<span id="L624" class="source-line"><a class="line-number" href="#L624">624</a>     } else {</span>
+<span id="L625" class="source-line"><a class="line-number" href="#L625">625</a>       buf[pos++] = &#x27;0&#x27;;</span>
+<span id="L626" class="source-line"><a class="line-number" href="#L626">626</a>       buf[pos++] = &#x27;.&#x27;;</span>
+<span id="L627" class="source-line"><a class="line-number" href="#L627">627</a>       for ( i32 i = 0; i &lt; -(exp + static_cast&lt;i32&gt;(len)); ++i ) buf[pos++] = &#x27;0&#x27;;</span>
+<span id="L628" class="source-line"><a class="line-number" href="#L628">628</a>       for ( usize i = 0; i &lt; len; ++i ) buf[pos++] = start[i];</span>
+<span id="L629" class="source-line"><a class="line-number" href="#L629">629</a>     }</span>
+<span id="L630" class="source-line"><a class="line-number" href="#L630">630</a>     return pos;</span>
+<span id="L631" class="source-line"><a class="line-number" href="#L631">631</a>   }</span>
+<span id="L632" class="source-line"><a class="line-number" href="#L632">632</a> </span>
+<span id="L633" class="source-line"><a class="line-number" href="#L633">633</a>   buf[pos++] = start[0];</span>
+<span id="L634" class="source-line"><a class="line-number" href="#L634">634</a>   if ( len &gt; 1 ) {</span>
+<span id="L635" class="source-line"><a class="line-number" href="#L635">635</a>     buf[pos++] = &#x27;.&#x27;;</span>
+<span id="L636" class="source-line"><a class="line-number" href="#L636">636</a>     for ( usize i = 1; i &lt; len; ++i ) buf[pos++] = start[i];</span>
+<span id="L637" class="source-line"><a class="line-number" href="#L637">637</a>   }</span>
+<span id="L638" class="source-line"><a class="line-number" href="#L638">638</a>   buf[pos++] = &#x27;e&#x27;;</span>
+<span id="L639" class="source-line"><a class="line-number" href="#L639">639</a>   if ( sci_exp &gt;= 0 )</span>
+<span id="L640" class="source-line"><a class="line-number" href="#L640">640</a>     buf[pos++] = &#x27;+&#x27;;</span>
+<span id="L641" class="source-line"><a class="line-number" href="#L641">641</a>   else {</span>
+<span id="L642" class="source-line"><a class="line-number" href="#L642">642</a>     buf[pos++] = &#x27;-&#x27;;</span>
+<span id="L643" class="source-line"><a class="line-number" href="#L643">643</a>     sci_exp = -sci_exp;</span>
+<span id="L644" class="source-line"><a class="line-number" href="#L644">644</a>   }</span>
+<span id="L645" class="source-line"><a class="line-number" href="#L645">645</a>   return __emit_exp_digits(buf, pos, static_cast&lt;u32&gt;(sci_exp));</span>
+<span id="L646" class="source-line"><a class="line-number" href="#L646">646</a> }</span>
+<span id="L647" class="source-line"><a class="line-number" href="#L647">647</a> </span>
+<span id="L648" class="source-line"><a class="line-number" href="#L648">648</a> inline constexpr usize</span>
+<span id="L649" class="source-line"><a class="line-number" href="#L649">649</a> d2s_buffered(f64 value, char *buf) noexcept</span>
+<span id="L650" class="source-line"><a class="line-number" href="#L650">650</a> {</span>
+<span id="L651" class="source-line"><a class="line-number" href="#L651">651</a>   i32 last_digit = 0;</span>
+<span id="L652" class="source-line"><a class="line-number" href="#L652">652</a>   bool has_last_digit = false;</span>
+<span id="L653" class="source-line"><a class="line-number" href="#L653">653</a>   const decimal_fp dec = __to_decimal_untrimmed(value, last_digit, has_last_digit);</span>
+<span id="L654" class="source-line"><a class="line-number" href="#L654">654</a>   return __emit_d2s(dec, last_digit, has_last_digit, buf);</span>
+<span id="L655" class="source-line"><a class="line-number" href="#L655">655</a> }</span>
+<span id="L656" class="source-line"><a class="line-number" href="#L656">656</a> </span>
+<span id="L657" class="source-line"><a class="line-number" href="#L657">657</a> inline constexpr usize</span>
+<span id="L658" class="source-line"><a class="line-number" href="#L658">658</a> __emit_f2s(decimal_fp dec, i32 last_digit, bool has_last_digit, char *buf) noexcept</span>
+<span id="L659" class="source-line"><a class="line-number" href="#L659">659</a> {</span>
+<span id="L660" class="source-line"><a class="line-number" href="#L660">660</a>   if ( dec.nonfinite ) return __emit_special(dec, buf);</span>
+<span id="L661" class="source-line"><a class="line-number" href="#L661">661</a>   usize pos = 0;</span>
+<span id="L662" class="source-line"><a class="line-number" href="#L662">662</a>   if ( dec.negative ) buf[pos++] = &#x27;-&#x27;;</span>
+<span id="L663" class="source-line"><a class="line-number" href="#L663">663</a>   if ( dec.sig == 0 &amp;&amp; !has_last_digit ) {</span>
+<span id="L664" class="source-line"><a class="line-number" href="#L664">664</a>     buf[pos++] = &#x27;0&#x27;;</span>
+<span id="L665" class="source-line"><a class="line-number" href="#L665">665</a>     buf[pos++] = &#x27;E&#x27;;</span>
+<span id="L666" class="source-line"><a class="line-number" href="#L666">666</a>     buf[pos++] = &#x27;0&#x27;;</span>
+<span id="L667" class="source-line"><a class="line-number" href="#L667">667</a>     return pos;</span>
+<span id="L668" class="source-line"><a class="line-number" href="#L668">668</a>   }</span>
+<span id="L669" class="source-line"><a class="line-number" href="#L669">669</a>   if ( has_last_digit )</span>
+<span id="L670" class="source-line"><a class="line-number" href="#L670">670</a>     dec.sig = dec.sig * 10 + static_cast&lt;u64&gt;(last_digit);</span>
+<span id="L671" class="source-line"><a class="line-number" href="#L671">671</a>   else</span>
+<span id="L672" class="source-line"><a class="line-number" href="#L672">672</a>     ++dec.exp;</span>
+<span id="L673" class="source-line"><a class="line-number" href="#L673">673</a>   char digits[18];</span>
+<span id="L674" class="source-line"><a class="line-number" href="#L674">674</a>   usize len = __ryu::decimalLength(dec.sig);</span>
+<span id="L675" class="source-line"><a class="line-number" href="#L675">675</a>   char *start = __digits_n(dec.sig, static_cast&lt;u32&gt;(len), digits);</span>
+<span id="L676" class="source-line"><a class="line-number" href="#L676">676</a>   while ( len &gt; 1 &amp;&amp; start[len - 1] == &#x27;0&#x27; ) {</span>
+<span id="L677" class="source-line"><a class="line-number" href="#L677">677</a>     --len;</span>
+<span id="L678" class="source-line"><a class="line-number" href="#L678">678</a>     ++dec.exp;</span>
+<span id="L679" class="source-line"><a class="line-number" href="#L679">679</a>   }</span>
+<span id="L680" class="source-line"><a class="line-number" href="#L680">680</a>   i32 sci_exp = dec.exp + static_cast&lt;i32&gt;(len) - 1;</span>
+<span id="L681" class="source-line"><a class="line-number" href="#L681">681</a>   buf[pos++] = start[0];</span>
+<span id="L682" class="source-line"><a class="line-number" href="#L682">682</a>   if ( len &gt; 1 ) {</span>
+<span id="L683" class="source-line"><a class="line-number" href="#L683">683</a>     buf[pos++] = &#x27;.&#x27;;</span>
+<span id="L684" class="source-line"><a class="line-number" href="#L684">684</a>     for ( usize i = 1; i &lt; len; ++i ) buf[pos++] = start[i];</span>
+<span id="L685" class="source-line"><a class="line-number" href="#L685">685</a>   }</span>
+<span id="L686" class="source-line"><a class="line-number" href="#L686">686</a>   buf[pos++] = &#x27;E&#x27;;</span>
+<span id="L687" class="source-line"><a class="line-number" href="#L687">687</a>   if ( sci_exp &lt; 0 ) {</span>
+<span id="L688" class="source-line"><a class="line-number" href="#L688">688</a>     buf[pos++] = &#x27;-&#x27;;</span>
+<span id="L689" class="source-line"><a class="line-number" href="#L689">689</a>     sci_exp = -sci_exp;</span>
+<span id="L690" class="source-line"><a class="line-number" href="#L690">690</a>   }</span>
+<span id="L691" class="source-line"><a class="line-number" href="#L691">691</a>   return __emit_exp_digits(buf, pos, static_cast&lt;u32&gt;(sci_exp));</span>
+<span id="L692" class="source-line"><a class="line-number" href="#L692">692</a> }</span>
+<span id="L693" class="source-line"><a class="line-number" href="#L693">693</a> </span>
+<span id="L694" class="source-line"><a class="line-number" href="#L694">694</a> inline constexpr usize</span>
+<span id="L695" class="source-line"><a class="line-number" href="#L695">695</a> f2s_buffered(f32 value, char *buf) noexcept</span>
+<span id="L696" class="source-line"><a class="line-number" href="#L696">696</a> {</span>
+<span id="L697" class="source-line"><a class="line-number" href="#L697">697</a>   i32 last_digit = 0;</span>
+<span id="L698" class="source-line"><a class="line-number" href="#L698">698</a>   bool has_last_digit = false;</span>
+<span id="L699" class="source-line"><a class="line-number" href="#L699">699</a>   const decimal_fp dec = __to_decimal_untrimmed(value, last_digit, has_last_digit);</span>
+<span id="L700" class="source-line"><a class="line-number" href="#L700">700</a>   return __emit_f2s(dec, last_digit, has_last_digit, buf);</span>
+<span id="L701" class="source-line"><a class="line-number" href="#L701">701</a> }</span>
+<span id="L702" class="source-line"><a class="line-number" href="#L702">702</a> </span>
+<span id="L703" class="source-line"><a class="line-number" href="#L703">703</a> inline constexpr void</span>
+<span id="L704" class="source-line"><a class="line-number" href="#L704">704</a> d2s_buffered4(const f64 *values, char *out, usize stride, usize *lengths) noexcept</span>
+<span id="L705" class="source-line"><a class="line-number" href="#L705">705</a> {</span>
+<span id="L706" class="source-line"><a class="line-number" href="#L706">706</a> #if !defined(__micron_x86_avx2) &amp;&amp; !(defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon))</span>
+<span id="L707" class="source-line"><a class="line-number" href="#L707">707</a>   lengths[0] = d2s_buffered(values[0], out);</span>
+<span id="L708" class="source-line"><a class="line-number" href="#L708">708</a>   lengths[1] = d2s_buffered(values[1], out + stride);</span>
+<span id="L709" class="source-line"><a class="line-number" href="#L709">709</a>   lengths[2] = d2s_buffered(values[2], out + stride * 2);</span>
+<span id="L710" class="source-line"><a class="line-number" href="#L710">710</a>   lengths[3] = d2s_buffered(values[3], out + stride * 3);</span>
+<span id="L711" class="source-line"><a class="line-number" href="#L711">711</a>   return;</span>
+<span id="L712" class="source-line"><a class="line-number" href="#L712">712</a> #endif</span>
+<span id="L713" class="source-line"><a class="line-number" href="#L713">713</a>   decimal_fp dec[4];</span>
+<span id="L714" class="source-line"><a class="line-number" href="#L714">714</a>   i32 last[4] = {};</span>
+<span id="L715" class="source-line"><a class="line-number" href="#L715">715</a>   bool has_last[4] = {};</span>
+<span id="L716" class="source-line"><a class="line-number" href="#L716">716</a> #if defined(__micron_x86_avx2)</span>
+<span id="L717" class="source-line"><a class="line-number" href="#L717">717</a>   if !consteval {</span>
+<span id="L718" class="source-line"><a class="line-number" href="#L718">718</a>     if ( !__to_decimal4_avx2(values, dec, last, has_last) ) {</span>
+<span id="L719" class="source-line"><a class="line-number" href="#L719">719</a>       dec[0] = __to_decimal_untrimmed(values[0], last[0], has_last[0]);</span>
+<span id="L720" class="source-line"><a class="line-number" href="#L720">720</a>       dec[1] = __to_decimal_untrimmed(values[1], last[1], has_last[1]);</span>
+<span id="L721" class="source-line"><a class="line-number" href="#L721">721</a>       dec[2] = __to_decimal_untrimmed(values[2], last[2], has_last[2]);</span>
+<span id="L722" class="source-line"><a class="line-number" href="#L722">722</a>       dec[3] = __to_decimal_untrimmed(values[3], last[3], has_last[3]);</span>
+<span id="L723" class="source-line"><a class="line-number" href="#L723">723</a>     }</span>
+<span id="L724" class="source-line"><a class="line-number" href="#L724">724</a>   } else</span>
+<span id="L725" class="source-line"><a class="line-number" href="#L725">725</a> #elif defined(__micron_arch_arm64) &amp;&amp; defined(__micron_arm_neon)</span>
+<span id="L726" class="source-line"><a class="line-number" href="#L726">726</a>   if !consteval {</span>
+<span id="L727" class="source-line"><a class="line-number" href="#L727">727</a>     __to_decimal4_neon(values, dec, last, has_last);</span>
+<span id="L728" class="source-line"><a class="line-number" href="#L728">728</a>   } else</span>
+<span id="L729" class="source-line"><a class="line-number" href="#L729">729</a> #endif</span>
+<span id="L730" class="source-line"><a class="line-number" href="#L730">730</a>   {</span>
+<span id="L731" class="source-line"><a class="line-number" href="#L731">731</a>     dec[0] = __to_decimal_untrimmed(values[0], last[0], has_last[0]);</span>
+<span id="L732" class="source-line"><a class="line-number" href="#L732">732</a>     dec[1] = __to_decimal_untrimmed(values[1], last[1], has_last[1]);</span>
+<span id="L733" class="source-line"><a class="line-number" href="#L733">733</a>     dec[2] = __to_decimal_untrimmed(values[2], last[2], has_last[2]);</span>
+<span id="L734" class="source-line"><a class="line-number" href="#L734">734</a>     dec[3] = __to_decimal_untrimmed(values[3], last[3], has_last[3]);</span>
+<span id="L735" class="source-line"><a class="line-number" href="#L735">735</a>   }</span>
+<span id="L736" class="source-line"><a class="line-number" href="#L736">736</a>   lengths[0] = __emit_d2s(dec[0], last[0], has_last[0], out);</span>
+<span id="L737" class="source-line"><a class="line-number" href="#L737">737</a>   lengths[1] = __emit_d2s(dec[1], last[1], has_last[1], out + stride);</span>
+<span id="L738" class="source-line"><a class="line-number" href="#L738">738</a>   lengths[2] = __emit_d2s(dec[2], last[2], has_last[2], out + stride * 2);</span>
+<span id="L739" class="source-line"><a class="line-number" href="#L739">739</a>   lengths[3] = __emit_d2s(dec[3], last[3], has_last[3], out + stride * 3);</span>
+<span id="L740" class="source-line"><a class="line-number" href="#L740">740</a> }</span>
+<span id="L741" class="source-line"><a class="line-number" href="#L741">741</a> </span>
+<span id="L742" class="source-line"><a class="line-number" href="#L742">742</a> inline constexpr void</span>
+<span id="L743" class="source-line"><a class="line-number" href="#L743">743</a> f2s_buffered4(const f32 *values, char *out, usize stride, usize *lengths) noexcept</span>
+<span id="L744" class="source-line"><a class="line-number" href="#L744">744</a> {</span>
+<span id="L745" class="source-line"><a class="line-number" href="#L745">745</a> #if !defined(__micron_x86_avx2) &amp;&amp; !((defined(__micron_arch_arm32) || defined(__micron_arch_arm64)) &amp;&amp; defined(__micron_arm_neon))</span>
+<span id="L746" class="source-line"><a class="line-number" href="#L746">746</a>   lengths[0] = f2s_buffered(values[0], out);</span>
+<span id="L747" class="source-line"><a class="line-number" href="#L747">747</a>   lengths[1] = f2s_buffered(values[1], out + stride);</span>
+<span id="L748" class="source-line"><a class="line-number" href="#L748">748</a>   lengths[2] = f2s_buffered(values[2], out + stride * 2);</span>
+<span id="L749" class="source-line"><a class="line-number" href="#L749">749</a>   lengths[3] = f2s_buffered(values[3], out + stride * 3);</span>
+<span id="L750" class="source-line"><a class="line-number" href="#L750">750</a>   return;</span>
+<span id="L751" class="source-line"><a class="line-number" href="#L751">751</a> #endif</span>
+<span id="L752" class="source-line"><a class="line-number" href="#L752">752</a>   decimal_fp dec[4];</span>
+<span id="L753" class="source-line"><a class="line-number" href="#L753">753</a>   i32 last[4] = {};</span>
+<span id="L754" class="source-line"><a class="line-number" href="#L754">754</a>   bool has_last[4] = {};</span>
+<span id="L755" class="source-line"><a class="line-number" href="#L755">755</a> #if defined(__micron_x86_avx2)</span>
+<span id="L756" class="source-line"><a class="line-number" href="#L756">756</a>   if !consteval {</span>
+<span id="L757" class="source-line"><a class="line-number" href="#L757">757</a>     if ( !__to_decimal4_avx2(values, dec, last, has_last) ) {</span>
+<span id="L758" class="source-line"><a class="line-number" href="#L758">758</a>       dec[0] = __to_decimal_untrimmed(values[0], last[0], has_last[0]);</span>
+<span id="L759" class="source-line"><a class="line-number" href="#L759">759</a>       dec[1] = __to_decimal_untrimmed(values[1], last[1], has_last[1]);</span>
+<span id="L760" class="source-line"><a class="line-number" href="#L760">760</a>       dec[2] = __to_decimal_untrimmed(values[2], last[2], has_last[2]);</span>
+<span id="L761" class="source-line"><a class="line-number" href="#L761">761</a>       dec[3] = __to_decimal_untrimmed(values[3], last[3], has_last[3]);</span>
+<span id="L762" class="source-line"><a class="line-number" href="#L762">762</a>     }</span>
+<span id="L763" class="source-line"><a class="line-number" href="#L763">763</a>   } else</span>
+<span id="L764" class="source-line"><a class="line-number" href="#L764">764</a> #elif (defined(__micron_arch_arm32) || defined(__micron_arch_arm64)) &amp;&amp; defined(__micron_arm_neon)</span>
+<span id="L765" class="source-line"><a class="line-number" href="#L765">765</a>   if !consteval {</span>
+<span id="L766" class="source-line"><a class="line-number" href="#L766">766</a>     __to_decimal4_neon(values, dec, last, has_last);</span>
+<span id="L767" class="source-line"><a class="line-number" href="#L767">767</a>   } else</span>
+<span id="L768" class="source-line"><a class="line-number" href="#L768">768</a> #endif</span>
+<span id="L769" class="source-line"><a class="line-number" href="#L769">769</a>   {</span>
+<span id="L770" class="source-line"><a class="line-number" href="#L770">770</a>     dec[0] = __to_decimal_untrimmed(values[0], last[0], has_last[0]);</span>
+<span id="L771" class="source-line"><a class="line-number" href="#L771">771</a>     dec[1] = __to_decimal_untrimmed(values[1], last[1], has_last[1]);</span>
+<span id="L772" class="source-line"><a class="line-number" href="#L772">772</a>     dec[2] = __to_decimal_untrimmed(values[2], last[2], has_last[2]);</span>
+<span id="L773" class="source-line"><a class="line-number" href="#L773">773</a>     dec[3] = __to_decimal_untrimmed(values[3], last[3], has_last[3]);</span>
+<span id="L774" class="source-line"><a class="line-number" href="#L774">774</a>   }</span>
+<span id="L775" class="source-line"><a class="line-number" href="#L775">775</a>   lengths[0] = __emit_f2s(dec[0], last[0], has_last[0], out);</span>
+<span id="L776" class="source-line"><a class="line-number" href="#L776">776</a>   lengths[1] = __emit_f2s(dec[1], last[1], has_last[1], out + stride);</span>
+<span id="L777" class="source-line"><a class="line-number" href="#L777">777</a>   lengths[2] = __emit_f2s(dec[2], last[2], has_last[2], out + stride * 2);</span>
+<span id="L778" class="source-line"><a class="line-number" href="#L778">778</a>   lengths[3] = __emit_f2s(dec[3], last[3], has_last[3], out + stride * 3);</span>
+<span id="L779" class="source-line"><a class="line-number" href="#L779">779</a> }</span>
+<span id="L780" class="source-line"><a class="line-number" href="#L780">780</a> </span>
+<span id="L781" class="source-line"><a class="line-number" href="#L781">781</a> struct precision_decimal {</span>
+<span id="L782" class="source-line"><a class="line-number" href="#L782">782</a>   u64 sig;</span>
+<span id="L783" class="source-line"><a class="line-number" href="#L783">783</a>   i32 lead_exp;</span>
+<span id="L784" class="source-line"><a class="line-number" href="#L784">784</a> };</span>
+<span id="L785" class="source-line"><a class="line-number" href="#L785">785</a> </span>
+<span id="L786" class="source-line"><a class="line-number" href="#L786">786</a> inline constexpr u64</span>
+<span id="L787" class="source-line"><a class="line-number" href="#L787">787</a> __scale(u64 bin_sig, i32 bin_exp, i32 dec_exp) noexcept</span>
+<span id="L788" class="source-line"><a class="line-number" href="#L788">788</a> {</span>
+<span id="L789" class="source-line"><a class="line-number" href="#L789">789</a>   constexpr i32 shift = 11;</span>
+<span id="L790" class="source-line"><a class="line-number" href="#L790">790</a>   const i32 point_shift = shift - __compute_exp_shift(bin_exp, dec_exp);</span>
+<span id="L791" class="source-line"><a class="line-number" href="#L791">791</a>   const uint128 pow10 = __data.pow10_significands[-dec_exp];</span>
+<span id="L792" class="source-line"><a class="line-number" href="#L792">792</a>   const uint128 p = __umul192_hi128(pow10.hi, pow10.lo + (dec_exp &lt; -55 || dec_exp &gt; 0), bin_sig &lt;&lt; shift);</span>
+<span id="L793" class="source-line"><a class="line-number" href="#L793">793</a>   const u64 integral = p.hi &gt;&gt; point_shift;</span>
+<span id="L794" class="source-line"><a class="line-number" href="#L794">794</a>   const u64 half = p.hi &gt;&gt; (point_shift - 1) &amp; 1;</span>
+<span id="L795" class="source-line"><a class="line-number" href="#L795">795</a>   const u64 tail = (p.hi &amp; ((1ull &lt;&lt; (point_shift - 1)) - 1)) | p.lo;</span>
+<span id="L796" class="source-line"><a class="line-number" href="#L796">796</a>   return integral &lt;&lt; 2 | half &lt;&lt; 1 | (tail != 0);</span>
+<span id="L797" class="source-line"><a class="line-number" href="#L797">797</a> }</span>
+<span id="L798" class="source-line"><a class="line-number" href="#L798">798</a> </span>
+<span id="L799" class="source-line"><a class="line-number" href="#L799">799</a> inline constexpr u64</span>
+<span id="L800" class="source-line"><a class="line-number" href="#L800">800</a> __round_even(u64 x) noexcept</span>
+<span id="L801" class="source-line"><a class="line-number" href="#L801">801</a> {</span>
+<span id="L802" class="source-line"><a class="line-number" href="#L802">802</a>   return (x + 1 + ((x &gt;&gt; 2) &amp; 1)) &gt;&gt; 2;</span>
+<span id="L803" class="source-line"><a class="line-number" href="#L803">803</a> }</span>
+<span id="L804" class="source-line"><a class="line-number" href="#L804">804</a> </span>
+<span id="L805" class="source-line"><a class="line-number" href="#L805">805</a> inline constexpr precision_decimal</span>
+<span id="L806" class="source-line"><a class="line-number" href="#L806">806</a> __to_precision(u64 bin_sig, i32 bin_exp, i32 precision) noexcept</span>
+<span id="L807" class="source-line"><a class="line-number" href="#L807">807</a> {</span>
+<span id="L808" class="source-line"><a class="line-number" href="#L808">808</a>   i32 dec_exp = __compute_dec_exp(bin_exp + 52) - (precision - 1);</span>
+<span id="L809" class="source-line"><a class="line-number" href="#L809">809</a>   const u64 scaled = __scale(bin_sig, bin_exp, dec_exp);</span>
+<span id="L810" class="source-line"><a class="line-number" href="#L810">810</a>   u64 dec_sig = __round_even(scaled);</span>
+<span id="L811" class="source-line"><a class="line-number" href="#L811">811</a>   if ( dec_sig &gt;= __pow10s[precision] ) {</span>
+<span id="L812" class="source-line"><a class="line-number" href="#L812">812</a>     dec_sig = __round_even(scaled / 10 | (scaled &amp; 1) | (scaled % 10 != 0));</span>
+<span id="L813" class="source-line"><a class="line-number" href="#L813">813</a>     ++dec_exp;</span>
+<span id="L814" class="source-line"><a class="line-number" href="#L814">814</a>   }</span>
+<span id="L815" class="source-line"><a class="line-number" href="#L815">815</a>   return { dec_sig * __pow10s[18 - precision], dec_exp + precision - 1 };</span>
+<span id="L816" class="source-line"><a class="line-number" href="#L816">816</a> }</span>
+<span id="L817" class="source-line"><a class="line-number" href="#L817">817</a> </span>
+<span id="L818" class="source-line"><a class="line-number" href="#L818">818</a> inline constexpr void</span>
+<span id="L819" class="source-line"><a class="line-number" href="#L819">819</a> __digits18(u64 value, char (&amp;digits)[18]) noexcept</span>
+<span id="L820" class="source-line"><a class="line-number" href="#L820">820</a> {</span>
+<span id="L821" class="source-line"><a class="line-number" href="#L821">821</a>   if !consteval {</span>
+<span id="L822" class="source-line"><a class="line-number" href="#L822">822</a> #if defined(__micron_arch_x86_any) &amp;&amp; defined(__micron_x86_sse2)</span>
+<span id="L823" class="source-line"><a class="line-number" href="#L823">823</a>     const u64 hi = value / 10000000000000000ull;</span>
+<span id="L824" class="source-line"><a class="line-number" href="#L824">824</a>     digits[0] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi / 10);</span>
+<span id="L825" class="source-line"><a class="line-number" href="#L825">825</a>     digits[1] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi % 10);</span>
+<span id="L826" class="source-line"><a class="line-number" href="#L826">826</a>     micron::simd::sse::decimal_digits_16(digits + 2, value - hi * 10000000000000000ull);</span>
+<span id="L827" class="source-line"><a class="line-number" href="#L827">827</a>     return;</span>
+<span id="L828" class="source-line"><a class="line-number" href="#L828">828</a> #elif (defined(__micron_arch_arm32) || defined(__micron_arch_arm64)) &amp;&amp; defined(__micron_arm_neon)</span>
+<span id="L829" class="source-line"><a class="line-number" href="#L829">829</a>     const u64 hi = value / 10000000000000000ull;</span>
+<span id="L830" class="source-line"><a class="line-number" href="#L830">830</a>     digits[0] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi / 10);</span>
+<span id="L831" class="source-line"><a class="line-number" href="#L831">831</a>     digits[1] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi % 10);</span>
+<span id="L832" class="source-line"><a class="line-number" href="#L832">832</a>     micron::simd::neon::decimal_digits_16(digits + 2, value - hi * 10000000000000000ull);</span>
+<span id="L833" class="source-line"><a class="line-number" href="#L833">833</a>     return;</span>
+<span id="L834" class="source-line"><a class="line-number" href="#L834">834</a> #endif</span>
+<span id="L835" class="source-line"><a class="line-number" href="#L835">835</a>   }</span>
+<span id="L836" class="source-line"><a class="line-number" href="#L836">836</a>   for ( i32 i = 18; i-- &gt; 0; ) {</span>
+<span id="L837" class="source-line"><a class="line-number" href="#L837">837</a>     digits[i] = static_cast&lt;char&gt;(&#x27;0&#x27; + value % 10);</span>
+<span id="L838" class="source-line"><a class="line-number" href="#L838">838</a>     value /= 10;</span>
+<span id="L839" class="source-line"><a class="line-number" href="#L839">839</a>   }</span>
+<span id="L840" class="source-line"><a class="line-number" href="#L840">840</a> }</span>
+<span id="L841" class="source-line"><a class="line-number" href="#L841">841</a> </span>
+<span id="L842" class="source-line"><a class="line-number" href="#L842">842</a> inline constexpr char *</span>
+<span id="L843" class="source-line"><a class="line-number" href="#L843">843</a> __digits_n(u64 value, u32 count, char (&amp;digits)[18]) noexcept</span>
+<span id="L844" class="source-line"><a class="line-number" href="#L844">844</a> {</span>
+<span id="L845" class="source-line"><a class="line-number" href="#L845">845</a>   char *const end = digits + 18;</span>
+<span id="L846" class="source-line"><a class="line-number" href="#L846">846</a>   if ( count &lt;= 8 ) {</span>
+<span id="L847" class="source-line"><a class="line-number" href="#L847">847</a>     micron::__impl::emit8_backward(end - 8, static_cast&lt;u32&gt;(value));</span>
+<span id="L848" class="source-line"><a class="line-number" href="#L848">848</a>   } else if ( count &lt;= 16 ) {</span>
+<span id="L849" class="source-line"><a class="line-number" href="#L849">849</a>     const u64 hi = micron::__impl::fast_div1e8(value);</span>
+<span id="L850" class="source-line"><a class="line-number" href="#L850">850</a>     micron::__impl::emit8_backward(end - 16, static_cast&lt;u32&gt;(hi));</span>
+<span id="L851" class="source-line"><a class="line-number" href="#L851">851</a>     micron::__impl::emit8_backward(end - 8, micron::__impl::fast_mod1e8(value, hi));</span>
+<span id="L852" class="source-line"><a class="line-number" href="#L852">852</a>   } else {</span>
+<span id="L853" class="source-line"><a class="line-number" href="#L853">853</a>     __digits18(value, digits);</span>
+<span id="L854" class="source-line"><a class="line-number" href="#L854">854</a>   }</span>
+<span id="L855" class="source-line"><a class="line-number" href="#L855">855</a>   return end - count;</span>
+<span id="L856" class="source-line"><a class="line-number" href="#L856">856</a> }</span>
+<span id="L857" class="source-line"><a class="line-number" href="#L857">857</a> </span>
+<span id="L858" class="source-line"><a class="line-number" href="#L858">858</a> inline constexpr void</span>
+<span id="L859" class="source-line"><a class="line-number" href="#L859">859</a> __normalize(u64 &amp;sig, i32 &amp;exp) noexcept</span>
+<span id="L860" class="source-line"><a class="line-number" href="#L860">860</a> {</span>
+<span id="L861" class="source-line"><a class="line-number" href="#L861">861</a>   const i32 shift = static_cast&lt;i32&gt;(micron::__impl::clz64(sig)) - 11;</span>
+<span id="L862" class="source-line"><a class="line-number" href="#L862">862</a>   if ( shift &gt; 0 ) {</span>
+<span id="L863" class="source-line"><a class="line-number" href="#L863">863</a>     sig &lt;&lt;= shift;</span>
+<span id="L864" class="source-line"><a class="line-number" href="#L864">864</a>     exp -= shift;</span>
+<span id="L865" class="source-line"><a class="line-number" href="#L865">865</a>   }</span>
+<span id="L866" class="source-line"><a class="line-number" href="#L866">866</a> }</span>
+<span id="L867" class="source-line"><a class="line-number" href="#L867">867</a> </span>
+<span id="L868" class="source-line"><a class="line-number" href="#L868">868</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L869" class="source-line"><a class="line-number" href="#L869">869</a> // exact base-2^32 precision path</span>
+<span id="L870" class="source-line"><a class="line-number" href="#L870">870</a> </span>
+<span id="L871" class="source-line"><a class="line-number" href="#L871">871</a> struct bigint {</span>
+<span id="L872" class="source-line"><a class="line-number" href="#L872">872</a>   static constexpr i32 capacity = 96;</span>
+<span id="L873" class="source-line"><a class="line-number" href="#L873">873</a>   u32 limbs[capacity];</span>
+<span id="L874" class="source-line"><a class="line-number" href="#L874">874</a>   i32 size = 0;</span>
+<span id="L875" class="source-line"><a class="line-number" href="#L875">875</a> </span>
+<span id="L876" class="source-line"><a class="line-number" href="#L876">876</a>   constexpr explicit bigint(u64 value) noexcept</span>
+<span id="L877" class="source-line"><a class="line-number" href="#L877">877</a>   {</span>
+<span id="L878" class="source-line"><a class="line-number" href="#L878">878</a>     limbs[0] = static_cast&lt;u32&gt;(value);</span>
+<span id="L879" class="source-line"><a class="line-number" href="#L879">879</a>     limbs[1] = static_cast&lt;u32&gt;(value &gt;&gt; 32);</span>
+<span id="L880" class="source-line"><a class="line-number" href="#L880">880</a>     size = limbs[1] != 0 ? 2 : limbs[0] != 0 ? 1 : 0;</span>
+<span id="L881" class="source-line"><a class="line-number" href="#L881">881</a>   }</span>
+<span id="L882" class="source-line"><a class="line-number" href="#L882">882</a> </span>
+<span id="L883" class="source-line"><a class="line-number" href="#L883">883</a>   constexpr void</span>
+<span id="L884" class="source-line"><a class="line-number" href="#L884">884</a>   trim() noexcept</span>
+<span id="L885" class="source-line"><a class="line-number" href="#L885">885</a>   {</span>
+<span id="L886" class="source-line"><a class="line-number" href="#L886">886</a>     while ( size &gt; 0 &amp;&amp; limbs[size - 1] == 0 ) --size;</span>
+<span id="L887" class="source-line"><a class="line-number" href="#L887">887</a>   }</span>
+<span id="L888" class="source-line"><a class="line-number" href="#L888">888</a> </span>
+<span id="L889" class="source-line"><a class="line-number" href="#L889">889</a>   constexpr void</span>
+<span id="L890" class="source-line"><a class="line-number" href="#L890">890</a>   shl(i32 bits) noexcept</span>
+<span id="L891" class="source-line"><a class="line-number" href="#L891">891</a>   {</span>
+<span id="L892" class="source-line"><a class="line-number" href="#L892">892</a>     if ( size == 0 ) return;</span>
+<span id="L893" class="source-line"><a class="line-number" href="#L893">893</a>     const i32 words = bits &gt;&gt; 5;</span>
+<span id="L894" class="source-line"><a class="line-number" href="#L894">894</a>     const i32 shift = bits &amp; 31;</span>
+<span id="L895" class="source-line"><a class="line-number" href="#L895">895</a>     if ( shift == 0 ) {</span>
+<span id="L896" class="source-line"><a class="line-number" href="#L896">896</a>       for ( i32 i = size; i-- &gt; 0; ) limbs[i + words] = limbs[i];</span>
+<span id="L897" class="source-line"><a class="line-number" href="#L897">897</a>       size += words;</span>
+<span id="L898" class="source-line"><a class="line-number" href="#L898">898</a>     } else {</span>
+<span id="L899" class="source-line"><a class="line-number" href="#L899">899</a>       limbs[size + words] = limbs[size - 1] &gt;&gt; (32 - shift);</span>
+<span id="L900" class="source-line"><a class="line-number" href="#L900">900</a>       for ( i32 i = size - 1; i &gt; 0; --i ) limbs[i + words] = limbs[i] &lt;&lt; shift | limbs[i - 1] &gt;&gt; (32 - shift);</span>
+<span id="L901" class="source-line"><a class="line-number" href="#L901">901</a>       limbs[words] = limbs[0] &lt;&lt; shift;</span>
+<span id="L902" class="source-line"><a class="line-number" href="#L902">902</a>       size += words + 1;</span>
+<span id="L903" class="source-line"><a class="line-number" href="#L903">903</a>     }</span>
+<span id="L904" class="source-line"><a class="line-number" href="#L904">904</a>     for ( i32 i = 0; i &lt; words; ++i ) limbs[i] = 0;</span>
+<span id="L905" class="source-line"><a class="line-number" href="#L905">905</a>     trim();</span>
+<span id="L906" class="source-line"><a class="line-number" href="#L906">906</a>   }</span>
+<span id="L907" class="source-line"><a class="line-number" href="#L907">907</a> </span>
+<span id="L908" class="source-line"><a class="line-number" href="#L908">908</a>   constexpr void</span>
+<span id="L909" class="source-line"><a class="line-number" href="#L909">909</a>   mul(u32 factor) noexcept</span>
+<span id="L910" class="source-line"><a class="line-number" href="#L910">910</a>   {</span>
+<span id="L911" class="source-line"><a class="line-number" href="#L911">911</a>     u64 carry = 0;</span>
+<span id="L912" class="source-line"><a class="line-number" href="#L912">912</a>     for ( i32 i = 0; i &lt; size; ++i ) {</span>
+<span id="L913" class="source-line"><a class="line-number" href="#L913">913</a>       const u64 product = static_cast&lt;u64&gt;(limbs[i]) * factor + carry;</span>
+<span id="L914" class="source-line"><a class="line-number" href="#L914">914</a>       limbs[i] = static_cast&lt;u32&gt;(product);</span>
+<span id="L915" class="source-line"><a class="line-number" href="#L915">915</a>       carry = product &gt;&gt; 32;</span>
+<span id="L916" class="source-line"><a class="line-number" href="#L916">916</a>     }</span>
+<span id="L917" class="source-line"><a class="line-number" href="#L917">917</a>     if ( carry != 0 ) limbs[size++] = static_cast&lt;u32&gt;(carry);</span>
+<span id="L918" class="source-line"><a class="line-number" href="#L918">918</a>   }</span>
+<span id="L919" class="source-line"><a class="line-number" href="#L919">919</a> </span>
+<span id="L920" class="source-line"><a class="line-number" href="#L920">920</a>   constexpr void</span>
+<span id="L921" class="source-line"><a class="line-number" href="#L921">921</a>   mul_pow5(i32 exp) noexcept</span>
+<span id="L922" class="source-line"><a class="line-number" href="#L922">922</a>   {</span>
+<span id="L923" class="source-line"><a class="line-number" href="#L923">923</a>     constexpr u32 pow5[13] = { 1u, 5u, 25u, 125u, 625u, 3125u, 15625u, 78125u, 390625u, 1953125u, 9765625u, 48828125u, 244140625u };</span>
+<span id="L924" class="source-line"><a class="line-number" href="#L924">924</a>     while ( exp &gt;= 13 ) {</span>
+<span id="L925" class="source-line"><a class="line-number" href="#L925">925</a>       mul(1220703125u);</span>
+<span id="L926" class="source-line"><a class="line-number" href="#L926">926</a>       exp -= 13;</span>
+<span id="L927" class="source-line"><a class="line-number" href="#L927">927</a>     }</span>
+<span id="L928" class="source-line"><a class="line-number" href="#L928">928</a>     if ( exp != 0 ) mul(pow5[exp]);</span>
+<span id="L929" class="source-line"><a class="line-number" href="#L929">929</a>   }</span>
+<span id="L930" class="source-line"><a class="line-number" href="#L930">930</a> </span>
+<span id="L931" class="source-line"><a class="line-number" href="#L931">931</a>   constexpr u32</span>
+<span id="L932" class="source-line"><a class="line-number" href="#L932">932</a>   divmod_1e9() noexcept</span>
+<span id="L933" class="source-line"><a class="line-number" href="#L933">933</a>   {</span>
+<span id="L934" class="source-line"><a class="line-number" href="#L934">934</a>     u64 rem = 0;</span>
+<span id="L935" class="source-line"><a class="line-number" href="#L935">935</a>     for ( i32 i = size; i-- &gt; 0; ) {</span>
+<span id="L936" class="source-line"><a class="line-number" href="#L936">936</a>       const u64 value = rem &lt;&lt; 32 | limbs[i];</span>
+<span id="L937" class="source-line"><a class="line-number" href="#L937">937</a>       limbs[i] = static_cast&lt;u32&gt;(value / 1000000000u);</span>
+<span id="L938" class="source-line"><a class="line-number" href="#L938">938</a>       rem = value % 1000000000u;</span>
+<span id="L939" class="source-line"><a class="line-number" href="#L939">939</a>     }</span>
+<span id="L940" class="source-line"><a class="line-number" href="#L940">940</a>     trim();</span>
+<span id="L941" class="source-line"><a class="line-number" href="#L941">941</a>     return static_cast&lt;u32&gt;(rem);</span>
+<span id="L942" class="source-line"><a class="line-number" href="#L942">942</a>   }</span>
+<span id="L943" class="source-line"><a class="line-number" href="#L943">943</a> };</span>
+<span id="L944" class="source-line"><a class="line-number" href="#L944">944</a> </span>
+<span id="L945" class="source-line"><a class="line-number" href="#L945">945</a> [[gnu::noinline]] inline constexpr char *</span>
+<span id="L946" class="source-line"><a class="line-number" href="#L946">946</a> __write_big_digits(bigint &amp;value, char *end) noexcept</span>
+<span id="L947" class="source-line"><a class="line-number" href="#L947">947</a> {</span>
+<span id="L948" class="source-line"><a class="line-number" href="#L948">948</a>   char *out = end;</span>
+<span id="L949" class="source-line"><a class="line-number" href="#L949">949</a>   u32 group = value.divmod_1e9();</span>
+<span id="L950" class="source-line"><a class="line-number" href="#L950">950</a>   while ( value.size != 0 ) {</span>
+<span id="L951" class="source-line"><a class="line-number" href="#L951">951</a>     out -= 9;</span>
+<span id="L952" class="source-line"><a class="line-number" href="#L952">952</a>     const u32 hi = group / 100000000u;</span>
+<span id="L953" class="source-line"><a class="line-number" href="#L953">953</a>     out[0] = static_cast&lt;char&gt;(&#x27;0&#x27; + hi);</span>
+<span id="L954" class="source-line"><a class="line-number" href="#L954">954</a>     micron::__impl::emit8_backward(out + 1, group - hi * 100000000u);</span>
+<span id="L955" class="source-line"><a class="line-number" href="#L955">955</a>     group = value.divmod_1e9();</span>
+<span id="L956" class="source-line"><a class="line-number" href="#L956">956</a>   }</span>
+<span id="L957" class="source-line"><a class="line-number" href="#L957">957</a>   return micron::__impl::uint_to_buf_backward(out, group);</span>
+<span id="L958" class="source-line"><a class="line-number" href="#L958">958</a> }</span>
+<span id="L959" class="source-line"><a class="line-number" href="#L959">959</a> </span>
+<span id="L960" class="source-line"><a class="line-number" href="#L960">960</a> enum class cut : u8 { significant, fraction };</span>
+<span id="L961" class="source-line"><a class="line-number" href="#L961">961</a> </span>
+<span id="L962" class="source-line"><a class="line-number" href="#L962">962</a> [[gnu::noinline]] inline constexpr void</span>
+<span id="L963" class="source-line"><a class="line-number" href="#L963">963</a> __exact_round(u64 sig, i32 exp, cut mode, i32 argument, char *digits, u32 &amp;count, i32 &amp;point) noexcept</span>
+<span id="L964" class="source-line"><a class="line-number" href="#L964">964</a> {</span>
+<span id="L965" class="source-line"><a class="line-number" href="#L965">965</a>   bigint value(sig);</span>
+<span id="L966" class="source-line"><a class="line-number" href="#L966">966</a>   i32 base_exp = 0;</span>
+<span id="L967" class="source-line"><a class="line-number" href="#L967">967</a>   if ( exp &gt;= 0 )</span>
+<span id="L968" class="source-line"><a class="line-number" href="#L968">968</a>     value.shl(exp);</span>
+<span id="L969" class="source-line"><a class="line-number" href="#L969">969</a>   else {</span>
+<span id="L970" class="source-line"><a class="line-number" href="#L970">970</a>     value.mul_pow5(-exp);</span>
+<span id="L971" class="source-line"><a class="line-number" href="#L971">971</a>     base_exp = exp;</span>
+<span id="L972" class="source-line"><a class="line-number" href="#L972">972</a>   }</span>
+<span id="L973" class="source-line"><a class="line-number" href="#L973">973</a> </span>
+<span id="L974" class="source-line"><a class="line-number" href="#L974">974</a>   char exact[__ryu::__fx::__dig_cap];</span>
+<span id="L975" class="source-line"><a class="line-number" href="#L975">975</a>   char *start = __write_big_digits(value, exact + sizeof(exact));</span>
+<span id="L976" class="source-line"><a class="line-number" href="#L976">976</a>   const u32 exact_count = static_cast&lt;u32&gt;(exact + sizeof(exact) - start);</span>
+<span id="L977" class="source-line"><a class="line-number" href="#L977">977</a>   point = static_cast&lt;i32&gt;(exact_count) + base_exp;</span>
+<span id="L978" class="source-line"><a class="line-number" href="#L978">978</a>   count = 0;</span>
+<span id="L979" class="source-line"><a class="line-number" href="#L979">979</a> </span>
+<span id="L980" class="source-line"><a class="line-number" href="#L980">980</a>   const i32 keep = mode == cut::significant ? argument : point + argument;</span>
+<span id="L981" class="source-line"><a class="line-number" href="#L981">981</a>   if ( keep &lt; 0 ) return;</span>
+<span id="L982" class="source-line"><a class="line-number" href="#L982">982</a>   const u32 kept = static_cast&lt;u32&gt;(keep);</span>
+<span id="L983" class="source-line"><a class="line-number" href="#L983">983</a>   if ( kept &gt;= exact_count ) {</span>
+<span id="L984" class="source-line"><a class="line-number" href="#L984">984</a>     for ( u32 i = 0; i &lt; exact_count; ++i ) digits[i] = start[i];</span>
+<span id="L985" class="source-line"><a class="line-number" href="#L985">985</a>     count = exact_count;</span>
+<span id="L986" class="source-line"><a class="line-number" href="#L986">986</a>     return;</span>
+<span id="L987" class="source-line"><a class="line-number" href="#L987">987</a>   }</span>
+<span id="L988" class="source-line"><a class="line-number" href="#L988">988</a> </span>
+<span id="L989" class="source-line"><a class="line-number" href="#L989">989</a>   bool tail = false;</span>
+<span id="L990" class="source-line"><a class="line-number" href="#L990">990</a>   for ( u32 i = kept + 1; i &lt; exact_count; ++i ) tail |= start[i] != &#x27;0&#x27;;</span>
+<span id="L991" class="source-line"><a class="line-number" href="#L991">991</a>   const char dropped = start[kept];</span>
+<span id="L992" class="source-line"><a class="line-number" href="#L992">992</a>   const bool odd = kept != 0 &amp;&amp; ((start[kept - 1] - &#x27;0&#x27;) &amp; 1) != 0;</span>
+<span id="L993" class="source-line"><a class="line-number" href="#L993">993</a>   const bool up = dropped &gt; &#x27;5&#x27; || (dropped == &#x27;5&#x27; &amp;&amp; (tail || odd));</span>
+<span id="L994" class="source-line"><a class="line-number" href="#L994">994</a>   for ( u32 i = 0; i &lt; kept; ++i ) digits[i] = start[i];</span>
+<span id="L995" class="source-line"><a class="line-number" href="#L995">995</a>   count = kept;</span>
+<span id="L996" class="source-line"><a class="line-number" href="#L996">996</a>   if ( !up ) return;</span>
+<span id="L997" class="source-line"><a class="line-number" href="#L997">997</a> </span>
+<span id="L998" class="source-line"><a class="line-number" href="#L998">998</a>   for ( u32 i = kept; i-- &gt; 0; ) {</span>
+<span id="L999" class="source-line"><a class="line-number" href="#L999">999</a>     if ( digits[i] != &#x27;9&#x27; ) {</span>
+<span id="L1000" class="source-line"><a class="line-number" href="#L1000">1000</a>       ++digits[i];</span>
+<span id="L1001" class="source-line"><a class="line-number" href="#L1001">1001</a>       return;</span>
+<span id="L1002" class="source-line"><a class="line-number" href="#L1002">1002</a>     }</span>
+<span id="L1003" class="source-line"><a class="line-number" href="#L1003">1003</a>     digits[i] = &#x27;0&#x27;;</span>
+<span id="L1004" class="source-line"><a class="line-number" href="#L1004">1004</a>   }</span>
+<span id="L1005" class="source-line"><a class="line-number" href="#L1005">1005</a>   digits[0] = &#x27;1&#x27;;</span>
+<span id="L1006" class="source-line"><a class="line-number" href="#L1006">1006</a>   if ( count == 0 ) count = 1;</span>
+<span id="L1007" class="source-line"><a class="line-number" href="#L1007">1007</a>   ++point;</span>
+<span id="L1008" class="source-line"><a class="line-number" href="#L1008">1008</a> }</span>
+<span id="L1009" class="source-line"><a class="line-number" href="#L1009">1009</a> </span>
+<span id="L1010" class="source-line"><a class="line-number" href="#L1010">1010</a> inline constexpr usize</span>
+<span id="L1011" class="source-line"><a class="line-number" href="#L1011">1011</a> __d2f_exact(const __ryu::__fx::parts &amp;p, char *buf, usize cap, u32 precision) noexcept</span>
+<span id="L1012" class="source-line"><a class="line-number" href="#L1012">1012</a> {</span>
+<span id="L1013" class="source-line"><a class="line-number" href="#L1013">1013</a>   char digits[__ryu::__fx::__dig_cap];</span>
+<span id="L1014" class="source-line"><a class="line-number" href="#L1014">1014</a>   u32 count = 0;</span>
+<span id="L1015" class="source-line"><a class="line-number" href="#L1015">1015</a>   i32 point = 0;</span>
+<span id="L1016" class="source-line"><a class="line-number" href="#L1016">1016</a>   __exact_round(p.m2, p.e2, cut::fraction, static_cast&lt;i32&gt;(precision), digits, count, point);</span>
+<span id="L1017" class="source-line"><a class="line-number" href="#L1017">1017</a>   return __ryu::__fx::__emit_fixed(buf, cap, p.neg, digits, count, point, precision);</span>
+<span id="L1018" class="source-line"><a class="line-number" href="#L1018">1018</a> }</span>
+<span id="L1019" class="source-line"><a class="line-number" href="#L1019">1019</a> </span>
+<span id="L1020" class="source-line"><a class="line-number" href="#L1020">1020</a> inline constexpr usize</span>
+<span id="L1021" class="source-line"><a class="line-number" href="#L1021">1021</a> __d2e_exact(const __ryu::__fx::parts &amp;p, char *buf, usize cap, u32 precision) noexcept</span>
+<span id="L1022" class="source-line"><a class="line-number" href="#L1022">1022</a> {</span>
+<span id="L1023" class="source-line"><a class="line-number" href="#L1023">1023</a>   char digits[__ryu::__fx::__dig_cap];</span>
+<span id="L1024" class="source-line"><a class="line-number" href="#L1024">1024</a>   u32 count = 0;</span>
+<span id="L1025" class="source-line"><a class="line-number" href="#L1025">1025</a>   i32 point = 0;</span>
+<span id="L1026" class="source-line"><a class="line-number" href="#L1026">1026</a>   __exact_round(p.m2, p.e2, cut::significant, static_cast&lt;i32&gt;(precision) + 1, digits, count, point);</span>
+<span id="L1027" class="source-line"><a class="line-number" href="#L1027">1027</a>   return __ryu::__fx::__emit_sci(buf, cap, p.neg, digits, count, point - 1, precision);</span>
+<span id="L1028" class="source-line"><a class="line-number" href="#L1028">1028</a> }</span>
+<span id="L1029" class="source-line"><a class="line-number" href="#L1029">1029</a> </span>
+<span id="L1030" class="source-line"><a class="line-number" href="#L1030">1030</a> inline constexpr usize</span>
+<span id="L1031" class="source-line"><a class="line-number" href="#L1031">1031</a> d2f_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</span>
+<span id="L1032" class="source-line"><a class="line-number" href="#L1032">1032</a> {</span>
+<span id="L1033" class="source-line"><a class="line-number" href="#L1033">1033</a>   const __ryu::__fx::parts p = __ryu::__fx::__decompose(value);</span>
+<span id="L1034" class="source-line"><a class="line-number" href="#L1034">1034</a>   if ( p.is_nan || p.is_inf ) return __ryu::__fx::__emit_special(p, buf, cap);</span>
+<span id="L1035" class="source-line"><a class="line-number" href="#L1035">1035</a>   if ( p.is_zero ) return __ryu::__fx::__emit_fixed(buf, cap, p.neg, nullptr, 0, 0, precision);</span>
+<span id="L1036" class="source-line"><a class="line-number" href="#L1036">1036</a>   if ( precision &gt; 18 ) return __d2f_exact(p, buf, cap, precision);</span>
+<span id="L1037" class="source-line"><a class="line-number" href="#L1037">1037</a> </span>
+<span id="L1038" class="source-line"><a class="line-number" href="#L1038">1038</a>   const i32 dec_exp = __compute_dec_exp(p.e2 + 52) - 17;</span>
+<span id="L1039" class="source-line"><a class="line-number" href="#L1039">1039</a>   u64 scaled = __scale(p.m2, p.e2, dec_exp);</span>
+<span id="L1040" class="source-line"><a class="line-number" href="#L1040">1040</a>   const u64 integral = scaled &gt;&gt; 2;</span>
+<span id="L1041" class="source-line"><a class="line-number" href="#L1041">1041</a>   const i32 scaled_digits = 18 + static_cast&lt;i32&gt;(integral &gt;= __pow10s[18]);</span>
+<span id="L1042" class="source-line"><a class="line-number" href="#L1042">1042</a>   i32 lead_exp = dec_exp + scaled_digits - 1;</span>
+<span id="L1043" class="source-line"><a class="line-number" href="#L1043">1043</a>   const i32 num_digits = lead_exp + 1 + static_cast&lt;i32&gt;(precision);</span>
+<span id="L1044" class="source-line"><a class="line-number" href="#L1044">1044</a>   if ( num_digits &lt;= 0 ) {</span>
+<span id="L1045" class="source-line"><a class="line-number" href="#L1045">1045</a>     if ( num_digits &lt; 0 ) return __ryu::__fx::__emit_fixed(buf, cap, p.neg, nullptr, 0, 0, precision);</span>
+<span id="L1046" class="source-line"><a class="line-number" href="#L1046">1046</a>     const u64 half = 5 * __pow10s[scaled_digits - 1];</span>
+<span id="L1047" class="source-line"><a class="line-number" href="#L1047">1047</a>     const bool up = integral &gt; half || (integral == half &amp;&amp; (scaled &amp; 3) != 0);</span>
+<span id="L1048" class="source-line"><a class="line-number" href="#L1048">1048</a>     const char one = &#x27;1&#x27;;</span>
+<span id="L1049" class="source-line"><a class="line-number" href="#L1049">1049</a>     return __ryu::__fx::__emit_fixed(buf, cap, p.neg, up ? &amp;one : nullptr, static_cast&lt;u32&gt;(up), up ? 1 - static_cast&lt;i32&gt;(precision) : 0,</span>
+<span id="L1050" class="source-line"><a class="line-number" href="#L1050">1050</a>                                      precision);</span>
+<span id="L1051" class="source-line"><a class="line-number" href="#L1051">1051</a>   }</span>
+<span id="L1052" class="source-line"><a class="line-number" href="#L1052">1052</a>   if ( num_digits &gt; 18 ) return __d2f_exact(p, buf, cap, precision);</span>
+<span id="L1053" class="source-line"><a class="line-number" href="#L1053">1053</a>   if ( num_digits &lt; scaled_digits ) {</span>
+<span id="L1054" class="source-line"><a class="line-number" href="#L1054">1054</a>     const u64 pow = __pow10s[scaled_digits - num_digits];</span>
+<span id="L1055" class="source-line"><a class="line-number" href="#L1055">1055</a>     const u64 rem = integral % pow;</span>
+<span id="L1056" class="source-line"><a class="line-number" href="#L1056">1056</a>     const u64 half = rem &gt;= pow / 2;</span>
+<span id="L1057" class="source-line"><a class="line-number" href="#L1057">1057</a>     const u64 sticky = (rem != pow / 2) || ((scaled &amp; 3) != 0);</span>
+<span id="L1058" class="source-line"><a class="line-number" href="#L1058">1058</a>     scaled = (integral / pow) &lt;&lt; 2 | half &lt;&lt; 1 | sticky;</span>
+<span id="L1059" class="source-line"><a class="line-number" href="#L1059">1059</a>   }</span>
+<span id="L1060" class="source-line"><a class="line-number" href="#L1060">1060</a>   u64 dec_sig = __round_even(scaled);</span>
+<span id="L1061" class="source-line"><a class="line-number" href="#L1061">1061</a>   if ( dec_sig &gt;= __pow10s[num_digits] ) {</span>
+<span id="L1062" class="source-line"><a class="line-number" href="#L1062">1062</a>     ++lead_exp;</span>
+<span id="L1063" class="source-line"><a class="line-number" href="#L1063">1063</a>     dec_sig /= 10;</span>
+<span id="L1064" class="source-line"><a class="line-number" href="#L1064">1064</a>   }</span>
+<span id="L1065" class="source-line"><a class="line-number" href="#L1065">1065</a>   char digits[18];</span>
+<span id="L1066" class="source-line"><a class="line-number" href="#L1066">1066</a>   char *const start = __digits_n(dec_sig, static_cast&lt;u32&gt;(num_digits), digits);</span>
+<span id="L1067" class="source-line"><a class="line-number" href="#L1067">1067</a>   return __ryu::__fx::__emit_fixed(buf, cap, p.neg, start, static_cast&lt;u32&gt;(num_digits), lead_exp + 1, precision);</span>
+<span id="L1068" class="source-line"><a class="line-number" href="#L1068">1068</a> }</span>
+<span id="L1069" class="source-line"><a class="line-number" href="#L1069">1069</a> </span>
+<span id="L1070" class="source-line"><a class="line-number" href="#L1070">1070</a> inline constexpr usize</span>
+<span id="L1071" class="source-line"><a class="line-number" href="#L1071">1071</a> d2e_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</span>
+<span id="L1072" class="source-line"><a class="line-number" href="#L1072">1072</a> {</span>
+<span id="L1073" class="source-line"><a class="line-number" href="#L1073">1073</a>   const __ryu::__fx::parts p = __ryu::__fx::__decompose(value);</span>
+<span id="L1074" class="source-line"><a class="line-number" href="#L1074">1074</a>   if ( p.is_nan || p.is_inf ) return __ryu::__fx::__emit_special(p, buf, cap);</span>
+<span id="L1075" class="source-line"><a class="line-number" href="#L1075">1075</a>   if ( p.is_zero ) return __ryu::__fx::__emit_sci(buf, cap, p.neg, nullptr, 0, 0, precision);</span>
+<span id="L1076" class="source-line"><a class="line-number" href="#L1076">1076</a>   const u32 significant = precision + 1;</span>
+<span id="L1077" class="source-line"><a class="line-number" href="#L1077">1077</a>   if ( significant &gt; 18 ) return __d2e_exact(p, buf, cap, precision);</span>
+<span id="L1078" class="source-line"><a class="line-number" href="#L1078">1078</a>   u64 sig = p.m2;</span>
+<span id="L1079" class="source-line"><a class="line-number" href="#L1079">1079</a>   i32 exp = p.e2;</span>
+<span id="L1080" class="source-line"><a class="line-number" href="#L1080">1080</a>   __normalize(sig, exp);</span>
+<span id="L1081" class="source-line"><a class="line-number" href="#L1081">1081</a>   const precision_decimal dec = __to_precision(sig, exp, static_cast&lt;i32&gt;(significant));</span>
+<span id="L1082" class="source-line"><a class="line-number" href="#L1082">1082</a>   char digits[18];</span>
+<span id="L1083" class="source-line"><a class="line-number" href="#L1083">1083</a>   __digits18(dec.sig, digits);</span>
+<span id="L1084" class="source-line"><a class="line-number" href="#L1084">1084</a>   return __ryu::__fx::__emit_sci(buf, cap, p.neg, digits, 18, dec.lead_exp, precision);</span>
+<span id="L1085" class="source-line"><a class="line-number" href="#L1085">1085</a> }</span>
+<span id="L1086" class="source-line"><a class="line-number" href="#L1086">1086</a> </span>
+<span id="L1087" class="source-line"><a class="line-number" href="#L1087">1087</a> inline constexpr usize</span>
+<span id="L1088" class="source-line"><a class="line-number" href="#L1088">1088</a> __d2g_core(f64 value, char *buf, usize cap, u32 precision, bool alt, bool upper) noexcept</span>
+<span id="L1089" class="source-line"><a class="line-number" href="#L1089">1089</a> {</span>
+<span id="L1090" class="source-line"><a class="line-number" href="#L1090">1090</a>   const __ryu::__fx::parts p = __ryu::__fx::__decompose(value);</span>
+<span id="L1091" class="source-line"><a class="line-number" href="#L1091">1091</a>   if ( p.is_nan || p.is_inf ) return __ryu::__fx::__emit_special(p, buf, cap);</span>
+<span id="L1092" class="source-line"><a class="line-number" href="#L1092">1092</a>   const u32 significant = precision == 0 ? 1u : precision;</span>
+<span id="L1093" class="source-line"><a class="line-number" href="#L1093">1093</a>   if ( significant &gt; 18 ) {</span>
+<span id="L1094" class="source-line"><a class="line-number" href="#L1094">1094</a>     char digits[__ryu::__fx::__dig_cap];</span>
+<span id="L1095" class="source-line"><a class="line-number" href="#L1095">1095</a>     u32 count = 0;</span>
+<span id="L1096" class="source-line"><a class="line-number" href="#L1096">1096</a>     i32 point = 0;</span>
+<span id="L1097" class="source-line"><a class="line-number" href="#L1097">1097</a>     __exact_round(p.m2, p.e2, cut::significant, static_cast&lt;i32&gt;(significant), digits, count, point);</span>
+<span id="L1098" class="source-line"><a class="line-number" href="#L1098">1098</a>     const i32 lead_exp = point - 1;</span>
+<span id="L1099" class="source-line"><a class="line-number" href="#L1099">1099</a>     usize len = 0;</span>
+<span id="L1100" class="source-line"><a class="line-number" href="#L1100">1100</a>     if ( lead_exp &gt;= -4 &amp;&amp; lead_exp &lt; static_cast&lt;i32&gt;(significant) )</span>
+<span id="L1101" class="source-line"><a class="line-number" href="#L1101">1101</a>       len = __ryu::__fx::__emit_fixed(buf, cap, p.neg, digits, count, point,</span>
+<span id="L1102" class="source-line"><a class="line-number" href="#L1102">1102</a>                                       static_cast&lt;u32&gt;(static_cast&lt;i32&gt;(significant) - 1 - lead_exp));</span>
+<span id="L1103" class="source-line"><a class="line-number" href="#L1103">1103</a>     else</span>
+<span id="L1104" class="source-line"><a class="line-number" href="#L1104">1104</a>       len = __ryu::__fx::__emit_sci(buf, cap, p.neg, digits, count, lead_exp, significant - 1);</span>
+<span id="L1105" class="source-line"><a class="line-number" href="#L1105">1105</a>     if ( len == 0 ) return 0;</span>
+<span id="L1106" class="source-line"><a class="line-number" href="#L1106">1106</a>     if ( !alt ) {</span>
+<span id="L1107" class="source-line"><a class="line-number" href="#L1107">1107</a>       usize dot = len;</span>
+<span id="L1108" class="source-line"><a class="line-number" href="#L1108">1108</a>       usize exponent = len;</span>
+<span id="L1109" class="source-line"><a class="line-number" href="#L1109">1109</a>       for ( usize i = 0; i &lt; len; ++i ) {</span>
+<span id="L1110" class="source-line"><a class="line-number" href="#L1110">1110</a>         if ( buf[i] == &#x27;.&#x27; )</span>
+<span id="L1111" class="source-line"><a class="line-number" href="#L1111">1111</a>           dot = i;</span>
+<span id="L1112" class="source-line"><a class="line-number" href="#L1112">1112</a>         else if ( buf[i] == &#x27;e&#x27; ) {</span>
+<span id="L1113" class="source-line"><a class="line-number" href="#L1113">1113</a>           exponent = i;</span>
+<span id="L1114" class="source-line"><a class="line-number" href="#L1114">1114</a>           break;</span>
+<span id="L1115" class="source-line"><a class="line-number" href="#L1115">1115</a>         }</span>
+<span id="L1116" class="source-line"><a class="line-number" href="#L1116">1116</a>       }</span>
+<span id="L1117" class="source-line"><a class="line-number" href="#L1117">1117</a>       if ( dot != len ) {</span>
+<span id="L1118" class="source-line"><a class="line-number" href="#L1118">1118</a>         usize end = exponent;</span>
+<span id="L1119" class="source-line"><a class="line-number" href="#L1119">1119</a>         while ( end &gt; dot + 1 &amp;&amp; buf[end - 1] == &#x27;0&#x27; ) --end;</span>
+<span id="L1120" class="source-line"><a class="line-number" href="#L1120">1120</a>         if ( end == dot + 1 ) end = dot;</span>
+<span id="L1121" class="source-line"><a class="line-number" href="#L1121">1121</a>         if ( end != exponent ) {</span>
+<span id="L1122" class="source-line"><a class="line-number" href="#L1122">1122</a>           usize out = end;</span>
+<span id="L1123" class="source-line"><a class="line-number" href="#L1123">1123</a>           for ( usize i = exponent; i &lt; len; ++i ) buf[out++] = buf[i];</span>
+<span id="L1124" class="source-line"><a class="line-number" href="#L1124">1124</a>           len = out;</span>
+<span id="L1125" class="source-line"><a class="line-number" href="#L1125">1125</a>         }</span>
+<span id="L1126" class="source-line"><a class="line-number" href="#L1126">1126</a>       }</span>
+<span id="L1127" class="source-line"><a class="line-number" href="#L1127">1127</a>     }</span>
+<span id="L1128" class="source-line"><a class="line-number" href="#L1128">1128</a>     if ( upper )</span>
+<span id="L1129" class="source-line"><a class="line-number" href="#L1129">1129</a>       for ( usize i = 0; i &lt; len; ++i )</span>
+<span id="L1130" class="source-line"><a class="line-number" href="#L1130">1130</a>         if ( buf[i] == &#x27;e&#x27; ) buf[i] = &#x27;E&#x27;;</span>
+<span id="L1131" class="source-line"><a class="line-number" href="#L1131">1131</a>     return len;</span>
+<span id="L1132" class="source-line"><a class="line-number" href="#L1132">1132</a>   }</span>
+<span id="L1133" class="source-line"><a class="line-number" href="#L1133">1133</a>   char digits[18];</span>
+<span id="L1134" class="source-line"><a class="line-number" href="#L1134">1134</a>   for ( char &amp;digit : digits ) digit = &#x27;0&#x27;;</span>
+<span id="L1135" class="source-line"><a class="line-number" href="#L1135">1135</a>   i32 lead_exp = 0;</span>
+<span id="L1136" class="source-line"><a class="line-number" href="#L1136">1136</a>   if ( !p.is_zero ) {</span>
+<span id="L1137" class="source-line"><a class="line-number" href="#L1137">1137</a>     u64 sig = p.m2;</span>
+<span id="L1138" class="source-line"><a class="line-number" href="#L1138">1138</a>     i32 exp = p.e2;</span>
+<span id="L1139" class="source-line"><a class="line-number" href="#L1139">1139</a>     __normalize(sig, exp);</span>
+<span id="L1140" class="source-line"><a class="line-number" href="#L1140">1140</a>     const precision_decimal dec = __to_precision(sig, exp, static_cast&lt;i32&gt;(significant));</span>
+<span id="L1141" class="source-line"><a class="line-number" href="#L1141">1141</a>     __digits18(dec.sig, digits);</span>
+<span id="L1142" class="source-line"><a class="line-number" href="#L1142">1142</a>     lead_exp = dec.lead_exp;</span>
+<span id="L1143" class="source-line"><a class="line-number" href="#L1143">1143</a>   }</span>
+<span id="L1144" class="source-line"><a class="line-number" href="#L1144">1144</a>   usize len = 0;</span>
+<span id="L1145" class="source-line"><a class="line-number" href="#L1145">1145</a>   if ( lead_exp &gt;= -4 &amp;&amp; lead_exp &lt; static_cast&lt;i32&gt;(significant) )</span>
+<span id="L1146" class="source-line"><a class="line-number" href="#L1146">1146</a>     len = __ryu::__fx::__emit_fixed(buf, cap, p.neg, digits, 18, lead_exp + 1,</span>
+<span id="L1147" class="source-line"><a class="line-number" href="#L1147">1147</a>                                     static_cast&lt;u32&gt;(static_cast&lt;i32&gt;(significant) - 1 - lead_exp));</span>
+<span id="L1148" class="source-line"><a class="line-number" href="#L1148">1148</a>   else</span>
+<span id="L1149" class="source-line"><a class="line-number" href="#L1149">1149</a>     len = __ryu::__fx::__emit_sci(buf, cap, p.neg, digits, 18, lead_exp, significant - 1);</span>
+<span id="L1150" class="source-line"><a class="line-number" href="#L1150">1150</a>   if ( len == 0 ) return 0;</span>
+<span id="L1151" class="source-line"><a class="line-number" href="#L1151">1151</a>   if ( !alt ) {</span>
+<span id="L1152" class="source-line"><a class="line-number" href="#L1152">1152</a>     usize dot = len;</span>
+<span id="L1153" class="source-line"><a class="line-number" href="#L1153">1153</a>     usize exponent = len;</span>
+<span id="L1154" class="source-line"><a class="line-number" href="#L1154">1154</a>     for ( usize i = 0; i &lt; len; ++i ) {</span>
+<span id="L1155" class="source-line"><a class="line-number" href="#L1155">1155</a>       if ( buf[i] == &#x27;.&#x27; )</span>
+<span id="L1156" class="source-line"><a class="line-number" href="#L1156">1156</a>         dot = i;</span>
+<span id="L1157" class="source-line"><a class="line-number" href="#L1157">1157</a>       else if ( buf[i] == &#x27;e&#x27; ) {</span>
+<span id="L1158" class="source-line"><a class="line-number" href="#L1158">1158</a>         exponent = i;</span>
+<span id="L1159" class="source-line"><a class="line-number" href="#L1159">1159</a>         break;</span>
+<span id="L1160" class="source-line"><a class="line-number" href="#L1160">1160</a>       }</span>
+<span id="L1161" class="source-line"><a class="line-number" href="#L1161">1161</a>     }</span>
+<span id="L1162" class="source-line"><a class="line-number" href="#L1162">1162</a>     if ( dot != len ) {</span>
+<span id="L1163" class="source-line"><a class="line-number" href="#L1163">1163</a>       usize end = exponent;</span>
+<span id="L1164" class="source-line"><a class="line-number" href="#L1164">1164</a>       while ( end &gt; dot + 1 &amp;&amp; buf[end - 1] == &#x27;0&#x27; ) --end;</span>
+<span id="L1165" class="source-line"><a class="line-number" href="#L1165">1165</a>       if ( end == dot + 1 ) end = dot;</span>
+<span id="L1166" class="source-line"><a class="line-number" href="#L1166">1166</a>       if ( end != exponent ) {</span>
+<span id="L1167" class="source-line"><a class="line-number" href="#L1167">1167</a>         usize out = end;</span>
+<span id="L1168" class="source-line"><a class="line-number" href="#L1168">1168</a>         for ( usize i = exponent; i &lt; len; ++i ) buf[out++] = buf[i];</span>
+<span id="L1169" class="source-line"><a class="line-number" href="#L1169">1169</a>         len = out;</span>
+<span id="L1170" class="source-line"><a class="line-number" href="#L1170">1170</a>       }</span>
+<span id="L1171" class="source-line"><a class="line-number" href="#L1171">1171</a>     }</span>
+<span id="L1172" class="source-line"><a class="line-number" href="#L1172">1172</a>   }</span>
+<span id="L1173" class="source-line"><a class="line-number" href="#L1173">1173</a>   if ( upper )</span>
+<span id="L1174" class="source-line"><a class="line-number" href="#L1174">1174</a>     for ( usize i = 0; i &lt; len; ++i )</span>
+<span id="L1175" class="source-line"><a class="line-number" href="#L1175">1175</a>       if ( buf[i] == &#x27;e&#x27; ) buf[i] = &#x27;E&#x27;;</span>
+<span id="L1176" class="source-line"><a class="line-number" href="#L1176">1176</a>   return len;</span>
+<span id="L1177" class="source-line"><a class="line-number" href="#L1177">1177</a> }</span>
+<span id="L1178" class="source-line"><a class="line-number" href="#L1178">1178</a> </span>
+<span id="L1179" class="source-line"><a class="line-number" href="#L1179">1179</a> inline constexpr usize</span>
+<span id="L1180" class="source-line"><a class="line-number" href="#L1180">1180</a> d2g_buffered(f64 value, char *buf, usize cap, u32 precision, bool alt, bool upper) noexcept</span>
+<span id="L1181" class="source-line"><a class="line-number" href="#L1181">1181</a> {</span>
+<span id="L1182" class="source-line"><a class="line-number" href="#L1182">1182</a>   if ( precision &lt;= cap &amp;&amp; cap - precision &gt;= 8 ) return __d2g_core(value, buf, cap, precision, alt, upper);</span>
+<span id="L1183" class="source-line"><a class="line-number" href="#L1183">1183</a>   char scratch[__ryu::__fmt_fixed_max];</span>
+<span id="L1184" class="source-line"><a class="line-number" href="#L1184">1184</a>   const usize len = __d2g_core(value, scratch, sizeof(scratch), precision, alt, upper);</span>
+<span id="L1185" class="source-line"><a class="line-number" href="#L1185">1185</a>   if ( len == 0 || len &gt; cap ) return 0;</span>
+<span id="L1186" class="source-line"><a class="line-number" href="#L1186">1186</a>   for ( usize i = 0; i &lt; len; ++i ) buf[i] = scratch[i];</span>
+<span id="L1187" class="source-line"><a class="line-number" href="#L1187">1187</a>   return len;</span>
+<span id="L1188" class="source-line"><a class="line-number" href="#L1188">1188</a> }</span>
+<span id="L1189" class="source-line"><a class="line-number" href="#L1189">1189</a> </span>
+<span id="L1190" class="source-line"><a class="line-number" href="#L1190">1190</a> inline constexpr usize</span>
+<span id="L1191" class="source-line"><a class="line-number" href="#L1191">1191</a> d2f_trim_buffered(f64 value, char *buf, usize cap, u32 precision) noexcept</span>
+<span id="L1192" class="source-line"><a class="line-number" href="#L1192">1192</a> {</span>
+<span id="L1193" class="source-line"><a class="line-number" href="#L1193">1193</a>   usize len = d2f_buffered(value, buf, cap, precision);</span>
+<span id="L1194" class="source-line"><a class="line-number" href="#L1194">1194</a>   usize dot = len;</span>
+<span id="L1195" class="source-line"><a class="line-number" href="#L1195">1195</a>   for ( usize i = 0; i &lt; len; ++i )</span>
+<span id="L1196" class="source-line"><a class="line-number" href="#L1196">1196</a>     if ( buf[i] == &#x27;.&#x27; ) {</span>
+<span id="L1197" class="source-line"><a class="line-number" href="#L1197">1197</a>       dot = i;</span>
+<span id="L1198" class="source-line"><a class="line-number" href="#L1198">1198</a>       break;</span>
+<span id="L1199" class="source-line"><a class="line-number" href="#L1199">1199</a>     }</span>
+<span id="L1200" class="source-line"><a class="line-number" href="#L1200">1200</a>   usize end = len;</span>
+<span id="L1201" class="source-line"><a class="line-number" href="#L1201">1201</a>   if ( dot != len ) {</span>
+<span id="L1202" class="source-line"><a class="line-number" href="#L1202">1202</a>     while ( end &gt; dot + 1 &amp;&amp; buf[end - 1] == &#x27;0&#x27; ) --end;</span>
+<span id="L1203" class="source-line"><a class="line-number" href="#L1203">1203</a>     if ( end == dot + 1 ) end = dot;</span>
+<span id="L1204" class="source-line"><a class="line-number" href="#L1204">1204</a>   }</span>
+<span id="L1205" class="source-line"><a class="line-number" href="#L1205">1205</a>   if ( end &gt; 0 &amp;&amp; buf[0] == &#x27;-&#x27; ) {</span>
+<span id="L1206" class="source-line"><a class="line-number" href="#L1206">1206</a>     bool zero = true;</span>
+<span id="L1207" class="source-line"><a class="line-number" href="#L1207">1207</a>     for ( usize i = 1; i &lt; end; ++i )</span>
+<span id="L1208" class="source-line"><a class="line-number" href="#L1208">1208</a>       if ( buf[i] != &#x27;0&#x27; &amp;&amp; buf[i] != &#x27;.&#x27; ) zero = false;</span>
+<span id="L1209" class="source-line"><a class="line-number" href="#L1209">1209</a>     if ( zero ) {</span>
+<span id="L1210" class="source-line"><a class="line-number" href="#L1210">1210</a>       for ( usize i = 1; i &lt; end; ++i ) buf[i - 1] = buf[i];</span>
+<span id="L1211" class="source-line"><a class="line-number" href="#L1211">1211</a>       --end;</span>
+<span id="L1212" class="source-line"><a class="line-number" href="#L1212">1212</a>     }</span>
+<span id="L1213" class="source-line"><a class="line-number" href="#L1213">1213</a>   }</span>
+<span id="L1214" class="source-line"><a class="line-number" href="#L1214">1214</a>   return end;</span>
+<span id="L1215" class="source-line"><a class="line-number" href="#L1215">1215</a> }</span>
+<span id="L1216" class="source-line"><a class="line-number" href="#L1216">1216</a> </span>
+<span id="L1217" class="source-line"><a class="line-number" href="#L1217">1217</a> };      // namespace __zmij</span>
+<span id="L1218" class="source-line"><a class="line-number" href="#L1218">1218</a> </span>
+<span id="L1219" class="source-line"><a class="line-number" href="#L1219">1219</a> // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+<span id="L1220" class="source-line"><a class="line-number" href="#L1220">1220</a> // selected decimal backend</span>
+<span id="L1221" class="source-line"><a class="line-number" href="#L1221">1221</a> </span>
+<span id="L1222" class="source-line"><a class="line-number" href="#L1222">1222</a> namespace __fpconv</span>
+<span id="L1223" class="source-line"><a class="line-number" href="#L1223">1223</a> {</span>
+<span id="L1224" class="source-line"><a class="line-number" href="#L1224">1224</a> </span>
+<span id="L1225" class="source-line"><a class="line-number" href="#L1225">1225</a> inline constexpr usize __fmt_fixed_max = __ryu::__fmt_fixed_max;</span>
+<span id="L1226" class="source-line"><a class="line-number" href="#L1226">1226</a> </span>
+<span id="L1227" class="source-line"><a class="line-number" href="#L1227">1227</a> inline constexpr usize</span>
+<span id="L1228" class="source-line"><a class="line-number" href="#L1228">1228</a> d2f_size(f64 value, u32 precision) noexcept</span>
+<span id="L1229" class="source-line"><a class="line-number" href="#L1229">1229</a> {</span>
+<span id="L1230" class="source-line"><a class="line-number" href="#L1230">1230</a>   return __ryu::d2f_size(value, precision);</span>
+<span id="L1231" class="source-line"><a class="line-number" href="#L1231">1231</a> }</span>
+<span id="L1232" class="source-line"><a class="line-number" href="#L1232">1232</a> </span>
+<span id="L1233" class="source-line"><a class="line-number" href="#L1233">1233</a> inline constexpr usize</span>
+<span id="L1234" class="source-line"><a class="line-number" href="#L1234">1234</a> d2e_size(f64 value, u32 precision) noexcept</span>
+<span id="L1235" class="source-line"><a class="line-number" href="#L1235">1235</a> {</span>
+<span id="L1236" class="source-line"><a class="line-number" href="#L1236">1236</a>   return __ryu::d2e_size(value, precision);</span>
+<span id="L1237" class="source-line"><a class="line-number" href="#L1237">1237</a> }</span>
+<span id="L1238" class="source-line"><a class="line-number" href="#L1238">1238</a> </span>
+<span id="L1239" class="source-line"><a class="line-number" href="#L1239">1239</a> inline constexpr usize</span>
+<span id="L1240" class="source-line"><a class="line-number" href="#L1240">1240</a> d2g_size(f64 value, u32 precision, bool alt) noexcept</span>
+<span id="L1241" class="source-line"><a class="line-number" href="#L1241">1241</a> {</span>
+<span id="L1242" class="source-line"><a class="line-number" href="#L1242">1242</a>   return __ryu::d2g_size(value, precision, alt);</span>
+<span id="L1243" class="source-line"><a class="line-number" href="#L1243">1243</a> }</span>
+<span id="L1244" class="source-line"><a class="line-number" href="#L1244">1244</a> </span>
+<span id="L1245" class="source-line"><a class="line-number" href="#L1245">1245</a> #if defined(MICRON_USE_RYU)</span>
+<span id="L1246" class="source-line"><a class="line-number" href="#L1246">1246</a> inline constexpr usize</span>
+<span id="L1247" class="source-line"><a class="line-number" href="#L1247">1247</a> d2s_buffered(f64 v, char *b) noexcept</span>
+<span id="L1248" class="source-line"><a class="line-number" href="#L1248">1248</a> {</span>
+<span id="L1249" class="source-line"><a class="line-number" href="#L1249">1249</a>   return __ryu::d2s_buffered(v, b);</span>
+<span id="L1250" class="source-line"><a class="line-number" href="#L1250">1250</a> }</span>
+<span id="L1251" class="source-line"><a class="line-number" href="#L1251">1251</a> </span>
+<span id="L1252" class="source-line"><a class="line-number" href="#L1252">1252</a> inline constexpr usize</span>
+<span id="L1253" class="source-line"><a class="line-number" href="#L1253">1253</a> f2s_buffered(f32 v, char *b) noexcept</span>
+<span id="L1254" class="source-line"><a class="line-number" href="#L1254">1254</a> {</span>
+<span id="L1255" class="source-line"><a class="line-number" href="#L1255">1255</a>   return __ryu::__f32::f2s_buffered(v, b);</span>
+<span id="L1256" class="source-line"><a class="line-number" href="#L1256">1256</a> }</span>
+<span id="L1257" class="source-line"><a class="line-number" href="#L1257">1257</a> </span>
+<span id="L1258" class="source-line"><a class="line-number" href="#L1258">1258</a> inline constexpr void</span>
+<span id="L1259" class="source-line"><a class="line-number" href="#L1259">1259</a> d2s_buffered4(const f64 *v, char *b, usize stride, usize *lengths) noexcept</span>
+<span id="L1260" class="source-line"><a class="line-number" href="#L1260">1260</a> {</span>
+<span id="L1261" class="source-line"><a class="line-number" href="#L1261">1261</a>   for ( usize i = 0; i &lt; 4; ++i ) lengths[i] = __ryu::d2s_buffered(v[i], b + i * stride);</span>
+<span id="L1262" class="source-line"><a class="line-number" href="#L1262">1262</a> }</span>
+<span id="L1263" class="source-line"><a class="line-number" href="#L1263">1263</a> </span>
+<span id="L1264" class="source-line"><a class="line-number" href="#L1264">1264</a> inline constexpr void</span>
+<span id="L1265" class="source-line"><a class="line-number" href="#L1265">1265</a> f2s_buffered4(const f32 *v, char *b, usize stride, usize *lengths) noexcept</span>
+<span id="L1266" class="source-line"><a class="line-number" href="#L1266">1266</a> {</span>
+<span id="L1267" class="source-line"><a class="line-number" href="#L1267">1267</a>   for ( usize i = 0; i &lt; 4; ++i ) lengths[i] = __ryu::__f32::f2s_buffered(v[i], b + i * stride);</span>
+<span id="L1268" class="source-line"><a class="line-number" href="#L1268">1268</a> }</span>
+<span id="L1269" class="source-line"><a class="line-number" href="#L1269">1269</a> </span>
+<span id="L1270" class="source-line"><a class="line-number" href="#L1270">1270</a> inline constexpr usize</span>
+<span id="L1271" class="source-line"><a class="line-number" href="#L1271">1271</a> d2f_buffered(f64 v, char *b, usize c, u32 p) noexcept</span>
+<span id="L1272" class="source-line"><a class="line-number" href="#L1272">1272</a> {</span>
+<span id="L1273" class="source-line"><a class="line-number" href="#L1273">1273</a>   return __ryu::d2f_buffered(v, b, c, p);</span>
+<span id="L1274" class="source-line"><a class="line-number" href="#L1274">1274</a> }</span>
+<span id="L1275" class="source-line"><a class="line-number" href="#L1275">1275</a> </span>
+<span id="L1276" class="source-line"><a class="line-number" href="#L1276">1276</a> inline constexpr usize</span>
+<span id="L1277" class="source-line"><a class="line-number" href="#L1277">1277</a> d2f_trim_buffered(f64 v, char *b, usize c, u32 p) noexcept</span>
+<span id="L1278" class="source-line"><a class="line-number" href="#L1278">1278</a> {</span>
+<span id="L1279" class="source-line"><a class="line-number" href="#L1279">1279</a>   return __ryu::d2f_trim_buffered(v, b, c, p);</span>
+<span id="L1280" class="source-line"><a class="line-number" href="#L1280">1280</a> }</span>
+<span id="L1281" class="source-line"><a class="line-number" href="#L1281">1281</a> </span>
+<span id="L1282" class="source-line"><a class="line-number" href="#L1282">1282</a> inline constexpr usize</span>
+<span id="L1283" class="source-line"><a class="line-number" href="#L1283">1283</a> d2e_buffered(f64 v, char *b, usize c, u32 p) noexcept</span>
+<span id="L1284" class="source-line"><a class="line-number" href="#L1284">1284</a> {</span>
+<span id="L1285" class="source-line"><a class="line-number" href="#L1285">1285</a>   return __ryu::d2e_buffered(v, b, c, p);</span>
+<span id="L1286" class="source-line"><a class="line-number" href="#L1286">1286</a> }</span>
+<span id="L1287" class="source-line"><a class="line-number" href="#L1287">1287</a> </span>
+<span id="L1288" class="source-line"><a class="line-number" href="#L1288">1288</a> inline constexpr usize</span>
+<span id="L1289" class="source-line"><a class="line-number" href="#L1289">1289</a> d2g_buffered(f64 v, char *b, usize c, u32 p, bool a, bool u) noexcept</span>
+<span id="L1290" class="source-line"><a class="line-number" href="#L1290">1290</a> {</span>
+<span id="L1291" class="source-line"><a class="line-number" href="#L1291">1291</a>   return __ryu::d2g_buffered(v, b, c, p, a, u);</span>
+<span id="L1292" class="source-line"><a class="line-number" href="#L1292">1292</a> }</span>
+<span id="L1293" class="source-line"><a class="line-number" href="#L1293">1293</a> #else</span>
+<span id="L1294" class="source-line"><a class="line-number" href="#L1294">1294</a> inline constexpr usize</span>
+<span id="L1295" class="source-line"><a class="line-number" href="#L1295">1295</a> d2s_buffered(f64 v, char *b) noexcept</span>
+<span id="L1296" class="source-line"><a class="line-number" href="#L1296">1296</a> {</span>
+<span id="L1297" class="source-line"><a class="line-number" href="#L1297">1297</a>   return __zmij::d2s_buffered(v, b);</span>
+<span id="L1298" class="source-line"><a class="line-number" href="#L1298">1298</a> }</span>
+<span id="L1299" class="source-line"><a class="line-number" href="#L1299">1299</a> </span>
+<span id="L1300" class="source-line"><a class="line-number" href="#L1300">1300</a> inline constexpr usize</span>
+<span id="L1301" class="source-line"><a class="line-number" href="#L1301">1301</a> f2s_buffered(f32 v, char *b) noexcept</span>
+<span id="L1302" class="source-line"><a class="line-number" href="#L1302">1302</a> {</span>
+<span id="L1303" class="source-line"><a class="line-number" href="#L1303">1303</a>   return __zmij::f2s_buffered(v, b);</span>
+<span id="L1304" class="source-line"><a class="line-number" href="#L1304">1304</a> }</span>
+<span id="L1305" class="source-line"><a class="line-number" href="#L1305">1305</a> </span>
+<span id="L1306" class="source-line"><a class="line-number" href="#L1306">1306</a> inline constexpr void</span>
+<span id="L1307" class="source-line"><a class="line-number" href="#L1307">1307</a> d2s_buffered4(const f64 *v, char *b, usize stride, usize *lengths) noexcept</span>
+<span id="L1308" class="source-line"><a class="line-number" href="#L1308">1308</a> {</span>
+<span id="L1309" class="source-line"><a class="line-number" href="#L1309">1309</a>   __zmij::d2s_buffered4(v, b, stride, lengths);</span>
+<span id="L1310" class="source-line"><a class="line-number" href="#L1310">1310</a> }</span>
+<span id="L1311" class="source-line"><a class="line-number" href="#L1311">1311</a> </span>
+<span id="L1312" class="source-line"><a class="line-number" href="#L1312">1312</a> inline constexpr void</span>
+<span id="L1313" class="source-line"><a class="line-number" href="#L1313">1313</a> f2s_buffered4(const f32 *v, char *b, usize stride, usize *lengths) noexcept</span>
+<span id="L1314" class="source-line"><a class="line-number" href="#L1314">1314</a> {</span>
+<span id="L1315" class="source-line"><a class="line-number" href="#L1315">1315</a>   __zmij::f2s_buffered4(v, b, stride, lengths);</span>
+<span id="L1316" class="source-line"><a class="line-number" href="#L1316">1316</a> }</span>
+<span id="L1317" class="source-line"><a class="line-number" href="#L1317">1317</a> </span>
+<span id="L1318" class="source-line"><a class="line-number" href="#L1318">1318</a> inline constexpr usize</span>
+<span id="L1319" class="source-line"><a class="line-number" href="#L1319">1319</a> d2f_buffered(f64 v, char *b, usize c, u32 p) noexcept</span>
+<span id="L1320" class="source-line"><a class="line-number" href="#L1320">1320</a> {</span>
+<span id="L1321" class="source-line"><a class="line-number" href="#L1321">1321</a>   return __zmij::d2f_buffered(v, b, c, p);</span>
+<span id="L1322" class="source-line"><a class="line-number" href="#L1322">1322</a> }</span>
+<span id="L1323" class="source-line"><a class="line-number" href="#L1323">1323</a> </span>
+<span id="L1324" class="source-line"><a class="line-number" href="#L1324">1324</a> inline constexpr usize</span>
+<span id="L1325" class="source-line"><a class="line-number" href="#L1325">1325</a> d2f_trim_buffered(f64 v, char *b, usize c, u32 p) noexcept</span>
+<span id="L1326" class="source-line"><a class="line-number" href="#L1326">1326</a> {</span>
+<span id="L1327" class="source-line"><a class="line-number" href="#L1327">1327</a>   return __zmij::d2f_trim_buffered(v, b, c, p);</span>
+<span id="L1328" class="source-line"><a class="line-number" href="#L1328">1328</a> }</span>
+<span id="L1329" class="source-line"><a class="line-number" href="#L1329">1329</a> </span>
+<span id="L1330" class="source-line"><a class="line-number" href="#L1330">1330</a> inline constexpr usize</span>
+<span id="L1331" class="source-line"><a class="line-number" href="#L1331">1331</a> d2e_buffered(f64 v, char *b, usize c, u32 p) noexcept</span>
+<span id="L1332" class="source-line"><a class="line-number" href="#L1332">1332</a> {</span>
+<span id="L1333" class="source-line"><a class="line-number" href="#L1333">1333</a>   return __zmij::d2e_buffered(v, b, c, p);</span>
+<span id="L1334" class="source-line"><a class="line-number" href="#L1334">1334</a> }</span>
+<span id="L1335" class="source-line"><a class="line-number" href="#L1335">1335</a> </span>
+<span id="L1336" class="source-line"><a class="line-number" href="#L1336">1336</a> inline constexpr usize</span>
+<span id="L1337" class="source-line"><a class="line-number" href="#L1337">1337</a> d2g_buffered(f64 v, char *b, usize c, u32 p, bool a, bool u) noexcept</span>
+<span id="L1338" class="source-line"><a class="line-number" href="#L1338">1338</a> {</span>
+<span id="L1339" class="source-line"><a class="line-number" href="#L1339">1339</a>   return __zmij::d2g_buffered(v, b, c, p, a, u);</span>
+<span id="L1340" class="source-line"><a class="line-number" href="#L1340">1340</a> }</span>
+<span id="L1341" class="source-line"><a class="line-number" href="#L1341">1341</a> #endif</span>
+<span id="L1342" class="source-line"><a class="line-number" href="#L1342">1342</a> </span>
+<span id="L1343" class="source-line"><a class="line-number" href="#L1343">1343</a> inline constexpr usize</span>
+<span id="L1344" class="source-line"><a class="line-number" href="#L1344">1344</a> d2a_buffered(f64 v, char *b, usize c, u32 p, bool h, bool u) noexcept</span>
+<span id="L1345" class="source-line"><a class="line-number" href="#L1345">1345</a> {</span>
+<span id="L1346" class="source-line"><a class="line-number" href="#L1346">1346</a>   return __ryu::d2a_buffered(v, b, c, p, h, u);</span>
+<span id="L1347" class="source-line"><a class="line-number" href="#L1347">1347</a> }</span>
+<span id="L1348" class="source-line"><a class="line-number" href="#L1348">1348</a> </span>
+<span id="L1349" class="source-line"><a class="line-number" href="#L1349">1349</a> };      // namespace __fpconv</span>
+<span id="L1350" class="source-line"><a class="line-number" href="#L1350">1350</a> };      // namespace __impl</span>
+<span id="L1351" class="source-line"><a class="line-number" href="#L1351">1351</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

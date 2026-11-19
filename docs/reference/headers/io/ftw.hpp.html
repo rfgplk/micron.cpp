@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/io/ftw.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/io/ftw.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/filesystem.html">Files and filesystem</a></div><p>Defined in header <code>&lt;micron/io/ftw.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/io/ftw.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-f26ab8429dab07c9">micron::io::ftw(path &amp;&amp;p)</a></td><td>function; line 128</td></tr><tr class="t-dsc"><td><a href="#f-f633a6cb3ee7a91f">micron::io::ftw_all(path &amp;&amp;p)</a></td><td>function; line 134</td></tr><tr class="t-dsc"><td><a href="#f-3ea369251011ac51">micron::io::ftw_files(path &amp;&amp;p)</a></td><td>function; line 140</td></tr><tr class="t-dsc"><td><a href="#f-dc30698b4a218991">micron::io::ftw(path &amp;&amp;p, Fn &amp;&amp;fn)</a></td><td>function; line 151</td></tr><tr class="t-dsc"><td><a href="#f-4573ac033bbb4dd4">micron::io::ftw_all(path &amp;&amp;p, Fn &amp;&amp;fn)</a></td><td>function; line 159</td></tr><tr class="t-dsc"><td><a href="#f-a96fe77ad127d07d">micron::io::ftw_files(path &amp;&amp;p, Fn &amp;&amp;fn)</a></td><td>function; line 167</td></tr><tr class="t-dsc"><td><a href="#f-dede8f8714cb401b">micron::io::ftw_fold(path &amp;&amp;p, R init, Fn &amp;&amp;fn)</a></td><td>function; line 176</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f26ab8429dab07c9"><h3><code>micron::io::ftw(path &amp;&amp;p)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L128">line 128</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline auto
+ftw(path &amp;&amp;p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li></ul><h4>Effects</h4><p>Returns <code>__ftw::run(micron::move(p), __ftw::collect::dirs)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline auto
+ftw(path &amp;&amp;p)
+{
+  return __ftw::run(micron::move(p), __ftw::collect::dirs);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ftw::run(micron::move(p), __ftw::collect::dirs)</code></td><td><a href="../../source/io/ftw.hpp.html#L130">line 130</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-ddacbe70f49f7228">__ftw::run</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-f633a6cb3ee7a91f"><h3><code>micron::io::ftw_all(path &amp;&amp;p)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L134">line 134</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline auto
+ftw_all(path &amp;&amp;p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li></ul><h4>Effects</h4><p>Returns <code>__ftw::run(micron::move(p), __ftw::collect::all)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline auto
+ftw_all(path &amp;&amp;p)
+{
+  return __ftw::run(micron::move(p), __ftw::collect::all);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ftw::run(micron::move(p), __ftw::collect::all)</code></td><td><a href="../../source/io/ftw.hpp.html#L136">line 136</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-ddacbe70f49f7228">__ftw::run</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-3ea369251011ac51"><h3><code>micron::io::ftw_files(path &amp;&amp;p)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L140">line 140</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline auto
+ftw_files(path &amp;&amp;p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li></ul><h4>Effects</h4><p>Returns <code>__ftw::run(micron::move(p), __ftw::collect::files)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline auto
+ftw_files(path &amp;&amp;p)
+{
+  return __ftw::run(micron::move(p), __ftw::collect::files);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ftw::run(micron::move(p), __ftw::collect::files)</code></td><td><a href="../../source/io/ftw.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-ddacbe70f49f7228">__ftw::run</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-dc30698b4a218991"><h3><code>micron::io::ftw(path &amp;&amp;p, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L151">line 151</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, const path_t &amp;&gt;
+inline usize
+ftw(path &amp;&amp;p, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Returns <code>__ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::dirs)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, const path_t &amp;&gt;
+inline usize
+ftw(path &amp;&amp;p, Fn &amp;&amp;fn)
+{
+  return __ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::dirs);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::dirs)</code></td><td><a href="../../source/io/ftw.hpp.html#L153">line 153</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-a06740cffd13dde4">__ftw::visit</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-4573ac033bbb4dd4"><h3><code>micron::io::ftw_all(path &amp;&amp;p, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L159">line 159</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, const path_t &amp;&gt;
+inline usize
+ftw_all(path &amp;&amp;p, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Returns <code>__ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::all)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, const path_t &amp;&gt;
+inline usize
+ftw_all(path &amp;&amp;p, Fn &amp;&amp;fn)
+{
+  return __ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::all);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::all)</code></td><td><a href="../../source/io/ftw.hpp.html#L161">line 161</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-a06740cffd13dde4">__ftw::visit</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-a96fe77ad127d07d"><h3><code>micron::io::ftw_files(path &amp;&amp;p, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L167">line 167</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, const path_t &amp;&gt;
+inline usize
+ftw_files(path &amp;&amp;p, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Returns <code>__ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::files)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+  requires micron::invocable&lt;Fn, const path_t &amp;&gt;
+inline usize
+ftw_files(path &amp;&amp;p, Fn &amp;&amp;fn)
+{
+  return __ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::files);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ftw::visit(micron::move(p), micron::forward&lt;Fn&gt;(fn), __ftw::collect::files)</code></td><td><a href="../../source/io/ftw.hpp.html#L169">line 169</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-a06740cffd13dde4">__ftw::visit</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;Fn&gt;</a>.</p></section><section class="function-entry" id="f-dede8f8714cb401b"><h3><code>micron::io::ftw_fold(path &amp;&amp;p, R init, Fn &amp;&amp;fn)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L176">line 176</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R, typename Fn&gt;
+  requires fn_fold&lt;Fn, R, const path_t &amp;&gt;
+inline R
+ftw_fold(path &amp;&amp;p, R init, Fn &amp;&amp;fn)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li><li><code>R init</code></li><li><code>Fn &amp;&amp;fn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R, typename Fn&gt;
+  requires fn_fold&lt;Fn, R, const path_t &amp;&gt;
+inline R
+ftw_fold(path &amp;&amp;p, R init, Fn &amp;&amp;fn)
+{
+  __ftw::run_sink(
+      micron::move(p),
+      [&amp;](path_t &amp;&amp;x) -&gt; bool {
+        init = fn(micron::move(init), x);
+        return true;
+      },
+      __ftw::collect::all);
+  return init;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>init</code></td><td><a href="../../source/io/ftw.hpp.html#L185">line 185</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-03c9ab7025b87b59">__ftw::run_sink</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-dfd968d775fab5b2"><h3><code>micron::io::__ftw::walk(path &amp;&amp;p, Sink &amp;&amp;sink, node_id *chain, u32 depth, collect what, bool is_root = false)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L31">line 31</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sink&gt;
+inline bool
+walk(path &amp;&amp;p, Sink &amp;&amp;sink, node_id *chain, u32 depth, collect what, bool is_root = false)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li><li><code>Sink &amp;&amp;sink</code></li><li><code>node_id *chain</code></li><li><code>u32 depth</code></li><li><code>collect what</code></li><li><code>bool is_root = false</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sink&gt;
+inline bool
+walk(path &amp;&amp;p, Sink &amp;&amp;sink, node_id *chain, u32 depth, collect what, bool is_root = false)
+{
+  if ( depth &gt;= ftw_max_depth ) return true;
+
+  // entries collected at this level
+  // NB: this must stay exception-free. An unreadable sub-directory (EACCES) is skipped, not fatal,
+  // and that cannot be expressed with try/catch: below the eh gate exc&lt;&gt; aborts instead of
+  // throwing, so a catch-based skip would kill the process mid-walk. try_*() report instead.
+  micron::fvector&lt;path_t&gt; coll;
+  if ( const i32 r = (what == collect::files) ? p.try_files(coll) : (what == collect::all ? p.try_all(coll) : p.try_dirs(coll)); r &lt; 0 ) {
+    if ( is_root ) exc_e&lt;except::io_error&gt;(r, &quot;micron::io::ftw, failed to open root directory.&quot;);
+    return true;      // unreadable sub-directory -&gt; skip
+  }
+  for ( auto &amp;n : coll ) {
+    if ( n == &quot;.&quot; || n == &quot;..&quot; ) continue;
+    if ( !sink(p.join(n.c_str())) ) return false;
+  }
+
+  // recurse into sub-directories only
+  micron::fvector&lt;path_t&gt; subdirs;
+  if ( const i32 r = p.try_dirs(subdirs); r &lt; 0 ) {
+    if ( is_root ) exc_e&lt;except::io_error&gt;(r, &quot;micron::io::ftw, failed to open root directory.&quot;);
+    return true;      // unreadable sub-directory -&gt; skip
+  }
+  for ( auto &amp;n : subdirs ) {
+    if ( n == &quot;.&quot; || n == &quot;..&quot; ) continue;
+    path_t child = p.join(n.c_str());
+    // NOTE:: paths are trusted; not racefree against an attacker swapping child for a symlink between the check and the open
+    if ( posix::is_symlink(child.c_str()) ) continue;      // WARNING: do NOT follow symlinks
+
+    posix::stat_t st{};
+    if ( !posix::__impl::__stat(child.c_str(), st) ) continue;
+    node_id id{ st.st_dev, static_cast&lt;posix::ino64_t&gt;(st.st_ino) };
+    bool seen = false;
+    for ( u32 i = 0; i &lt; depth; ++i )
+      if ( chain[i].dev == id.dev &amp;&amp; chain[i].ino == id.ino ) {
+        seen = true;
+        break;
+      }
+    if ( seen ) continue;      // directory cycle -&gt; skip
+
+    chain[depth] = id;
+    if ( !walk(path(child.c_str()), sink, chain, depth + 1, what) ) return false;
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/io/ftw.hpp.html#L33">line 33</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/io/ftw.hpp.html#L42">line 42</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/io/ftw.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/io/ftw.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/io/ftw.hpp.html#L73">line 73</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/io/ftw.hpp.html#L75">line 75</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-e41f8ecce94e4e03">exc_e&lt;except::io_error&gt;</a>, <a href="../linux/io/inode.hpp.html#f-0a5db4a050c93032">posix::is_symlink</a>, <a href="../linux/io/inode.hpp.html#f-d76f6d58e5d0321a">posix::__impl::__stat</a>, <a href="paths.hpp.html#s-8d990ff9cbd254ff">path</a>.</p></section><section class="function-entry" id="f-03c9ab7025b87b59"><h3><code>micron::io::__ftw::run_sink(path &amp;&amp;p, Sink &amp;&amp;sink, collect what)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L80">line 80</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Sink&gt;
+inline bool
+run_sink(path &amp;&amp;p, Sink &amp;&amp;sink, collect what)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li><li><code>Sink &amp;&amp;sink</code></li><li><code>collect what</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Sink&gt;
+inline bool
+run_sink(path &amp;&amp;p, Sink &amp;&amp;sink, collect what)
+{
+  node_id chain[ftw_max_depth];
+  u32 start = 0;
+  posix::stat_t st{};
+  if ( posix::__impl::__stat(p.get().c_str(), st) ) {
+    chain[0] = node_id{ st.st_dev, static_cast&lt;posix::ino64_t&gt;(st.st_ino) };
+    start = 1;
+  }
+  return walk(micron::move(p), sink, chain, start, what, true);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>walk(micron::move(p), sink, chain, start, what, true)</code></td><td><a href="../../source/io/ftw.hpp.html#L89">line 89</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/io/inode.hpp.html#f-d76f6d58e5d0321a">posix::__impl::__stat</a>, <a href="ftw.hpp.html#f-dfd968d775fab5b2">walk</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-ddacbe70f49f7228"><h3><code>micron::io::__ftw::run(path &amp;&amp;p, collect what)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L93">line 93</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline micron::fvector&lt;path_t&gt;
+run(path &amp;&amp;p, collect what)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li><li><code>collect what</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline micron::fvector&lt;path_t&gt;
+run(path &amp;&amp;p, collect what)
+{
+  micron::fvector&lt;path_t&gt; out;
+  run_sink(
+      micron::move(p),
+      [&amp;out](path_t &amp;&amp;x) {
+        out.push_back(micron::move(x));
+        return true;
+      },
+      what);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/io/ftw.hpp.html#L103">line 103</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-03c9ab7025b87b59">run_sink</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-a06740cffd13dde4"><h3><code>micron::io::__ftw::visit(path &amp;&amp;p, Fn &amp;&amp;fn, collect what)</code></h3><p>Defined in <code>io/ftw.hpp</code>, <a href="../../source/io/ftw.hpp.html#L108">line 108</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Fn&gt;
+inline usize
+visit(path &amp;&amp;p, Fn &amp;&amp;fn, collect what)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>path &amp;&amp;p</code></li><li><code>Fn &amp;&amp;fn</code></li><li><code>collect what</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Fn&gt;
+inline usize
+visit(path &amp;&amp;p, Fn &amp;&amp;fn, collect what)
+{
+  usize n = 0;
+  run_sink(
+      micron::move(p),
+      [&amp;](path_t &amp;&amp;x) -&gt; bool {
+        ++n;
+        if constexpr ( micron::is_convertible_v&lt;micron::invoke_result_t&lt;Fn, const path_t &amp;&gt;, bool&gt; )
+          return static_cast&lt;bool&gt;(fn(x));
+        else {
+          fn(x);
+          return true;
+        }
+      },
+      what);
+  return n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/io/ftw.hpp.html#L123">line 123</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="ftw.hpp.html#f-03c9ab7025b87b59">run_sink</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

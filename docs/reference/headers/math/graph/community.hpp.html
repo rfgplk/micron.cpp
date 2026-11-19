@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/graph/community.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/graph/community.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/graphs.html">Graphs</a></div><p>Defined in header <code>&lt;micron/math/graph/community.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/graph/community.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-c0a6479e758143c9">micron::math::graphs::partition_result</code></td><td>struct; line 14</td></tr><tr class="t-dsc"><td><code id="s-554afe8ad2bcbca6">micron::math::graphs::partition_result::status</code></td><td>member; line 15</td></tr><tr class="t-dsc"><td><code id="s-653efce25996ed58">micron::math::graphs::partition_result::communities</code></td><td>member; line 16</td></tr><tr class="t-dsc"><td><code id="s-b883fd9f836bcd91">micron::math::graphs::partition_result::iterations</code></td><td>member; line 17</td></tr><tr class="t-dsc"><td><code id="s-d7e8ecd36bcd3f0a">micron::math::graphs::partition_result::community</code></td><td>member; line 18</td></tr><tr class="t-dsc"><td><a href="#f-0a0065bfc4a96ee2">micron::math::graphs::label_propagation(const G &amp;graph, usize max_iterations = 100)</a></td><td>function; line 23</td></tr><tr class="t-dsc"><td><a href="#f-7f5dc2bfd7d4505c">micron::math::graphs::modularity(const G &amp;graph, const Partition &amp;community, f64 resolution = 1.0)</a></td><td>function; line 97</td></tr><tr class="t-dsc"><td><a href="#f-e0eb8e7d652a93c0">micron::math::graphs::louvain(const G &amp;graph, usize max_iterations = 100)</a></td><td>function; line 117</td></tr><tr class="t-dsc"><td><a href="#f-67029662638cfcd3">micron::math::graphs::leiden(const G &amp;graph, usize max_iterations = 100)</a></td><td>function; line 226</td></tr><tr class="t-dsc"><td><a href="#f-0b479c8e567a4a32">micron::math::graphs::greedy_modularity_communities(const G &amp;graph, usize max_iterations = 100)</a></td><td>function; line 266</td></tr><tr class="t-dsc"><td><a href="#f-f03c7946aad9959d">micron::math::graphs::partition_coverage(const G &amp;graph, const Partition &amp;community)</a></td><td>function; line 363</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-0a0065bfc4a96ee2"><h3><code>micron::math::graphs::label_propagation(const G &amp;graph, usize max_iterations = 100)</code></h3><p>Defined in <code>math/graph/community.hpp</code>, <a href="../../../source/math/graph/community.hpp.html#L23">line 23</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] partition_result&lt;typename G::index_type&gt;
+label_propagation(const G &amp;graph, usize max_iterations = 100)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>usize max_iterations = 100</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] partition_result&lt;typename G::index_type&gt;
+label_propagation(const G &amp;graph, usize max_iterations = 100)
+{
+  using I = typename G::index_type;
+  partition_result&lt;I&gt; result{ algorithm_status::ok, graph.vertices_count(), 0,
+                              micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), vertex_id&lt;I&gt;::invalid_value()) };
+  for ( auto vertex : graph.vertices() ) result.community.data()[static_cast&lt;usize&gt;(vertex.value)] = vertex.value;
+  for ( usize iteration = 0; iteration &lt; max_iterations; ++iteration ) {
+    bool changed = false;
+    for ( auto vertex : graph.vertices() ) {
+      I best = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+      usize best_count = 0;
+      for ( auto candidate : graph.out_neighbors(vertex) ) {
+        const I label = result.community.data()[static_cast&lt;usize&gt;(candidate.value)];
+        usize count = 0;
+        for ( auto neighbor : graph.out_neighbors(vertex) )
+          if ( result.community.data()[static_cast&lt;usize&gt;(neighbor.value)] == label ) ++count;
+        if constexpr ( G::is_directed )
+          for ( auto neighbor : graph.in_neighbors(vertex) )
+            if ( result.community.data()[static_cast&lt;usize&gt;(neighbor.value)] == label ) ++count;
+        if ( count &gt; best_count || (count == best_count &amp;&amp; label &lt; best) ) {
+          best = label;
+          best_count = count;
+        }
+      }
+      if constexpr ( G::is_directed ) {
+        for ( auto candidate : graph.in_neighbors(vertex) ) {
+          const I label = result.community.data()[static_cast&lt;usize&gt;(candidate.value)];
+          usize count = 0;
+          for ( auto neighbor : graph.out_neighbors(vertex) )
+            if ( result.community.data()[static_cast&lt;usize&gt;(neighbor.value)] == label ) ++count;
+          for ( auto neighbor : graph.in_neighbors(vertex) )
+            if ( result.community.data()[static_cast&lt;usize&gt;(neighbor.value)] == label ) ++count;
+          if ( count &gt; best_count || (count == best_count &amp;&amp; label &lt; best) ) {
+            best = label;
+            best_count = count;
+          }
+        }
+      }
+      I &amp;current = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+      if ( current != best ) {
+        current = best;
+        changed = true;
+      }
+    }
+    result.iterations = iteration + 1;
+    if ( !changed ) break;
+    if ( iteration + 1 == max_iterations ) result.status = algorithm_status::non_convergent;
+  }
+  // Canonicalize sparse labels to [0,k).
+  micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; labels;
+  for ( auto vertex : graph.vertices() ) {
+    const I label = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+    bool found = false;
+    for ( I existing : labels )
+      if ( existing == label ) {
+        found = true;
+        break;
+      }
+    if ( !found ) labels.push_back(label);
+  }
+  for ( auto vertex : graph.vertices() ) {
+    I &amp;label = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+    for ( usize i = 0; i &lt; labels.size(); ++i )
+      if ( labels.data()[i] == label ) {
+        label = static_cast&lt;I&gt;(i);
+        break;
+      }
+  }
+  result.communities = labels.size();
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/community.hpp.html#L92">line 92</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="descriptors.hpp.html#f-ef8d5d2565228ebe">vertex_id&lt;I&gt;::invalid_value</a>.</p></section><section class="function-entry" id="f-7f5dc2bfd7d4505c"><h3><code>micron::math::graphs::modularity(const G &amp;graph, const Partition &amp;community, f64 resolution = 1.0)</code></h3><p>Defined in <code>math/graph/community.hpp</code>, <a href="../../../source/math/graph/community.hpp.html#L97">line 97</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename Partition&gt;
+[[nodiscard]] f64
+modularity(const G &amp;graph, const Partition &amp;community, f64 resolution = 1.0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>const Partition &amp;community</code></li><li><code>f64 resolution = 1.0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename Partition&gt;
+[[nodiscard]] f64
+modularity(const G &amp;graph, const Partition &amp;community, f64 resolution = 1.0)
+{
+  const f64 m = static_cast&lt;f64&gt;(graph.edges_count());
+  if ( m == 0 ) return f64(0);
+  f64 score = 0;
+  for ( auto u : graph.vertices() ) {
+    for ( auto v : graph.vertices() ) {
+      if ( community[static_cast&lt;usize&gt;(u.value)] != community[static_cast&lt;usize&gt;(v.value)] ) continue;
+      const f64 adjacency = graph.has_edge(u, v) ? f64(1) : f64(0);
+      if constexpr ( G::is_directed )
+        score += adjacency - resolution * static_cast&lt;f64&gt;(graph.out_degree(u) * graph.in_degree(v)) / m;
+      else
+        score += adjacency - resolution * static_cast&lt;f64&gt;(graph.degree(u) * graph.degree(v)) / (f64(2) * m);
+    }
+  }
+  return score / (G::is_directed ? m : f64(2) * m);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/community.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>score / (G::is_directed ? m : f64(2) * m)</code></td><td><a href="../../../source/math/graph/community.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-e0eb8e7d652a93c0"><h3><code>micron::math::graphs::louvain(const G &amp;graph, usize max_iterations = 100)</code></h3><p>Defined in <code>math/graph/community.hpp</code>, <a href="../../../source/math/graph/community.hpp.html#L117">line 117</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+louvain(const G &amp;graph, usize max_iterations = 100)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>usize max_iterations = 100</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+louvain(const G &amp;graph, usize max_iterations = 100)
+{
+  using I = typename G::index_type;
+  partition_result&lt;I&gt; result{ algorithm_status::ok, graph.vertices_count(), 0,
+                              micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), vertex_id&lt;I&gt;::invalid_value()) };
+  for ( auto vertex : graph.vertices() ) result.community.data()[static_cast&lt;usize&gt;(vertex.value)] = vertex.value;
+  if ( graph.edges_count() == 0 ) return result;
+  const f64 normalization = static_cast&lt;f64&gt;(graph.edges_count());
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; out_total(graph.vertex_slots(), f64(0));
+  micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; in_total(graph.vertex_slots(), f64(0));
+  for ( auto vertex : graph.vertices() ) {
+    const usize slot = static_cast&lt;usize&gt;(vertex.value);
+    out_total.data()[slot] = static_cast&lt;f64&gt;(G::is_directed ? graph.out_degree(vertex) : graph.degree(vertex));
+    in_total.data()[slot] = static_cast&lt;f64&gt;(G::is_directed ? graph.in_degree(vertex) : graph.degree(vertex));
+  }
+
+  for ( usize iteration = 0; iteration &lt; max_iterations; ++iteration ) {
+    bool changed = false;
+    for ( auto vertex : graph.vertices() ) {
+      const usize slot = static_cast&lt;usize&gt;(vertex.value);
+      const I original = result.community.data()[slot];
+      micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; candidates;
+      micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; outgoing;
+      micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; incoming;
+      candidates.push_back(original);
+      outgoing.push_back(0);
+      incoming.push_back(0);
+      auto consider = [&amp;](auto neighbor, bool is_outgoing) {
+        const I label = result.community.data()[static_cast&lt;usize&gt;(neighbor.value)];
+        usize index = 0;
+        while ( index &lt; candidates.size() &amp;&amp; candidates.data()[index] != label ) ++index;
+        if ( index == candidates.size() ) {
+          candidates.push_back(label);
+          outgoing.push_back(0);
+          incoming.push_back(0);
+        }
+        if ( is_outgoing )
+          outgoing.data()[index] += 1;
+        else
+          incoming.data()[index] += 1;
+      };
+      for ( auto neighbor : graph.out_neighbors(vertex) ) consider(neighbor, true);
+      if constexpr ( G::is_directed ) {
+        for ( auto neighbor : graph.in_neighbors(vertex) ) consider(neighbor, false);
+      } else {
+        for ( usize i = 0; i &lt; outgoing.size(); ++i ) incoming.data()[i] = outgoing.data()[i];
+      }
+
+      const f64 out_degree = static_cast&lt;f64&gt;(graph.out_degree(vertex));
+      const f64 in_degree = static_cast&lt;f64&gt;(G::is_directed ? graph.in_degree(vertex) : graph.degree(vertex));
+      out_total.data()[static_cast&lt;usize&gt;(original)] -= G::is_directed ? out_degree : in_degree;
+      in_total.data()[static_cast&lt;usize&gt;(original)] -= in_degree;
+
+      I best = original;
+      f64 best_gain = -1.0;
+      bool have_gain = false;
+      for ( usize i = 0; i &lt; candidates.size(); ++i ) {
+        const I candidate = candidates.data()[i];
+        f64 gain{};
+        if constexpr ( G::is_directed ) {
+          gain = (outgoing.data()[i] + incoming.data()[i]) / normalization
+                 - (out_degree * in_total.data()[static_cast&lt;usize&gt;(candidate)]
+                    + in_degree * out_total.data()[static_cast&lt;usize&gt;(candidate)])
+                       / (normalization * normalization);
+        } else {
+          gain = outgoing.data()[i] / normalization
+                 - in_degree * in_total.data()[static_cast&lt;usize&gt;(candidate)] / (f64(2) * normalization * normalization);
+        }
+        if ( !have_gain || gain &gt; best_gain + 1e-12 || (gain &gt;= best_gain - 1e-12 &amp;&amp; candidate &lt; best) ) {
+          have_gain = true;
+          best = candidate;
+          best_gain = gain;
+        }
+      }
+      result.community.data()[slot] = best;
+      out_total.data()[static_cast&lt;usize&gt;(best)] += G::is_directed ? out_degree : in_degree;
+      in_total.data()[static_cast&lt;usize&gt;(best)] += in_degree;
+      if ( best != original ) changed = true;
+    }
+    result.iterations = iteration + 1;
+    if ( !changed ) break;
+    if ( iteration + 1 == max_iterations ) result.status = algorithm_status::non_convergent;
+  }
+
+  micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; labels;
+  for ( auto vertex : graph.vertices() ) {
+    const I label = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+    bool found = false;
+    for ( I existing : labels )
+      if ( existing == label ) {
+        found = true;
+        break;
+      }
+    if ( !found ) labels.push_back(label);
+  }
+  for ( auto vertex : graph.vertices() ) {
+    I &amp;label = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+    for ( usize i = 0; i &lt; labels.size(); ++i )
+      if ( labels.data()[i] == label ) {
+        label = static_cast&lt;I&gt;(i);
+        break;
+      }
+  }
+  result.communities = labels.size();
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/community.hpp.html#L123">line 123</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/community.hpp.html#L221">line 221</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="descriptors.hpp.html#f-ef8d5d2565228ebe">vertex_id&lt;I&gt;::invalid_value</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-67029662638cfcd3"><h3><code>micron::math::graphs::leiden(const G &amp;graph, usize max_iterations = 100)</code></h3><p>Defined in <code>math/graph/community.hpp</code>, <a href="../../../source/math/graph/community.hpp.html#L226">line 226</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+leiden(const G &amp;graph, usize max_iterations = 100)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>usize max_iterations = 100</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+leiden(const G &amp;graph, usize max_iterations = 100)
+{
+  using I = typename G::index_type;
+  auto result = louvain(graph, max_iterations);
+  micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; refined(graph.vertex_slots(), vertex_id&lt;I&gt;::invalid_value());
+  micron::vector&lt;u8, micron::allocator_serial&lt;&gt;, false&gt; seen(graph.vertex_slots(), u8(0));
+  micron::vector&lt;typename G::vertex_descriptor, micron::allocator_serial&lt;&gt;, false&gt; queue;
+  queue.reserve(graph.vertices_count());
+  I next_label = 0;
+  for ( auto root : graph.vertices() ) {
+    const usize root_slot = static_cast&lt;usize&gt;(root.value);
+    if ( seen.data()[root_slot] ) continue;
+    const I old_label = result.community.data()[root_slot];
+    queue.clear();
+    queue.push_back(root);
+    seen.data()[root_slot] = 1;
+    refined.data()[root_slot] = next_label;
+    usize head = 0;
+    while ( head &lt; queue.size() ) {
+      const auto vertex = queue.data()[head++];
+      auto inspect = [&amp;](auto neighbor) {
+        const usize slot = static_cast&lt;usize&gt;(neighbor.value);
+        if ( seen.data()[slot] || result.community.data()[slot] != old_label ) return;
+        seen.data()[slot] = 1;
+        refined.data()[slot] = next_label;
+        queue.push_back(neighbor);
+      };
+      for ( auto neighbor : graph.out_neighbors(vertex) ) inspect(neighbor);
+      if constexpr ( G::is_directed )
+        for ( auto neighbor : graph.in_neighbors(vertex) ) inspect(neighbor);
+    }
+    ++next_label;
+  }
+  result.community = micron::move(refined);
+  result.communities = static_cast&lt;usize&gt;(next_label);
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/community.hpp.html#L261">line 261</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="community.hpp.html#f-e0eb8e7d652a93c0">louvain</a>, <a href="descriptors.hpp.html#f-ef8d5d2565228ebe">vertex_id&lt;I&gt;::invalid_value</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-0b479c8e567a4a32"><h3><code>micron::math::graphs::greedy_modularity_communities(const G &amp;graph, usize max_iterations = 100)</code></h3><p>Defined in <code>math/graph/community.hpp</code>, <a href="../../../source/math/graph/community.hpp.html#L266">line 266</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G&gt;
+[[nodiscard]] auto
+greedy_modularity_communities(const G &amp;graph, usize max_iterations = 100)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>usize max_iterations = 100</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G&gt;
+[[nodiscard]] auto
+greedy_modularity_communities(const G &amp;graph, usize max_iterations = 100)
+{
+  using I = typename G::index_type;
+  partition_result&lt;I&gt; result{ algorithm_status::ok, graph.vertices_count(), 0,
+                              micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt;(graph.vertex_slots(), vertex_id&lt;I&gt;::invalid_value()) };
+  for ( auto vertex : graph.vertices() ) result.community.data()[static_cast&lt;usize&gt;(vertex.value)] = vertex.value;
+  if ( graph.edges_count() == 0 ) return result;
+  const f64 normalization = static_cast&lt;f64&gt;(graph.edges_count());
+
+  for ( usize iteration = 0; iteration &lt; max_iterations &amp;&amp; result.communities &gt; 1; ++iteration ) {
+    micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; labels;
+    for ( auto vertex : graph.vertices() ) {
+      const I label = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+      bool found = false;
+      for ( I existing : labels )
+        if ( existing == label ) {
+          found = true;
+          break;
+        }
+      if ( !found ) labels.push_back(label);
+    }
+
+    const usize count = labels.size();
+    micron::vector&lt;usize, micron::allocator_serial&lt;&gt;, false&gt; label_index(graph.vertex_slots(), usize(-1));
+    for ( usize i = 0; i &lt; count; ++i ) label_index.data()[static_cast&lt;usize&gt;(labels.data()[i])] = i;
+    micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; outgoing(count, f64(0));
+    micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; incoming(count, f64(0));
+    micron::vector&lt;f64, micron::allocator_serial&lt;&gt;, false&gt; between(count * count, f64(0));
+    for ( auto vertex : graph.vertices() ) {
+      const usize community = label_index.data()[static_cast&lt;usize&gt;(result.community.data()[static_cast&lt;usize&gt;(vertex.value)])];
+      outgoing.data()[community] += static_cast&lt;f64&gt;(G::is_directed ? graph.out_degree(vertex) : graph.degree(vertex));
+      incoming.data()[community] += static_cast&lt;f64&gt;(G::is_directed ? graph.in_degree(vertex) : graph.degree(vertex));
+    }
+    for ( auto edge : graph.edges() ) {
+      const usize a = label_index.data()[static_cast&lt;usize&gt;(result.community.data()[static_cast&lt;usize&gt;(edge.source.value)])];
+      const usize b = label_index.data()[static_cast&lt;usize&gt;(result.community.data()[static_cast&lt;usize&gt;(edge.target.value)])];
+      if ( a == b ) continue;
+      between.data()[a * count + b] += 1;
+      if constexpr ( !G::is_directed ) between.data()[b * count + a] += 1;
+    }
+
+    bool improved = false;
+    I best_a{};
+    I best_b{};
+    f64 best_delta = 0;
+    for ( usize a = 0; a &lt; count; ++a ) {
+      for ( usize b = a + 1; b &lt; count; ++b ) {
+        f64 delta{};
+        if constexpr ( G::is_directed ) {
+          delta = (between.data()[a * count + b] + between.data()[b * count + a]) / normalization
+                  - (outgoing.data()[a] * incoming.data()[b] + outgoing.data()[b] * incoming.data()[a]) / (normalization * normalization);
+        } else {
+          delta = between.data()[a * count + b] / normalization
+                  - outgoing.data()[a] * outgoing.data()[b] / (f64(2) * normalization * normalization);
+        }
+        if ( delta &gt; best_delta + 1e-12 ) {
+          improved = true;
+          best_delta = delta;
+          best_a = labels.data()[a];
+          best_b = labels.data()[b];
+        }
+      }
+    }
+    if ( !improved ) break;
+    for ( auto vertex : graph.vertices() ) {
+      I &amp;label = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+      if ( label == best_b ) label = best_a;
+    }
+    --result.communities;
+    result.iterations = iteration + 1;
+    if ( iteration + 1 == max_iterations &amp;&amp; result.communities &gt; 1 ) result.status = algorithm_status::non_convergent;
+  }
+  micron::vector&lt;I, micron::allocator_serial&lt;&gt;, false&gt; labels;
+  for ( auto vertex : graph.vertices() ) {
+    const I label = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+    bool found = false;
+    for ( I existing : labels )
+      if ( existing == label ) {
+        found = true;
+        break;
+      }
+    if ( !found ) labels.push_back(label);
+  }
+  for ( auto vertex : graph.vertices() ) {
+    I &amp;label = result.community.data()[static_cast&lt;usize&gt;(vertex.value)];
+    for ( usize i = 0; i &lt; labels.size(); ++i )
+      if ( labels.data()[i] == label ) {
+        label = static_cast&lt;I&gt;(i);
+        break;
+      }
+  }
+  result.communities = labels.size();
+  return result;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/community.hpp.html#L272">line 272</a></td></tr><tr class="t-dsc"><td><code>result</code></td><td><a href="../../../source/math/graph/community.hpp.html#L358">line 358</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="descriptors.hpp.html#f-ef8d5d2565228ebe">vertex_id&lt;I&gt;::invalid_value</a>, <a href="../../types.hpp.html#s-ef6634bb91f59652">usize</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><section class="function-entry" id="f-f03c7946aad9959d"><h3><code>micron::math::graphs::partition_coverage(const G &amp;graph, const Partition &amp;community)</code></h3><p>Defined in <code>math/graph/community.hpp</code>, <a href="../../../source/math/graph/community.hpp.html#L363">line 363</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;graph_model G, typename Partition&gt;
+[[nodiscard]] f64
+partition_coverage(const G &amp;graph, const Partition &amp;community)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const G &amp;graph</code></li><li><code>const Partition &amp;community</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;graph_model G, typename Partition&gt;
+[[nodiscard]] f64
+partition_coverage(const G &amp;graph, const Partition &amp;community)
+{
+  if ( graph.edges_count() == 0 ) return f64(0);
+  usize internal = 0;
+  for ( auto edge : graph.edges() )
+    if ( community[static_cast&lt;usize&gt;(edge.source.value)] == community[static_cast&lt;usize&gt;(edge.target.value)] ) ++internal;
+  return static_cast&lt;f64&gt;(internal) / static_cast&lt;f64&gt;(graph.edges_count());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>f64(0)</code></td><td><a href="../../../source/math/graph/community.hpp.html#L365">line 365</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;f64&gt;(internal) / static_cast&lt;f64&gt;(graph.edges_count())</code></td><td><a href="../../../source/math/graph/community.hpp.html#L369">line 369</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/lazy/collect.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/lazy/collect.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/lazy.html">Lazy algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/lazy/collect.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/algorithm/lazy/collect.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-78c96601504cca93">micron::lz::sizable</code></td><td>concept; line 28</td></tr><tr class="t-dsc"><td><code id="s-df8ca5a167211ba1">micron::lz::reservable</code></td><td>concept; line 31</td></tr><tr class="t-dsc"><td><code id="s-b3f3af96bd5a85b9">micron::lz::pushable</code></td><td>concept; line 34</td></tr><tr class="t-dsc"><td><code id="s-0e1227f9b1ce2011">micron::lz::size_constructible</code></td><td>concept; line 37</td></tr><tr class="t-dsc"><td><a href="#f-c71325182b609668">micron::lz::collect_into(V &amp;&amp;__v)</a></td><td>function; line 67</td></tr><tr class="t-dsc"><td><a href="#f-665aeddab7088fbf">micron::lz::collect() noexcept</a></td><td>function; line 148</td></tr><tr class="t-dsc"><td><a href="#f-a72e8f810c6d204d">micron::lz::to() noexcept</a></td><td>function; line 155</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-c71325182b609668"><h3><code>micron::lz::collect_into(V &amp;&amp;__v)</code></h3><p>Defined in <code>algorithm/lazy/collect.hpp</code>, <a href="../../../source/algorithm/lazy/collect.hpp.html#L67">line 67</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Out, typename V&gt;
+constexpr Out
+collect_into(V &amp;&amp;__v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>V &amp;&amp;__v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Out, typename V&gt;
+constexpr Out
+collect_into(V &amp;&amp;__v)
+{
+  using B = micron::remove_cvref_t&lt;V&gt;;
+  static_assert(kind_of&lt;B&gt; != size_kind::endless,
+                &quot;micron::lz::collect: this pipeline never terminates -- put a take(n) or take_while(p) before it&quot;);
+
+  if constexpr ( kind_of&lt;B&gt; == size_kind::exact &amp;&amp; sizable&lt;Out&gt; ) {
+    const usize __n = static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v));
+    Out __out = __impl::__sized&lt;Out&gt;(__n);
+    auto *__restrict __dst = __out.begin();
+    auto __i = micron::ranges::begin(__v);
+    const auto __e = micron::ranges::end(__v);
+    for ( ; !(__i == __e); ++__i, ++__dst ) *__dst = *__i;
+    return __out;
+  }
+
+  else if constexpr ( micron::has_static_size&lt;Out&gt; &amp;&amp; !sizable&lt;Out&gt; &amp;&amp; !pushable&lt;Out&gt; ) {
+    Out __out;
+    static_assert(static_size_of&lt;B&gt; == micron::remove_cvref_t&lt;Out&gt;::static_size,
+                  &quot;micron::lz::collect&lt;array&lt;T,N&gt;&gt;: the pipeline&#x27;s compile-time extent does not match N. &quot;
+                  &quot;filter / take(n) / generators erase it -- collect into a vector instead&quot;);
+    if constexpr ( static_size_of&lt;B&gt; != no_static_size &amp;&amp; static_size_of&lt;B&gt; &lt;= micron::__unroll_max ) {
+      __impl::__fill_unrolled(__out, __v, micron::make_index_sequence&lt;static_size_of&lt;B&gt;&gt;{});
+    } else {
+      auto __i = micron::ranges::begin(__v);
+      for ( usize __k = 0; __k &lt; micron::remove_cvref_t&lt;Out&gt;::static_size; ++__k, ++__i ) __out[__k] = *__i;
+    }
+    return __out;
+  }
+
+  else if constexpr ( kind_of&lt;B&gt; == size_kind::bounded ) {
+    const usize __n = static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v));
+    if constexpr ( sizable&lt;Out&gt; ) {
+      Out __out = __impl::__sized&lt;Out&gt;(__n);
+      auto *__restrict __dst = __out.begin();
+
+      if constexpr ( requires(const B &amp;__b, decltype(__dst) __p) { __b.__drain_into(__p); } ) {
+        __dst = __v.__drain_into(__dst);
+      } else {
+        auto __i = micron::ranges::begin(__v);
+        const auto __e = micron::ranges::end(__v);
+        for ( ; !(__i == __e); ++__i, ++__dst ) *__dst = *__i;
+      }
+      __out.resize(static_cast&lt;usize&gt;(__dst - __out.begin()));
+      return __out;
+    } else {
+      static_assert(pushable&lt;Out&gt;, &quot;micron::lz::collect: Out has neither resize() nor push_back()&quot;);
+      Out __out;
+      if constexpr ( reservable&lt;Out&gt; ) __out.reserve(__n);
+      auto __i = micron::ranges::begin(__v);
+      const auto __e = micron::ranges::end(__v);
+      for ( ; !(__i == __e); ++__i ) __out.push_back(*__i);
+      return __out;
+    }
+  }
+
+  else {
+    static_assert(pushable&lt;Out&gt;, &quot;micron::lz::collect: an unknown-length pipeline needs an Out with push_back()&quot;);
+    Out __out;
+    if constexpr ( reservable&lt;Out&gt; ) {
+      const usize __n = static_cast&lt;usize&gt;(micron::ranges::reserve_hint(__v));
+      if ( __n ) __out.reserve(__n);
+    }
+    auto __i = micron::ranges::begin(__v);
+    const auto __e = micron::ranges::end(__v);
+    for ( ; !(__i == __e); ++__i ) __out.push_back(*__i);
+    return __out;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__out</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>__out</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L94">line 94</a></td></tr><tr class="t-dsc"><td><code>__out</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L111">line 111</a></td></tr><tr class="t-dsc"><td><code>__out</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L119">line 119</a></td></tr><tr class="t-dsc"><td><code>__out</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L133">line 133</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(kind_of&lt;B&gt; != size_kind::endless,
+                &quot;micron::lz::collect: this pipeline never terminates -- put a take(n) or take_while(p) before it&quot;);</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L70">line 70</a></td></tr><tr class="t-dsc"><td><code>static_assert(static_size_of&lt;B&gt; == micron::remove_cvref_t&lt;Out&gt;::static_size,
+                  &quot;micron::lz::collect&lt;array&lt;T,N&gt;&gt;: the pipeline&#x27;s compile-time extent does not match N. &quot;
+                  &quot;filter / take(n) / generators erase it -- collect into a vector instead&quot;);</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L85">line 85</a><br>Within <code>else of ( kind_of&lt;B&gt; == size_kind::exact &amp;&amp; sizable&lt;Out&gt; )</code>, <code>( micron::has_static_size&lt;Out&gt; &amp;&amp; !sizable&lt;Out&gt; &amp;&amp; !pushable&lt;Out&gt; )</code></td></tr><tr class="t-dsc"><td><code>static_assert(pushable&lt;Out&gt;, &quot;micron::lz::collect: Out has neither resize() nor push_back()&quot;);</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L113">line 113</a><br>Within <code>else of ( kind_of&lt;B&gt; == size_kind::exact &amp;&amp; sizable&lt;Out&gt; )</code>, <code>else of ( micron::has_static_size&lt;Out&gt; &amp;&amp; !sizable&lt;Out&gt; &amp;&amp; !pushable&lt;Out&gt; )</code>, <code>( kind_of&lt;B&gt; == size_kind::bounded )</code>, <code>else of ( sizable&lt;Out&gt; )</code></td></tr><tr class="t-dsc"><td><code>static_assert(pushable&lt;Out&gt;, &quot;micron::lz::collect: an unknown-length pipeline needs an Out with push_back()&quot;);</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L124">line 124</a><br>Within <code>else of ( kind_of&lt;B&gt; == size_kind::exact &amp;&amp; sizable&lt;Out&gt; )</code>, <code>else of ( micron::has_static_size&lt;Out&gt; &amp;&amp; !sizable&lt;Out&gt; &amp;&amp; !pushable&lt;Out&gt; )</code>, <code>else of ( kind_of&lt;B&gt; == size_kind::bounded )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-86b48cc370469477">micron::ranges::reserve_hint</a>, <a href="collect.hpp.html#f-2c71edc81133c2bb">__impl::__sized&lt;Out&gt;</a>, <a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>, <a href="../../range.hpp.html#s-13f6efabd0f19446">micron::ranges::end</a>, <a href="collect.hpp.html#f-848db092405f0039">__impl::__fill_unrolled</a>.</p></section><section class="function-entry" id="f-665aeddab7088fbf"><h3><code>micron::lz::collect() noexcept</code></h3><p>Defined in <code>algorithm/lazy/collect.hpp</code>, <a href="../../../source/algorithm/lazy/collect.hpp.html#L148">line 148</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Out&gt;
+[[nodiscard]] constexpr auto
+collect() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__collect_fn&lt;Out&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Out&gt;
+[[nodiscard]] constexpr auto
+collect() noexcept
+{
+  return __collect_fn&lt;Out&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__collect_fn&lt;Out&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L150">line 150</a></td></tr></tbody></table></section><section class="function-entry" id="f-a72e8f810c6d204d"><h3><code>micron::lz::to() noexcept</code></h3><p>Defined in <code>algorithm/lazy/collect.hpp</code>, <a href="../../../source/algorithm/lazy/collect.hpp.html#L155">line 155</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Out&gt;
+[[nodiscard]] constexpr auto
+to() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__collect_fn&lt;Out&gt;{}</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Out&gt;
+[[nodiscard]] constexpr auto
+to() noexcept
+{
+  return __collect_fn&lt;Out&gt;{};
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__collect_fn&lt;Out&gt;{}</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L157">line 157</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-2c71edc81133c2bb"><h3><code>micron::lz::__impl::__sized(usize __n)</code></h3><p>Defined in <code>algorithm/lazy/collect.hpp</code>, <a href="../../../source/algorithm/lazy/collect.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename O&gt;
+constexpr O
+__sized(usize __n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename O&gt;
+constexpr O
+__sized(usize __n)
+{
+  if constexpr ( size_constructible&lt;O&gt; ) {
+    return O(__n);
+  } else {
+    O __o;
+    __o.resize(__n);
+    return __o;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>O(__n)</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>__o</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L51">line 51</a></td></tr></tbody></table></section><section class="function-entry" id="f-848db092405f0039"><h3><code>micron::lz::__impl::__fill_unrolled(Out &amp;__out, V &amp;__v, micron::index_sequence&lt;Is...&gt;)</code></h3><p>Defined in <code>algorithm/lazy/collect.hpp</code>, <a href="../../../source/algorithm/lazy/collect.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename Out, typename V, usize... Is&gt;
+[[gnu::always_inline]] constexpr void
+__fill_unrolled(Out &amp;__out, V &amp;__v, micron::index_sequence&lt;Is...&gt;)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>Out &amp;__out</code></li><li><code>V &amp;__v</code></li><li><code>micron::index_sequence&lt;Is...&gt;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename Out, typename V, usize... Is&gt;
+[[gnu::always_inline]] constexpr void
+__fill_unrolled(Out &amp;__out, V &amp;__v, micron::index_sequence&lt;Is...&gt;)
+{
+  auto __i = micron::ranges::begin(__v);
+  ((__out[Is] = *__i, ++__i), ...);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../../range.hpp.html#s-1455b6da08164fcd">micron::ranges::begin</a>.</p></section><section class="function-entry" id="f-7bc5152b5dabb5d5"><h3><code>micron::lz::__collect_fn::operator()(R &amp;&amp;__r) const</code></h3><p>Defined in <code>algorithm/lazy/collect.hpp</code>, <a href="../../../source/algorithm/lazy/collect.hpp.html#L140">line 140</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+  constexpr Out
+  operator()(R &amp;&amp;__r) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>R &amp;&amp;__r</code></li></ul><h4>Effects</h4><p>Returns <code>collect_into&lt;Out&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+  constexpr Out
+  operator()(R &amp;&amp;__r) const
+  {
+    return collect_into&lt;Out&gt;(__as_view(micron::forward&lt;R&gt;(__r)));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>collect_into&lt;Out&gt;(__as_view(micron::forward&lt;R&gt;(__r)))</code></td><td><a href="../../../source/algorithm/lazy/collect.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="collect.hpp.html#f-c71325182b609668">collect_into&lt;Out&gt;</a>, <a href="source.hpp.html#f-91995c25bca48a56">__as_view</a>, <a href="../../memory/actions.hpp.html#f-5f5f68bc26f1662a">micron::forward&lt;R&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

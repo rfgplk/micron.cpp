@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/elf/read/sections.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/elf/read/sections.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/elf/read/sections.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/linux/elf/read/sections.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-fbeb2dbf56419f51">micron::elf::read::section_row</code></td><td>struct; line 23</td></tr><tr class="t-dsc"><td><code id="s-cc65edcde25bd993">micron::elf::read::section_row::name</code></td><td>member; line 24</td></tr><tr class="t-dsc"><td><code id="s-ddd3bf423eb3a75a">micron::elf::read::section_row::type</code></td><td>member; line 25</td></tr><tr class="t-dsc"><td><code id="s-ffb59b5d203b108d">micron::elf::read::section_row::flags</code></td><td>member; line 26</td></tr><tr class="t-dsc"><td><code id="s-fab1edcb150190a0">micron::elf::read::section_row::addr</code></td><td>member; line 27</td></tr><tr class="t-dsc"><td><code id="s-c5d86a6d10e86466">micron::elf::read::section_row::offset</code></td><td>member; line 28</td></tr><tr class="t-dsc"><td><code id="s-2eee31bb47e7f6b6">micron::elf::read::section_row::size</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-436c49af88c44a58">micron::elf::read::section_row::link</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-0f6a7601a774b965">micron::elf::read::section_row::info</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-f34e667995210c1a">micron::elf::read::section_row::addralign</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-484638d0f9c0df07">micron::elf::read::section_row::entsize</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><a href="#f-d077eaff7e2ee17c">micron::elf::read::walk_sections(const image &amp;img)</a></td><td>function; line 77</td></tr><tr class="t-dsc"><td><a href="#f-967da40897717d41">micron::elf::read::find_section(const micron::vector&lt;section_row&gt; &amp;secs, const char *name)</a></td><td>function; line 123</td></tr><tr class="t-dsc"><td><a href="#f-d6afabbe023d40f6">micron::elf::read::find_section_by_type(const micron::vector&lt;section_row&gt; &amp;secs, u32 sht)</a></td><td>function; line 131</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-d077eaff7e2ee17c"><h3><code>micron::elf::read::walk_sections(const image &amp;img)</code></h3><p>Defined in <code>linux/elf/read/sections.hpp</code>, <a href="../../../../source/linux/elf/read/sections.hpp.html#L77">line 77</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline micron::vector&lt;section_row&gt;
+walk_sections(const image &amp;img)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const image &amp;img</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline micron::vector&lt;section_row&gt;
+walk_sections(const image &amp;img)
+{
+  micron::vector&lt;section_row&gt; out{};
+  if ( !img.ok() || img.hdr.shoff == 0 ) return out;
+
+  if ( img.hdr.shentsize == 0 ) return out;
+
+  u64 shnum = img.hdr.shnum;
+  u64 shstrndx = img.hdr.shstrndx;
+
+  if ( shnum == 0 || shstrndx == shn_xindex ) {
+    section_row sec0{};
+    u32 noff0 = 0;
+    if ( __impl::read_one_section(img, 0, noff0, sec0) ) {
+      if ( shnum == 0 ) shnum = sec0.size;
+      if ( shstrndx == shn_xindex ) shstrndx = sec0.link;
+    }
+  }
+  shnum = clamp_records(img, img.hdr.shoff, img.hdr.shentsize, shnum);
+  if ( shnum == 0 ) return out;
+
+  out.reserve(static_cast&lt;usize&gt;(shnum));
+  micron::vector&lt;u32&gt; name_offs{};
+  name_offs.reserve(static_cast&lt;usize&gt;(shnum));
+
+  for ( u64 i = 0; i &lt; shnum; i++ ) {
+    section_row row{};
+    u32 noff = 0;
+    if ( !__impl::read_one_section(img, i, noff, row) ) break;
+    name_offs.push_back(noff);
+    out.push_back(micron::move(row));
+  }
+
+  if ( shstrndx &lt; out.size() &amp;&amp; img.src ) {
+    const u64 strtab_off = out[static_cast&lt;usize&gt;(shstrndx)].offset;
+    const u64 strtab_size = out[static_cast&lt;usize&gt;(shstrndx)].size;
+    for ( usize i = 0; i &lt; out.size(); i++ ) {
+      const u32 noff = name_offs[i];
+      const u64 lim = strtab_size &gt; noff ? strtab_size - noff : 0;
+      out[i].name = read_cstr_at(*img.src, strtab_off + noff, lim);
+    }
+  }
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L82">line 82</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L119">line 119</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sections.hpp.html#f-64537ca5fae5b25d">__impl::read_one_section</a>, <a href="image.hpp.html#f-819b9164c4096dc0">clamp_records</a>, <a href="../../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="source.hpp.html#f-91fef632bed0b0af">read_cstr_at</a>.</p></section><section class="function-entry" id="f-967da40897717d41"><h3><code>micron::elf::read::find_section(const micron::vector&lt;section_row&gt; &amp;secs, const char *name)</code></h3><p>Defined in <code>linux/elf/read/sections.hpp</code>, <a href="../../../../source/linux/elf/read/sections.hpp.html#L123">line 123</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const section_row *
+find_section(const micron::vector&lt;section_row&gt; &amp;secs, const char *name)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector&lt;section_row&gt; &amp;secs</code></li><li><code>const char *name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const section_row *
+find_section(const micron::vector&lt;section_row&gt; &amp;secs, const char *name)
+{
+  for ( const auto &amp;s : secs )
+    if ( micron::strcmp(s.name.c_str(), name) == 0 ) return &amp;s;
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;s</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L126">line 126</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L127">line 127</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../../memory/cstring.hpp.html#f-37dd12c10ea0a198">micron::strcmp</a>.</p></section><section class="function-entry" id="f-d6afabbe023d40f6"><h3><code>micron::elf::read::find_section_by_type(const micron::vector&lt;section_row&gt; &amp;secs, u32 sht)</code></h3><p>Defined in <code>linux/elf/read/sections.hpp</code>, <a href="../../../../source/linux/elf/read/sections.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const section_row *
+find_section_by_type(const micron::vector&lt;section_row&gt; &amp;secs, u32 sht)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector&lt;section_row&gt; &amp;secs</code></li><li><code>u32 sht</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const section_row *
+find_section_by_type(const micron::vector&lt;section_row&gt; &amp;secs, u32 sht)
+{
+  for ( const auto &amp;s : secs )
+    if ( s.type == sht ) return &amp;s;
+  return nullptr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;s</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L134">line 134</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L135">line 135</a></td></tr></tbody></table></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-64537ca5fae5b25d"><h3><code>micron::elf::read::__impl::read_one_section(const image &amp;img, u64 idx, u32 &amp;name_off, section_row &amp;row)</code></h3><p>Defined in <code>linux/elf/read/sections.hpp</code>, <a href="../../../../source/linux/elf/read/sections.hpp.html#L40">line 40</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+read_one_section(const image &amp;img, u64 idx, u32 &amp;name_off, section_row &amp;row)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const image &amp;img</code></li><li><code>u64 idx</code></li><li><code>u32 &amp;name_off</code></li><li><code>section_row &amp;row</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+read_one_section(const image &amp;img, u64 idx, u32 &amp;name_off, section_row &amp;row)
+{
+  const u64 off = img.hdr.shoff + idx * static_cast&lt;u64&gt;(img.hdr.shentsize);
+
+  if ( img.is64() ) {
+    const span_t raw = img.at(off, sizeof(shdr_t));
+    if ( raw.len &lt; sizeof(shdr_t) ) return false;
+    name_off = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr_t, name), img.hdr.data);
+    row.type = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr_t, type), img.hdr.data);
+    row.flags = rd&lt;u64&gt;(raw.ptr, __builtin_offsetof(shdr_t, flags), img.hdr.data);
+    row.addr = rd&lt;u64&gt;(raw.ptr, __builtin_offsetof(shdr_t, addr), img.hdr.data);
+    row.offset = rd&lt;u64&gt;(raw.ptr, __builtin_offsetof(shdr_t, offset), img.hdr.data);
+    row.size = rd&lt;u64&gt;(raw.ptr, __builtin_offsetof(shdr_t, size), img.hdr.data);
+    row.link = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr_t, link), img.hdr.data);
+    row.info = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr_t, info), img.hdr.data);
+    row.addralign = rd&lt;u64&gt;(raw.ptr, __builtin_offsetof(shdr_t, addralign), img.hdr.data);
+    row.entsize = rd&lt;u64&gt;(raw.ptr, __builtin_offsetof(shdr_t, entsize), img.hdr.data);
+  } else {
+    const span_t raw = img.at(off, sizeof(shdr32_t));
+    if ( raw.len &lt; sizeof(shdr32_t) ) return false;
+    name_off = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, name), img.hdr.data);
+    row.type = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, type), img.hdr.data);
+    row.flags = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, flags), img.hdr.data);
+    row.addr = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, addr), img.hdr.data);
+    row.offset = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, offset), img.hdr.data);
+    row.size = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, size), img.hdr.data);
+    row.link = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, link), img.hdr.data);
+    row.info = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, info), img.hdr.data);
+    row.addralign = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, addralign), img.hdr.data);
+    row.entsize = rd&lt;u32&gt;(raw.ptr, __builtin_offsetof(shdr32_t, entsize), img.hdr.data);
+  }
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L59">line 59</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../../source/linux/elf/read/sections.hpp.html#L71">line 71</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="source.hpp.html#f-3af020fdf1086f85">rd&lt;u32&gt;</a>, <a href="source.hpp.html#f-3af020fdf1086f85">rd&lt;u64&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

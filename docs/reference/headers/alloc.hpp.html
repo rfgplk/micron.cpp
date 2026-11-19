@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/alloc.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../assets/cppreference2/screen.css"><link rel="stylesheet" href="../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../index.html">Reference</a> <a href="index.html">Headers</a> <a href="../functions/index.html">Functions</a> <a href="../symbols/index.html">Symbols</a> <a href="../source/index.html">Source</a> <a href="../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/alloc.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../index.html">micron reference</a> › <a href="../modules/allocation.html">Allocation</a></div><p>Defined in header <code>&lt;micron/alloc.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../source/alloc.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-47b712c81713a1bc">micron::alloc(size_t sz)</a></td><td>function; line 16</td></tr><tr class="t-dsc"><td><a href="#f-f641296e457fdc2a">micron::free(T *ptr)</a></td><td>function; line 23</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-47b712c81713a1bc"><h3><code>micron::alloc(size_t sz)</code></h3><p>Defined in <code>alloc.hpp</code>, <a href="../source/alloc.hpp.html#L16">line 16</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T = void&gt;
+T *
+alloc(size_t sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>size_t sz</code></li></ul><h4>Effects</h4><p>Returns <code>micron::ptr_cast&lt;T *&gt;(micron::__alloc(sz))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T = void&gt;
+T *
+alloc(size_t sz)
+{
+  return micron::ptr_cast&lt;T *&gt;(micron::__alloc(sz));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::ptr_cast&lt;T *&gt;(micron::__alloc(sz))</code></td><td><a href="../source/alloc.hpp.html#L18">line 18</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memory/addr.hpp.html#f-97b72614189a6972">micron::ptr_cast&lt;T *&gt;</a>, <a href="memory/allocation/__internal.hpp.html#f-ffc8aa504255b0b5">micron::__alloc</a>.</p></section><section class="function-entry" id="f-f641296e457fdc2a"><h3><code>micron::free(T *ptr)</code></h3><p>Defined in <code>alloc.hpp</code>, <a href="../source/alloc.hpp.html#L23">line 23</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T = void&gt;
+void
+free(T *ptr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *ptr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T = void&gt;
+void
+free(T *ptr)
+{
+  micron::__free(ptr);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="memory/allocation/__internal.hpp.html#f-b9bb2b61f5af906a">micron::__free</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../about.html">Attribution and licenses</a> · <a href="../index.html">Contents</a></p></div></div>
+</body></html>

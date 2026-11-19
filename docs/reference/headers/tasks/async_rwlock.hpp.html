@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/tasks/async_rwlock.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/tasks/async_rwlock.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/tasks.html">Tasks and coroutines</a></div><p>Defined in header <code>&lt;micron/tasks/async_rwlock.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/tasks/async_rwlock.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-d8bf92d5bb6d77da">micron::coro::async_rwlock</code></td><td>class; line 26</td></tr><tr class="t-dsc"><td><a href="#f-ca950bcfaf2d5d20">micron::coro::async_rwlock::async_rwlock() noexcept</a></td><td>function; line 64</td></tr><tr class="t-dsc"><td><a href="#f-7758e553f611fc1b">micron::coro::async_rwlock::async_rwlock(const async_rwlock &amp;)</a></td><td>function; line 65</td></tr><tr class="t-dsc"><td><a href="#f-3fc47fa2c44e278d">micron::coro::async_rwlock::operator=(const async_rwlock &amp;)</a></td><td>function; line 66</td></tr><tr class="t-dsc"><td><a href="#f-839e2d41491a9404">micron::coro::async_rwlock::lock_shared() noexcept</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-930fd1fbf839c688">micron::coro::async_rwlock::unlock_shared() noexcept</a></td><td>function; line 109</td></tr><tr class="t-dsc"><td><a href="#f-c2101b15d46f3ddb">micron::coro::async_rwlock::lock() noexcept</a></td><td>function; line 161</td></tr><tr class="t-dsc"><td><a href="#f-f6c6bc5112e5eca0">micron::coro::async_rwlock::unlock() noexcept</a></td><td>function; line 167</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-ca950bcfaf2d5d20"><h3><code>micron::coro::async_rwlock::async_rwlock() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L64">line 64</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>async_rwlock() noexcept = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-7758e553f611fc1b"><h3><code>micron::coro::async_rwlock::async_rwlock(const async_rwlock &amp;)</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L65">line 65</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>async_rwlock(const async_rwlock &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const async_rwlock &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-3fc47fa2c44e278d"><h3><code>micron::coro::async_rwlock::operator=(const async_rwlock &amp;)</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L66">line 66</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>async_rwlock &amp;operator=(const async_rwlock &amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const async_rwlock &amp;</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-839e2d41491a9404"><h3><code>micron::coro::async_rwlock::lock_shared() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__rlock_awaiter
+  lock_shared() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__rlock_awaiter{ this }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__rlock_awaiter
+  lock_shared() noexcept
+  {
+    return __rlock_awaiter{ this };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__rlock_awaiter{ this }</code></td><td><a href="../../source/tasks/async_rwlock.hpp.html#L105">line 105</a></td></tr></tbody></table></section><section class="function-entry" id="f-930fd1fbf839c688"><h3><code>micron::coro::async_rwlock::unlock_shared() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L109">line 109</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  unlock_shared() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  unlock_shared() noexcept
+  {
+    __acq();
+    --__readers;
+    if ( __readers == 0 &amp;&amp; __wwaiting &gt; 0u ) {
+      __rw_node *__w = __whead;
+      __whead = __w-&gt;__next;
+      --__wwaiting;
+      __writer = true;
+      __rel();
+      __grant(__w);
+      return;
+    }
+    __rel();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/tasks/async_rwlock.hpp.html#L120">line 120</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="async_rwlock.hpp.html#f-a201f0ca061e661e">__acq</a>, <a href="async_rwlock.hpp.html#f-b89b48e42951dbf6">__rel</a>, <a href="async_rwlock.hpp.html#f-4c8c2dec9066ab5a">__grant</a>.</p></section><section class="function-entry" id="f-c2101b15d46f3ddb"><h3><code>micron::coro::async_rwlock::lock() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L161">line 161</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__wlock_awaiter
+  lock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__wlock_awaiter{ this }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__wlock_awaiter
+  lock() noexcept
+  {
+    return __wlock_awaiter{ this };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__wlock_awaiter{ this }</code></td><td><a href="../../source/tasks/async_rwlock.hpp.html#L163">line 163</a></td></tr></tbody></table></section><section class="function-entry" id="f-f6c6bc5112e5eca0"><h3><code>micron::coro::async_rwlock::unlock() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L167">line 167</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  unlock() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  unlock() noexcept
+  {
+    __acq();
+    __writer = false;
+    if ( __wwaiting &gt; 0u ) {
+      __rw_node *__w = __whead;
+      __whead = __w-&gt;__next;
+      --__wwaiting;
+      __writer = true;
+      __rel();
+      __grant(__w);
+      return;
+    }
+
+    __rw_node *__rs = __rhead;
+    __rhead = nullptr;
+    i64 __cnt = 0;
+    for ( __rw_node *__p = __rs; __p != nullptr; __p = __p-&gt;__next ) ++__cnt;
+    __readers = __cnt;
+    __rel();
+    while ( __rs != nullptr ) {
+      __rw_node *__nx = __rs-&gt;__next;
+      __grant(__rs);
+      __rs = __nx;
+    }
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/tasks/async_rwlock.hpp.html#L178">line 178</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="async_rwlock.hpp.html#f-a201f0ca061e661e">__acq</a>, <a href="async_rwlock.hpp.html#f-b89b48e42951dbf6">__rel</a>, <a href="async_rwlock.hpp.html#f-4c8c2dec9066ab5a">__grant</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-a201f0ca061e661e"><h3><code>micron::coro::async_rwlock::__acq() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L41">line 41</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __acq() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __acq() noexcept
+  {
+    u32 __e = 0;
+    while ( !__lk.compare_exchange_weak(__e, 1u, memory_order_acq_rel, memory_order_acquire) ) {
+      __e = 0;
+      __cpu_pause();
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../bits/__pause.hpp.html#f-7833fe33dfed755e">__cpu_pause</a>.</p></section><section class="function-entry" id="f-b89b48e42951dbf6"><h3><code>micron::coro::async_rwlock::__rel() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L51">line 51</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __rel() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __rel() noexcept
+  {
+    __lk.store(0u, memory_order_release);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-4c8c2dec9066ab5a"><h3><code>micron::coro::async_rwlock::__grant(__rw_node *__w) noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L57">line 57</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static void
+  __grant(__rw_node *__w) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__rw_node *__w</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static void
+  __grant(__rw_node *__w) noexcept
+  {
+    const usize __old = __w-&gt;__st.swap(1u, memory_order_acq_rel);
+    if ( __old != 0u ) __resume_waiter(reinterpret_cast&lt;__frame_base *&gt;(__old));
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="waiter_list.hpp.html#f-5bc590b6e30ccb8b">__resume_waiter</a>.</p></section><section class="function-entry" id="f-678dc83d329017a2"><h3><code>micron::coro::async_rwlock::__rlock_awaiter::await_ready() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L73">line 73</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    await_ready() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    await_ready() noexcept
+    {
+      __rw-&gt;__acq();
+      if ( !__rw-&gt;__writer &amp;&amp; __rw-&gt;__wwaiting == 0u ) {
+        ++__rw-&gt;__readers;
+        __rw-&gt;__rel();
+        return true;
+      }
+      __node.__next = __rw-&gt;__rhead;
+      __rw-&gt;__rhead = &amp;__node;
+      __rw-&gt;__rel();
+      return false;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/tasks/async_rwlock.hpp.html#L79">line 79</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/tasks/async_rwlock.hpp.html#L84">line 84</a></td></tr></tbody></table></section><section class="function-entry" id="f-2c0bd9036e574383"><h3><code>micron::coro::async_rwlock::__rlock_awaiter::await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L89">line 89</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class P&gt;
+    bool
+    await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;P&gt; __h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class P&gt;
+    bool
+    await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept
+    {
+      usize __exp = 0u;
+      const usize __f = reinterpret_cast&lt;usize&gt;(static_cast&lt;__frame_base *&gt;(&amp;__h.promise()));
+      return __node.__st.compare_exchange_strong(__exp, __f, memory_order_acq_rel, memory_order_acquire);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__node.__st.compare_exchange_strong(__exp, __f, memory_order_acq_rel, memory_order_acquire)</code></td><td><a href="../../source/tasks/async_rwlock.hpp.html#L93">line 93</a></td></tr></tbody></table></section><section class="function-entry" id="f-6cd09a2fe1a4f958"><h3><code>micron::coro::async_rwlock::__rlock_awaiter::await_resume() const noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L97">line 97</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    await_resume() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    await_resume() const noexcept
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-41c9c8c2ef9ef0c0"><h3><code>micron::coro::async_rwlock::__wlock_awaiter::await_ready() noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L130">line 130</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+    await_ready() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+    await_ready() noexcept
+    {
+      __rw-&gt;__acq();
+      if ( !__rw-&gt;__writer &amp;&amp; __rw-&gt;__readers == 0 ) {
+        __rw-&gt;__writer = true;
+        __rw-&gt;__rel();
+        return true;
+      }
+      ++__rw-&gt;__wwaiting;
+      __node.__next = __rw-&gt;__whead;
+      __rw-&gt;__whead = &amp;__node;
+      __rw-&gt;__rel();
+      return false;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/tasks/async_rwlock.hpp.html#L136">line 136</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/tasks/async_rwlock.hpp.html#L142">line 142</a></td></tr></tbody></table></section><section class="function-entry" id="f-f4ec09cf230104b4"><h3><code>micron::coro::async_rwlock::__wlock_awaiter::await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L147">line 147</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class P&gt;
+    bool
+    await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::coroutine_handle&lt;P&gt; __h</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class P&gt;
+    bool
+    await_suspend(std::coroutine_handle&lt;P&gt; __h) noexcept
+    {
+      usize __exp = 0u;
+      const usize __f = reinterpret_cast&lt;usize&gt;(static_cast&lt;__frame_base *&gt;(&amp;__h.promise()));
+      return __node.__st.compare_exchange_strong(__exp, __f, memory_order_acq_rel, memory_order_acquire);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__node.__st.compare_exchange_strong(__exp, __f, memory_order_acq_rel, memory_order_acquire)</code></td><td><a href="../../source/tasks/async_rwlock.hpp.html#L151">line 151</a></td></tr></tbody></table></section><section class="function-entry" id="f-e0c5354f2c73058d"><h3><code>micron::coro::async_rwlock::__wlock_awaiter::await_resume() const noexcept</code></h3><p>Defined in <code>tasks/async_rwlock.hpp</code>, <a href="../../source/tasks/async_rwlock.hpp.html#L155">line 155</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+    await_resume() const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+    await_resume() const noexcept
+    {
+    }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

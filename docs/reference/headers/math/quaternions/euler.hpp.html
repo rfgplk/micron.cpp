@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/quaternions/euler.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/quaternions/euler.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/quaternions.html">Quantities and quaternions</a></div><p>Defined in header <code>&lt;micron/math/quaternions/euler.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/quaternions/euler.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-699bded9ee79dba5">micron::math::quaternions::rotations</code></td><td>enum; line 32</td></tr><tr class="t-dsc"><td><code id="s-00adc5f39647608d">micron::math::quaternions::rotations::roll</code></td><td>enumerator; line 34</td></tr><tr class="t-dsc"><td><code id="s-49cb433ef078ae0c">micron::math::quaternions::rotations::pitch</code></td><td>enumerator; line 35</td></tr><tr class="t-dsc"><td><code id="s-5127e888785d6df5">micron::math::quaternions::rotations::yaw</code></td><td>enumerator; line 36</td></tr><tr class="t-dsc"><td><code id="s-9257b0fc3eedba22">micron::math::quaternions::rotations::alpha</code></td><td>enumerator; line 38</td></tr><tr class="t-dsc"><td><code id="s-268a3458e426885d">micron::math::quaternions::rotations::beta</code></td><td>enumerator; line 39</td></tr><tr class="t-dsc"><td><code id="s-1e4171ee856ea6ad">micron::math::quaternions::rotations::gamma</code></td><td>enumerator; line 40</td></tr><tr class="t-dsc"><td><code id="s-32ae4edc4863ac48">micron::math::quaternions::frame</code></td><td>enum; line 43</td></tr><tr class="t-dsc"><td><code id="s-811c4b1a4ef60b5f">micron::math::quaternions::frame::body</code></td><td>enumerator; line 44</td></tr><tr class="t-dsc"><td><code id="s-58bd1a64d775c67e">micron::math::quaternions::frame::world</code></td><td>enumerator; line 45</td></tr><tr class="t-dsc"><td><code id="s-6f3fff48a9043165">micron::math::quaternions::euler_order</code></td><td>enum; line 48</td></tr><tr class="t-dsc"><td><code id="s-f4b033c80390debe">micron::math::quaternions::euler_order::XYZ</code></td><td>enumerator; line 50</td></tr><tr class="t-dsc"><td><code id="s-e9bd0b0d557c8a9f">micron::math::quaternions::euler_order::XZY</code></td><td>enumerator; line 51</td></tr><tr class="t-dsc"><td><code id="s-0c3bb5c2b192f9b4">micron::math::quaternions::euler_order::YXZ</code></td><td>enumerator; line 52</td></tr><tr class="t-dsc"><td><code id="s-38f24d0734ae2357">micron::math::quaternions::euler_order::YZX</code></td><td>enumerator; line 53</td></tr><tr class="t-dsc"><td><code id="s-38a612462bc921a7">micron::math::quaternions::euler_order::ZXY</code></td><td>enumerator; line 54</td></tr><tr class="t-dsc"><td><code id="s-13f5df457171561a">micron::math::quaternions::euler_order::ZYX</code></td><td>enumerator; line 55</td></tr><tr class="t-dsc"><td><code id="s-8d274800cf5cf205">micron::math::quaternions::euler_order::XYX</code></td><td>enumerator; line 57</td></tr><tr class="t-dsc"><td><code id="s-405d0d55541dc246">micron::math::quaternions::euler_order::XZX</code></td><td>enumerator; line 58</td></tr><tr class="t-dsc"><td><code id="s-b7571281fceb240b">micron::math::quaternions::euler_order::YXY</code></td><td>enumerator; line 59</td></tr><tr class="t-dsc"><td><code id="s-dce5ac83380c9acb">micron::math::quaternions::euler_order::YZY</code></td><td>enumerator; line 60</td></tr><tr class="t-dsc"><td><code id="s-025929306a435a5e">micron::math::quaternions::euler_order::ZXZ</code></td><td>enumerator; line 61</td></tr><tr class="t-dsc"><td><code id="s-2fd18ad7c39973cd">micron::math::quaternions::euler_order::ZYZ</code></td><td>enumerator; line 62</td></tr><tr class="t-dsc"><td><a href="#f-a9140259f1b97a7a">micron::math::quaternions::quat_x(T angle) noexcept</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-44bff4c084b4ef89">micron::math::quaternions::quat_y(T angle) noexcept</a></td><td>function; line 159</td></tr><tr class="t-dsc"><td><a href="#f-3f046eb5e7799c35">micron::math::quaternions::quat_z(T angle) noexcept</a></td><td>function; line 168</td></tr><tr class="t-dsc"><td><a href="#f-893173afcc99fa50">micron::math::quaternions::axis_quat(T angle) noexcept</a></td><td>function; line 177</td></tr><tr class="t-dsc"><td><a href="#f-067ae3b42b2c5c65">micron::math::quaternions::rotate(quaternion&lt;T&gt; &amp;q, T angle) noexcept</a></td><td>function; line 194</td></tr><tr class="t-dsc"><td><a href="#f-93c20baf076472e0">micron::math::quaternions::rotated(const quaternion&lt;T&gt; &amp;q, T angle) noexcept</a></td><td>function; line 217</td></tr><tr class="t-dsc"><td><a href="#f-56c29e30d76f3c08">micron::math::quaternions::rotate_safe(quaternion&lt;T&gt; &amp;q, T angle) noexcept</a></td><td>function; line 226</td></tr><tr class="t-dsc"><td><a href="#f-c93111af05cbef90">micron::math::quaternions::rotated_safe(const quaternion&lt;T&gt; &amp;q, T angle) noexcept</a></td><td>function; line 234</td></tr><tr class="t-dsc"><td><a href="#f-2ebe07f3e7b0ab75">micron::math::quaternions::rotate(quaternion&lt;T&gt; &amp;q, rotations axis, T angle, frame f = frame::body) noexcept</a></td><td>function; line 243</td></tr><tr class="t-dsc"><td><a href="#f-173534f6407ca461">micron::math::quaternions::rotate_axis(const micron::vector_3&lt;T&gt; &amp;v, T angle) noexcept</a></td><td>function; line 271</td></tr><tr class="t-dsc"><td><a href="#f-c72e71c55bf67109">micron::math::quaternions::from_euler(T a, T b, T c) noexcept</a></td><td>function; line 288</td></tr><tr class="t-dsc"><td><a href="#f-f6c8af72e5312bc2">micron::math::quaternions::from_euler(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</a></td><td>function; line 338</td></tr><tr class="t-dsc"><td><a href="#f-4e0a23640ffdb112">micron::math::quaternions::from_euler_matrix(T a, T b, T c) noexcept</a></td><td>function; line 348</td></tr><tr class="t-dsc"><td><a href="#f-8f4555fbc187b08d">micron::math::quaternions::from_euler_matrix(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</a></td><td>function; line 483</td></tr><tr class="t-dsc"><td><a href="#f-d99c23c078a0a841">micron::math::quaternions::from_euler_matrix4(T a, T b, T c) noexcept</a></td><td>function; line 490</td></tr><tr class="t-dsc"><td><a href="#f-4a4b43b1903b8831">micron::math::quaternions::from_euler_matrix4(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</a></td><td>function; line 517</td></tr><tr class="t-dsc"><td><a href="#f-b1093677aae36bb2">micron::math::quaternions::to_euler_matrix(const mat&lt;T, 3, 3&gt; &amp;R) noexcept</a></td><td>function; line 548</td></tr><tr class="t-dsc"><td><a href="#f-2d660135931d0b08">micron::math::quaternions::to_euler(const quaternion&lt;T&gt; &amp;q) noexcept</a></td><td>function; line 689</td></tr><tr class="t-dsc"><td><a href="#f-4ee003916f644a20">micron::math::quaternions::orientate3(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</a></td><td>function; line 724</td></tr><tr class="t-dsc"><td><a href="#f-ee6f6a8079f9b128">micron::math::quaternions::orientate4(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</a></td><td>function; line 731</td></tr><tr class="t-dsc"><td><a href="#f-7cec9cada1ba15b3">micron::math::quaternions::orientate(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</a></td><td>function; line 738</td></tr><tr class="t-dsc"><td><a href="#f-b8f18a9275d053c5">micron::math::quaternions::from_euler_zyx(T yaw, T pitch, T roll) noexcept</a></td><td>function; line 745</td></tr><tr class="t-dsc"><td><a href="#f-3532a8cd30acc698">micron::math::quaternions::to_euler_zyx(const quaternion&lt;T&gt; &amp;q) noexcept</a></td><td>function; line 752</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-a9140259f1b97a7a"><h3><code>micron::math::quaternions::quat_x(T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+quat_x(T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+quat_x(T angle) noexcept
+{
+  T s, c;
+  math::sincos&lt;T&gt;(angle * T(0.5), s, c);
+  return quaternion&lt;T&gt;{ s, T(0), T(0), c };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ s, T(0), T(0), c }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L154">line 154</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-44bff4c084b4ef89"><h3><code>micron::math::quaternions::quat_y(T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L159">line 159</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+quat_y(T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+quat_y(T angle) noexcept
+{
+  T s, c;
+  math::sincos&lt;T&gt;(angle * T(0.5), s, c);
+  return quaternion&lt;T&gt;{ T(0), s, T(0), c };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ T(0), s, T(0), c }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L163">line 163</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-3f046eb5e7799c35"><h3><code>micron::math::quaternions::quat_z(T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L168">line 168</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+quat_z(T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+quat_z(T angle) noexcept
+{
+  T s, c;
+  math::sincos&lt;T&gt;(angle * T(0.5), s, c);
+  return quaternion&lt;T&gt;{ T(0), T(0), s, c };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ T(0), T(0), s, c }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L172">line 172</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-893173afcc99fa50"><h3><code>micron::math::quaternions::axis_quat(T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L177">line 177</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;rotations Axis, ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+axis_quat(T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;rotations Axis, ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+axis_quat(T angle) noexcept
+{
+  T s, c;
+  math::sincos&lt;T&gt;(angle * T(0.5), s, c);
+  if constexpr ( __impl_euler::axis_of_v&lt;Axis&gt; == u8(0) )
+    return quaternion&lt;T&gt;{ s, T(0), T(0), c };
+  else if constexpr ( __impl_euler::axis_of_v&lt;Axis&gt; == u8(1) )
+    return quaternion&lt;T&gt;{ T(0), s, T(0), c };
+  else
+    return quaternion&lt;T&gt;{ T(0), T(0), s, c };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ s, T(0), T(0), c }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L182">line 182</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ T(0), s, T(0), c }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L184">line 184</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ T(0), T(0), s, c }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L186">line 186</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-067ae3b42b2c5c65"><h3><code>micron::math::quaternions::rotate(quaternion&lt;T&gt; &amp;q, T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L194">line 194</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;rotations Axis, frame F = frame::body, ieee754_floating T&gt;
+[[gnu::always_inline]] inline constexpr void
+rotate(quaternion&lt;T&gt; &amp;q, T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quaternion&lt;T&gt; &amp;q</code></li><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;rotations Axis, frame F = frame::body, ieee754_floating T&gt;
+[[gnu::always_inline]] inline constexpr void
+rotate(quaternion&lt;T&gt; &amp;q, T angle) noexcept
+{
+  T s, c;
+  math::sincos&lt;T&gt;(angle * T(0.5), s, c);
+  if constexpr ( F == frame::body ) {
+    if constexpr ( __impl_euler::axis_of_v&lt;Axis&gt; == u8(0) )
+      q = __impl_euler::mul_x_body&lt;T&gt;(q, s, c);
+    else if constexpr ( __impl_euler::axis_of_v&lt;Axis&gt; == u8(1) )
+      q = __impl_euler::mul_y_body&lt;T&gt;(q, s, c);
+    else
+      q = __impl_euler::mul_z_body&lt;T&gt;(q, s, c);
+  } else {
+    if constexpr ( __impl_euler::axis_of_v&lt;Axis&gt; == u8(0) )
+      q = __impl_euler::mul_x_world&lt;T&gt;(q, s, c);
+    else if constexpr ( __impl_euler::axis_of_v&lt;Axis&gt; == u8(1) )
+      q = __impl_euler::mul_y_world&lt;T&gt;(q, s, c);
+    else
+      q = __impl_euler::mul_z_world&lt;T&gt;(q, s, c);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="euler.hpp.html#f-80cbf30ae5a96f9c">__impl_euler::mul_x_body&lt;T&gt;</a>, <a href="euler.hpp.html#f-1b2b38aaeb66a96f">__impl_euler::mul_y_body&lt;T&gt;</a>, <a href="euler.hpp.html#f-3e551efb16cac5b6">__impl_euler::mul_z_body&lt;T&gt;</a>, <a href="euler.hpp.html#f-627fe4818c1e001a">__impl_euler::mul_x_world&lt;T&gt;</a>, <a href="euler.hpp.html#f-2bb13a9830a4f49b">__impl_euler::mul_y_world&lt;T&gt;</a>, <a href="euler.hpp.html#f-84939e1beee44141">__impl_euler::mul_z_world&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-93c20baf076472e0"><h3><code>micron::math::quaternions::rotated(const quaternion&lt;T&gt; &amp;q, T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L217">line 217</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;rotations Axis, frame F = frame::body, ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+rotated(const quaternion&lt;T&gt; &amp;q, T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;rotations Axis, frame F = frame::body, ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+rotated(const quaternion&lt;T&gt; &amp;q, T angle) noexcept
+{
+  quaternion&lt;T&gt; r = q;
+  rotate&lt;Axis, F, T&gt;(r, angle);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L221">line 221</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-067ae3b42b2c5c65">rotate&lt;Axis, F, T&gt;</a>.</p></section><section class="function-entry" id="f-56c29e30d76f3c08"><h3><code>micron::math::quaternions::rotate_safe(quaternion&lt;T&gt; &amp;q, T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L226">line 226</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;rotations Axis, frame F = frame::body, ieee754_floating T&gt;
+[[gnu::always_inline]] inline constexpr void
+rotate_safe(quaternion&lt;T&gt; &amp;q, T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quaternion&lt;T&gt; &amp;q</code></li><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;rotations Axis, frame F = frame::body, ieee754_floating T&gt;
+[[gnu::always_inline]] inline constexpr void
+rotate_safe(quaternion&lt;T&gt; &amp;q, T angle) noexcept
+{
+  rotate&lt;Axis, F, T&gt;(q, angle);
+  q = __impl_euler::unit_renorm&lt;T&gt;(q);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-067ae3b42b2c5c65">rotate&lt;Axis, F, T&gt;</a>, <a href="euler.hpp.html#f-b16665a9ccf5be84">__impl_euler::unit_renorm&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-c93111af05cbef90"><h3><code>micron::math::quaternions::rotated_safe(const quaternion&lt;T&gt; &amp;q, T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L234">line 234</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;rotations Axis, frame F = frame::body, ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+rotated_safe(const quaternion&lt;T&gt; &amp;q, T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;rotations Axis, frame F = frame::body, ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+rotated_safe(const quaternion&lt;T&gt; &amp;q, T angle) noexcept
+{
+  quaternion&lt;T&gt; r = q;
+  rotate_safe&lt;Axis, F, T&gt;(r, angle);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L238">line 238</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-56c29e30d76f3c08">rotate_safe&lt;Axis, F, T&gt;</a>.</p></section><section class="function-entry" id="f-2ebe07f3e7b0ab75"><h3><code>micron::math::quaternions::rotate(quaternion&lt;T&gt; &amp;q, rotations axis, T angle, frame f = frame::body) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L243">line 243</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+inline constexpr void
+rotate(quaternion&lt;T&gt; &amp;q, rotations axis, T angle, frame f = frame::body) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>quaternion&lt;T&gt; &amp;q</code></li><li><code>rotations axis</code></li><li><code>T angle</code></li><li><code>frame f = frame::body</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+inline constexpr void
+rotate(quaternion&lt;T&gt; &amp;q, rotations axis, T angle, frame f = frame::body) noexcept
+{
+  T s, c;
+  math::sincos&lt;T&gt;(angle * T(0.5), s, c);
+  const u8 ax = ((axis == rotations::roll) || (axis == rotations::alpha))   ? u8(0)
+                : ((axis == rotations::pitch) || (axis == rotations::beta)) ? u8(1)
+                                                                            : u8(2);
+  if ( f == frame::body ) {
+    if ( ax == u8(0) )
+      q = __impl_euler::mul_x_body&lt;T&gt;(q, s, c);
+    else if ( ax == u8(1) )
+      q = __impl_euler::mul_y_body&lt;T&gt;(q, s, c);
+    else
+      q = __impl_euler::mul_z_body&lt;T&gt;(q, s, c);
+  } else {
+    if ( ax == u8(0) )
+      q = __impl_euler::mul_x_world&lt;T&gt;(q, s, c);
+    else if ( ax == u8(1) )
+      q = __impl_euler::mul_y_world&lt;T&gt;(q, s, c);
+    else
+      q = __impl_euler::mul_z_world&lt;T&gt;(q, s, c);
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>, <a href="euler.hpp.html#f-80cbf30ae5a96f9c">__impl_euler::mul_x_body&lt;T&gt;</a>, <a href="euler.hpp.html#f-1b2b38aaeb66a96f">__impl_euler::mul_y_body&lt;T&gt;</a>, <a href="euler.hpp.html#f-3e551efb16cac5b6">__impl_euler::mul_z_body&lt;T&gt;</a>, <a href="euler.hpp.html#f-627fe4818c1e001a">__impl_euler::mul_x_world&lt;T&gt;</a>, <a href="euler.hpp.html#f-2bb13a9830a4f49b">__impl_euler::mul_y_world&lt;T&gt;</a>, <a href="euler.hpp.html#f-84939e1beee44141">__impl_euler::mul_z_world&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-173534f6407ca461"><h3><code>micron::math::quaternions::rotate_axis(const micron::vector_3&lt;T&gt; &amp;v, T angle) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L271">line 271</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;rotations Axis, ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr micron::vector_3&lt;T&gt;
+rotate_axis(const micron::vector_3&lt;T&gt; &amp;v, T angle) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector_3&lt;T&gt; &amp;v</code></li><li><code>T angle</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;rotations Axis, ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr micron::vector_3&lt;T&gt;
+rotate_axis(const micron::vector_3&lt;T&gt; &amp;v, T angle) noexcept
+{
+  T s, c;
+  math::sincos&lt;T&gt;(angle, s, c);
+  if constexpr ( __impl_euler::axis_of_v&lt;Axis&gt; == u8(0) ) {
+    return micron::vector_3&lt;T&gt;{ v.x, c * v.y - s * v.z, s * v.y + c * v.z };
+  } else if constexpr ( __impl_euler::axis_of_v&lt;Axis&gt; == u8(1) ) {
+    return micron::vector_3&lt;T&gt;{ c * v.x + s * v.z, v.y, -s * v.x + c * v.z };
+  } else {
+    return micron::vector_3&lt;T&gt;{ c * v.x - s * v.y, s * v.x + c * v.y, v.z };
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::vector_3&lt;T&gt;{ v.x, c * v.y - s * v.z, s * v.y + c * v.z }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L276">line 276</a></td></tr><tr class="t-dsc"><td><code>micron::vector_3&lt;T&gt;{ c * v.x + s * v.z, v.y, -s * v.x + c * v.z }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L278">line 278</a></td></tr><tr class="t-dsc"><td><code>micron::vector_3&lt;T&gt;{ c * v.x - s * v.y, s * v.x + c * v.y, v.z }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L280">line 280</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>, <a href="../../types.hpp.html#s-b3d4994ec55417b4">u8</a>.</p></section><section class="function-entry" id="f-c72e71c55bf67109"><h3><code>micron::math::quaternions::from_euler(T a, T b, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L288">line 288</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr quaternion&lt;T&gt;
+from_euler(T a, T b, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T a</code></li><li><code>T b</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr quaternion&lt;T&gt;
+from_euler(T a, T b, T c) noexcept
+{
+  T s1, c1, s2, c2, s3, c3;
+  math::sincos&lt;T&gt;(a * T(0.5), s1, c1);
+  math::sincos&lt;T&gt;(b * T(0.5), s2, c2);
+  math::sincos&lt;T&gt;(c * T(0.5), s3, c3);
+
+  // Tait-Bryan
+  if constexpr ( Ord == euler_order::XYZ ) {
+    return quaternion&lt;T&gt;{ s1 * c2 * c3 + c1 * s2 * s3, c1 * s2 * c3 - s1 * c2 * s3, c1 * c2 * s3 + s1 * s2 * c3,
+                          c1 * c2 * c3 - s1 * s2 * s3 };
+  } else if constexpr ( Ord == euler_order::XZY ) {
+    return quaternion&lt;T&gt;{ s1 * c2 * c3 - c1 * s2 * s3, c1 * c2 * s3 - s1 * s2 * c3, c1 * s2 * c3 + s1 * c2 * s3,
+                          c1 * c2 * c3 + s1 * s2 * s3 };
+  } else if constexpr ( Ord == euler_order::YXZ ) {
+    return quaternion&lt;T&gt;{ c1 * s2 * c3 + s1 * c2 * s3, s1 * c2 * c3 - c1 * s2 * s3, c1 * c2 * s3 - s1 * s2 * c3,
+                          c1 * c2 * c3 + s1 * s2 * s3 };
+  } else if constexpr ( Ord == euler_order::YZX ) {
+    return quaternion&lt;T&gt;{ c1 * c2 * s3 + s1 * s2 * c3, s1 * c2 * c3 + c1 * s2 * s3, c1 * s2 * c3 - s1 * c2 * s3,
+                          c1 * c2 * c3 - s1 * s2 * s3 };
+  } else if constexpr ( Ord == euler_order::ZXY ) {
+    return quaternion&lt;T&gt;{ c1 * s2 * c3 - s1 * c2 * s3, c1 * c2 * s3 + s1 * s2 * c3, s1 * c2 * c3 + c1 * s2 * s3,
+                          c1 * c2 * c3 - s1 * s2 * s3 };
+  } else if constexpr ( Ord == euler_order::ZYX ) {
+    return quaternion&lt;T&gt;{ c1 * c2 * s3 - s1 * s2 * c3, c1 * s2 * c3 + s1 * c2 * s3, s1 * c2 * c3 - c1 * s2 * s3,
+                          c1 * c2 * c3 + s1 * s2 * s3 };
+    // true Euler
+  } else if constexpr ( Ord == euler_order::XYX ) {
+    return quaternion&lt;T&gt;{ c1 * c2 * s3 + s1 * c2 * c3, c1 * s2 * c3 + s1 * s2 * s3, s1 * s2 * c3 - c1 * s2 * s3,
+                          c1 * c2 * c3 - s1 * c2 * s3 };
+  } else if constexpr ( Ord == euler_order::XZX ) {
+    return quaternion&lt;T&gt;{ c1 * c2 * s3 + s1 * c2 * c3, c1 * s2 * s3 - s1 * s2 * c3, s1 * s2 * s3 + c1 * s2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 };
+  } else if constexpr ( Ord == euler_order::YXY ) {
+    return quaternion&lt;T&gt;{ c1 * s2 * c3 + s1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3, c1 * s2 * s3 - s1 * s2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 };
+  } else if constexpr ( Ord == euler_order::YZY ) {
+    return quaternion&lt;T&gt;{ s1 * s2 * c3 - c1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3, s1 * s2 * s3 + c1 * s2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 };
+  } else if constexpr ( Ord == euler_order::ZXZ ) {
+    return quaternion&lt;T&gt;{ c1 * s2 * c3 + s1 * s2 * s3, s1 * s2 * c3 - c1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 };
+  } else {      // ZYZ
+    return quaternion&lt;T&gt;{ c1 * s2 * s3 - s1 * s2 * c3, c1 * s2 * c3 + s1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 };
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ s1 * c2 * c3 + c1 * s2 * s3, c1 * s2 * c3 - s1 * c2 * s3, c1 * c2 * s3 + s1 * s2 * c3,
+                          c1 * c2 * c3 - s1 * s2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L297">line 297</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ s1 * c2 * c3 - c1 * s2 * s3, c1 * c2 * s3 - s1 * s2 * c3, c1 * s2 * c3 + s1 * c2 * s3,
+                          c1 * c2 * c3 + s1 * s2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L300">line 300</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * s2 * c3 + s1 * c2 * s3, s1 * c2 * c3 - c1 * s2 * s3, c1 * c2 * s3 - s1 * s2 * c3,
+                          c1 * c2 * c3 + s1 * s2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L303">line 303</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * c2 * s3 + s1 * s2 * c3, s1 * c2 * c3 + c1 * s2 * s3, c1 * s2 * c3 - s1 * c2 * s3,
+                          c1 * c2 * c3 - s1 * s2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L306">line 306</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * s2 * c3 - s1 * c2 * s3, c1 * c2 * s3 + s1 * s2 * c3, s1 * c2 * c3 + c1 * s2 * s3,
+                          c1 * c2 * c3 - s1 * s2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L309">line 309</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * c2 * s3 - s1 * s2 * c3, c1 * s2 * c3 + s1 * c2 * s3, s1 * c2 * c3 - c1 * s2 * s3,
+                          c1 * c2 * c3 + s1 * s2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L312">line 312</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * c2 * s3 + s1 * c2 * c3, c1 * s2 * c3 + s1 * s2 * s3, s1 * s2 * c3 - c1 * s2 * s3,
+                          c1 * c2 * c3 - s1 * c2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L316">line 316</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * c2 * s3 + s1 * c2 * c3, c1 * s2 * s3 - s1 * s2 * c3, s1 * s2 * s3 + c1 * s2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L319">line 319</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * s2 * c3 + s1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3, c1 * s2 * s3 - s1 * s2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L322">line 322</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ s1 * s2 * c3 - c1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3, s1 * s2 * s3 + c1 * s2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L325">line 325</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * s2 * c3 + s1 * s2 * s3, s1 * s2 * c3 - c1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L328">line 328</a></td></tr><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c1 * s2 * s3 - s1 * s2 * c3, c1 * s2 * c3 + s1 * s2 * s3, c1 * c2 * s3 + s1 * c2 * c3,
+                          c1 * c2 * c3 - s1 * c2 * s3 }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L331">line 331</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-f6c8af72e5312bc2"><h3><code>micron::math::quaternions::from_euler(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L338">line 338</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr quaternion&lt;T&gt;
+from_euler(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector_3&lt;T&gt; &amp;abc</code></li></ul><h4>Effects</h4><p>Returns <code>from_euler&lt;Ord, T&gt;(abc.x, abc.y, abc.z)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr quaternion&lt;T&gt;
+from_euler(const micron::vector_3&lt;T&gt; &amp;abc) noexcept
+{
+  return from_euler&lt;Ord, T&gt;(abc.x, abc.y, abc.z);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from_euler&lt;Ord, T&gt;(abc.x, abc.y, abc.z)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L340">line 340</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-c72e71c55bf67109">from_euler&lt;Ord, T&gt;</a>.</p></section><section class="function-entry" id="f-4e0a23640ffdb112"><h3><code>micron::math::quaternions::from_euler_matrix(T a, T b, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L348">line 348</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 3, 3&gt;
+from_euler_matrix(T a, T b, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T a</code></li><li><code>T b</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 3, 3&gt;
+from_euler_matrix(T a, T b, T c) noexcept
+{
+  T sa, ca, sb, cb, sg, cg;
+  math::sincos&lt;T&gt;(a, sa, ca);
+  math::sincos&lt;T&gt;(b, sb, cb);
+  math::sincos&lt;T&gt;(c, sg, cg);
+  mat&lt;T, 3, 3&gt; R{};
+  T *__restrict__ d = R.data;
+
+  if constexpr ( Ord == euler_order::XYZ ) {
+    d[0] = cb * cg;
+    d[1] = -cb * sg;
+    d[2] = sb;
+    d[3] = sa * sb * cg + ca * sg;
+    d[4] = ca * cg - sa * sb * sg;
+    d[5] = -sa * cb;
+    d[6] = sa * sg - ca * sb * cg;
+    d[7] = ca * sb * sg + sa * cg;
+    d[8] = ca * cb;
+  } else if constexpr ( Ord == euler_order::XZY ) {
+    d[0] = cb * cg;
+    d[1] = -sb;
+    d[2] = cb * sg;
+    d[3] = ca * sb * cg + sa * sg;
+    d[4] = ca * cb;
+    d[5] = ca * sb * sg - sa * cg;
+    d[6] = sa * sb * cg - ca * sg;
+    d[7] = sa * cb;
+    d[8] = sa * sb * sg + ca * cg;
+  } else if constexpr ( Ord == euler_order::YXZ ) {
+    d[0] = ca * cg + sa * sb * sg;
+    d[1] = sa * sb * cg - ca * sg;
+    d[2] = sa * cb;
+    d[3] = cb * sg;
+    d[4] = cb * cg;
+    d[5] = -sb;
+    d[6] = ca * sb * sg - sa * cg;
+    d[7] = sa * sg + ca * sb * cg;
+    d[8] = ca * cb;
+  } else if constexpr ( Ord == euler_order::YZX ) {
+    d[0] = ca * cb;
+    d[1] = sa * sg - ca * sb * cg;
+    d[2] = ca * sb * sg + sa * cg;
+    d[3] = sb;
+    d[4] = cb * cg;
+    d[5] = -cb * sg;
+    d[6] = -sa * cb;
+    d[7] = sa * sb * cg + ca * sg;
+    d[8] = ca * cg - sa * sb * sg;
+  } else if constexpr ( Ord == euler_order::ZXY ) {
+    d[0] = ca * cg - sa * sb * sg;
+    d[1] = -sa * cb;
+    d[2] = ca * sg + sa * sb * cg;
+    d[3] = sa * cg + ca * sb * sg;
+    d[4] = ca * cb;
+    d[5] = sa * sg - ca * sb * cg;
+    d[6] = -cb * sg;
+    d[7] = sb;
+    d[8] = cb * cg;
+  } else if constexpr ( Ord == euler_order::ZYX ) {
+    d[0] = ca * cb;
+    d[1] = ca * sb * sg - sa * cg;
+    d[2] = ca * sb * cg + sa * sg;
+    d[3] = sa * cb;
+    d[4] = sa * sb * sg + ca * cg;
+    d[5] = sa * sb * cg - ca * sg;
+    d[6] = -sb;
+    d[7] = cb * sg;
+    d[8] = cb * cg;
+  } else if constexpr ( Ord == euler_order::XYX ) {
+    d[0] = cb;
+    d[1] = sb * sg;
+    d[2] = sb * cg;
+    d[3] = sa * sb;
+    d[4] = ca * cg - sa * cb * sg;
+    d[5] = -ca * sg - sa * cb * cg;
+    d[6] = -ca * sb;
+    d[7] = sa * cg + ca * cb * sg;
+    d[8] = ca * cb * cg - sa * sg;
+  } else if constexpr ( Ord == euler_order::XZX ) {
+    d[0] = cb;
+    d[1] = -sb * cg;
+    d[2] = sb * sg;
+    d[3] = ca * sb;
+    d[4] = ca * cb * cg - sa * sg;
+    d[5] = -ca * cb * sg - sa * cg;
+    d[6] = sa * sb;
+    d[7] = sa * cb * cg + ca * sg;
+    d[8] = ca * cg - sa * cb * sg;
+  } else if constexpr ( Ord == euler_order::YXY ) {
+    d[0] = ca * cg - sa * cb * sg;
+    d[1] = sa * sb;
+    d[2] = ca * sg + sa * cb * cg;
+    d[3] = sb * sg;
+    d[4] = cb;
+    d[5] = -sb * cg;
+    d[6] = -sa * cg - ca * cb * sg;
+    d[7] = ca * sb;
+    d[8] = ca * cb * cg - sa * sg;
+  } else if constexpr ( Ord == euler_order::YZY ) {
+    d[0] = ca * cb * cg - sa * sg;
+    d[1] = -ca * sb;
+    d[2] = ca * cb * sg + sa * cg;
+    d[3] = sb * cg;
+    d[4] = cb;
+    d[5] = sb * sg;
+    d[6] = -sa * cb * cg - ca * sg;
+    d[7] = sa * sb;
+    d[8] = ca * cg - sa * cb * sg;
+  } else if constexpr ( Ord == euler_order::ZXZ ) {
+    d[0] = ca * cg - sa * cb * sg;
+    d[1] = -ca * sg - sa * cb * cg;
+    d[2] = sa * sb;
+    d[3] = sa * cg + ca * cb * sg;
+    d[4] = ca * cb * cg - sa * sg;
+    d[5] = -ca * sb;
+    d[6] = sb * sg;
+    d[7] = sb * cg;
+    d[8] = cb;
+  } else {      // ZYZ
+    d[0] = ca * cb * cg - sa * sg;
+    d[1] = -ca * cb * sg - sa * cg;
+    d[2] = ca * sb;
+    d[3] = sa * cb * cg + ca * sg;
+    d[4] = ca * cg - sa * cb * sg;
+    d[5] = sa * sb;
+    d[6] = -sb * cg;
+    d[7] = sb * sg;
+    d[8] = cb;
+  }
+  return R;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>R</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L478">line 478</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../mk.hpp.html#f-d8c2b79bed43ef0b">math::sincos&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-8f4555fbc187b08d"><h3><code>micron::math::quaternions::from_euler_matrix(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L483">line 483</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 3, 3&gt;
+from_euler_matrix(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector_3&lt;T&gt; &amp;abc</code></li></ul><h4>Effects</h4><p>Returns <code>from_euler_matrix&lt;Ord, T&gt;(abc.x, abc.y, abc.z)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 3, 3&gt;
+from_euler_matrix(const micron::vector_3&lt;T&gt; &amp;abc) noexcept
+{
+  return from_euler_matrix&lt;Ord, T&gt;(abc.x, abc.y, abc.z);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from_euler_matrix&lt;Ord, T&gt;(abc.x, abc.y, abc.z)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L485">line 485</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-4e0a23640ffdb112">from_euler_matrix&lt;Ord, T&gt;</a>.</p></section><section class="function-entry" id="f-d99c23c078a0a841"><h3><code>micron::math::quaternions::from_euler_matrix4(T a, T b, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L490">line 490</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 4, 4&gt;
+from_euler_matrix4(T a, T b, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T a</code></li><li><code>T b</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 4, 4&gt;
+from_euler_matrix4(T a, T b, T c) noexcept
+{
+  const mat&lt;T, 3, 3&gt; R = from_euler_matrix&lt;Ord, T&gt;(a, b, c);
+  mat&lt;T, 4, 4&gt; M{};
+  T *__restrict__ d = M.data;
+  const T *__restrict__ r = R.data;
+  d[0] = r[0];
+  d[1] = r[1];
+  d[2] = r[2];
+  d[3] = T(0);
+  d[4] = r[3];
+  d[5] = r[4];
+  d[6] = r[5];
+  d[7] = T(0);
+  d[8] = r[6];
+  d[9] = r[7];
+  d[10] = r[8];
+  d[11] = T(0);
+  d[12] = T(0);
+  d[13] = T(0);
+  d[14] = T(0);
+  d[15] = T(1);
+  return M;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>M</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L512">line 512</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-4e0a23640ffdb112">from_euler_matrix&lt;Ord, T&gt;</a>.</p></section><section class="function-entry" id="f-4a4b43b1903b8831"><h3><code>micron::math::quaternions::from_euler_matrix4(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L517">line 517</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 4, 4&gt;
+from_euler_matrix4(const micron::vector_3&lt;T&gt; &amp;abc) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector_3&lt;T&gt; &amp;abc</code></li></ul><h4>Effects</h4><p>Returns <code>from_euler_matrix4&lt;Ord, T&gt;(abc.x, abc.y, abc.z)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 4, 4&gt;
+from_euler_matrix4(const micron::vector_3&lt;T&gt; &amp;abc) noexcept
+{
+  return from_euler_matrix4&lt;Ord, T&gt;(abc.x, abc.y, abc.z);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from_euler_matrix4&lt;Ord, T&gt;(abc.x, abc.y, abc.z)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L519">line 519</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-d99c23c078a0a841">from_euler_matrix4&lt;Ord, T&gt;</a>.</p></section><section class="function-entry" id="f-b1093677aae36bb2"><h3><code>micron::math::quaternions::to_euler_matrix(const mat&lt;T, 3, 3&gt; &amp;R) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L548">line 548</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr micron::vector_3&lt;T&gt;
+to_euler_matrix(const mat&lt;T, 3, 3&gt; &amp;R) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const mat&lt;T, 3, 3&gt; &amp;R</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr micron::vector_3&lt;T&gt;
+to_euler_matrix(const mat&lt;T, 3, 3&gt; &amp;R) noexcept
+{
+  const T *__restrict__ d = R.data;
+  const T R00 = d[0], R01 = d[1], R02 = d[2];
+  const T R10 = d[3], R11 = d[4], R12 = d[5];
+  const T R20 = d[6], R21 = d[7], R22 = d[8];
+  const T glim = __impl_euler::gimbal_floor&lt;T&gt;();
+  T a, b, c;
+
+  // NOTE: gimbal-lock formulas are unified across both beta branches per sequence
+  // each chosen atan2 pair gives sin/cos of the merged angle with the
+  // correct sign in both gimbal poles, so no further sign branching needed
+  if constexpr ( Ord == euler_order::XYZ ) {
+    const T sb = __impl_euler::clamp_unit&lt;T&gt;(R02);
+    b = math::asin&lt;T&gt;(sb);
+    if ( math::fabs(sb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(R21, R11);
+    } else {
+      a = math::atan2&lt;T&gt;(-R12, R22);
+      c = math::atan2&lt;T&gt;(-R01, R00);
+    }
+  } else if constexpr ( Ord == euler_order::XZY ) {
+    const T sb = __impl_euler::clamp_unit&lt;T&gt;(-R01);
+    b = math::asin&lt;T&gt;(sb);
+    if ( math::fabs(sb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(-R12, R22);
+    } else {
+      a = math::atan2&lt;T&gt;(R21, R11);
+      c = math::atan2&lt;T&gt;(R02, R00);
+    }
+  } else if constexpr ( Ord == euler_order::YXZ ) {
+    const T sb = __impl_euler::clamp_unit&lt;T&gt;(-R12);
+    b = math::asin&lt;T&gt;(sb);
+    if ( math::fabs(sb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(-R20, R00);
+    } else {
+      a = math::atan2&lt;T&gt;(R02, R22);
+      c = math::atan2&lt;T&gt;(R10, R11);
+    }
+  } else if constexpr ( Ord == euler_order::YZX ) {
+    const T sb = __impl_euler::clamp_unit&lt;T&gt;(R10);
+    b = math::asin&lt;T&gt;(sb);
+    if ( math::fabs(sb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(R02, R22);
+    } else {
+      a = math::atan2&lt;T&gt;(-R20, R00);
+      c = math::atan2&lt;T&gt;(-R12, R11);
+    }
+  } else if constexpr ( Ord == euler_order::ZXY ) {
+    const T sb = __impl_euler::clamp_unit&lt;T&gt;(R21);
+    b = math::asin&lt;T&gt;(sb);
+    if ( math::fabs(sb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(R10, R00);
+    } else {
+      a = math::atan2&lt;T&gt;(-R01, R11);
+      c = math::atan2&lt;T&gt;(-R20, R22);
+    }
+  } else if constexpr ( Ord == euler_order::ZYX ) {
+    const T sb = __impl_euler::clamp_unit&lt;T&gt;(-R20);
+    b = math::asin&lt;T&gt;(sb);
+    if ( math::fabs(sb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(-R01, R11);
+    } else {
+      a = math::atan2&lt;T&gt;(R10, R00);
+      c = math::atan2&lt;T&gt;(R21, R22);
+    }
+  } else if constexpr ( Ord == euler_order::XYX ) {
+    const T cb = __impl_euler::clamp_unit&lt;T&gt;(R00);
+    b = math::acos&lt;T&gt;(cb);
+    if ( math::fabs(cb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(R21, R11);
+    } else {
+      a = math::atan2&lt;T&gt;(R10, -R20);
+      c = math::atan2&lt;T&gt;(R01, R02);
+    }
+  } else if constexpr ( Ord == euler_order::XZX ) {
+    const T cb = __impl_euler::clamp_unit&lt;T&gt;(R00);
+    b = math::acos&lt;T&gt;(cb);
+    if ( math::fabs(cb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(-R12, R22);
+    } else {
+      a = math::atan2&lt;T&gt;(R20, R10);
+      c = math::atan2&lt;T&gt;(R02, -R01);
+    }
+  } else if constexpr ( Ord == euler_order::YXY ) {
+    const T cb = __impl_euler::clamp_unit&lt;T&gt;(R11);
+    b = math::acos&lt;T&gt;(cb);
+    if ( math::fabs(cb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(-R20, R00);
+    } else {
+      a = math::atan2&lt;T&gt;(R01, R21);
+      c = math::atan2&lt;T&gt;(R10, -R12);
+    }
+  } else if constexpr ( Ord == euler_order::YZY ) {
+    const T cb = __impl_euler::clamp_unit&lt;T&gt;(R11);
+    b = math::acos&lt;T&gt;(cb);
+    if ( math::fabs(cb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(R02, R22);
+    } else {
+      a = math::atan2&lt;T&gt;(R21, -R01);
+      c = math::atan2&lt;T&gt;(R12, R10);
+    }
+  } else if constexpr ( Ord == euler_order::ZXZ ) {
+    const T cb = __impl_euler::clamp_unit&lt;T&gt;(R22);
+    b = math::acos&lt;T&gt;(cb);
+    if ( math::fabs(cb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(R10, R00);
+    } else {
+      a = math::atan2&lt;T&gt;(R02, -R12);
+      c = math::atan2&lt;T&gt;(R20, R21);
+    }
+  } else {      // ZYZ
+    const T cb = __impl_euler::clamp_unit&lt;T&gt;(R22);
+    b = math::acos&lt;T&gt;(cb);
+    if ( math::fabs(cb) &gt;= glim ) {
+      c = T(0);
+      a = math::atan2&lt;T&gt;(-R01, R11);
+    } else {
+      a = math::atan2&lt;T&gt;(R12, R02);
+      c = math::atan2&lt;T&gt;(R21, -R20);
+    }
+  }
+  return micron::vector_3&lt;T&gt;{ a, b, c };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::vector_3&lt;T&gt;{ a, b, c }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L681">line 681</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-3fc9fd5f2b23b3b6">__impl_euler::gimbal_floor&lt;T&gt;</a>, <a href="euler.hpp.html#f-fcb966488ad507ef">__impl_euler::clamp_unit&lt;T&gt;</a>, <a href="../mk.hpp.html#f-26dd5376087de178">math::asin&lt;T&gt;</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../mk.hpp.html#f-4db5683eb6ab85c6">math::atan2&lt;T&gt;</a>, <a href="../mk.hpp.html#f-e24d26d1923573d8">math::acos&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-2d660135931d0b08"><h3><code>micron::math::quaternions::to_euler(const quaternion&lt;T&gt; &amp;q) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L689">line 689</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr micron::vector_3&lt;T&gt;
+to_euler(const quaternion&lt;T&gt; &amp;q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr micron::vector_3&lt;T&gt;
+to_euler(const quaternion&lt;T&gt; &amp;q) noexcept
+{
+  const T x = q.x, y = q.y, z = q.z, w = q.w;
+  const T xx = x * x, yy = y * y, zz = z * z;
+  const T xy = x * y, xz = x * z, yz = y * z;
+  const T wx = w * x, wy = w * y, wz = w * z;
+  // matrix elements (lazy-eval per sequence)
+  const T R00 = T(1) - T(2) * (yy + zz);
+  const T R01 = T(2) * (xy - wz);
+  const T R02 = T(2) * (xz + wy);
+  const T R10 = T(2) * (xy + wz);
+  const T R11 = T(1) - T(2) * (xx + zz);
+  const T R12 = T(2) * (yz - wx);
+  const T R20 = T(2) * (xz - wy);
+  const T R21 = T(2) * (yz + wx);
+  const T R22 = T(1) - T(2) * (xx + yy);
+  mat&lt;T, 3, 3&gt; R{};
+  R.data[0] = R00;
+  R.data[1] = R01;
+  R.data[2] = R02;
+  R.data[3] = R10;
+  R.data[4] = R11;
+  R.data[5] = R12;
+  R.data[6] = R20;
+  R.data[7] = R21;
+  R.data[8] = R22;
+  return to_euler_matrix&lt;Ord, T&gt;(R);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>to_euler_matrix&lt;Ord, T&gt;(R)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L715">line 715</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-b1093677aae36bb2">to_euler_matrix&lt;Ord, T&gt;</a>.</p></section><section class="function-entry" id="f-4ee003916f644a20"><h3><code>micron::math::quaternions::orientate3(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L724">line 724</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord = euler_order::YXZ, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 3, 3&gt;
+orientate3(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector_3&lt;T&gt; &amp;angles</code></li></ul><h4>Effects</h4><p>Returns <code>from_euler_matrix&lt;Ord, T&gt;(angles.x, angles.y, angles.z)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord = euler_order::YXZ, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 3, 3&gt;
+orientate3(const micron::vector_3&lt;T&gt; &amp;angles) noexcept
+{
+  return from_euler_matrix&lt;Ord, T&gt;(angles.x, angles.y, angles.z);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from_euler_matrix&lt;Ord, T&gt;(angles.x, angles.y, angles.z)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L726">line 726</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-4e0a23640ffdb112">from_euler_matrix&lt;Ord, T&gt;</a>.</p></section><section class="function-entry" id="f-ee6f6a8079f9b128"><h3><code>micron::math::quaternions::orientate4(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L731">line 731</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord = euler_order::YXZ, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 4, 4&gt;
+orientate4(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector_3&lt;T&gt; &amp;angles</code></li></ul><h4>Effects</h4><p>Returns <code>from_euler_matrix4&lt;Ord, T&gt;(angles.x, angles.y, angles.z)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord = euler_order::YXZ, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr mat&lt;T, 4, 4&gt;
+orientate4(const micron::vector_3&lt;T&gt; &amp;angles) noexcept
+{
+  return from_euler_matrix4&lt;Ord, T&gt;(angles.x, angles.y, angles.z);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from_euler_matrix4&lt;Ord, T&gt;(angles.x, angles.y, angles.z)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L733">line 733</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-d99c23c078a0a841">from_euler_matrix4&lt;Ord, T&gt;</a>.</p></section><section class="function-entry" id="f-7cec9cada1ba15b3"><h3><code>micron::math::quaternions::orientate(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L738">line 738</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;euler_order Ord = euler_order::YXZ, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr quaternion&lt;T&gt;
+orientate(const micron::vector_3&lt;T&gt; &amp;angles) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron::vector_3&lt;T&gt; &amp;angles</code></li></ul><h4>Effects</h4><p>Returns <code>from_euler&lt;Ord, T&gt;(angles.x, angles.y, angles.z)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;euler_order Ord = euler_order::YXZ, ieee754_floating T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr quaternion&lt;T&gt;
+orientate(const micron::vector_3&lt;T&gt; &amp;angles) noexcept
+{
+  return from_euler&lt;Ord, T&gt;(angles.x, angles.y, angles.z);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from_euler&lt;Ord, T&gt;(angles.x, angles.y, angles.z)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L740">line 740</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-c72e71c55bf67109">from_euler&lt;Ord, T&gt;</a>.</p></section><section class="function-entry" id="f-b8f18a9275d053c5"><h3><code>micron::math::quaternions::from_euler_zyx(T yaw, T pitch, T roll) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L745">line 745</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr quaternion&lt;T&gt;
+from_euler_zyx(T yaw, T pitch, T roll) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T yaw</code></li><li><code>T pitch</code></li><li><code>T roll</code></li></ul><h4>Effects</h4><p>Returns <code>from_euler&lt;euler_order::ZYX, T&gt;(yaw, pitch, roll)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr quaternion&lt;T&gt;
+from_euler_zyx(T yaw, T pitch, T roll) noexcept
+{
+  return from_euler&lt;euler_order::ZYX, T&gt;(yaw, pitch, roll);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>from_euler&lt;euler_order::ZYX, T&gt;(yaw, pitch, roll)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L747">line 747</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-c72e71c55bf67109">from_euler&lt;euler_order::ZYX, T&gt;</a>.</p></section><section class="function-entry" id="f-3532a8cd30acc698"><h3><code>micron::math::quaternions::to_euler_zyx(const quaternion&lt;T&gt; &amp;q) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L752">line 752</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr micron::vector_3&lt;T&gt;
+to_euler_zyx(const quaternion&lt;T&gt; &amp;q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li></ul><h4>Effects</h4><p>Returns <code>to_euler&lt;euler_order::ZYX, T&gt;(q)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+[[nodiscard, gnu::flatten]] inline constexpr micron::vector_3&lt;T&gt;
+to_euler_zyx(const quaternion&lt;T&gt; &amp;q) noexcept
+{
+  return to_euler&lt;euler_order::ZYX, T&gt;(q);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>to_euler&lt;euler_order::ZYX, T&gt;(q)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L754">line 754</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="euler.hpp.html#f-2d660135931d0b08">to_euler&lt;euler_order::ZYX, T&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-80cbf30ae5a96f9c"><h3><code>micron::math::quaternions::__impl_euler::mul_x_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L88">line 88</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_x_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li><li><code>T s</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Returns <code>quaternion&lt;T&gt;{ q.w * s + q.x * c, q.y * c + q.z * s, q.z * c - q.y * s, q.w * c - q.x * s }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_x_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept
+{
+  return quaternion&lt;T&gt;{ q.w * s + q.x * c, q.y * c + q.z * s, q.z * c - q.y * s, q.w * c - q.x * s };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ q.w * s + q.x * c, q.y * c + q.z * s, q.z * c - q.y * s, q.w * c - q.x * s }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L90">line 90</a></td></tr></tbody></table></section><section class="function-entry" id="f-1b2b38aaeb66a96f"><h3><code>micron::math::quaternions::__impl_euler::mul_y_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L96">line 96</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_y_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li><li><code>T s</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Returns <code>quaternion&lt;T&gt;{ q.x * c - q.z * s, q.w * s + q.y * c, q.x * s + q.z * c, q.w * c - q.y * s }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_y_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept
+{
+  return quaternion&lt;T&gt;{ q.x * c - q.z * s, q.w * s + q.y * c, q.x * s + q.z * c, q.w * c - q.y * s };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ q.x * c - q.z * s, q.w * s + q.y * c, q.x * s + q.z * c, q.w * c - q.y * s }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L98">line 98</a></td></tr></tbody></table></section><section class="function-entry" id="f-3e551efb16cac5b6"><h3><code>micron::math::quaternions::__impl_euler::mul_z_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L104">line 104</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_z_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li><li><code>T s</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Returns <code>quaternion&lt;T&gt;{ q.x * c + q.y * s, q.y * c - q.x * s, q.w * s + q.z * c, q.w * c - q.z * s }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_z_body(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept
+{
+  return quaternion&lt;T&gt;{ q.x * c + q.y * s, q.y * c - q.x * s, q.w * s + q.z * c, q.w * c - q.z * s };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ q.x * c + q.y * s, q.y * c - q.x * s, q.w * s + q.z * c, q.w * c - q.z * s }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L106">line 106</a></td></tr></tbody></table></section><section class="function-entry" id="f-627fe4818c1e001a"><h3><code>micron::math::quaternions::__impl_euler::mul_x_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L112">line 112</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_x_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li><li><code>T s</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Returns <code>quaternion&lt;T&gt;{ c * q.x + s * q.w, c * q.y - s * q.z, c * q.z + s * q.y, c * q.w - s * q.x }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_x_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept
+{
+  return quaternion&lt;T&gt;{ c * q.x + s * q.w, c * q.y - s * q.z, c * q.z + s * q.y, c * q.w - s * q.x };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c * q.x + s * q.w, c * q.y - s * q.z, c * q.z + s * q.y, c * q.w - s * q.x }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L114">line 114</a></td></tr></tbody></table></section><section class="function-entry" id="f-2bb13a9830a4f49b"><h3><code>micron::math::quaternions::__impl_euler::mul_y_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L120">line 120</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_y_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li><li><code>T s</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Returns <code>quaternion&lt;T&gt;{ c * q.x + s * q.z, c * q.y + s * q.w, c * q.z - s * q.x, c * q.w - s * q.y }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_y_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept
+{
+  return quaternion&lt;T&gt;{ c * q.x + s * q.z, c * q.y + s * q.w, c * q.z - s * q.x, c * q.w - s * q.y };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c * q.x + s * q.z, c * q.y + s * q.w, c * q.z - s * q.x, c * q.w - s * q.y }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L122">line 122</a></td></tr></tbody></table></section><section class="function-entry" id="f-84939e1beee44141"><h3><code>micron::math::quaternions::__impl_euler::mul_z_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L128">line 128</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_z_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li><li><code>T s</code></li><li><code>T c</code></li></ul><h4>Effects</h4><p>Returns <code>quaternion&lt;T&gt;{ c * q.x - s * q.y, c * q.y + s * q.x, c * q.z + s * q.w, c * q.w - s * q.z }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+mul_z_world(const quaternion&lt;T&gt; &amp;q, T s, T c) noexcept
+{
+  return quaternion&lt;T&gt;{ c * q.x - s * q.y, c * q.y + s * q.x, c * q.z + s * q.w, c * q.w - s * q.z };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ c * q.x - s * q.y, c * q.y + s * q.x, c * q.z + s * q.w, c * q.w - s * q.z }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L130">line 130</a></td></tr></tbody></table></section><section class="function-entry" id="f-b16665a9ccf5be84"><h3><code>micron::math::quaternions::__impl_euler::unit_renorm(const quaternion&lt;T&gt; &amp;q) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L136">line 136</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+unit_renorm(const quaternion&lt;T&gt; &amp;q) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const quaternion&lt;T&gt; &amp;q</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr quaternion&lt;T&gt;
+unit_renorm(const quaternion&lt;T&gt; &amp;q) noexcept
+{
+  const T n2 = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
+  const T inv = math::frsqrt(n2);
+  return quaternion&lt;T&gt;{ q.x * inv, q.y * inv, q.z * inv, q.w * inv };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>quaternion&lt;T&gt;{ q.x * inv, q.y * inv, q.z * inv, q.w * inv }</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L140">line 140</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-7833c1a496eb8deb">math::frsqrt</a>.</p></section><section class="function-entry" id="f-fcb966488ad507ef"><h3><code>micron::math::quaternions::__impl_euler::clamp_unit(T x) noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L530">line 530</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T
+clamp_unit(T x) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T
+clamp_unit(T x) noexcept
+{
+  if ( x &gt; T(1) ) return T(1);
+  if ( x &lt; T(-1) ) return T(-1);
+  return x;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>T(1)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L532">line 532</a></td></tr><tr class="t-dsc"><td><code>T(-1)</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L533">line 533</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L534">line 534</a></td></tr></tbody></table></section><section class="function-entry" id="f-3fc9fd5f2b23b3b6"><h3><code>micron::math::quaternions::__impl_euler::gimbal_floor() noexcept</code></h3><p>Defined in <code>math/quaternions/euler.hpp</code>, <a href="../../../source/math/quaternions/euler.hpp.html#L539">line 539</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T
+gimbal_floor() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>T(1) - math::default_eps&lt;T&gt;()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating T&gt;
+[[nodiscard, gnu::always_inline]] inline constexpr T
+gimbal_floor() noexcept
+{
+  return T(1) - math::default_eps&lt;T&gt;();
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>T(1) - math::default_eps&lt;T&gt;()</code></td><td><a href="../../../source/math/quaternions/euler.hpp.html#L541">line 541</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../constants.hpp.html#f-0f81c1f55e949515">math::default_eps&lt;T&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dynamic/resolve.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../../headers/index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">dynamic/resolve.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../headers/dynamic/resolve.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2026- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../linux/elf/host_modules.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> </span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;registry.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> #include &quot;versioning.hpp&quot;</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> </span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> namespace micron</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> {</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> namespace elf</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> {</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> namespace dl</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> {</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> </span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> struct __seen_set {</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a>   u64 w[(max_modules + 63) / 64] = {};</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> </span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a>   bool</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a>   test_and_set(u32 i) noexcept</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a>   {</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a>     if ( i &gt;= max_modules ) return true;</span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a>     const u64 bit = u64(1) &lt;&lt; (i &amp; 63);</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a>     if ( w[i &gt;&gt; 6] &amp; bit ) return true;</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a>     w[i &gt;&gt; 6] |= bit;</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>     return false;</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   }</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> };</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> </span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> struct found_t {</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a>   void *addr = nullptr;</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a>   dl_module *owner = nullptr;</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> </span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   explicit</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a>   operator bool() const noexcept</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a>   {</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a>     return addr != nullptr;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a>   }</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> };</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> </span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> inline found_t</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> __lookup_one(dl_module *m, const char *name, const char *want) noexcept</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> {</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>   if ( !m || !m-&gt;mod.load_base ) return {};</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   const nsym_t *s = lookup_versioned(m-&gt;mod.dyn, name, want);</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a>   if ( !s || s-&gt;shndx == shn_undef ) return {};</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a>   void *a = reinterpret_cast&lt;void *&gt;(m-&gt;mod.load_base + s-&gt;value);</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a>   if ( elf_st_type(s-&gt;info) == stt_gnu_ifunc ) {</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a>     using ifn = void *(*)();</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a>     a = reinterpret_cast&lt;ifn&gt;(a)();</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a>   }</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>   return found_t{ a, m };</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> }</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> </span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> inline found_t</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> __lookup_closure(dl_module *root, const char *name, const char *want) noexcept</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> {</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a>   if ( !root ) return {};</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>   __seen_set seen;</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>   u32 queue[max_modules];</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   usize head = 0, tail = 0;</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> </span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>   queue[tail++] = root-&gt;index;</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>   seen.test_and_set(root-&gt;index);</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> </span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a>   while ( head &lt; tail ) {</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a>     dl_module *m = __slots[queue[head++]];</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a>     if ( !m || !m-&gt;in_use ) continue;</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a>     if ( found_t f = __lookup_one(m, name, want) ) return f;</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a>     for ( u32 k = 0; k &lt; m-&gt;dep_count &amp;&amp; tail &lt; max_modules; ++k ) {</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>       const u32 di = m-&gt;deps[k];</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>       if ( !seen.test_and_set(di) ) queue[tail++] = di;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>     }</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>   }</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>   return {};</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> }</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> </span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> inline found_t</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> __lookup_global(const char *name, const char *want, u64 skip_upto = 0) noexcept</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> {</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>   found_t best;</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>   u64 best_order = ~u64(0);</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   for ( usize i = 0; i &lt; __slot_high; ++i ) {</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a>     dl_module *m = __slots[i];</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a>     if ( !m || !m-&gt;in_use || !m-&gt;global ) continue;</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a>     if ( m-&gt;load_order &lt;= skip_upto ) continue;</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a>     if ( m-&gt;load_order &gt;= best_order ) continue;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a>     if ( found_t f = __lookup_one(m, name, want) ) {</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a>       best = f;</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a>       best_order = m-&gt;load_order;</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>     }</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>   }</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   return best;</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> }</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> </span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> inline void *</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> __host_resolve(const char *name) noexcept</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> {</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   void *p = host_resolve_sym(name);</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   if ( !p ) return nullptr;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   dl_module *owner = __find_by_address(p);</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>   if ( owner &amp;&amp; !owner-&gt;global ) return nullptr;</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>   return p;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> }</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> </span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> inline void *</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> __resolve_for_module(void *user, const char *name, u32 sym_index) noexcept</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> {</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>   dl_module *self = reinterpret_cast&lt;dl_module *&gt;(user);</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>   if ( !self ) return __host_resolve(name);</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> </span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   const dyn_info_t &amp;d = self-&gt;mod.dyn;</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>   const char *want = wanted_version(d, sym_index);</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> </span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>   if ( self-&gt;options.resolve )</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>     if ( void *p = self-&gt;options.resolve(self-&gt;options.context, name, want) ) return p;</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> </span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>   const bool symbolic = self-&gt;deepbind || (d.flags &amp; df_symbolic) != 0;</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>   if ( symbolic ) {</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     if ( found_t f = __lookup_one(self, name, want) ) return f.addr;</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>   }</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> </span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a>   if ( found_t f = __lookup_global(name, want) ) return f.addr;</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a>   if ( found_t f = __lookup_closure(self, name, want) ) return f.addr;</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> </span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a>   if ( void *h = __host_resolve(name) ) return h;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> </span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   if ( want ) {</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>     if ( found_t f = __lookup_global(name, nullptr) ) return f.addr;</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     if ( found_t f = __lookup_closure(self, name, nullptr) ) return f.addr;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>   }</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a>   if ( sym_index &lt; d.symcount &amp;&amp; elf_st_bind(d.symtab[sym_index].info) != stb_weak )</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a>     __err_set_once(&quot;dynamic_open: unresolved symbol&quot;, name);</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a>   return nullptr;</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> }</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> </span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> };      // namespace dl</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> };      // namespace elf</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> };      // namespace micron</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

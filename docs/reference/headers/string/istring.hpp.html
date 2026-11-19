@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/string/istring.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/string/istring.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/strings.html">Strings</a></div><p>Defined in header <code>&lt;micron/string/istring.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/string/istring.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-68df3ce0619e313c">micron::istring</code></td><td>class; line 27</td></tr><tr class="t-dsc"><td><code id="s-ddc4b7a0fb142511">micron::istring::category_type</code></td><td>typedef; line 130</td></tr><tr class="t-dsc"><td><code id="s-da36947a7efc4e05">micron::istring::contiguous_tag</code></td><td>typedef; line 131</td></tr><tr class="t-dsc"><td><code id="s-e378c1db613dfbd0">micron::istring::mutability_type</code></td><td>typedef; line 132</td></tr><tr class="t-dsc"><td><code id="s-dd2a9e12b44bf034">micron::istring::memory_type</code></td><td>typedef; line 133</td></tr><tr class="t-dsc"><td><code id="s-3f57732b585dce1e">micron::istring::value_type</code></td><td>typedef; line 134</td></tr><tr class="t-dsc"><td><code id="s-aaf08360393b5970">micron::istring::size_type</code></td><td>typedef; line 135</td></tr><tr class="t-dsc"><td><code id="s-3ee627b79e6d39ca">micron::istring::reference</code></td><td>typedef; line 136</td></tr><tr class="t-dsc"><td><code id="s-6a757bd62a14cfe9">micron::istring::ref</code></td><td>typedef; line 137</td></tr><tr class="t-dsc"><td><code id="s-c327bd049466bed3">micron::istring::const_reference</code></td><td>typedef; line 138</td></tr><tr class="t-dsc"><td><code id="s-500681aa292a493f">micron::istring::const_ref</code></td><td>typedef; line 139</td></tr><tr class="t-dsc"><td><code id="s-43c2dc6feb672adc">micron::istring::pointer</code></td><td>typedef; line 140</td></tr><tr class="t-dsc"><td><code id="s-ded4d7b22ab49958">micron::istring::const_pointer</code></td><td>typedef; line 141</td></tr><tr class="t-dsc"><td><code id="s-f7fdd6b8d2b7865c">micron::istring::iterator</code></td><td>typedef; line 142</td></tr><tr class="t-dsc"><td><code id="s-4282440ce7281ddf">micron::istring::const_iterator</code></td><td>typedef; line 143</td></tr><tr class="t-dsc"><td><a href="#f-d49c5ea3c37d8194">micron::istring::~istring()</a></td><td>function; line 145</td></tr><tr class="t-dsc"><td><a href="#f-8c91d9fb837427ae">micron::istring::istring()</a></td><td>function; line 152</td></tr><tr class="t-dsc"><td><a href="#f-3566ab8a0e12f98c">micron::istring::istring(const usize n)</a></td><td>function; line 158</td></tr><tr class="t-dsc"><td><a href="#f-5576598dde425db1">micron::istring::istring(usize cnt, T ch)</a></td><td>function; line 163</td></tr><tr class="t-dsc"><td><a href="#f-f218131c830380e5">micron::istring::istring(const char *&amp;str)</a></td><td>function; line 169</td></tr><tr class="t-dsc"><td><a href="#f-62fb98aa112e57ce">micron::istring::istring(const F (&amp;str)[M])</a></td><td>function; line 176</td></tr><tr class="t-dsc"><td><a href="#f-ef21196e61e085ce">micron::istring::istring(const istring &amp;o)</a></td><td>function; line 186</td></tr><tr class="t-dsc"><td><a href="#f-ab46e609a20baa3e">micron::istring::istring(istring &amp;&amp;o)</a></td><td>function; line 188</td></tr><tr class="t-dsc"><td><a href="#f-d5c72c2d65411991">micron::istring::istring(istring&lt;F&gt; &amp;&amp;o)</a></td><td>function; line 190</td></tr><tr class="t-dsc"><td><a href="#f-282017dedeb9751f">micron::istring::operator=(const istring &amp;o)</a></td><td>function; line 201</td></tr><tr class="t-dsc"><td><a href="#f-93d7d625354a536a">micron::istring::operator=(istring &amp;&amp;o)</a></td><td>function; line 204</td></tr><tr class="t-dsc"><td><a href="#f-90953e413d69932c">micron::istring::operator=(istring&lt;F&gt; &amp;&amp;o)</a></td><td>function; line 221</td></tr><tr class="t-dsc"><td><a href="#f-d41a821582ac9a6a">micron::istring::operator*()</a></td><td>function; line 238</td></tr><tr class="t-dsc"><td><a href="#f-8732403813b7b4d3">micron::istring::operator!() const</a></td><td>function; line 244</td></tr><tr class="t-dsc"><td><a href="#f-aa8dc86fc00b2158">micron::istring::operator&amp;()</a></td><td>function; line 250</td></tr><tr class="t-dsc"><td><a href="#f-f875e03c655cb52f">micron::istring::operator&amp;() const</a></td><td>function; line 253</td></tr><tr class="t-dsc"><td><a href="#f-d03f543dc17bd953">micron::istring::swap(istring&lt;C&gt; &amp;o)</a></td><td>function; line 261</td></tr><tr class="t-dsc"><td><a href="#f-b0bf63ab841801ff">micron::istring::empty() const</a></td><td>function; line 275</td></tr><tr class="t-dsc"><td><a href="#f-b910dc187e61cd66">micron::istring::size() const</a></td><td>function; line 281</td></tr><tr class="t-dsc"><td><a href="#f-887ddaeb355f715b">micron::istring::max_size() const</a></td><td>function; line 287</td></tr><tr class="t-dsc"><td><a href="#f-e830a3040f8af986">micron::istring::data()</a></td><td>function; line 294</td></tr><tr class="t-dsc"><td><a href="#f-e991410c274b5c7b">micron::istring::cdata() const</a></td><td>function; line 300</td></tr><tr class="t-dsc"><td><a href="#f-d83ba54d57f85163">micron::istring::stack(void) const</a></td><td>function; line 306</td></tr><tr class="t-dsc"><td><a href="#f-f7e04337ed9315e6">micron::istring::c_str() const</a></td><td>function; line 313</td></tr><tr class="t-dsc"><td><a href="#f-35b52ed603b08a47">micron::istring::w_str() const</a></td><td>function; line 320</td></tr><tr class="t-dsc"><td><a href="#f-d5da399df5654f28">micron::istring::uni_str() const</a></td><td>function; line 327</td></tr><tr class="t-dsc"><td><a href="#f-edd0e2a96b5505fa">micron::istring::into_bytes() const</a></td><td>function; line 334</td></tr><tr class="t-dsc"><td><a href="#f-9656f828bdc38863">micron::istring::clone() const</a></td><td>function; line 340</td></tr><tr class="t-dsc"><td><a href="#f-d1179f362c782d02">micron::istring::clone() const</a></td><td>function; line 347</td></tr><tr class="t-dsc"><td><a href="#f-7ce177f28c2e1774">micron::istring::find(F ch, usize pos = 0) const</a></td><td>function; line 354</td></tr><tr class="t-dsc"><td><a href="#f-58d844fc3fe65cc0">micron::istring::find(const istring&lt;F&gt; &amp;str, usize pos = 0) const</a></td><td>function; line 374</td></tr><tr class="t-dsc"><td><a href="#f-cc1eef0f96fd5af6">micron::istring::begin() const</a></td><td>function; line 390</td></tr><tr class="t-dsc"><td><a href="#f-bc66def03ac09dd2">micron::istring::end() const</a></td><td>function; line 396</td></tr><tr class="t-dsc"><td><a href="#f-f62fb4948c6db34b">micron::istring::last() const</a></td><td>function; line 402</td></tr><tr class="t-dsc"><td><a href="#f-09f016f9097de74d">micron::istring::cbegin() const</a></td><td>function; line 408</td></tr><tr class="t-dsc"><td><a href="#f-d8c2d8ab04e6b802">micron::istring::cend() const</a></td><td>function; line 414</td></tr><tr class="t-dsc"><td><a href="#f-7c3c01dcff9ffa96">micron::istring::clear()</a></td><td>function; line 420</td></tr><tr class="t-dsc"><td><a href="#f-59bda43a23c41b69">micron::istring::fast_clear()</a></td><td>function; line 432</td></tr><tr class="t-dsc"><td><a href="#f-0b90ad1f98a72e95">micron::istring::append(const buffer &amp;f, usize n)</a></td><td>function; line 438</td></tr><tr class="t-dsc"><td><a href="#f-d2508fe0ae7171a2">micron::istring::append(const slice&lt;F&gt; &amp;f, usize n)</a></td><td>function; line 452</td></tr><tr class="t-dsc"><td><a href="#f-0fee0ac93ee57569">micron::istring::append(const F *f, usize n)</a></td><td>function; line 466</td></tr><tr class="t-dsc"><td><a href="#f-cc61346cb4cb9fe1">micron::istring::append(const F (&amp;str)[M])</a></td><td>function; line 480</td></tr><tr class="t-dsc"><td><a href="#f-bccf328577c0cbc2">micron::istring::append(const istring&lt;F&gt; &amp;o)</a></td><td>function; line 494</td></tr><tr class="t-dsc"><td><a href="#f-5f0cf6eea17817dd">micron::istring::append(const sstring&lt;M, F&gt; &amp;o)</a></td><td>function; line 508</td></tr><tr class="t-dsc"><td><a href="#f-1934f15e889455e7">micron::istring::push_back(F ch)</a></td><td>function; line 523</td></tr><tr class="t-dsc"><td><a href="#f-a71c8475b5671bca">micron::istring::push_back(const F (&amp;str)[M])</a></td><td>function; line 536</td></tr><tr class="t-dsc"><td><a href="#f-776932d0d4b07548">micron::istring::push_back(const istring&lt;F&gt; &amp;o)</a></td><td>function; line 549</td></tr><tr class="t-dsc"><td><a href="#f-b2a1a33befd02f69">micron::istring::push_back(const sstring&lt;M, F&gt; &amp;o)</a></td><td>function; line 563</td></tr><tr class="t-dsc"><td><a href="#f-2a24177342b6d80e">micron::istring::insert(usize ind, F ch, usize cnt = 1)</a></td><td>function; line 578</td></tr><tr class="t-dsc"><td><a href="#f-f3410fff53870081">micron::istring::insert(usize ind, const char (&amp;str)[M], usize cnt = 1)</a></td><td>function; line 593</td></tr><tr class="t-dsc"><td><a href="#f-2888208d7a409c23">micron::istring::insert(usize ind, const sstring&lt;M, F&gt; &amp;o)</a></td><td>function; line 612</td></tr><tr class="t-dsc"><td><a href="#f-6fac2ddc27ec0620">micron::istring::at(const usize n) const</a></td><td>function; line 629</td></tr><tr class="t-dsc"><td><a href="#f-33f843488d3523b5">micron::istring::at(const_iterator n) const</a></td><td>function; line 636</td></tr><tr class="t-dsc"><td><a href="#f-52acb97457b2c4e2">micron::istring::at(iterator n) const</a></td><td>function; line 643</td></tr><tr class="t-dsc"><td><a href="#f-78a29d0cf804fea9">micron::istring::operator[](const usize n) const</a></td><td>function; line 650</td></tr><tr class="t-dsc"><td><a href="#f-5c6731b14cbdfb05">micron::istring::operator+=(const buffer &amp;data)</a></td><td>function; line 656</td></tr><tr class="t-dsc"><td><a href="#f-885c1021d40b0d2f">micron::istring::operator+=(const char (&amp;data)[M])</a></td><td>function; line 670</td></tr><tr class="t-dsc"><td><a href="#f-6a9f8368271feb7f">micron::istring::operator+=(const F *&amp;data)</a></td><td>function; line 684</td></tr><tr class="t-dsc"><td><a href="#f-789dae8c70ae59b3">micron::istring::operator+=(const sstring&lt;M, F&gt; &amp;data)</a></td><td>function; line 699</td></tr><tr class="t-dsc"><td><a href="#f-846e30e793690296">micron::istring::operator+=(const istring&lt;F&gt; &amp;data)</a></td><td>function; line 713</td></tr><tr class="t-dsc"><td><a href="#f-ff215f1755bcef6b">micron::istring::operator+=(const slice&lt;F&gt; &amp;data)</a></td><td>function; line 727</td></tr><tr class="t-dsc"><td><a href="#f-19e21c30b75cf7e4">micron::istring::operator-(const R &amp;rhs) const</a></td><td>function; line 743</td></tr><tr class="t-dsc"><td><a href="#f-c315169a9b306f28">micron::istring::operator-=(const R &amp;rhs) const</a></td><td>function; line 766</td></tr><tr class="t-dsc"><td><a href="#f-dea2990a59f5963d">micron::istring::operator*(I n) const</a></td><td>function; line 774</td></tr><tr class="t-dsc"><td><a href="#f-2ba884989984b759">micron::istring::operator*=(I n) const</a></td><td>function; line 796</td></tr><tr class="t-dsc"><td><a href="#f-4dad4bd4c8cfc07c">micron::istring::operator/(const R &amp;rhs) const</a></td><td>function; line 804</td></tr><tr class="t-dsc"><td><a href="#f-4cea6e1f3bc26f41">micron::istring::operator/=(const R &amp;rhs) const</a></td><td>function; line 819</td></tr><tr class="t-dsc"><td><a href="#f-903f104a2771a6c6">micron::istring::operator^(const R &amp;rhs) const</a></td><td>function; line 827</td></tr><tr class="t-dsc"><td><a href="#f-92b85f615270a47e">micron::istring::operator^=(const R &amp;rhs) const</a></td><td>function; line 841</td></tr><tr class="t-dsc"><td><a href="#f-478c82ca5b07011d">micron::istring::operator&amp;(const R &amp;rhs) const</a></td><td>function; line 849</td></tr><tr class="t-dsc"><td><a href="#f-12a001148807a5c4">micron::istring::operator&amp;=(const R &amp;rhs) const</a></td><td>function; line 863</td></tr><tr class="t-dsc"><td><a href="#f-b43d1070fb4862bd">micron::istring::operator|(const R &amp;rhs) const</a></td><td>function; line 871</td></tr><tr class="t-dsc"><td><a href="#f-f14193964ddaebe6">micron::istring::operator|=(const R &amp;rhs) const</a></td><td>function; line 885</td></tr><tr class="t-dsc"><td><a href="#f-043d15c6aa05f47a">micron::istring::substr(usize pos = 0, usize cnt = 0) const</a></td><td>function; line 892</td></tr><tr class="t-dsc"><td><a href="#f-8607b9e1c19885d8">micron::istring::reserve(usize n)</a></td><td>function; line 902</td></tr><tr class="t-dsc"><td><a href="#f-1cf56ba088cef2ed">micron::istring::try_reserve(usize n)</a></td><td>function; line 904</td></tr><tr class="t-dsc"><td><a href="#f-fe4fab11bc965afa">micron::istring::operator==(const char *data) const</a></td><td>function; line 907</td></tr><tr class="t-dsc"><td><a href="#f-4b1a26d4ffa32e1e">micron::istring::operator==(const F (&amp;data)[M]) const</a></td><td>function; line 918</td></tr><tr class="t-dsc"><td><a href="#f-e4dd56e7837c2dd8">micron::istring::operator==(const istring&lt;F&gt; &amp;data) const</a></td><td>function; line 929</td></tr><tr class="t-dsc"><td><a href="#f-f76a687057622a52">micron::to_persist(const S &amp;str)</a></td><td>function; line 941</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-d49c5ea3c37d8194"><h3><code>micron::istring::~istring()</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L145">line 145</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~istring()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">~istring()
+  {
+    if ( __mem::is_zero() ) return;
+    clear();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/string/istring.hpp.html#L147">line 147</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-7c3c01dcff9ffa96">clear</a>.</p></section><section class="function-entry" id="f-8c91d9fb837427ae"><h3><code>micron::istring::istring()</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L152">line 152</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr istring() : __mem(Alloc::auto_size())</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr istring() : __mem(Alloc::auto_size())
+  {
+    // empty string: keep c_str()/w_str() NUL-terminated even on a recycled (non-zeroed) page
+    if ( __mem::memory ) __mem::memory[0] = T{ 0 };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-3566ab8a0e12f98c"><h3><code>micron::istring::istring(const usize n)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L158">line 158</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr istring(const usize n) : __mem(__alloc_size(n))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr istring(const usize n) : __mem(__alloc_size(n))
+  {
+    if ( __mem::memory ) __mem::memory[0] = T{ 0 };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-5576598dde425db1"><h3><code>micron::istring::istring(usize cnt, T ch)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L163">line 163</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>istring(usize cnt, T ch) : __mem(__alloc_size(cnt + 1))      // +1 for the trailing NUL</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize cnt</code></li><li><code>T ch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">istring(usize cnt, T ch) : __mem(__alloc_size(cnt + 1))      // +1 for the trailing NUL
+  {
+    micron::typeset&lt;T&gt;(&amp;__mem::memory[0], ch, cnt);
+    _buf_set_length(cnt);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-5f3abd2b78acd611">micron::typeset&lt;T&gt;</a>, <a href="istring.hpp.html#f-dfd8b9c875ef8170">_buf_set_length</a>.</p></section><section class="function-entry" id="f-f218131c830380e5"><h3><code>micron::istring::istring(const char *&amp;str)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L169">line 169</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr istring(const char *&amp;str) : __mem(__alloc_size(micron::strlen(str)))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *&amp;str</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr istring(const char *&amp;str) : __mem(__alloc_size(micron::strlen(str)))
+  {
+    usize end = micron::strlen(str);
+    micron::memcpy(&amp;(__mem::memory)[0], &amp;str[0], end);      // - 1);
+    __mem::length = end;                                    // - 1;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-62fb98aa112e57ce"><h3><code>micron::istring::istring(const F (&amp;str)[M])</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L176">line 176</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, typename F&gt; constexpr istring(const F (&amp;str)[M]) : __mem(__alloc_size(M))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F (&amp;str)[M]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, typename F&gt; constexpr istring(const F (&amp;str)[M]) : __mem(__alloc_size(M))
+  {
+    // WARNING: do NOT blind-bytecpy M*sizeof(F) bytes into an M*sizeof(T)-ELEMENT buffer:
+    // for sizeof(F) != sizeof(T) that is a cross-width OOB write
+    usize end = 0;
+    while ( end &lt; M - 1 &amp;&amp; !(str[end] == F{ 0 }) ) ++end;
+    micron::memcpy(&amp;(__mem::memory)[0], &amp;str[0], end);
+    _buf_set_length(end);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="istring.hpp.html#f-dfd8b9c875ef8170">_buf_set_length</a>.</p></section><section class="function-entry" id="f-ef21196e61e085ce"><h3><code>micron::istring::istring(const istring &amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L186">line 186</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr istring(const istring &amp;o) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const istring &amp;o</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-ab46e609a20baa3e"><h3><code>micron::istring::istring(istring &amp;&amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L188">line 188</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr istring(istring &amp;&amp;o) : __mem(micron::move(o))</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>istring &amp;&amp;o</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr istring(istring &amp;&amp;o) : __mem(micron::move(o)) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d5c72c2d65411991"><h3><code>micron::istring::istring(istring&lt;F&gt; &amp;&amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L190">line 190</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt; istring(istring&lt;F&gt; &amp;&amp;o) : __mem(nullptr)      // nullptr ctor: no spurious 512B alloc/free</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>istring&lt;F&gt; &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt; istring(istring&lt;F&gt; &amp;&amp;o) : __mem(nullptr)      // nullptr ctor: no spurious 512B alloc/free
+  {
+    if ( __mem::memory ) __mem::free();
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
+    o.memory = nullptr;
+    o.length = 0;
+    o.capacity = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-282017dedeb9751f"><h3><code>micron::istring::operator=(const istring &amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L201">line 201</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>istring &amp;operator=(const istring &amp;o) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const istring &amp;o</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-93d7d625354a536a"><h3><code>micron::istring::operator=(istring &amp;&amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L204">line 204</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>istring &amp;
+  operator=(istring &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>istring &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">istring &amp;
+  operator=(istring &amp;&amp;o)
+  {
+    if ( __mem::memory ) {
+      // kill old memory first
+      __mem::free();
+    }
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
+    o.memory = nullptr;
+    o.length = 0;
+    o.capacity = 0;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/string/istring.hpp.html#L216">line 216</a></td></tr></tbody></table></section><section class="function-entry" id="f-90953e413d69932c"><h3><code>micron::istring::operator=(istring&lt;F&gt; &amp;&amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L221">line 221</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  istring &amp;
+  operator=(istring&lt;F&gt; &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>istring&lt;F&gt; &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  istring &amp;
+  operator=(istring&lt;F&gt; &amp;&amp;o)
+  {
+    if ( __mem::memory ) {
+      // kill old memory first
+      __mem::free();
+    }
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
+    o.memory = nullptr;
+    o.length = 0;
+    o.capacity = 0;
+    ;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/string/istring.hpp.html#L234">line 234</a></td></tr></tbody></table></section><section class="function-entry" id="f-d41a821582ac9a6a"><h3><code>micron::istring::operator*()</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L238">line 238</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>chunk&lt;byte&gt;
+  operator*()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::data()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">chunk&lt;byte&gt;
+  operator*()
+  {
+    return __mem::data();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::data()</code></td><td><a href="../../source/string/istring.hpp.html#L240">line 240</a></td></tr></tbody></table></section><section class="function-entry" id="f-8732403813b7b4d3"><h3><code>micron::istring::operator!() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L244">line 244</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+  operator!() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>empty()</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+  operator!() const
+  {
+    return empty();
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>empty()</code></td><td><a href="../../source/string/istring.hpp.html#L246">line 246</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-b0bf63ab841801ff">empty</a>.</p></section><section class="function-entry" id="f-aa8dc86fc00b2158"><h3><code>micron::istring::operator&amp;()</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L250">line 250</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>byte *operator&amp;() = delete;</pre></td></tr></tbody></table><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-f875e03c655cb52f"><h3><code>micron::istring::operator&amp;() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L253">line 253</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const byte *
+  operator&amp;() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>reinterpret_cast&lt;const byte *&gt;(__mem::memory)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const byte *
+  operator&amp;() const
+  {
+    return reinterpret_cast&lt;const byte *&gt;(__mem::memory);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>reinterpret_cast&lt;const byte *&gt;(__mem::memory)</code></td><td><a href="../../source/string/istring.hpp.html#L255">line 255</a></td></tr></tbody></table></section><section class="function-entry" id="f-d03f543dc17bd953"><h3><code>micron::istring::swap(istring&lt;C&gt; &amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L261">line 261</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename C = T&gt;
+    requires(micron::same_as&lt;C, T&gt;)
+  void
+  swap(istring&lt;C&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>istring&lt;C&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename C = T&gt;
+    requires(micron::same_as&lt;C, T&gt;)
+  void
+  swap(istring&lt;C&gt; &amp;o)
+  {
+    T *tmp_mem = __mem::memory;
+    usize tmp_len = __mem::length;
+    usize tmp_cap = __mem::capacity;
+    __mem::memory = o.memory;
+    __mem::length = o.length;
+    __mem::capacity = o.capacity;
+    o.memory = tmp_mem;
+    o.length = tmp_len;
+    o.capacity = tmp_cap;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b0bf63ab841801ff"><h3><code>micron::istring::empty() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L275">line 275</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>bool
+  empty() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>(bool)__mem::length == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">bool
+  empty() const
+  {
+    return (bool)__mem::length == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(bool)__mem::length == 0</code></td><td><a href="../../source/string/istring.hpp.html#L277">line 277</a></td></tr></tbody></table></section><section class="function-entry" id="f-b910dc187e61cd66"><h3><code>micron::istring::size() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L281">line 281</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  size() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::length</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  size() const
+  {
+    return __mem::length;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::length</code></td><td><a href="../../source/string/istring.hpp.html#L283">line 283</a></td></tr></tbody></table></section><section class="function-entry" id="f-887ddaeb355f715b"><h3><code>micron::istring::max_size() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L287">line 287</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>usize
+  max_size() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::capacity</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">usize
+  max_size() const
+  {
+    return __mem::capacity;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::capacity</code></td><td><a href="../../source/string/istring.hpp.html#L289">line 289</a></td></tr></tbody></table></section><section class="function-entry" id="f-e830a3040f8af986"><h3><code>micron::istring::data()</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L294">line 294</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>T *
+  data()</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">T *
+  data()
+  {
+    return __mem::memory;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory</code></td><td><a href="../../source/string/istring.hpp.html#L296">line 296</a></td></tr></tbody></table></section><section class="function-entry" id="f-e991410c274b5c7b"><h3><code>micron::istring::cdata() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L300">line 300</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>const auto &amp;
+  cdata() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mem::memory</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">const auto &amp;
+  cdata() const
+  {
+    return __mem::memory;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mem::memory</code></td><td><a href="../../source/string/istring.hpp.html#L302">line 302</a></td></tr></tbody></table></section><section class="function-entry" id="f-d83ba54d57f85163"><h3><code>micron::istring::stack(void) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L306">line 306</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline sstring&lt;256, T&gt;
+  stack(void) const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline sstring&lt;256, T&gt;
+  stack(void) const
+  {
+    if ( __mem::length &gt;= 255 ) exc&lt;except::library_error&gt;(&quot;micron::istring stack() out of memory.&quot;);
+    return sstring&lt;256, T&gt;(c_str());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>sstring&lt;256, T&gt;(c_str())</code></td><td><a href="../../source/string/istring.hpp.html#L309">line 309</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::istring stack() out of memory.&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L308">line 308</a><br>Within <code>( __mem::length &gt;= 255 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="sstring.hpp.html#s-eff99300b2944667">sstring&lt;256, T&gt;</a>, <a href="istring.hpp.html#f-f7e04337ed9315e6">c_str</a>.</p></section><section class="function-entry" id="f-f7e04337ed9315e6"><h3><code>micron::istring::c_str() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L313">line 313</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+  c_str() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+  c_str() const
+  {
+    if ( __mem::memory == nullptr ) return _null_str;
+    return reinterpret_cast&lt;const char *&gt;(&amp;(__mem::memory)[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_null_str</code></td><td><a href="../../source/string/istring.hpp.html#L315">line 315</a></td></tr><tr class="t-dsc"><td><code>reinterpret_cast&lt;const char *&gt;(&amp;(__mem::memory)[0])</code></td><td><a href="../../source/string/istring.hpp.html#L316">line 316</a></td></tr></tbody></table></section><section class="function-entry" id="f-35b52ed603b08a47"><h3><code>micron::istring::w_str() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L320">line 320</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const wide *
+  w_str() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const wide *
+  w_str() const
+  {
+    if ( __mem::memory == nullptr ) return _null_wstr;
+    return reinterpret_cast&lt;const wide *&gt;(&amp;(__mem::memory)[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_null_wstr</code></td><td><a href="../../source/string/istring.hpp.html#L322">line 322</a></td></tr><tr class="t-dsc"><td><code>reinterpret_cast&lt;const wide *&gt;(&amp;(__mem::memory)[0])</code></td><td><a href="../../source/string/istring.hpp.html#L323">line 323</a></td></tr></tbody></table></section><section class="function-entry" id="f-d5da399df5654f28"><h3><code>micron::istring::uni_str() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L327">line 327</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const unicode32 *
+  uni_str() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const unicode32 *
+  uni_str() const
+  {
+    if ( __mem::memory == nullptr ) return _null_u32str;
+    return reinterpret_cast&lt;const unicode32 *&gt;(&amp;(__mem::memory)[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_null_u32str</code></td><td><a href="../../source/string/istring.hpp.html#L329">line 329</a></td></tr><tr class="t-dsc"><td><code>reinterpret_cast&lt;const unicode32 *&gt;(&amp;(__mem::memory)[0])</code></td><td><a href="../../source/string/istring.hpp.html#L330">line 330</a></td></tr></tbody></table></section><section class="function-entry" id="f-edd0e2a96b5505fa"><h3><code>micron::istring::into_bytes() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L334">line 334</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const slice&lt;byte&gt;
+  into_bytes() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>slice&lt;byte&gt;(reinterpret_cast&lt;byte *&gt;(&amp;__mem::memory[0]), reinterpret_cast&lt;byte *&gt;(&amp;__mem::memory[__mem::length]))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const slice&lt;byte&gt;
+  into_bytes() const
+  {
+    return slice&lt;byte&gt;(reinterpret_cast&lt;byte *&gt;(&amp;__mem::memory[0]), reinterpret_cast&lt;byte *&gt;(&amp;__mem::memory[__mem::length]));
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>slice&lt;byte&gt;(reinterpret_cast&lt;byte *&gt;(&amp;__mem::memory[0]), reinterpret_cast&lt;byte *&gt;(&amp;__mem::memory[__mem::length]))</code></td><td><a href="../../source/string/istring.hpp.html#L336">line 336</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../slice.hpp.html#s-17d2aaedd28b5a25">slice&lt;byte&gt;</a>.</p></section><section class="function-entry" id="f-9656f828bdc38863"><h3><code>micron::istring::clone() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L340">line 340</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const auto
+  clone() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>istring&lt;T&gt;(*this)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const auto
+  clone() const
+  {
+    return istring&lt;T&gt;(*this);      // copy
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>istring&lt;T&gt;(*this)</code></td><td><a href="../../source/string/istring.hpp.html#L342">line 342</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-8c91d9fb837427ae">istring&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-d1179f362c782d02"><h3><code>micron::istring::clone() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L347">line 347</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline const F
+  clone() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>F(*this)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline const F
+  clone() const
+  {
+    return F(*this);      // copy
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(*this)</code></td><td><a href="../../source/string/istring.hpp.html#L349">line 349</a></td></tr></tbody></table></section><section class="function-entry" id="f-7ce177f28c2e1774"><h3><code>micron::istring::find(F ch, usize pos = 0) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L354">line 354</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  usize
+  find(F ch, usize pos = 0) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F ch</code></li><li><code>usize pos = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  usize
+  find(F ch, usize pos = 0) const
+  {
+    if ( pos &gt;= __mem::length ) return npos;
+    const usize len = __mem::length - pos;
+    usize r;
+    if constexpr ( sizeof(T) == 1 ) {
+#if defined(__micron_x86_avx2)
+      r = micron::simd::find_first_set_256(__mem::memory + pos, len, static_cast&lt;char&gt;(ch));
+#else
+      r = micron::simd::find_first_set_128(__mem::memory + pos, len, static_cast&lt;char&gt;(ch));
+#endif
+    } else {
+      r = micron::simd::find_first_elem&lt;T&gt;(__mem::memory + pos, len, static_cast&lt;T&gt;(ch));
+    }
+    return r == len ? npos : pos + r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>npos</code></td><td><a href="../../source/string/istring.hpp.html#L356">line 356</a></td></tr><tr class="t-dsc"><td><code>r == len ? npos : pos + r</code></td><td><a href="../../source/string/istring.hpp.html#L368">line 368</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/wasm/simd/bitwise.hpp.html#f-6f92b7b519b355b2">micron::simd::find_first_set_256</a>, <a href="../bits/wasm/simd/bitwise.hpp.html#f-11510e5fe3ae317c">micron::simd::find_first_set_128</a>, <a href="../simd/strings.hpp.html#f-c9eb5026ef643de8">micron::simd::find_first_elem&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-58d844fc3fe65cc0"><h3><code>micron::istring::find(const istring&lt;F&gt; &amp;str, usize pos = 0) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L374">line 374</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+    requires(sizeof(F) == sizeof(T))
+  usize
+  find(const istring&lt;F&gt; &amp;str, usize pos = 0) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const istring&lt;F&gt; &amp;str</code></li><li><code>usize pos = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+    requires(sizeof(F) == sizeof(T))
+  usize
+  find(const istring&lt;F&gt; &amp;str, usize pos = 0) const
+  {
+    if ( str.empty() ) return pos;
+    if ( pos &gt;= __mem::length ) return npos;
+    if ( str.size() &gt; __mem::length - pos ) return npos;
+    if constexpr ( sizeof(T) != 1 ) {
+      const usize rr = micron::simd::find_substr_elem&lt;T&gt;(__mem::memory + pos, __mem::length - pos, reinterpret_cast&lt;const T *&gt;(str.cdata()),
+                                                         str.size());
+      return rr == (__mem::length - pos) ? npos : pos + rr;
+    }
+    auto *r = micron::memmem&lt;byte&gt;(reinterpret_cast&lt;const byte *&gt;(__mem::memory + pos), __mem::length - pos,
+                                   reinterpret_cast&lt;const byte *&gt;(str.cdata()), str.size());
+    return r == nullptr ? npos : static_cast&lt;usize&gt;(reinterpret_cast&lt;const T *&gt;(r) - __mem::memory);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pos</code></td><td><a href="../../source/string/istring.hpp.html#L376">line 376</a></td></tr><tr class="t-dsc"><td><code>npos</code></td><td><a href="../../source/string/istring.hpp.html#L377">line 377</a></td></tr><tr class="t-dsc"><td><code>npos</code></td><td><a href="../../source/string/istring.hpp.html#L378">line 378</a></td></tr><tr class="t-dsc"><td><code>rr == (__mem::length - pos) ? npos : pos + rr</code></td><td><a href="../../source/string/istring.hpp.html#L382">line 382</a></td></tr><tr class="t-dsc"><td><code>r == nullptr ? npos : static_cast&lt;usize&gt;(reinterpret_cast&lt;const T *&gt;(r) - __mem::memory)</code></td><td><a href="../../source/string/istring.hpp.html#L386">line 386</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../simd/strings.hpp.html#f-7d6b1784149d159b">micron::simd::find_substr_elem&lt;T&gt;</a>, <a href="../memory/cmemory/memchr.hpp.html#f-35a13d90ed66849a">micron::memmem&lt;byte&gt;</a>.</p></section><section class="function-entry" id="f-cc1eef0f96fd5af6"><h3><code>micron::istring::begin() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L390">line 390</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const_iterator
+  begin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_cast&lt;T *&gt;(&amp;(__mem::memory)[0])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const_iterator
+  begin() const
+  {
+    return const_cast&lt;T *&gt;(&amp;(__mem::memory)[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(&amp;(__mem::memory)[0])</code></td><td><a href="../../source/string/istring.hpp.html#L392">line 392</a></td></tr></tbody></table></section><section class="function-entry" id="f-bc66def03ac09dd2"><h3><code>micron::istring::end() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L396">line 396</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const_iterator
+  end() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_cast&lt;T *&gt;(&amp;(__mem::memory)[__mem::length])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const_iterator
+  end() const
+  {
+    return const_cast&lt;T *&gt;(&amp;(__mem::memory)[__mem::length]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(&amp;(__mem::memory)[__mem::length])</code></td><td><a href="../../source/string/istring.hpp.html#L398">line 398</a></td></tr></tbody></table></section><section class="function-entry" id="f-f62fb4948c6db34b"><h3><code>micron::istring::last() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L402">line 402</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const_iterator
+  last() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>const_cast&lt;T *&gt;(&amp;(__mem::memory)[__mem::length - 1])</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const_iterator
+  last() const
+  {
+    return const_cast&lt;T *&gt;(&amp;(__mem::memory)[__mem::length - 1]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>const_cast&lt;T *&gt;(&amp;(__mem::memory)[__mem::length - 1])</code></td><td><a href="../../source/string/istring.hpp.html#L404">line 404</a></td></tr></tbody></table></section><section class="function-entry" id="f-09f016f9097de74d"><h3><code>micron::istring::cbegin() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L408">line 408</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const_iterator
+  cbegin() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>&amp;(__mem::memory)[0]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const_iterator
+  cbegin() const
+  {
+    return &amp;(__mem::memory)[0];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;(__mem::memory)[0]</code></td><td><a href="../../source/string/istring.hpp.html#L410">line 410</a></td></tr></tbody></table></section><section class="function-entry" id="f-d8c2d8ab04e6b802"><h3><code>micron::istring::cend() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L414">line 414</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const_iterator
+  cend() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>&amp;(__mem::memory)[__mem::length]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const_iterator
+  cend() const
+  {
+    return &amp;(__mem::memory)[__mem::length];      // correct, should point at nptr
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&amp;(__mem::memory)[__mem::length]</code></td><td><a href="../../source/string/istring.hpp.html#L416">line 416</a></td></tr></tbody></table></section><section class="function-entry" id="f-7c3c01dcff9ffa96"><h3><code>micron::istring::clear()</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L420">line 420</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  clear()
+  {
+    if ( __mem::is_zero() ) {
+      __mem::length = 0;
+      return;
+    }
+    zero(__mem::memory, __mem::capacity);
+    __mem::length = 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/string/istring.hpp.html#L424">line 424</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../algorithm/memory.hpp.html#f-43fbf1bfc5b0907d">zero</a>.</p></section><section class="function-entry" id="f-59bda43a23c41b69"><h3><code>micron::istring::fast_clear()</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L432">line 432</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  fast_clear()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  fast_clear()
+  {
+    __mem::length = 0;
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-0b90ad1f98a72e95"><h3><code>micron::istring::append(const buffer &amp;f, usize n)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L438">line 438</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline istring
+  append(const buffer &amp;f, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const buffer &amp;f</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline istring
+  append(const buffer &amp;f, usize n)
+  {
+    istring t(__mem::length + n + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],         // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    micron::memcpy(&amp;(t.memory)[t.length],      // null is here so, overwrite it
+                   &amp;f[0], n);
+    t._buf_set_length(t.length + n);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L447">line 447</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-d2508fe0ae7171a2"><h3><code>micron::istring::append(const slice&lt;F&gt; &amp;f, usize n)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L452">line 452</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline istring
+  append(const slice&lt;F&gt; &amp;f, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const slice&lt;F&gt; &amp;f</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline istring
+  append(const slice&lt;F&gt; &amp;f, usize n)
+  {
+    istring t(__mem::length + n + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],         // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    micron::memcpy(&amp;(t.memory)[t.length],      // null is here so, overwrite it
+                   &amp;f[0], n);
+    t._buf_set_length(t.length + n);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L461">line 461</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-0fee0ac93ee57569"><h3><code>micron::istring::append(const F *f, usize n)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L466">line 466</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F&gt;
+  inline istring
+  append(const F *f, usize n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *f</code></li><li><code>usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F&gt;
+  inline istring
+  append(const F *f, usize n)
+  {
+    istring t(__mem::length + n + 1);      // +1 for the NUL terminator
+    micron::memcpy(&amp;(t.memory)[0],         // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    micron::memcpy(&amp;(t.memory)[t.length],      // null is here so, overwrite it
+                   f, n);
+    t._buf_set_length(t.length + n);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L475">line 475</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-cc61346cb4cb9fe1"><h3><code>micron::istring::append(const F (&amp;str)[M])</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L480">line 480</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T, usize M&gt;
+  inline istring
+  append(const F (&amp;str)[M])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F (&amp;str)[M]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T, usize M&gt;
+  inline istring
+  append(const F (&amp;str)[M])
+  {
+    istring t(__mem::length + M);       // length + (M-1) content + 1 NUL slot
+    micron::memcpy(&amp;(t.memory)[0],      // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    micron::memcpy(&amp;(t.memory)[t.length],      // null is here so, overwrite it
+                   &amp;str[0], M - 1);
+    t._buf_set_length(t.length + (M - 1));
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L489">line 489</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-bccf328577c0cbc2"><h3><code>micron::istring::append(const istring&lt;F&gt; &amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L494">line 494</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline istring
+  append(const istring&lt;F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const istring&lt;F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline istring
+  append(const istring&lt;F&gt; &amp;o)
+  {
+    istring t(__mem::length + o.size() + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],                // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    micron::memcpy(&amp;(t.memory)[t.length],      // null trunc
+                   &amp;(o.memory)[0], o.length);
+    t._buf_set_length(t.length + o.length);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L503">line 503</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-5f0cf6eea17817dd"><h3><code>micron::istring::append(const sstring&lt;M, F&gt; &amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L508">line 508</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, typename F = T&gt;
+  inline istring
+  append(const sstring&lt;M, F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const sstring&lt;M, F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, typename F = T&gt;
+  inline istring
+  append(const sstring&lt;M, F&gt; &amp;o)
+  {
+    istring t(__mem::length + M);       // M includes the NUL slot, so length+(end&lt;=M-1)+1 fits
+    micron::memcpy(&amp;(t.memory)[0],      // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    usize end = micron::strlen(o.c_str());
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;(o.memory)[0],
+                   end);      // truncate null
+    t._buf_set_length(t.length + end);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L518">line 518</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>.</p></section><section class="function-entry" id="f-1934f15e889455e7"><h3><code>micron::istring::push_back(F ch)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L523">line 523</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline istring
+  push_back(F ch)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F ch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline istring
+  push_back(F ch)
+  {
+    istring t(__mem::length + 2);       // +1 char +1 NUL
+    micron::memcpy(&amp;(t.memory)[0],      // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    (t.memory)[t.length] = ch;
+    t._buf_set_length(t.length + 1);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L531">line 531</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-a71c8475b5671bca"><h3><code>micron::istring::push_back(const F (&amp;str)[M])</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L536">line 536</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T, usize M&gt;
+  inline istring
+  push_back(const F (&amp;str)[M])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F (&amp;str)[M]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T, usize M&gt;
+  inline istring
+  push_back(const F (&amp;str)[M])
+  {
+    istring t(__mem::length + M);       // length + (M-1) content + 1 NUL slot
+    micron::memcpy(&amp;(t.memory)[0],      // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;str[0], M - 1);
+    t._buf_set_length(t.length + (M - 1));
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L544">line 544</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-776932d0d4b07548"><h3><code>micron::istring::push_back(const istring&lt;F&gt; &amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L549">line 549</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline istring
+  push_back(const istring&lt;F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const istring&lt;F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline istring
+  push_back(const istring&lt;F&gt; &amp;o)
+  {
+    istring t(__mem::length + o.size() + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],                // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;(o.memory)[0],
+                   o.length);      // truncate null
+    t._buf_set_length(t.length + o.length);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L558">line 558</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-b2a1a33befd02f69"><h3><code>micron::istring::push_back(const sstring&lt;M, F&gt; &amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L563">line 563</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M, typename F = T&gt;
+  inline istring
+  push_back(const sstring&lt;M, F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const sstring&lt;M, F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M, typename F = T&gt;
+  inline istring
+  push_back(const sstring&lt;M, F&gt; &amp;o)
+  {
+    usize end = micron::strlen(o.c_str());      // excludes the NUL already
+    istring t(__mem::length + end + 1);         // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],              // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;(o.memory)[0],
+                   end);                    // truncate null
+    t._buf_set_length(t.length + end);      // was &#x27;end - 1&#x27; -&gt; underflow on empty + dropped last char
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L573">line 573</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-2a24177342b6d80e"><h3><code>micron::istring::insert(usize ind, F ch, usize cnt = 1)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L578">line 578</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline istring
+  insert(usize ind, F ch, usize cnt = 1)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize ind</code></li><li><code>F ch</code></li><li><code>usize cnt = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline istring
+  insert(usize ind, F ch, usize cnt = 1)
+  {
+    if ( ind &gt; __mem::length ) exc&lt;except::library_error&gt;(&quot;micron::istring insert() out of range&quot;);
+    istring t(__mem::length + cnt + 1);      // +1 for the trailing NUL
+
+    micron::memcpy(t.memory, __mem::memory, ind);
+    micron::typeset&lt;T&gt;(t.memory + ind, ch, cnt);
+    micron::memcpy(t.memory + ind + cnt, __mem::memory + ind, __mem::length - ind);
+
+    t._buf_set_length(__mem::length + cnt);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L588">line 588</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::istring insert() out of range&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L580">line 580</a><br>Within <code>( ind &gt; __mem::length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/cmemory/memset.hpp.html#f-5f3abd2b78acd611">micron::typeset&lt;T&gt;</a>.</p></section><section class="function-entry" id="f-f3410fff53870081"><h3><code>micron::istring::insert(usize ind, const char (&amp;str)[M], usize cnt = 1)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L593">line 593</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T, usize M&gt;
+  inline istring
+  insert(usize ind, const char (&amp;str)[M], usize cnt = 1)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize ind</code></li><li><code>const char (&amp;str)[M]</code></li><li><code>usize cnt = 1</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T, usize M&gt;
+  inline istring
+  insert(usize ind, const char (&amp;str)[M], usize cnt = 1)
+  {
+    usize str_len = M - 1;
+    if ( ind &gt; __mem::length ) exc&lt;except::library_error&gt;(&quot;micron::istring insert() out of range&quot;);
+
+    istring t(__mem::length + cnt * str_len + 1);      // +1 for the trailing NUL
+
+    micron::memcpy(t.memory, __mem::memory, ind);
+
+    for ( usize i = 0; i &lt; cnt; ++i ) micron::memcpy(t.memory + ind + i * str_len, str, str_len);
+
+    micron::memcpy(t.memory + ind + cnt * str_len, __mem::memory + ind, __mem::length - ind);
+
+    t._buf_set_length(__mem::length + cnt * str_len);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L607">line 607</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::istring insert() out of range&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L596">line 596</a><br>Within <code>( ind &gt; __mem::length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-2888208d7a409c23"><h3><code>micron::istring::insert(usize ind, const sstring&lt;M, F&gt; &amp;o)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L612">line 612</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, usize M&gt;
+  inline istring
+  insert(usize ind, const sstring&lt;M, F&gt; &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize ind</code></li><li><code>const sstring&lt;M, F&gt; &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, usize M&gt;
+  inline istring
+  insert(usize ind, const sstring&lt;M, F&gt; &amp;o)
+  {
+    if ( ind &gt; __mem::length ) exc&lt;except::library_error&gt;(&quot;micron::istring insert() out of range&quot;);
+    usize end = micron::strlen(o.c_str());
+    istring t(__mem::length + end + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],           // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+    // shift the [ind, length) tail right by &#x27;end&#x27; BEFORE writing the insert (note: length - ind, not t.length - ind)
+    micron::memmove(&amp;(t.memory)[ind + end], &amp;(t.memory)[ind], __mem::length - ind);
+    micron::memcpy(&amp;(t.memory)[ind], &amp;o.memory[0], end);
+
+    t._buf_set_length(t.length + end);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L625">line 625</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::istring insert() out of range&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L614">line 614</a><br>Within <code>( ind &gt; __mem::length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>, <a href="../memory/cmemory/memmove.hpp.html#f-8a8a4e3789dd039d">micron::memmove</a>.</p></section><section class="function-entry" id="f-6fac2ddc27ec0620"><h3><code>micron::istring::at(const usize n) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L629">line 629</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T &amp;
+  at(const usize n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const usize n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T &amp;
+  at(const usize n) const
+  {
+    if ( n &gt;= __mem::length ) exc&lt;except::library_error&gt;(&quot;micron:string at() out of range&quot;);
+    return (__mem::memory)[n];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__mem::memory)[n]</code></td><td><a href="../../source/string/istring.hpp.html#L632">line 632</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron:string at() out of range&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L631">line 631</a><br>Within <code>( n &gt;= __mem::length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-33f843488d3523b5"><h3><code>micron::istring::at(const_iterator n) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L636">line 636</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  at(const_iterator n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const_iterator n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  at(const_iterator n) const
+  {
+    if ( n - &amp;__mem::memory[0] &gt; 256 or n - &amp;__mem::memory[0] &lt; 0 ) exc&lt;except::library_error&gt;(&quot;micron:sstring at() out of range&quot;);
+    return n - &amp;__mem::memory[0];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n - &amp;__mem::memory[0]</code></td><td><a href="../../source/string/istring.hpp.html#L639">line 639</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron:sstring at() out of range&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L638">line 638</a><br>Within <code>( n - &amp;__mem::memory[0] &gt; 256 or n - &amp;__mem::memory[0] &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-52acb97457b2c4e2"><h3><code>micron::istring::at(iterator n) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L643">line 643</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+  at(iterator n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>iterator n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+  at(iterator n) const
+  {
+    if ( n - &amp;__mem::memory[0] &gt; 256 or n - &amp;__mem::memory[0] &lt; 0 ) exc&lt;except::library_error&gt;(&quot;micron:sstring at() out of range&quot;);
+    return n - &amp;__mem::memory[0];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n - &amp;__mem::memory[0]</code></td><td><a href="../../source/string/istring.hpp.html#L646">line 646</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron:sstring at() out of range&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L645">line 645</a><br>Within <code>( n - &amp;__mem::memory[0] &gt; 256 or n - &amp;__mem::memory[0] &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-78a29d0cf804fea9"><h3><code>micron::istring::operator[](const usize n) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L650">line 650</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const T &amp;
+  operator[](const usize n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const usize n</code></li></ul><h4>Effects</h4><p>Returns <code>(__mem::memory)[n]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const T &amp;
+  operator[](const usize n) const
+  {
+    return (__mem::memory)[n];
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(__mem::memory)[n]</code></td><td><a href="../../source/string/istring.hpp.html#L652">line 652</a></td></tr></tbody></table></section><section class="function-entry" id="f-5c6731b14cbdfb05"><h3><code>micron::istring::operator+=(const buffer &amp;data)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L656">line 656</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline istring
+  operator+=(const buffer &amp;data)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const buffer &amp;data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline istring
+  operator+=(const buffer &amp;data)
+  {
+    istring t(__mem::length + data.size() + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],                   // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;data[0], data.size());
+    t._buf_set_length(t.length + data.size());
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L665">line 665</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-885c1021d40b0d2f"><h3><code>micron::istring::operator+=(const char (&amp;data)[M])</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L670">line 670</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt;
+  inline istring
+  operator+=(const char (&amp;data)[M])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char (&amp;data)[M]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt;
+  inline istring
+  operator+=(const char (&amp;data)[M])
+  {
+    istring t(__mem::length + M);       // length + (M-1) content + 1 NUL slot
+    micron::memcpy(&amp;(t.memory)[0],      // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;(data)[0], M - 1);      // append at end; drop the source NUL
+    t._buf_set_length(t.length + (M - 1));
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L679">line 679</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-6a9f8368271feb7f"><h3><code>micron::istring::operator+=(const F *&amp;data)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L684">line 684</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline istring
+  operator+=(const F *&amp;data)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F *&amp;data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline istring
+  operator+=(const F *&amp;data)
+  {
+    usize end = micron::strlen(data);
+    istring t(__mem::length + end + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],           // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;(data)[0], end);
+    t._buf_set_length(t.length + end);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L694">line 694</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-789dae8c70ae59b3"><h3><code>micron::istring::operator+=(const sstring&lt;M, F&gt; &amp;data)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L699">line 699</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F, usize M&gt;
+  inline istring
+  operator+=(const sstring&lt;M, F&gt; &amp;data)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const sstring&lt;M, F&gt; &amp;data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F, usize M&gt;
+  inline istring
+  operator+=(const sstring&lt;M, F&gt; &amp;data)
+  {
+    istring t(__mem::length + data.size() + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],                   // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;(data.memory)[0], data.size());
+    t._buf_set_length(t.length + data.size());
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L708">line 708</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-846e30e793690296"><h3><code>micron::istring::operator+=(const istring&lt;F&gt; &amp;data)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L713">line 713</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline istring
+  operator+=(const istring&lt;F&gt; &amp;data)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const istring&lt;F&gt; &amp;data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline istring
+  operator+=(const istring&lt;F&gt; &amp;data)
+  {
+    istring t(__mem::length + data.size() + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],                   // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;(data.memory)[0], data.size());
+    t._buf_set_length(t.length + data.length);
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L722">line 722</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-ff215f1755bcef6b"><h3><code>micron::istring::operator+=(const slice&lt;F&gt; &amp;data)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L727">line 727</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline istring
+  operator+=(const slice&lt;F&gt; &amp;data)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const slice&lt;F&gt; &amp;data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline istring
+  operator+=(const slice&lt;F&gt; &amp;data)
+  {
+    if ( data.size() == 0 ) return __dup();
+    istring t(__mem::length + data.size() + 1);      // +1 for the trailing NUL
+    micron::memcpy(&amp;(t.memory)[0],                   // null is here so, overwrite it
+                   &amp;__mem::memory[0], __mem::length);
+    t.length += __mem::length;
+
+    micron::memcpy(&amp;(t.memory)[t.length], &amp;data[0], data.size());
+    t._buf_set_length(t.length + data.size());
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__dup()</code></td><td><a href="../../source/string/istring.hpp.html#L729">line 729</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L737">line 737</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-2a00028e18005e41">__dup</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-19e21c30b75cf7e4"><h3><code>micron::istring::operator-(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L743">line 743</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires(__valid_needle&lt;R&gt;)
+  inline istring
+  operator-(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires(__valid_needle&lt;R&gt;)
+  inline istring
+  operator-(const R &amp;rhs) const
+  {
+    const __needle nd = __as_needle(rhs);
+    if ( nd.n == 0 || nd.n &gt; __mem::length ) return __dup();
+    istring t(__mem::length + 1);
+    usize w = 0, r = 0;
+    while ( r &lt; __mem::length ) {
+      if ( r + nd.n &lt;= __mem::length
+           &amp;&amp; micron::memcmp&lt;byte&gt;(reinterpret_cast&lt;const byte *&gt;(&amp;__mem::memory[r]), reinterpret_cast&lt;const byte *&gt;(nd.p),
+                                   nd.n * sizeof(T))
+                  == 0 )
+        r += nd.n;
+      else
+        t.memory[w++] = __mem::memory[r++];
+    }
+    t.memory[w] = T{ 0 };
+    t.length = w;
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__dup()</code></td><td><a href="../../source/string/istring.hpp.html#L746">line 746</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L760">line 760</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-eaf10b838dcef0e6">__as_needle</a>, <a href="istring.hpp.html#f-2a00028e18005e41">__dup</a>, <a href="../memory/cmemory/memcmp.hpp.html#f-6c598db646ee1850">micron::memcmp&lt;byte&gt;</a>.</p></section><section class="function-entry" id="f-c315169a9b306f28"><h3><code>micron::istring::operator-=(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L766">line 766</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires(__valid_needle&lt;R&gt;)
+  inline istring
+  operator-=(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Returns <code>(*this) - rhs</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires(__valid_needle&lt;R&gt;)
+  inline istring
+  operator-=(const R &amp;rhs) const
+  {
+    return (*this) - rhs;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(*this) - rhs</code></td><td><a href="../../source/string/istring.hpp.html#L768">line 768</a></td></tr></tbody></table></section><section class="function-entry" id="f-dea2990a59f5963d"><h3><code>micron::istring::operator*(I n) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L774">line 774</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I&gt;
+    requires micron::integral&lt;I&gt; &amp;&amp; (!micron::is_pointer_v&lt;I&gt;)
+  inline istring
+  operator*(I n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I&gt;
+    requires micron::integral&lt;I&gt; &amp;&amp; (!micron::is_pointer_v&lt;I&gt;)
+  inline istring
+  operator*(I n) const
+  {
+    if ( n &lt; 1 ) {
+      istring t(1);
+      t.memory[0] = T{ 0 };
+      t.length = 0;
+      return t;
+    }
+    const usize cnt = static_cast&lt;usize&gt;(n);
+    if ( __mem::length != 0 &amp;&amp; cnt &gt; static_cast&lt;usize&gt;(-1) / __mem::length )
+      exc&lt;except::library_error&gt;(&quot;micron::istring operator* size overflow&quot;);
+    const usize total = __mem::length * cnt;
+    istring t(total + 1);
+    for ( usize k = 0; k &lt; cnt; ++k ) micron::memcpy(&amp;t.memory[k * __mem::length], &amp;__mem::memory[0], __mem::length);
+    t.memory[total] = T{ 0 };
+    t.length = total;
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L780">line 780</a></td></tr><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L790">line 790</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::istring operator* size overflow&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L784">line 784</a><br>Within <code>( __mem::length != 0 &amp;&amp; cnt &gt; static_cast&lt;usize&gt;(-1) / __mem::length )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-2ba884989984b759"><h3><code>micron::istring::operator*=(I n) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L796">line 796</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename I&gt;
+    requires micron::integral&lt;I&gt; &amp;&amp; (!micron::is_pointer_v&lt;I&gt;)
+  inline istring
+  operator*=(I n) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>I n</code></li></ul><h4>Effects</h4><p>Returns <code>(*this) * n</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename I&gt;
+    requires micron::integral&lt;I&gt; &amp;&amp; (!micron::is_pointer_v&lt;I&gt;)
+  inline istring
+  operator*=(I n) const
+  {
+    return (*this) * n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(*this) * n</code></td><td><a href="../../source/string/istring.hpp.html#L798">line 798</a></td></tr></tbody></table></section><section class="function-entry" id="f-4dad4bd4c8cfc07c"><h3><code>micron::istring::operator/(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L804">line 804</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires(__valid_needle&lt;R&gt;)
+  inline istring
+  operator/(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires(__valid_needle&lt;R&gt;)
+  inline istring
+  operator/(const R &amp;rhs) const
+  {
+    const __needle nd = __as_needle(rhs);
+    const usize total = __mem::length + nd.n;
+    istring t(total + 1);
+    if ( __mem::length ) micron::memcpy(&amp;t.memory[0], &amp;__mem::memory[0], __mem::length);
+    if ( nd.n ) micron::memcpy(&amp;t.memory[__mem::length], nd.p, nd.n);
+    t.memory[total] = T{ 0 };
+    t.length = total;
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L813">line 813</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-eaf10b838dcef0e6">__as_needle</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-4cea6e1f3bc26f41"><h3><code>micron::istring::operator/=(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L819">line 819</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires(__valid_needle&lt;R&gt;)
+  inline istring
+  operator/=(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Returns <code>(*this) / rhs</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires(__valid_needle&lt;R&gt;)
+  inline istring
+  operator/=(const R &amp;rhs) const
+  {
+    return (*this) / rhs;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(*this) / rhs</code></td><td><a href="../../source/string/istring.hpp.html#L821">line 821</a></td></tr></tbody></table></section><section class="function-entry" id="f-903f104a2771a6c6"><h3><code>micron::istring::operator^(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L827">line 827</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator^(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator^(const R &amp;rhs) const
+  {
+    const __bspan k = __as_key(rhs);
+    istring t(__mem::length + 1);
+    micron::simd::xor_bytes_cycle(reinterpret_cast&lt;byte *&gt;(&amp;t.memory[0]), reinterpret_cast&lt;const byte *&gt;(&amp;__mem::memory[0]),
+                                  __mem::length * sizeof(T), k.p, k.n);
+    t.memory[__mem::length] = T{ 0 };
+    t.length = __mem::length;
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L835">line 835</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-f32d741b27f80dac">__as_key</a>, <a href="../simd/strings.hpp.html#f-3b0b2cc3ec6ff4b1">micron::simd::xor_bytes_cycle</a>.</p></section><section class="function-entry" id="f-92b85f615270a47e"><h3><code>micron::istring::operator^=(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L841">line 841</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator^=(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Returns <code>(*this) ^ rhs</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator^=(const R &amp;rhs) const
+  {
+    return (*this) ^ rhs;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(*this) ^ rhs</code></td><td><a href="../../source/string/istring.hpp.html#L843">line 843</a></td></tr></tbody></table></section><section class="function-entry" id="f-478c82ca5b07011d"><h3><code>micron::istring::operator&amp;(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L849">line 849</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator&amp;(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator&amp;(const R &amp;rhs) const
+  {
+    const __bspan k = __as_key(rhs);
+    istring t(__mem::length + 1);
+    micron::simd::and_bytes_cycle(reinterpret_cast&lt;byte *&gt;(&amp;t.memory[0]), reinterpret_cast&lt;const byte *&gt;(&amp;__mem::memory[0]),
+                                  __mem::length * sizeof(T), k.p, k.n);
+    t.memory[__mem::length] = T{ 0 };
+    t.length = __mem::length;
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L857">line 857</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-f32d741b27f80dac">__as_key</a>, <a href="../simd/strings.hpp.html#f-367117279435c216">micron::simd::and_bytes_cycle</a>.</p></section><section class="function-entry" id="f-12a001148807a5c4"><h3><code>micron::istring::operator&amp;=(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L863">line 863</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator&amp;=(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Returns <code>(*this) &amp; rhs</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator&amp;=(const R &amp;rhs) const
+  {
+    return (*this) &amp; rhs;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(*this) &amp; rhs</code></td><td><a href="../../source/string/istring.hpp.html#L865">line 865</a></td></tr></tbody></table></section><section class="function-entry" id="f-b43d1070fb4862bd"><h3><code>micron::istring::operator|(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L871">line 871</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator|(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator|(const R &amp;rhs) const
+  {
+    const __bspan k = __as_key(rhs);
+    istring t(__mem::length + 1);
+    micron::simd::or_bytes_cycle(reinterpret_cast&lt;byte *&gt;(&amp;t.memory[0]), reinterpret_cast&lt;const byte *&gt;(&amp;__mem::memory[0]),
+                                 __mem::length * sizeof(T), k.p, k.n);
+    t.memory[__mem::length] = T{ 0 };
+    t.length = __mem::length;
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L879">line 879</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#f-f32d741b27f80dac">__as_key</a>, <a href="../simd/strings.hpp.html#f-35dc7f22ae4f31e1">micron::simd::or_bytes_cycle</a>.</p></section><section class="function-entry" id="f-f14193964ddaebe6"><h3><code>micron::istring::operator|=(const R &amp;rhs) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L885">line 885</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator|=(const R &amp;rhs) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const R &amp;rhs</code></li></ul><h4>Effects</h4><p>Returns <code>(*this) | rhs</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename R&gt;
+    requires requires(const R &amp;__r) { __as_key(__r); }
+  inline istring
+  operator|=(const R &amp;rhs) const
+  {
+    return (*this) | rhs;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(*this) | rhs</code></td><td><a href="../../source/string/istring.hpp.html#L887">line 887</a></td></tr></tbody></table></section><section class="function-entry" id="f-043d15c6aa05f47a"><h3><code>micron::istring::substr(usize pos = 0, usize cnt = 0) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L892">line 892</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline istring&lt;F, Alloc&gt;
+  substr(usize pos = 0, usize cnt = 0) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize pos = 0</code></li><li><code>usize cnt = 0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline istring&lt;F, Alloc&gt;
+  substr(usize pos = 0, usize cnt = 0) const
+  {
+    if ( pos &gt; __mem::length or cnt &gt; __mem::length - pos ) exc&lt;except::library_error&gt;(&quot;error micron::string substr invalid range.&quot;);
+    istring&lt;F, Alloc&gt; buf(cnt + 1);      // size from the real copy length + 1 NUL slot
+    if ( cnt ) micron::memcpy(buf.data(), &amp;__mem::memory[pos], cnt);
+    buf._buf_set_length(cnt);
+    return buf;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>buf</code></td><td><a href="../../source/string/istring.hpp.html#L898">line 898</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;error micron::string substr invalid range.&quot;)</code></td><td><a href="../../source/string/istring.hpp.html#L894">line 894</a><br>Within <code>( pos &gt; __mem::length or cnt &gt; __mem::length - pos )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-8607b9e1c19885d8"><h3><code>micron::istring::reserve(usize n)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L902">line 902</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void reserve(usize n) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-1cf56ba088cef2ed"><h3><code>micron::istring::try_reserve(usize n)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L904">line 904</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void try_reserve(usize n) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-fe4fab11bc965afa"><h3><code>micron::istring::operator==(const char *data) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L907">line 907</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline bool
+  operator==(const char *data) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline bool
+  operator==(const char *data) const
+  {
+    const usize M = strlen(data);
+    if ( M != __mem::length ) return false;
+    if ( M == 0 ) return true;
+    return micron::memcmp&lt;byte&gt;(reinterpret_cast&lt;const byte *&gt;(__mem::memory), reinterpret_cast&lt;const byte *&gt;(data), M) == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/istring.hpp.html#L910">line 910</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/string/istring.hpp.html#L911">line 911</a></td></tr><tr class="t-dsc"><td><code>micron::memcmp&lt;byte&gt;(reinterpret_cast&lt;const byte *&gt;(__mem::memory), reinterpret_cast&lt;const byte *&gt;(data), M) == 0</code></td><td><a href="../../source/string/istring.hpp.html#L912">line 912</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring_c.hpp.html#f-a08b3ad0552bcf52">strlen</a>, <a href="../memory/cmemory/memcmp.hpp.html#f-6c598db646ee1850">micron::memcmp&lt;byte&gt;</a>.</p></section><section class="function-entry" id="f-4b1a26d4ffa32e1e"><h3><code>micron::istring::operator==(const F (&amp;data)[M]) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L918">line 918</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T, usize M&gt;
+    requires(sizeof(F) == sizeof(T))
+  inline bool
+  operator==(const F (&amp;data)[M]) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const F (&amp;data)[M]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T, usize M&gt;
+    requires(sizeof(F) == sizeof(T))
+  inline bool
+  operator==(const F (&amp;data)[M]) const
+  {
+    constexpr usize len = M - 1;
+    if ( len != __mem::length ) return false;
+    if constexpr ( len == 0 ) return true;
+    return micron::memcmp&lt;byte&gt;(reinterpret_cast&lt;const byte *&gt;(__mem::memory), reinterpret_cast&lt;const byte *&gt;(&amp;data[0]), len * sizeof(T))
+           == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/istring.hpp.html#L921">line 921</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/string/istring.hpp.html#L922">line 922</a></td></tr><tr class="t-dsc"><td><code>micron::memcmp&lt;byte&gt;(reinterpret_cast&lt;const byte *&gt;(__mem::memory), reinterpret_cast&lt;const byte *&gt;(&amp;data[0]), len * sizeof(T))
+           == 0</code></td><td><a href="../../source/string/istring.hpp.html#L923">line 923</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcmp.hpp.html#f-6c598db646ee1850">micron::memcmp&lt;byte&gt;</a>.</p></section><section class="function-entry" id="f-e4dd56e7837c2dd8"><h3><code>micron::istring::operator==(const istring&lt;F&gt; &amp;data) const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L929">line 929</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename F = T&gt;
+  inline bool
+  operator==(const istring&lt;F&gt; &amp;data) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const istring&lt;F&gt; &amp;data</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename F = T&gt;
+  inline bool
+  operator==(const istring&lt;F&gt; &amp;data) const
+  {
+    if ( data.length != __mem::length ) return false;
+    if ( __mem::length == 0 ) return true;
+    return micron::memcmp&lt;byte&gt;(reinterpret_cast&lt;const byte *&gt;(__mem::memory), reinterpret_cast&lt;const byte *&gt;(data.memory),
+                                __mem::length * sizeof(T))
+           == 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/string/istring.hpp.html#L931">line 931</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/string/istring.hpp.html#L932">line 932</a></td></tr><tr class="t-dsc"><td><code>micron::memcmp&lt;byte&gt;(reinterpret_cast&lt;const byte *&gt;(__mem::memory), reinterpret_cast&lt;const byte *&gt;(data.memory),
+                                __mem::length * sizeof(T))
+           == 0</code></td><td><a href="../../source/string/istring.hpp.html#L933">line 933</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcmp.hpp.html#f-6c598db646ee1850">micron::memcmp&lt;byte&gt;</a>.</p></section><section class="function-entry" id="f-f76a687057622a52"><h3><code>micron::to_persist(const S &amp;str)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L941">line 941</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_string S&gt;
+auto
+to_persist(const S &amp;str)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;str</code></li></ul><h4>Effects</h4><p>Returns <code>istring&lt;typename S::value_type&gt;(str.c_str())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_string S&gt;
+auto
+to_persist(const S &amp;str)
+{
+  return istring&lt;typename S::value_type&gt;(str.c_str());
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>istring&lt;typename S::value_type&gt;(str.c_str())</code></td><td><a href="../../source/string/istring.hpp.html#L943">line 943</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="istring.hpp.html#s-68df3ce0619e313c">istring&lt;typename S::value_type&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-0bddd2a9d81084a1"><h3><code>micron::istring::__replicate()</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L32">line 32</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>istring
+  __replicate()</pre></td></tr></tbody></table><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">istring
+  __replicate()
+  {
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-420061ac9a5ff0bc"><h3><code>micron::istring::__alloc_size(usize n) noexcept</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L37">line 37</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline constexpr __attribute__((always_inline)) usize
+  __alloc_size(usize n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li></ul><h4>Effects</h4><p>Returns <code>n == 0 ? Alloc::auto_size() : n</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline constexpr __attribute__((always_inline)) usize
+  __alloc_size(usize n) noexcept
+  {
+    return n == 0 ? Alloc::auto_size() : n;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>n == 0 ? Alloc::auto_size() : n</code></td><td><a href="../../source/string/istring.hpp.html#L39">line 39</a></td></tr></tbody></table></section><section class="function-entry" id="f-f32d741b27f80dac"><h3><code>micron::istring::__as_key(const S &amp;s) noexcept</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L49">line 49</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;has_cstr S&gt;
+  static inline __bspan
+  __as_key(const S &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Returns <code>{ reinterpret_cast&lt;const byte *&gt;(s.c_str()), s.size() * sizeof(typename S::value_type) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;has_cstr S&gt;
+  static inline __bspan
+  __as_key(const S &amp;s) noexcept
+  {
+    return { reinterpret_cast&lt;const byte *&gt;(s.c_str()), s.size() * sizeof(typename S::value_type) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ reinterpret_cast&lt;const byte *&gt;(s.c_str()), s.size() * sizeof(typename S::value_type) }</code></td><td><a href="../../source/string/istring.hpp.html#L51">line 51</a></td></tr></tbody></table></section><section class="function-entry" id="f-a990f625807cc313"><h3><code>micron::istring::__as_key(const char *s) noexcept</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L55">line 55</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __bspan
+  __as_key(const char *s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li></ul><h4>Effects</h4><p>Returns <code>{ reinterpret_cast&lt;const byte *&gt;(s), micron::strlen(s) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __bspan
+  __as_key(const char *s) noexcept
+  {
+    return { reinterpret_cast&lt;const byte *&gt;(s), micron::strlen(s) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ reinterpret_cast&lt;const byte *&gt;(s), micron::strlen(s) }</code></td><td><a href="../../source/string/istring.hpp.html#L57">line 57</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>.</p></section><section class="function-entry" id="f-4f83902a31a8d2b5"><h3><code>micron::istring::__as_key(const T (&amp;s)[M]) noexcept</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L62">line 62</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt;
+  static inline __bspan
+  __as_key(const T (&amp;s)[M]) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T (&amp;s)[M]</code></li></ul><h4>Effects</h4><p>Returns <code>{ reinterpret_cast&lt;const byte *&gt;(&amp;s[0]), (M - 1) * sizeof(T) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt;
+  static inline __bspan
+  __as_key(const T (&amp;s)[M]) noexcept
+  {
+    return { reinterpret_cast&lt;const byte *&gt;(&amp;s[0]), (M - 1) * sizeof(T) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ reinterpret_cast&lt;const byte *&gt;(&amp;s[0]), (M - 1) * sizeof(T) }</code></td><td><a href="../../source/string/istring.hpp.html#L64">line 64</a></td></tr></tbody></table></section><section class="function-entry" id="f-eaf10b838dcef0e6"><h3><code>micron::istring::__as_needle(const S &amp;s) noexcept</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L76">line 76</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;has_cstr S&gt;
+  static inline __needle
+  __as_needle(const S &amp;s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const S &amp;s</code></li></ul><h4>Effects</h4><p>Returns <code>{ reinterpret_cast&lt;const T *&gt;(s.c_str()), s.size() }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;has_cstr S&gt;
+  static inline __needle
+  __as_needle(const S &amp;s) noexcept
+  {
+    return { reinterpret_cast&lt;const T *&gt;(s.c_str()), s.size() };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ reinterpret_cast&lt;const T *&gt;(s.c_str()), s.size() }</code></td><td><a href="../../source/string/istring.hpp.html#L78">line 78</a></td></tr></tbody></table></section><section class="function-entry" id="f-40f1f244367f477e"><h3><code>micron::istring::__as_needle(const char *s) noexcept</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L82">line 82</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline __needle
+  __as_needle(const char *s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li></ul><h4>Effects</h4><p>Returns <code>{ reinterpret_cast&lt;const T *&gt;(s), micron::strlen(s) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline __needle
+  __as_needle(const char *s) noexcept
+  {
+    return { reinterpret_cast&lt;const T *&gt;(s), micron::strlen(s) };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ reinterpret_cast&lt;const T *&gt;(s), micron::strlen(s) }</code></td><td><a href="../../source/string/istring.hpp.html#L84">line 84</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cstring.hpp.html#f-146ab2c36042befa">micron::strlen</a>.</p></section><section class="function-entry" id="f-aa93809407e22e27"><h3><code>micron::istring::__as_needle(const T (&amp;s)[M]) noexcept</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L89">line 89</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize M&gt;
+  static inline __needle
+  __as_needle(const T (&amp;s)[M]) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T (&amp;s)[M]</code></li></ul><h4>Effects</h4><p>Returns <code>{ &amp;s[0], M - 1 }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize M&gt;
+  static inline __needle
+  __as_needle(const T (&amp;s)[M]) noexcept
+  {
+    return { &amp;s[0], M - 1 };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ &amp;s[0], M - 1 }</code></td><td><a href="../../source/string/istring.hpp.html#L91">line 91</a></td></tr></tbody></table></section><section class="function-entry" id="f-2a00028e18005e41"><h3><code>micron::istring::__dup() const</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L112">line 112</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline istring
+  __dup() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline istring
+  __dup() const
+  {
+    istring t(__mem::length + 1);
+    if ( __mem::length ) micron::memcpy(&amp;t.memory[0], &amp;__mem::memory[0], __mem::length);
+    t.memory[__mem::length] = T{ 0 };
+    t.length = __mem::length;
+    return t;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>t</code></td><td><a href="../../source/string/istring.hpp.html#L118">line 118</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-33352f4bbe2dd7cf">micron::memcpy</a>.</p></section><section class="function-entry" id="f-dfd8b9c875ef8170"><h3><code>micron::istring::_buf_set_length(const usize s)</code></h3><p>Defined in <code>string/istring.hpp</code>, <a href="../../source/string/istring.hpp.html#L122">line 122</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  _buf_set_length(const usize s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const usize s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  _buf_set_length(const usize s)
+  {
+    __mem::length = s;
+    // must maintain trailing NUL invariantly
+    if ( __mem::memory &amp;&amp; s &lt; __mem::capacity ) __mem::memory[s] = T{ 0 };
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

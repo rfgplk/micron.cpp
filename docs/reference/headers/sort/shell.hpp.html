@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sort/shell.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sort/shell.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/sorting.html">Sorting</a></div><p>Defined in header <code>&lt;micron/sort/shell.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sort/shell.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-1fa0c979adf9049e">micron::sort::shell(T &amp;arr)</a></td><td>function; line 60</td></tr><tr class="t-dsc"><td><a href="#f-80901af4685e2c06">micron::sort::shell(T &amp;arr, Cmp comp)</a></td><td>function; line 67</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-1fa0c979adf9049e"><h3><code>micron::sort::shell(T &amp;arr)</code></h3><p>Defined in <code>sort/shell.hpp</code>, <a href="../../source/sort/shell.hpp.html#L60">line 60</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T&gt;
+T &amp;
+shell(T &amp;arr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li></ul><h4>Effects</h4><p>Returns <code>__shell(arr, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T&gt;
+T &amp;
+shell(T &amp;arr)
+{
+  return __shell(arr, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; });
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__shell(arr, [](const auto &amp;a, const auto &amp;b) { return a &lt; b; })</code></td><td><a href="../../source/sort/shell.hpp.html#L62">line 62</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="shell.hpp.html#f-cd0e1a6ec1c439e8">__shell</a>.</p></section><section class="function-entry" id="f-80901af4685e2c06"><h3><code>micron::sort::shell(T &amp;arr, Cmp comp)</code></h3><p>Defined in <code>sort/shell.hpp</code>, <a href="../../source/sort/shell.hpp.html#L67">line 67</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+T &amp;
+shell(T &amp;arr, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Returns <code>__shell(arr, comp)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, is_valid_comp&lt;T&gt; Cmp&gt;
+T &amp;
+shell(T &amp;arr, Cmp comp)
+{
+  return __shell(arr, comp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__shell(arr, comp)</code></td><td><a href="../../source/sort/shell.hpp.html#L69">line 69</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="shell.hpp.html#f-cd0e1a6ec1c439e8">__shell</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-cd0e1a6ec1c439e8"><h3><code>micron::sort::__shell(T &amp;arr, Cmp comp)</code></h3><p>Defined in <code>sort/shell.hpp</code>, <a href="../../source/sort/shell.hpp.html#L26">line 26</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;is_iterable_container T, typename Cmp&gt;
+T &amp;
+__shell(T &amp;arr, Cmp comp)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;arr</code></li><li><code>Cmp comp</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;is_iterable_container T, typename Cmp&gt;
+T &amp;
+__shell(T &amp;arr, Cmp comp)
+{
+  using value_t = typename T::value_type;
+  const max_t n = static_cast&lt;max_t&gt;(arr.size());
+  if ( n &lt; 2 ) return arr;
+
+  // Ciura base sequence
+  max_t gaps[96];
+  max_t ng = 0;
+  static constexpr max_t ciura[] = { 1, 4, 10, 23, 57, 132, 301, 701, 1750 };
+  for ( max_t i = 0; i &lt; 9; ++i ) gaps[ng++] = ciura[i];
+  while ( ng &lt; 96 &amp;&amp; gaps[ng - 1] &lt; n ) {
+    gaps[ng] = gaps[ng - 1] * 9 / 4;
+    ++ng;
+  }
+
+  for ( max_t g = ng; g-- &gt; 0; ) {
+    const max_t gap = gaps[g];
+    if ( gap &gt;= n ) continue;      // a gap &gt;= n would touch nothing
+    for ( max_t i = gap; i &lt; n; ++i ) {
+      value_t key = arr[i];
+      max_t j = i;
+      while ( j &gt;= gap &amp;&amp; comp(key, arr[j - gap]) ) {
+        arr[j] = arr[j - gap];
+        j -= gap;
+      }
+      arr[j] = key;
+    }
+  }
+  return arr;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/sort/shell.hpp.html#L30">line 30</a></td></tr><tr class="t-dsc"><td><code>arr</code></td><td><a href="../../source/sort/shell.hpp.html#L55">line 55</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

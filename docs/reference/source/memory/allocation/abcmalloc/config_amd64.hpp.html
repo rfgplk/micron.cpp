@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>memory/allocation/abcmalloc/config_amd64.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../../headers/index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">memory/allocation/abcmalloc/config_amd64.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../../headers/memory/allocation/abcmalloc/config_amd64.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> // Copyright (c) 2025 David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> // Permission is hereby granted, free of charge, to any person obtaining</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> // a copy of this software and associated documentation files (the</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> // &quot;Software&quot;), to deal in the Software without restriction, including</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> // without limitation the rights to use, copy, modify, merge, publish,</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> // distribute, sublicense, and/or sell copies of the Software, and to</span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> // permit persons to whom the Software is furnished to do so, subject to</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> // the following conditions:</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> //</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> // The above copyright notice and this permission notice shall be</span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> // included in all copies or substantial portions of the Software.</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> //</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> // THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,</span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE</span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> </span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> #pragma once</span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> </span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> // temporary workaround</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> #define MICRON_ABC_MT 1</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> </span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> #include &quot;../../../bits/__profile.hpp&quot;</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> #include &quot;../kmemory.hpp&quot;</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> </span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a> namespace abc</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a> {</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> </span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> constexpr static const bool __is_constrained = false;      // for if running on a mem constrained system</span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> constexpr static const usize __system_pagesize = micron::page_size;</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> </span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> // once an allocation occurs its address is NEVER freed back to the OS nor regranted to a different allocation (even on explicit free()) and</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a> // the sheet it lives on is NEVER unmapped</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a> #if defined(MICRON_ABC_PERSISTENT)</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> constexpr static const bool __default_persistent_mode = true;</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> #else</span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> constexpr static const bool __default_persistent_mode = false;</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> #endif</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> </span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a> // shifts defined like this so we can easily pull them up in code</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a> constexpr static const usize __class_arena_internal = 1024;</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a> constexpr static const usize __class_precise_shift = 8;</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a> constexpr static const usize __class_small_shift = 9;</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a> constexpr static const usize __class_medium_shift = 12;</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a> constexpr static const usize __class_large_shift = 15;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> constexpr static const usize __class_huge_shift = 18;</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> constexpr static const usize __class_1mb_shift = 20;</span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> constexpr static const usize __class_gb_shift = 29;      // go from ~500mb</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> constexpr static const usize __class_precise = (1 &lt;&lt; __class_precise_shift);</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> constexpr static const usize __class_small = (1 &lt;&lt; __class_small_shift);</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> constexpr static const usize __class_medium = (1 &lt;&lt; __class_medium_shift);</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a> constexpr static const usize __class_large = (1 &lt;&lt; __class_large_shift);</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> constexpr static const usize __class_huge = (1 &lt;&lt; __class_huge_shift);</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> constexpr static const usize __class_1mb = (1 &lt;&lt; __class_1mb_shift);</span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> constexpr static const usize __class_gb = (1 &lt;&lt; __class_gb_shift);</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> constexpr static const usize __alloc_limit = 0;      // forbid any allocations greater than this, active only if __is_constrained is true</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> </span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> // these two switches determine the number of *pages* to allocate on initialization, by default, it&#x27;s 512 pages for the</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a> // internal abcmalloc metabuffer, and a minimum of 16 per each new sheet allocation</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a> //</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a> // NOTE: every eager mapping below is rounded up to __sheet_align (2 MiB) by __va_carve, so trimming</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a> // either of the next two knobs past ~512 KiB of request buys nothing, the granule is the floor</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a> #ifndef MICRON_ABC_CACHE_SIZE_FACTOR</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a> #define MICRON_ABC_CACHE_SIZE_FACTOR (1 &lt;&lt; 13)</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> #endif</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> #ifndef MICRON_ABC_ARENA_PAGE_BUF</span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> #define MICRON_ABC_ARENA_PAGE_BUF 512</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> #endif</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> constexpr static const usize __default_cache_size_factor = MICRON_ABC_CACHE_SIZE_FACTOR;      // mults by class_precise</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> constexpr static const usize __default_arena_page_buf = MICRON_ABC_ARENA_PAGE_BUF;            // 2MiB for now... ~81k rnd allocations</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a> constexpr static const usize __default_magic_size = micron::numeric_limits&lt;usize&gt;::max();</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a> constexpr static const usize __default_minimum_page_mul = 16;      // 65kB minimum per sheet, larger buckets will exceed this</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a> </span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a> #ifndef MICRON_ABC_PREALLOC_FACTOR</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a> #define MICRON_ABC_PREALLOC_FACTOR 0.0075f</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a> #endif</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a> constexpr static const f32 __default_prealloc_factor = MICRON_ABC_PREALLOC_FACTOR;      // 0.75% of total system mem</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a> constexpr static const usize __default_cache_step = 768;                                // ~5.9MB</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a> </span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a> constexpr static const bool __default_launder</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>     = false;      // by default is off, laundering lets the allocators allocate same sized requests at the same address</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a> constexpr static const bool __default_lazy_construct = true;        // should buckets be initialized lazily or all at startup</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a> constexpr static const bool __default_single_instance = true;       // enable an allocator per thread (DEPRECATED for now)</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> constexpr static const bool __default_global_instance = false;      // enable a single global allocator (DEPRECATED for now)</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> // freestanding builds have no threading runtime, unless one is asked for</span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> #if defined(__micron_freestanding) &amp;&amp; !defined(MICRON_ABC_MT)</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> constexpr static const bool __default_multithread_safe = false;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> #define __micron_abc_mt_resolved 1</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> #else</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> constexpr static const bool __default_multithread_safe = true;      // essentially, enables locks across API calls</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a> #endif</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a> // eagerly preallocate precise/small/medium with weight-based shares even if __default_lazy_construct is true.</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a> #ifndef MICRON_ABC_EAGER_HOT_TIERS</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a> #define MICRON_ABC_EAGER_HOT_TIERS true</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a> #endif</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a> constexpr static const bool __default_eager_hot_tiers = MICRON_ABC_EAGER_HOT_TIERS;</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a> </span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a> // per-class free cache, caches recent allocations in a free list for rapid allocs</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a> // (persistent mode forces this off: a cached block is a regrant of freed memory)</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a> constexpr static const bool __default_per_class_free_cache = __default_persistent_mode ? false : true;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a> </span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a> // 0 == per-dealloc tombstone ratio check (pre 1.1 behav.)</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a> // &gt;0 == batch only sweep a tier&#x27;s sheets every N deallocations</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a> constexpr static const u32 __default_tombstone_sweep_interval = 64;</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a> </span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a> // per-tier sheet caps (multi-word __space_mask bitmap)</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a> // hot tiers (precise/small/medium) carry frequent small-allocation pressure;</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a> // cold tiers (large/huge) rarely exceed 64 sheets, so keeping them narrow conserves the per-arena tier footprint</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a> // NOTE: each tier costs sizeof(__range)=24B per __idx slot + ceil(N/64)*8B for the bitmap</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a> #ifndef MICRON_ABC_MAX_SHEETS_PRECISE</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a> #define MICRON_ABC_MAX_SHEETS_PRECISE 512</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a> #endif</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a> #ifndef MICRON_ABC_MAX_SHEETS_SMALL</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a> #define MICRON_ABC_MAX_SHEETS_SMALL 512</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a> #endif</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a> #ifndef MICRON_ABC_MAX_SHEETS_MEDIUM</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a> #define MICRON_ABC_MAX_SHEETS_MEDIUM 512</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a> #endif</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a> #ifndef MICRON_ABC_MAX_SHEETS_LARGE</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a> #define MICRON_ABC_MAX_SHEETS_LARGE 128</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a> #endif</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> #ifndef MICRON_ABC_MAX_SHEETS_HUGE</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> #define MICRON_ABC_MAX_SHEETS_HUGE 128</span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> #endif</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> constexpr static const u32 __max_sheets_precise = MICRON_ABC_MAX_SHEETS_PRECISE;</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a> constexpr static const u32 __max_sheets_small = MICRON_ABC_MAX_SHEETS_SMALL;</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> constexpr static const u32 __max_sheets_medium = MICRON_ABC_MAX_SHEETS_MEDIUM;</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a> constexpr static const u32 __max_sheets_large = MICRON_ABC_MAX_SHEETS_LARGE;</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a> constexpr static const u32 __max_sheets_huge = MICRON_ABC_MAX_SHEETS_HUGE;      // doubled to absorb sustained huge-band pressure</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a> constexpr static const u32 __max_sheets_arena_internal = 64;</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a> </span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> // per-tier free-cache slot counts (LIFO depth per tier)</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> // 0 disables the cache for that tier</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> // worst-case memory pinning = sum(slots * max_block_size) ~176 KiB at the defaults below</span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> #ifndef MICRON_ABC_CACHE_SLOTS_PRECISE</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> #define MICRON_ABC_CACHE_SLOTS_PRECISE 32</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> #endif</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> #ifndef MICRON_ABC_CACHE_SLOTS_SMALL</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a> #define MICRON_ABC_CACHE_SLOTS_SMALL 16</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a> #endif</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a> #ifndef MICRON_ABC_CACHE_SLOTS_MEDIUM</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a> #define MICRON_ABC_CACHE_SLOTS_MEDIUM 8</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a> #endif</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a> #ifndef MICRON_ABC_CACHE_SLOTS_LARGE</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a> #define MICRON_ABC_CACHE_SLOTS_LARGE 4</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a> #endif</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a> constexpr static const u32 __cache_slots_precise = MICRON_ABC_CACHE_SLOTS_PRECISE;      // 1-256 B blocks</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a> constexpr static const u32 __cache_slots_small = MICRON_ABC_CACHE_SLOTS_SMALL;          // 257-512 B</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a> constexpr static const u32 __cache_slots_medium = MICRON_ABC_CACHE_SLOTS_MEDIUM;        // 513 B - 4 KiB</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a> constexpr static const u32 __cache_slots_large = MICRON_ABC_CACHE_SLOTS_LARGE;          // 4 K - 32 KiB</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a> constexpr static const u32 __cache_slots_huge = 0;                                      // disabled (rare, large)</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a> </span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a> static_assert(__default_single_instance != __default_global_instance,</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>               &quot;abcmalloc constexpr: __default_single_instance cannot be set simultaneously with __default_global_instance.&quot;);</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a> </span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a> constexpr static const byte __default_fail_result = 0;      // 0: abort 1: message 2: silent fail</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a> constexpr static const usize __default_max_retries = 2;</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a> </span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a> // is a define so we can intercept at the compilation stage</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a> #define __MICRON_ABCMALLOC_CRITICAL_EXIT 11</span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a> // in pages (each page is 4096)</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a> constexpr static const bool __default_saturated_mode = true;      // enables a saturation buffer, which checks the rate at which new</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>                                                                   // requests are coming in. adjusts allocation space accordingly</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a> constexpr static const usize __default_overcommit</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a>     = 1;      // overcommit multiplier, multiplies all page req. by this value. MUST BE GREATER THAN ONE AND INTEGRAL.</span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a> </span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> constexpr static const bool __default_init_large_pages = false;</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a> constexpr static const bool __default_oom_enable = false;      // NOTE: costs performance</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> constexpr static const bool __default_borrow_auto = true;</span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a> constexpr static const float __default_oom_limit_warn = 0.1f;</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a> constexpr static const float __default_oom_limit_error = 0.2f;</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a> constexpr static const u32 __default_oom_check_interval = 1024;</span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a> </span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> // enforce provenance forces the allocator to verify if a req. pointer has been allocated within that session. if it</span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a> // hasn&#x27;t fail out according to __default_fail_result</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a> #ifndef MICRON_ABC_ENFORCE_PROVENANCE</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a> #define MICRON_ABC_ENFORCE_PROVENANCE false</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a> #endif</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a> constexpr static const bool __default_enforce_provenance = MICRON_ABC_ENFORCE_PROVENANCE;</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a> // NOTE: by enabling this the allocator will never return memory that has been freed to a new allocation</span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a> // UNLESS the page on which it resides has been unmapped</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a> //</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a> // per-tier tombstone policy; empirically pulled from benching, best results on hot reuse</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a> constexpr static const bool __tombstone_precise = false;</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a> constexpr static const bool __tombstone_small = false;</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a> constexpr static const bool __tombstone_medium = false;</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a> constexpr static const bool __tombstone_large = true;</span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a> constexpr static const bool __tombstone_huge = true;</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a> constexpr static const bool __default_tombstone</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>     = __tombstone_precise || __tombstone_small || __tombstone_medium || __tombstone_large || __tombstone_huge;</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a> #ifndef MICRON_ABC_GUARD_PAGES</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> #define MICRON_ABC_GUARD_PAGES true</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a> #endif</span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a> constexpr static const bool __default_insert_guard_pages = MICRON_ABC_GUARD_PAGES;</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a> constexpr static const int __default_guard_page_perms = micron::prot_none;</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a> </span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a> // NOTE: all of these cost a lot of performance</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a> constexpr static const bool __default_self_cleanup = false;</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a> </span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a> static_assert(!(__default_persistent_mode &amp;&amp; __default_launder),</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>               &quot;abcmalloc: persistent mode is incompatible with __default_launder (it reuses addresses).&quot;);</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> static_assert(!(__default_persistent_mode &amp;&amp; __default_self_cleanup),</span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>               &quot;abcmalloc: persistent mode requires __default_self_cleanup off (arena dtor must not unmap).&quot;);</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> static_assert(!(__default_persistent_mode &amp;&amp; __default_per_class_free_cache),</span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>               &quot;abcmalloc: persistent mode requires __default_per_class_free_cache off (it regrants freed blocks).&quot;);</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a> constexpr static const bool __default_debug_notices = false;</span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a> // scrub handed-out memory</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a> #ifndef MICRON_ABC_ZERO_ON_ALLOC</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a> #define MICRON_ABC_ZERO_ON_ALLOC false</span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a> #endif</span>
+<span id="L215" class="source-line"><a class="line-number" href="#L215">215</a> constexpr static const bool __default_zero_on_alloc = MICRON_ABC_ZERO_ON_ALLOC;</span>
+<span id="L216" class="source-line"><a class="line-number" href="#L216">216</a> #ifndef MICRON_ABC_ZERO_ON_FREE</span>
+<span id="L217" class="source-line"><a class="line-number" href="#L217">217</a> #define MICRON_ABC_ZERO_ON_FREE false</span>
+<span id="L218" class="source-line"><a class="line-number" href="#L218">218</a> #endif</span>
+<span id="L219" class="source-line"><a class="line-number" href="#L219">219</a> constexpr static const bool __default_zero_on_free = MICRON_ABC_ZERO_ON_FREE;</span>
+<span id="L220" class="source-line"><a class="line-number" href="#L220">220</a> constexpr static const bool __default_full_on_free = false;</span>
+<span id="L221" class="source-line"><a class="line-number" href="#L221">221</a> constexpr static const bool __default_sanitize = false;</span>
+<span id="L222" class="source-line"><a class="line-number" href="#L222">222</a> constexpr static const byte __default_sanitize_with_on_alloc = 0xcc;</span>
+<span id="L223" class="source-line"><a class="line-number" href="#L223">223</a> </span>
+<span id="L224" class="source-line"><a class="line-number" href="#L224">224</a> #if defined(MICRON_ABC_STATS)</span>
+<span id="L225" class="source-line"><a class="line-number" href="#L225">225</a> constexpr static const bool __default_collect_stats = true;</span>
+<span id="L226" class="source-line"><a class="line-number" href="#L226">226</a> #else</span>
+<span id="L227" class="source-line"><a class="line-number" href="#L227">227</a> constexpr static const bool __default_collect_stats = false;</span>
+<span id="L228" class="source-line"><a class="line-number" href="#L228">228</a> #endif</span>
+<span id="L229" class="source-line"><a class="line-number" href="#L229">229</a> constexpr static const byte __default_double_free_action = 2;</span>
+<span id="L230" class="source-line"><a class="line-number" href="#L230">230</a> // 0 == ignore silently (return false, no log)</span>
+<span id="L231" class="source-line"><a class="line-number" href="#L231">231</a> // 1 == log diagnostic return false</span>
+<span id="L232" class="source-line"><a class="line-number" href="#L232">232</a> // 2 == abort</span>
+<span id="L233" class="source-line"><a class="line-number" href="#L233">233</a> </span>
+<span id="L234" class="source-line"><a class="line-number" href="#L234">234</a> #ifndef MICRON_ABC_GUARD_ARENA_METADATA</span>
+<span id="L235" class="source-line"><a class="line-number" href="#L235">235</a> #define MICRON_ABC_GUARD_ARENA_METADATA true</span>
+<span id="L236" class="source-line"><a class="line-number" href="#L236">236</a> #endif</span>
+<span id="L237" class="source-line"><a class="line-number" href="#L237">237</a> constexpr static const bool __default_guard_arena_metadata = MICRON_ABC_GUARD_ARENA_METADATA;</span>
+<span id="L238" class="source-line"><a class="line-number" href="#L238">238</a> // insert guard pages at the trail of each arena metadata</span>
+<span id="L239" class="source-line"><a class="line-number" href="#L239">239</a> // same protection flags as __default_guard_page_perms</span>
+<span id="L240" class="source-line"><a class="line-number" href="#L240">240</a> </span>
+<span id="L241" class="source-line"><a class="line-number" href="#L241">241</a> constexpr static const bool __default_check_alignment = false;      // verify that addresses passed to pop/freeze are naturally aligned</span>
+<span id="L242" class="source-line"><a class="line-number" href="#L242">242</a> </span>
+<span id="L243" class="source-line"><a class="line-number" href="#L243">243</a> #ifndef MICRON_ABC_POISON_ON_FREE</span>
+<span id="L244" class="source-line"><a class="line-number" href="#L244">244</a> #define MICRON_ABC_POISON_ON_FREE false</span>
+<span id="L245" class="source-line"><a class="line-number" href="#L245">245</a> #endif</span>
+<span id="L246" class="source-line"><a class="line-number" href="#L246">246</a> constexpr static const bool __default_poison_on_free = MICRON_ABC_POISON_ON_FREE;</span>
+<span id="L247" class="source-line"><a class="line-number" href="#L247">247</a> // fill freed regions with __default_poison_byte to detect use-after-free.</span>
+<span id="L248" class="source-line"><a class="line-number" href="#L248">248</a> </span>
+<span id="L249" class="source-line"><a class="line-number" href="#L249">249</a> constexpr static const byte __default_poison_byte = 0x7B;</span>
+<span id="L250" class="source-line"><a class="line-number" href="#L250">250</a> </span>
+<span id="L251" class="source-line"><a class="line-number" href="#L251">251</a> #ifndef MICRON_ABC_REDZONE</span>
+<span id="L252" class="source-line"><a class="line-number" href="#L252">252</a> #define MICRON_ABC_REDZONE false</span>
+<span id="L253" class="source-line"><a class="line-number" href="#L253">253</a> #endif</span>
+<span id="L254" class="source-line"><a class="line-number" href="#L254">254</a> constexpr static const bool __default_redzone</span>
+<span id="L255" class="source-line"><a class="line-number" href="#L255">255</a>     = MICRON_ABC_REDZONE;      // insert canary bytes before/after user region on TLSF allocs</span>
+<span id="L256" class="source-line"><a class="line-number" href="#L256">256</a>                                // NOTE: uses 2 * __default_redzone_size bytes per alloc</span>
+<span id="L257" class="source-line"><a class="line-number" href="#L257">257</a>                                // (verified in __vmap_remove*, which the remote-free drain also goes through)</span>
+<span id="L258" class="source-line"><a class="line-number" href="#L258">258</a> </span>
+<span id="L259" class="source-line"><a class="line-number" href="#L259">259</a> constexpr static const byte __default_redzone_byte = 0xC1;</span>
+<span id="L260" class="source-line"><a class="line-number" href="#L260">260</a> // must be a multiple of __rz_min_align</span>
+<span id="L261" class="source-line"><a class="line-number" href="#L261">261</a> constexpr static const usize __default_redzone_size = 16;</span>
+<span id="L262" class="source-line"><a class="line-number" href="#L262">262</a> </span>
+<span id="L263" class="source-line"><a class="line-number" href="#L263">263</a> // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span id="L264" class="source-line"><a class="line-number" href="#L264">264</a> // doctor mode configuration</span>
+<span id="L265" class="source-line"><a class="line-number" href="#L265">265</a> // (enabled via -DABCMALLOC_DOCTOR_HELP)</span>
+<span id="L266" class="source-line"><a class="line-number" href="#L266">266</a> #if defined(ABCMALLOC_DOCTOR_HELP)</span>
+<span id="L267" class="source-line"><a class="line-number" href="#L267">267</a> constexpr static const bool __default_doctor_help = true;</span>
+<span id="L268" class="source-line"><a class="line-number" href="#L268">268</a> #if defined(ABCMALLOC_DOCTOR_RESCUE)</span>
+<span id="L269" class="source-line"><a class="line-number" href="#L269">269</a> constexpr static const bool __default_doctor_rescue = true;      // attempt repair vs report-only</span>
+<span id="L270" class="source-line"><a class="line-number" href="#L270">270</a> #else</span>
+<span id="L271" class="source-line"><a class="line-number" href="#L271">271</a> constexpr static const bool __default_doctor_rescue = false;</span>
+<span id="L272" class="source-line"><a class="line-number" href="#L272">272</a> #endif</span>
+<span id="L273" class="source-line"><a class="line-number" href="#L273">273</a> #if defined(ABCMALLOC_DOCTOR_RESCUE_CONSERVATIVE)</span>
+<span id="L274" class="source-line"><a class="line-number" href="#L274">274</a> constexpr static const bool __default_doctor_rescue_conservative</span>
+<span id="L275" class="source-line"><a class="line-number" href="#L275">275</a>     = true;      // escape hatch: reroute/skip/quarantine only, no in-place repair</span>
+<span id="L276" class="source-line"><a class="line-number" href="#L276">276</a> #else</span>
+<span id="L277" class="source-line"><a class="line-number" href="#L277">277</a> constexpr static const bool __default_doctor_rescue_conservative = false;</span>
+<span id="L278" class="source-line"><a class="line-number" href="#L278">278</a> #endif</span>
+<span id="L279" class="source-line"><a class="line-number" href="#L279">279</a> constexpr static const bool __default_doctor_harden = true;      // auto-enable redzone/guard/provenance/poison for deep detection</span>
+<span id="L280" class="source-line"><a class="line-number" href="#L280">280</a> constexpr static const bool __default_doctor_leak_report_at_exit = true;      // dump the live-set at thread/process exit</span>
+<span id="L281" class="source-line"><a class="line-number" href="#L281">281</a> constexpr static const int __default_doctor_color = 2;      // forensic-output ANSI coloring: 0=never 1=always 2=auto (tty-detect on fd 2)</span>
+<span id="L282" class="source-line"><a class="line-number" href="#L282">282</a> constexpr static const bool __default_doctor_crash_safe</span>
+<span id="L283" class="source-line"><a class="line-number" href="#L283">283</a>     = true;      // install a fault-time SIGSEGV/SIGBUS handler so the sweep/forensics survive faulting on corrupt/unmapped memory</span>
+<span id="L284" class="source-line"><a class="line-number" href="#L284">284</a> constexpr static const bool __default_doctor_canary = true;                    // snapshot the block header + lay a slack canary at alloc</span>
+<span id="L285" class="source-line"><a class="line-number" href="#L285">285</a> constexpr static const byte __default_doctor_canary_byte = 0x5A;               // slack-canary fill byte</span>
+<span id="L286" class="source-line"><a class="line-number" href="#L286">286</a> constexpr static const bool __default_doctor_backtrace = true;                 // capture an alloc-site backtrace by frame-pointer walking</span>
+<span id="L287" class="source-line"><a class="line-number" href="#L287">287</a> constexpr static const usize __default_doctor_max_records = (1ull &lt;&lt; 24);      // soft cap: past this the ledger drops all non-live records</span>
+<span id="L288" class="source-line"><a class="line-number" href="#L288">288</a> static_assert(!__default_doctor_rescue || __default_doctor_help, &quot;abcmalloc: doctor rescue requires __default_doctor_help&quot;);</span>
+<span id="L289" class="source-line"><a class="line-number" href="#L289">289</a> static_assert(!__default_doctor_harden || __default_doctor_help, &quot;abcmalloc: doctor harden requires __default_doctor_help&quot;);</span>
+<span id="L290" class="source-line"><a class="line-number" href="#L290">290</a> static_assert(!__default_doctor_rescue_conservative || __default_doctor_rescue,</span>
+<span id="L291" class="source-line"><a class="line-number" href="#L291">291</a>               &quot;abcmalloc: doctor rescue_conservative requires __default_doctor_rescue&quot;);</span>
+<span id="L292" class="source-line"><a class="line-number" href="#L292">292</a> #endif</span>
+<span id="L293" class="source-line"><a class="line-number" href="#L293">293</a> };      // namespace abc</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

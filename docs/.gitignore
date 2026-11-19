@@ -1,0 +1,4 @@
+# Keep local documentation ignored, except the versioned reference.
+*
+!/reference/
+!/reference/**

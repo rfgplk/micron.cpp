@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/parallel/memory.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/parallel/memory.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/parallel.html">Parallel algorithms</a></div><p>Defined in header <code>&lt;micron/parallel/memory.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/parallel/memory.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-4a936d556b8410eb">micron::parallel::copy_n(const T *__src, F *__dst, usize __n)</a></td><td>function; line 22</td></tr><tr class="t-dsc"><td><a href="#f-b5f71a530bcf6412">micron::parallel::move_n(T *__src, F *__dst, usize __n)</a></td><td>function; line 34</td></tr><tr class="t-dsc"><td><a href="#f-19b8a76136eca1f3">micron::parallel::set_n(T *__dst, unsigned char __val, usize __nbytes)</a></td><td>function; line 46</td></tr><tr class="t-dsc"><td><a href="#f-a92671030eb61259">micron::parallel::zero_n(T *__dst, usize __nbytes)</a></td><td>function; line 56</td></tr><tr class="t-dsc"><td><a href="#f-8282a02207e4d222">micron::parallel::swap_n(T *__a0, T *__b0, usize __nbytes)</a></td><td>function; line 66</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-4a936d556b8410eb"><h3><code>micron::parallel::copy_n(const T *__src, F *__dst, usize __n)</code></h3><p>Defined in <code>parallel/memory.hpp</code>, <a href="../../source/parallel/memory.hpp.html#L22">line 22</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, class F&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+copy_n(const T *__src, F *__dst, usize __n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *__src</code></li><li><code>F *__dst</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, class F&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+copy_n(const T *__src, F *__dst, usize __n)
+{
+  auto __leaf = [__src, __dst](const T *__a, const T *__b) {
+    const usize __off = static_cast&lt;usize&gt;(__a - __src);
+    micron::copy_n(__a, __dst + __off, static_cast&lt;usize&gt;(__b - __a));
+  };
+  return __pmap&lt;const T *, decltype(__leaf)&gt;(__src, __src + __n, __leaf, __grain_for(__n));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pmap&lt;const T *, decltype(__leaf)&gt;(__src, __src + __n, __leaf, __grain_for(__n))</code></td><td><a href="../../source/parallel/memory.hpp.html#L28">line 28</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-f2bc3d1a503db8ef">__pmap&lt;const T *, decltype(__leaf)&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-b5f71a530bcf6412"><h3><code>micron::parallel::move_n(T *__src, F *__dst, usize __n)</code></h3><p>Defined in <code>parallel/memory.hpp</code>, <a href="../../source/parallel/memory.hpp.html#L34">line 34</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T, class F&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+move_n(T *__src, F *__dst, usize __n)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__src</code></li><li><code>F *__dst</code></li><li><code>usize __n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T, class F&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+move_n(T *__src, F *__dst, usize __n)
+{
+  auto __leaf = [__src, __dst](T *__a, T *__b) {
+    const usize __off = static_cast&lt;usize&gt;(__a - __src);
+    micron::move_n(__a, __dst + __off, static_cast&lt;usize&gt;(__b - __a));
+  };
+  return __pmap&lt;T *, decltype(__leaf)&gt;(__src, __src + __n, __leaf, __grain_for(__n));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pmap&lt;T *, decltype(__leaf)&gt;(__src, __src + __n, __leaf, __grain_for(__n))</code></td><td><a href="../../source/parallel/memory.hpp.html#L40">line 40</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-f2bc3d1a503db8ef">__pmap&lt;T *, decltype(__leaf)&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-19b8a76136eca1f3"><h3><code>micron::parallel::set_n(T *__dst, unsigned char __val, usize __nbytes)</code></h3><p>Defined in <code>parallel/memory.hpp</code>, <a href="../../source/parallel/memory.hpp.html#L46">line 46</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+set_n(T *__dst, unsigned char __val, usize __nbytes)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__dst</code></li><li><code>unsigned char __val</code></li><li><code>usize __nbytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+set_n(T *__dst, unsigned char __val, usize __nbytes)
+{
+  using BP = unsigned char *;
+  BP __base = reinterpret_cast&lt;BP&gt;(__dst);
+  auto __leaf = [__val](BP __a, BP __b) { micron::set_n(__a, __val, static_cast&lt;usize&gt;(__b - __a)); };
+  return __pmap&lt;BP, decltype(__leaf)&gt;(__base, __base + __nbytes, __leaf, __grain_for(__nbytes));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pmap&lt;BP, decltype(__leaf)&gt;(__base, __base + __nbytes, __leaf, __grain_for(__nbytes))</code></td><td><a href="../../source/parallel/memory.hpp.html#L51">line 51</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-f2bc3d1a503db8ef">__pmap&lt;BP, decltype(__leaf)&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-a92671030eb61259"><h3><code>micron::parallel::zero_n(T *__dst, usize __nbytes)</code></h3><p>Defined in <code>parallel/memory.hpp</code>, <a href="../../source/parallel/memory.hpp.html#L56">line 56</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+zero_n(T *__dst, usize __nbytes)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__dst</code></li><li><code>usize __nbytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+zero_n(T *__dst, usize __nbytes)
+{
+  using BP = unsigned char *;
+  BP __base = reinterpret_cast&lt;BP&gt;(__dst);
+  auto __leaf = [](BP __a, BP __b) { micron::zero_n(__a, static_cast&lt;usize&gt;(__b - __a)); };
+  return __pmap&lt;BP, decltype(__leaf)&gt;(__base, __base + __nbytes, __leaf, __grain_for(__nbytes));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pmap&lt;BP, decltype(__leaf)&gt;(__base, __base + __nbytes, __leaf, __grain_for(__nbytes))</code></td><td><a href="../../source/parallel/memory.hpp.html#L61">line 61</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-f2bc3d1a503db8ef">__pmap&lt;BP, decltype(__leaf)&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><section class="function-entry" id="f-8282a02207e4d222"><h3><code>micron::parallel::swap_n(T *__a0, T *__b0, usize __nbytes)</code></h3><p>Defined in <code>parallel/memory.hpp</code>, <a href="../../source/parallel/memory.hpp.html#L66">line 66</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;class T&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+swap_n(T *__a0, T *__b0, usize __nbytes)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *__a0</code></li><li><code>T *__b0</code></li><li><code>usize __nbytes</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;class T&gt;
+[[nodiscard]] micron::task&lt;void&gt;
+swap_n(T *__a0, T *__b0, usize __nbytes)
+{
+  using BP = unsigned char *;
+  BP __abase = reinterpret_cast&lt;BP&gt;(__a0);
+  BP __bbase = reinterpret_cast&lt;BP&gt;(__b0);
+  auto __leaf = [__abase, __bbase](BP __a, BP __b) {
+    const usize __off = static_cast&lt;usize&gt;(__a - __abase);
+    micron::swap_n(__a, __bbase + __off, static_cast&lt;usize&gt;(__b - __a));
+  };
+  return __pmap&lt;BP, decltype(__leaf)&gt;(__abase, __abase + __nbytes, __leaf, __grain_for(__nbytes));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__pmap&lt;BP, decltype(__leaf)&gt;(__abase, __abase + __nbytes, __leaf, __grain_for(__nbytes))</code></td><td><a href="../../source/parallel/memory.hpp.html#L75">line 75</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="engine.hpp.html#f-f2bc3d1a503db8ef">__pmap&lt;BP, decltype(__leaf)&gt;</a>, <a href="engine.hpp.html#f-3c76ec4c844c72ba">__grain_for</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

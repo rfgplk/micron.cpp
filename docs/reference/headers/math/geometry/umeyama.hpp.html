@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/geometry/umeyama.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/geometry/umeyama.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/geometry.html">Geometry</a></div><p>Defined in header <code>&lt;micron/math/geometry/umeyama.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/geometry/umeyama.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-f9582747adad483f">micron::math::geometry::umeyama(const dynmat&lt;F&gt; &amp;src, const dynmat&lt;F&gt; &amp;dst, bool with_scaling = true) noexcept</a></td><td>function; line 76</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-f9582747adad483f"><h3><code>micron::math::geometry::umeyama(const dynmat&lt;F&gt; &amp;src, const dynmat&lt;F&gt; &amp;dst, bool with_scaling = true) noexcept</code></h3><p>Defined in <code>math/geometry/umeyama.hpp</code>, <a href="../../../source/math/geometry/umeyama.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::affine&gt;
+umeyama(const dynmat&lt;F&gt; &amp;src, const dynmat&lt;F&gt; &amp;dst, bool with_scaling = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const dynmat&lt;F&gt; &amp;src</code></li><li><code>const dynmat&lt;F&gt; &amp;dst</code></li><li><code>bool with_scaling = true</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+[[nodiscard]] inline transform&lt;F, 3, transform_mode::affine&gt;
+umeyama(const dynmat&lt;F&gt; &amp;src, const dynmat&lt;F&gt; &amp;dst, bool with_scaling = true) noexcept
+{
+  transform&lt;F, 3, transform_mode::affine&gt; out{};
+  out.M = mat&lt;F, 4, 4&gt;::identity();
+  const usize N = src.cols;
+  if ( N == 0 || src.rows != 3 || dst.rows != 3 || dst.cols != N ) return out;
+
+  // centroids
+  vec&lt;F, 3&gt; cs{};
+  vec&lt;F, 3&gt; cd{};
+  for ( usize i = 0; i &lt; 3; ++i ) {
+    F s = F(0), d = F(0);
+    for ( usize j = 0; j &lt; N; ++j ) {
+      s += src.at(i, j);
+      d += dst.at(i, j);
+    }
+    cs.data[i] = s / F(N);
+    cd.data[i] = d / F(N);
+  }
+
+  // cross-covariance H = (1/N) * sum_j (dst_j - cd) (src_j - cs)^T
+  mat&lt;F, 3, 3&gt; H = mat&lt;F, 3, 3&gt;::zero();
+  F var_src = F(0);
+  for ( usize j = 0; j &lt; N; ++j ) {
+    F sx[3];
+    F dx[3];
+    for ( usize i = 0; i &lt; 3; ++i ) {
+      sx[i] = src.at(i, j) - cs.data[i];
+      dx[i] = dst.at(i, j) - cd.data[i];
+    }
+    for ( usize i = 0; i &lt; 3; ++i )
+      for ( usize k = 0; k &lt; 3; ++k ) H.data[i * 3 + k] += dx[i] * sx[k];
+    for ( usize i = 0; i &lt; 3; ++i ) var_src += sx[i] * sx[i];
+  }
+  for ( usize i = 0; i &lt; 9; ++i ) H.data[i] /= F(N);
+  var_src /= F(N);
+
+  // SVD of H
+  auto sv = linalg::decomp::svd3&lt;F&gt;(H);
+  // build sign matrix S to ensure det(R) = +1
+  mat&lt;F, 3, 3&gt; Vt{};
+  for ( usize i = 0; i &lt; 3; ++i )
+    for ( usize j = 0; j &lt; 3; ++j ) Vt.data[i * 3 + j] = sv.V.data[j * 3 + i];      // V^T
+
+  // det(U) * det(V) sign
+  F detU = linalg::ops::det3&lt;F&gt;(sv.U);
+  if ( !(math::fabs(detU) &gt; F(0.5)) ) {
+    __impl_umeyama::complete_u&lt;F&gt;(sv.U);
+    detU = linalg::ops::det3&lt;F&gt;(sv.U);
+  }
+  F detV = linalg::ops::det3&lt;F&gt;(sv.V);
+  F sgn = (detU * detV &gt;= F(0)) ? F(1) : F(-1);
+
+  // R = U * diag(1, 1, sgn) * V^T
+  mat&lt;F, 3, 3&gt; R = mat&lt;F, 3, 3&gt;::zero();
+  for ( usize i = 0; i &lt; 3; ++i )
+    for ( usize j = 0; j &lt; 3; ++j ) {
+      F s = F(0);
+      for ( usize k = 0; k &lt; 3; ++k ) {
+        F sign_k = (k == 2) ? sgn : F(1);
+        s += sv.U.data[i * 3 + k] * sign_k * Vt.data[k * 3 + j];
+      }
+      R.data[i * 3 + j] = s;
+    }
+
+  // scale
+  F scale = F(1);
+  if ( with_scaling ) {
+    F trace_Ds = sv.S.data[0] + sv.S.data[1] + sgn * sv.S.data[2];
+    if ( var_src &gt; F(0) ) scale = trace_Ds / var_src;
+  }
+
+  // translation: cd - scale * R * cs
+  vec&lt;F, 3&gt; t{};
+  for ( usize i = 0; i &lt; 3; ++i ) {
+    F s = cd.data[i];
+    for ( usize j = 0; j &lt; 3; ++j ) s -= scale * R.data[i * 3 + j] * cs.data[j];
+    t.data[i] = s;
+  }
+
+  // assemble into homogeneous 4x4
+  out.M = mat&lt;F, 4, 4&gt;::zero();
+  for ( usize i = 0; i &lt; 3; ++i )
+    for ( usize j = 0; j &lt; 3; ++j ) out.M.data[i * 4 + j] = scale * R.data[i * 3 + j];
+  for ( usize i = 0; i &lt; 3; ++i ) out.M.data[i * 4 + 3] = t.data[i];
+  out.M.data[3 * 4 + 3] = F(1);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/umeyama.hpp.html#L81">line 81</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../source/math/geometry/umeyama.hpp.html#L162">line 162</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../matrix/mat.hpp.html#f-7ed1904ce493336f">mat&lt;F, 4, 4&gt;::identity</a>, <a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, 3, 3&gt;::zero</a>, <a href="../linalg/decomp.hpp.html#f-5906d6c6ea9227df">linalg::decomp::svd3&lt;F&gt;</a>, <a href="../linalg/ops.hpp.html#f-261a51c1584913b7">linalg::ops::det3&lt;F&gt;</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="umeyama.hpp.html#f-f3306ff3900b3102">__impl_umeyama::complete_u&lt;F&gt;</a>, <a href="../matrix/mat.hpp.html#f-1dcb2b2e786e0884">mat&lt;F, 4, 4&gt;::zero</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-f3306ff3900b3102"><h3><code>micron::math::geometry::__impl_umeyama::complete_u(mat&lt;F, 3, 3&gt; &amp;U) noexcept</code></h3><p>Defined in <code>math/geometry/umeyama.hpp</code>, <a href="../../../source/math/geometry/umeyama.hpp.html#L30">line 30</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+inline void
+complete_u(mat&lt;F, 3, 3&gt; &amp;U) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>mat&lt;F, 3, 3&gt; &amp;U</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+inline void
+complete_u(mat&lt;F, 3, 3&gt; &amp;U) noexcept
+{
+  vec&lt;F, 3&gt; u0{ U.data[0], U.data[3], U.data[6] };
+  vec&lt;F, 3&gt; u1{ U.data[1], U.data[4], U.data[7] };
+
+  F n0 = math::fsqrt(u0.data[0] * u0.data[0] + u0.data[1] * u0.data[1] + u0.data[2] * u0.data[2]);
+  if ( !(n0 &gt; F(0.5)) ) {
+    u0 = vec&lt;F, 3&gt;{ F(1), F(0), F(0) };
+    n0 = F(1);
+  }
+  const F inv0 = F(1) / n0;
+  for ( usize i = 0; i &lt; 3; ++i ) u0.data[i] *= inv0;
+
+  F d = u1.data[0] * u0.data[0] + u1.data[1] * u0.data[1] + u1.data[2] * u0.data[2];
+  for ( usize i = 0; i &lt; 3; ++i ) u1.data[i] -= d * u0.data[i];
+  F n1 = math::fsqrt(u1.data[0] * u1.data[0] + u1.data[1] * u1.data[1] + u1.data[2] * u1.data[2]);
+  if ( !(n1 &gt; F(0.5)) ) {
+    const F ax = math::fabs(u0.data[0]);
+    const F ay = math::fabs(u0.data[1]);
+    const F az = math::fabs(u0.data[2]);
+    u1 = vec&lt;F, 3&gt;{ F(0), F(0), F(0) };
+    if ( ax &lt;= ay &amp;&amp; ax &lt;= az )
+      u1.data[0] = F(1);
+    else if ( ay &lt;= az )
+      u1.data[1] = F(1);
+    else
+      u1.data[2] = F(1);
+    d = u1.data[0] * u0.data[0] + u1.data[1] * u0.data[1] + u1.data[2] * u0.data[2];
+    for ( usize i = 0; i &lt; 3; ++i ) u1.data[i] -= d * u0.data[i];
+    n1 = math::fsqrt(u1.data[0] * u1.data[0] + u1.data[1] * u1.data[1] + u1.data[2] * u1.data[2]);
+  }
+  const F inv1 = F(1) / n1;
+  for ( usize i = 0; i &lt; 3; ++i ) u1.data[i] *= inv1;
+
+  const vec&lt;F, 3&gt; u2 = linalg::ops::cross&lt;F&gt;(u0, u1);
+  for ( usize i = 0; i &lt; 3; ++i ) {
+    U.data[i * 3 + 0] = u0.data[i];
+    U.data[i * 3 + 1] = u1.data[i];
+    U.data[i * 3 + 2] = u2.data[i];
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../sqrt.hpp.html#f-d7afaa69bf01dabe">math::fsqrt</a>, <a href="../generic.hpp.html#f-6e8ba6a49891b6f3">math::fabs</a>, <a href="../linalg/ops.hpp.html#f-f44233de36210ce3">linalg::ops::cross&lt;F&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

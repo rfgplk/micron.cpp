@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/algorithm/memory.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/algorithm/memory.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/algorithms.html">Algorithms</a></div><p>Defined in header <code>&lt;micron/algorithm/memory.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/algorithm/memory.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-d4013d14a3243c66">micron::distance(T a, F b)</a></td><td>function; line 33</td></tr><tr class="t-dsc"><td><a href="#f-fd6cb130f1699de2">micron::adistance(T a, F b)</a></td><td>function; line 41</td></tr><tr class="t-dsc"><td><a href="#f-142c0f068d1e8bbd">micron::destroy(T &amp;mem)
+  requires(!micron::is_array&lt;T&gt;::value)</a></td><td>function; line 51</td></tr><tr class="t-dsc"><td><a href="#f-106d52d55c62a0cf">micron::destroy(T &amp;mem)
+  requires micron::is_array&lt;T&gt;::value</a></td><td>function; line 63</td></tr><tr class="t-dsc"><td><a href="#f-c6514d8fc38bda73">micron::overwrite(T &amp;src, F &amp;dest)</a></td><td>function; line 78</td></tr><tr class="t-dsc"><td><a href="#f-43fbf1bfc5b0907d">micron::zero(T *src)</a></td><td>function; line 89</td></tr><tr class="t-dsc"><td><a href="#f-0f1cf0cdc7ad1f76">micron::zero(char (*ptr)[M])</a></td><td>function; line 96</td></tr><tr class="t-dsc"><td><a href="#f-02e0b82662d85f9d">micron::zero(T *src)</a></td><td>function; line 103</td></tr><tr class="t-dsc"><td><a href="#f-39c1cfd1a24a7401">micron::is_zero(const T *src)</a></td><td>function; line 110</td></tr><tr class="t-dsc"><td><a href="#f-3c4695d65ca980e5">micron::copy_n(const T *restrict src, F *restrict dst, const N cnt)</a></td><td>function; line 124</td></tr><tr class="t-dsc"><td><a href="#f-0eed08f6f4d1c09d">micron::copy(const T *restrict src, F *restrict dst)</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-fd27a92b2b7a5ed2">micron::rcopy(const T &amp;restrict src, F &amp;restrict dst)</a></td><td>function; line 180</td></tr><tr class="t-dsc"><td><a href="#f-682f718806b48ca1">micron::copy(T *restrict start_src, T *restrict end_src, F *restrict dest)</a></td><td>function; line 209</td></tr><tr class="t-dsc"><td><a href="#f-9351c56a200ed858">micron::ccopy(const T *restrict src, F *restrict dst)</a></td><td>function; line 236</td></tr><tr class="t-dsc"><td><a href="#f-6abadeaf93cf491c">micron::scopy(const T &amp;restrict src, T &amp;restrict dst)</a></td><td>function; line 270</td></tr><tr class="t-dsc"><td><a href="#f-2f712d690073d9ce">micron::cmove(T *restrict src, F *restrict dst)</a></td><td>function; line 304</td></tr><tr class="t-dsc"><td><a href="#f-856fbd7fe780f630">micron::cmove(T &amp;&amp;src, const F &amp;dst)</a></td><td>function; line 339</td></tr><tr class="t-dsc"><td><a href="#f-b8ac9396fa75d766">micron::move_n(T *restrict src, F *restrict dst, const N cnt)</a></td><td>function; line 349</td></tr><tr class="t-dsc"><td><a href="#f-6988b423be1515b3">micron::set_n(T *restrict dst, const byte val, const N cnt)</a></td><td>function; line 376</td></tr><tr class="t-dsc"><td><a href="#f-753a9913e443466f">micron::cset_n(T *restrict dst, const byte val)</a></td><td>function; line 402</td></tr><tr class="t-dsc"><td><a href="#f-6b21abdd21811f1d">micron::zero_n(T *restrict dst, const N cnt)</a></td><td>function; line 465</td></tr><tr class="t-dsc"><td><a href="#f-eda47e2db8724550">micron::czero_n(T *restrict dst)</a></td><td>function; line 491</td></tr><tr class="t-dsc"><td><a href="#f-6a6266a37f05f00f">micron::compare_n(const T *restrict src, const T *restrict dst, const N cnt)</a></td><td>function; line 518</td></tr><tr class="t-dsc"><td><a href="#f-d4a9596ce907ec49">micron::ccompare_n(const T *restrict src, const T *restrict dst)</a></td><td>function; line 543</td></tr><tr class="t-dsc"><td><a href="#f-a789b40ef6790896">micron::equal_n(const T *restrict src, const T *restrict dst, const N cnt)</a></td><td>function; line 568</td></tr><tr class="t-dsc"><td><a href="#f-ff7467e216ffc849">micron::cequal_n(const T *restrict src, const T *restrict dst)</a></td><td>function; line 578</td></tr><tr class="t-dsc"><td><a href="#f-d41171dcb5c7974a">micron::swap_n(T *restrict a, T *restrict b, const N cnt)</a></td><td>function; line 588</td></tr><tr class="t-dsc"><td><a href="#f-6b5e07c934ba05df">micron::cswap_n(T *restrict a, T *restrict b)</a></td><td>function; line 615</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-d4013d14a3243c66"><h3><code>micron::distance(T a, F b)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L33">line 33</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F&gt;
+  requires micron::is_pointer_v&lt;T&gt; &amp;&amp; micron::is_pointer_v&lt;F&gt;
+inline usize
+distance(T a, F b)      // distance between two pointers, can be of different types</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Returns <code>(reinterpret_cast&lt;word *&gt;(b) - reinterpret_cast&lt;word *&gt;(a))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F&gt;
+  requires micron::is_pointer_v&lt;T&gt; &amp;&amp; micron::is_pointer_v&lt;F&gt;
+inline usize
+distance(T a, F b)      // distance between two pointers, can be of different types
+{
+  return (reinterpret_cast&lt;word *&gt;(b) - reinterpret_cast&lt;word *&gt;(a));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(reinterpret_cast&lt;word *&gt;(b) - reinterpret_cast&lt;word *&gt;(a))</code></td><td><a href="../../source/algorithm/memory.hpp.html#L35">line 35</a></td></tr></tbody></table></section><section class="function-entry" id="f-fd6cb130f1699de2"><h3><code>micron::adistance(T a, F b)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L41">line 41</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F&gt;
+  requires micron::is_pointer_v&lt;T&gt; &amp;&amp; micron::is_pointer_v&lt;F&gt;
+inline usize
+adistance(T a, F b)      // absolute distance between two pointers, can be of different types</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T a</code></li><li><code>F b</code></li></ul><h4>Effects</h4><p>Returns <code>math::abs(reinterpret_cast&lt;word *&gt;(b) - reinterpret_cast&lt;word *&gt;(a))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F&gt;
+  requires micron::is_pointer_v&lt;T&gt; &amp;&amp; micron::is_pointer_v&lt;F&gt;
+inline usize
+adistance(T a, F b)      // absolute distance between two pointers, can be of different types
+{
+  return math::abs(reinterpret_cast&lt;word *&gt;(b) - reinterpret_cast&lt;word *&gt;(a));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>math::abs(reinterpret_cast&lt;word *&gt;(b) - reinterpret_cast&lt;word *&gt;(a))</code></td><td><a href="../../source/algorithm/memory.hpp.html#L43">line 43</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../math/arbint/signed.hpp.html#f-b771a97e0e3bc780">math::abs</a>.</p></section><section class="function-entry" id="f-142c0f068d1e8bbd"><h3><code>micron::destroy(T &amp;mem)
+  requires(!micron::is_array&lt;T&gt;::value)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L51">line 51</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline void
+destroy(T &amp;mem)
+  requires(!micron::is_array&lt;T&gt;::value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;mem</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline void
+destroy(T &amp;mem)
+  requires(!micron::is_array&lt;T&gt;::value)
+{
+  if constexpr ( micron::is_class&lt;T&gt;::value ) {
+    mem.~T();
+  } else if constexpr ( micron::is_pointer&lt;T&gt;::value &amp;&amp; !micron::is_null_pointer&lt;T&gt;::value &amp;&amp; !micron::is_array&lt;T&gt;::value ) {
+    delete mem;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-106d52d55c62a0cf"><h3><code>micron::destroy(T &amp;mem)
+  requires micron::is_array&lt;T&gt;::value</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L63">line 63</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, usize N&gt;
+inline void
+destroy(T &amp;mem)
+  requires micron::is_array&lt;T&gt;::value</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;mem</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, usize N&gt;
+inline void
+destroy(T &amp;mem)
+  requires micron::is_array&lt;T&gt;::value
+{
+  if constexpr ( micron::is_class&lt;T&gt;::value ) {
+    for ( usize i = 0; i &lt; N; i++ ) mem[i].~T();
+  } else if constexpr ( micron::is_pointer&lt;T&gt;::value &amp;&amp; !micron::is_null_pointer&lt;T&gt;::value ) {
+    delete[] mem;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-c6514d8fc38bda73"><h3><code>micron::overwrite(T &amp;src, F &amp;dest)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L78">line 78</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F&gt;
+void
+overwrite(T &amp;src, F &amp;dest)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;src</code></li><li><code>F &amp;dest</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F&gt;
+void
+overwrite(T &amp;src, F &amp;dest)
+{
+  micron::bytecpy(&amp;src, &amp;dest, dest.size());
+  // NOTE: yes it&#x27;s supposed to look like this
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-95166e01bb68ea54">micron::bytecpy</a>.</p></section><section class="function-entry" id="f-43fbf1bfc5b0907d"><h3><code>micron::zero(T *src)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L89">line 89</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+void
+zero(T *src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+void
+zero(T *src)
+{
+  czero&lt;N&gt;(src);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-9d74686774337f45">czero&lt;N&gt;</a>.</p></section><section class="function-entry" id="f-0f1cf0cdc7ad1f76"><h3><code>micron::zero(char (*ptr)[M])</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L96">line 96</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, usize M&gt;
+void
+zero(char (*ptr)[M])</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char (*ptr)[M]</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, usize M&gt;
+void
+zero(char (*ptr)[M])
+{
+  czero&lt;M&gt;(ptr);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-9d74686774337f45">czero&lt;M&gt;</a>.</p></section><section class="function-entry" id="f-02e0b82662d85f9d"><h3><code>micron::zero(T *src)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L103">line 103</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+zero(T *src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+zero(T *src)
+{
+  bset(src, 0x0, sizeof(T));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/cmemory/memset.hpp.html#f-9017b4b629ec2d27">bset</a>.</p></section><section class="function-entry" id="f-39c1cfd1a24a7401"><h3><code>micron::is_zero(const T *src)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L110">line 110</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+inline bool
+is_zero(const T *src)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *src</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+inline bool
+is_zero(const T *src)
+{
+  if ( src == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::is_zero invalid pointer.&quot;);
+  const byte *b_ptr = reinterpret_cast&lt;const byte *&gt;(src);
+  for ( usize i = 0; i &lt; sizeof(T); i++ )
+    if ( *b_ptr++ != 0x0 ) return false;
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/algorithm/memory.hpp.html#L115">line 115</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../source/algorithm/memory.hpp.html#L116">line 116</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::is_zero invalid pointer.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L112">line 112</a><br>Within <code>( src == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>.</p></section><section class="function-entry" id="f-3c4695d65ca980e5"><h3><code>micron::copy_n(const T *restrict src, F *restrict dst, const N cnt)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L124">line 124</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename N, typename T, typename F&gt;
+F *
+copy_n(const T *restrict src, F *restrict dst, const N cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>F *restrict dst</code></li><li><code>const N cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename N, typename T, typename F&gt;
+F *
+copy_n(const T *restrict src, F *restrict dst, const N cnt)
+{
+  if ( src == nullptr or dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::copy_n invalid pointers.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if ( cnt % 32 == 0 )
+    simd::memcpy256(dst, src, cnt);
+  else if ( cnt % 16 == 0 )
+    simd::memcpy128(dst, src, cnt);
+  else
+    memcpy(dst, src, cnt);
+#elif __micron_x86_simd_width &gt;= 128
+  if ( cnt % 16 == 0 )
+    simd::memcpy128(dst, src, cnt);
+  else
+    memcpy(dst, src, cnt);
+#else
+  memcpy(dst, src, cnt);
+#endif
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L142">line 142</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::copy_n invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L126">line 126</a><br>Within <code>( src == nullptr or dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-a272437a29bd4fd0">simd::memcpy256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-c7f13b2ed66b3287">simd::memcpy128</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-0c2e35dfded6abd6">memcpy</a>.</p></section><section class="function-entry" id="f-0eed08f6f4d1c09d"><h3><code>micron::copy(const T *restrict src, F *restrict dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T, typename F&gt;
+F *
+copy(const T *restrict src, F *restrict dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>F *restrict dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T, typename F&gt;
+F *
+copy(const T *restrict src, F *restrict dst)
+{
+  if ( src == nullptr or dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::copy invalid pointers.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if constexpr ( (N / sizeof(T)) &lt;= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
+    simd::memcpy256(dst, src, N);
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
+    simd::memcpy128(dst, src, N);
+  else
+    cmemcpy&lt;N&gt;(dst, src);
+#elif __micron_x86_simd_width &gt;= 128
+  if constexpr ( (N / sizeof(T)) &lt;= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
+    simd::memcpy128(dst, src, N);
+  else
+    cmemcpy&lt;N&gt;(dst, src);
+#else
+  cmemcpy&lt;N&gt;(dst, src);
+#endif
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L172">line 172</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::copy invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L152">line 152</a><br>Within <code>( src == nullptr or dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-e80f0e7c2c76f404">__memcpy_32</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-a272437a29bd4fd0">simd::memcpy256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-c7f13b2ed66b3287">simd::memcpy128</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-1184d0b445404eda">cmemcpy&lt;N&gt;</a>.</p></section><section class="function-entry" id="f-fd27a92b2b7a5ed2"><h3><code>micron::rcopy(const T &amp;restrict src, F &amp;restrict dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L180">line 180</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T, typename F&gt;
+F &amp;
+rcopy(const T &amp;restrict src, F &amp;restrict dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;restrict src</code></li><li><code>F &amp;restrict dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T, typename F&gt;
+F &amp;
+rcopy(const T &amp;restrict src, F &amp;restrict dst)
+{
+#if __micron_x86_simd_width &gt;= 256
+  if constexpr ( (N / sizeof(T)) &lt;= 32 )
+    _rmemcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
+    simd::rmemcpy256(dst, src, N);
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
+    simd::rmemcpy128(dst, src, N);
+  else
+    crmemcpy&lt;N&gt;(dst, src);
+#elif __micron_x86_simd_width &gt;= 128
+  if constexpr ( (N / sizeof(T)) &lt;= 32 )
+    _rmemcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
+    simd::rmemcpy128(dst, src, N);
+  else
+    crmemcpy&lt;N&gt;(dst, src);
+#else
+  crmemcpy&lt;N&gt;(dst, src);
+#endif
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L201">line 201</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-1c90cb4c544c1c46">_rmemcpy_32</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-f145df1d384b5880">simd::rmemcpy256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-0e5763963f02aa30">simd::rmemcpy128</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-9fa1bb6db38a4c8e">crmemcpy&lt;N&gt;</a>.</p></section><section class="function-entry" id="f-682f718806b48ca1"><h3><code>micron::copy(T *restrict start_src, T *restrict end_src, F *restrict dest)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L209">line 209</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T, typename F&gt;
+F *
+copy(T *restrict start_src, T *restrict end_src, F *restrict dest)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict start_src</code></li><li><code>T *restrict end_src</code></li><li><code>F *restrict dest</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T, typename F&gt;
+F *
+copy(T *restrict start_src, T *restrict end_src, F *restrict dest)
+{
+  if ( (end_src - start_src) &lt; 0 ) exc&lt;except::library_error&gt;(&quot;micron::copy invalid pointers.&quot;);
+  const usize len = static_cast&lt;usize&gt;(end_src - start_src);
+#if __micron_x86_simd_width &gt;= 256
+  if ( N % 32 == 0 )
+    simd::memcpy256(dest, start_src, len);
+  else if ( N % 16 == 0 )
+    simd::memcpy128(dest, start_src, len);
+  else
+    memcpy(dest, start_src, len);
+#elif __micron_x86_simd_width &gt;= 128
+  if ( N % 16 == 0 )
+    simd::memcpy128(dest, start_src, len);
+  else
+    memcpy(dest, start_src, len);
+#else
+  memcpy(dest, start_src, len);
+#endif
+  return dest;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dest</code></td><td><a href="../../source/algorithm/memory.hpp.html#L228">line 228</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::copy invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L211">line 211</a><br>Within <code>( (end_src - start_src) &lt; 0 )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-a272437a29bd4fd0">simd::memcpy256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-c7f13b2ed66b3287">simd::memcpy128</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-0c2e35dfded6abd6">memcpy</a>.</p></section><section class="function-entry" id="f-9351c56a200ed858"><h3><code>micron::ccopy(const T *restrict src, F *restrict dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L236">line 236</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T, typename F&gt;
+F *
+ccopy(const T *restrict src, F *restrict dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>F *restrict dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T, typename F&gt;
+F *
+ccopy(const T *restrict src, F *restrict dst)
+{
+  if ( src == nullptr or dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::ccopy invalid pointers.&quot;);
+  if constexpr ( micron::is_class&lt;T&gt;::value ) {
+    for ( usize i = 0; i &lt; N; i++ ) dst[i] = src[i];
+    return dst;
+  }
+#if __micron_x86_simd_width &gt;= 256
+  if constexpr ( (N / sizeof(T)) &lt;= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
+    simd::memcpy256(dst, src, N);
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
+    simd::memcpy128(dst, src, N);
+  else
+    cmemcpy&lt;N&gt;(dst, src);
+#elif __micron_x86_simd_width &gt;= 128
+  if constexpr ( (N / sizeof(T)) &lt;= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
+    simd::memcpy128(dst, src, N);
+  else
+    cmemcpy&lt;N&gt;(dst, src);
+#else
+  cmemcpy&lt;N&gt;(dst, src);
+#endif
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L241">line 241</a></td></tr><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L262">line 262</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::ccopy invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L238">line 238</a><br>Within <code>( src == nullptr or dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-e80f0e7c2c76f404">__memcpy_32</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-a272437a29bd4fd0">simd::memcpy256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-c7f13b2ed66b3287">simd::memcpy128</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-1184d0b445404eda">cmemcpy&lt;N&gt;</a>.</p></section><section class="function-entry" id="f-6abadeaf93cf491c"><h3><code>micron::scopy(const T &amp;restrict src, T &amp;restrict dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L270">line 270</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T&gt;
+void
+scopy(const T &amp;restrict src, T &amp;restrict dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T &amp;restrict src</code></li><li><code>T &amp;restrict dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T&gt;
+void
+scopy(const T &amp;restrict src, T &amp;restrict dst)
+{
+  auto smlr = src.size() &lt; dst.size() ? src.size() : dst.size();
+  if constexpr ( micron::is_class_v&lt;T&gt; or micron::is_object_v&lt;T&gt; ) {
+    for ( usize i = 0; i &lt; smlr; i++ ) dst[i] = src[i];
+    return;
+  }
+  smlr = smlr * sizeof(typename T::value_type);
+#if __micron_x86_simd_width &gt;= 256
+  if ( smlr &lt;= 32 )
+    __memcpy_32(dst, src, smlr);
+  else if ( smlr % 32 == 0 )
+    simd::memcpy256(dst, src, smlr);
+  else if ( smlr % 16 == 0 )
+    simd::memcpy128(dst, src, smlr);
+  else
+    memcpy(dst, src, smlr);
+#elif __micron_x86_simd_width &gt;= 128
+  if ( smlr &lt;= 32 )
+    __memcpy_32(dst, src, smlr);
+  else if ( smlr % 16 == 0 )
+    simd::memcpy128(dst, src, smlr);
+  else
+    memcpy(dst, src, smlr);
+#else
+  memcpy(dst, src, smlr);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/algorithm/memory.hpp.html#L275">line 275</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../memory/cmemory/memcpy.hpp.html#f-e80f0e7c2c76f404">__memcpy_32</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-a272437a29bd4fd0">simd::memcpy256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-c7f13b2ed66b3287">simd::memcpy128</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-0c2e35dfded6abd6">memcpy</a>.</p></section><section class="function-entry" id="f-2f712d690073d9ce"><h3><code>micron::cmove(T *restrict src, F *restrict dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L304">line 304</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T, typename F&gt;
+F *
+cmove(T *restrict src, F *restrict dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict src</code></li><li><code>F *restrict dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T, typename F&gt;
+F *
+cmove(T *restrict src, F *restrict dst)
+{
+  if ( src == nullptr or dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::cmove invalid pointers.&quot;);
+  if constexpr ( micron::is_class&lt;T&gt;::value ) {
+    for ( usize i = 0; i &lt; N; i++ ) dst[i] = micron::move(src[i]);
+    return dst;
+  }
+#if __micron_x86_simd_width &gt;= 256
+  if constexpr ( (N / sizeof(T)) &lt;= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 32 == 0 )
+    simd::memcpy256(dst, src, N);
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
+    simd::memcpy128(dst, src, N);
+  else
+    cmemcpy&lt;N&gt;(dst, src);
+#elif __micron_x86_simd_width &gt;= 128
+  if constexpr ( (N / sizeof(T)) &lt;= 32 )
+    __memcpy_32(dst, src, N * sizeof(T));
+  else if constexpr ( (N * sizeof(T)) % 16 == 0 )
+    simd::memcpy128(dst, src, N);
+  else
+    cmemcpy&lt;N&gt;(dst, src);
+#else
+  cmemcpy&lt;N&gt;(dst, src);
+#endif
+  czero&lt;N&gt;(src);
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L309">line 309</a></td></tr><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L331">line 331</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::cmove invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L306">line 306</a><br>Within <code>( src == nullptr or dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-e80f0e7c2c76f404">__memcpy_32</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-a272437a29bd4fd0">simd::memcpy256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-c7f13b2ed66b3287">simd::memcpy128</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-1184d0b445404eda">cmemcpy&lt;N&gt;</a>, <a href="../memory/cmemory/memset.hpp.html#f-9d74686774337f45">czero&lt;N&gt;</a>.</p></section><section class="function-entry" id="f-856fbd7fe780f630"><h3><code>micron::cmove(T &amp;&amp;src, const F &amp;dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L339">line 339</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename F&gt;
+void
+cmove(T &amp;&amp;src, const F &amp;dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T &amp;&amp;src</code></li><li><code>const F &amp;dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename F&gt;
+void
+cmove(T &amp;&amp;src, const F &amp;dst)
+{
+  dst = micron::move(src);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><section class="function-entry" id="f-b8ac9396fa75d766"><h3><code>micron::move_n(T *restrict src, F *restrict dst, const N cnt)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L349">line 349</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename N, typename T, typename F&gt;
+F *
+move_n(T *restrict src, F *restrict dst, const N cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict src</code></li><li><code>F *restrict dst</code></li><li><code>const N cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename N, typename T, typename F&gt;
+F *
+move_n(T *restrict src, F *restrict dst, const N cnt)
+{
+  if ( src == nullptr or dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::move_n invalid pointers.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if ( cnt % 32 == 0 )
+    simd::memcpy256(dst, src, cnt);
+  else if ( cnt % 16 == 0 )
+    simd::memcpy128(dst, src, cnt);
+  else
+    memcpy(dst, src, cnt);
+#elif __micron_x86_simd_width &gt;= 128
+  if ( cnt % 16 == 0 )
+    simd::memcpy128(dst, src, cnt);
+  else
+    memcpy(dst, src, cnt);
+#else
+  memcpy(dst, src, cnt);
+#endif
+  byteset(src, 0x0, cnt);
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L368">line 368</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::move_n invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L351">line 351</a><br>Within <code>( src == nullptr or dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-a272437a29bd4fd0">simd::memcpy256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-c7f13b2ed66b3287">simd::memcpy128</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-0c2e35dfded6abd6">memcpy</a>, <a href="../memory/cmemory/memset.hpp.html#f-4619d7efcc8954e2">byteset</a>.</p></section><section class="function-entry" id="f-6988b423be1515b3"><h3><code>micron::set_n(T *restrict dst, const byte val, const N cnt)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L376">line 376</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename N&gt;
+T *
+set_n(T *restrict dst, const byte val, const N cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict dst</code></li><li><code>const byte val</code></li><li><code>const N cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename N&gt;
+T *
+set_n(T *restrict dst, const byte val, const N cnt)
+{
+  if ( dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::set_n invalid pointer.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if ( cnt % 32 == 0 )
+    memset256(dst, val, cnt);
+  else if ( cnt % 16 == 0 )
+    memset128(dst, val, cnt);
+  else
+    memset(dst, val, cnt);
+#elif __micron_x86_simd_width &gt;= 128
+  if ( cnt % 16 == 0 )
+    memset128(dst, val, cnt);
+  else
+    memset(dst, val, cnt);
+#else
+  memset(dst, val, cnt);
+#endif
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L394">line 394</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::set_n invalid pointer.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L378">line 378</a><br>Within <code>( dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory.hpp.html#s-f41ded4144f6bf10">memset256</a>, <a href="../memory/cmemory.hpp.html#s-c171c6a379b314a7">memset128</a>, <a href="../memory/cmemory/memset.hpp.html#f-85f5543634b993bc">memset</a>.</p></section><section class="function-entry" id="f-753a9913e443466f"><h3><code>micron::cset_n(T *restrict dst, const byte val)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L402">line 402</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+T *
+cset_n(T *restrict dst, const byte val)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict dst</code></li><li><code>const byte val</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+T *
+cset_n(T *restrict dst, const byte val)
+{
+  if ( dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::cset_n invalid pointer.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if constexpr ( N % 32 == 0 )
+    memset256(dst, val, N);
+  else if constexpr ( N % 16 == 0 )
+    memset128(dst, val, N);
+  else
+    cmemset&lt;N * sizeof(T)&gt;(dst, val);
+#elif __micron_x86_simd_width &gt;= 128
+  if constexpr ( N % 16 == 0 )
+    memset128(dst, val, N);
+  else
+    cmemset&lt;N * sizeof(T)&gt;(dst, val);
+#else
+  cmemset&lt;N * sizeof(T)&gt;(dst, val);
+#endif
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L420">line 420</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::cset_n invalid pointer.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L404">line 404</a><br>Within <code>( dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory.hpp.html#s-f41ded4144f6bf10">memset256</a>, <a href="../memory/cmemory.hpp.html#s-c171c6a379b314a7">memset128</a>, <a href="../memory/cmemory/memset.hpp.html#f-56cb58b76c103a4d">cmemset&lt;N * sizeof(T)&gt;</a>.</p></section><section class="function-entry" id="f-6b21abdd21811f1d"><h3><code>micron::zero_n(T *restrict dst, const N cnt)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L465">line 465</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename T, typename N&gt;
+T *
+zero_n(T *restrict dst, const N cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict dst</code></li><li><code>const N cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename T, typename N&gt;
+T *
+zero_n(T *restrict dst, const N cnt)
+{
+  if ( dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::zero_n invalid pointer.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if ( cnt % 32 == 0 )
+    memset256(dst, 0x0, cnt);
+  else if ( cnt % 16 == 0 )
+    memset128(dst, 0x0, cnt);
+  else
+    memset(dst, 0x0, cnt);
+#elif __micron_x86_simd_width &gt;= 128
+  if ( cnt % 16 == 0 )
+    memset128(dst, 0x0, cnt);
+  else
+    memset(dst, 0x0, cnt);
+#else
+  memset(dst, 0x0, cnt);
+#endif
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L483">line 483</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::zero_n invalid pointer.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L467">line 467</a><br>Within <code>( dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory.hpp.html#s-f41ded4144f6bf10">memset256</a>, <a href="../memory/cmemory.hpp.html#s-c171c6a379b314a7">memset128</a>, <a href="../memory/cmemory/memset.hpp.html#f-85f5543634b993bc">memset</a>.</p></section><section class="function-entry" id="f-eda47e2db8724550"><h3><code>micron::czero_n(T *restrict dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L491">line 491</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+T *
+czero_n(T *restrict dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+T *
+czero_n(T *restrict dst)
+{
+  // memset is elements, cmemset is BYTES
+  if ( dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::czero_n invalid pointer.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if constexpr ( N % 32 == 0 )
+    memset256(dst, 0x0, N);
+  else if constexpr ( N % 16 == 0 )
+    memset128(dst, 0x0, N);
+  else
+    cmemset&lt;N * sizeof(T)&gt;(dst, 0x0);
+#elif __micron_x86_simd_width &gt;= 128
+  if constexpr ( N % 16 == 0 )
+    memset128(dst, 0x0, N);
+  else
+    cmemset&lt;N * sizeof(T)&gt;(dst, 0x0);
+#else
+  cmemset&lt;N * sizeof(T)&gt;(dst, 0x0);
+#endif
+  return dst;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>dst</code></td><td><a href="../../source/algorithm/memory.hpp.html#L510">line 510</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::czero_n invalid pointer.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L494">line 494</a><br>Within <code>( dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory.hpp.html#s-f41ded4144f6bf10">memset256</a>, <a href="../memory/cmemory.hpp.html#s-c171c6a379b314a7">memset128</a>, <a href="../memory/cmemory/memset.hpp.html#f-56cb58b76c103a4d">cmemset&lt;N * sizeof(T)&gt;</a>.</p></section><section class="function-entry" id="f-6a6266a37f05f00f"><h3><code>micron::compare_n(const T *restrict src, const T *restrict dst, const N cnt)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L518">line 518</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename N, typename T&gt;
+i64
+compare_n(const T *restrict src, const T *restrict dst, const N cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>const T *restrict dst</code></li><li><code>const N cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename N, typename T&gt;
+i64
+compare_n(const T *restrict src, const T *restrict dst, const N cnt)
+{
+  if ( src == nullptr or dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::compare_n invalid pointers.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if ( cnt % 32 == 0 )
+    return simd::memcmp256(src, dst, cnt);
+  else if ( cnt % 16 == 0 )
+    return simd::memcmp128(src, dst, cnt);
+  else
+    return bytecmp(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst), cnt);
+#elif __micron_x86_simd_width &gt;= 128
+  if ( cnt % 16 == 0 )
+    return simd::memcmp128(src, dst, cnt);
+  else
+    return bytecmp(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst), cnt);
+#else
+  return bytecmp(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst), cnt);
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>simd::memcmp256(src, dst, cnt)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L523">line 523</a></td></tr><tr class="t-dsc"><td><code>simd::memcmp128(src, dst, cnt)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L525">line 525</a></td></tr><tr class="t-dsc"><td><code>bytecmp(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst), cnt)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L527">line 527</a></td></tr><tr class="t-dsc"><td><code>simd::memcmp128(src, dst, cnt)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L530">line 530</a></td></tr><tr class="t-dsc"><td><code>bytecmp(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst), cnt)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L532">line 532</a></td></tr><tr class="t-dsc"><td><code>bytecmp(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst), cnt)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L534">line 534</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::compare_n invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L520">line 520</a><br>Within <code>( src == nullptr or dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-472d938e4ccb17a9">simd::memcmp256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-1a86ac0d147a33e2">simd::memcmp128</a>, <a href="../memory/cmemory/memcmp.hpp.html#f-96be8426d38eac40">bytecmp</a>.</p></section><section class="function-entry" id="f-d4a9596ce907ec49"><h3><code>micron::ccompare_n(const T *restrict src, const T *restrict dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L543">line 543</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+i64
+ccompare_n(const T *restrict src, const T *restrict dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>const T *restrict dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+i64
+ccompare_n(const T *restrict src, const T *restrict dst)
+{
+  if ( src == nullptr or dst == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::ccompare_n invalid pointers.&quot;);
+#if __micron_x86_simd_width &gt;= 256
+  if constexpr ( N % 32 == 0 )
+    return simd::memcmp256(src, dst, N);
+  else if constexpr ( N % 16 == 0 )
+    return simd::memcmp128(src, dst, N);
+  else
+    return cmemcmp&lt;N, byte&gt;(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst));
+#elif __micron_x86_simd_width &gt;= 128
+  if constexpr ( N % 16 == 0 )
+    return simd::memcmp128(src, dst, N);
+  else
+    return cmemcmp&lt;N, byte&gt;(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst));
+#else
+  return cmemcmp&lt;N, byte&gt;(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst));
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>simd::memcmp256(src, dst, N)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L548">line 548</a></td></tr><tr class="t-dsc"><td><code>simd::memcmp128(src, dst, N)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L550">line 550</a></td></tr><tr class="t-dsc"><td><code>cmemcmp&lt;N, byte&gt;(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst))</code></td><td><a href="../../source/algorithm/memory.hpp.html#L552">line 552</a></td></tr><tr class="t-dsc"><td><code>simd::memcmp128(src, dst, N)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L555">line 555</a></td></tr><tr class="t-dsc"><td><code>cmemcmp&lt;N, byte&gt;(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst))</code></td><td><a href="../../source/algorithm/memory.hpp.html#L557">line 557</a></td></tr><tr class="t-dsc"><td><code>cmemcmp&lt;N, byte&gt;(reinterpret_cast&lt;const byte *&gt;(src), reinterpret_cast&lt;const byte *&gt;(dst))</code></td><td><a href="../../source/algorithm/memory.hpp.html#L559">line 559</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::ccompare_n invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L545">line 545</a><br>Within <code>( src == nullptr or dst == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-472d938e4ccb17a9">simd::memcmp256</a>, <a href="../bits/wasm/simd/memory.hpp.html#f-1a86ac0d147a33e2">simd::memcmp128</a>, <a href="../memory/cmemory/memcmp.hpp.html#f-3cf284ec1e4c11e4">cmemcmp&lt;N, byte&gt;</a>.</p></section><section class="function-entry" id="f-a789b40ef6790896"><h3><code>micron::equal_n(const T *restrict src, const T *restrict dst, const N cnt)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L568">line 568</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename N, typename T&gt;
+bool
+equal_n(const T *restrict src, const T *restrict dst, const N cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>const T *restrict dst</code></li><li><code>const N cnt</code></li></ul><h4>Effects</h4><p>Returns <code>compare_n(src, dst, cnt) == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename N, typename T&gt;
+bool
+equal_n(const T *restrict src, const T *restrict dst, const N cnt)
+{
+  return compare_n(src, dst, cnt) == 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>compare_n(src, dst, cnt) == 0</code></td><td><a href="../../source/algorithm/memory.hpp.html#L570">line 570</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memory.hpp.html#f-6a6266a37f05f00f">compare_n</a>.</p></section><section class="function-entry" id="f-ff7467e216ffc849"><h3><code>micron::cequal_n(const T *restrict src, const T *restrict dst)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L578">line 578</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+bool
+cequal_n(const T *restrict src, const T *restrict dst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const T *restrict src</code></li><li><code>const T *restrict dst</code></li></ul><h4>Effects</h4><p>Returns <code>ccompare_n&lt;N&gt;(src, dst) == 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+bool
+cequal_n(const T *restrict src, const T *restrict dst)
+{
+  return ccompare_n&lt;N&gt;(src, dst) == 0;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>ccompare_n&lt;N&gt;(src, dst) == 0</code></td><td><a href="../../source/algorithm/memory.hpp.html#L580">line 580</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="memory.hpp.html#f-d4a9596ce907ec49">ccompare_n&lt;N&gt;</a>.</p></section><section class="function-entry" id="f-d41171dcb5c7974a"><h3><code>micron::swap_n(T *restrict a, T *restrict b, const N cnt)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L588">line 588</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename N, typename T&gt;
+void
+swap_n(T *restrict a, T *restrict b, const N cnt)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict a</code></li><li><code>T *restrict b</code></li><li><code>const N cnt</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename N, typename T&gt;
+void
+swap_n(T *restrict a, T *restrict b, const N cnt)
+{
+  if ( a == nullptr or b == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::swap_n invalid pointers.&quot;);
+  byte tmp[32];
+  byte *pa = reinterpret_cast&lt;byte *&gt;(a);
+  byte *pb = reinterpret_cast&lt;byte *&gt;(b);
+  N remaining = cnt;
+  while ( remaining &gt;= 32 ) {
+    __memcpy_32(tmp, pa, 32);
+    __memcpy_32(pa, pb, 32);
+    __memcpy_32(pb, tmp, 32);
+    pa += 32;
+    pb += 32;
+    remaining -= 32;
+  }
+  for ( N i = 0; i &lt; remaining; i++ ) {
+    byte t = pa[i];
+    pa[i] = pb[i];
+    pb[i] = t;
+  }
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::swap_n invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L590">line 590</a><br>Within <code>( a == nullptr or b == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-e80f0e7c2c76f404">__memcpy_32</a>.</p></section><section class="function-entry" id="f-6b5e07c934ba05df"><h3><code>micron::cswap_n(T *restrict a, T *restrict b)</code></h3><p>Defined in <code>algorithm/memory.hpp</code>, <a href="../../source/algorithm/memory.hpp.html#L615">line 615</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N, typename T&gt;
+void
+cswap_n(T *restrict a, T *restrict b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>T *restrict a</code></li><li><code>T *restrict b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N, typename T&gt;
+void
+cswap_n(T *restrict a, T *restrict b)
+{
+  if ( a == nullptr or b == nullptr ) exc&lt;except::library_error&gt;(&quot;micron::cswap_n invalid pointers.&quot;);
+  byte tmp[N];
+  cmemcpy&lt;N&gt;(tmp, reinterpret_cast&lt;const byte *&gt;(a));
+  cmemcpy&lt;N&gt;(reinterpret_cast&lt;byte *&gt;(a), reinterpret_cast&lt;const byte *&gt;(b));
+  cmemcpy&lt;N&gt;(reinterpret_cast&lt;byte *&gt;(b), tmp);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>exc&lt;except::library_error&gt;(&quot;micron::cswap_n invalid pointers.&quot;)</code></td><td><a href="../../source/algorithm/memory.hpp.html#L617">line 617</a><br>Within <code>( a == nullptr or b == nullptr )</code></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__exceptions.hpp.html#f-4cc1d1df403c43da">exc&lt;except::library_error&gt;</a>, <a href="../memory/cmemory/memcpy.hpp.html#f-1184d0b445404eda">cmemcpy&lt;N&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/bits/pow.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/bits/pow.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/internal.html">Implementation notes</a></div><p>Defined in header <code>&lt;micron/math/bits/pow.hpp&gt;</code>.</p><p>This is an implementation header. Some named declarations are exposed through public headers; include the public interface that provides the facility.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/bits/pow.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-62d455494361b6a9">micron::math::mkbits::pow_ns::pow(F x, F y) noexcept</a></td><td>function; line 76</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-62d455494361b6a9"><h3><code>micron::math::mkbits::pow_ns::pow(F x, F y) noexcept</code></h3><p>Defined in <code>math/bits/pow.hpp</code>, <a href="../../../source/math/bits/pow.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::flatten]] inline constexpr F
+  pow(F x, F y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li><li><code>F y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::flatten]] inline constexpr F
+  pow(F x, F y) noexcept
+  {
+#if defined(__micron_arch_wasm_any)
+    if constexpr ( sizeof(F) == 16 ) return micron::wasm::math::pow(x, y);
+#endif
+    if ( y == F(0) ) return F(1);
+    if ( x == F(1) ) return F(1);
+    if ( ieee::is_nan(x) || ieee::is_nan(y) ) return ieee::qnan_v&lt;F&gt;();
+
+    int yint = __impl::classify_integer(y);
+    bool x_neg = manip::signbit(x);
+    F ax = manip::fabs(x);
+
+    if ( ieee::is_inf(y) ) {
+      if ( ax == F(1) ) return F(1);
+      bool y_pos = !manip::signbit(y);
+      bool x_lt_1 = (ax &lt; F(1));
+      return (y_pos == x_lt_1) ? F(0) : ieee::inf_v&lt;F&gt;(0);
+    }
+
+    if ( x == F(0) ) {
+      bool y_neg = manip::signbit(y);
+      if ( yint == 2 ) {
+        if ( y_neg ) return ieee::inf_v&lt;F&gt;(x_neg ? 1 : 0);
+        return x;
+      }
+      if ( y_neg ) return ieee::inf_v&lt;F&gt;(0);
+      return F(0);
+    }
+
+    if ( ieee::is_inf(x) ) {
+      bool y_neg = manip::signbit(y);
+      if ( x_neg ) {
+        if ( yint == 2 ) {
+          return y_neg ? F(-0.0) : ieee::inf_v&lt;F&gt;(1);
+        }
+        return y_neg ? F(0) : ieee::inf_v&lt;F&gt;(0);
+      }
+      return y_neg ? F(0) : ieee::inf_v&lt;F&gt;(0);
+    }
+
+    if ( x_neg &amp;&amp; yint == 0 ) return ieee::qnan_v&lt;F&gt;();
+
+    if ( yint != 0 ) {
+      constexpr F int_path_max = F(2147483648.0);
+      if ( manip::fabs(y) &lt;= int_path_max ) {
+        long long n = static_cast&lt;long long&gt;(y);
+        F r = __impl::pow_int&lt;F&gt;(ax, n);
+        return (x_neg &amp;&amp; yint == 2) ? F(-r) : r;
+      }
+    }
+
+    F r;
+    if constexpr ( sizeof(F) == 8 ) {
+      f64 lx = log_ns::log_f64(f64(ax));
+      auto p = dd::two_prod(f64(y), lx);
+      f64 ehi = exp_ns::exp_f64(f64(p.hi));
+      r = (ieee::is_inf(ehi) || ehi == f64(0)) ? F(ehi) : F(hw::fmadd_sd(ehi, f64(p.lo), ehi));
+    } else {
+      f64 lx = f64(log_ns::log_f32(f32(ax)));
+      auto p = dd::two_prod(f64(y), lx);
+      f64 ehi = exp_ns::exp_f64(f64(p.hi));
+      r = (ieee::is_inf(ehi) || ehi == f64(0)) ? F(ehi) : F(hw::fmadd_sd(ehi, f64(p.lo), ehi));
+    }
+    return (x_neg &amp;&amp; yint == 2) ? F(-r) : r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wasm::math::pow(x, y)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L79">line 79</a></td></tr><tr class="t-dsc"><td><code>F(1)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L81">line 81</a></td></tr><tr class="t-dsc"><td><code>F(1)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L82">line 82</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;F&gt;()</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L83">line 83</a></td></tr><tr class="t-dsc"><td><code>F(1)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L90">line 90</a></td></tr><tr class="t-dsc"><td><code>(y_pos == x_lt_1) ? F(0) : ieee::inf_v&lt;F&gt;(0)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L93">line 93</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;F&gt;(x_neg ? 1 : 0)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L99">line 99</a></td></tr><tr class="t-dsc"><td><code>x</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>ieee::inf_v&lt;F&gt;(0)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L102">line 102</a></td></tr><tr class="t-dsc"><td><code>F(0)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L103">line 103</a></td></tr><tr class="t-dsc"><td><code>y_neg ? F(-0.0) : ieee::inf_v&lt;F&gt;(1)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L110">line 110</a></td></tr><tr class="t-dsc"><td><code>y_neg ? F(0) : ieee::inf_v&lt;F&gt;(0)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L112">line 112</a></td></tr><tr class="t-dsc"><td><code>y_neg ? F(0) : ieee::inf_v&lt;F&gt;(0)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L114">line 114</a></td></tr><tr class="t-dsc"><td><code>ieee::qnan_v&lt;F&gt;()</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L117">line 117</a></td></tr><tr class="t-dsc"><td><code>(x_neg &amp;&amp; yint == 2) ? F(-r) : r</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L124">line 124</a></td></tr><tr class="t-dsc"><td><code>(x_neg &amp;&amp; yint == 2) ? F(-r) : r</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L140">line 140</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/math/extended.hpp.html#f-5a24cc1ae4c41b23">micron::wasm::math::pow</a>, <a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-a507321e625c0de3">ieee::qnan_v&lt;F&gt;</a>, <a href="pow.hpp.html#f-48ac57b849eac146">__impl::classify_integer</a>, <a href="manip.hpp.html#f-f7c805a2af0629e6">manip::signbit</a>, <a href="manip.hpp.html#f-da39f5f12006f2e7">manip::fabs</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="../ieee.hpp.html#f-b6ef3d91075bfc55">ieee::inf_v&lt;F&gt;</a>, <a href="pow.hpp.html#f-e56c5b0259c42be5">__impl::pow_int&lt;F&gt;</a>, <a href="log.hpp.html#f-7f8c2495fae2cc97">log_ns::log_f64</a>, <a href="../../types.hpp.html#s-8242e79026dbef28">f64</a>, <a href="../dd64.hpp.html#f-11758c007c03dc6d">dd::two_prod</a>, <a href="../__asm/hw.hpp.html#f-c2d5a2e0427c549b">hw::fmadd_sd</a>, <a href="log.hpp.html#f-9e2d996e0f5b0e0c">log_ns::log_f32</a>, <a href="../../types.hpp.html#s-cadb933712e16f5c">f32</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-48ac57b849eac146"><h3><code>micron::math::mkbits::pow_ns::__impl::classify_integer(F y) noexcept</code></h3><p>Defined in <code>math/bits/pow.hpp</code>, <a href="../../../source/math/bits/pow.hpp.html#L39">line 39</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr int
+  classify_integer(F y) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F y</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::always_inline]] inline constexpr int
+  classify_integer(F y) noexcept
+  {
+    if ( ieee::is_nan(y) || ieee::is_inf(y) ) return 0;
+    using T = ieee::traits&lt;F&gt;;
+    using U = typename T::uint_type;
+    U bits = ieee::to_bits(manip::fabs(y));
+    int e = int((bits &amp; T::exp_mask) &gt;&gt; T::mant_bits) - T::exp_bias;
+    if ( e &lt; 0 ) return 0;
+    if ( e &gt; int(T::mant_bits) ) return 1;
+    U frac_mask = (U(1) &lt;&lt; (T::mant_bits - e)) - 1;
+    if ( (bits &amp; T::mant_mask &amp; frac_mask) != 0 ) return 0;
+    if ( e == 0 ) return 2;
+    return ((bits &gt;&gt; (T::mant_bits - e)) &amp; 1) ? 2 : 1;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L41">line 41</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L46">line 46</a></td></tr><tr class="t-dsc"><td><code>1</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L47">line 47</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L49">line 49</a></td></tr><tr class="t-dsc"><td><code>2</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L50">line 50</a></td></tr><tr class="t-dsc"><td><code>((bits &gt;&gt; (T::mant_bits - e)) &amp; 1) ? 2 : 1</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L51">line 51</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../ieee.hpp.html#f-28fe00029cc619cc">ieee::is_nan</a>, <a href="../ieee.hpp.html#f-3e9b0a2aeafe8e63">ieee::is_inf</a>, <a href="../ieee.hpp.html#f-4ae309043c1a9124">ieee::to_bits</a>, <a href="manip.hpp.html#f-da39f5f12006f2e7">manip::fabs</a>.</p></section><section class="function-entry" id="f-e56c5b0259c42be5"><h3><code>micron::math::mkbits::pow_ns::__impl::pow_int(F x, long long n) noexcept</code></h3><p>Defined in <code>math/bits/pow.hpp</code>, <a href="../../../source/math/bits/pow.hpp.html#L56">line 56</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::flatten]] inline constexpr F
+  pow_int(F x, long long n) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li><li><code>long long n</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;ieee754_floating F&gt;
+  [[nodiscard, gnu::flatten]] inline constexpr F
+  pow_int(F x, long long n) noexcept
+  {
+    if ( n == 0 ) return F(1);
+    bool neg = n &lt; 0;
+    unsigned long long un = neg ? static_cast&lt;unsigned long long&gt;(-n) : static_cast&lt;unsigned long long&gt;(n);
+    F base = x;
+    F r = F(1);
+    while ( un &gt; 0 ) {
+      if ( un &amp; 1 ) r = r * base;
+      base = base * base;
+      un &gt;&gt;= 1;
+    }
+    return neg ? F(F(1) / r) : r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>F(1)</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>neg ? F(F(1) / r) : r</code></td><td><a href="../../../source/math/bits/pow.hpp.html#L68">line 68</a></td></tr></tbody></table></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

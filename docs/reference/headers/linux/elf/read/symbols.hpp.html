@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/linux/elf/read/symbols.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../../index.html">Reference</a> <a href="../../../index.html">Headers</a> <a href="../../../../functions/index.html">Functions</a> <a href="../../../../symbols/index.html">Symbols</a> <a href="../../../../source/index.html">Source</a> <a href="../../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/linux/elf/read/symbols.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../../index.html">micron reference</a> › <a href="../../../../modules/linux.html">Linux interfaces</a></div><p>Defined in header <code>&lt;micron/linux/elf/read/symbols.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../../source/linux/elf/read/symbols.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-7457d1e33c5e083e">micron::elf::read::sym_table_kind</code></td><td>enum; line 24</td></tr><tr class="t-dsc"><td><code id="s-0acbcfc69e8470c7">micron::elf::read::sym_table_kind::dynamic_dynsym</code></td><td>enumerator; line 24</td></tr><tr class="t-dsc"><td><code id="s-2ae1b7575746677e">micron::elf::read::sym_table_kind::static_symtab</code></td><td>enumerator; line 24</td></tr><tr class="t-dsc"><td><code id="s-2490d2064f18b5bc">micron::elf::read::symbol_row</code></td><td>struct; line 26</td></tr><tr class="t-dsc"><td><code id="s-fb3c83d9852e4f3d">micron::elf::read::symbol_row::name</code></td><td>member; line 27</td></tr><tr class="t-dsc"><td><code id="s-44e0f77763dae120">micron::elf::read::symbol_row::value</code></td><td>member; line 28</td></tr><tr class="t-dsc"><td><code id="s-f4e35c01dd1f5dca">micron::elf::read::symbol_row::size</code></td><td>member; line 29</td></tr><tr class="t-dsc"><td><code id="s-cf2b619d2c96ce4f">micron::elf::read::symbol_row::bind</code></td><td>member; line 30</td></tr><tr class="t-dsc"><td><code id="s-622823757190668e">micron::elf::read::symbol_row::type</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-0088f9ac1ecbd4c4">micron::elf::read::symbol_row::visibility</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-74d07924097900d8">micron::elf::read::symbol_row::shndx</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-1db5b61cd486609e">micron::elf::read::symbol_row::defined</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-5fe682991bfc6f13">micron::elf::read::symbol_row::table</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><a href="#f-258e3241bf906b22">micron::elf::read::walk_symbols(const image &amp;img, const micron::vector&lt;section_row&gt; &amp;secs)</a></td><td>function; line 98</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-258e3241bf906b22"><h3><code>micron::elf::read::walk_symbols(const image &amp;img, const micron::vector&lt;section_row&gt; &amp;secs)</code></h3><p>Defined in <code>linux/elf/read/symbols.hpp</code>, <a href="../../../../source/linux/elf/read/symbols.hpp.html#L98">line 98</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline micron::vector&lt;symbol_row&gt;
+walk_symbols(const image &amp;img, const micron::vector&lt;section_row&gt; &amp;secs)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const image &amp;img</code></li><li><code>const micron::vector&lt;section_row&gt; &amp;secs</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline micron::vector&lt;symbol_row&gt;
+walk_symbols(const image &amp;img, const micron::vector&lt;section_row&gt; &amp;secs)
+{
+  micron::vector&lt;symbol_row&gt; out{};
+  if ( !img.ok() ) return out;
+  __impl::walk_one_table(img, find_section_by_type(secs, sht_symtab), secs, sym_table_kind::static_symtab, out);
+  __impl::walk_one_table(img, find_section_by_type(secs, sht_dynsym), secs, sym_table_kind::dynamic_dynsym, out);
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../../source/linux/elf/read/symbols.hpp.html#L101">line 101</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../../../source/linux/elf/read/symbols.hpp.html#L104">line 104</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="symbols.hpp.html#f-46a3d31d715c09bf">__impl::walk_one_table</a>, <a href="sections.hpp.html#f-d6afabbe023d40f6">find_section_by_type</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-12e0ee2929ff1fc7"><h3><code>micron::elf::read::__impl::read_one_symbol(const image &amp;img, const u8 *raw, symbol_row &amp;row, u64 &amp;name_off)</code></h3><p>Defined in <code>linux/elf/read/symbols.hpp</code>, <a href="../../../../source/linux/elf/read/symbols.hpp.html#L42">line 42</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+read_one_symbol(const image &amp;img, const u8 *raw, symbol_row &amp;row, u64 &amp;name_off)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const image &amp;img</code></li><li><code>const u8 *raw</code></li><li><code>symbol_row &amp;row</code></li><li><code>u64 &amp;name_off</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+read_one_symbol(const image &amp;img, const u8 *raw, symbol_row &amp;row, u64 &amp;name_off)
+{
+  u8 info = 0, other = 0;
+  if ( img.is64() ) {
+    name_off = rd&lt;u32&gt;(raw, __builtin_offsetof(sym_t, name), img.hdr.data);
+    row.value = rd&lt;u64&gt;(raw, __builtin_offsetof(sym_t, value), img.hdr.data);
+    row.size = rd&lt;u64&gt;(raw, __builtin_offsetof(sym_t, size), img.hdr.data);
+    info = raw[__builtin_offsetof(sym_t, info)];
+    other = raw[__builtin_offsetof(sym_t, other)];
+    row.shndx = rd&lt;u16&gt;(raw, __builtin_offsetof(sym_t, shndx), img.hdr.data);
+  } else {
+    name_off = rd&lt;u32&gt;(raw, __builtin_offsetof(sym32_t, name), img.hdr.data);
+    row.value = rd&lt;u32&gt;(raw, __builtin_offsetof(sym32_t, value), img.hdr.data);
+    row.size = rd&lt;u32&gt;(raw, __builtin_offsetof(sym32_t, size), img.hdr.data);
+    info = raw[__builtin_offsetof(sym32_t, info)];
+    other = raw[__builtin_offsetof(sym32_t, other)];
+    row.shndx = rd&lt;u16&gt;(raw, __builtin_offsetof(sym32_t, shndx), img.hdr.data);
+  }
+  row.bind = elf_st_bind(info);
+  row.type = elf_st_type(info);
+  row.visibility = elf_st_visibility(other);
+  row.defined = row.shndx != shn_undef;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="source.hpp.html#f-3af020fdf1086f85">rd&lt;u32&gt;</a>, <a href="source.hpp.html#f-3af020fdf1086f85">rd&lt;u64&gt;</a>, <a href="source.hpp.html#f-3af020fdf1086f85">rd&lt;u16&gt;</a>, <a href="../consts.hpp.html#f-428e3f18cd07901e">elf_st_bind</a>, <a href="../consts.hpp.html#f-4d024459ff0565fa">elf_st_type</a>, <a href="../consts.hpp.html#f-e29ec8e58e6f1eeb">elf_st_visibility</a>.</p></section><section class="function-entry" id="f-46a3d31d715c09bf"><h3><code>micron::elf::read::__impl::walk_one_table(const image &amp;img, const section_row *symtab_sec, const micron::vector&lt;section_row&gt; &amp;secs, sym_table_kind kind,
+               micron::vector&lt;symbol_row&gt; &amp;out)</code></h3><p>Defined in <code>linux/elf/read/symbols.hpp</code>, <a href="../../../../source/linux/elf/read/symbols.hpp.html#L67">line 67</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+walk_one_table(const image &amp;img, const section_row *symtab_sec, const micron::vector&lt;section_row&gt; &amp;secs, sym_table_kind kind,
+               micron::vector&lt;symbol_row&gt; &amp;out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const image &amp;img</code></li><li><code>const section_row *symtab_sec</code></li><li><code>const micron::vector&lt;section_row&gt; &amp;secs</code></li><li><code>sym_table_kind kind</code></li><li><code>micron::vector&lt;symbol_row&gt; &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+walk_one_table(const image &amp;img, const section_row *symtab_sec, const micron::vector&lt;section_row&gt; &amp;secs, sym_table_kind kind,
+               micron::vector&lt;symbol_row&gt; &amp;out)
+{
+  if ( symtab_sec == nullptr || img.src == nullptr ) return;
+  const u64 entsize = img.is64() ? sizeof(sym_t) : sizeof(sym32_t);
+  if ( symtab_sec-&gt;size &lt; entsize ) return;
+  const u64 count = clamp_records(img, symtab_sec-&gt;offset, entsize, symtab_sec-&gt;size / entsize);
+
+  const section_row *strtab_sec = symtab_sec-&gt;link &lt; secs.size() ? &amp;secs[symtab_sec-&gt;link] : nullptr;
+
+  out.reserve(out.size() + static_cast&lt;usize&gt;(count));
+  for ( u64 i = 0; i &lt; count; i++ ) {
+    const u64 off = symtab_sec-&gt;offset + i * entsize;
+    const span_t raw = img.at(off, entsize);
+    if ( raw.len &lt; entsize ) break;
+
+    symbol_row row{};
+    row.table = kind;
+    u64 name_off = 0;
+    read_one_symbol(img, raw.ptr, row, name_off);
+    if ( strtab_sec != nullptr &amp;&amp; name_off != 0 ) {
+      const u64 lim = strtab_sec-&gt;size &gt; name_off ? strtab_sec-&gt;size - name_off : 0;
+      row.name = read_cstr_at(*img.src, strtab_sec-&gt;offset + name_off, lim);
+    }
+    out.push_back(micron::move(row));
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/linux/elf/read/symbols.hpp.html#L70">line 70</a></td></tr><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../../source/linux/elf/read/symbols.hpp.html#L72">line 72</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="image.hpp.html#f-819b9164c4096dc0">clamp_records</a>, <a href="symbols.hpp.html#f-12e0ee2929ff1fc7">read_one_symbol</a>, <a href="source.hpp.html#f-91fef632bed0b0af">read_cstr_at</a>, <a href="../../../memory/actions.hpp.html#f-60340540f256052f">micron::move</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../../about.html">Attribution and licenses</a> · <a href="../../../../index.html">Contents</a></p></div></div>
+</body></html>

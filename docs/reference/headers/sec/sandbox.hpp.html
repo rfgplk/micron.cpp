@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/sec/sandbox.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/sec/sandbox.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/security.html">Security</a></div><p>Defined in header <code>&lt;micron/sec/sandbox.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/sec/sandbox.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-4e38d3789489fb05">micron::sec::stage</code></td><td>enum; line 56</td></tr><tr class="t-dsc"><td><code id="s-547767996829b22d">micron::sec::stage::none</code></td><td>enumerator; line 57</td></tr><tr class="t-dsc"><td><code id="s-d46cfa9d2450b558">micron::sec::stage::fork_failed</code></td><td>enumerator; line 58</td></tr><tr class="t-dsc"><td><code id="s-6c98d265ae2dde5d">micron::sec::stage::namespaces</code></td><td>enumerator; line 59</td></tr><tr class="t-dsc"><td><code id="s-3f4699fd9480729e">micron::sec::stage::filesystem</code></td><td>enumerator; line 60</td></tr><tr class="t-dsc"><td><code id="s-f9de8ca9f01ae5a7">micron::sec::stage::rlimits</code></td><td>enumerator; line 61</td></tr><tr class="t-dsc"><td><code id="s-bd756ff7b8cd0bd6">micron::sec::stage::stdio</code></td><td>enumerator; line 62</td></tr><tr class="t-dsc"><td><code id="s-0b008bebd3fb9378">micron::sec::stage::descriptors</code></td><td>enumerator; line 63</td></tr><tr class="t-dsc"><td><code id="s-1fba0521b67af50e">micron::sec::stage::landlock</code></td><td>enumerator; line 64</td></tr><tr class="t-dsc"><td><code id="s-1a3886ed639dad63">micron::sec::stage::seccomp</code></td><td>enumerator; line 65</td></tr><tr class="t-dsc"><td><code id="s-bf3d39251edbbaec">micron::sec::stage::caps_pre</code></td><td>enumerator; line 66</td></tr><tr class="t-dsc"><td><code id="s-6e340c913ca62b8c">micron::sec::stage::no_new_privs</code></td><td>enumerator; line 67</td></tr><tr class="t-dsc"><td><code id="s-9f1dcd35783e21a3">micron::sec::stage::credentials</code></td><td>enumerator; line 68</td></tr><tr class="t-dsc"><td><code id="s-ca612c3c9787e7da">micron::sec::stage::caps_post</code></td><td>enumerator; line 69</td></tr><tr class="t-dsc"><td><code id="s-b67b2a8cd24a8fa3">micron::sec::stage::signal_mask</code></td><td>enumerator; line 70</td></tr><tr class="t-dsc"><td><code id="s-9d44db9ee6215f42">micron::sec::stage::exec</code></td><td>enumerator; line 71</td></tr><tr class="t-dsc"><td><code id="s-11876e170f51344f">micron::sec::stage::parent_lifetime</code></td><td>enumerator; line 72</td></tr><tr class="t-dsc"><td><code id="s-0aea71217a9e6ba9">micron::sec::fault_t</code></td><td>struct; line 115</td></tr><tr class="t-dsc"><td><code id="s-deca79435660ef7f">micron::sec::fault_t::where</code></td><td>member; line 116</td></tr><tr class="t-dsc"><td><code id="s-af4a7cb1697ebe32">micron::sec::fault_t::err</code></td><td>member; line 117</td></tr><tr class="t-dsc"><td><code id="s-213a83b714094fe9">micron::sec::mount_spec</code></td><td>struct; line 160</td></tr><tr class="t-dsc"><td><code id="s-a7c32ddd5b36734b">micron::sec::mount_spec::source</code></td><td>member; line 161</td></tr><tr class="t-dsc"><td><code id="s-dbde348dbee9c6c1">micron::sec::mount_spec::target</code></td><td>member; line 162</td></tr><tr class="t-dsc"><td><code id="s-cd26daa47c5b23ba">micron::sec::mount_spec::fstype</code></td><td>member; line 163</td></tr><tr class="t-dsc"><td><code id="s-4299a931c3a36eee">micron::sec::mount_spec::options</code></td><td>member; line 164</td></tr><tr class="t-dsc"><td><code id="s-60c2defde058b637">micron::sec::mount_spec::flags</code></td><td>member; line 165</td></tr><tr class="t-dsc"><td><code id="s-6cf31fc976fe99c2">micron::sec::mount_spec::read_only</code></td><td>member; line 166</td></tr><tr class="t-dsc"><td><code id="s-a7590701f40ae420">micron::sec::mount_spec::attrs</code></td><td>member; line 167</td></tr><tr class="t-dsc"><td><code id="s-83ef3af60de9f60c">micron::sec::sandbox</code></td><td>class; line 182</td></tr><tr class="t-dsc"><td><code id="s-43fe23d43c8bb86b">micron::sec::sandbox::max_mounts</code></td><td>member; line 185</td></tr><tr class="t-dsc"><td><code id="s-443d472db25ed820">micron::sec::sandbox::max_landlock_rules</code></td><td>member; line 186</td></tr><tr class="t-dsc"><td><code id="s-441373d400cda794">micron::sec::sandbox::ll_rule::path</code></td><td>member; line 207</td></tr><tr class="t-dsc"><td><code id="s-b1a3ea3b8e75d99d">micron::sec::sandbox::ll_rule::access</code></td><td>member; line 208</td></tr><tr class="t-dsc"><td><code id="s-680b4bfa5a84ab36">micron::sec::sandbox::ll_rule::fd</code></td><td>member; line 209</td></tr><tr class="t-dsc"><td><code id="s-f0b4ea8d549b2338">micron::sec::sandbox::rl_spec::res</code></td><td>member; line 241</td></tr><tr class="t-dsc"><td><code id="s-1dca01ddbd0dec5f">micron::sec::sandbox::rl_spec::soft</code></td><td>member; line 242</td></tr><tr class="t-dsc"><td><code id="s-86941bdccf6ea98f">micron::sec::sandbox::rl_spec::hard</code></td><td>member; line 243</td></tr><tr class="t-dsc"><td><code id="s-789475832f97d404">micron::sec::sandbox::child</code></td><td>struct; line 841</td></tr><tr class="t-dsc"><td><code id="s-ba28c6ca617bb30b">micron::sec::sandbox::child::pid</code></td><td>member; line 842</td></tr><tr class="t-dsc"><td><code id="s-c30f9c026e731396">micron::sec::sandbox::child::fault</code></td><td>member; line 843</td></tr><tr class="t-dsc"><td><code id="s-00aa4f066ff6c8cc">micron::sec::sandbox::exit_status</code></td><td>struct; line 853</td></tr><tr class="t-dsc"><td><code id="s-57c40e93db983730">micron::sec::sandbox::exit_status::raw_status</code></td><td>member; line 854</td></tr><tr class="t-dsc"><td><a href="#f-3fc9bf51c292d2ae">micron::sec::name_of(stage s) noexcept</a></td><td>function; line 76</td></tr><tr class="t-dsc"><td><a href="#f-1a93a1c88c0ed3b5">micron::sec::fault_t::operator bool(void) const noexcept</a></td><td>function; line 120</td></tr><tr class="t-dsc"><td><a href="#f-4b2c40ca42256364">micron::sec::fault_t::stage_name(void) const noexcept</a></td><td>function; line 126</td></tr><tr class="t-dsc"><td><a href="#f-544a3e7f4971ada0">micron::sec::mount_spec::recursive(void) const noexcept</a></td><td>function; line 170</td></tr><tr class="t-dsc"><td><a href="#f-4e64d6b403d7733c">micron::sec::mount_spec::needs_remount(void) const noexcept</a></td><td>function; line 176</td></tr><tr class="t-dsc"><td><a href="#f-c50ba332b62103d2">micron::sec::sandbox::sandbox(void) noexcept</a></td><td>function; line 520</td></tr><tr class="t-dsc"><td><a href="#f-7ffb3e251944c043">micron::sec::sandbox::user(void) noexcept</a></td><td>function; line 525</td></tr><tr class="t-dsc"><td><a href="#f-5632677dd39c1106">micron::sec::sandbox::mount_ns(void) noexcept</a></td><td>function; line 531</td></tr><tr class="t-dsc"><td><a href="#f-ce520c8f6eabdd43">micron::sec::sandbox::pid_ns(void) noexcept</a></td><td>function; line 537</td></tr><tr class="t-dsc"><td><a href="#f-135987c3c101bb99">micron::sec::sandbox::net(void) noexcept</a></td><td>function; line 543</td></tr><tr class="t-dsc"><td><a href="#f-23e81e3c6064a868">micron::sec::sandbox::uts(void) noexcept</a></td><td>function; line 549</td></tr><tr class="t-dsc"><td><a href="#f-5ca11acfd2691045">micron::sec::sandbox::ipc(void) noexcept</a></td><td>function; line 555</td></tr><tr class="t-dsc"><td><a href="#f-acfb3a2e87de2680">micron::sec::sandbox::cgroup(void) noexcept</a></td><td>function; line 561</td></tr><tr class="t-dsc"><td><a href="#f-f4883326163a47ea">micron::sec::sandbox::namespaces(ns::ns_kind k) noexcept</a></td><td>function; line 567</td></tr><tr class="t-dsc"><td><a href="#f-1495f398864fcb1a">micron::sec::sandbox::root(const char *new_root, const char *put_old) noexcept</a></td><td>function; line 577</td></tr><tr class="t-dsc"><td><a href="#f-c74437add332131f">micron::sec::sandbox::chroot_to(const char *new_root) noexcept</a></td><td>function; line 587</td></tr><tr class="t-dsc"><td><a href="#f-4fcfb2c5d0744a65">micron::sec::sandbox::keep_propagation(void) noexcept</a></td><td>function; line 595</td></tr><tr class="t-dsc"><td><a href="#f-fcefab726c0fe508">micron::sec::sandbox::bind(const char *src, const char *dst, bool read_only = false, bool recursive = true, bool harden = true) noexcept</a></td><td>function; line 601</td></tr><tr class="t-dsc"><td><a href="#f-9f1a1ac3108092c7">micron::sec::sandbox::tmpfs(const char *dst, const char *options = &quot;size=64m&quot;) noexcept</a></td><td>function; line 611</td></tr><tr class="t-dsc"><td><a href="#f-44e29ff04eb9eacd">micron::sec::sandbox::procfs(const char *dst) noexcept</a></td><td>function; line 620</td></tr><tr class="t-dsc"><td><a href="#f-81a5acae9c2cf4f6">micron::sec::sandbox::landlock(const char *path, landlock::access_fs access) noexcept</a></td><td>function; line 630</td></tr><tr class="t-dsc"><td><a href="#f-41400399e0525d84">micron::sec::sandbox::landlock_fd(i32 fd, landlock::access_fs access) noexcept</a></td><td>function; line 642</td></tr><tr class="t-dsc"><td><a href="#f-816a0c54e19da5fe">micron::sec::sandbox::landlock_strict(bool on = true) noexcept</a></td><td>function; line 653</td></tr><tr class="t-dsc"><td><a href="#f-1c42e4a103ccf6a2">micron::sec::sandbox::landlock_scope(landlock::scope scoped) noexcept</a></td><td>function; line 663</td></tr><tr class="t-dsc"><td><a href="#f-999e07c3d6b5b35c">micron::sec::sandbox::landlock_net(landlock::access_net handled_net) noexcept</a></td><td>function; line 670</td></tr><tr class="t-dsc"><td><a href="#f-e37a2e79e52f0c62">micron::sec::sandbox::landlock_handled(landlock::access_fs handled) noexcept</a></td><td>function; line 677</td></tr><tr class="t-dsc"><td><a href="#f-1b4641380a25ad18">micron::sec::sandbox::landlock_handled_all(void) noexcept</a></td><td>function; line 685</td></tr><tr class="t-dsc"><td><a href="#f-860281c7f6aaa266">micron::sec::sandbox::seccomp(const seccomp::filter_builder&lt;N&gt; &amp;fb) noexcept</a></td><td>function; line 692</td></tr><tr class="t-dsc"><td><a href="#f-098232cb7e9f513d">micron::sec::sandbox::seccomp(const seccomp::filter_builder&lt;N&gt; &amp;&amp;)</a></td><td>function; line 700</td></tr><tr class="t-dsc"><td><a href="#f-37832707f6e519fc">micron::sec::sandbox::no_new_privs(bool on = true) noexcept</a></td><td>function; line 703</td></tr><tr class="t-dsc"><td><a href="#f-0696a0c28e8e7298">micron::sec::sandbox::undumpable(bool on = true) noexcept</a></td><td>function; line 709</td></tr><tr class="t-dsc"><td><a href="#f-128e365eff4353ed">micron::sec::sandbox::drop_capabilities(bool on = true) noexcept</a></td><td>function; line 715</td></tr><tr class="t-dsc"><td><a href="#f-1b25a5c0ee9f7c05">micron::sec::sandbox::as_user(posix::uid_t uid, posix::gid_t gid) noexcept</a></td><td>function; line 721</td></tr><tr class="t-dsc"><td><a href="#f-14bc2b461032425b">micron::sec::sandbox::rlimit(posix::rlim_t res, u64 soft, u64 hard) noexcept</a></td><td>function; line 730</td></tr><tr class="t-dsc"><td><a href="#f-5af8c8c17e0e4aeb">micron::sec::sandbox::stdio(i32 in, i32 out, i32 err) noexcept</a></td><td>function; line 738</td></tr><tr class="t-dsc"><td><a href="#f-8c49881251dfb7c0">micron::sec::sandbox::keep_fd(i32 fd) noexcept</a></td><td>function; line 748</td></tr><tr class="t-dsc"><td><a href="#f-3da314c9ecd8a6fd">micron::sec::sandbox::keep_dir_fd(i32 fd) noexcept</a></td><td>function; line 755</td></tr><tr class="t-dsc"><td><a href="#f-d36c6b4305a68eda">micron::sec::sandbox::close_extra_fds(bool on = true) noexcept</a></td><td>function; line 764</td></tr><tr class="t-dsc"><td><a href="#f-1c8149b3474857fa">micron::sec::sandbox::kinds(void) const noexcept</a></td><td>function; line 770</td></tr><tr class="t-dsc"><td><a href="#f-7fd14c45de0f2535">micron::sec::sandbox::mount_count(void) const noexcept</a></td><td>function; line 776</td></tr><tr class="t-dsc"><td><a href="#f-6623056ee69da011">micron::sec::sandbox::landlock_rule_count(void) const noexcept</a></td><td>function; line 782</td></tr><tr class="t-dsc"><td><a href="#f-357125e9c13d0292">micron::sec::sandbox::has_seccomp(void) const noexcept</a></td><td>function; line 788</td></tr><tr class="t-dsc"><td><a href="#f-1677439e761d3103">micron::sec::sandbox::landlock_handled(void) const noexcept</a></td><td>function; line 794</td></tr><tr class="t-dsc"><td><a href="#f-6502b64c0c3cf88d">micron::sec::sandbox::landlock_scoped(void) const noexcept</a></td><td>function; line 800</td></tr><tr class="t-dsc"><td><a href="#f-51c54127a600a699">micron::sec::sandbox::landlock_handled_net(void) const noexcept</a></td><td>function; line 806</td></tr><tr class="t-dsc"><td><a href="#f-fa109b65ce7ac369">micron::sec::sandbox::closes_extra_fds(void) const noexcept</a></td><td>function; line 814</td></tr><tr class="t-dsc"><td><a href="#f-c09e2ef68a182261">micron::sec::sandbox::drops_capabilities(void) const noexcept</a></td><td>function; line 820</td></tr><tr class="t-dsc"><td><a href="#f-e8f32594e7ea9e03">micron::sec::sandbox::config_fault(void) const noexcept</a></td><td>function; line 827</td></tr><tr class="t-dsc"><td><a href="#f-134af715485fa7e6">micron::sec::sandbox::configured(void) const noexcept</a></td><td>function; line 833</td></tr><tr class="t-dsc"><td><a href="#f-aefded28cbd20d77">micron::sec::sandbox::child::ok(void) const noexcept</a></td><td>function; line 846</td></tr><tr class="t-dsc"><td><a href="#f-851a8d29942bea1e">micron::sec::sandbox::exit_status::exited(void) const noexcept</a></td><td>function; line 857</td></tr><tr class="t-dsc"><td><a href="#f-f71c7aebd1e009b8">micron::sec::sandbox::exit_status::signaled(void) const noexcept</a></td><td>function; line 863</td></tr><tr class="t-dsc"><td><a href="#f-5d7f999265337efd">micron::sec::sandbox::exit_status::code(void) const noexcept</a></td><td>function; line 870</td></tr><tr class="t-dsc"><td><a href="#f-c81646602c5dc05c">micron::sec::sandbox::exit_status::signal(void) const noexcept</a></td><td>function; line 877</td></tr><tr class="t-dsc"><td><a href="#f-d73d081d1a3a80f7">micron::sec::sandbox::exit_status::raw(void) const noexcept</a></td><td>function; line 883</td></tr><tr class="t-dsc"><td><a href="#f-8809b568c7644b2b">micron::sec::sandbox::spawn(const char *path, char *const *argv, char *const *envp) const noexcept</a></td><td>function; line 891</td></tr><tr class="t-dsc"><td><a href="#f-013b18cd02dac6b9">micron::sec::sandbox::parent_death_signal() noexcept</a></td><td>function; line 899</td></tr><tr class="t-dsc"><td><a href="#f-fd59f9ecb06f25f8">micron::sec::sandbox::run(i32 (*body)(void)) const noexcept</a></td><td>function; line 906</td></tr><tr class="t-dsc"><td><a href="#f-216a2b4d54194ce7">micron::sec::sandbox::run_to_completion(i32 (*body)(void)) const noexcept</a></td><td>function; line 912</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-3fc9bf51c292d2ae"><h3><code>micron::sec::name_of(stage s) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L76">line 76</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr const char *
+name_of(stage s) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>stage s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr const char *
+name_of(stage s) noexcept
+{
+  switch ( s ) {
+  case stage::none:
+    return &quot;none&quot;;
+  case stage::fork_failed:
+    return &quot;fork&quot;;
+  case stage::namespaces:
+    return &quot;namespaces&quot;;
+  case stage::filesystem:
+    return &quot;filesystem&quot;;
+  case stage::rlimits:
+    return &quot;rlimits&quot;;
+  case stage::stdio:
+    return &quot;stdio&quot;;
+  case stage::descriptors:
+    return &quot;descriptors&quot;;
+  case stage::landlock:
+    return &quot;landlock&quot;;
+  case stage::seccomp:
+    return &quot;seccomp&quot;;
+  case stage::caps_pre:
+    return &quot;caps_pre_uid&quot;;
+  case stage::no_new_privs:
+    return &quot;no_new_privs&quot;;
+  case stage::credentials:
+    return &quot;credentials&quot;;
+  case stage::caps_post:
+    return &quot;caps_post_uid&quot;;
+  case stage::signal_mask:
+    return &quot;signal_mask&quot;;
+  case stage::exec:
+    return &quot;exec&quot;;
+  case stage::parent_lifetime:
+    return &quot;parent_lifetime&quot;;
+  }
+  return &quot;?&quot;;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>&quot;none&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L80">line 80</a></td></tr><tr class="t-dsc"><td><code>&quot;fork&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L82">line 82</a></td></tr><tr class="t-dsc"><td><code>&quot;namespaces&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L84">line 84</a></td></tr><tr class="t-dsc"><td><code>&quot;filesystem&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L86">line 86</a></td></tr><tr class="t-dsc"><td><code>&quot;rlimits&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L88">line 88</a></td></tr><tr class="t-dsc"><td><code>&quot;stdio&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L90">line 90</a></td></tr><tr class="t-dsc"><td><code>&quot;descriptors&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L92">line 92</a></td></tr><tr class="t-dsc"><td><code>&quot;landlock&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L94">line 94</a></td></tr><tr class="t-dsc"><td><code>&quot;seccomp&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L96">line 96</a></td></tr><tr class="t-dsc"><td><code>&quot;caps_pre_uid&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L98">line 98</a></td></tr><tr class="t-dsc"><td><code>&quot;no_new_privs&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L100">line 100</a></td></tr><tr class="t-dsc"><td><code>&quot;credentials&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L102">line 102</a></td></tr><tr class="t-dsc"><td><code>&quot;caps_post_uid&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>&quot;signal_mask&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L106">line 106</a></td></tr><tr class="t-dsc"><td><code>&quot;exec&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L108">line 108</a></td></tr><tr class="t-dsc"><td><code>&quot;parent_lifetime&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L110">line 110</a></td></tr><tr class="t-dsc"><td><code>&quot;?&quot;</code></td><td><a href="../../source/sec/sandbox.hpp.html#L112">line 112</a></td></tr></tbody></table></section><section class="function-entry" id="f-1a93a1c88c0ed3b5"><h3><code>micron::sec::fault_t::operator bool(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L120">line 120</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr explicit
+  operator bool(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>where != stage::none</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr explicit
+  operator bool(void) const noexcept
+  {
+    return where != stage::none;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>where != stage::none</code></td><td><a href="../../source/sec/sandbox.hpp.html#L122">line 122</a></td></tr></tbody></table></section><section class="function-entry" id="f-4b2c40ca42256364"><h3><code>micron::sec::fault_t::stage_name(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L126">line 126</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] const char *
+  stage_name(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>name_of(where)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] const char *
+  stage_name(void) const noexcept
+  {
+    return name_of(where);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>name_of(where)</code></td><td><a href="../../source/sec/sandbox.hpp.html#L128">line 128</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-3fc9bf51c292d2ae">name_of</a>.</p></section><section class="function-entry" id="f-544a3e7f4971ada0"><h3><code>micron::sec::mount_spec::recursive(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L170">line 170</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr bool
+  recursive(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>(flags &amp; posix::ms_rec) != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr bool
+  recursive(void) const noexcept
+  {
+    return (flags &amp; posix::ms_rec) != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(flags &amp; posix::ms_rec) != 0</code></td><td><a href="../../source/sec/sandbox.hpp.html#L172">line 172</a></td></tr></tbody></table></section><section class="function-entry" id="f-4e64d6b403d7733c"><h3><code>micron::sec::mount_spec::needs_remount(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L176">line 176</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr bool
+  needs_remount(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>read_only || attrs != 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr bool
+  needs_remount(void) const noexcept
+  {
+    return read_only || attrs != 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>read_only || attrs != 0</code></td><td><a href="../../source/sec/sandbox.hpp.html#L178">line 178</a></td></tr></tbody></table></section><section class="function-entry" id="f-c50ba332b62103d2"><h3><code>micron::sec::sandbox::sandbox(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L520">line 520</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr sandbox(void) noexcept = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-7ffb3e251944c043"><h3><code>micron::sec::sandbox::user(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L525">line 525</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  user(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ns_kinds |= ns::ns_kind::user, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  user(void) noexcept
+  {
+    return __ns_kinds |= ns::ns_kind::user, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds |= ns::ns_kind::user, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L527">line 527</a></td></tr></tbody></table></section><section class="function-entry" id="f-5632677dd39c1106"><h3><code>micron::sec::sandbox::mount_ns(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L531">line 531</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  mount_ns(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ns_kinds |= ns::ns_kind::mount, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  mount_ns(void) noexcept
+  {
+    return __ns_kinds |= ns::ns_kind::mount, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds |= ns::ns_kind::mount, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L533">line 533</a></td></tr></tbody></table></section><section class="function-entry" id="f-ce520c8f6eabdd43"><h3><code>micron::sec::sandbox::pid_ns(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L537">line 537</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  pid_ns(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ns_kinds |= ns::ns_kind::pid, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  pid_ns(void) noexcept
+  {
+    return __ns_kinds |= ns::ns_kind::pid, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds |= ns::ns_kind::pid, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L539">line 539</a></td></tr></tbody></table></section><section class="function-entry" id="f-135987c3c101bb99"><h3><code>micron::sec::sandbox::net(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L543">line 543</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  net(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ns_kinds |= ns::ns_kind::net, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  net(void) noexcept
+  {
+    return __ns_kinds |= ns::ns_kind::net, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds |= ns::ns_kind::net, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L545">line 545</a></td></tr></tbody></table></section><section class="function-entry" id="f-23e81e3c6064a868"><h3><code>micron::sec::sandbox::uts(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L549">line 549</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  uts(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ns_kinds |= ns::ns_kind::uts, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  uts(void) noexcept
+  {
+    return __ns_kinds |= ns::ns_kind::uts, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds |= ns::ns_kind::uts, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L551">line 551</a></td></tr></tbody></table></section><section class="function-entry" id="f-5ca11acfd2691045"><h3><code>micron::sec::sandbox::ipc(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L555">line 555</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  ipc(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ns_kinds |= ns::ns_kind::ipc, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  ipc(void) noexcept
+  {
+    return __ns_kinds |= ns::ns_kind::ipc, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds |= ns::ns_kind::ipc, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L557">line 557</a></td></tr></tbody></table></section><section class="function-entry" id="f-acfb3a2e87de2680"><h3><code>micron::sec::sandbox::cgroup(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L561">line 561</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  cgroup(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ns_kinds |= ns::ns_kind::cgroup, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  cgroup(void) noexcept
+  {
+    return __ns_kinds |= ns::ns_kind::cgroup, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds |= ns::ns_kind::cgroup, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L563">line 563</a></td></tr></tbody></table></section><section class="function-entry" id="f-f4883326163a47ea"><h3><code>micron::sec::sandbox::namespaces(ns::ns_kind k) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L567">line 567</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  namespaces(ns::ns_kind k) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>ns::ns_kind k</code></li></ul><h4>Effects</h4><p>Returns <code>__ns_kinds |= k, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  namespaces(ns::ns_kind k) noexcept
+  {
+    return __ns_kinds |= k, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds |= k, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L569">line 569</a></td></tr></tbody></table></section><section class="function-entry" id="f-1495f398864fcb1a"><h3><code>micron::sec::sandbox::root(const char *new_root, const char *put_old) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L577">line 577</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  root(const char *new_root, const char *put_old) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *new_root</code></li><li><code>const char *put_old</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  root(const char *new_root, const char *put_old) noexcept
+  {
+    __new_root = new_root;
+    __put_old = put_old;
+    __use_chroot = false;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L582">line 582</a></td></tr></tbody></table></section><section class="function-entry" id="f-c74437add332131f"><h3><code>micron::sec::sandbox::chroot_to(const char *new_root) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L587">line 587</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  chroot_to(const char *new_root) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *new_root</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  chroot_to(const char *new_root) noexcept
+  {
+    __new_root = new_root;
+    __use_chroot = true;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L591">line 591</a></td></tr></tbody></table></section><section class="function-entry" id="f-4fcfb2c5d0744a65"><h3><code>micron::sec::sandbox::keep_propagation(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L595">line 595</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  keep_propagation(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__make_private = false, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  keep_propagation(void) noexcept
+  {
+    return __make_private = false, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__make_private = false, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L597">line 597</a></td></tr></tbody></table></section><section class="function-entry" id="f-fcefab726c0fe508"><h3><code>micron::sec::sandbox::bind(const char *src, const char *dst, bool read_only = false, bool recursive = true, bool harden = true) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L601">line 601</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  bind(const char *src, const char *dst, bool read_only = false, bool recursive = true, bool harden = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *src</code></li><li><code>const char *dst</code></li><li><code>bool read_only = false</code></li><li><code>bool recursive = true</code></li><li><code>bool harden = true</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  bind(const char *src, const char *dst, bool read_only = false, bool recursive = true, bool harden = true) noexcept
+  {
+    if ( __mount_count &gt;= max_mounts ) return __config_fail(stage::filesystem, -error::no_space), *this;
+    const unsigned long fl = recursive ? (posix::ms_bind | posix::ms_rec) : posix::ms_bind;
+    const u64 attrs = harden ? __impl::__bind_default_attrs : 0ull;
+    __mounts[__mount_count++] = mount_spec{ src, dst, nullptr, nullptr, fl, read_only, attrs };
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::filesystem, -error::no_space), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L603">line 603</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L607">line 607</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>.</p></section><section class="function-entry" id="f-9f1a1ac3108092c7"><h3><code>micron::sec::sandbox::tmpfs(const char *dst, const char *options = &quot;size=64m&quot;) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L611">line 611</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  tmpfs(const char *dst, const char *options = &quot;size=64m&quot;) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *dst</code></li><li><code>const char *options = &quot;size=64m&quot;</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  tmpfs(const char *dst, const char *options = &quot;size=64m&quot;) noexcept
+  {
+    if ( __mount_count &gt;= max_mounts ) return __config_fail(stage::filesystem, -error::no_space), *this;
+    __mounts[__mount_count++]
+        = mount_spec{ &quot;tmpfs&quot;, dst, &quot;tmpfs&quot;, options, posix::ms_nosuid | posix::ms_nodev | posix::ms_strictatime, false, 0 };
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::filesystem, -error::no_space), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L613">line 613</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L616">line 616</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>.</p></section><section class="function-entry" id="f-44e29ff04eb9eacd"><h3><code>micron::sec::sandbox::procfs(const char *dst) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L620">line 620</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  procfs(const char *dst) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *dst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  procfs(const char *dst) noexcept
+  {
+    if ( __mount_count &gt;= max_mounts ) return __config_fail(stage::filesystem, -error::no_space), *this;
+    __mounts[__mount_count++] = mount_spec{ &quot;proc&quot;, dst, &quot;proc&quot;, nullptr, posix::ms_nosuid | posix::ms_nodev | posix::ms_noexec, false, 0 };
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::filesystem, -error::no_space), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L622">line 622</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L624">line 624</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>.</p></section><section class="function-entry" id="f-81a5acae9c2cf4f6"><h3><code>micron::sec::sandbox::landlock(const char *path, landlock::access_fs access) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L630">line 630</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  landlock(const char *path, landlock::access_fs access) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *path</code></li><li><code>landlock::access_fs access</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  landlock(const char *path, landlock::access_fs access) noexcept
+  {
+    if ( __ll_count &gt;= max_landlock_rules ) return __config_fail(stage::landlock, -error::no_space), *this;
+    __ll_rules[__ll_count++] = ll_rule{ path, access };
+    // WARNING: the default is everything handled, not the union of what was granted
+    if ( !__ll_handled_explicit ) __ll_handled = landlock::supported_fs();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::landlock, -error::no_space), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L632">line 632</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L636">line 636</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>, <a href="landlock.hpp.html#f-7da3f1f54329971e">landlock::supported_fs</a>.</p></section><section class="function-entry" id="f-41400399e0525d84"><h3><code>micron::sec::sandbox::landlock_fd(i32 fd, landlock::access_fs access) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L642">line 642</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  landlock_fd(i32 fd, landlock::access_fs access) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 fd</code></li><li><code>landlock::access_fs access</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  landlock_fd(i32 fd, landlock::access_fs access) noexcept
+  {
+    if ( fd &lt; 3 || posix::fcntl(fd, posix::f_getfd, 0) &lt; 0 ) return __config_fail(stage::landlock, -error::bad_file_number), *this;
+    if ( __ll_count &gt;= max_landlock_rules ) return __config_fail(stage::landlock, -error::no_space), *this;
+    __ll_rules[__ll_count++] = ll_rule{ nullptr, access, fd };
+    if ( !__ll_handled_explicit ) __ll_handled = landlock::supported_fs();
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::landlock, -error::bad_file_number), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L644">line 644</a></td></tr><tr class="t-dsc"><td><code>__config_fail(stage::landlock, -error::no_space), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L645">line 645</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L648">line 648</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/sys/fcntl.hpp.html#f-8723db8d254730c9">posix::fcntl</a>, <a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>, <a href="landlock.hpp.html#f-7da3f1f54329971e">landlock::supported_fs</a>.</p></section><section class="function-entry" id="f-816a0c54e19da5fe"><h3><code>micron::sec::sandbox::landlock_strict(bool on = true) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L653">line 653</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  landlock_strict(bool on = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool on = true</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  landlock_strict(bool on = true) noexcept
+  {
+    __ll_strict = on;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L656">line 656</a></td></tr></tbody></table></section><section class="function-entry" id="f-1c42e4a103ccf6a2"><h3><code>micron::sec::sandbox::landlock_scope(landlock::scope scoped) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L663">line 663</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  landlock_scope(landlock::scope scoped) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>landlock::scope scoped</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  landlock_scope(landlock::scope scoped) noexcept
+  {
+    __ll_scoped = scoped;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L666">line 666</a></td></tr></tbody></table></section><section class="function-entry" id="f-999e07c3d6b5b35c"><h3><code>micron::sec::sandbox::landlock_net(landlock::access_net handled_net) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L670">line 670</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  landlock_net(landlock::access_net handled_net) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>landlock::access_net handled_net</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  landlock_net(landlock::access_net handled_net) noexcept
+  {
+    __ll_handled_net = handled_net;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L673">line 673</a></td></tr></tbody></table></section><section class="function-entry" id="f-e37a2e79e52f0c62"><h3><code>micron::sec::sandbox::landlock_handled(landlock::access_fs handled) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L677">line 677</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  landlock_handled(landlock::access_fs handled) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>landlock::access_fs handled</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  landlock_handled(landlock::access_fs handled) noexcept
+  {
+    __ll_handled = handled;
+    __ll_handled_explicit = true;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L681">line 681</a></td></tr></tbody></table></section><section class="function-entry" id="f-1b4641380a25ad18"><h3><code>micron::sec::sandbox::landlock_handled_all(void) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L685">line 685</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  landlock_handled_all(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>landlock_handled(landlock::supported_fs())</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  landlock_handled_all(void) noexcept
+  {
+    return landlock_handled(landlock::supported_fs());
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>landlock_handled(landlock::supported_fs())</code></td><td><a href="../../source/sec/sandbox.hpp.html#L687">line 687</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-e37a2e79e52f0c62">landlock_handled</a>, <a href="landlock.hpp.html#f-7da3f1f54329971e">landlock::supported_fs</a>.</p></section><section class="function-entry" id="f-860281c7f6aaa266"><h3><code>micron::sec::sandbox::seccomp(const seccomp::filter_builder&lt;N&gt; &amp;fb) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L692">line 692</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N&gt;
+  sandbox &amp;
+  seccomp(const seccomp::filter_builder&lt;N&gt; &amp;fb) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const seccomp::filter_builder&lt;N&gt; &amp;fb</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;usize N&gt;
+  sandbox &amp;
+  seccomp(const seccomp::filter_builder&lt;N&gt; &amp;fb) noexcept
+  {
+    if ( !fb.valid() ) return __config_fail(stage::seccomp, -error::invalid_arg), *this;
+    __filter = fb.insns;
+    __filter_len = static_cast&lt;u16&gt;(fb.count);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::seccomp, -error::invalid_arg), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L694">line 694</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L697">line 697</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>.</p></section><section class="function-entry" id="f-098232cb7e9f513d"><h3><code>micron::sec::sandbox::seccomp(const seccomp::filter_builder&lt;N&gt; &amp;&amp;)</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L700">line 700</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;usize N&gt; sandbox &amp;seccomp(const seccomp::filter_builder&lt;N&gt; &amp;&amp;) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const seccomp::filter_builder&lt;N&gt; &amp;&amp;</code></li></ul><h4>Effects</h4><p>See <a href="sandbox.hpp.html#f-860281c7f6aaa266">the definition and overloads</a> for the effects. This declaration supplies the parameter types and qualifiers shown above.</p></section><section class="function-entry" id="f-37832707f6e519fc"><h3><code>micron::sec::sandbox::no_new_privs(bool on = true) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L703">line 703</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  no_new_privs(bool on = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool on = true</code></li></ul><h4>Effects</h4><p>Returns <code>__want_nnp = on, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  no_new_privs(bool on = true) noexcept
+  {
+    return __want_nnp = on, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__want_nnp = on, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L705">line 705</a></td></tr></tbody></table></section><section class="function-entry" id="f-0696a0c28e8e7298"><h3><code>micron::sec::sandbox::undumpable(bool on = true) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L709">line 709</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  undumpable(bool on = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool on = true</code></li></ul><h4>Effects</h4><p>Returns <code>__want_undumpable = on, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  undumpable(bool on = true) noexcept
+  {
+    return __want_undumpable = on, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__want_undumpable = on, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L711">line 711</a></td></tr></tbody></table></section><section class="function-entry" id="f-128e365eff4353ed"><h3><code>micron::sec::sandbox::drop_capabilities(bool on = true) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L715">line 715</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  drop_capabilities(bool on = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool on = true</code></li></ul><h4>Effects</h4><p>Returns <code>__drop_all_caps = on, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  drop_capabilities(bool on = true) noexcept
+  {
+    return __drop_all_caps = on, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__drop_all_caps = on, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L717">line 717</a></td></tr></tbody></table></section><section class="function-entry" id="f-1b25a5c0ee9f7c05"><h3><code>micron::sec::sandbox::as_user(posix::uid_t uid, posix::gid_t gid) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L721">line 721</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  as_user(posix::uid_t uid, posix::gid_t gid) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>posix::uid_t uid</code></li><li><code>posix::gid_t gid</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  as_user(posix::uid_t uid, posix::gid_t gid) noexcept
+  {
+    __uid = uid;
+    __gid = gid;
+    __change_ids = true;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L726">line 726</a></td></tr></tbody></table></section><section class="function-entry" id="f-14bc2b461032425b"><h3><code>micron::sec::sandbox::rlimit(posix::rlim_t res, u64 soft, u64 hard) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L730">line 730</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  rlimit(posix::rlim_t res, u64 soft, u64 hard) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>posix::rlim_t res</code></li><li><code>u64 soft</code></li><li><code>u64 hard</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  rlimit(posix::rlim_t res, u64 soft, u64 hard) noexcept
+  {
+    if ( __rlimit_count &gt;= 8 ) return __config_fail(stage::rlimits, -error::no_space), *this;
+    __rlimits[__rlimit_count++] = rl_spec{ res, soft, hard };
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::rlimits, -error::no_space), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L732">line 732</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L734">line 734</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>.</p></section><section class="function-entry" id="f-5af8c8c17e0e4aeb"><h3><code>micron::sec::sandbox::stdio(i32 in, i32 out, i32 err) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L738">line 738</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  stdio(i32 in, i32 out, i32 err) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 in</code></li><li><code>i32 out</code></li><li><code>i32 err</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  stdio(i32 in, i32 out, i32 err) noexcept
+  {
+    __stdin_fd = in;
+    __stdout_fd = out;
+    __stderr_fd = err;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L743">line 743</a></td></tr></tbody></table></section><section class="function-entry" id="f-8c49881251dfb7c0"><h3><code>micron::sec::sandbox::keep_fd(i32 fd) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L748">line 748</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  keep_fd(i32 fd) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 fd</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  keep_fd(i32 fd) noexcept
+  {
+    if ( __impl::__fd_is_dir(fd) ) return __config_fail(stage::descriptors, -error::is_a_dir), *this;
+    return keep_dir_fd(fd);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::descriptors, -error::is_a_dir), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L750">line 750</a></td></tr><tr class="t-dsc"><td><code>keep_dir_fd(fd)</code></td><td><a href="../../source/sec/sandbox.hpp.html#L751">line 751</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-e2da98e82350e51f">__impl::__fd_is_dir</a>, <a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>, <a href="sandbox.hpp.html#f-3da314c9ecd8a6fd">keep_dir_fd</a>.</p></section><section class="function-entry" id="f-3da314c9ecd8a6fd"><h3><code>micron::sec::sandbox::keep_dir_fd(i32 fd) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L755">line 755</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  keep_dir_fd(i32 fd) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 fd</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  keep_dir_fd(i32 fd) noexcept
+  {
+    __close_others = true;
+    if ( __keep_count &gt;= 8 ) return __config_fail(stage::descriptors, -error::no_space), *this;
+    __keep_fds[__keep_count++] = fd;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__config_fail(stage::descriptors, -error::no_space), *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L758">line 758</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L760">line 760</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-694e4bef0ef70683">__config_fail</a>.</p></section><section class="function-entry" id="f-d36c6b4305a68eda"><h3><code>micron::sec::sandbox::close_extra_fds(bool on = true) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L764">line 764</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  close_extra_fds(bool on = true) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>bool on = true</code></li></ul><h4>Effects</h4><p>Returns <code>__close_others = on, *this</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  close_extra_fds(bool on = true) noexcept
+  {
+    return __close_others = on, *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__close_others = on, *this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L766">line 766</a></td></tr></tbody></table></section><section class="function-entry" id="f-1c8149b3474857fa"><h3><code>micron::sec::sandbox::kinds(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L770">line 770</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] ns::ns_kind
+  kinds(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ns_kinds</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] ns::ns_kind
+  kinds(void) const noexcept
+  {
+    return __ns_kinds;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ns_kinds</code></td><td><a href="../../source/sec/sandbox.hpp.html#L772">line 772</a></td></tr></tbody></table></section><section class="function-entry" id="f-7fd14c45de0f2535"><h3><code>micron::sec::sandbox::mount_count(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L776">line 776</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  mount_count(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__mount_count</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  mount_count(void) const noexcept
+  {
+    return __mount_count;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__mount_count</code></td><td><a href="../../source/sec/sandbox.hpp.html#L778">line 778</a></td></tr></tbody></table></section><section class="function-entry" id="f-6623056ee69da011"><h3><code>micron::sec::sandbox::landlock_rule_count(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L782">line 782</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] usize
+  landlock_rule_count(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ll_count</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] usize
+  landlock_rule_count(void) const noexcept
+  {
+    return __ll_count;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ll_count</code></td><td><a href="../../source/sec/sandbox.hpp.html#L784">line 784</a></td></tr></tbody></table></section><section class="function-entry" id="f-357125e9c13d0292"><h3><code>micron::sec::sandbox::has_seccomp(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L788">line 788</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  has_seccomp(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__filter != nullptr &amp;&amp; __filter_len &gt; 0</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  has_seccomp(void) const noexcept
+  {
+    return __filter != nullptr &amp;&amp; __filter_len &gt; 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__filter != nullptr &amp;&amp; __filter_len &gt; 0</code></td><td><a href="../../source/sec/sandbox.hpp.html#L790">line 790</a></td></tr></tbody></table></section><section class="function-entry" id="f-1677439e761d3103"><h3><code>micron::sec::sandbox::landlock_handled(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L794">line 794</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] landlock::access_fs
+  landlock_handled(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ll_handled</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] landlock::access_fs
+  landlock_handled(void) const noexcept
+  {
+    return __ll_handled;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ll_handled</code></td><td><a href="../../source/sec/sandbox.hpp.html#L796">line 796</a></td></tr></tbody></table></section><section class="function-entry" id="f-6502b64c0c3cf88d"><h3><code>micron::sec::sandbox::landlock_scoped(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L800">line 800</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] landlock::scope
+  landlock_scoped(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ll_scoped</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] landlock::scope
+  landlock_scoped(void) const noexcept
+  {
+    return __ll_scoped;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ll_scoped</code></td><td><a href="../../source/sec/sandbox.hpp.html#L802">line 802</a></td></tr></tbody></table></section><section class="function-entry" id="f-51c54127a600a699"><h3><code>micron::sec::sandbox::landlock_handled_net(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L806">line 806</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] landlock::access_net
+  landlock_handled_net(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__ll_handled_net</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] landlock::access_net
+  landlock_handled_net(void) const noexcept
+  {
+    return __ll_handled_net;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__ll_handled_net</code></td><td><a href="../../source/sec/sandbox.hpp.html#L808">line 808</a></td></tr></tbody></table></section><section class="function-entry" id="f-fa109b65ce7ac369"><h3><code>micron::sec::sandbox::closes_extra_fds(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L814">line 814</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  closes_extra_fds(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__close_others</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  closes_extra_fds(void) const noexcept
+  {
+    return __close_others;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__close_others</code></td><td><a href="../../source/sec/sandbox.hpp.html#L816">line 816</a></td></tr></tbody></table></section><section class="function-entry" id="f-c09e2ef68a182261"><h3><code>micron::sec::sandbox::drops_capabilities(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L820">line 820</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  drops_capabilities(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__drop_all_caps</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  drops_capabilities(void) const noexcept
+  {
+    return __drop_all_caps;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__drop_all_caps</code></td><td><a href="../../source/sec/sandbox.hpp.html#L822">line 822</a></td></tr></tbody></table></section><section class="function-entry" id="f-e8f32594e7ea9e03"><h3><code>micron::sec::sandbox::config_fault(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L827">line 827</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] fault_t
+  config_fault(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>__cfg_fault</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] fault_t
+  config_fault(void) const noexcept
+  {
+    return __cfg_fault;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__cfg_fault</code></td><td><a href="../../source/sec/sandbox.hpp.html#L829">line 829</a></td></tr></tbody></table></section><section class="function-entry" id="f-134af715485fa7e6"><h3><code>micron::sec::sandbox::configured(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L833">line 833</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] bool
+  configured(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>!__cfg_fault</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] bool
+  configured(void) const noexcept
+  {
+    return !__cfg_fault;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>!__cfg_fault</code></td><td><a href="../../source/sec/sandbox.hpp.html#L835">line 835</a></td></tr></tbody></table></section><section class="function-entry" id="f-aefded28cbd20d77"><h3><code>micron::sec::sandbox::child::ok(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L846">line 846</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr bool
+    ok(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>pid &gt; 0 &amp;&amp; !fault</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr bool
+    ok(void) const noexcept
+    {
+      return pid &gt; 0 &amp;&amp; !fault;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>pid &gt; 0 &amp;&amp; !fault</code></td><td><a href="../../source/sec/sandbox.hpp.html#L848">line 848</a></td></tr></tbody></table></section><section class="function-entry" id="f-851a8d29942bea1e"><h3><code>micron::sec::sandbox::exit_status::exited(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L857">line 857</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr bool
+    exited(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::wifexited(raw_status)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr bool
+    exited(void) const noexcept
+    {
+      return micron::wifexited(raw_status);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wifexited(raw_status)</code></td><td><a href="../../source/sec/sandbox.hpp.html#L859">line 859</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/process/wait.hpp.html#f-76d33c351667921d">micron::wifexited</a>.</p></section><section class="function-entry" id="f-f71c7aebd1e009b8"><h3><code>micron::sec::sandbox::exit_status::signaled(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L863">line 863</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr bool
+    signaled(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::wifsignaled(raw_status)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr bool
+    signaled(void) const noexcept
+    {
+      return micron::wifsignaled(raw_status);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wifsignaled(raw_status)</code></td><td><a href="../../source/sec/sandbox.hpp.html#L865">line 865</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/process/wait.hpp.html#f-b785101824d4e921">micron::wifsignaled</a>.</p></section><section class="function-entry" id="f-5d7f999265337efd"><h3><code>micron::sec::sandbox::exit_status::code(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L870">line 870</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr i32
+    code(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::wexitstatus(raw_status)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr i32
+    code(void) const noexcept
+    {
+      return micron::wexitstatus(raw_status);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wexitstatus(raw_status)</code></td><td><a href="../../source/sec/sandbox.hpp.html#L872">line 872</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/process/wait.hpp.html#f-706ac8dabc838509">micron::wexitstatus</a>.</p></section><section class="function-entry" id="f-c81646602c5dc05c"><h3><code>micron::sec::sandbox::exit_status::signal(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L877">line 877</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr i32
+    signal(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>micron::wtermsig(raw_status)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr i32
+    signal(void) const noexcept
+    {
+      return micron::wtermsig(raw_status);
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>micron::wtermsig(raw_status)</code></td><td><a href="../../source/sec/sandbox.hpp.html#L879">line 879</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/process/wait.hpp.html#f-36c75efa5e6433dc">micron::wtermsig</a>.</p></section><section class="function-entry" id="f-d73d081d1a3a80f7"><h3><code>micron::sec::sandbox::exit_status::raw(void) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L883">line 883</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] constexpr int
+    raw(void) const noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Returns <code>raw_status</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] constexpr int
+    raw(void) const noexcept
+    {
+      return raw_status;
+    }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>raw_status</code></td><td><a href="../../source/sec/sandbox.hpp.html#L885">line 885</a></td></tr></tbody></table></section><section class="function-entry" id="f-8809b568c7644b2b"><h3><code>micron::sec::sandbox::spawn(const char *path, char *const *argv, char *const *envp) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L891">line 891</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] child
+  spawn(const char *path, char *const *argv, char *const *envp) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li></ul><h4>Effects</h4><p>Returns <code>__launch(path, argv, envp, nullptr)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] child
+  spawn(const char *path, char *const *argv, char *const *envp) const noexcept
+  {
+    return __launch(path, argv, envp, nullptr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__launch(path, argv, envp, nullptr)</code></td><td><a href="../../source/sec/sandbox.hpp.html#L893">line 893</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-364acd1155e53e1c">__launch</a>.</p></section><section class="function-entry" id="f-013b18cd02dac6b9"><h3><code>micron::sec::sandbox::parent_death_signal() noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L899">line 899</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>sandbox &amp;
+  parent_death_signal() noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">sandbox &amp;
+  parent_death_signal() noexcept
+  {
+    __parent_death = true;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../source/sec/sandbox.hpp.html#L902">line 902</a></td></tr></tbody></table></section><section class="function-entry" id="f-fd59f9ecb06f25f8"><h3><code>micron::sec::sandbox::run(i32 (*body)(void)) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L906">line 906</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] child
+  run(i32 (*body)(void)) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 (*body)(void)</code></li></ul><h4>Effects</h4><p>Returns <code>__launch(nullptr, nullptr, nullptr, body)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] child
+  run(i32 (*body)(void)) const noexcept
+  {
+    return __launch(nullptr, nullptr, nullptr, body);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__launch(nullptr, nullptr, nullptr, body)</code></td><td><a href="../../source/sec/sandbox.hpp.html#L908">line 908</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-364acd1155e53e1c">__launch</a>.</p></section><section class="function-entry" id="f-216a2b4d54194ce7"><h3><code>micron::sec::sandbox::run_to_completion(i32 (*body)(void)) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L912">line 912</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] result&lt;exit_status&gt;
+  run_to_completion(i32 (*body)(void)) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 (*body)(void)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] result&lt;exit_status&gt;
+  run_to_completion(i32 (*body)(void)) const noexcept
+  {
+    child c = run(body);
+    if ( !c.ok() ) return result&lt;exit_status&gt;{ error_t(c.fault.err ? c.fault.err : -error::permissions) };
+    int status = 0;
+    if ( micron::waitpid(c.pid, &amp;status, 0) &lt; 0 ) [[unlikely]]
+      return result&lt;exit_status&gt;{ error_t(-error::no_child_process) };      // nothing was reaped; status is not an answer
+    return result&lt;exit_status&gt;{ exit_status{ status } };
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>result&lt;exit_status&gt;{ error_t(c.fault.err ? c.fault.err : -error::permissions) }</code></td><td><a href="../../source/sec/sandbox.hpp.html#L915">line 915</a></td></tr><tr class="t-dsc"><td><code>result&lt;exit_status&gt;{ error_t(-error::no_child_process) }</code></td><td><a href="../../source/sec/sandbox.hpp.html#L918">line 918</a></td></tr><tr class="t-dsc"><td><code>result&lt;exit_status&gt;{ exit_status{ status } }</code></td><td><a href="../../source/sec/sandbox.hpp.html#L919">line 919</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="sandbox.hpp.html#f-fd59f9ecb06f25f8">run</a>, <a href="bits.hpp.html#s-d1519b12d5c1d418">error_t</a>, <a href="../linux/process/wait.hpp.html#f-72deb6806252135c">micron::waitpid</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e2da98e82350e51f"><h3><code>micron::sec::__impl::__fd_is_dir(i32 fd) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L141">line 141</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline bool
+__fd_is_dir(i32 fd) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 fd</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline bool
+__fd_is_dir(i32 fd) noexcept
+{
+  if ( fd &lt; 0 ) return false;
+  posix::stat_t st{};
+  if ( posix::fstat(fd, st) &lt; 0 ) return false;
+  return (st.st_mode &amp; 0170000u) == 0040000u;      // S_IFMT / S_IFDIR
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sec/sandbox.hpp.html#L143">line 143</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../source/sec/sandbox.hpp.html#L145">line 145</a></td></tr><tr class="t-dsc"><td><code>(st.st_mode &amp; 0170000u) == 0040000u</code></td><td><a href="../../source/sec/sandbox.hpp.html#L146">line 146</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/sys/stat.hpp.html#f-bd0672840e2ec772">posix::fstat</a>.</p></section><section class="function-entry" id="f-1b3678efbe6ba7f5"><h3><code>micron::sec::__impl::__child_fail(i32 pipe_fd, stage where, i32 err) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L150">line 150</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[noreturn]] inline void
+__child_fail(i32 pipe_fd, stage where, i32 err) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 pipe_fd</code></li><li><code>stage where</code></li><li><code>i32 err</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[noreturn]] inline void
+__child_fail(i32 pipe_fd, stage where, i32 err) noexcept
+{
+  wire_fault w{ static_cast&lt;i32&gt;(where), err };
+  if ( pipe_fd &gt;= 0 ) (void)posix::write(pipe_fd, &amp;w, sizeof(w));
+  micron::sys_group_exit(120);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/io/sys.hpp.html#f-3125062f09a2bad4">posix::write</a>, <a href="../exit.hpp.html#f-7f4fb45e23edea94">micron::sys_group_exit</a>.</p></section><section class="function-entry" id="f-694e4bef0ef70683"><h3><code>micron::sec::sandbox::__config_fail(stage where, i32 err) noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L220">line 220</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>void
+  __config_fail(stage where, i32 err) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>stage where</code></li><li><code>i32 err</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">void
+  __config_fail(stage where, i32 err) noexcept
+  {
+    if ( !__cfg_fault ) __cfg_fault = fault_t{ where, err };      // first failure wins
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-9999768462eb6a51"><h3><code>micron::sec::sandbox::__close_extra(i32 ep, u64 ceiling) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L252">line 252</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] i32
+  __close_extra(i32 ep, u64 ceiling) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 ep</code></li><li><code>u64 ceiling</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] i32
+  __close_extra(i32 ep, u64 ceiling) const noexcept
+  {
+    i32 keep[8 + 1 + max_landlock_rules];
+    usize n = 0;
+    for ( usize i = 0; i &lt; __keep_count; ++i )
+      if ( __keep_fds[i] &gt;= 3 ) keep[n++] = __keep_fds[i];
+    if ( ep &gt;= 3 ) keep[n++] = ep;
+    for ( usize i = 0; i &lt; __ll_count; ++i )
+      if ( __ll_rules[i].fd &gt;= 3 ) keep[n++] = __ll_rules[i].fd;
+    for ( usize i = 1; i &lt; n; ++i ) {
+      const i32 v = keep[i];
+      usize j = i;
+      while ( j &gt; 0 &amp;&amp; keep[j - 1] &gt; v ) {
+        keep[j] = keep[j - 1];
+        --j;
+      }
+      keep[j] = v;
+    }
+
+    bool ranged = micron::kernel::since(micron::kernel::feature::close_range);
+    if ( ranged ) {
+      unsigned int lo = 3;
+      for ( usize i = 0; i &lt; n &amp;&amp; ranged; ++i ) {
+        const unsigned int k = static_cast&lt;unsigned int&gt;(keep[i]);
+        if ( k &lt; lo ) continue;      // a duplicate in the keep set, or below the floor
+        if ( k &gt; lo ) {
+          const i32 r = posix::close_range(lo, k - 1, 0);
+          if ( r == -error::bad_syscall )
+            ranged = false;
+          else if ( r &lt; 0 )
+            return r;
+        }
+        lo = k + 1;
+      }
+      if ( ranged ) {
+        const i32 r = posix::close_range(lo, ~0u, 0);
+        if ( r == -error::bad_syscall )
+          ranged = false;
+        else if ( r &lt; 0 )
+          return r;
+        else
+          return 0;
+      }
+    }
+
+    u64 hi = ceiling;
+    if ( hi &lt; 1024 ) hi = 1024;
+    if ( hi &gt; max_fd_sweep ) [[unlikely]]
+      return -error::overflow;      // no close_range, and more fds than a loop can walk
+    for ( u64 fd = 3; fd &lt; hi; ++fd ) {
+      bool k = false;
+      for ( usize i = 0; i &lt; n; ++i )
+        if ( static_cast&lt;u64&gt;(keep[i]) == fd ) k = true;
+      if ( !k ) (void)posix::close(static_cast&lt;i32&gt;(fd));
+    }
+    return 0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/sec/sandbox.hpp.html#L282">line 282</a></td></tr><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/sec/sandbox.hpp.html#L291">line 291</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/sec/sandbox.hpp.html#L293">line 293</a></td></tr><tr class="t-dsc"><td><code>-error::overflow</code></td><td><a href="../../source/sec/sandbox.hpp.html#L300">line 300</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/sec/sandbox.hpp.html#L307">line 307</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../kernel.hpp.html#f-8298e30ad452be6a">micron::kernel::since</a>, <a href="../linux/io/sys.hpp.html#f-4127a8717d2339ac">posix::close_range</a>, <a href="../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>.</p></section><section class="function-entry" id="f-559ce9ccb95d238f"><h3><code>micron::sec::sandbox::__child(i32 ep, i32 parent, const char *path, char *const *argv, char *const *envp, i32 (*body)(void)) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L312">line 312</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[noreturn]] void
+  __child(i32 ep, i32 parent, const char *path, char *const *argv, char *const *envp, i32 (*body)(void)) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 ep</code></li><li><code>i32 parent</code></li><li><code>const char *path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li><li><code>i32 (*body)(void)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[noreturn]] void
+  __child(i32 ep, i32 parent, const char *path, char *const *argv, char *const *envp, i32 (*body)(void)) const noexcept
+  {
+    i32 r = 0;
+    if ( __parent_death ) {
+      r = micron::prctl(micron::PR_SET_PDEATHSIG, posix::sig_kill);
+      if ( r &lt; 0 || posix::getppid() != parent ) __impl::__child_fail(ep, stage::parent_lifetime, r &lt; 0 ? r : -error::no_process);
+    }
+
+    // namespaces
+    if ( ns::any(__ns_kinds) ) {
+      if ( ns::any(__ns_kinds &amp; ns::ns_kind::user) )
+        r = ns::unshare_user_as_root(__ns_kinds &amp; ~ns::ns_kind::user);
+      else
+        r = ns::unshare(__ns_kinds);
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::namespaces, r);
+
+      // WARNING: unshare(CLONE_NEWPID) does ___NOT___ move the caller
+      if ( ns::any(__ns_kinds &amp; ns::ns_kind::pid) ) {
+        const int inner = micron::try_fork();
+        if ( inner &lt; 0 ) __impl::__child_fail(ep, stage::namespaces, inner);
+        if ( inner &gt; 0 ) {
+          if ( ep &gt;= 0 ) (void)posix::close(ep);
+          int st = 0;
+          const posix::pid_t got = micron::waitpid(inner, &amp;st, 0);
+          if ( got &lt; 0 ) micron::sys_group_exit(125);
+          if ( micron::wifsignaled(st) ) micron::sys_group_exit(128 + micron::wtermsig(st));
+          micron::sys_group_exit(micron::wifexited(st) ? micron::wexitstatus(st) : 125);
+        }
+      }
+    }
+
+    // filesystem
+    if ( ns::any(__ns_kinds &amp; ns::ns_kind::mount) &amp;&amp; __make_private ) {
+      r = static_cast&lt;i32&gt;(posix::mount(&quot;none&quot;, &quot;/&quot;, nullptr, posix::ms_rec | posix::ms_private, nullptr));
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::filesystem, r);
+    }
+    for ( usize i = 0; i &lt; __mount_count; ++i ) {
+      const mount_spec &amp;m = __mounts[i];
+      r = static_cast&lt;i32&gt;(posix::mount(m.source, m.target, m.fstype, m.flags, m.options));
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::filesystem, r);
+      if ( m.needs_remount() ) {
+        r = __impl::__remount_attrs(m.target, m.recursive(), m.flags, m.attrs, m.read_only);
+        if ( r &lt; 0 ) __impl::__child_fail(ep, stage::filesystem, r);
+      }
+    }
+    if ( __new_root != nullptr ) {
+      if ( __use_chroot ) {
+        r = static_cast&lt;i32&gt;(posix::chroot(__new_root));
+        if ( r &lt; 0 ) __impl::__child_fail(ep, stage::filesystem, r);
+        r = static_cast&lt;i32&gt;(posix::chdir(&quot;/&quot;));
+        if ( r &lt; 0 ) __impl::__child_fail(ep, stage::filesystem, r);
+      } else {
+        const char *old_here = __impl::__rel_put_old(__new_root, __put_old);
+        if ( old_here == nullptr ) __impl::__child_fail(ep, stage::filesystem, -error::invalid_arg);
+
+        r = static_cast&lt;i32&gt;(posix::pivot_root(__new_root, __put_old));
+        if ( r &lt; 0 ) __impl::__child_fail(ep, stage::filesystem, r);
+        r = static_cast&lt;i32&gt;(posix::chdir(&quot;/&quot;));
+        if ( r &lt; 0 ) __impl::__child_fail(ep, stage::filesystem, r);
+
+        r = static_cast&lt;i32&gt;(posix::umount2(old_here, posix::mnt_detach));
+        if ( r &lt; 0 ) __impl::__child_fail(ep, stage::filesystem, r);
+      }
+    }
+
+    u64 fd_ceiling = 0;
+    if ( __close_others ) {
+      posix::rlimit64_t rl{};
+      if ( posix::get_process_limits(0, posix::rlimit_nofile, rl) == 0 ) fd_ceiling = rl.rlim_max &gt; rl.rlim_cur ? rl.rlim_max : rl.rlim_cur;
+    }
+
+    // rlimits
+    for ( usize i = 0; i &lt; __rlimit_count; ++i ) {
+      posix::rlimit64_t rl{};
+      rl.rlim_cur = __rlimits[i].soft;
+      rl.rlim_max = __rlimits[i].hard;
+      r = static_cast&lt;i32&gt;(posix::set_process_limits(0, __rlimits[i].res, rl));
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::rlimits, r);
+    }
+
+    // stdio
+    // WARNING: dup2 onto 0/1/2 can clobber a source that is 0/1/2
+    {
+      i32 src[3] = { __stdin_fd, __stdout_fd, __stderr_fd };
+      i32 tmp[3] = { -1, -1, -1 };
+      for ( usize i = 0; i &lt; 3; ++i ) {
+        if ( src[i] &lt; 0 || src[i] &gt;= 3 ) continue;
+        const i32 hi = posix::fcntl(src[i], posix::f_dupfd, 3);
+        if ( hi &lt; 0 ) __impl::__child_fail(ep, stage::stdio, hi);
+        tmp[i] = hi;
+        src[i] = hi;
+      }
+      for ( usize i = 0; i &lt; 3; ++i )
+        if ( src[i] &gt;= 0 &amp;&amp; posix::dup2(src[i], static_cast&lt;i32&gt;(i)) &lt; 0 ) __impl::__child_fail(ep, stage::stdio, -error::bad_file_number);
+      for ( usize i = 0; i &lt; 3; ++i )
+        if ( tmp[i] &gt;= 0 ) (void)posix::close(tmp[i]);
+    }
+
+    // descriptors, must be before the seccomp stage
+    if ( __close_others ) {
+      r = __close_extra(ep, fd_ceiling);
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::descriptors, r);
+    }
+
+    // landlock, also before seccomp
+    if ( landlock::any(__ll_handled) || landlock::any(__ll_handled_net) || landlock::any(__ll_scoped) || __ll_count &gt; 0 ) {
+      landlock::ruleset rs = landlock::try_ruleset(__ll_handled, __ll_handled_net, __ll_scoped,
+                                                   __ll_strict ? landlock::abi_policy::strict : landlock::abi_policy::narrow);
+      if ( !rs.valid() ) __impl::__child_fail(ep, stage::landlock, rs.error());
+      for ( usize i = 0; i &lt; __ll_count; ++i ) {
+        const auto &amp;rule = __ll_rules[i];
+        const i32 a = rule.fd &gt;= 0 ? rs.allow_fd(rule.fd, rule.access) : rs.allow(rule.path, rule.access);
+        if ( a &lt; 0 ) __impl::__child_fail(ep, stage::landlock, a);
+      }
+      const i32 e = rs.restrict_self();
+      if ( e &lt; 0 ) __impl::__child_fail(ep, stage::landlock, e);
+      // Rule descriptors are borrowed setup handles, not child authority.
+      for ( usize i = 0; i &lt; __ll_count; ++i ) {
+        const i32 fd = __ll_rules[i].fd;
+        bool kept = false;
+        for ( usize j = 0; j &lt; __keep_count; ++j )
+          if ( __keep_fds[j] == fd ) kept = true;
+        if ( fd &gt;= 3 &amp;&amp; !kept ) (void)posix::close(fd);
+      }
+    }
+
+    // capabilities; needs CAP_SETPCAP, and must precede seccomp
+    bool has_caps_to_drop = false;
+    if ( __drop_all_caps ) {
+      //   holds CAP_SETPCAP        -&gt; drop, falat failure
+      //   no CAP_SETPCAP, NNP on   -&gt; skip
+      //   no CAP_SETPCAP, NNP OFF  -&gt; FATAL
+      const bool can_drop_bounding = micron::has_cap(micron::cap::setpcap);
+      if ( !can_drop_bounding &amp;&amp; !__want_nnp ) __impl::__child_fail(ep, stage::caps_pre, -error::permissions);
+      const micron::ucap_set_t __live = micron::this_caps();
+      // EFFECTIVE and PERMITTED only
+      has_caps_to_drop = static_cast&lt;u64&gt;(__live.effective) != 0 || static_cast&lt;u64&gt;(__live.permitted) != 0;
+      if ( can_drop_bounding ) {
+        for ( u32 i = 0; i &lt; static_cast&lt;u32&gt;(micron::cap::__count); ++i ) {
+          const i32 d = micron::drop_bounding(static_cast&lt;micron::cap&gt;(i));
+          if ( d &lt; 0 &amp;&amp; d != -error::invalid_arg ) __impl::__child_fail(ep, stage::caps_pre, d);
+        }
+      }
+
+      // ambient caps need no privilege to clear, so this is unconditional
+      r = micron::clear_ambient();
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::caps_pre, r);
+      constexpr i32 want
+          = posix::secbit_noroot | posix::secbit_noroot_locked | posix::secbit_no_setuid_fixup | posix::secbit_no_setuid_fixup_locked;
+      if ( can_drop_bounding ) {
+        const i32 sb = posix::cap_set_securebits(want);
+        if ( sb &lt; 0 ) __impl::__child_fail(ep, stage::caps_pre, sb);
+      }
+    }
+
+    // seccomp, must precede the cred drop
+    if ( __filter != nullptr &amp;&amp; __filter_len &gt; 0 ) {
+      bpf::fprog_t prog{ __filter_len, const_cast&lt;bpf::insn_t *&gt;(__filter) };
+      r = seccomp::load_raw(prog, true, 0);
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::seccomp, r);
+    }
+
+    // nnp / dumpable
+    if ( __want_nnp ) {
+      r = micron::prctl(PR_SET_NO_NEW_PRIVS, 1UL);
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::no_new_privs, r);
+    }
+    if ( __want_undumpable ) {
+      r = micron::prctl(PR_SET_DUMPABLE, 0UL);
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::no_new_privs, r);
+    }
+
+    // credentials
+    if ( __change_ids ) {
+      if ( !ns::any(__ns_kinds &amp; ns::ns_kind::user) ) {
+        if ( micron::syscall(SYS_setgroups, 0, 0) &lt; 0 ) __impl::__child_fail(ep, stage::credentials, -error::permissions);
+      }
+      if ( posix::setgid(__gid) &lt; 0 ) __impl::__child_fail(ep, stage::credentials, -error::permissions);
+      if ( posix::setuid(__uid) &lt; 0 ) __impl::__child_fail(ep, stage::credentials, -error::permissions);
+      if ( posix::getuid() != __uid || posix::geteuid() != __uid || posix::getgid() != __gid || posix::getegid() != __gid )
+        __impl::__child_fail(ep, stage::credentials, -error::permissions);
+    }
+
+    // capabilities
+    if ( __drop_all_caps &amp;&amp; has_caps_to_drop ) {
+      r = micron::drop_all_caps();
+      if ( r &lt; 0 ) __impl::__child_fail(ep, stage::caps_post, r);
+    }
+
+    // signal mask
+    {
+      posix::sigset_t empty{};
+      posix::sigemptyset(empty);
+      if ( posix::sigprocmask(posix::sig_setmask, empty, nullptr) &lt; 0 ) __impl::__child_fail(ep, stage::signal_mask, -error::invalid_arg);
+    }
+
+    // exec.
+    // WARNING: the fault pipe is closed on execve by O_CLOEXEC
+    if ( body != nullptr ) {
+      if ( ep &gt;= 0 ) (void)posix::close(ep);
+      micron::sys_group_exit(body());
+    }
+
+    (void)posix::execve(path, argv, envp);
+    __impl::__child_fail(ep, stage::exec, -error::no_entry);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="../linux/sys/prctl.hpp.html#f-fafcdc2c1afeedbd">micron::prctl</a>, <a href="../linux/sys/system.hpp.html#f-e2217364ad7bafd4">posix::getppid</a>, <a href="sandbox.hpp.html#f-1b3678efbe6ba7f5">__impl::__child_fail</a>, <a href="namespaces.hpp.html#f-991df1f805829619">ns::any</a>, <a href="namespaces.hpp.html#f-79c3171bcc529217">ns::unshare_user_as_root</a>, <a href="namespaces.hpp.html#f-8c1410edcdbf9c5f">ns::unshare</a>, <a href="../linux/process/fork.hpp.html#f-5d3108d1f424574e">micron::try_fork</a>, <a href="../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="../linux/process/wait.hpp.html#f-72deb6806252135c">micron::waitpid</a>, <a href="../exit.hpp.html#f-7f4fb45e23edea94">micron::sys_group_exit</a>, <a href="../linux/process/wait.hpp.html#f-b785101824d4e921">micron::wifsignaled</a>, <a href="../linux/process/wait.hpp.html#f-36c75efa5e6433dc">micron::wtermsig</a>, <a href="../linux/process/wait.hpp.html#f-76d33c351667921d">micron::wifexited</a>, <a href="../linux/process/wait.hpp.html#f-706ac8dabc838509">micron::wexitstatus</a>, <a href="../linux/sys/mount.hpp.html#f-3be7078f042dc60e">posix::mount</a>, <a href="policy.hpp.html#f-696d42a3c5653945">__impl::__remount_attrs</a>, <a href="../linux/io/sys.hpp.html#f-97cf3b578302c477">posix::chroot</a>, <a href="../linux/io/sys.hpp.html#f-7edcdac8976c7158">posix::chdir</a>, <a href="policy.hpp.html#f-4cf31f507ee26142">__impl::__rel_put_old</a>, <a href="../linux/sys/mount.hpp.html#f-42bcfff7bdf9ca47">posix::pivot_root</a>, <a href="../linux/sys/mount.hpp.html#f-21d427e77059de8a">posix::umount2</a>, <a href="../linux/sys/limits.hpp.html#f-854c55130a1d5116">posix::get_process_limits</a>, <a href="../linux/sys/limits.hpp.html#f-3492958cc7e59195">posix::set_process_limits</a>, <a href="../linux/sys/fcntl.hpp.html#f-8723db8d254730c9">posix::fcntl</a>, <a href="../linux/io/sys.hpp.html#f-4217c4094565eaaf">posix::dup2</a>, <a href="sandbox.hpp.html#f-9999768462eb6a51">__close_extra</a>, <a href="landlock.hpp.html#f-eddb823c226625fd">landlock::any</a>, <a href="landlock.hpp.html#f-c6975824da2be1fe">landlock::try_ruleset</a>, <a href="../linux/process/capabilities.hpp.html#f-dc3558238de1cf1a">micron::has_cap</a>, <a href="../linux/process/capabilities.hpp.html#f-8750e2d24858e5c2">micron::this_caps</a>, <a href="../linux/process/capabilities.hpp.html#f-9eed5765a159fe88">micron::drop_bounding</a>, <a href="../linux/process/capabilities.hpp.html#f-f3ffd2d8767debe6">micron::clear_ambient</a>, <a href="../linux/sys/capabilities.hpp.html#f-0f544db97793ce42">posix::cap_set_securebits</a>, <a href="seccomp.hpp.html#f-6fde15ae28f4cdc7">seccomp::load_raw</a>, <a href="../linux/sys/syscall_arm32.hpp.html#f-4479941396ba077b">micron::syscall</a>, <a href="../linux/sys/system.hpp.html#f-4ece17ba42cec4a6">posix::setgid</a>, <a href="../linux/sys/system.hpp.html#f-c0a2233d1da7c7cb">posix::setuid</a>, <a href="../linux/sys/system.hpp.html#f-bbe286bc2fb50331">posix::getuid</a>, <a href="../linux/sys/system.hpp.html#f-de646bdd018766b5">posix::geteuid</a>, <a href="../linux/sys/system.hpp.html#f-742583b379beb58a">posix::getgid</a>, <a href="../linux/sys/system.hpp.html#f-7f33dc523a25d292">posix::getegid</a>, <a href="../linux/process/capabilities.hpp.html#f-a34573e088cde079">micron::drop_all_caps</a>, <a href="../linux/sys/signal.hpp.html#f-a3519d6915ce00cd">posix::sigemptyset</a>, <a href="../linux/sys/signal.hpp.html#f-bd7867fe541a6dbf">posix::sigprocmask</a>, <a href="../linux/sys/exec.hpp.html#f-b30ae40162743d27">posix::execve</a>.</p></section><section class="function-entry" id="f-364acd1155e53e1c"><h3><code>micron::sec::sandbox::__launch(const char *path, char *const *argv, char *const *envp, i32 (*body)(void)) const noexcept</code></h3><p>Defined in <code>sec/sandbox.hpp</code>, <a href="../../source/sec/sandbox.hpp.html#L924">line 924</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] child
+  __launch(const char *path, char *const *argv, char *const *envp, i32 (*body)(void)) const noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *path</code></li><li><code>char *const *argv</code></li><li><code>char *const *envp</code></li><li><code>i32 (*body)(void)</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] child
+  __launch(const char *path, char *const *argv, char *const *envp, i32 (*body)(void)) const noexcept
+  {
+    child out{};
+
+    if ( __parent_death &amp;&amp; (__change_ids || ns::any(__ns_kinds &amp; ns::ns_kind::pid)) ) {
+      out.fault = fault_t{ stage::parent_lifetime, -error::invalid_arg };
+      return out;
+    }
+
+    // must refuse before the fork
+    if ( __cfg_fault ) {
+      out.fault = __cfg_fault;
+      return out;
+    }
+
+    i32 pfd[2] = { -1, -1 };
+    if ( posix::pipe2(pfd, posix::o_cloexec) &lt; 0 ) {
+      out.fault = fault_t{ stage::fork_failed, -error::too_many_files };
+      return out;
+    }
+
+    const int parent = posix::getpid();
+    const int pid = micron::try_fork();
+    if ( pid &lt; 0 ) {
+      (void)posix::close(pfd[0]);
+      (void)posix::close(pfd[1]);
+      out.fault = fault_t{ stage::fork_failed, pid };
+      return out;
+    }
+
+    if ( pid == 0 ) {
+      (void)posix::close(pfd[0]);
+      __child(pfd[1], parent, path, argv, envp, body);
+    }
+
+    (void)posix::close(pfd[1]);
+
+    __impl::wire_fault w{ 0, 0 };
+    usize got = 0;
+    max_t n = 0;
+    for ( ;; ) {
+      n = posix::read(pfd[0], reinterpret_cast&lt;char *&gt;(&amp;w) + got, sizeof(w) - got);
+      if ( n &gt; 0 ) {
+        got += static_cast&lt;usize&gt;(n);
+        if ( got == sizeof(w) ) break;
+        continue;
+      }
+      if ( n == -error::interrupted ) continue;
+      break;      // a clean eof, or a read error
+    }
+    (void)posix::close(pfd[0]);
+
+    out.pid = pid;
+    if ( got == sizeof(w) )
+      out.fault = fault_t{ static_cast&lt;stage&gt;(w.where), w.err };
+    else if ( got != 0 || n &lt; 0 )
+      out.fault = fault_t{ stage::fork_failed, got != 0 ? -error::io_error : static_cast&lt;i32&gt;(n) };
+
+    if ( out.fault ) {
+      // the child either failed a stage and exited, or is in a state we cannot vouch for
+      if ( got != sizeof(w) ) (void)posix::kill(pid, posix::sig_kill);
+      int status = 0;
+      (void)micron::waitpid(pid, &amp;status, 0);
+      out.pid = -1;
+    }
+    return out;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/sec/sandbox.hpp.html#L930">line 930</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/sec/sandbox.hpp.html#L936">line 936</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/sec/sandbox.hpp.html#L942">line 942</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/sec/sandbox.hpp.html#L951">line 951</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/sec/sandbox.hpp.html#L989">line 989</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="namespaces.hpp.html#f-991df1f805829619">ns::any</a>, <a href="../linux/io/sys.hpp.html#f-6ac2df4fe68a4a87">posix::pipe2</a>, <a href="../linux/sys/system.hpp.html#f-02b340c9ce1eeab2">posix::getpid</a>, <a href="../linux/process/fork.hpp.html#f-5d3108d1f424574e">micron::try_fork</a>, <a href="../linux/io/sys.hpp.html#f-3fa70c30c28afe18">posix::close</a>, <a href="sandbox.hpp.html#f-559ce9ccb95d238f">__child</a>, <a href="../linux/io/sys.hpp.html#f-4dae032f64ac939d">posix::read</a>, <a href="../linux/sys/system.hpp.html#f-d839e98907961fdc">posix::kill</a>, <a href="../linux/process/wait.hpp.html#f-72deb6806252135c">micron::waitpid</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

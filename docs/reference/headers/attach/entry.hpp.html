@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/attach/entry.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/attach/entry.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/attach.html">Module attachment</a></div><p>Defined in header <code>&lt;micron/attach/entry.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/attach/entry.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-b95bee7ea222dabb">_attach(const micron_attach_info *info) noexcept</a></td><td>function; line 52<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(MICRON_ATTACH_MODULE)</code></small></td></tr><tr class="t-dsc"><td><a href="#f-63bc7d491741810e">_detach(void) noexcept</a></td><td>function; line 75<br><small><code>#else of #if defined(__micron_arch_wasm32)</code><br><code>#if defined(MICRON_ATTACH_MODULE)</code></small></td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-b95bee7ea222dabb"><h3><code>_attach(const micron_attach_info *info) noexcept</code></h3><p>Defined in <code>attach/entry.hpp</code>, <a href="../../source/attach/entry.hpp.html#L52">line 52</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((used, retain, visibility(&quot;default&quot;))) int
+_attach(const micron_attach_info *info) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(MICRON_ATTACH_MODULE)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const micron_attach_info *info</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((used, retain, visibility(&quot;default&quot;))) int
+_attach(const micron_attach_info *info) noexcept
+{
+  // NOTE: the bmg linker currently doesn&#x27;t provide for frame unwinding, so we can&#x27;t use exceptions at all; this is here for that reason
+  // only once we extend the linker remove this
+  static_assert(!micron::except::__use_exceptions, &quot;modules must build freestanding without __micron_eh&quot;);
+
+  if ( micron::__micron_attach_info != nullptr ) return attach_ealready;
+  if ( micron::__micron_module_detached ) return attach_ealready;      // spent: statics are destroyed, guards latched
+  if ( !micron::__attach_info_valid(info) ) return attach_ebadinfo;
+
+  micron::__micron_attach_fatal = info-&gt;fatal;
+  micron::__micron_attach_thread_atexit = info-&gt;thread_atexit;
+  micron::__micron_attach_run_thread_dtors = info-&gt;run_thread_dtors;
+  micron::__micron_attach_info = info;
+
+  if ( __micron_mem_init ) __micron_mem_init();
+  micron::__boot_threadpool();
+  if ( info-&gt;flags &amp; attach_f_io_buffers ) micron::io::__boot_io_buffers();
+
+  return attach_ok;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>attach_ealready</code></td><td><a href="../../source/attach/entry.hpp.html#L58">line 58</a></td></tr><tr class="t-dsc"><td><code>attach_ealready</code></td><td><a href="../../source/attach/entry.hpp.html#L59">line 59</a></td></tr><tr class="t-dsc"><td><code>attach_ebadinfo</code></td><td><a href="../../source/attach/entry.hpp.html#L60">line 60</a></td></tr><tr class="t-dsc"><td><code>attach_ok</code></td><td><a href="../../source/attach/entry.hpp.html#L71">line 71</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::except::__use_exceptions, &quot;modules must build freestanding without __micron_eh&quot;);</code></td><td><a href="../../source/attach/entry.hpp.html#L56">line 56</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="info.hpp.html#f-13a036e730377489">micron::__attach_info_valid</a>, <a href="entry.hpp.html#f-d24df792825f4757">__micron_mem_init</a>, <a href="../thread/pool.hpp.html#f-bd3213094cced6bb">micron::__boot_threadpool</a>, <a href="../io/__std.hpp.html#f-41c18b0ed946d845">micron::io::__boot_io_buffers</a>.</p></section><section class="function-entry" id="f-63bc7d491741810e"><h3><code>_detach(void) noexcept</code></h3><p>Defined in <code>attach/entry.hpp</code>, <a href="../../source/attach/entry.hpp.html#L75">line 75</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((used, retain, visibility(&quot;default&quot;))) void
+_detach(void) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(MICRON_ATTACH_MODULE)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((used, retain, visibility(&quot;default&quot;))) void
+_detach(void) noexcept
+{
+  if ( micron::__micron_attach_info == nullptr || micron::__micron_module_detached ) return;
+  micron::__micron_module_detached = true;
+
+  // WARNING: order matters
+  if ( micron::__global_parallelpool != nullptr ) {
+    micron::__global_parallelpool-&gt;stop_all();
+    micron::__global_parallelpool-&gt;join_all();
+  }
+  if ( micron::__global_threadpool != nullptr ) micron::__global_threadpool-&gt;join_all(500);
+
+  micron::__run_thread_dtors();             // the attaching thread&#x27;s thread_local dtors (LIFO)
+  micron::__drain_atexit_table();           // module __cxa_atexit registrations
+  micron::io::__shutdown_io_buffers();      // flush module stdio (no-op if never booted); never closes fd 0/1/2
+
+  // WARNING: the hooks stay installed on purpose
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../source/attach/entry.hpp.html#L77">line 77</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../bits/__thread_exit_hook.hpp.html#f-b5b82ee89d36a3e6">micron::__run_thread_dtors</a>, <a href="../exit.hpp.html#f-c002be6d496d5735">micron::__drain_atexit_table</a>, <a href="../io/__std.hpp.html#f-3c76e12295e65293">micron::io::__shutdown_io_buffers</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-d24df792825f4757"><h3><code>__micron_mem_init(void) noexcept</code></h3><p>Defined in <code>attach/entry.hpp</code>, <a href="../../source/attach/entry.hpp.html#L39">line 39</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((weak)) void __micron_mem_init(void) noexcept;</pre></td></tr></tbody></table><h4>Availability</h4><pre>#else of #if defined(__micron_arch_wasm32)
+#if defined(MICRON_ATTACH_MODULE)</pre><h4>Effects</h4><p>This is a declaration. Its body is supplied by the runtime, compiler, or host. The source declaration does not specify additional effects.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

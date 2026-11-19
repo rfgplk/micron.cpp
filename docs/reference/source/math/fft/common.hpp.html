@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>math/fft/common.hpp source - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../../headers/index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">math/fft/common.hpp source</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a></div><p>Verbatim source snapshot. Copyright and license notices are retained. <a href="../../../headers/math/fft/common.hpp.html">Function and declaration reference</a>.</p><pre class="source-listing"><span id="L1" class="source-line"><a class="line-number" href="#L1">1</a> //  Copyright (c) 2024- David Lucius Severus</span>
+<span id="L2" class="source-line"><a class="line-number" href="#L2">2</a> //</span>
+<span id="L3" class="source-line"><a class="line-number" href="#L3">3</a> //  Distributed under the Boost Software License, Version 1.0.</span>
+<span id="L4" class="source-line"><a class="line-number" href="#L4">4</a> //  See accompanying file LICENSE_1_0.txt or copy at</span>
+<span id="L5" class="source-line"><a class="line-number" href="#L5">5</a> //  http://www.boost.org/LICENSE_1_0.txt</span>
+<span id="L6" class="source-line"><a class="line-number" href="#L6">6</a> #pragma once</span>
+<span id="L7" class="source-line"><a class="line-number" href="#L7">7</a> </span>
+<span id="L8" class="source-line"><a class="line-number" href="#L8">8</a> #include &quot;../../except.hpp&quot;</span>
+<span id="L9" class="source-line"><a class="line-number" href="#L9">9</a> #include &quot;../../vector/vector.hpp&quot;</span>
+<span id="L10" class="source-line"><a class="line-number" href="#L10">10</a> #include &quot;../complex.hpp&quot;</span>
+<span id="L11" class="source-line"><a class="line-number" href="#L11">11</a> </span>
+<span id="L12" class="source-line"><a class="line-number" href="#L12">12</a> namespace micron::math::fft</span>
+<span id="L13" class="source-line"><a class="line-number" href="#L13">13</a> {</span>
+<span id="L14" class="source-line"><a class="line-number" href="#L14">14</a> </span>
+<span id="L15" class="source-line"><a class="line-number" href="#L15">15</a> template&lt;typename F&gt;</span>
+<span id="L16" class="source-line"><a class="line-number" href="#L16">16</a> concept fft_scalar = micron::math::complex_scalar&lt;F&gt; &amp;&amp; (sizeof(F) == 4 || sizeof(F) == 8 || micron::is_same_v&lt;F, long double&gt;);</span>
+<span id="L17" class="source-line"><a class="line-number" href="#L17">17</a> </span>
+<span id="L18" class="source-line"><a class="line-number" href="#L18">18</a> template&lt;typename T&gt; using buffer = micron::vector&lt;T, micron::allocator_serial&lt;&gt;, false&gt;;</span>
+<span id="L19" class="source-line"><a class="line-number" href="#L19">19</a> enum class direction { forward, backward };</span>
+<span id="L20" class="source-line"><a class="line-number" href="#L20">20</a> enum class normalization { backward, none, forward, ortho };</span>
+<span id="L21" class="source-line"><a class="line-number" href="#L21">21</a> enum class domain { complex, real_forward, real_backward };</span>
+<span id="L22" class="source-line"><a class="line-number" href="#L22">22</a> </span>
+<span id="L23" class="source-line"><a class="line-number" href="#L23">23</a> namespace __impl</span>
+<span id="L24" class="source-line"><a class="line-number" href="#L24">24</a> {</span>
+<span id="L25" class="source-line"><a class="line-number" href="#L25">25</a> inline constexpr usize __limit = usize(micron::numeric_limits&lt;intptr_t&gt;::max());</span>
+<span id="L26" class="source-line"><a class="line-number" href="#L26">26</a> </span>
+<span id="L27" class="source-line"><a class="line-number" href="#L27">27</a> inline usize</span>
+<span id="L28" class="source-line"><a class="line-number" href="#L28">28</a> __add(usize a, usize b)</span>
+<span id="L29" class="source-line"><a class="line-number" href="#L29">29</a> {</span>
+<span id="L30" class="source-line"><a class="line-number" href="#L30">30</a>   if ( b &gt; __limit || a &gt; __limit - b ) exc&lt;except::length_error&gt;(&quot;fft: size overflow&quot;);</span>
+<span id="L31" class="source-line"><a class="line-number" href="#L31">31</a>   return a + b;</span>
+<span id="L32" class="source-line"><a class="line-number" href="#L32">32</a> }</span>
+<span id="L33" class="source-line"><a class="line-number" href="#L33">33</a> </span>
+<span id="L34" class="source-line"><a class="line-number" href="#L34">34</a> inline usize</span>
+<span id="L35" class="source-line"><a class="line-number" href="#L35">35</a> __mul(usize a, usize b)</span>
+<span id="L36" class="source-line"><a class="line-number" href="#L36">36</a> {</span>
+<span id="L37" class="source-line"><a class="line-number" href="#L37">37</a>   if ( b &amp;&amp; a &gt; __limit / b ) exc&lt;except::length_error&gt;(&quot;fft: size overflow&quot;);</span>
+<span id="L38" class="source-line"><a class="line-number" href="#L38">38</a>   return a * b;</span>
+<span id="L39" class="source-line"><a class="line-number" href="#L39">39</a> }</span>
+<span id="L40" class="source-line"><a class="line-number" href="#L40">40</a> </span>
+<span id="L41" class="source-line"><a class="line-number" href="#L41">41</a> inline usize</span>
+<span id="L42" class="source-line"><a class="line-number" href="#L42">42</a> __product(const buffer&lt;usize&gt; &amp;shape)</span>
+<span id="L43" class="source-line"><a class="line-number" href="#L43">43</a> {</span>
+<span id="L44" class="source-line"><a class="line-number" href="#L44">44</a>   usize n = 1;</span>
+<span id="L45" class="source-line"><a class="line-number" href="#L45">45</a>   for ( usize v : shape ) {</span>
+<span id="L46" class="source-line"><a class="line-number" href="#L46">46</a>     if ( !v ) exc&lt;except::invalid_argument&gt;(&quot;fft: zero dimension&quot;);</span>
+<span id="L47" class="source-line"><a class="line-number" href="#L47">47</a>     n = __mul(n, v);</span>
+<span id="L48" class="source-line"><a class="line-number" href="#L48">48</a>   }</span>
+<span id="L49" class="source-line"><a class="line-number" href="#L49">49</a>   return n;</span>
+<span id="L50" class="source-line"><a class="line-number" href="#L50">50</a> }</span>
+<span id="L51" class="source-line"><a class="line-number" href="#L51">51</a> </span>
+<span id="L52" class="source-line"><a class="line-number" href="#L52">52</a> template&lt;fft_scalar F&gt;</span>
+<span id="L53" class="source-line"><a class="line-number" href="#L53">53</a> constexpr F</span>
+<span id="L54" class="source-line"><a class="line-number" href="#L54">54</a> __abs(F x) noexcept</span>
+<span id="L55" class="source-line"><a class="line-number" href="#L55">55</a> {</span>
+<span id="L56" class="source-line"><a class="line-number" href="#L56">56</a>   return x &lt; F(0) ? -x : x;</span>
+<span id="L57" class="source-line"><a class="line-number" href="#L57">57</a> }</span>
+<span id="L58" class="source-line"><a class="line-number" href="#L58">58</a> </span>
+<span id="L59" class="source-line"><a class="line-number" href="#L59">59</a> template&lt;fft_scalar F&gt;</span>
+<span id="L60" class="source-line"><a class="line-number" href="#L60">60</a> constexpr F</span>
+<span id="L61" class="source-line"><a class="line-number" href="#L61">61</a> __epsilon() noexcept</span>
+<span id="L62" class="source-line"><a class="line-number" href="#L62">62</a> {</span>
+<span id="L63" class="source-line"><a class="line-number" href="#L63">63</a>   if constexpr ( sizeof(F) == sizeof(float) )</span>
+<span id="L64" class="source-line"><a class="line-number" href="#L64">64</a>     return F(micron::numeric_limits&lt;float&gt;::epsilon());</span>
+<span id="L65" class="source-line"><a class="line-number" href="#L65">65</a>   else if constexpr ( sizeof(F) == sizeof(double) )</span>
+<span id="L66" class="source-line"><a class="line-number" href="#L66">66</a>     return F(micron::numeric_limits&lt;double&gt;::epsilon());</span>
+<span id="L67" class="source-line"><a class="line-number" href="#L67">67</a>   else</span>
+<span id="L68" class="source-line"><a class="line-number" href="#L68">68</a>     return F(__micron_ldbl_epsilon);</span>
+<span id="L69" class="source-line"><a class="line-number" href="#L69">69</a> }</span>
+<span id="L70" class="source-line"><a class="line-number" href="#L70">70</a> </span>
+<span id="L71" class="source-line"><a class="line-number" href="#L71">71</a> template&lt;fft_scalar F&gt;</span>
+<span id="L72" class="source-line"><a class="line-number" href="#L72">72</a> F</span>
+<span id="L73" class="source-line"><a class="line-number" href="#L73">73</a> __sqrt(F x) noexcept</span>
+<span id="L74" class="source-line"><a class="line-number" href="#L74">74</a> {</span>
+<span id="L75" class="source-line"><a class="line-number" href="#L75">75</a>   if ( x == F(0) ) return x;</span>
+<span id="L76" class="source-line"><a class="line-number" href="#L76">76</a>   F scale = 1;</span>
+<span id="L77" class="source-line"><a class="line-number" href="#L77">77</a>   while ( x &gt; F(4) ) {</span>
+<span id="L78" class="source-line"><a class="line-number" href="#L78">78</a>     x /= F(4);</span>
+<span id="L79" class="source-line"><a class="line-number" href="#L79">79</a>     scale *= F(2);</span>
+<span id="L80" class="source-line"><a class="line-number" href="#L80">80</a>   }</span>
+<span id="L81" class="source-line"><a class="line-number" href="#L81">81</a>   while ( x &lt; F(1) ) {</span>
+<span id="L82" class="source-line"><a class="line-number" href="#L82">82</a>     x *= F(4);</span>
+<span id="L83" class="source-line"><a class="line-number" href="#L83">83</a>     scale /= F(2);</span>
+<span id="L84" class="source-line"><a class="line-number" href="#L84">84</a>   }</span>
+<span id="L85" class="source-line"><a class="line-number" href="#L85">85</a>   F y = (x + F(1)) / F(2);</span>
+<span id="L86" class="source-line"><a class="line-number" href="#L86">86</a>   for ( unsigned i = 0; i &lt; 12; ++i ) y = (y + x / y) / F(2);</span>
+<span id="L87" class="source-line"><a class="line-number" href="#L87">87</a>   return y * scale;</span>
+<span id="L88" class="source-line"><a class="line-number" href="#L88">88</a> }</span>
+<span id="L89" class="source-line"><a class="line-number" href="#L89">89</a> </span>
+<span id="L90" class="source-line"><a class="line-number" href="#L90">90</a> // exp(-2*pi*i*k/n), with integer quadrant reduction before floating conversion.</span>
+<span id="L91" class="source-line"><a class="line-number" href="#L91">91</a> template&lt;fft_scalar F&gt;</span>
+<span id="L92" class="source-line"><a class="line-number" href="#L92">92</a> complex&lt;F&gt;</span>
+<span id="L93" class="source-line"><a class="line-number" href="#L93">93</a> __root(usize k, usize n) noexcept</span>
+<span id="L94" class="source-line"><a class="line-number" href="#L94">94</a> {</span>
+<span id="L95" class="source-line"><a class="line-number" href="#L95">95</a>   k %= n;</span>
+<span id="L96" class="source-line"><a class="line-number" href="#L96">96</a>   unsigned quadrant = 0;</span>
+<span id="L97" class="source-line"><a class="line-number" href="#L97">97</a>   // k*4 is bounded by the plan&#x27;s checked phase denominator.</span>
+<span id="L98" class="source-line"><a class="line-number" href="#L98">98</a>   usize scaled = k * 4;</span>
+<span id="L99" class="source-line"><a class="line-number" href="#L99">99</a>   quadrant = unsigned(scaled / n);</span>
+<span id="L100" class="source-line"><a class="line-number" href="#L100">100</a>   usize residue = scaled % n;</span>
+<span id="L101" class="source-line"><a class="line-number" href="#L101">101</a>   bool reflect = residue &gt; n / 2;</span>
+<span id="L102" class="source-line"><a class="line-number" href="#L102">102</a>   usize reduced = reflect ? n - residue : residue;</span>
+<span id="L103" class="source-line"><a class="line-number" href="#L103">103</a>   F x = (F(reduced) / F(n)) * F(1.570796326794896619231321691639751442098584699687552910487L);</span>
+<span id="L104" class="source-line"><a class="line-number" href="#L104">104</a>   F xx = x * x, s = x, c = 1, st = x, ct = 1;</span>
+<span id="L105" class="source-line"><a class="line-number" href="#L105">105</a>   for ( unsigned j = 1; j &lt;= 20; ++j ) {</span>
+<span id="L106" class="source-line"><a class="line-number" href="#L106">106</a>     st *= -xx / F((2 * j) * (2 * j + 1));</span>
+<span id="L107" class="source-line"><a class="line-number" href="#L107">107</a>     s += st;</span>
+<span id="L108" class="source-line"><a class="line-number" href="#L108">108</a>     ct *= -xx / F((2 * j - 1) * (2 * j));</span>
+<span id="L109" class="source-line"><a class="line-number" href="#L109">109</a>     c += ct;</span>
+<span id="L110" class="source-line"><a class="line-number" href="#L110">110</a>   }</span>
+<span id="L111" class="source-line"><a class="line-number" href="#L111">111</a>   if ( reflect ) {</span>
+<span id="L112" class="source-line"><a class="line-number" href="#L112">112</a>     F tmp = s;</span>
+<span id="L113" class="source-line"><a class="line-number" href="#L113">113</a>     s = c;</span>
+<span id="L114" class="source-line"><a class="line-number" href="#L114">114</a>     c = tmp;</span>
+<span id="L115" class="source-line"><a class="line-number" href="#L115">115</a>   }</span>
+<span id="L116" class="source-line"><a class="line-number" href="#L116">116</a>   switch ( quadrant ) {</span>
+<span id="L117" class="source-line"><a class="line-number" href="#L117">117</a>   case 0:</span>
+<span id="L118" class="source-line"><a class="line-number" href="#L118">118</a>     return { c, -s };</span>
+<span id="L119" class="source-line"><a class="line-number" href="#L119">119</a>   case 1:</span>
+<span id="L120" class="source-line"><a class="line-number" href="#L120">120</a>     return { -s, -c };</span>
+<span id="L121" class="source-line"><a class="line-number" href="#L121">121</a>   case 2:</span>
+<span id="L122" class="source-line"><a class="line-number" href="#L122">122</a>     return { -c, s };</span>
+<span id="L123" class="source-line"><a class="line-number" href="#L123">123</a>   default:</span>
+<span id="L124" class="source-line"><a class="line-number" href="#L124">124</a>     return { s, c };</span>
+<span id="L125" class="source-line"><a class="line-number" href="#L125">125</a>   }</span>
+<span id="L126" class="source-line"><a class="line-number" href="#L126">126</a> }</span>
+<span id="L127" class="source-line"><a class="line-number" href="#L127">127</a> </span>
+<span id="L128" class="source-line"><a class="line-number" href="#L128">128</a> template&lt;fft_scalar F&gt;</span>
+<span id="L129" class="source-line"><a class="line-number" href="#L129">129</a> F</span>
+<span id="L130" class="source-line"><a class="line-number" href="#L130">130</a> __scale(normalization mode, direction dir, usize n) noexcept</span>
+<span id="L131" class="source-line"><a class="line-number" href="#L131">131</a> {</span>
+<span id="L132" class="source-line"><a class="line-number" href="#L132">132</a>   if ( mode == normalization::ortho ) return F(1) / __sqrt(F(n));</span>
+<span id="L133" class="source-line"><a class="line-number" href="#L133">133</a>   if ( (mode == normalization::backward &amp;&amp; dir == direction::backward) || (mode == normalization::forward &amp;&amp; dir == direction::forward) )</span>
+<span id="L134" class="source-line"><a class="line-number" href="#L134">134</a>     return F(1) / F(n);</span>
+<span id="L135" class="source-line"><a class="line-number" href="#L135">135</a>   return F(1);</span>
+<span id="L136" class="source-line"><a class="line-number" href="#L136">136</a> }</span>
+<span id="L137" class="source-line"><a class="line-number" href="#L137">137</a> }      // namespace __impl</span>
+<span id="L138" class="source-line"><a class="line-number" href="#L138">138</a> </span>
+<span id="L139" class="source-line"><a class="line-number" href="#L139">139</a> // Smallest 2/3/5/7-smooth length &gt;= n; no linear scan through candidate lengths.</span>
+<span id="L140" class="source-line"><a class="line-number" href="#L140">140</a> inline usize</span>
+<span id="L141" class="source-line"><a class="line-number" href="#L141">141</a> next_fast_len(usize n)</span>
+<span id="L142" class="source-line"><a class="line-number" href="#L142">142</a> {</span>
+<span id="L143" class="source-line"><a class="line-number" href="#L143">143</a>   if ( n &lt;= 1 ) return 1;</span>
+<span id="L144" class="source-line"><a class="line-number" href="#L144">144</a>   if ( n &gt; __impl::__limit / 8 ) exc&lt;except::length_error&gt;(&quot;fft: length too large&quot;);</span>
+<span id="L145" class="source-line"><a class="line-number" href="#L145">145</a>   usize best = 1;</span>
+<span id="L146" class="source-line"><a class="line-number" href="#L146">146</a>   while ( best &lt; n ) best *= 2;</span>
+<span id="L147" class="source-line"><a class="line-number" href="#L147">147</a>   for ( usize a = 1; a &lt;= best; ) {</span>
+<span id="L148" class="source-line"><a class="line-number" href="#L148">148</a>     for ( usize b = a; b &lt;= best; ) {</span>
+<span id="L149" class="source-line"><a class="line-number" href="#L149">149</a>       for ( usize c = b; c &lt;= best; ) {</span>
+<span id="L150" class="source-line"><a class="line-number" href="#L150">150</a>         usize d = c;</span>
+<span id="L151" class="source-line"><a class="line-number" href="#L151">151</a>         while ( d &lt; n &amp;&amp; d &lt;= best / 2 ) d *= 2;</span>
+<span id="L152" class="source-line"><a class="line-number" href="#L152">152</a>         if ( d &gt;= n &amp;&amp; d &lt; best ) best = d;</span>
+<span id="L153" class="source-line"><a class="line-number" href="#L153">153</a>         if ( c &gt; best / 3 ) break;</span>
+<span id="L154" class="source-line"><a class="line-number" href="#L154">154</a>         c *= 3;</span>
+<span id="L155" class="source-line"><a class="line-number" href="#L155">155</a>       }</span>
+<span id="L156" class="source-line"><a class="line-number" href="#L156">156</a>       if ( b &gt; best / 5 ) break;</span>
+<span id="L157" class="source-line"><a class="line-number" href="#L157">157</a>       b *= 5;</span>
+<span id="L158" class="source-line"><a class="line-number" href="#L158">158</a>     }</span>
+<span id="L159" class="source-line"><a class="line-number" href="#L159">159</a>     if ( a &gt; best / 7 ) break;</span>
+<span id="L160" class="source-line"><a class="line-number" href="#L160">160</a>     a *= 7;</span>
+<span id="L161" class="source-line"><a class="line-number" href="#L161">161</a>   }</span>
+<span id="L162" class="source-line"><a class="line-number" href="#L162">162</a>   return best;</span>
+<span id="L163" class="source-line"><a class="line-number" href="#L163">163</a> }</span>
+<span id="L164" class="source-line"><a class="line-number" href="#L164">164</a> </span>
+<span id="L165" class="source-line"><a class="line-number" href="#L165">165</a> template&lt;fft_scalar F&gt; struct workspace_view {</span>
+<span id="L166" class="source-line"><a class="line-number" href="#L166">166</a>   complex&lt;F&gt; *data{};</span>
+<span id="L167" class="source-line"><a class="line-number" href="#L167">167</a>   usize size{};</span>
+<span id="L168" class="source-line"><a class="line-number" href="#L168">168</a> };</span>
+<span id="L169" class="source-line"><a class="line-number" href="#L169">169</a> </span>
+<span id="L170" class="source-line"><a class="line-number" href="#L170">170</a> template&lt;fft_scalar F&gt; class workspace</span>
+<span id="L171" class="source-line"><a class="line-number" href="#L171">171</a> {</span>
+<span id="L172" class="source-line"><a class="line-number" href="#L172">172</a>   buffer&lt;complex&lt;F&gt;&gt; __storage;</span>
+<span id="L173" class="source-line"><a class="line-number" href="#L173">173</a> </span>
+<span id="L174" class="source-line"><a class="line-number" href="#L174">174</a> public:</span>
+<span id="L175" class="source-line"><a class="line-number" href="#L175">175</a>   explicit workspace(usize elements) : __storage(elements) { }</span>
+<span id="L176" class="source-line"><a class="line-number" href="#L176">176</a> </span>
+<span id="L177" class="source-line"><a class="line-number" href="#L177">177</a>   template&lt;typename Plan&gt; explicit workspace(const Plan &amp;p) : workspace(p.workspace_size()) { }</span>
+<span id="L178" class="source-line"><a class="line-number" href="#L178">178</a> </span>
+<span id="L179" class="source-line"><a class="line-number" href="#L179">179</a>   workspace_view&lt;F&gt;</span>
+<span id="L180" class="source-line"><a class="line-number" href="#L180">180</a>   view() noexcept</span>
+<span id="L181" class="source-line"><a class="line-number" href="#L181">181</a>   {</span>
+<span id="L182" class="source-line"><a class="line-number" href="#L182">182</a>     return { __storage.data(), __storage.size() };</span>
+<span id="L183" class="source-line"><a class="line-number" href="#L183">183</a>   }</span>
+<span id="L184" class="source-line"><a class="line-number" href="#L184">184</a> </span>
+<span id="L185" class="source-line"><a class="line-number" href="#L185">185</a>   usize</span>
+<span id="L186" class="source-line"><a class="line-number" href="#L186">186</a>   size() const noexcept</span>
+<span id="L187" class="source-line"><a class="line-number" href="#L187">187</a>   {</span>
+<span id="L188" class="source-line"><a class="line-number" href="#L188">188</a>     return __storage.size();</span>
+<span id="L189" class="source-line"><a class="line-number" href="#L189">189</a>   }</span>
+<span id="L190" class="source-line"><a class="line-number" href="#L190">190</a> };</span>
+<span id="L191" class="source-line"><a class="line-number" href="#L191">191</a> </span>
+<span id="L192" class="source-line"><a class="line-number" href="#L192">192</a> struct layout {</span>
+<span id="L193" class="source-line"><a class="line-number" href="#L193">193</a>   buffer&lt;ssize_t&gt; strides;</span>
+<span id="L194" class="source-line"><a class="line-number" href="#L194">194</a>   ssize_t offset{};</span>
+<span id="L195" class="source-line"><a class="line-number" href="#L195">195</a>   ssize_t distance{};      // zero selects the contiguous logical volume</span>
+<span id="L196" class="source-line"><a class="line-number" href="#L196">196</a> };</span>
+<span id="L197" class="source-line"><a class="line-number" href="#L197">197</a> </span>
+<span id="L198" class="source-line"><a class="line-number" href="#L198">198</a> template&lt;fft_scalar F&gt; struct descriptor {</span>
+<span id="L199" class="source-line"><a class="line-number" href="#L199">199</a>   buffer&lt;usize&gt; shape;</span>
+<span id="L200" class="source-line"><a class="line-number" href="#L200">200</a>   buffer&lt;usize&gt; axes;      // empty selects every axis, in row-major order</span>
+<span id="L201" class="source-line"><a class="line-number" href="#L201">201</a>   layout input, output;</span>
+<span id="L202" class="source-line"><a class="line-number" href="#L202">202</a>   usize batches{ 1 };</span>
+<span id="L203" class="source-line"><a class="line-number" href="#L203">203</a>   domain kind{ domain::complex };</span>
+<span id="L204" class="source-line"><a class="line-number" href="#L204">204</a>   normalization norm{ normalization::backward };</span>
+<span id="L205" class="source-line"><a class="line-number" href="#L205">205</a>   F forward_scale{ 1 }, backward_scale{ 1 };</span>
+<span id="L206" class="source-line"><a class="line-number" href="#L206">206</a> </span>
+<span id="L207" class="source-line"><a class="line-number" href="#L207">207</a>   explicit descriptor(usize n) : shape{ n } { }</span>
+<span id="L208" class="source-line"><a class="line-number" href="#L208">208</a> </span>
+<span id="L209" class="source-line"><a class="line-number" href="#L209">209</a>   descriptor(std::initializer_list&lt;usize&gt; dimensions) : shape(dimensions) { }</span>
+<span id="L210" class="source-line"><a class="line-number" href="#L210">210</a> </span>
+<span id="L211" class="source-line"><a class="line-number" href="#L211">211</a>   explicit descriptor(const buffer&lt;usize&gt; &amp;dimensions) : shape(dimensions) { }</span>
+<span id="L212" class="source-line"><a class="line-number" href="#L212">212</a> };</span>
+<span id="L213" class="source-line"><a class="line-number" href="#L213">213</a> </span>
+<span id="L214" class="source-line"><a class="line-number" href="#L214">214</a> };      // namespace micron::math::fft</span></pre><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

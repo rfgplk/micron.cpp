@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/math/arbint/gcdext.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/math/arbint/gcdext.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/arbint.html">Arbitrary-precision integers</a></div><p>Defined in header <code>&lt;micron/math/arbint/gcdext.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/math/arbint/gcdext.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><a href="#f-5483b7759c10adf4">micron::math::mpn::invmod_itch(usize an, usize mn) noexcept</a></td><td>function; line 33</td></tr><tr class="t-dsc"><td><a href="#f-224217b926a0f9ca">micron::math::mpn::invmod(limb_t *rp, usize &amp;rn, const limb_t *ap, usize an, const limb_t *mp, usize mn, limb_t *scratch) noexcept</a></td><td>function; line 48</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-5483b7759c10adf4"><h3><code>micron::math::mpn::invmod_itch(usize an, usize mn) noexcept</code></h3><p>Defined in <code>math/arbint/gcdext.hpp</code>, <a href="../../../source/math/arbint/gcdext.hpp.html#L33">line 33</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard, gnu::flatten]] inline constexpr usize
+invmod_itch(usize an, usize mn) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize an</code></li><li><code>usize mn</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard, gnu::flatten]] inline constexpr usize
+invmod_itch(usize an, usize mn) noexcept
+{
+  const usize s = mn + 3u;
+  usize w = divrem_cap_itch(2u * s, s);
+  const usize m = __mul_itch_bound(s, s);
+  if ( m &gt; w ) w = m;
+  if ( an &gt; mn ) {
+    const usize h = (an - mn + 1u) + divrem_itch(an, mn);
+    if ( h &gt; w ) w = h;
+  }
+  // r0 r1 r2 t0 t1 t2 q, the q*t product, the Lehmer path&#x27;s second staging slot, then the tail
+  return 7u * s + 2u * s + s + w;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>7u * s + 2u * s + s + w</code></td><td><a href="../../../source/math/arbint/gcdext.hpp.html#L44">line 44</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="div_mu.hpp.html#f-d1e4cf8152d559a6">divrem_cap_itch</a>, <a href="mul.hpp.html#f-d99d21f6c745b624">__mul_itch_bound</a>, <a href="div_mu.hpp.html#f-b10f1230d37ca4e3">divrem_itch</a>.</p></section><section class="function-entry" id="f-224217b926a0f9ca"><h3><code>micron::math::mpn::invmod(limb_t *rp, usize &amp;rn, const limb_t *ap, usize an, const limb_t *mp, usize mn, limb_t *scratch) noexcept</code></h3><p>Defined in <code>math/arbint/gcdext.hpp</code>, <a href="../../../source/math/arbint/gcdext.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[nodiscard]] inline constexpr bool
+invmod(limb_t *rp, usize &amp;rn, const limb_t *ap, usize an, const limb_t *mp, usize mn, limb_t *scratch) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>limb_t *rp</code></li><li><code>usize &amp;rn</code></li><li><code>const limb_t *ap</code></li><li><code>usize an</code></li><li><code>const limb_t *mp</code></li><li><code>usize mn</code></li><li><code>limb_t *scratch</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[nodiscard]] inline constexpr bool
+invmod(limb_t *rp, usize &amp;rn, const limb_t *ap, usize an, const limb_t *mp, usize mn, limb_t *scratch) noexcept
+{
+  mn = normalize(mp, mn);
+  an = normalize(ap, an);
+  rn = 0;
+  if ( mn == 0 ) return false;
+
+  if ( mn == 1 &amp;&amp; mp[0] == 1 ) return true;
+
+  const usize s = mn + 3u;
+  limb_t *r0 = scratch;                  // s
+  limb_t *r1 = r0 + s;                   // s
+  limb_t *r2 = r1 + s;                   // s
+  limb_t *t0 = r2 + s;                   // s
+  limb_t *t1 = t0 + s;                   // s
+  limb_t *t2 = t1 + s;                   // s
+  limb_t *const q = t2 + s;              // s
+  limb_t *const prod = q + s;            // 2s
+  limb_t *const w2 = prod + 2u * s;      // s
+  limb_t *const work = w2 + s;
+
+  usize r0n = mn, r1n = 0, t0n = 0, t1n = 1;
+  copyi(r0, mp, mn);
+  t0[0] = 0;
+  t1[0] = 1;
+
+  // r_0 = a mod m
+  if ( an == 0 ) {
+    r1n = 0;
+  } else if ( an &lt; mn || cmp_var(ap, an, mp, mn) &lt; 0 ) {
+    copyi(r1, ap, an);
+    r1n = an;
+  } else {
+    limb_t *const rq = work;
+    limb_t *const rw = rq + (an - mn + 1u);
+    divrem(rq, r1, ap, an, mp, mn, rw);
+    r1n = normalize(r1, mn);
+  }
+
+  // k counts the index of r1
+  usize k = 0;
+  while ( r1n != 0 ) {
+    // Lehmer
+    if ( r0n == r1n &amp;&amp; r0n &gt;= 2u &amp;&amp; r0n &gt;= threshold::gcd_lehmer ) {
+      const usize sh = limb_clz(r0[r0n - 1u]);
+      limb_t A = r0[r0n - 1u];
+      limb_t B = r1[r0n - 1u];
+      if ( sh != 0 ) {
+        A = static_cast&lt;limb_t&gt;((A &lt;&lt; sh) | (r0[r0n - 2u] &gt;&gt; (limb_bits - sh)));
+        B = static_cast&lt;limb_t&gt;((B &lt;&lt; sh) | (r1[r0n - 2u] &gt;&gt; (limb_bits - sh)));
+      }
+
+      mat1 mm{}, nn{};
+      const usize steps = hgcd2_ext(mm, nn, A, B);
+      if ( steps != 0 ) {
+        usize pn = 0;
+        if ( mat1_mul_inverse_vector(mm, r2, q, r0, r1, r0n, pn) ) {
+          // length is of the cofactors, not the operands
+          usize tn = t0n &gt; t1n ? t0n : t1n;
+          if ( tn == 0 ) tn = 1u;
+          if ( t0n &lt; tn ) zero(t0 + t0n, tn - t0n);
+          if ( t1n &lt; tn ) zero(t1 + t1n, tn - t1n);
+          (void)mat1_mul_vector(nn, prod, w2, t0, t1, tn);
+
+          const usize a0 = normalize(r2, pn);
+          const usize a1 = normalize(q, pn);
+          const usize c0 = normalize(prod, tn + 2u);
+          const usize c1 = normalize(w2, tn + 2u);
+
+          const bool odd = (steps &amp; 1u) != 0;
+          copyi(r0, odd ? q : r2, odd ? a1 : a0);
+          copyi(r1, odd ? r2 : q, odd ? a0 : a1);
+          copyi(t0, odd ? w2 : prod, odd ? c1 : c0);
+          copyi(t1, odd ? prod : w2, odd ? c0 : c1);
+          r0n = odd ? a1 : a0;
+          r1n = odd ? a0 : a1;
+          t0n = odd ? c1 : c0;
+          t1n = odd ? c0 : c1;
+          k += steps;
+          continue;
+        }
+        // high limbs disagreed; the matrix was not valid for the full operands
+      }
+    }
+
+    divrem(q, r2, r0, r0n, r1, r1n, work);
+    const usize qn = normalize(q, r0n - r1n + 1u);
+    const usize r2n = normalize(r2, r1n);
+
+    // t2 = t0 + q*t1
+    usize t2n = 0;
+    if ( qn == 0 || t1n == 0 ) {
+      copyi(t2, t0, t0n);
+      t2n = t0n;
+    } else {
+      const usize pn = qn + t1n;
+      if ( qn &gt;= t1n )
+        mul(prod, q, qn, t1, t1n, work);
+      else
+        mul(prod, t1, t1n, q, qn, work);
+      const usize pnn = normalize(prod, pn);
+      if ( pnn &gt;= t0n ) {
+        const limb_t cy = add(t2, prod, pnn, t0, t0n);
+        t2[pnn] = cy;
+        t2n = normalize(t2, pnn + 1u);
+      } else {
+        const limb_t cy = add(t2, t0, t0n, prod, pnn);
+        t2[t0n] = cy;
+        t2n = normalize(t2, t0n + 1u);
+      }
+    }
+
+    limb_t *sw = r0;
+    r0 = r1;
+    r1 = r2;
+    r2 = sw;
+    r0n = r1n;
+    r1n = r2n;
+
+    sw = t0;
+    t0 = t1;
+    t1 = t2;
+    t2 = sw;
+    t0n = t1n;
+    t1n = t2n;
+    ++k;
+  }
+
+  // g == r0
+  if ( r0n != 1 || r0[0] != 1 ) return false;
+
+  // (-1)^(k-1) * t0
+  const bool negative = ((k - 1u) &amp; 1u) != 0;
+  if ( !negative || t0n == 0 ) {
+    copyi(rp, t0, t0n);
+    rn = t0n;
+    return true;
+  }
+  (void)sub(rp, mp, mn, t0, t0n);
+  rn = normalize(rp, mn);
+  return true;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/gcdext.hpp.html#L53">line 53</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/arbint/gcdext.hpp.html#L55">line 55</a></td></tr><tr class="t-dsc"><td><code>false</code></td><td><a href="../../../source/math/arbint/gcdext.hpp.html#L177">line 177</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/arbint/gcdext.hpp.html#L184">line 184</a></td></tr><tr class="t-dsc"><td><code>true</code></td><td><a href="../../../source/math/arbint/gcdext.hpp.html#L188">line 188</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="mpn_core.hpp.html#f-609375a8e9e72c37">normalize</a>, <a href="mpn_core.hpp.html#f-a8e41bce178fff27">copyi</a>, <a href="mpn_core.hpp.html#f-5b9ddf144a5ad75c">cmp_var</a>, <a href="div_mu.hpp.html#f-eeb8063a9a0ba734">divrem</a>, <a href="limb.hpp.html#f-58e660595c930a67">limb_clz</a>, <a href="hgcd2.hpp.html#f-64aa1ddcdc8d8c96">hgcd2_ext</a>, <a href="hgcd2.hpp.html#f-aaf9bbe45c7c7e76">mat1_mul_inverse_vector</a>, <a href="mpn_core.hpp.html#f-49f95adbd694cca9">zero</a>, <a href="hgcd2.hpp.html#f-602eb43c8ee2227b">mat1_mul_vector</a>, <a href="mul.hpp.html#f-e7f7cb20e6b85f6a">mul</a>, <a href="mpn_core.hpp.html#f-7766a59ba519d780">add</a>, <a href="mpn_core.hpp.html#f-e845dacf002635a3">sub</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

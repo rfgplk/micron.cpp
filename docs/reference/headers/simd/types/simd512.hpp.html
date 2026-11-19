@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/simd/types/simd512.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../../index.html">Reference</a> <a href="../../index.html">Headers</a> <a href="../../../functions/index.html">Functions</a> <a href="../../../symbols/index.html">Symbols</a> <a href="../../../source/index.html">Source</a> <a href="../../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/simd/types/simd512.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../../index.html">micron reference</a> › <a href="../../../modules/simd.html">SIMD</a></div><p>Defined in header <code>&lt;micron/simd/types/simd512.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../../source/simd/types/simd512.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-db61d92f46f297cb">micron::simd::v512</code></td><td>class; line 16</td></tr><tr class="t-dsc"><td><code id="s-883caa662331800c">micron::simd::v512::bit_width</code></td><td>typedef; line 49</td></tr><tr class="t-dsc"><td><code id="s-70cef7621c2e441e">micron::simd::v512::lane_width</code></td><td>typedef; line 50</td></tr><tr class="t-dsc"><td><a href="#f-6a1bbdf6deb5623d">micron::simd::v512::~v512()</a></td><td>function; line 52</td></tr><tr class="t-dsc"><td><a href="#f-fd3dfc16461b3a87">micron::simd::v512::v512(void)</a></td><td>function; line 54</td></tr><tr class="t-dsc"><td><a href="#f-99dc3e253f0b113c">micron::simd::v512::operator=(std::initializer_list&lt;double&gt; lst)</a></td><td>function; line 57</td></tr><tr class="t-dsc"><td><a href="#f-1ca2b220ca1b92fe">micron::simd::v512::operator=(std::initializer_list&lt;float&gt; lst)</a></td><td>function; line 81</td></tr><tr class="t-dsc"><td><a href="#f-1f1c020b186f14f1">micron::simd::v512::operator=(std::initializer_list&lt;i64&gt; lst)</a></td><td>function; line 99</td></tr><tr class="t-dsc"><td><a href="#f-dd66238f4d6d0a4e">micron::simd::v512::operator=(std::initializer_list&lt;i32&gt; lst)</a></td><td>function; line 116</td></tr><tr class="t-dsc"><td><a href="#f-fadf1ae8cccb7aa5">micron::simd::v512::operator=(std::initializer_list&lt;i16&gt; lst)</a></td><td>function; line 132</td></tr><tr class="t-dsc"><td><a href="#f-00847d231d12e660">micron::simd::v512::operator=(std::initializer_list&lt;i8&gt; lst)</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-0786c002e386a2f4">micron::simd::v512::v512(i8 _e0)
+    requires micron::is_same_v&lt;T, i512&gt;</a></td><td>function; line 172</td></tr><tr class="t-dsc"><td><a href="#f-00979b899667db4d">micron::simd::v512::v512(i16 _e0)
+    requires micron::is_same_v&lt;T, i512&gt;</a></td><td>function; line 178</td></tr><tr class="t-dsc"><td><a href="#f-fd0224bfe4dc0d6e">micron::simd::v512::v512(i32 a)
+    requires micron::is_same_v&lt;T, i512&gt;</a></td><td>function; line 184</td></tr><tr class="t-dsc"><td><a href="#f-07ad076b4e3f2ff6">micron::simd::v512::v512(i64 a)
+    requires micron::is_same_v&lt;T, i512&gt;</a></td><td>function; line 190</td></tr><tr class="t-dsc"><td><a href="#f-581c32a530e9bc90">micron::simd::v512::v512(float a)
+    requires micron::is_same_v&lt;T, f512&gt;</a></td><td>function; line 196</td></tr><tr class="t-dsc"><td><a href="#f-bfa9988a11de13bd">micron::simd::v512::v512(double a)
+    requires micron::is_same_v&lt;T, d512&gt;</a></td><td>function; line 202</td></tr><tr class="t-dsc"><td><a href="#f-b3684bf89af35845">micron::simd::v512::v512(std::initializer_list&lt;double&gt; lst)</a></td><td>function; line 208</td></tr><tr class="t-dsc"><td><a href="#f-bbf0fbda80b8f1cc">micron::simd::v512::v512(std::initializer_list&lt;float&gt; lst)</a></td><td>function; line 230</td></tr><tr class="t-dsc"><td><a href="#f-1905ea054969b9ce">micron::simd::v512::v512(std::initializer_list&lt;i64&gt; lst)</a></td><td>function; line 246</td></tr><tr class="t-dsc"><td><a href="#f-b7fd4d177b93af1f">micron::simd::v512::v512(std::initializer_list&lt;i32&gt; lst)</a></td><td>function; line 260</td></tr><tr class="t-dsc"><td><a href="#f-68fb15bdad00c92f">micron::simd::v512::v512(std::initializer_list&lt;i16&gt; lst)</a></td><td>function; line 275</td></tr><tr class="t-dsc"><td><a href="#f-c052beef42732ffb">micron::simd::v512::v512(std::initializer_list&lt;i8&gt; lst)</a></td><td>function; line 292</td></tr><tr class="t-dsc"><td><a href="#f-17ae7cc8a1cb74d3">micron::simd::v512::v512(const v512 &amp;o)</a></td><td>function; line 313</td></tr><tr class="t-dsc"><td><a href="#f-61e331b1e0718afd">micron::simd::v512::v512(v512 &amp;&amp;o)</a></td><td>function; line 315</td></tr><tr class="t-dsc"><td><a href="#f-356c3eff52f199bf">micron::simd::v512::operator=(const v512 &amp;o)</a></td><td>function; line 329</td></tr><tr class="t-dsc"><td><a href="#f-40ab83d1452d8c58">micron::simd::v512::operator=(v512 &amp;&amp;o)</a></td><td>function; line 336</td></tr><tr class="t-dsc"><td><a href="#f-b703da2a4ecb7f7e">micron::simd::v512::operator=(float f)</a></td><td>function; line 344</td></tr><tr class="t-dsc"><td><a href="#f-adab795cd9acc38c">micron::simd::v512::operator=(double d)</a></td><td>function; line 351</td></tr><tr class="t-dsc"><td><a href="#f-92d99e362177636c">micron::simd::v512::operator=(i8 c)</a></td><td>function; line 358</td></tr><tr class="t-dsc"><td><a href="#f-82f6b11466e2c67f">micron::simd::v512::operator=(i16 s)</a></td><td>function; line 365</td></tr><tr class="t-dsc"><td><a href="#f-244ecd47effc6103">micron::simd::v512::operator=(i32 i)</a></td><td>function; line 372</td></tr><tr class="t-dsc"><td><a href="#f-e31ea14c05f09932">micron::simd::v512::operator=(i64 l)</a></td><td>function; line 379</td></tr><tr class="t-dsc"><td><a href="#f-eb07cbcba72b6a2a">micron::simd::v512::operator=(F *addr)</a></td><td>function; line 386</td></tr><tr class="t-dsc"><td><a href="#f-5765e8be965761ef">micron::simd::v512::operator[](const int a)</a></td><td>function; line 391</td></tr><tr class="t-dsc"><td><a href="#f-37c61a3f067ca248">micron::simd::v512::operator==(const v512 &amp;o) const</a></td><td>function; line 394</td></tr><tr class="t-dsc"><td><a href="#f-f3f35b03808f9c40">micron::simd::v512::operator&gt;=(const v512 &amp;o) const</a></td><td>function; line 410</td></tr><tr class="t-dsc"><td><a href="#f-7279502f4bf9e6d7">micron::simd::v512::operator&gt;(const v512 &amp;o) const</a></td><td>function; line 428</td></tr><tr class="t-dsc"><td><a href="#f-9971b6a2489c70a5">micron::simd::v512::operator&lt;(const v512 &amp;o) const</a></td><td>function; line 444</td></tr><tr class="t-dsc"><td><a href="#f-5a8e572a8d1ec5a0">micron::simd::v512::operator&lt;=(const v512 &amp;o) const</a></td><td>function; line 460</td></tr><tr class="t-dsc"><td><a href="#f-ed1b82757abd9813">micron::simd::v512::operator+=(double x)</a></td><td>function; line 479</td></tr><tr class="t-dsc"><td><a href="#f-c2f23b0dfd3eebcb">micron::simd::v512::operator+=(float x)</a></td><td>function; line 489</td></tr><tr class="t-dsc"><td><a href="#f-cb99c25cc577e76b">micron::simd::v512::operator+=(A x)
+    requires is_int_flag_type&lt;A&gt;</a></td><td>function; line 500</td></tr><tr class="t-dsc"><td><a href="#f-14c1e539b9c6b85d">micron::simd::v512::operator-=(double x)</a></td><td>function; line 528</td></tr><tr class="t-dsc"><td><a href="#f-78d4f0f31305e069">micron::simd::v512::operator-=(float x)</a></td><td>function; line 538</td></tr><tr class="t-dsc"><td><a href="#f-dbeeb59180f2f315">micron::simd::v512::operator-=(A x)
+    requires is_int_flag_type&lt;A&gt;</a></td><td>function; line 549</td></tr><tr class="t-dsc"><td><a href="#f-665a4bf3c78cd312">micron::simd::v512::operator-=(const v512 &amp;o)</a></td><td>function; line 575</td></tr><tr class="t-dsc"><td><a href="#f-14cad1c33cae2102">micron::simd::v512::operator+(const v512 &amp;o) const</a></td><td>function; line 599</td></tr><tr class="t-dsc"><td><a href="#f-d32a933873ac8a2a">micron::simd::v512::operator-(const v512 &amp;o) const</a></td><td>function; line 624</td></tr><tr class="t-dsc"><td><a href="#f-14e3b75e5af0c00d">micron::simd::v512::all_zeroes() const</a></td><td>function; line 649</td></tr><tr class="t-dsc"><td><a href="#f-641159789d780c87">micron::simd::v512::all_ones() const</a></td><td>function; line 663</td></tr><tr class="t-dsc"><td><a href="#f-ed00b772e0b5cd1e">micron::simd::v512::to_zero(void)</a></td><td>function; line 677</td></tr><tr class="t-dsc"><td><a href="#f-9c706d8f061388db">micron::simd::v512::to_ones(void)</a></td><td>function; line 683</td></tr><tr class="t-dsc"><td><a href="#f-cc3151bfe5145b63">micron::simd::v512::set(float f)</a></td><td>function; line 690</td></tr><tr class="t-dsc"><td><a href="#f-6dcdaf9e4ad6437d">micron::simd::v512::set(double d)</a></td><td>function; line 697</td></tr><tr class="t-dsc"><td><a href="#f-883dbabf52b96170">micron::simd::v512::set(i8 c)</a></td><td>function; line 704</td></tr><tr class="t-dsc"><td><a href="#f-04d60411c9923881">micron::simd::v512::set(i16 s)</a></td><td>function; line 711</td></tr><tr class="t-dsc"><td><a href="#f-28ca5172778ae350">micron::simd::v512::set(i32 i)</a></td><td>function; line 718</td></tr><tr class="t-dsc"><td><a href="#f-3a5e4baaed92b2b5">micron::simd::v512::set(i64 l)</a></td><td>function; line 725</td></tr><tr class="t-dsc"><td><a href="#f-ba16b69ceb000979">micron::simd::v512::set(float const *f)</a></td><td>function; line 732</td></tr><tr class="t-dsc"><td><a href="#f-b13b4139b6f86449">micron::simd::v512::broadcast(float const *f)</a></td><td>function; line 740</td></tr><tr class="t-dsc"><td><a href="#f-87310ab3ff7262a2">micron::simd::v512::load(B *mem)</a></td><td>function; line 747</td></tr><tr class="t-dsc"><td><a href="#f-3338efff2997953c">micron::simd::v512::uload(B *mem)</a></td><td>function; line 762</td></tr><tr class="t-dsc"><td><a href="#f-f770bce629f6751d">micron::simd::v512::operator|=(const v512 &amp;o)</a></td><td>function; line 776</td></tr><tr class="t-dsc"><td><a href="#f-be2052c587cc1cd6">micron::simd::v512::operator&amp;=(const v512 &amp;o)</a></td><td>function; line 791</td></tr><tr class="t-dsc"><td><a href="#f-fd696e1271dcfb86">micron::simd::v512::operator^=(const v512 &amp;o)</a></td><td>function; line 806</td></tr><tr class="t-dsc"><td><a href="#f-690b6f25f85b554d">micron::simd::v512::operator|(const v512 &amp;o) const</a></td><td>function; line 821</td></tr><tr class="t-dsc"><td><a href="#f-ceb30b4565b52b4a">micron::simd::v512::operator&amp;(const v512 &amp;o) const</a></td><td>function; line 837</td></tr><tr class="t-dsc"><td><a href="#f-8f6c70eb70023be5">micron::simd::v512::operator^(const v512 &amp;o) const</a></td><td>function; line 853</td></tr><tr class="t-dsc"><td><a href="#f-61628b485c32edc1">micron::simd::v512::operator&lt;&lt;(int i) const</a></td><td>function; line 869</td></tr><tr class="t-dsc"><td><a href="#f-0b7ede378cc42ef9">micron::simd::v512::operator&lt;&lt;=(int i)</a></td><td>function; line 890</td></tr><tr class="t-dsc"><td><a href="#f-a5b9dccee79c17cf">micron::simd::v512::operator&gt;&gt;(int i) const</a></td><td>function; line 910</td></tr><tr class="t-dsc"><td><a href="#f-99500d7f5f045186">micron::simd::v512::operator&gt;&gt;=(int i)</a></td><td>function; line 931</td></tr><tr class="t-dsc"><td><a href="#f-c53b8ac3329823e7">micron::simd::v512::operator/=(double x)</a></td><td>function; line 954</td></tr><tr class="t-dsc"><td><a href="#f-3db4237920547619">micron::simd::v512::operator/=(float x)</a></td><td>function; line 964</td></tr><tr class="t-dsc"><td><a href="#f-522961430f53b71c">micron::simd::v512::operator/(double x) const</a></td><td>function; line 974</td></tr><tr class="t-dsc"><td><a href="#f-b25e6b06a9ca89a8">micron::simd::v512::operator/(float x) const</a></td><td>function; line 985</td></tr><tr class="t-dsc"><td><a href="#f-2751b5244f80bdcb">micron::simd::v512::operator*=(double x)</a></td><td>function; line 996</td></tr><tr class="t-dsc"><td><a href="#f-1cbb9981fc28fcd9">micron::simd::v512::operator*=(float x)</a></td><td>function; line 1006</td></tr><tr class="t-dsc"><td><a href="#f-9d35f50e6a16b632">micron::simd::v512::operator*=(A x)
+    requires is_int_flag_type&lt;A&gt;</a></td><td>function; line 1017</td></tr><tr class="t-dsc"><td><a href="#f-0faf81b78a9b4a9f">micron::simd::v512::operator*(double x) const</a></td><td>function; line 1042</td></tr><tr class="t-dsc"><td><a href="#f-1416d90ee6b985b5">micron::simd::v512::operator*(float x) const</a></td><td>function; line 1053</td></tr><tr class="t-dsc"><td><a href="#f-cdff4a2ae43303a1">micron::simd::v512::operator*(F x)</a></td><td>function; line 1064</td></tr><tr class="t-dsc"><td><a href="#f-156741db43859497">micron::simd::v512::get(F *arr) const</a></td><td>function; line 1091</td></tr><tr class="t-dsc"><td><a href="#f-d9fde0b482abc7bc">micron::simd::v512::get_aligned(F *arr) const</a></td><td>function; line 1106</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-6a1bbdf6deb5623d"><h3><code>micron::simd::v512::~v512()</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L52">line 52</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>~v512() = default;</pre></td></tr></tbody></table><h4>Effects</h4><p>This special member is explicitly defaulted. Its initialization, assignment, or destruction is performed memberwise as specified by the declaration and the class definition.</p></section><section class="function-entry" id="f-fd3dfc16461b3a87"><h3><code>micron::simd::v512::v512(void)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L54">line 54</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(void) { __impl_zero_init(); }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-99dc3e253f0b113c"><h3><code>micron::simd::v512::operator=(std::initializer_list&lt;double&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L57">line 57</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(std::initializer_list&lt;double&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;double&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(std::initializer_list&lt;double&gt; lst)
+  {
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return *this;
+    }
+    double a, b, c, d, e, f, g, h;
+    int _f = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
+      if ( _f == 4 ) e = *itr;
+      if ( _f == 5 ) f = *itr;
+      if ( _f == 6 ) g = *itr;
+      if ( _f == 7 ) h = *itr;
+      _f++;
+    }
+    value = _mm512_set_pd(h, g, f, e, d, c, b, a);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L61">line 61</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L77">line 77</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-1ca2b220ca1b92fe"><h3><code>micron::simd::v512::operator=(std::initializer_list&lt;float&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L81">line 81</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(std::initializer_list&lt;float&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;float&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(std::initializer_list&lt;float&gt; lst)
+  {
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return *this;
+    }
+
+    float __arr[16];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+    value = _mm512_set_ps(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
+                          __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L85">line 85</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L94">line 94</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-1f1c020b186f14f1"><h3><code>micron::simd::v512::operator=(std::initializer_list&lt;i64&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L99">line 99</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(std::initializer_list&lt;i64&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i64&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(std::initializer_list&lt;i64&gt; lst)
+  {
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return *this;
+    }
+
+    i64 __arr[16];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+
+    value = _mm512_set_epi64(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L103">line 103</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L112">line 112</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-dd66238f4d6d0a4e"><h3><code>micron::simd::v512::operator=(std::initializer_list&lt;i32&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L116">line 116</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(std::initializer_list&lt;i32&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i32&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(std::initializer_list&lt;i32&gt; lst)
+  {
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return *this;
+    }
+    i32 __arr[16];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+    value = _mm512_set_epi32(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
+                             __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L120">line 120</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L128">line 128</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-fadf1ae8cccb7aa5"><h3><code>micron::simd::v512::operator=(std::initializer_list&lt;i16&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L132">line 132</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(std::initializer_list&lt;i16&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i16&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(std::initializer_list&lt;i16&gt; lst)
+  {
+    if ( lst.size() != 32 ) {
+      __impl_zero_init();
+      return *this;
+    }
+    i16 __arr[32];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+    value = _mm512_set_epi16(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24], __arr[23], __arr[22],
+                             __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14], __arr[13], __arr[12],
+                             __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
+                             __arr[0]);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L136">line 136</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L146">line 146</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-00847d231d12e660"><h3><code>micron::simd::v512::operator=(std::initializer_list&lt;i8&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(std::initializer_list&lt;i8&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i8&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(std::initializer_list&lt;i8&gt; lst)
+  {
+    if ( lst.size() != 64 ) {
+      __impl_zero_init();
+      return *this;
+    }
+    i8 __arr[64];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+
+    value = _mm512_set_epi8(__arr[63], __arr[62], __arr[61], __arr[60], __arr[59], __arr[58], __arr[57], __arr[56], __arr[55], __arr[54],
+                            __arr[53], __arr[52], __arr[51], __arr[50], __arr[49], __arr[48], __arr[47], __arr[46], __arr[45], __arr[44],
+                            __arr[43], __arr[42], __arr[41], __arr[40], __arr[39], __arr[38], __arr[37], __arr[36], __arr[35], __arr[34],
+                            __arr[33], __arr[32], __arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24],
+                            __arr[23], __arr[22], __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14],
+                            __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4],
+                            __arr[3], __arr[2], __arr[1], __arr[0]);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L154">line 154</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L168">line 168</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-0786c002e386a2f4"><h3><code>micron::simd::v512::v512(i8 _e0)
+    requires micron::is_same_v&lt;T, i512&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L172">line 172</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(i8 _e0)
+    requires micron::is_same_v&lt;T, i512&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i8 _e0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(i8 _e0)
+    requires micron::is_same_v&lt;T, i512&gt;
+  {
+    value = _mm512_set1_epi8(_e0);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-00979b899667db4d"><h3><code>micron::simd::v512::v512(i16 _e0)
+    requires micron::is_same_v&lt;T, i512&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L178">line 178</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(i16 _e0)
+    requires micron::is_same_v&lt;T, i512&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i16 _e0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(i16 _e0)
+    requires micron::is_same_v&lt;T, i512&gt;
+  {
+    value = _mm512_set1_epi16(_e0);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-fd0224bfe4dc0d6e"><h3><code>micron::simd::v512::v512(i32 a)
+    requires micron::is_same_v&lt;T, i512&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L184">line 184</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(i32 a)
+    requires micron::is_same_v&lt;T, i512&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(i32 a)
+    requires micron::is_same_v&lt;T, i512&gt;
+  {
+    value = _mm512_set1_epi32(a);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-07ad076b4e3f2ff6"><h3><code>micron::simd::v512::v512(i64 a)
+    requires micron::is_same_v&lt;T, i512&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L190">line 190</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(i64 a)
+    requires micron::is_same_v&lt;T, i512&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(i64 a)
+    requires micron::is_same_v&lt;T, i512&gt;
+  {
+    value = _mm512_set1_epi64(a);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-581c32a530e9bc90"><h3><code>micron::simd::v512::v512(float a)
+    requires micron::is_same_v&lt;T, f512&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L196">line 196</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(float a)
+    requires micron::is_same_v&lt;T, f512&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(float a)
+    requires micron::is_same_v&lt;T, f512&gt;
+  {
+    value = _mm512_set1_ps(a);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-bfa9988a11de13bd"><h3><code>micron::simd::v512::v512(double a)
+    requires micron::is_same_v&lt;T, d512&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L202">line 202</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(double a)
+    requires micron::is_same_v&lt;T, d512&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(double a)
+    requires micron::is_same_v&lt;T, d512&gt;
+  {
+    value = _mm512_set1_pd(a);
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b3684bf89af35845"><h3><code>micron::simd::v512::v512(std::initializer_list&lt;double&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L208">line 208</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(std::initializer_list&lt;double&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;double&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(std::initializer_list&lt;double&gt; lst)
+  {
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return;
+    }
+    double a, b, c, d, e, f, g, h;
+    int _f = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) {
+      if ( _f == 0 ) a = *itr;
+      if ( _f == 1 ) b = *itr;
+      if ( _f == 2 ) c = *itr;
+      if ( _f == 3 ) d = *itr;
+      if ( _f == 4 ) e = *itr;
+      if ( _f == 5 ) f = *itr;
+      if ( _f == 6 ) g = *itr;
+      if ( _f == 7 ) h = *itr;
+      _f++;
+    }
+    value = _mm512_set_pd(h, g, f, e, d, c, b, a);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/simd/types/simd512.hpp.html#L212">line 212</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-bbf0fbda80b8f1cc"><h3><code>micron::simd::v512::v512(std::initializer_list&lt;float&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L230">line 230</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(std::initializer_list&lt;float&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;float&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(std::initializer_list&lt;float&gt; lst)
+  {
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return;
+    }
+    float __arr[16];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+
+    value = _mm512_set_ps(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
+                          __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/simd/types/simd512.hpp.html#L234">line 234</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-1905ea054969b9ce"><h3><code>micron::simd::v512::v512(std::initializer_list&lt;i64&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L246">line 246</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(std::initializer_list&lt;i64&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i64&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(std::initializer_list&lt;i64&gt; lst)
+  {
+    if ( lst.size() != 8 ) {
+      __impl_zero_init();
+      return;
+    }
+    i64 __arr[8];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+
+    value = _mm512_set_epi64(__arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/simd/types/simd512.hpp.html#L250">line 250</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-b7fd4d177b93af1f"><h3><code>micron::simd::v512::v512(std::initializer_list&lt;i32&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L260">line 260</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(std::initializer_list&lt;i32&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i32&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(std::initializer_list&lt;i32&gt; lst)
+  {
+    if ( lst.size() != 16 ) {
+      __impl_zero_init();
+      return;
+    }
+    i32 __arr[16];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+
+    value = _mm512_set_epi32(__arr[15], __arr[14], __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6],
+                             __arr[5], __arr[4], __arr[3], __arr[2], __arr[1], __arr[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/simd/types/simd512.hpp.html#L264">line 264</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-68fb15bdad00c92f"><h3><code>micron::simd::v512::v512(std::initializer_list&lt;i16&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L275">line 275</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(std::initializer_list&lt;i16&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i16&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(std::initializer_list&lt;i16&gt; lst)
+  {
+    if ( lst.size() != 32 ) {
+      __impl_zero_init();
+      return;
+    }
+    i16 __arr[32];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+
+    value = _mm512_set_epi16(__arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24], __arr[23], __arr[22],
+                             __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14], __arr[13], __arr[12],
+                             __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4], __arr[3], __arr[2], __arr[1],
+                             __arr[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/simd/types/simd512.hpp.html#L279">line 279</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-c052beef42732ffb"><h3><code>micron::simd::v512::v512(std::initializer_list&lt;i8&gt; lst)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L292">line 292</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(std::initializer_list&lt;i8&gt; lst)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>std::initializer_list&lt;i8&gt; lst</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(std::initializer_list&lt;i8&gt; lst)
+  {
+    if ( lst.size() != 64 ) {
+      __impl_zero_init();
+      return;
+    }
+    i8 __arr[64];
+
+    int __i = 0;
+    for ( auto itr = lst.begin(); itr != lst.end(); ++itr ) __arr[__i++] = *itr;
+    value = _mm512_set_epi8(__arr[63], __arr[62], __arr[61], __arr[60], __arr[59], __arr[58], __arr[57], __arr[56], __arr[55], __arr[54],
+                            __arr[53], __arr[52], __arr[51], __arr[50], __arr[49], __arr[48], __arr[47], __arr[46], __arr[45], __arr[44],
+                            __arr[43], __arr[42], __arr[41], __arr[40], __arr[39], __arr[38], __arr[37], __arr[36], __arr[35], __arr[34],
+                            __arr[33], __arr[32], __arr[31], __arr[30], __arr[29], __arr[28], __arr[27], __arr[26], __arr[25], __arr[24],
+                            __arr[23], __arr[22], __arr[21], __arr[20], __arr[19], __arr[18], __arr[17], __arr[16], __arr[15], __arr[14],
+                            __arr[13], __arr[12], __arr[11], __arr[10], __arr[9], __arr[8], __arr[7], __arr[6], __arr[5], __arr[4],
+                            __arr[3], __arr[2], __arr[1], __arr[0]);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td>No value (<code>return;</code>)</td><td><a href="../../../source/simd/types/simd512.hpp.html#L296">line 296</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-17ae7cc8a1cb74d3"><h3><code>micron::simd::v512::v512(const v512 &amp;o)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L313">line 313</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(const v512 &amp;o) : value(o.value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>The function body performs no operations. Any base and member initialization is specified in the declaration.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(const v512 &amp;o) : value(o.value) { }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-61e331b1e0718afd"><h3><code>micron::simd::v512::v512(v512 &amp;&amp;o)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L315">line 315</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>v512(v512 &amp;&amp;o) : value(o.value)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>v512 &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">v512(v512 &amp;&amp;o) : value(o.value)
+  {
+    if constexpr ( micron::same_as&lt;T, f512&gt; ) {
+      o.value = _mm512_setzero_ps();
+    }
+    if constexpr ( micron::same_as&lt;T, d512&gt; ) {
+      o.value = _mm512_setzero_pd();
+    }
+    if constexpr ( micron::same_as&lt;T, i512&gt; ) {
+      o.value = _mm512_setzero_si512();
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-356c3eff52f199bf"><h3><code>micron::simd::v512::operator=(const v512 &amp;o)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L329">line 329</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(const v512 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(const v512 &amp;o)
+  {
+    value = o.value;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L332">line 332</a></td></tr></tbody></table></section><section class="function-entry" id="f-40ab83d1452d8c58"><h3><code>micron::simd::v512::operator=(v512 &amp;&amp;o)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L336">line 336</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(v512 &amp;&amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>v512 &amp;&amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(v512 &amp;&amp;o)
+  {
+    value = o.value;
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L339">line 339</a></td></tr></tbody></table></section><section class="function-entry" id="f-b703da2a4ecb7f7e"><h3><code>micron::simd::v512::operator=(float f)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L344">line 344</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(float f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(float f)
+  {
+    value = _mm512_set1_ps(f);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L347">line 347</a></td></tr></tbody></table></section><section class="function-entry" id="f-adab795cd9acc38c"><h3><code>micron::simd::v512::operator=(double d)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L351">line 351</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(double d)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(double d)
+  {
+    value = _mm512_set1_pd(d);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L354">line 354</a></td></tr></tbody></table></section><section class="function-entry" id="f-92d99e362177636c"><h3><code>micron::simd::v512::operator=(i8 c)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L358">line 358</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(i8 c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i8 c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(i8 c)
+  {
+    value = _mm512_set1_epi8(c);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L361">line 361</a></td></tr></tbody></table></section><section class="function-entry" id="f-82f6b11466e2c67f"><h3><code>micron::simd::v512::operator=(i16 s)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L365">line 365</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(i16 s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i16 s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(i16 s)
+  {
+    value = _mm512_set1_epi16(s);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L368">line 368</a></td></tr></tbody></table></section><section class="function-entry" id="f-244ecd47effc6103"><h3><code>micron::simd::v512::operator=(i32 i)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L372">line 372</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(i32 i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(i32 i)
+  {
+    value = _mm512_set1_epi32(i);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L375">line 375</a></td></tr></tbody></table></section><section class="function-entry" id="f-e31ea14c05f09932"><h3><code>micron::simd::v512::operator=(i64 l)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L379">line 379</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(i64 l)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(i64 l)
+  {
+    value = _mm512_set1_epi64(l);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L382">line 382</a></td></tr></tbody></table></section><section class="function-entry" id="f-eb07cbcba72b6a2a"><h3><code>micron::simd::v512::operator=(F *addr)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L386">line 386</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator=(F *addr)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *addr</code></li></ul><h4>Effects</h4><p>Returns <code>uload&lt;F&gt;(addr)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator=(F *addr)
+  {
+    return uload&lt;F&gt;(addr);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>uload&lt;F&gt;(addr)</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L388">line 388</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-3338efff2997953c">uload&lt;F&gt;</a>.</p></section><section class="function-entry" id="f-5765e8be965761ef"><h3><code>micron::simd::v512::operator[](const int a)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L391">line 391</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr v512 &amp;operator[](const int a) = delete;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const int a</code></li></ul><h4>Effects</h4><p>This overload is deleted. A program that selects it is ill-formed.</p></section><section class="function-entry" id="f-37c61a3f067ca248"><h3><code>micron::simd::v512::operator==(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L394">line 394</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr i64
+  operator==(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr i64
+  operator==(const v512 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_EQ_OQ));
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_EQ_OQ));
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpeq_epi8_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpeq_epi16_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpeq_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpeq_epi64_mask(value, o.value));
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_EQ_OQ))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L397">line 397</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_EQ_OQ))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L399">line 399</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpeq_epi8_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L401">line 401</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpeq_epi16_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L402">line 402</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpeq_epi32_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L403">line 403</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpeq_epi64_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L404">line 404</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L406">line 406</a></td></tr></tbody></table></section><section class="function-entry" id="f-f3f35b03808f9c40"><h3><code>micron::simd::v512::operator&gt;=(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L410">line 410</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr i64
+  operator&gt;=(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr i64
+  operator&gt;=(const v512 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_GE_OS));
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_GE_OS));
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) return static_cast&lt;i64&gt;(static_cast&lt;__mmask64&gt;(~_mm512_cmplt_epi8_mask(value, o.value)));
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; )
+        return static_cast&lt;i64&gt;(static_cast&lt;__mmask32&gt;(~_mm512_cmplt_epi16_mask(value, o.value)));
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpge_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) return static_cast&lt;i64&gt;(static_cast&lt;__mmask8&gt;(~_mm512_cmplt_epi64_mask(value, o.value)));
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_GE_OS))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L413">line 413</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_GE_OS))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L415">line 415</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;__mmask64&gt;(~_mm512_cmplt_epi8_mask(value, o.value)))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L418">line 418</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;__mmask32&gt;(~_mm512_cmplt_epi16_mask(value, o.value)))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L420">line 420</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpge_epi32_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L421">line 421</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;__mmask8&gt;(~_mm512_cmplt_epi64_mask(value, o.value)))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L422">line 422</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L424">line 424</a></td></tr></tbody></table></section><section class="function-entry" id="f-7279502f4bf9e6d7"><h3><code>micron::simd::v512::operator&gt;(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L428">line 428</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr i64
+  operator&gt;(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr i64
+  operator&gt;(const v512 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_GT_OS));
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_GT_OS));
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpgt_epi8_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpgt_epi16_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpgt_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) return static_cast&lt;i64&gt;(_mm512_cmpgt_epi64_mask(value, o.value));
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_GT_OS))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L431">line 431</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_GT_OS))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L433">line 433</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpgt_epi8_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L435">line 435</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpgt_epi16_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L436">line 436</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpgt_epi32_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L437">line 437</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmpgt_epi64_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L438">line 438</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L440">line 440</a></td></tr></tbody></table></section><section class="function-entry" id="f-9971b6a2489c70a5"><h3><code>micron::simd::v512::operator&lt;(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L444">line 444</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr i64
+  operator&lt;(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr i64
+  operator&lt;(const v512 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_LT_OS));
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_LT_OS));
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) return static_cast&lt;i64&gt;(_mm512_cmplt_epi8_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) return static_cast&lt;i64&gt;(_mm512_cmplt_epi16_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) return static_cast&lt;i64&gt;(_mm512_cmplt_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) return static_cast&lt;i64&gt;(_mm512_cmplt_epi64_mask(value, o.value));
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_LT_OS))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L447">line 447</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_LT_OS))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L449">line 449</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmplt_epi8_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L451">line 451</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmplt_epi16_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L452">line 452</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmplt_epi32_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L453">line 453</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmplt_epi64_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L454">line 454</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L456">line 456</a></td></tr></tbody></table></section><section class="function-entry" id="f-5a8e572a8d1ec5a0"><h3><code>micron::simd::v512::operator&lt;=(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L460">line 460</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr i64
+  operator&lt;=(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr i64
+  operator&lt;=(const v512 &amp;o) const
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_LE_OS));
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      return static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_LE_OS));
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) return static_cast&lt;i64&gt;(static_cast&lt;__mmask64&gt;(~_mm512_cmpgt_epi8_mask(value, o.value)));
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; )
+        return static_cast&lt;i64&gt;(static_cast&lt;__mmask32&gt;(~_mm512_cmpgt_epi16_mask(value, o.value)));
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) return static_cast&lt;i64&gt;(_mm512_cmple_epi32_mask(value, o.value));
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) return static_cast&lt;i64&gt;(static_cast&lt;__mmask8&gt;(~_mm512_cmpgt_epi64_mask(value, o.value)));
+    }
+    return 0x0;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_ps_mask(value, o.value, _CMP_LE_OS))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L463">line 463</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmp_pd_mask(value, o.value, _CMP_LE_OS))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L465">line 465</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;__mmask64&gt;(~_mm512_cmpgt_epi8_mask(value, o.value)))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L468">line 468</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;__mmask32&gt;(~_mm512_cmpgt_epi16_mask(value, o.value)))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L470">line 470</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(_mm512_cmple_epi32_mask(value, o.value))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L471">line 471</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;i64&gt;(static_cast&lt;__mmask8&gt;(~_mm512_cmpgt_epi64_mask(value, o.value)))</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L472">line 472</a></td></tr><tr class="t-dsc"><td><code>0x0</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L474">line 474</a></td></tr></tbody></table></section><section class="function-entry" id="f-ed1b82757abd9813"><h3><code>micron::simd::v512::operator+=(double x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L479">line 479</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator+=(double x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator+=(double x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      d512 _r = _mm512_set1_pd(x);
+      value = _mm512_add_pd(value, _r);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L485">line 485</a></td></tr></tbody></table></section><section class="function-entry" id="f-c2f23b0dfd3eebcb"><h3><code>micron::simd::v512::operator+=(float x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L489">line 489</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator+=(float x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator+=(float x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      f512 _r = _mm512_set1_ps(x);
+      value = _mm512_add_ps(value, _r);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L495">line 495</a></td></tr></tbody></table></section><section class="function-entry" id="f-cb99c25cc577e76b"><h3><code>micron::simd::v512::operator+=(A x)
+    requires is_int_flag_type&lt;A&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L500">line 500</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+  constexpr inline v512 &amp;
+  operator+=(A x)
+    requires is_int_flag_type&lt;A&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+  constexpr inline v512 &amp;
+  operator+=(A x)
+    requires is_int_flag_type&lt;A&gt;
+  {
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;A, __v8&gt; ) {
+        i512 _r = _mm512_set1_epi8(x);
+        value = _mm512_add_epi8(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v16&gt; ) {
+        i512 _r = _mm512_set1_epi16(x);
+        value = _mm512_add_epi16(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v32&gt; ) {
+        i512 _r = _mm512_set1_epi32(x);
+        value = _mm512_add_epi32(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v64&gt; ) {
+        i512 _r = _mm512_set1_epi64(x);
+        value = _mm512_add_epi64(value, _r);
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L521">line 521</a></td></tr></tbody></table></section><section class="function-entry" id="f-14c1e539b9c6b85d"><h3><code>micron::simd::v512::operator-=(double x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L528">line 528</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator-=(double x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator-=(double x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      d512 _r = _mm512_set1_pd(x);
+      value = _mm512_sub_pd(value, _r);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L534">line 534</a></td></tr></tbody></table></section><section class="function-entry" id="f-78d4f0f31305e069"><h3><code>micron::simd::v512::operator-=(float x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L538">line 538</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator-=(float x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator-=(float x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      f512 _r = _mm512_set1_ps(x);
+      value = _mm512_sub_ps(value, _r);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L544">line 544</a></td></tr></tbody></table></section><section class="function-entry" id="f-dbeeb59180f2f315"><h3><code>micron::simd::v512::operator-=(A x)
+    requires is_int_flag_type&lt;A&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L549">line 549</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+  constexpr inline v512 &amp;
+  operator-=(A x)
+    requires is_int_flag_type&lt;A&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+  constexpr inline v512 &amp;
+  operator-=(A x)
+    requires is_int_flag_type&lt;A&gt;
+  {
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;A, __v8&gt; ) {
+        i512 _r = _mm512_set1_epi8(x);
+        value = _mm512_sub_epi8(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v16&gt; ) {
+        i512 _r = _mm512_set1_epi16(x);
+        value = _mm512_sub_epi16(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v32&gt; ) {
+        i512 _r = _mm512_set1_epi32(x);
+        value = _mm512_sub_epi32(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v64&gt; ) {
+        i512 _r = _mm512_set1_epi64(x);
+        value = _mm512_sub_epi64(value, _r);
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L570">line 570</a></td></tr></tbody></table></section><section class="function-entry" id="f-665a4bf3c78cd312"><h3><code>micron::simd::v512::operator-=(const v512 &amp;o)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L575">line 575</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator-=(const v512 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator-=(const v512 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      value = _mm512_sub_ps(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      value = _mm512_sub_pd(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) {
+        value = _mm512_sub_epi8(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) {
+        value = _mm512_sub_epi16(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) {
+        value = _mm512_sub_epi32(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) {
+        value = _mm512_sub_epi64(value, o.value);
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L595">line 595</a></td></tr></tbody></table></section><section class="function-entry" id="f-14cad1c33cae2102"><h3><code>micron::simd::v512::operator+(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L599">line 599</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512
+  operator+(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512
+  operator+(const v512 &amp;o) const
+  {
+    v512 _r;
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      _r.value = _mm512_add_ps(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      _r.value = _mm512_add_pd(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) {
+        _r.value = _mm512_add_epi8(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) {
+        _r.value = _mm512_add_epi16(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) {
+        _r.value = _mm512_add_epi32(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) {
+        _r.value = _mm512_add_epi64(value, o.value);
+      }
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L620">line 620</a></td></tr></tbody></table></section><section class="function-entry" id="f-d32a933873ac8a2a"><h3><code>micron::simd::v512::operator-(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L624">line 624</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512
+  operator-(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512
+  operator-(const v512 &amp;o) const
+  {
+    v512 _r;
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      _r.value = _mm512_sub_ps(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      _r.value = _mm512_sub_pd(value, o.value);
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) {
+        _r.value = _mm512_sub_epi8(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) {
+        _r.value = _mm512_sub_epi16(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) {
+        _r.value = _mm512_sub_epi32(value, o.value);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) {
+        _r.value = _mm512_sub_epi64(value, o.value);
+      }
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L645">line 645</a></td></tr></tbody></table></section><section class="function-entry" id="f-14e3b75e5af0c00d"><h3><code>micron::simd::v512::all_zeroes() const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L649">line 649</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  all_zeroes() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  all_zeroes() const
+  {
+    i512 _v;
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      _v = _mm512_castps_si512(value);
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      _v = _mm512_castpd_si512(value);
+    } else {
+      _v = value;
+    }
+    return _mm512_cmpeq_epi32_mask(_v, _mm512_setzero_si512()) == static_cast&lt;__mmask16&gt;(0xFFFF);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_mm512_cmpeq_epi32_mask(_v, _mm512_setzero_si512()) == static_cast&lt;__mmask16&gt;(0xFFFF)</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L659">line 659</a></td></tr></tbody></table></section><section class="function-entry" id="f-641159789d780c87"><h3><code>micron::simd::v512::all_ones() const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L663">line 663</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+  all_ones() const</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+  all_ones() const
+  {
+    i512 _v;
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      _v = _mm512_castps_si512(value);
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      _v = _mm512_castpd_si512(value);
+    } else {
+      _v = value;
+    }
+    return _mm512_cmpeq_epi32_mask(_v, _mm512_set1_epi32(-1)) == static_cast&lt;__mmask16&gt;(0xFFFF);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_mm512_cmpeq_epi32_mask(_v, _mm512_set1_epi32(-1)) == static_cast&lt;__mmask16&gt;(0xFFFF)</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L673">line 673</a></td></tr></tbody></table></section><section class="function-entry" id="f-ed00b772e0b5cd1e"><h3><code>micron::simd::v512::to_zero(void)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L677">line 677</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  to_zero(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  to_zero(void)
+  {
+    __impl_zero_init();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-e92d8eab5f844307">__impl_zero_init</a>.</p></section><section class="function-entry" id="f-9c706d8f061388db"><h3><code>micron::simd::v512::to_ones(void)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L683">line 683</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr void
+  to_ones(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr void
+  to_ones(void)
+  {
+    __impl_one_init();
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-b01a6b8c98ddfa99">__impl_one_init</a>.</p></section><section class="function-entry" id="f-cc3151bfe5145b63"><h3><code>micron::simd::v512::set(float f)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L690">line 690</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  set(float f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  set(float f)
+  {
+    value = _mm512_set1_ps(f);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L693">line 693</a></td></tr></tbody></table></section><section class="function-entry" id="f-6dcdaf9e4ad6437d"><h3><code>micron::simd::v512::set(double d)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L697">line 697</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  set(double d)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double d</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  set(double d)
+  {
+    value = _mm512_set1_pd(d);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L700">line 700</a></td></tr></tbody></table></section><section class="function-entry" id="f-883dbabf52b96170"><h3><code>micron::simd::v512::set(i8 c)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L704">line 704</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  set(i8 c)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i8 c</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  set(i8 c)
+  {
+    value = _mm512_set1_epi8(c);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L707">line 707</a></td></tr></tbody></table></section><section class="function-entry" id="f-04d60411c9923881"><h3><code>micron::simd::v512::set(i16 s)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L711">line 711</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  set(i16 s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i16 s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  set(i16 s)
+  {
+    value = _mm512_set1_epi16(s);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L714">line 714</a></td></tr></tbody></table></section><section class="function-entry" id="f-28ca5172778ae350"><h3><code>micron::simd::v512::set(i32 i)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L718">line 718</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  set(i32 i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i32 i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  set(i32 i)
+  {
+    value = _mm512_set1_epi32(i);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L721">line 721</a></td></tr></tbody></table></section><section class="function-entry" id="f-3a5e4baaed92b2b5"><h3><code>micron::simd::v512::set(i64 l)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L725">line 725</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  set(i64 l)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 l</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  set(i64 l)
+  {
+    value = _mm512_set1_epi64(l);
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L728">line 728</a></td></tr></tbody></table></section><section class="function-entry" id="f-ba16b69ceb000979"><h3><code>micron::simd::v512::set(float const *f)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L732">line 732</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  set(float const *f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float const *f</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  set(float const *f)
+  {
+    f128 t = _mm_load_ss(f);
+    value = _mm512_broadcastss_ps(t);      // why :c
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L736">line 736</a></td></tr></tbody></table></section><section class="function-entry" id="f-b13b4139b6f86449"><h3><code>micron::simd::v512::broadcast(float const *f)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L740">line 740</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  broadcast(float const *f)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float const *f</code></li></ul><h4>Effects</h4><p>Returns <code>set(f)</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  broadcast(float const *f)
+  {
+    return set(f);
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>set(f)</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L742">line 742</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="simd512.hpp.html#f-cc3151bfe5145b63">set</a>.</p></section><section class="function-entry" id="f-87310ab3ff7262a2"><h3><code>micron::simd::v512::load(B *mem)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L747">line 747</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename B&gt;
+  inline v512 &amp;
+  load(B *mem)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>B *mem</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename B&gt;
+  inline v512 &amp;
+  load(B *mem)
+  {
+    if ( !is_aligned&lt;512&gt;(mem) ) return *this;
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      value = _mm512_load_ps(reinterpret_cast&lt;const void *&gt;(mem));
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      value = _mm512_load_pd(reinterpret_cast&lt;const void *&gt;(mem));
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      value = _mm512_load_si512(reinterpret_cast&lt;const void *&gt;(mem));
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L749">line 749</a></td></tr><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L757">line 757</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../../bits/wasm/simd/bits.hpp.html#f-eb6676627338050d">is_aligned&lt;512&gt;</a>.</p></section><section class="function-entry" id="f-3338efff2997953c"><h3><code>micron::simd::v512::uload(B *mem)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L762">line 762</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename B&gt;
+  inline v512 &amp;
+  uload(B *mem)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>B *mem</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename B&gt;
+  inline v512 &amp;
+  uload(B *mem)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      value = _mm512_loadu_ps(reinterpret_cast&lt;const void *&gt;(mem));
+    } else if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      value = _mm512_loadu_pd(reinterpret_cast&lt;const void *&gt;(mem));
+    } else if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      value = _mm512_loadu_si512(reinterpret_cast&lt;const void *&gt;(mem));
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L771">line 771</a></td></tr></tbody></table></section><section class="function-entry" id="f-f770bce629f6751d"><h3><code>micron::simd::v512::operator|=(const v512 &amp;o)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L776">line 776</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator|=(const v512 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator|=(const v512 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      value = _mm512_or_si512(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      value = _mm512_or_ps(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      value = _mm512_or_pd(value, o.value);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L787">line 787</a></td></tr></tbody></table></section><section class="function-entry" id="f-be2052c587cc1cd6"><h3><code>micron::simd::v512::operator&amp;=(const v512 &amp;o)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L791">line 791</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator&amp;=(const v512 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator&amp;=(const v512 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      value = _mm512_and_si512(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      value = _mm512_and_ps(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      value = _mm512_and_pd(value, o.value);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L802">line 802</a></td></tr></tbody></table></section><section class="function-entry" id="f-fd696e1271dcfb86"><h3><code>micron::simd::v512::operator^=(const v512 &amp;o)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L806">line 806</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator^=(const v512 &amp;o)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator^=(const v512 &amp;o)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      value = _mm512_xor_si512(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      value = _mm512_xor_ps(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      value = _mm512_xor_pd(value, o.value);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L817">line 817</a></td></tr></tbody></table></section><section class="function-entry" id="f-690b6f25f85b554d"><h3><code>micron::simd::v512::operator|(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L821">line 821</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512
+  operator|(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512
+  operator|(const v512 &amp;o) const
+  {
+    v512 _r;
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      _r.value = _mm512_or_si512(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      _r.value = _mm512_or_ps(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      _r.value = _mm512_or_pd(value, o.value);
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L833">line 833</a></td></tr></tbody></table></section><section class="function-entry" id="f-ceb30b4565b52b4a"><h3><code>micron::simd::v512::operator&amp;(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L837">line 837</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512
+  operator&amp;(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512
+  operator&amp;(const v512 &amp;o) const
+  {
+    v512 _r;
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      _r.value = _mm512_and_si512(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      _r.value = _mm512_and_ps(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      _r.value = _mm512_and_pd(value, o.value);
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L849">line 849</a></td></tr></tbody></table></section><section class="function-entry" id="f-8f6c70eb70023be5"><h3><code>micron::simd::v512::operator^(const v512 &amp;o) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L853">line 853</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512
+  operator^(const v512 &amp;o) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const v512 &amp;o</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512
+  operator^(const v512 &amp;o) const
+  {
+    v512 _r;
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      _r.value = _mm512_xor_si512(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      _r.value = _mm512_xor_ps(value, o.value);
+    }
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      _r.value = _mm512_xor_pd(value, o.value);
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L865">line 865</a></td></tr></tbody></table></section><section class="function-entry" id="f-61628b485c32edc1"><h3><code>micron::simd::v512::operator&lt;&lt;(int i) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L869">line 869</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512
+  operator&lt;&lt;(int i) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512
+  operator&lt;&lt;(int i) const
+  {
+    v512 _r;
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) {
+        static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 shift&quot;);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) {
+        _r.value = _mm512_slli_epi16(value, i);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) {
+        _r.value = _mm512_slli_epi32(value, i);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) {
+        _r.value = _mm512_slli_epi64(value, i);
+      }
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L886">line 886</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 shift&quot;);</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L874">line 874</a><br>Within <code>( micron::is_same_v&lt;T, i512&gt; )</code>, <code>( micron::is_same_v&lt;F, __v8&gt; )</code></td></tr></tbody></table></section><section class="function-entry" id="f-0b7ede378cc42ef9"><h3><code>micron::simd::v512::operator&lt;&lt;=(int i)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L890">line 890</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator&lt;&lt;=(int i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator&lt;&lt;=(int i)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) {
+        static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 shift&quot;);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) {
+        value = _mm512_slli_epi16(value, i);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) {
+        value = _mm512_slli_epi32(value, i);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) {
+        value = _mm512_slli_epi64(value, i);
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L906">line 906</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 shift&quot;);</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L894">line 894</a><br>Within <code>( micron::is_same_v&lt;T, i512&gt; )</code>, <code>( micron::is_same_v&lt;F, __v8&gt; )</code></td></tr></tbody></table></section><section class="function-entry" id="f-a5b9dccee79c17cf"><h3><code>micron::simd::v512::operator&gt;&gt;(int i) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L910">line 910</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512
+  operator&gt;&gt;(int i) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512
+  operator&gt;&gt;(int i) const
+  {
+    v512 _r;
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) {
+        static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 shift&quot;);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) {
+        _r.value = _mm512_srai_epi16(value, i);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) {
+        _r.value = _mm512_srai_epi32(value, i);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) {
+        _r.value = _mm512_srai_epi64(value, i);
+      }
+    }
+    return _r;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_r</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L927">line 927</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 shift&quot;);</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L915">line 915</a><br>Within <code>( micron::is_same_v&lt;T, i512&gt; )</code>, <code>( micron::is_same_v&lt;F, __v8&gt; )</code></td></tr></tbody></table></section><section class="function-entry" id="f-99500d7f5f045186"><h3><code>micron::simd::v512::operator&gt;&gt;=(int i)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L931">line 931</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline v512 &amp;
+  operator&gt;&gt;=(int i)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int i</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline v512 &amp;
+  operator&gt;&gt;=(int i)
+  {
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) {
+        static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 shift&quot;);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) {
+        value = _mm512_srai_epi16(value, i);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) {
+        value = _mm512_srai_epi32(value, i);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) {
+        value = _mm512_srai_epi64(value, i);
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L947">line 947</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 shift&quot;);</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L935">line 935</a><br>Within <code>( micron::is_same_v&lt;T, i512&gt; )</code>, <code>( micron::is_same_v&lt;F, __v8&gt; )</code></td></tr></tbody></table></section><section class="function-entry" id="f-c53b8ac3329823e7"><h3><code>micron::simd::v512::operator/=(double x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L954">line 954</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator/=(double x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator/=(double x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      d512 _r = _mm512_set1_pd(x);
+      value = _mm512_div_pd(value, _r);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L960">line 960</a></td></tr></tbody></table></section><section class="function-entry" id="f-3db4237920547619"><h3><code>micron::simd::v512::operator/=(float x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L964">line 964</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator/=(float x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator/=(float x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      f512 _r = _mm512_set1_ps(x);
+      value = _mm512_div_ps(value, _r);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L970">line 970</a></td></tr></tbody></table></section><section class="function-entry" id="f-522961430f53b71c"><h3><code>micron::simd::v512::operator/(double x) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L974">line 974</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512
+  operator/(double x) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512
+  operator/(double x) const
+  {
+    v512 _d;
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      d512 _r = _mm512_set1_pd(x);
+      _d.value = _mm512_div_pd(value, _r);
+    }
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L981">line 981</a></td></tr></tbody></table></section><section class="function-entry" id="f-b25e6b06a9ca89a8"><h3><code>micron::simd::v512::operator/(float x) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L985">line 985</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512
+  operator/(float x) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512
+  operator/(float x) const
+  {
+    v512 _d;
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      f512 _r = _mm512_set1_ps(x);
+      _d.value = _mm512_div_ps(value, _r);
+    }
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L992">line 992</a></td></tr></tbody></table></section><section class="function-entry" id="f-2751b5244f80bdcb"><h3><code>micron::simd::v512::operator*=(double x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L996">line 996</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator*=(double x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator*=(double x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      d512 _r = _mm512_set1_pd(x);
+      value = _mm512_mul_pd(value, _r);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L1002">line 1002</a></td></tr></tbody></table></section><section class="function-entry" id="f-1cbb9981fc28fcd9"><h3><code>micron::simd::v512::operator*=(float x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L1006">line 1006</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512 &amp;
+  operator*=(float x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512 &amp;
+  operator*=(float x)
+  {
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      f512 _r = _mm512_set1_ps(x);
+      value = _mm512_mul_ps(value, _r);
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L1012">line 1012</a></td></tr></tbody></table></section><section class="function-entry" id="f-9d35f50e6a16b632"><h3><code>micron::simd::v512::operator*=(A x)
+    requires is_int_flag_type&lt;A&gt;</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L1017">line 1017</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;typename A&gt;
+  constexpr inline v512 &amp;
+  operator*=(A x)
+    requires is_int_flag_type&lt;A&gt;</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>A x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;typename A&gt;
+  constexpr inline v512 &amp;
+  operator*=(A x)
+    requires is_int_flag_type&lt;A&gt;
+  {
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;A, __v8&gt; ) {
+        static_assert(!micron::is_same_v&lt;A, __v8&gt;, &quot;AVX-512 has no epi8 multiply&quot;);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v16&gt; ) {
+        i512 _r = _mm512_set1_epi16(x);
+        value = _mm512_mullo_epi16(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v32&gt; ) {
+        i512 _r = _mm512_set1_epi32(x);
+        value = _mm512_mullo_epi32(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;A, __v64&gt; ) {
+        // AVX-512DQ
+        i512 _r = _mm512_set1_epi64(x);
+        value = _mm512_mullo_epi64(value, _r);
+      }
+    }
+    return *this;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>*this</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L1038">line 1038</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::is_same_v&lt;A, __v8&gt;, &quot;AVX-512 has no epi8 multiply&quot;);</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L1022">line 1022</a><br>Within <code>( micron::is_same_v&lt;T, i512&gt; )</code>, <code>( micron::is_same_v&lt;A, __v8&gt; )</code></td></tr></tbody></table></section><section class="function-entry" id="f-0faf81b78a9b4a9f"><h3><code>micron::simd::v512::operator*(double x) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L1042">line 1042</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512
+  operator*(double x) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>double x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512
+  operator*(double x) const
+  {
+    v512 _d;
+    if constexpr ( micron::is_same_v&lt;T, d512&gt; ) {
+      d512 _r = _mm512_set1_pd(x);
+      _d.value = _mm512_mul_pd(value, _r);
+    }
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L1049">line 1049</a></td></tr></tbody></table></section><section class="function-entry" id="f-1416d90ee6b985b5"><h3><code>micron::simd::v512::operator*(float x) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L1053">line 1053</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512
+  operator*(float x) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>float x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512
+  operator*(float x) const
+  {
+    v512 _d;
+    if constexpr ( micron::is_same_v&lt;T, f512&gt; ) {
+      f512 _r = _mm512_set1_ps(x);
+      _d.value = _mm512_mul_ps(value, _r);
+    }
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L1060">line 1060</a></td></tr></tbody></table></section><section class="function-entry" id="f-cdff4a2ae43303a1"><h3><code>micron::simd::v512::operator*(F x)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L1064">line 1064</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr inline v512
+  operator*(F x)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F x</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr inline v512
+  operator*(F x)
+  {
+    v512 _d;
+    if constexpr ( micron::is_same_v&lt;T, i512&gt; ) {
+      if constexpr ( micron::is_same_v&lt;F, __v8&gt; ) {
+        static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 multiply&quot;);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v16&gt; ) {
+        i512 _r = _mm512_set1_epi16(x);
+        _d.value = _mm512_mullo_epi16(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v32&gt; ) {
+        i512 _r = _mm512_set1_epi32(x);
+        _d.value = _mm512_mullo_epi32(value, _r);
+      }
+      if constexpr ( micron::is_same_v&lt;F, __v64&gt; ) {
+        // AVX-512DQ
+        i512 _r = _mm512_set1_epi64(x);
+        _d.value = _mm512_mullo_epi64(value, _r);
+      }
+    }
+    return _d;
+  }</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>_d</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L1085">line 1085</a></td></tr></tbody></table><h4>Constraints and explicit failure paths</h4><p>The definition contains the following assertions, throw expressions, or diagnostic calls. Their enclosing tests are shown where present. Calls made by the function can have additional requirements and failure behavior.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_assert(!micron::is_same_v&lt;F, __v8&gt;, &quot;AVX-512 has no epi8 multiply&quot;);</code></td><td><a href="../../../source/simd/types/simd512.hpp.html#L1069">line 1069</a><br>Within <code>( micron::is_same_v&lt;T, i512&gt; )</code>, <code>( micron::is_same_v&lt;F, __v8&gt; )</code></td></tr></tbody></table></section><section class="function-entry" id="f-156741db43859497"><h3><code>micron::simd::v512::get(F *arr) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L1091">line 1091</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  get(F *arr) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *arr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  get(F *arr) const
+  {
+    if constexpr ( micron::is_same_v&lt;F, __vf&gt; ) {
+      _mm512_storeu_ps(reinterpret_cast&lt;T *&gt;(arr), value);
+    }
+    if constexpr ( micron::is_same_v&lt;F, __vd&gt; ) {
+      _mm512_storeu_pd(reinterpret_cast&lt;T *&gt;(arr), value);
+    }
+    if constexpr ( micron::is_same_v&lt;F, __v8&gt; or micron::is_same_v&lt;F, __v16&gt; or micron::is_same_v&lt;F, __v32&gt;
+                   or micron::is_same_v&lt;F, __v64&gt; ) {
+      _mm512_storeu_si512(reinterpret_cast&lt;T *&gt;(arr), value);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-d9fde0b482abc7bc"><h3><code>micron::simd::v512::get_aligned(F *arr) const</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L1106">line 1106</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  get_aligned(F *arr) const</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>F *arr</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  get_aligned(F *arr) const
+  {
+    if constexpr ( micron::is_same_v&lt;F, __vf&gt; ) {
+      _mm512_store_ps(reinterpret_cast&lt;T *&gt;(arr), value);
+    }
+    if constexpr ( micron::is_same_v&lt;F, __vd&gt; ) {
+      _mm512_store_pd(reinterpret_cast&lt;T *&gt;(arr), value);
+    }
+    if constexpr ( micron::is_same_v&lt;F, __v8&gt; or micron::is_same_v&lt;F, __v16&gt; or micron::is_same_v&lt;F, __v32&gt;
+                   or micron::is_same_v&lt;F, __v64&gt; ) {
+      _mm512_store_si512(reinterpret_cast&lt;T *&gt;(arr), value);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-e92d8eab5f844307"><h3><code>micron::simd::v512::__impl_zero_init(void)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L21">line 21</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __impl_zero_init(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __impl_zero_init(void)
+  {
+    if constexpr ( micron::same_as&lt;T, f512&gt; ) {
+      value = _mm512_setzero_ps();
+    }
+    if constexpr ( micron::same_as&lt;T, d512&gt; ) {
+      value = _mm512_setzero_pd();
+    }
+    if constexpr ( micron::same_as&lt;T, i512&gt; ) {
+      value = _mm512_setzero_si512();
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-b01a6b8c98ddfa99"><h3><code>micron::simd::v512::__impl_one_init(void)</code></h3><p>Defined in <code>simd/types/simd512.hpp</code>, <a href="../../../source/simd/types/simd512.hpp.html#L35">line 35</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+  __impl_one_init(void)</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+  __impl_one_init(void)
+  {
+    if constexpr ( micron::same_as&lt;T, f512&gt; ) {
+      value = _mm512_castsi512_ps(_mm512_set1_epi32(-1));
+    }
+    if constexpr ( micron::same_as&lt;T, d512&gt; ) {
+      value = _mm512_castsi512_pd(_mm512_set1_epi64(-1));
+    }
+    if constexpr ( micron::same_as&lt;T, i512&gt; ) {
+      value = _mm512_set1_epi32(-1);
+    }
+  }</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../../about.html">Attribution and licenses</a> · <a href="../../../index.html">Contents</a></p></div></div>
+</body></html>

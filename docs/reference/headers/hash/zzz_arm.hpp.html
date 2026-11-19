@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/hash/zzz_arm.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/hash/zzz_arm.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/hashing.html">Hashing</a></div><p>Defined in header <code>&lt;micron/hash/zzz_arm.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/hash/zzz_arm.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-fdd61f83846e85b8">micron::hashes::iv</code></td><td>variable; line 28</td></tr><tr class="t-dsc"><td><code id="s-8ca681bd0dd7a238">micron::hashes::iv64_0</code></td><td>variable; line 42</td></tr><tr class="t-dsc"><td><code id="s-3ce472a8484f28ef">micron::hashes::iv64_1</code></td><td>variable; line 43</td></tr><tr class="t-dsc"><td><code id="s-114cd4771b489453">micron::hashes::iv64_2</code></td><td>variable; line 44</td></tr><tr class="t-dsc"><td><code id="s-dc4a5d53e1121ec6">micron::hashes::iv64_3</code></td><td>variable; line 45</td></tr><tr class="t-dsc"><td><a href="#f-bdf5cd50424e94a4">micron::hashes::pack_iv64(usize off)</a></td><td>function; line 32</td></tr><tr class="t-dsc"><td><a href="#f-eeea0826d869de1a">micron::hashes::z(const u8 *__restrict data, usize sz, u64 *__restrict out)</a></td><td>function; line 197</td></tr><tr class="t-dsc"><td><a href="#f-6429688de2f9972a">micron::hashes::z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</a></td><td>function; line 242</td></tr><tr class="t-dsc"><td><a href="#f-003b442dedbba12e">micron::hashes::zz(const u8 *__restrict data, usize sz, u64 *__restrict out)</a></td><td>function; line 299</td></tr><tr class="t-dsc"><td><a href="#f-4db0cf396652b312">micron::hashes::zz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</a></td><td>function; line 377</td></tr><tr class="t-dsc"><td><a href="#f-f66abca322d26bbf">micron::hashes::zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</a></td><td>function; line 451</td></tr><tr class="t-dsc"><td><a href="#f-964f9731bc77d0cc">micron::hashes::zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)</a></td><td>function; line 531</td></tr><tr class="t-dsc"><td><a href="#f-3bf157865e6421e1">micron::hashes::z64(const u8 *data, i64 seed, usize sz)</a></td><td>function; line 609</td></tr><tr class="t-dsc"><td><a href="#f-109da3cfdade2a41">micron::hashes::z64(const u8 *data, usize sz)</a></td><td>function; line 618</td></tr><tr class="t-dsc"><td><a href="#f-2d70346bcc2ec72a">micron::hashes::zz64(const u8 *data, i64 seed, usize sz)</a></td><td>function; line 626</td></tr><tr class="t-dsc"><td><a href="#f-e678f17c456a2e3a">micron::hashes::zz64(const u8 *data, usize sz)</a></td><td>function; line 635</td></tr><tr class="t-dsc"><td><a href="#f-d6376328a166c3a1">micron::hashes::zzz64(const u8 *data, i64 seed, usize sz)</a></td><td>function; line 644</td></tr><tr class="t-dsc"><td><a href="#f-ffca522bc8b191ff">micron::hashes::zzz64(const u8 *data, usize sz)</a></td><td>function; line 654</td></tr><tr class="t-dsc"><td><a href="#f-18a0b7f4aee9cb1f">micron::hashes::zzz128(const u8 *data, i64 seed, usize sz)</a></td><td>function; line 663</td></tr><tr class="t-dsc"><td><a href="#f-b9bcc74b3b6c587c">micron::hashes::zzz128(const u8 *data, usize sz)</a></td><td>function; line 673</td></tr><tr class="t-dsc"><td><a href="#f-e9341d27d2d8a4e2">micron::hashes::zzzf(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</a></td><td>function; line 698</td></tr><tr class="t-dsc"><td><a href="#f-1a182460524952c0">micron::hashes::zzzf(const u8 *__restrict data, usize sz, u64 *__restrict out)</a></td><td>function; line 739</td></tr><tr class="t-dsc"><td><a href="#f-877b89da77aa0330">micron::hashes::zzzf64(const u8 *data, i64 seed, usize sz)</a></td><td>function; line 778</td></tr><tr class="t-dsc"><td><a href="#f-b0f01b9851159e03">micron::hashes::zzzf64(const u8 *data, usize sz)</a></td><td>function; line 787</td></tr><tr class="t-dsc"><td><a href="#f-15501ee266ac7223">micron::hashes::zzzf128(const u8 *data, i64 seed, usize sz)</a></td><td>function; line 795</td></tr><tr class="t-dsc"><td><a href="#f-186a67b0b53f3a3d">micron::hashes::zzzf128(const u8 *data, usize sz)</a></td><td>function; line 804</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-bdf5cd50424e94a4"><h3><code>micron::hashes::pack_iv64(usize off)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L32">line 32</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr i64
+pack_iv64(usize off)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize off</code></li></ul><h4>Effects</h4><p>Returns <code>(i64)(((u64)(u8)iv[off + 0] &lt;&lt; 0) | ((u64)(u8)iv[off + 1] &lt;&lt; 8) | ((u64)(u8)iv[off + 2] &lt;&lt; 16) | ((u64)(u8)iv[off + 3] &lt;&lt; 24)
+               | ((u64)(u8)iv[off + 4] &lt;&lt; 32) | ((u64)(u8)iv[off + 5] &lt;&lt; 40) | ((u64)(u8)iv[off + 6] &lt;&lt; 48) | ((u64)(u8)iv[off + 7] &lt;&lt; 56))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr i64
+pack_iv64(usize off)
+{
+  // pack in u64 (well-defined) then reinterpret to i64
+  return (i64)(((u64)(u8)iv[off + 0] &lt;&lt; 0) | ((u64)(u8)iv[off + 1] &lt;&lt; 8) | ((u64)(u8)iv[off + 2] &lt;&lt; 16) | ((u64)(u8)iv[off + 3] &lt;&lt; 24)
+               | ((u64)(u8)iv[off + 4] &lt;&lt; 32) | ((u64)(u8)iv[off + 5] &lt;&lt; 40) | ((u64)(u8)iv[off + 6] &lt;&lt; 48) | ((u64)(u8)iv[off + 7] &lt;&lt; 56));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(i64)(((u64)(u8)iv[off + 0] &lt;&lt; 0) | ((u64)(u8)iv[off + 1] &lt;&lt; 8) | ((u64)(u8)iv[off + 2] &lt;&lt; 16) | ((u64)(u8)iv[off + 3] &lt;&lt; 24)
+               | ((u64)(u8)iv[off + 4] &lt;&lt; 32) | ((u64)(u8)iv[off + 5] &lt;&lt; 40) | ((u64)(u8)iv[off + 6] &lt;&lt; 48) | ((u64)(u8)iv[off + 7] &lt;&lt; 56))</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L35">line 35</a></td></tr></tbody></table></section><section class="function-entry" id="f-eeea0826d869de1a"><h3><code>micron::hashes::z(const u8 *__restrict data, usize sz, u64 *__restrict out)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L197">line 197</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+void
+z(const u8 *__restrict data, usize sz, u64 *__restrict out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *__restrict data</code></li><li><code>usize sz</code></li><li><code>u64 *__restrict out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+void
+z(const u8 *__restrict data, usize sz, u64 *__restrict out)
+{
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+  const __m256_neon seedv = __zset1_epi64(Seed);
+
+  __m256_neon S0 = __zxor(IV, seedv);
+  __m256_neon S1 = __zxor(__zperm_swap(IV), seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr &lt; end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining &gt;= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    __m256_neon S0_next = __zxor(S0, block);
+    __m256_neon S1_next = __zxor(S1, block);
+
+    for ( u64 r = 0; r &lt; __zzzrounds; ++r ) {
+      __m256_neon T0 = __zslli64&lt;3&gt;(S0_next);
+      __m256_neon A0 = __zsub64(S0_next, T0);
+      S0_next = A0;
+
+      __m256_neon T1 = __zslli64&lt;2&gt;(S1_next);
+      __m256_neon A1 = __zsub64(S1_next, T1);
+      S1_next = A1;
+    }
+
+    S0 = S0_next;
+    S1 = S1_next;
+  }
+
+  __m256_neon S = __zxor(S0, S1);
+  __zstore(reinterpret_cast&lt;u8 *&gt;(out), S);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-6207737bd0713375">__zset_epi64</a>, <a href="zzz_arm.hpp.html#f-227d8e81e61fa944">__zset1_epi64</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-f8a5b89ce8bd67e9">__zperm_swap</a>, <a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>, <a href="zzz_arm.hpp.html#f-4d498f5ca3931e91">__zload_tail</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;3&gt;</a>, <a href="zzz_arm.hpp.html#f-eae6d1f31620c7bc">__zsub64</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;2&gt;</a>, <a href="zzz_arm.hpp.html#f-615595994a5ffe45">__zstore</a>.</p></section><section class="function-entry" id="f-6429688de2f9972a"><h3><code>micron::hashes::z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L242">line 242</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *__restrict data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li><li><code>u64 *__restrict out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+z(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
+{
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+  const __m256_neon seedv = __zset1_epi64(seed);
+
+  __m256_neon S0 = __zxor(IV, seedv);
+  __m256_neon S1 = __zxor(__zperm_swap(IV), seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr &lt; end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining &gt;= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    __m256_neon S0_next = __zxor(S0, block);
+    __m256_neon S1_next = __zxor(S1, block);
+
+    for ( u64 r = 0; r &lt; __zzzrounds; ++r ) {
+      __m256_neon T0 = __zslli64&lt;3&gt;(S0_next);
+      __m256_neon A0 = __zsub64(S0_next, T0);
+      S0_next = A0;
+
+      __m256_neon T1 = __zslli64&lt;2&gt;(S1_next);
+      __m256_neon A1 = __zsub64(S1_next, T1);
+      S1_next = A1;
+    }
+
+    S0 = S0_next;
+    S1 = S1_next;
+  }
+
+  __m256_neon S = __zxor(S0, S1);
+  __zstore(reinterpret_cast&lt;u8 *&gt;(out), S);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-6207737bd0713375">__zset_epi64</a>, <a href="zzz_arm.hpp.html#f-227d8e81e61fa944">__zset1_epi64</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-f8a5b89ce8bd67e9">__zperm_swap</a>, <a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>, <a href="zzz_arm.hpp.html#f-4d498f5ca3931e91">__zload_tail</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;3&gt;</a>, <a href="zzz_arm.hpp.html#f-eae6d1f31620c7bc">__zsub64</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;2&gt;</a>, <a href="zzz_arm.hpp.html#f-615595994a5ffe45">__zstore</a>.</p></section><section class="function-entry" id="f-003b442dedbba12e"><h3><code>micron::hashes::zz(const u8 *__restrict data, usize sz, u64 *__restrict out)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L299">line 299</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+void
+zz(const u8 *__restrict data, usize sz, u64 *__restrict out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *__restrict data</code></li><li><code>usize sz</code></li><li><code>u64 *__restrict out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+void
+zz(const u8 *__restrict data, usize sz, u64 *__restrict out)
+{
+  const __m256_neon shift_vec = __zz_shift_vec();
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+
+  __m256_neon S0 = IV;
+  __m256_neon S1 = __zperm_swap(IV);
+  __m256_neon S2 = __zxor(IV, __zslli64&lt;1&gt;(IV));
+  __m256_neon S3 = __zadd64(IV, __zslli64&lt;2&gt;(IV));
+
+  const __m256_neon seedv = __zset1_epi64(Seed);
+  S0 = __zxor(S0, seedv);
+  S1 = __zxor(S1, seedv);
+  S2 = __zxor(S2, seedv);
+  S3 = __zxor(S3, seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr &lt; end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining &gt;= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    S0 = __zxor(S0, block);
+    S1 = __zadd64(S1, block);
+    S2 = __zxor(S2, __zslli64&lt;1&gt;(block));
+    S3 = __zadd64(S3, __zsrli64&lt;1&gt;(block));
+
+    for ( u64 r = 0; r &lt; __zzzrounds; ++r ) {
+      __m256_neon T, U;
+
+      // s0
+      T = __zsllv64(S0, shift_vec);
+      S0 = __zxor(S0, T);
+      U = __zperm_swap(S0);
+      S0 = __zsubs_epi8(S0, U);
+      T = __zslli16&lt;3&gt;(S0);
+      S0 = __zxor(S0, T);
+
+      // s1
+      T = __zsllv64(S1, shift_vec);
+      S1 = __zxor(S1, T);
+      U = __zperm_swap(S1);
+      S1 = __zsubs_epi8(S1, U);
+      T = __zslli16&lt;3&gt;(S1);
+      S1 = __zxor(S1, T);
+
+      // s2
+      T = __zsllv64(S2, shift_vec);
+      S2 = __zxor(S2, T);
+      U = __zperm_swap(S2);
+      S2 = __zsubs_epi8(S2, U);
+      T = __zslli16&lt;3&gt;(S2);
+      S2 = __zxor(S2, T);
+
+      // s3
+      T = __zsllv64(S3, shift_vec);
+      S3 = __zxor(S3, T);
+      U = __zperm_swap(S3);
+      S3 = __zsubs_epi8(S3, U);
+      T = __zslli16&lt;3&gt;(S3);
+      S3 = __zxor(S3, T);
+    }
+  }
+
+  __m256_neon S_final = __zxor(__zxor(S0, S1), __zxor(S2, S3));
+  __zstore(reinterpret_cast&lt;u8 *&gt;(out), S_final);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-2a454f98a60a2472">__zz_shift_vec</a>, <a href="zzz_arm.hpp.html#f-6207737bd0713375">__zset_epi64</a>, <a href="zzz_arm.hpp.html#f-f8a5b89ce8bd67e9">__zperm_swap</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-23722ddbca138af0">__zadd64</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;2&gt;</a>, <a href="zzz_arm.hpp.html#f-227d8e81e61fa944">__zset1_epi64</a>, <a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>, <a href="zzz_arm.hpp.html#f-4d498f5ca3931e91">__zload_tail</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-e91291eb0e066b1c">__zsllv64</a>, <a href="zzz_arm.hpp.html#f-d84afddde61d0164">__zsubs_epi8</a>, <a href="zzz_arm.hpp.html#f-59125a6d65dfd1cd">__zslli16&lt;3&gt;</a>, <a href="zzz_arm.hpp.html#f-615595994a5ffe45">__zstore</a>.</p></section><section class="function-entry" id="f-4db0cf396652b312"><h3><code>micron::hashes::zz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L377">line 377</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+zz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *__restrict data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li><li><code>u64 *__restrict out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+zz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
+{
+  const __m256_neon shift_vec = __zz_shift_vec();
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+
+  __m256_neon S0 = IV;
+  __m256_neon S1 = __zperm_swap(IV);
+  __m256_neon S2 = __zxor(IV, __zslli64&lt;1&gt;(IV));
+  __m256_neon S3 = __zadd64(IV, __zslli64&lt;2&gt;(IV));
+
+  const __m256_neon seedv = __zset1_epi64(seed);
+  S0 = __zxor(S0, seedv);
+  S1 = __zxor(S1, seedv);
+  S2 = __zxor(S2, seedv);
+  S3 = __zxor(S3, seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr &lt; end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining &gt;= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    S0 = __zxor(S0, block);
+    S1 = __zadd64(S1, block);
+    S2 = __zxor(S2, __zslli64&lt;1&gt;(block));
+    S3 = __zadd64(S3, __zsrli64&lt;1&gt;(block));
+
+    for ( u64 r = 0; r &lt; __zzzrounds; ++r ) {
+      __m256_neon T, U;
+
+      T = __zsllv64(S0, shift_vec);
+      S0 = __zxor(S0, T);
+      U = __zperm_swap(S0);
+      S0 = __zsubs_epi8(S0, U);
+      T = __zslli16&lt;3&gt;(S0);
+      S0 = __zxor(S0, T);
+
+      T = __zsllv64(S1, shift_vec);
+      S1 = __zxor(S1, T);
+      U = __zperm_swap(S1);
+      S1 = __zsubs_epi8(S1, U);
+      T = __zslli16&lt;3&gt;(S1);
+      S1 = __zxor(S1, T);
+
+      T = __zsllv64(S2, shift_vec);
+      S2 = __zxor(S2, T);
+      U = __zperm_swap(S2);
+      S2 = __zsubs_epi8(S2, U);
+      T = __zslli16&lt;3&gt;(S2);
+      S2 = __zxor(S2, T);
+
+      T = __zsllv64(S3, shift_vec);
+      S3 = __zxor(S3, T);
+      U = __zperm_swap(S3);
+      S3 = __zsubs_epi8(S3, U);
+      T = __zslli16&lt;3&gt;(S3);
+      S3 = __zxor(S3, T);
+    }
+  }
+
+  __m256_neon S_final = __zxor(__zxor(S0, S1), __zxor(S2, S3));
+  __zstore(reinterpret_cast&lt;u8 *&gt;(out), S_final);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-2a454f98a60a2472">__zz_shift_vec</a>, <a href="zzz_arm.hpp.html#f-6207737bd0713375">__zset_epi64</a>, <a href="zzz_arm.hpp.html#f-f8a5b89ce8bd67e9">__zperm_swap</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-23722ddbca138af0">__zadd64</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;2&gt;</a>, <a href="zzz_arm.hpp.html#f-227d8e81e61fa944">__zset1_epi64</a>, <a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>, <a href="zzz_arm.hpp.html#f-4d498f5ca3931e91">__zload_tail</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-e91291eb0e066b1c">__zsllv64</a>, <a href="zzz_arm.hpp.html#f-d84afddde61d0164">__zsubs_epi8</a>, <a href="zzz_arm.hpp.html#f-59125a6d65dfd1cd">__zslli16&lt;3&gt;</a>, <a href="zzz_arm.hpp.html#f-615595994a5ffe45">__zstore</a>.</p></section><section class="function-entry" id="f-f66abca322d26bbf"><h3><code>micron::hashes::zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L451">line 451</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *__restrict data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li><li><code>u64 *__restrict out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+zzz(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
+{
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+  const __m256_neon seedv = __zset1_epi64(seed);
+
+  __m256_neon S0 = __zxor(IV, seedv);
+  __m256_neon S1 = __zxor(__zperm_swap(IV), seedv);
+  __m256_neon S2 = __zxor(__zslli64&lt;1&gt;(IV), seedv);
+  __m256_neon S3 = __zxor(__zsrli64&lt;1&gt;(IV), seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr &lt; end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining &gt;= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    __m256_neon S0_next = __zxor(S0, block);
+    __m256_neon S1_next = __zxor(S1, block);
+    __m256_neon S2_next = __zxor(S2, block);
+    __m256_neon S3_next = __zxor(S3, block);
+
+    for ( u64 r = 0; r &lt; __zzzrounds; ++r ) {
+      __m256_neon T0 = __zslli64&lt;3&gt;(S0_next);
+      S0_next = __zsub64(S0_next, T0);
+      T0 = __zsrli64&lt;2&gt;(S0_next);
+      S0_next = __zsub64(S0_next, T0);
+      T0 = __zslli64&lt;5&gt;(S0_next);
+      S0_next = __zadd64(S0_next, T0);
+      T0 = __zsrli64&lt;4&gt;(S0_next);
+      S0_next = __zsub64(S0_next, T0);
+
+      __m256_neon T1 = __zslli64&lt;3&gt;(S1_next);
+      S1_next = __zsub64(S1_next, T1);
+      T1 = __zsrli64&lt;2&gt;(S1_next);
+      S1_next = __zsub64(S1_next, T1);
+      T1 = __zslli64&lt;5&gt;(S1_next);
+      S1_next = __zadd64(S1_next, T1);
+      T1 = __zsrli64&lt;4&gt;(S1_next);
+      S1_next = __zsub64(S1_next, T1);
+
+      __m256_neon T2 = __zslli64&lt;2&gt;(S2_next);
+      S2_next = __zsub64(S2_next, T2);
+      T2 = __zsrli64&lt;3&gt;(S2_next);
+      S2_next = __zsub64(S2_next, T2);
+      T2 = __zslli64&lt;4&gt;(S2_next);
+      S2_next = __zadd64(S2_next, T2);
+      T2 = __zsrli64&lt;5&gt;(S2_next);
+      S2_next = __zsub64(S2_next, T2);
+
+      __m256_neon T3 = __zslli64&lt;3&gt;(S3_next);
+      S3_next = __zsub64(S3_next, T3);
+      T3 = __zsrli64&lt;1&gt;(S3_next);
+      S3_next = __zsub64(S3_next, T3);
+      T3 = __zslli64&lt;6&gt;(S3_next);
+      S3_next = __zadd64(S3_next, T3);
+      T3 = __zsrli64&lt;3&gt;(S3_next);
+      S3_next = __zsub64(S3_next, T3);
+    }
+
+    S0 = S0_next;
+    S1 = S1_next;
+    S2 = S2_next;
+    S3 = S3_next;
+  }
+
+  __m256_neon S = __zxor(__zxor(S0, S1), __zxor(S2, S3));
+  __zstore(reinterpret_cast&lt;u8 *&gt;(out), S);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-6207737bd0713375">__zset_epi64</a>, <a href="zzz_arm.hpp.html#f-227d8e81e61fa944">__zset1_epi64</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-f8a5b89ce8bd67e9">__zperm_swap</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>, <a href="zzz_arm.hpp.html#f-4d498f5ca3931e91">__zload_tail</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;3&gt;</a>, <a href="zzz_arm.hpp.html#f-eae6d1f31620c7bc">__zsub64</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;2&gt;</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;5&gt;</a>, <a href="zzz_arm.hpp.html#f-23722ddbca138af0">__zadd64</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;4&gt;</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;2&gt;</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;3&gt;</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;4&gt;</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;5&gt;</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;6&gt;</a>, <a href="zzz_arm.hpp.html#f-615595994a5ffe45">__zstore</a>.</p></section><section class="function-entry" id="f-964f9731bc77d0cc"><h3><code>micron::hashes::zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L531">line 531</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+void
+zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *__restrict data</code></li><li><code>usize sz</code></li><li><code>u64 *__restrict out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+void
+zzz(const u8 *__restrict data, usize sz, u64 *__restrict out)
+{
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+  const __m256_neon seedv = __zset1_epi64(Seed);
+
+  __m256_neon S0 = __zxor(IV, seedv);
+  __m256_neon S1 = __zxor(__zperm_swap(IV), seedv);
+  __m256_neon S2 = __zxor(__zslli64&lt;1&gt;(IV), seedv);
+  __m256_neon S3 = __zxor(__zsrli64&lt;1&gt;(IV), seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr &lt; end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining &gt;= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    __m256_neon S0_next = __zxor(S0, block);
+    __m256_neon S1_next = __zxor(S1, block);
+    __m256_neon S2_next = __zxor(S2, block);
+    __m256_neon S3_next = __zxor(S3, block);
+
+    for ( u64 r = 0; r &lt; __zzzrounds; ++r ) {
+      __m256_neon T0 = __zslli64&lt;3&gt;(S0_next);
+      S0_next = __zsub64(S0_next, T0);
+      T0 = __zsrli64&lt;2&gt;(S0_next);
+      S0_next = __zsub64(S0_next, T0);
+      T0 = __zslli64&lt;5&gt;(S0_next);
+      S0_next = __zadd64(S0_next, T0);
+      T0 = __zsrli64&lt;4&gt;(S0_next);
+      S0_next = __zsub64(S0_next, T0);
+
+      __m256_neon T1 = __zslli64&lt;3&gt;(S1_next);
+      S1_next = __zsub64(S1_next, T1);
+      T1 = __zsrli64&lt;2&gt;(S1_next);
+      S1_next = __zsub64(S1_next, T1);
+      T1 = __zslli64&lt;5&gt;(S1_next);
+      S1_next = __zadd64(S1_next, T1);
+      T1 = __zsrli64&lt;4&gt;(S1_next);
+      S1_next = __zsub64(S1_next, T1);
+
+      __m256_neon T2 = __zslli64&lt;2&gt;(S2_next);
+      S2_next = __zsub64(S2_next, T2);
+      T2 = __zsrli64&lt;3&gt;(S2_next);
+      S2_next = __zsub64(S2_next, T2);
+      T2 = __zslli64&lt;4&gt;(S2_next);
+      S2_next = __zadd64(S2_next, T2);
+      T2 = __zsrli64&lt;5&gt;(S2_next);
+      S2_next = __zsub64(S2_next, T2);
+
+      __m256_neon T3 = __zslli64&lt;3&gt;(S3_next);
+      S3_next = __zsub64(S3_next, T3);
+      T3 = __zsrli64&lt;1&gt;(S3_next);
+      S3_next = __zsub64(S3_next, T3);
+      T3 = __zslli64&lt;6&gt;(S3_next);
+      S3_next = __zadd64(S3_next, T3);
+      T3 = __zsrli64&lt;3&gt;(S3_next);
+      S3_next = __zsub64(S3_next, T3);
+    }
+
+    S0 = S0_next;
+    S1 = S1_next;
+    S2 = S2_next;
+    S3 = S3_next;
+  }
+
+  __m256_neon S = __zxor(__zxor(S0, S1), __zxor(S2, S3));
+  __zstore(reinterpret_cast&lt;u8 *&gt;(out), S);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-6207737bd0713375">__zset_epi64</a>, <a href="zzz_arm.hpp.html#f-227d8e81e61fa944">__zset1_epi64</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-f8a5b89ce8bd67e9">__zperm_swap</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>, <a href="zzz_arm.hpp.html#f-4d498f5ca3931e91">__zload_tail</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;3&gt;</a>, <a href="zzz_arm.hpp.html#f-eae6d1f31620c7bc">__zsub64</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;2&gt;</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;5&gt;</a>, <a href="zzz_arm.hpp.html#f-23722ddbca138af0">__zadd64</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;4&gt;</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;2&gt;</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;3&gt;</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;4&gt;</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;5&gt;</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;6&gt;</a>, <a href="zzz_arm.hpp.html#f-615595994a5ffe45">__zstore</a>.</p></section><section class="function-entry" id="f-3bf157865e6421e1"><h3><code>micron::hashes::z64(const u8 *data, i64 seed, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L609">line 609</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+z64(const u8 *data, i64 seed, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+z64(const u8 *data, i64 seed, usize sz)
+{
+  alignas(32) u64 out[4];
+  z(data, seed, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out[0] ^ out[1] ^ out[2] ^ out[3]</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L613">line 613</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-de3e5a945cf50653">z</a>.</p></section><section class="function-entry" id="f-109da3cfdade2a41"><h3><code>micron::hashes::z64(const u8 *data, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L618">line 618</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+u64
+z64(const u8 *data, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+u64
+z64(const u8 *data, usize sz)
+{
+  alignas(32) u64 out[4];
+  z&lt;Seed&gt;(data, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out[0] ^ out[1] ^ out[2] ^ out[3]</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L622">line 622</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-de3e5a945cf50653">z&lt;Seed&gt;</a>.</p></section><section class="function-entry" id="f-2d70346bcc2ec72a"><h3><code>micron::hashes::zz64(const u8 *data, i64 seed, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L626">line 626</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+zz64(const u8 *data, i64 seed, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+zz64(const u8 *data, i64 seed, usize sz)
+{
+  alignas(32) u64 out[4];
+  zz(data, seed, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out[0] ^ out[1] ^ out[2] ^ out[3]</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L630">line 630</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-cf1150657c9198a2">zz</a>.</p></section><section class="function-entry" id="f-e678f17c456a2e3a"><h3><code>micron::hashes::zz64(const u8 *data, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L635">line 635</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+u64
+zz64(const u8 *data, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+u64
+zz64(const u8 *data, usize sz)
+{
+  alignas(32) u64 out[4];
+  zz&lt;Seed&gt;(data, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out[0] ^ out[1] ^ out[2] ^ out[3]</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L639">line 639</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-cf1150657c9198a2">zz&lt;Seed&gt;</a>.</p></section><section class="function-entry" id="f-d6376328a166c3a1"><h3><code>micron::hashes::zzz64(const u8 *data, i64 seed, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L644">line 644</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+zzz64(const u8 *data, i64 seed, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+zzz64(const u8 *data, i64 seed, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzz(data, seed, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out[0] ^ out[1] ^ out[2] ^ out[3]</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L648">line 648</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-00a21b1479f36638">zzz</a>.</p></section><section class="function-entry" id="f-ffca522bc8b191ff"><h3><code>micron::hashes::zzz64(const u8 *data, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L654">line 654</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+u64
+zzz64(const u8 *data, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+u64
+zzz64(const u8 *data, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzz&lt;Seed&gt;(data, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out[0] ^ out[1] ^ out[2] ^ out[3]</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L658">line 658</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-00a21b1479f36638">zzz&lt;Seed&gt;</a>.</p></section><section class="function-entry" id="f-18a0b7f4aee9cb1f"><h3><code>micron::hashes::zzz128(const u8 *data, i64 seed, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L663">line 663</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline micron::pair&lt;u64, u64&gt;
+zzz128(const u8 *data, i64 seed, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline micron::pair&lt;u64, u64&gt;
+zzz128(const u8 *data, i64 seed, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzz(data, seed, sz, out);
+  return { out[0] ^ out[1], out[2] ^ out[3] };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ out[0] ^ out[1], out[2] ^ out[3] }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L667">line 667</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-00a21b1479f36638">zzz</a>.</p></section><section class="function-entry" id="f-b9bcc74b3b6c587c"><h3><code>micron::hashes::zzz128(const u8 *data, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L673">line 673</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+micron::pair&lt;u64, u64&gt;
+zzz128(const u8 *data, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+micron::pair&lt;u64, u64&gt;
+zzz128(const u8 *data, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzz&lt;Seed&gt;(data, sz, out);
+  return { out[0] ^ out[1], out[2] ^ out[3] };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ out[0] ^ out[1], out[2] ^ out[3] }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L677">line 677</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-00a21b1479f36638">zzz&lt;Seed&gt;</a>.</p></section><section class="function-entry" id="f-e9341d27d2d8a4e2"><h3><code>micron::hashes::zzzf(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L698">line 698</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline void
+zzzf(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *__restrict data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li><li><code>u64 *__restrict out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline void
+zzzf(const u8 *__restrict data, i64 seed, usize sz, u64 *__restrict out)
+{
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+  const __m256_neon seedv = __zset1_epi64(seed);
+
+  __m256_neon S0 = __zxor(IV, seedv);
+  __m256_neon S1 = __zxor(__zperm_swap(IV), seedv);
+  __m256_neon S2 = __zxor(__zslli64&lt;1&gt;(IV), seedv);
+  __m256_neon S3 = __zxor(__zsrli64&lt;1&gt;(IV), seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr &lt; end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining &gt;= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    S0 = __zzzf_mix&lt;3, 31, 5, 29&gt;(__zxor(S0, block));
+    S1 = __zzzf_mix&lt;5, 29, 7, 31&gt;(__zxor(S1, block));
+    S2 = __zzzf_mix&lt;7, 27, 3, 33&gt;(__zxor(S2, block));
+    S3 = __zzzf_mix&lt;9, 33, 5, 27&gt;(__zxor(S3, block));
+  }
+
+  __m256_neon F = __zxor(__zxor(S0, __zperm_1230(S1)), __zxor(__zperm_swap(S2), __zperm_3012(S3)));
+  F = __zxor(F, seedv);
+  F = __zxor(F, __zset1_epi64((i64)sz));
+  F = __zzzf_mix&lt;3, 29, 5, 31&gt;(F);
+  F = __zzzf_mix&lt;7, 31, 9, 27&gt;(F);
+  __zstore(reinterpret_cast&lt;u8 *&gt;(out), F);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-6207737bd0713375">__zset_epi64</a>, <a href="zzz_arm.hpp.html#f-227d8e81e61fa944">__zset1_epi64</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-f8a5b89ce8bd67e9">__zperm_swap</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>, <a href="zzz_arm.hpp.html#f-4d498f5ca3931e91">__zload_tail</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;3, 31, 5, 29&gt;</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;5, 29, 7, 31&gt;</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;7, 27, 3, 33&gt;</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;9, 33, 5, 27&gt;</a>, <a href="zzz_arm.hpp.html#f-6b569886f2f4ea6b">__zperm_1230</a>, <a href="zzz_arm.hpp.html#f-b99d5dafe5efaa24">__zperm_3012</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;3, 29, 5, 31&gt;</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;7, 31, 9, 27&gt;</a>, <a href="zzz_arm.hpp.html#f-615595994a5ffe45">__zstore</a>.</p></section><section class="function-entry" id="f-1a182460524952c0"><h3><code>micron::hashes::zzzf(const u8 *__restrict data, usize sz, u64 *__restrict out)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L739">line 739</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+void
+zzzf(const u8 *__restrict data, usize sz, u64 *__restrict out)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *__restrict data</code></li><li><code>usize sz</code></li><li><code>u64 *__restrict out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+void
+zzzf(const u8 *__restrict data, usize sz, u64 *__restrict out)
+{
+  const __m256_neon IV = __zset_epi64(iv64_3, iv64_2, iv64_1, iv64_0);
+  const __m256_neon seedv = __zset1_epi64(Seed);
+
+  __m256_neon S0 = __zxor(IV, seedv);
+  __m256_neon S1 = __zxor(__zperm_swap(IV), seedv);
+  __m256_neon S2 = __zxor(__zslli64&lt;1&gt;(IV), seedv);
+  __m256_neon S3 = __zxor(__zsrli64&lt;1&gt;(IV), seedv);
+
+  const u8 *ptr = data;
+  const u8 *end = data + sz;
+
+  while ( ptr &lt; end ) {
+    __m256_neon block;
+    usize remaining = (usize)(end - ptr);
+    if ( remaining &gt;= 32 ) {
+      block = __zload(ptr);
+      ptr += 32;
+    } else {
+      block = __zload_tail(ptr, remaining);
+      ptr += remaining;
+    }
+
+    S0 = __zzzf_mix&lt;3, 31, 5, 29&gt;(__zxor(S0, block));
+    S1 = __zzzf_mix&lt;5, 29, 7, 31&gt;(__zxor(S1, block));
+    S2 = __zzzf_mix&lt;7, 27, 3, 33&gt;(__zxor(S2, block));
+    S3 = __zzzf_mix&lt;9, 33, 5, 27&gt;(__zxor(S3, block));
+  }
+
+  __m256_neon F = __zxor(__zxor(S0, __zperm_1230(S1)), __zxor(__zperm_swap(S2), __zperm_3012(S3)));
+  F = __zxor(F, seedv);
+  F = __zxor(F, __zset1_epi64((i64)sz));
+  F = __zzzf_mix&lt;3, 29, 5, 31&gt;(F);
+  F = __zzzf_mix&lt;7, 31, 9, 27&gt;(F);
+  __zstore(reinterpret_cast&lt;u8 *&gt;(out), F);
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-6207737bd0713375">__zset_epi64</a>, <a href="zzz_arm.hpp.html#f-227d8e81e61fa944">__zset1_epi64</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-f8a5b89ce8bd67e9">__zperm_swap</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;1&gt;</a>, <a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>, <a href="zzz_arm.hpp.html#f-4d498f5ca3931e91">__zload_tail</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;3, 31, 5, 29&gt;</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;5, 29, 7, 31&gt;</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;7, 27, 3, 33&gt;</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;9, 33, 5, 27&gt;</a>, <a href="zzz_arm.hpp.html#f-6b569886f2f4ea6b">__zperm_1230</a>, <a href="zzz_arm.hpp.html#f-b99d5dafe5efaa24">__zperm_3012</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;3, 29, 5, 31&gt;</a>, <a href="zzz.hpp.html#f-b93f409cd0306bf4">__zzzf_mix&lt;7, 31, 9, 27&gt;</a>, <a href="zzz_arm.hpp.html#f-615595994a5ffe45">__zstore</a>.</p></section><section class="function-entry" id="f-877b89da77aa0330"><h3><code>micron::hashes::zzzf64(const u8 *data, i64 seed, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L778">line 778</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline u64
+zzzf64(const u8 *data, i64 seed, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline u64
+zzzf64(const u8 *data, i64 seed, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzzf(data, seed, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out[0] ^ out[1] ^ out[2] ^ out[3]</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L782">line 782</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-54595333653eea65">zzzf</a>.</p></section><section class="function-entry" id="f-b0f01b9851159e03"><h3><code>micron::hashes::zzzf64(const u8 *data, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L787">line 787</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+u64
+zzzf64(const u8 *data, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+u64
+zzzf64(const u8 *data, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzzf&lt;Seed&gt;(data, sz, out);
+  return out[0] ^ out[1] ^ out[2] ^ out[3];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>out[0] ^ out[1] ^ out[2] ^ out[3]</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L791">line 791</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-54595333653eea65">zzzf&lt;Seed&gt;</a>.</p></section><section class="function-entry" id="f-15501ee266ac7223"><h3><code>micron::hashes::zzzf128(const u8 *data, i64 seed, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L795">line 795</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline micron::pair&lt;u64, u64&gt;
+zzzf128(const u8 *data, i64 seed, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>i64 seed</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline micron::pair&lt;u64, u64&gt;
+zzzf128(const u8 *data, i64 seed, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzzf(data, seed, sz, out);
+  return { out[0] ^ out[1], out[2] ^ out[3] };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ out[0] ^ out[1], out[2] ^ out[3] }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L799">line 799</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-54595333653eea65">zzzf</a>.</p></section><section class="function-entry" id="f-186a67b0b53f3a3d"><h3><code>micron::hashes::zzzf128(const u8 *data, usize sz)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L804">line 804</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;i64 Seed&gt;
+micron::pair&lt;u64, u64&gt;
+zzzf128(const u8 *data, usize sz)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *data</code></li><li><code>usize sz</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;i64 Seed&gt;
+micron::pair&lt;u64, u64&gt;
+zzzf128(const u8 *data, usize sz)
+{
+  alignas(32) u64 out[4];
+  zzzf&lt;Seed&gt;(data, sz, out);
+  return { out[0] ^ out[1], out[2] ^ out[3] };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ out[0] ^ out[1], out[2] ^ out[3] }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L808">line 808</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz.hpp.html#f-54595333653eea65">zzzf&lt;Seed&gt;</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-227d8e81e61fa944"><h3><code>micron::hashes::__zset1_epi64(i64 v)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L58">line 58</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zset1_epi64(i64 v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zset1_epi64(i64 v)
+{
+  uint64x2_t x = vdupq_n_u64((u64)v);
+  return { x, x };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ x, x }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L61">line 61</a></td></tr></tbody></table></section><section class="function-entry" id="f-6207737bd0713375"><h3><code>micron::hashes::__zset_epi64(i64 e3, i64 e2, i64 e1, i64 e0)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L66">line 66</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zset_epi64(i64 e3, i64 e2, i64 e1, i64 e0)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>i64 e3</code></li><li><code>i64 e2</code></li><li><code>i64 e1</code></li><li><code>i64 e0</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zset_epi64(i64 e3, i64 e2, i64 e1, i64 e0)
+{
+  uint64x2_t lo = vcombine_u64(vcreate_u64((u64)e0), vcreate_u64((u64)e1));
+  uint64x2_t hi = vcombine_u64(vcreate_u64((u64)e2), vcreate_u64((u64)e3));
+  return { lo, hi };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ lo, hi }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L70">line 70</a></td></tr></tbody></table></section><section class="function-entry" id="f-3374d94b8c1b57ad"><h3><code>micron::hashes::__zxor(__m256_neon a, __m256_neon b)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L74">line 74</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zxor(__m256_neon a, __m256_neon b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li><li><code>__m256_neon b</code></li></ul><h4>Effects</h4><p>Returns <code>{ veorq_u64(a.lo, b.lo), veorq_u64(a.hi, b.hi) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zxor(__m256_neon a, __m256_neon b)
+{
+  return { veorq_u64(a.lo, b.lo), veorq_u64(a.hi, b.hi) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ veorq_u64(a.lo, b.lo), veorq_u64(a.hi, b.hi) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L76">line 76</a></td></tr></tbody></table></section><section class="function-entry" id="f-5be20f7bf35701c4"><h3><code>micron::hashes::__zand(__m256_neon a, __m256_neon b)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L80">line 80</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zand(__m256_neon a, __m256_neon b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li><li><code>__m256_neon b</code></li></ul><h4>Effects</h4><p>Returns <code>{ vandq_u64(a.lo, b.lo), vandq_u64(a.hi, b.hi) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zand(__m256_neon a, __m256_neon b)
+{
+  return { vandq_u64(a.lo, b.lo), vandq_u64(a.hi, b.hi) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vandq_u64(a.lo, b.lo), vandq_u64(a.hi, b.hi) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L82">line 82</a></td></tr></tbody></table></section><section class="function-entry" id="f-23722ddbca138af0"><h3><code>micron::hashes::__zadd64(__m256_neon a, __m256_neon b)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L87">line 87</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zadd64(__m256_neon a, __m256_neon b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li><li><code>__m256_neon b</code></li></ul><h4>Effects</h4><p>Returns <code>{ vreinterpretq_u64_s64(vaddq_s64(vreinterpretq_s64_u64(a.lo), vreinterpretq_s64_u64(b.lo))),
+           vreinterpretq_u64_s64(vaddq_s64(vreinterpretq_s64_u64(a.hi), vreinterpretq_s64_u64(b.hi))) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zadd64(__m256_neon a, __m256_neon b)
+{
+  return { vreinterpretq_u64_s64(vaddq_s64(vreinterpretq_s64_u64(a.lo), vreinterpretq_s64_u64(b.lo))),
+           vreinterpretq_u64_s64(vaddq_s64(vreinterpretq_s64_u64(a.hi), vreinterpretq_s64_u64(b.hi))) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vreinterpretq_u64_s64(vaddq_s64(vreinterpretq_s64_u64(a.lo), vreinterpretq_s64_u64(b.lo))),
+           vreinterpretq_u64_s64(vaddq_s64(vreinterpretq_s64_u64(a.hi), vreinterpretq_s64_u64(b.hi))) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L89">line 89</a></td></tr></tbody></table></section><section class="function-entry" id="f-eae6d1f31620c7bc"><h3><code>micron::hashes::__zsub64(__m256_neon a, __m256_neon b)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L95">line 95</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zsub64(__m256_neon a, __m256_neon b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li><li><code>__m256_neon b</code></li></ul><h4>Effects</h4><p>Returns <code>{ vreinterpretq_u64_s64(vsubq_s64(vreinterpretq_s64_u64(a.lo), vreinterpretq_s64_u64(b.lo))),
+           vreinterpretq_u64_s64(vsubq_s64(vreinterpretq_s64_u64(a.hi), vreinterpretq_s64_u64(b.hi))) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zsub64(__m256_neon a, __m256_neon b)
+{
+  return { vreinterpretq_u64_s64(vsubq_s64(vreinterpretq_s64_u64(a.lo), vreinterpretq_s64_u64(b.lo))),
+           vreinterpretq_u64_s64(vsubq_s64(vreinterpretq_s64_u64(a.hi), vreinterpretq_s64_u64(b.hi))) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vreinterpretq_u64_s64(vsubq_s64(vreinterpretq_s64_u64(a.lo), vreinterpretq_s64_u64(b.lo))),
+           vreinterpretq_u64_s64(vsubq_s64(vreinterpretq_s64_u64(a.hi), vreinterpretq_s64_u64(b.hi))) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L97">line 97</a></td></tr></tbody></table></section><section class="function-entry" id="f-d84afddde61d0164"><h3><code>micron::hashes::__zsubs_epi8(__m256_neon a, __m256_neon b)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L103">line 103</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zsubs_epi8(__m256_neon a, __m256_neon b)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li><li><code>__m256_neon b</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zsubs_epi8(__m256_neon a, __m256_neon b)
+{
+  int8x16_t lo = vqsubq_s8(vreinterpretq_s8_u64(a.lo), vreinterpretq_s8_u64(b.lo));
+  int8x16_t hi = vqsubq_s8(vreinterpretq_s8_u64(a.hi), vreinterpretq_s8_u64(b.hi));
+  return { vreinterpretq_u64_s8(lo), vreinterpretq_u64_s8(hi) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vreinterpretq_u64_s8(lo), vreinterpretq_u64_s8(hi) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L107">line 107</a></td></tr></tbody></table></section><section class="function-entry" id="f-f8a5b89ce8bd67e9"><h3><code>micron::hashes::__zperm_swap(__m256_neon a)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L113">line 113</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zperm_swap(__m256_neon a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li></ul><h4>Effects</h4><p>Returns <code>{ a.hi, a.lo }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zperm_swap(__m256_neon a)
+{
+  return { a.hi, a.lo };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ a.hi, a.lo }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L115">line 115</a></td></tr></tbody></table></section><section class="function-entry" id="f-6b569886f2f4ea6b"><h3><code>micron::hashes::__zperm_1230(__m256_neon a)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L120">line 120</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zperm_1230(__m256_neon a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li></ul><h4>Effects</h4><p>Returns <code>{ vextq_u64(a.lo, a.hi, 1), vextq_u64(a.hi, a.lo, 1) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zperm_1230(__m256_neon a)
+{
+  return { vextq_u64(a.lo, a.hi, 1), vextq_u64(a.hi, a.lo, 1) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vextq_u64(a.lo, a.hi, 1), vextq_u64(a.hi, a.lo, 1) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L122">line 122</a></td></tr></tbody></table></section><section class="function-entry" id="f-b99d5dafe5efaa24"><h3><code>micron::hashes::__zperm_3012(__m256_neon a)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L127">line 127</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zperm_3012(__m256_neon a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li></ul><h4>Effects</h4><p>Returns <code>{ vextq_u64(a.hi, a.lo, 1), vextq_u64(a.lo, a.hi, 1) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zperm_3012(__m256_neon a)
+{
+  return { vextq_u64(a.hi, a.lo, 1), vextq_u64(a.lo, a.hi, 1) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vextq_u64(a.hi, a.lo, 1), vextq_u64(a.lo, a.hi, 1) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L129">line 129</a></td></tr></tbody></table></section><section class="function-entry" id="f-9012f35e2dd17298"><h3><code>micron::hashes::__zbyterev64(__m256_neon a)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L133">line 133</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zbyterev64(__m256_neon a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li></ul><h4>Effects</h4><p>Returns <code>{ vreinterpretq_u64_u8(vrev64q_u8(vreinterpretq_u8_u64(a.lo))), vreinterpretq_u64_u8(vrev64q_u8(vreinterpretq_u8_u64(a.hi))) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zbyterev64(__m256_neon a)
+{
+  return { vreinterpretq_u64_u8(vrev64q_u8(vreinterpretq_u8_u64(a.lo))), vreinterpretq_u64_u8(vrev64q_u8(vreinterpretq_u8_u64(a.hi))) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vreinterpretq_u64_u8(vrev64q_u8(vreinterpretq_u8_u64(a.lo))), vreinterpretq_u64_u8(vrev64q_u8(vreinterpretq_u8_u64(a.hi))) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L135">line 135</a></td></tr></tbody></table></section><section class="function-entry" id="f-6bc9ab49c6ed509c"><h3><code>micron::hashes::__zload(const u8 *p)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L139">line 139</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zload(const u8 *p)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li></ul><h4>Effects</h4><p>Returns <code>{ vreinterpretq_u64_u8(vld1q_u8(p)), vreinterpretq_u64_u8(vld1q_u8(p + 16)) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zload(const u8 *p)
+{
+  return { vreinterpretq_u64_u8(vld1q_u8(p)), vreinterpretq_u64_u8(vld1q_u8(p + 16)) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vreinterpretq_u64_u8(vld1q_u8(p)), vreinterpretq_u64_u8(vld1q_u8(p + 16)) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L141">line 141</a></td></tr></tbody></table></section><section class="function-entry" id="f-615595994a5ffe45"><h3><code>micron::hashes::__zstore(u8 *p, __m256_neon v)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L145">line 145</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline void
+__zstore(u8 *p, __m256_neon v)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u8 *p</code></li><li><code>__m256_neon v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline void
+__zstore(u8 *p, __m256_neon v)
+{
+  vst1q_u8(p, vreinterpretq_u8_u64(v.lo));
+  vst1q_u8(p + 16, vreinterpretq_u8_u64(v.hi));
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p></section><section class="function-entry" id="f-2670431dc39d9c94"><h3><code>micron::hashes::__zslli64(__m256_neon a)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L154">line 154</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int N&gt;
+__attribute__((always_inline)) static inline __m256_neon
+__zslli64(__m256_neon a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li></ul><h4>Effects</h4><p>Returns <code>{ vreinterpretq_u64_s64(vshlq_n_s64(vreinterpretq_s64_u64(a.lo), N)),
+           vreinterpretq_u64_s64(vshlq_n_s64(vreinterpretq_s64_u64(a.hi), N)) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int N&gt;
+__attribute__((always_inline)) static inline __m256_neon
+__zslli64(__m256_neon a)
+{
+  return { vreinterpretq_u64_s64(vshlq_n_s64(vreinterpretq_s64_u64(a.lo), N)),
+           vreinterpretq_u64_s64(vshlq_n_s64(vreinterpretq_s64_u64(a.hi), N)) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vreinterpretq_u64_s64(vshlq_n_s64(vreinterpretq_s64_u64(a.lo), N)),
+           vreinterpretq_u64_s64(vshlq_n_s64(vreinterpretq_s64_u64(a.hi), N)) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L156">line 156</a></td></tr></tbody></table></section><section class="function-entry" id="f-85f1581d9ee56698"><h3><code>micron::hashes::__zsrli64(__m256_neon a)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L163">line 163</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int N&gt;
+__attribute__((always_inline)) static inline __m256_neon
+__zsrli64(__m256_neon a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li></ul><h4>Effects</h4><p>Returns <code>{ vshrq_n_u64(a.lo, N), vshrq_n_u64(a.hi, N) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int N&gt;
+__attribute__((always_inline)) static inline __m256_neon
+__zsrli64(__m256_neon a)
+{
+  return { vshrq_n_u64(a.lo, N), vshrq_n_u64(a.hi, N) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vshrq_n_u64(a.lo, N), vshrq_n_u64(a.hi, N) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L165">line 165</a></td></tr></tbody></table></section><section class="function-entry" id="f-59125a6d65dfd1cd"><h3><code>micron::hashes::__zslli16(__m256_neon a)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L171">line 171</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int N&gt;
+__attribute__((always_inline)) static inline __m256_neon
+__zslli16(__m256_neon a)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int N&gt;
+__attribute__((always_inline)) static inline __m256_neon
+__zslli16(__m256_neon a)
+{
+  int16x8_t lo = vshlq_n_s16(vreinterpretq_s16_u64(a.lo), N);
+  int16x8_t hi = vshlq_n_s16(vreinterpretq_s16_u64(a.hi), N);
+  return { vreinterpretq_u64_s16(lo), vreinterpretq_u64_s16(hi) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vreinterpretq_u64_s16(lo), vreinterpretq_u64_s16(hi) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L175">line 175</a></td></tr></tbody></table></section><section class="function-entry" id="f-e91291eb0e066b1c"><h3><code>micron::hashes::__zsllv64(__m256_neon a, __m256_neon shifts)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L180">line 180</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zsllv64(__m256_neon a, __m256_neon shifts)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon a</code></li><li><code>__m256_neon shifts</code></li></ul><h4>Effects</h4><p>Returns <code>{ vshlq_u64(a.lo, vreinterpretq_s64_u64(shifts.lo)), vshlq_u64(a.hi, vreinterpretq_s64_u64(shifts.hi)) }</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zsllv64(__m256_neon a, __m256_neon shifts)
+{
+  return { vshlq_u64(a.lo, vreinterpretq_s64_u64(shifts.lo)), vshlq_u64(a.hi, vreinterpretq_s64_u64(shifts.hi)) };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ vshlq_u64(a.lo, vreinterpretq_s64_u64(shifts.lo)), vshlq_u64(a.hi, vreinterpretq_s64_u64(shifts.hi)) }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L182">line 182</a></td></tr></tbody></table></section><section class="function-entry" id="f-4d498f5ca3931e91"><h3><code>micron::hashes::__zload_tail(const u8 *ptr, usize remaining)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L186">line 186</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zload_tail(const u8 *ptr, usize remaining)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *ptr</code></li><li><code>usize remaining</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zload_tail(const u8 *ptr, usize remaining)
+{
+  alignas(16) u8 tmp[32];
+  for ( usize i = 0; i &lt; remaining; ++i ) tmp[i] = ptr[i];
+  for ( usize i = remaining; i &lt; 32; ++i ) tmp[i] = __zero_block[i];
+  return __zload(tmp);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__zload(tmp)</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L191">line 191</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-6bc9ab49c6ed509c">__zload</a>.</p></section><section class="function-entry" id="f-2a454f98a60a2472"><h3><code>micron::hashes::__zz_shift_vec()</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L289">line 289</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>__attribute__((always_inline)) static inline __m256_neon
+__zz_shift_vec()</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">__attribute__((always_inline)) static inline __m256_neon
+__zz_shift_vec()
+{
+  uint64x2_t lo = vcombine_u64(vcreate_u64((u64)19), vcreate_u64((u64)7));
+  uint64x2_t hi = vcombine_u64(vcreate_u64((u64)29), vcreate_u64((u64)13));
+  return { lo, hi };
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>{ lo, hi }</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L293">line 293</a></td></tr></tbody></table></section><section class="function-entry" id="f-7119f765af847c78"><h3><code>micron::hashes::__zzzf_mix(__m256_neon s)</code></h3><p>Defined in <code>hash/zzz_arm.hpp</code>, <a href="../../source/hash/zzz_arm.hpp.html#L682">line 682</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;int A, int B, int C, int D&gt;
+__attribute__((always_inline)) static inline __m256_neon
+__zzzf_mix(__m256_neon s)</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__m256_neon s</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;int A, int B, int C, int D&gt;
+__attribute__((always_inline)) static inline __m256_neon
+__zzzf_mix(__m256_neon s)
+{
+  __m256_neon t = __zslli64&lt;A&gt;(s);
+  s = __zsub64(s, t);
+  t = __zsrli64&lt;B&gt;(s);
+  s = __zxor(s, t);
+  s = __zbyterev64(s);
+  t = __zslli64&lt;C&gt;(s);
+  s = __zadd64(s, t);
+  t = __zsrli64&lt;D&gt;(s);
+  s = __zxor(s, t);
+  return s;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>s</code></td><td><a href="../../source/hash/zzz_arm.hpp.html#L693">line 693</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;A&gt;</a>, <a href="zzz_arm.hpp.html#f-eae6d1f31620c7bc">__zsub64</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;B&gt;</a>, <a href="zzz_arm.hpp.html#f-3374d94b8c1b57ad">__zxor</a>, <a href="zzz_arm.hpp.html#f-9012f35e2dd17298">__zbyterev64</a>, <a href="zzz_arm.hpp.html#f-2670431dc39d9c94">__zslli64&lt;C&gt;</a>, <a href="zzz_arm.hpp.html#f-23722ddbca138af0">__zadd64</a>, <a href="zzz_arm.hpp.html#f-85f1581d9ee56698">__zsrli64&lt;D&gt;</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

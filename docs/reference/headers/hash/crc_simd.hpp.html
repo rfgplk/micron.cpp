@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/hash/crc_simd.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/hash/crc_simd.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/hashing.html">Hashing</a></div><p>Defined in header <code>&lt;micron/hash/crc_simd.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/hash/crc_simd.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><p>This file provides implementation definitions, macros, or included facilities shown in its source snapshot.</p><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-6f59e0ac50dc02ed"><h3><code>micron::crc::__simd::__xpow_mod(usize n, u64 poly) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L44">line 44</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>consteval u64
+__xpow_mod(usize n, u64 poly) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>usize n</code></li><li><code>u64 poly</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">consteval u64
+__xpow_mod(usize n, u64 poly) noexcept
+{
+  u64 r = 1;      // x^0
+  for ( usize i = 0; i &lt; n; ++i ) r = (r &lt;&lt; 1) ^ ((r &gt;&gt; 63) ? poly : 0ull);
+  return r;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>r</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L48">line 48</a></td></tr></tbody></table></section><section class="function-entry" id="f-a08457c1f1ac1e31"><h3><code>micron::crc::__simd::__norm_byte(u64 crc, u8 b, const u64 *lut) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L59">line 59</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline u64
+__norm_byte(u64 crc, u8 b, const u64 *lut) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 crc</code></li><li><code>u8 b</code></li><li><code>const u64 *lut</code></li></ul><h4>Effects</h4><p>Returns <code>(crc &lt;&lt; 8) ^ lut[((crc &gt;&gt; 56) ^ b) &amp; 0xFFu]</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline u64
+__norm_byte(u64 crc, u8 b, const u64 *lut) noexcept
+{
+  return (crc &lt;&lt; 8) ^ lut[((crc &gt;&gt; 56) ^ b) &amp; 0xFFu];
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>(crc &lt;&lt; 8) ^ lut[((crc &gt;&gt; 56) ^ b) &amp; 0xFFu]</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L61">line 61</a></td></tr></tbody></table></section><section class="function-entry" id="f-989f258779780bf2"><h3><code>micron::crc::__simd::__bswap128(__v128 v) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L72">line 72</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline, gnu::target(&quot;ssse3&quot;)]] static inline __v128
+__bswap128(__v128 v) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__v128 v</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline, gnu::target(&quot;ssse3&quot;)]] static inline __v128
+__bswap128(__v128 v) noexcept
+{
+  const __v128 rev = __sse::setr_i8(15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0);
+  return __sse::shuffle_v_i8(v, rev);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sse::shuffle_v_i8(v, rev)</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L75">line 75</a></td></tr></tbody></table></section><section class="function-entry" id="f-f8f711ffdec6904b"><h3><code>micron::crc::__simd::__ld_be(const u8 *p) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L79">line 79</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline, gnu::target(&quot;ssse3&quot;)]] static inline __v128
+__ld_be(const u8 *p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li></ul><h4>Effects</h4><p>Returns <code>__bswap128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p)))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline, gnu::target(&quot;ssse3&quot;)]] static inline __v128
+__ld_be(const u8 *p) noexcept
+{
+  return __bswap128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p)));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__bswap128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p)))</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L81">line 81</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="crc_simd.hpp.html#f-989f258779780bf2">__bswap128</a>.</p></section><section class="function-entry" id="f-57fffbadc2c15fee"><h3><code>micron::crc::__simd::__kconst() noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L86">line 86</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Poly, usize N&gt;
+[[gnu::always_inline, gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline __v128
+__kconst() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#if defined(__micron_arch_x86_any)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Poly, usize N&gt;
+[[gnu::always_inline, gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline __v128
+__kconst() noexcept
+{
+  // { lo, hi } in memory order -&gt; low qword = lo, high qword = hi
+  const u64 k[2] = { __fold_k&lt;Poly, N&gt;::lo, __fold_k&lt;Poly, N&gt;::hi };
+  return __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(k));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(k))</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L90">line 90</a></td></tr></tbody></table></section><section class="function-entry" id="f-5d756a75de91d457"><h3><code>micron::crc::__simd::__fold(__v128 acc, __v128 k) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L95">line 95</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline, gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline __v128
+__fold(__v128 acc, __v128 k) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__v128 acc</code></li><li><code>__v128 k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline, gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline __v128
+__fold(__v128 acc, __v128 k) noexcept
+{
+  const __v128 h = __clm::clmul_64&lt;0x11&gt;(acc, k);      // acc_hi (x) k_hi
+  const __v128 l = __clm::clmul_64&lt;0x00&gt;(acc, k);      // acc_lo (x) k_lo
+  return __sse::xor_i128(h, l);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__sse::xor_i128(h, l)</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L99">line 99</a></td></tr></tbody></table></section><section class="function-entry" id="f-994cc4fed8fbac41"><h3><code>micron::crc::__simd::__crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L104">line 104</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Poly&gt;
+[[gnu::target(&quot;pclmul,sse4.1,ssse3&quot;)]] static inline u64
+__crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 init</code></li><li><code>const u8 *buf</code></li><li><code>usize len</code></li><li><code>const u64 *lut</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Poly&gt;
+[[gnu::target(&quot;pclmul,sse4.1,ssse3&quot;)]] static inline u64
+__crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept
+{
+  usize nc = len / 16;      // whole 16-byte chunks
+  const u8 *p = buf;
+
+  u8 head[16];
+  for ( usize i = 0; i &lt; 16; ++i ) head[i] = p[i];
+  for ( usize i = 0; i &lt; 8; ++i ) head[i] ^= static_cast&lt;u8&gt;(init &gt;&gt; (56 - 8 * i));
+
+  const __v128 k1 = __kconst&lt;Poly, 128&gt;();      // advance 1 chunk
+  __v128 acc;
+
+  if ( nc &gt;= 8 ) {
+    const __v128 k4 = __kconst&lt;Poly, 512&gt;();      // advance 4 chunks
+    __v128 a0 = __ld_be(head);                    // chunk 0 (carries init)
+    __v128 a1 = __ld_be(p + 16);
+    __v128 a2 = __ld_be(p + 32);
+    __v128 a3 = __ld_be(p + 48);
+    p += 64;
+    nc -= 4;
+
+    while ( nc &gt;= 4 ) {
+      a0 = __sse::xor_i128(__fold(a0, k4), __ld_be(p + 0));
+      a1 = __sse::xor_i128(__fold(a1, k4), __ld_be(p + 16));
+      a2 = __sse::xor_i128(__fold(a2, k4), __ld_be(p + 32));
+      a3 = __sse::xor_i128(__fold(a3, k4), __ld_be(p + 48));
+      p += 64;
+      nc -= 4;
+    }
+
+    // recombine: acc0 is 3 chunks behind acc3, acc1 two, acc2 one.
+    const __v128 k2 = __kconst&lt;Poly, 256&gt;();
+    const __v128 k3 = __kconst&lt;Poly, 384&gt;();
+    acc = __sse::xor_i128(__sse::xor_i128(__fold(a0, k3), __fold(a1, k2)), __sse::xor_i128(__fold(a2, k1), a3));
+  } else {
+    acc = __ld_be(head);
+    p += 16;
+    --nc;
+  }
+
+  while ( nc &gt; 0 ) {
+    acc = __sse::xor_i128(__fold(acc, k1), __ld_be(p));
+    p += 16;
+    --nc;
+  }
+
+  u8 tmp[16];
+  __sse::storeu_i128(reinterpret_cast&lt;__m128i_u *&gt;(tmp), __bswap128(acc));
+
+  u64 crc = 0;
+  for ( usize i = 0; i &lt; 16; ++i ) crc = __norm_byte(crc, tmp[i], lut);
+
+  // the &lt; 16-byte remainder just continues the scalar recurrence
+  for ( usize i = 0; i &lt; (len % 16); ++i ) crc = __norm_byte(crc, p[i], lut);
+  return crc;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>crc</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L158">line 158</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="crc_simd.hpp.html#f-57fffbadc2c15fee">__kconst&lt;Poly, 128&gt;</a>, <a href="crc_simd.hpp.html#f-57fffbadc2c15fee">__kconst&lt;Poly, 512&gt;</a>, <a href="crc_simd.hpp.html#f-f8f711ffdec6904b">__ld_be</a>, <a href="crc_simd.hpp.html#f-5d756a75de91d457">__fold</a>, <a href="crc_simd.hpp.html#f-57fffbadc2c15fee">__kconst&lt;Poly, 256&gt;</a>, <a href="crc_simd.hpp.html#f-57fffbadc2c15fee">__kconst&lt;Poly, 384&gt;</a>, <a href="crc_simd.hpp.html#f-989f258779780bf2">__bswap128</a>, <a href="crc_simd.hpp.html#f-a08457c1f1ac1e31">__norm_byte</a>.</p></section><section class="function-entry" id="f-07eb5ede1235fefd"><h3><code>micron::crc::__simd::__crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L167">line 167</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline u32
+__crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#if defined(__micron_arch_x86_any)
+#if defined(__micron_crc32_clmul)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 init</code></li><li><code>const u8 *p</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::target(&quot;pclmul,sse4.1&quot;)]] static inline u32
+__crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept
+{
+  // the (long long) casts are the declared parameter type of set_i64, not a width assumption
+  const __v128 mults = __sse::set_i64((long long)0xccaa009eULL, (long long)0xae689191ULL);
+  const __v128 mults4 = __sse::set_i64((long long)0x1d9513d7ULL, (long long)0x8f352d95ULL);
+  const __v128 barrett = __sse::set_i64((long long)0x1db710641ULL, (long long)0xb4e5b025f7011641ULL);
+
+  __v128 x0 = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p));
+  x0 = __sse::xor_i128(x0, __sse::broadcast_i32_to_i128((int)(init ^ 0xFFFFFFFFu)));
+  p += 16;
+  len -= 16;
+
+  if ( len &gt;= 48 ) {
+    __v128 x1 = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p));
+    __v128 x2 = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 16));
+    __v128 x3 = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 32));
+    p += 48;
+    len -= 48;
+    while ( len &gt;= 64 ) {
+      x0 = __sse::xor_i128(__sse::xor_i128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p)), __clm::clmul_64&lt;0x00&gt;(x0, mults4)),
+                           __clm::clmul_64&lt;0x11&gt;(x0, mults4));
+      x1 = __sse::xor_i128(
+          __sse::xor_i128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 16)), __clm::clmul_64&lt;0x00&gt;(x1, mults4)),
+          __clm::clmul_64&lt;0x11&gt;(x1, mults4));
+      x2 = __sse::xor_i128(
+          __sse::xor_i128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 32)), __clm::clmul_64&lt;0x00&gt;(x2, mults4)),
+          __clm::clmul_64&lt;0x11&gt;(x2, mults4));
+      x3 = __sse::xor_i128(
+          __sse::xor_i128(__sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p + 48)), __clm::clmul_64&lt;0x00&gt;(x3, mults4)),
+          __clm::clmul_64&lt;0x11&gt;(x3, mults4));
+      p += 64;
+      len -= 64;
+    }
+    x0 = __sse::xor_i128(__sse::xor_i128(x1, __clm::clmul_64&lt;0x00&gt;(x0, mults)), __clm::clmul_64&lt;0x11&gt;(x0, mults));
+    x0 = __sse::xor_i128(__sse::xor_i128(x2, __clm::clmul_64&lt;0x00&gt;(x0, mults)), __clm::clmul_64&lt;0x11&gt;(x0, mults));
+    x0 = __sse::xor_i128(__sse::xor_i128(x3, __clm::clmul_64&lt;0x00&gt;(x0, mults)), __clm::clmul_64&lt;0x11&gt;(x0, mults));
+  }
+  while ( len &gt;= 16 ) {
+    const __v128 d = __sse::loadu_i128(reinterpret_cast&lt;const __m128i_u *&gt;(p));
+    x0 = __sse::xor_i128(__sse::xor_i128(d, __clm::clmul_64&lt;0x00&gt;(x0, mults)), __clm::clmul_64&lt;0x11&gt;(x0, mults));
+    p += 16;
+    len -= 16;
+  }
+  x0 = __sse::xor_i128(__clm::clmul_64&lt;0x10&gt;(x0, mults), __sse::bsrl_i128&lt;8&gt;(x0));
+  __v128 x1 = __clm::clmul_64&lt;0x00&gt;(x0, barrett);
+  x1 = __clm::clmul_64&lt;0x10&gt;(x1, barrett);
+  x0 = __sse::xor_i128(x0, x1);
+  const u32 r = (u32)__sse::extract_i32_imm&lt;2&gt;(x0);
+
+  return __crc32_refl_slice8(p, len, r) ^ 0xFFFFFFFFu;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__crc32_refl_slice8(p, len, r) ^ 0xFFFFFFFFu</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L216">line 216</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="crc.hpp.html#f-c23705a4ddc76e2a">__crc32_refl_slice8</a>.</p></section><section class="function-entry" id="f-ad58186416c7b2f2"><h3><code>micron::crc::__simd::__ld_be(const u8 *p) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L231">line 231</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline __v128
+__ld_be(const u8 *p) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#else of #if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const u8 *p</code></li></ul><h4>Effects</h4><p>Returns <code>__nc::rev_bytes_q(__nc::load_u8q(p))</code>.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline __v128
+__ld_be(const u8 *p) noexcept
+{
+  return __nc::rev_bytes_q(__nc::load_u8q(p));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__nc::rev_bytes_q(__nc::load_u8q(p))</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L233">line 233</a></td></tr></tbody></table></section><section class="function-entry" id="f-fc614f8d79efc225"><h3><code>micron::crc::__simd::__kconst() noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L238">line 238</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Poly, usize N&gt;
+[[gnu::always_inline]] static inline __v128
+__kconst() noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#else of #if defined(__micron_arch_x86_any)</pre><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Poly, usize N&gt;
+[[gnu::always_inline]] static inline __v128
+__kconst() noexcept
+{
+  const u64 k[2] = { __fold_k&lt;Poly, N&gt;::lo, __fold_k&lt;Poly, N&gt;::hi };
+  return __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k));
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k))</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L241">line 241</a></td></tr></tbody></table></section><section class="function-entry" id="f-dcf761251755dd1b"><h3><code>micron::crc::__simd::__fold(__v128 acc, __v128 k) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L245">line 245</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>[[gnu::always_inline]] static inline __v128
+__fold(__v128 acc, __v128 k) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#else of #if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>__v128 acc</code></li><li><code>__v128 k</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">[[gnu::always_inline]] static inline __v128
+__fold(__v128 acc, __v128 k) noexcept
+{
+  // identical identity to x86: acc_hi (x) k_hi  ^  acc_lo (x) k_lo
+  const __v128 h = __nc::clmul_hi(acc, k);
+  const __v128 l = __nc::clmul_lo(acc, k);
+  return __nc::xor_q(h, l);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__nc::xor_q(h, l)</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L250">line 250</a></td></tr></tbody></table></section><section class="function-entry" id="f-1439e3201fe697f6"><h3><code>micron::crc::__simd::__crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L255">line 255</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>template&lt;u64 Poly&gt;
+static inline u64
+__crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#else of #if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 init</code></li><li><code>const u8 *buf</code></li><li><code>usize len</code></li><li><code>const u64 *lut</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">template&lt;u64 Poly&gt;
+static inline u64
+__crc64_norm_clmul(u64 init, const u8 *buf, usize len, const u64 *lut) noexcept
+{
+  usize nc_ = len / 16;
+  const u8 *p = buf;
+
+  u8 head[16];
+  for ( usize i = 0; i &lt; 16; ++i ) head[i] = p[i];
+  for ( usize i = 0; i &lt; 8; ++i ) head[i] ^= static_cast&lt;u8&gt;(init &gt;&gt; (56 - 8 * i));
+
+  const __v128 k1 = __kconst&lt;Poly, 128&gt;();
+  __v128 acc;
+
+  if ( nc_ &gt;= 8 ) {
+    const __v128 k4 = __kconst&lt;Poly, 512&gt;();
+    __v128 a0 = __ld_be(head);
+    __v128 a1 = __ld_be(p + 16);
+    __v128 a2 = __ld_be(p + 32);
+    __v128 a3 = __ld_be(p + 48);
+    p += 64;
+    nc_ -= 4;
+
+    while ( nc_ &gt;= 4 ) {
+      a0 = __nc::xor_q(__fold(a0, k4), __ld_be(p + 0));
+      a1 = __nc::xor_q(__fold(a1, k4), __ld_be(p + 16));
+      a2 = __nc::xor_q(__fold(a2, k4), __ld_be(p + 32));
+      a3 = __nc::xor_q(__fold(a3, k4), __ld_be(p + 48));
+      p += 64;
+      nc_ -= 4;
+    }
+
+    const __v128 k2 = __kconst&lt;Poly, 256&gt;();
+    const __v128 k3 = __kconst&lt;Poly, 384&gt;();
+    acc = __nc::xor_q(__nc::xor_q(__fold(a0, k3), __fold(a1, k2)), __nc::xor_q(__fold(a2, k1), a3));
+  } else {
+    acc = __ld_be(head);
+    p += 16;
+    --nc_;
+  }
+
+  while ( nc_ &gt; 0 ) {
+    acc = __nc::xor_q(__fold(acc, k1), __ld_be(p));
+    p += 16;
+    --nc_;
+  }
+
+  u8 tmp[16];
+  __nc::store_u8q(tmp, __nc::rev_bytes_q(acc));
+
+  u64 crc = 0;
+  for ( usize i = 0; i &lt; 16; ++i ) crc = __norm_byte(crc, tmp[i], lut);
+  for ( usize i = 0; i &lt; (len % 16); ++i ) crc = __norm_byte(crc, p[i], lut);
+  return crc;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>crc</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L306">line 306</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="crc_simd.hpp.html#f-57fffbadc2c15fee">__kconst&lt;Poly, 128&gt;</a>, <a href="crc_simd.hpp.html#f-57fffbadc2c15fee">__kconst&lt;Poly, 512&gt;</a>, <a href="crc_simd.hpp.html#f-f8f711ffdec6904b">__ld_be</a>, <a href="crc_simd.hpp.html#f-5d756a75de91d457">__fold</a>, <a href="crc_simd.hpp.html#f-57fffbadc2c15fee">__kconst&lt;Poly, 256&gt;</a>, <a href="crc_simd.hpp.html#f-57fffbadc2c15fee">__kconst&lt;Poly, 384&gt;</a>, <a href="crc_simd.hpp.html#f-a08457c1f1ac1e31">__norm_byte</a>.</p></section><section class="function-entry" id="f-186f3d9b25d0df3e"><h3><code>micron::crc::__simd::__crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept</code></h3><p>Defined in <code>hash/crc_simd.hpp</code>, <a href="../../source/hash/crc_simd.hpp.html#L311">line 311</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>static inline u32
+__crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept</pre></td></tr></tbody></table><h4>Availability</h4><pre>#if defined(__micron_crc_clmul)
+#else of #if defined(__micron_arch_x86_any)</pre><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u32 init</code></li><li><code>const u8 *p</code></li><li><code>usize len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">static inline u32
+__crc32_refl_clmul(u32 init, const u8 *p, usize len) noexcept
+{
+  alignas(16) static constexpr u64 k_mults[2] = { 0xae689191ULL, 0xccaa009eULL };      // x^159, x^95
+  alignas(16) static constexpr u64 k_x95[2] = { 0xccaa009eULL, 0 };                    // x^95 mod G
+  alignas(16) static constexpr u64 k_mu[2] = { 0xb4e5b025f7011641ULL, 0 };             // floor(x^95 / G)
+  alignas(16) static constexpr u64 k_g[2] = { 0x1db710641ULL, 0 };                     // G(x)
+
+  const __v128 mults = __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k_mults));
+  const __v128 m_x95 = __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k_x95));
+  const __v128 b_mu = __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k_mu));
+  const __v128 b_g = __nc::load_u8q(reinterpret_cast&lt;const u8 *&gt;(k_g));
+
+  __v128 x0 = __nc::load_u8q(p);
+  const uint32x4_t xi = __neon::set_lane_u32&lt;0&gt;(init ^ 0xFFFFFFFFu, __neon::splat_u32(0));
+  x0 = __nc::xor_q(x0, (__v128)xi);      // fold the conditioned register into the first 4 bytes
+  p += 16;
+  len -= 16;
+  while ( len &gt;= 16 ) {
+    const __v128 d = __nc::load_u8q(p);
+    x0 = __nc::xor_q(__nc::xor_q(d, __nc::clmul_lo(x0, mults)), __nc::clmul_hi(x0, mults));
+    p += 16;
+    len -= 16;
+  }
+  x0 = __nc::xor_q(__nc::clmul_lo(x0, m_x95), __neon::ext_u8&lt;8&gt;(x0, __neon::splat_u8(0)));
+  __v128 t = __nc::clmul_lo(x0, b_mu);
+  t = __nc::clmul_lo(t, b_g);
+  x0 = __nc::xor_q(x0, t);
+  const u32 r = __neon::get_lane_u32&lt;2&gt;((uint32x4_t)x0);
+
+  return __crc32_refl_slice8(p, len, r) ^ 0xFFFFFFFFu;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>__crc32_refl_slice8(p, len, r) ^ 0xFFFFFFFFu</code></td><td><a href="../../source/hash/crc_simd.hpp.html#L340">line 340</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="crc.hpp.html#f-c23705a4ddc76e2a">__crc32_refl_slice8</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>

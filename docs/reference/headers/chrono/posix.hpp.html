@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;micron/chrono/posix.hpp&gt; - micron reference</title>
+<link rel="stylesheet" href="../../assets/cppreference2/screen.css"><link rel="stylesheet" href="../../assets/cppreference2/site_modules.css"><link rel="stylesheet" href="../../assets/micron.css">
+</head><body class="mediawiki">
+<div id="mw-head" class="noprint"><div id="cpp-head-first-base"><div id="cpp-head-first">
+<h5><a href="../../index.html">micron reference</a></h5>
+<div id="cpp-head-search"><form action="../../search.html" method="get" role="search"><label class="visually-hidden" for="searchInput">Search reference</label><input id="searchInput" type="search" name="q" placeholder="Search" required><button type="submit">Search</button></form></div>
+</div></div><div id="cpp-head-second-base"><div id="cpp-head-second"><div id="cpp-head-tools-left"><div class="reference-tabs"><a href="../../index.html">Reference</a> <a href="../index.html">Headers</a> <a href="../../functions/index.html">Functions</a> <a href="../../symbols/index.html">Symbols</a> <a href="../../source/index.html">Source</a> <a href="../../about.html">About</a></div></div></div></div></div>
+<div id="cpp-content-base"><div id="content" role="main"><a id="top"></a><h1 id="firstHeading" class="firstHeading">&lt;micron/chrono/posix.hpp&gt;</h1><div id="bodyContent"><div id="siteSub">From micron reference</div><div id="contentSub"><a href="../../index.html">micron reference</a> › <a href="../../modules/chrono.html">Date and time</a></div><p>Defined in header <code>&lt;micron/chrono/posix.hpp&gt;</code>.</p><p>Function overloads are documented below with their declarations, source-equivalent effects, return sites, and explicit failure paths. <a href="../../source/chrono/posix.hpp.html">Read the complete source snapshot</a> for the surrounding type definitions and macros.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code id="s-9f23f55a5f4b210f">micron::posix::tm_t</code></td><td>struct; line 30</td></tr><tr class="t-dsc"><td><code id="s-87bf8bc9a37a9b63">micron::posix::tm_t::tm_sec</code></td><td>member; line 31</td></tr><tr class="t-dsc"><td><code id="s-57d4cf16b6269c84">micron::posix::tm_t::tm_min</code></td><td>member; line 32</td></tr><tr class="t-dsc"><td><code id="s-9be9803529529005">micron::posix::tm_t::tm_hour</code></td><td>member; line 33</td></tr><tr class="t-dsc"><td><code id="s-1d1d7c46c32979f5">micron::posix::tm_t::tm_mday</code></td><td>member; line 34</td></tr><tr class="t-dsc"><td><code id="s-6948e8996c5bf1d2">micron::posix::tm_t::tm_mon</code></td><td>member; line 35</td></tr><tr class="t-dsc"><td><code id="s-26116df83d5d590f">micron::posix::tm_t::tm_year</code></td><td>member; line 36</td></tr><tr class="t-dsc"><td><code id="s-056832d0acf2e96e">micron::posix::tm_t::tm_wday</code></td><td>member; line 37</td></tr><tr class="t-dsc"><td><code id="s-970a2ecbd4ffba38">micron::posix::tm_t::tm_yday</code></td><td>member; line 38</td></tr><tr class="t-dsc"><td><code id="s-d7ce3594c36ac7ad">micron::posix::tm_t::tm_isdst</code></td><td>member; line 39</td></tr><tr class="t-dsc"><td><code id="s-ad100d1282d6aaae">micron::posix::tm_t::tm_gmtoff</code></td><td>member; line 40</td></tr><tr class="t-dsc"><td><code id="s-fee273dff37ae9be">micron::posix::tm_t::tm_zone</code></td><td>member; line 41</td></tr><tr class="t-dsc"><td><code id="s-e9de13cf17cb5a4e">micron::posix::asctime_buf</code></td><td>variable; line 128</td></tr><tr class="t-dsc"><td><code id="s-41856265f1f28fb9">micron::posix::_sc_arg_max</code></td><td>variable; line 439</td></tr><tr class="t-dsc"><td><code id="s-fae9c9c61e1de144">micron::posix::_sc_clk_tck</code></td><td>variable; line 440</td></tr><tr class="t-dsc"><td><code id="s-8ee35edf5acaec68">micron::posix::_sc_open_max</code></td><td>variable; line 441</td></tr><tr class="t-dsc"><td><code id="s-c507ad6c445876d8">micron::posix::_sc_pagesize</code></td><td>variable; line 442</td></tr><tr class="t-dsc"><td><code id="s-976347c641721e00">micron::posix::_sc_page_size</code></td><td>variable; line 443</td></tr><tr class="t-dsc"><td><code id="s-702475f1f1b6974e">micron::posix::_sc_nprocessors_conf</code></td><td>variable; line 444</td></tr><tr class="t-dsc"><td><code id="s-fb7d3ce8cdb8b24b">micron::posix::_sc_nprocessors_onln</code></td><td>variable; line 445</td></tr><tr class="t-dsc"><td><a href="#f-0c3200ee87ce00f9">micron::posix::civil_of_tm(const tm_t &amp;t) noexcept</a></td><td>function; line 48</td></tr><tr class="t-dsc"><td><a href="#f-18d542840bd72999">micron::posix::tm_of_civil(const chrono::civil &amp;c, tm_t &amp;out) noexcept</a></td><td>function; line 62</td></tr><tr class="t-dsc"><td><a href="#f-53552b83dcf82c85">micron::posix::gmtime_r(const time_t *t, tm_t *out) noexcept</a></td><td>function; line 79</td></tr><tr class="t-dsc"><td><a href="#f-17a3daf095157770">micron::posix::localtime_r(const time_t *t, tm_t *out, const chrono::tz_table &amp;z) noexcept</a></td><td>function; line 90</td></tr><tr class="t-dsc"><td><a href="#f-f38287e9ea775693">micron::posix::timegm(tm_t *t) noexcept</a></td><td>function; line 102</td></tr><tr class="t-dsc"><td><a href="#f-5551c7874717d323">micron::posix::mktime(tm_t *t, const chrono::tz_table &amp;z) noexcept</a></td><td>function; line 114</td></tr><tr class="t-dsc"><td><a href="#f-7a2233946c9a9ecc">micron::posix::asctime_r(const tm_t *t, char *buf) noexcept</a></td><td>function; line 131</td></tr><tr class="t-dsc"><td><a href="#f-1e71d2378274a5ca">micron::posix::ctime_r(const time_t *t, char *buf, const chrono::tz_table &amp;z) noexcept</a></td><td>function; line 150</td></tr><tr class="t-dsc"><td><a href="#f-9d2bcb5dba0d666a">micron::posix::strftime(char *s, usize max, const char *format, const tm_t *t) noexcept</a></td><td>function; line 162</td></tr><tr class="t-dsc"><td><a href="#f-e08814a76a0ce83c">micron::posix::strptime(const char *s, const char *format, tm_t *t) noexcept</a></td><td>function; line 223</td></tr><tr class="t-dsc"><td><a href="#f-f6c3b387014262b2">micron::posix::usleep(u64 usec) noexcept</a></td><td>function; line 411</td></tr><tr class="t-dsc"><td><a href="#f-7fc7a1a821b6927e">micron::posix::nsleep(u64 nsec) noexcept</a></td><td>function; line 424</td></tr><tr class="t-dsc"><td><a href="#f-7ec6ab07636c9f63">micron::posix::clk_tck(void) noexcept</a></td><td>function; line 448</td></tr><tr class="t-dsc"><td><a href="#f-4bebb5015f613970">micron::posix::sysconf(int name) noexcept</a></td><td>function; line 459</td></tr></tbody></table><h2 id="functions">Functions</h2><section class="function-entry" id="f-0c3200ee87ce00f9"><h3><code>micron::posix::civil_of_tm(const tm_t &amp;t) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L48">line 48</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr chrono::civil
+civil_of_tm(const tm_t &amp;t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tm_t &amp;t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr chrono::civil
+civil_of_tm(const tm_t &amp;t) noexcept
+{
+  chrono::civil c{};
+  c.y = t.tm_year + 1900;
+  c.mo = static_cast&lt;u32&gt;(t.tm_mon + 1);
+  c.d = static_cast&lt;u32&gt;(t.tm_mday);
+  c.h = static_cast&lt;u32&gt;(t.tm_hour);
+  c.mi = static_cast&lt;u32&gt;(t.tm_min);
+  c.s = static_cast&lt;u32&gt;(t.tm_sec);
+  c.off = static_cast&lt;i32&gt;(t.tm_gmtoff);
+  return c;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>c</code></td><td><a href="../../source/chrono/posix.hpp.html#L58">line 58</a></td></tr></tbody></table></section><section class="function-entry" id="f-18d542840bd72999"><h3><code>micron::posix::tm_of_civil(const chrono::civil &amp;c, tm_t &amp;out) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L62">line 62</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline constexpr void
+tm_of_civil(const chrono::civil &amp;c, tm_t &amp;out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const chrono::civil &amp;c</code></li><li><code>tm_t &amp;out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline constexpr void
+tm_of_civil(const chrono::civil &amp;c, tm_t &amp;out) noexcept
+{
+  out.tm_sec = static_cast&lt;int&gt;(c.s);
+  out.tm_min = static_cast&lt;int&gt;(c.mi);
+  out.tm_hour = static_cast&lt;int&gt;(c.h);
+  out.tm_mday = static_cast&lt;int&gt;(c.d);
+  out.tm_mon = static_cast&lt;int&gt;(c.mo) - 1;
+  out.tm_year = c.y - 1900;
+  out.tm_wday = static_cast&lt;int&gt;(chrono::weekday_of(c.y, c.mo, c.d));
+  out.tm_yday = static_cast&lt;int&gt;(chrono::day_of_year(c.y, c.mo, c.d)) - 1;
+  out.tm_gmtoff = c.off;
+}</pre></details><h4>Return value</h4><p>The body contains no explicit return statement. Constructors and destructors do not produce a return value; a <code>void</code> function returns without a value when its body completes.</p><h4>Referenced functions</h4><p><a href="calendar.hpp.html#f-71e1c76974f80019">chrono::weekday_of</a>, <a href="calendar.hpp.html#f-dcca6417cc4aef49">chrono::day_of_year</a>.</p></section><section class="function-entry" id="f-53552b83dcf82c85"><h3><code>micron::posix::gmtime_r(const time_t *t, tm_t *out) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L79">line 79</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline tm_t *
+gmtime_r(const time_t *t, tm_t *out) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const time_t *t</code></li><li><code>tm_t *out</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline tm_t *
+gmtime_r(const time_t *t, tm_t *out) noexcept
+{
+  if ( !t || !out ) return nullptr;
+  tm_of_civil(chrono::civil_utc(static_cast&lt;i64&gt;(*t)), *out);
+  out-&gt;tm_isdst = 0;
+  out-&gt;tm_gmtoff = 0;
+  out-&gt;tm_zone = &quot;UTC&quot;;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L81">line 81</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/chrono/posix.hpp.html#L86">line 86</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="posix.hpp.html#f-18d542840bd72999">tm_of_civil</a>, <a href="civil.hpp.html#f-754475af8675d3f0">chrono::civil_utc</a>.</p></section><section class="function-entry" id="f-17a3daf095157770"><h3><code>micron::posix::localtime_r(const time_t *t, tm_t *out, const chrono::tz_table &amp;z) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L90">line 90</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline tm_t *
+localtime_r(const time_t *t, tm_t *out, const chrono::tz_table &amp;z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const time_t *t</code></li><li><code>tm_t *out</code></li><li><code>const chrono::tz_table &amp;z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline tm_t *
+localtime_r(const time_t *t, tm_t *out, const chrono::tz_table &amp;z) noexcept
+{
+  if ( !t || !out ) return nullptr;
+  const i32 off = chrono::offset_at(z, static_cast&lt;i64&gt;(*t));
+  tm_of_civil(chrono::to_civil(static_cast&lt;i64&gt;(*t), off), *out);
+  out-&gt;tm_isdst = -1;
+  out-&gt;tm_gmtoff = off;
+  out-&gt;tm_zone = nullptr;
+  return out;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L92">line 92</a></td></tr><tr class="t-dsc"><td><code>out</code></td><td><a href="../../source/chrono/posix.hpp.html#L98">line 98</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="civil.hpp.html#f-d52bd1bbe44d0b3a">chrono::offset_at</a>, <a href="posix.hpp.html#f-18d542840bd72999">tm_of_civil</a>, <a href="civil.hpp.html#f-4ccda33458754967">chrono::to_civil</a>.</p></section><section class="function-entry" id="f-f38287e9ea775693"><h3><code>micron::posix::timegm(tm_t *t) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L102">line 102</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline time_t
+timegm(tm_t *t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>tm_t *t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline time_t
+timegm(tm_t *t) noexcept
+{
+  if ( !t ) return static_cast&lt;time_t&gt;(-1);
+  const chrono::civil in = civil_of_tm(*t);
+  const i64 secs = chrono::civil_secs(in);
+  tm_of_civil(chrono::civil_utc(secs), *t);
+  t-&gt;tm_isdst = 0;
+  t-&gt;tm_gmtoff = 0;
+  return static_cast&lt;time_t&gt;(secs);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;time_t&gt;(-1)</code></td><td><a href="../../source/chrono/posix.hpp.html#L104">line 104</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;time_t&gt;(secs)</code></td><td><a href="../../source/chrono/posix.hpp.html#L110">line 110</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="posix.hpp.html#f-0c3200ee87ce00f9">civil_of_tm</a>, <a href="civil.hpp.html#f-b442bc2875c91034">chrono::civil_secs</a>, <a href="posix.hpp.html#f-18d542840bd72999">tm_of_civil</a>, <a href="civil.hpp.html#f-754475af8675d3f0">chrono::civil_utc</a>.</p></section><section class="function-entry" id="f-5551c7874717d323"><h3><code>micron::posix::mktime(tm_t *t, const chrono::tz_table &amp;z) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L114">line 114</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline time_t
+mktime(tm_t *t, const chrono::tz_table &amp;z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>tm_t *t</code></li><li><code>const chrono::tz_table &amp;z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline time_t
+mktime(tm_t *t, const chrono::tz_table &amp;z) noexcept
+{
+  if ( !t ) return static_cast&lt;time_t&gt;(-1);
+  const chrono::civil in = civil_of_tm(*t);
+  const i64 secs = chrono::from_civil(in, z);
+  const i32 off = chrono::offset_at(z, secs);
+  tm_of_civil(chrono::to_civil(secs, off), *t);
+  t-&gt;tm_gmtoff = off;
+  return static_cast&lt;time_t&gt;(secs);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;time_t&gt;(-1)</code></td><td><a href="../../source/chrono/posix.hpp.html#L116">line 116</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;time_t&gt;(secs)</code></td><td><a href="../../source/chrono/posix.hpp.html#L122">line 122</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="posix.hpp.html#f-0c3200ee87ce00f9">civil_of_tm</a>, <a href="civil.hpp.html#f-6c03ead02c7317c6">chrono::from_civil</a>, <a href="civil.hpp.html#f-d52bd1bbe44d0b3a">chrono::offset_at</a>, <a href="posix.hpp.html#f-18d542840bd72999">tm_of_civil</a>, <a href="civil.hpp.html#f-4ccda33458754967">chrono::to_civil</a>.</p></section><section class="function-entry" id="f-7a2233946c9a9ecc"><h3><code>micron::posix::asctime_r(const tm_t *t, char *buf) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L131">line 131</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline char *
+asctime_r(const tm_t *t, char *buf) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const tm_t *t</code></li><li><code>char *buf</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline char *
+asctime_r(const tm_t *t, char *buf) noexcept
+{
+  if ( !t || !buf ) return nullptr;
+  const chrono::civil c = civil_of_tm(*t);
+  if ( chrono::asctime_size(c) + 2 &gt; asctime_buf ) {
+    buf[0] = &#x27;\0&#x27;;
+    return nullptr;
+  }
+  const usize n = chrono::write_asctime(buf, asctime_buf - 2, c);
+  if ( n == 0 ) {
+    buf[0] = &#x27;\0&#x27;;
+    return nullptr;
+  }
+  buf[n] = &#x27;\n&#x27;;
+  buf[n + 1] = &#x27;\0&#x27;;
+  return buf;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L133">line 133</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L137">line 137</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L142">line 142</a></td></tr><tr class="t-dsc"><td><code>buf</code></td><td><a href="../../source/chrono/posix.hpp.html#L146">line 146</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="posix.hpp.html#f-0c3200ee87ce00f9">civil_of_tm</a>, <a href="format.hpp.html#f-903774f7e05914b4">chrono::asctime_size</a>, <a href="format.hpp.html#f-a30da0fb12f49421">chrono::write_asctime</a>.</p></section><section class="function-entry" id="f-1e71d2378274a5ca"><h3><code>micron::posix::ctime_r(const time_t *t, char *buf, const chrono::tz_table &amp;z) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L150">line 150</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline char *
+ctime_r(const time_t *t, char *buf, const chrono::tz_table &amp;z) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const time_t *t</code></li><li><code>char *buf</code></li><li><code>const chrono::tz_table &amp;z</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline char *
+ctime_r(const time_t *t, char *buf, const chrono::tz_table &amp;z) noexcept
+{
+  if ( !t || !buf ) return nullptr;
+  tm_t tmp{};
+  if ( !localtime_r(t, &amp;tmp, z) ) {
+    buf[0] = &#x27;\0&#x27;;
+    return nullptr;
+  }
+  return asctime_r(&amp;tmp, buf);
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L152">line 152</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L156">line 156</a></td></tr><tr class="t-dsc"><td><code>asctime_r(&amp;tmp, buf)</code></td><td><a href="../../source/chrono/posix.hpp.html#L158">line 158</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="posix.hpp.html#f-17a3daf095157770">localtime_r</a>, <a href="posix.hpp.html#f-7a2233946c9a9ecc">asctime_r</a>.</p></section><section class="function-entry" id="f-9d2bcb5dba0d666a"><h3><code>micron::posix::strftime(char *s, usize max, const char *format, const tm_t *t) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L162">line 162</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline usize
+strftime(char *s, usize max, const char *format, const tm_t *t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>char *s</code></li><li><code>usize max</code></li><li><code>const char *format</code></li><li><code>const tm_t *t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline usize
+strftime(char *s, usize max, const char *format, const tm_t *t) noexcept
+{
+  if ( !s || !format || !t || max == 0 ) return 0;
+  const chrono::civil c = civil_of_tm(*t);
+  const usize need = chrono::strftime_size(format, c);
+  if ( need + 1 &gt; max ) return 0;
+  const usize n = chrono::write_strftime(s, max - 1, format, c);
+  s[n] = &#x27;\0&#x27;;
+  return n;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/posix.hpp.html#L164">line 164</a></td></tr><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/posix.hpp.html#L167">line 167</a></td></tr><tr class="t-dsc"><td><code>n</code></td><td><a href="../../source/chrono/posix.hpp.html#L170">line 170</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="posix.hpp.html#f-0c3200ee87ce00f9">civil_of_tm</a>, <a href="format.hpp.html#f-c090b5132919c3ca">chrono::strftime_size</a>, <a href="format.hpp.html#f-2101660014ecc690">chrono::write_strftime</a>.</p></section><section class="function-entry" id="f-e08814a76a0ce83c"><h3><code>micron::posix::strptime(const char *s, const char *format, tm_t *t) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L223">line 223</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline const char *
+strptime(const char *s, const char *format, tm_t *t) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *s</code></li><li><code>const char *format</code></li><li><code>tm_t *t</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline const char *
+strptime(const char *s, const char *format, tm_t *t) noexcept
+{
+  if ( !s || !format || !t ) return nullptr;
+  const char *p = s;
+  const char *end = s;
+  while ( *end ) ++end;
+
+  bool have_ymd = false;
+  bool pm = false;
+  bool have_ampm = false;
+
+  for ( const char *f = format; *f; ++f ) {
+    if ( *f == &#x27; &#x27; || *f == &#x27;\t&#x27; || *f == &#x27;\n&#x27; ) {
+      while ( p &lt; end &amp;&amp; (*p == &#x27; &#x27; || *p == &#x27;\t&#x27; || *p == &#x27;\n&#x27;) ) ++p;
+      continue;
+    }
+    if ( *f != &#x27;%&#x27; ) {
+      if ( p &gt;= end || *p != *f ) return nullptr;
+      ++p;
+      continue;
+    }
+    ++f;
+    if ( *f == &#x27;\0&#x27; ) return nullptr;
+
+    i64 v = 0;
+    bool any = false;
+    switch ( *f ) {
+    case &#x27;Y&#x27;:
+      if ( !__impl::__sp_digits(p, end, 6, v, any) ) return nullptr;
+      t-&gt;tm_year = static_cast&lt;int&gt;(v - 1900);
+      have_ymd = true;
+      break;
+    case &#x27;y&#x27;:
+      if ( !__impl::__sp_digits(p, end, 2, v, any) ) return nullptr;
+      t-&gt;tm_year = static_cast&lt;int&gt;(v &lt; 69 ? v + 100 : v);
+      have_ymd = true;
+      break;
+    case &#x27;C&#x27;:
+      if ( !__impl::__sp_digits(p, end, 2, v, any) ) return nullptr;
+      t-&gt;tm_year = static_cast&lt;int&gt;(v * 100 - 1900);
+      break;
+    case &#x27;m&#x27;:
+      if ( !__impl::__sp_digits(p, end, 2, v, any) ) return nullptr;
+      if ( v &lt; 1 || v &gt; 12 ) return nullptr;
+      t-&gt;tm_mon = static_cast&lt;int&gt;(v - 1);
+      have_ymd = true;
+      break;
+    case &#x27;d&#x27;:
+    case &#x27;e&#x27;:
+      while ( p &lt; end &amp;&amp; *p == &#x27; &#x27; ) ++p;
+      if ( !__impl::__sp_digits(p, end, 2, v, any) ) return nullptr;
+      if ( v &lt; 1 || v &gt; 31 ) return nullptr;
+      t-&gt;tm_mday = static_cast&lt;int&gt;(v);
+      have_ymd = true;
+      break;
+    case &#x27;H&#x27;:
+      if ( !__impl::__sp_digits(p, end, 2, v, any) ) return nullptr;
+      if ( v &gt; 23 ) return nullptr;
+      t-&gt;tm_hour = static_cast&lt;int&gt;(v);
+      break;
+    case &#x27;I&#x27;:
+      if ( !__impl::__sp_digits(p, end, 2, v, any) ) return nullptr;
+      if ( v &lt; 1 || v &gt; 12 ) return nullptr;
+      t-&gt;tm_hour = static_cast&lt;int&gt;(v % 12);
+      break;
+    case &#x27;M&#x27;:
+      if ( !__impl::__sp_digits(p, end, 2, v, any) ) return nullptr;
+      if ( v &gt; 59 ) return nullptr;
+      t-&gt;tm_min = static_cast&lt;int&gt;(v);
+      break;
+    case &#x27;S&#x27;:
+      if ( !__impl::__sp_digits(p, end, 2, v, any) ) return nullptr;
+      if ( v &gt; 60 ) return nullptr;
+      t-&gt;tm_sec = static_cast&lt;int&gt;(v);
+      break;
+    case &#x27;j&#x27;:
+      if ( !__impl::__sp_digits(p, end, 3, v, any) ) return nullptr;
+      if ( v &lt; 1 || v &gt; 366 ) return nullptr;
+      t-&gt;tm_yday = static_cast&lt;int&gt;(v - 1);
+      break;
+    case &#x27;b&#x27;:
+    case &#x27;B&#x27;:
+    case &#x27;h&#x27;: {
+      const int m = __impl::__sp_match(p, end, chrono::month_name, 1, 12, 3);
+      if ( m &lt; 0 ) return nullptr;
+      t-&gt;tm_mon = m - 1;
+      have_ymd = true;
+      break;
+    }
+    case &#x27;a&#x27;:
+    case &#x27;A&#x27;: {
+      const int w = __impl::__sp_match(p, end, chrono::weekday_name, 0, 6, 3);
+      if ( w &lt; 0 ) return nullptr;
+      t-&gt;tm_wday = w;
+      break;
+    }
+    case &#x27;p&#x27;:
+    case &#x27;P&#x27;: {
+      if ( chrono::__impl::__ieq(p, static_cast&lt;usize&gt;(end - p), 0, &quot;AM&quot;, 2) ) {
+        pm = false;
+        have_ampm = true;
+        p += 2;
+      } else if ( chrono::__impl::__ieq(p, static_cast&lt;usize&gt;(end - p), 0, &quot;PM&quot;, 2) ) {
+        pm = true;
+        have_ampm = true;
+        p += 2;
+      } else {
+        return nullptr;
+      }
+      break;
+    }
+    case &#x27;z&#x27;: {
+      usize i = 0;
+      i32 off = 0;
+      if ( !chrono::__impl::__offset(p, static_cast&lt;usize&gt;(end - p), i, off) ) return nullptr;
+      p += i;
+      t-&gt;tm_gmtoff = off;
+      break;
+    }
+    case &#x27;s&#x27;:
+      if ( !__impl::__sp_digits(p, end, 19, v, any) ) return nullptr;
+      tm_of_civil(chrono::civil_utc(v), *t);
+      have_ymd = true;
+      break;
+    case &#x27;n&#x27;:
+    case &#x27;t&#x27;:
+      while ( p &lt; end &amp;&amp; (*p == &#x27; &#x27; || *p == &#x27;\t&#x27; || *p == &#x27;\n&#x27;) ) ++p;
+      break;
+    case &#x27;%&#x27;:
+      if ( p &gt;= end || *p != &#x27;%&#x27; ) return nullptr;
+      ++p;
+      break;
+    case &#x27;T&#x27;:
+    case &#x27;X&#x27;: {
+      const char *r = strptime(p, &quot;%H:%M:%S&quot;, t);
+      if ( !r ) return nullptr;
+      p = r;
+      break;
+    }
+    case &#x27;R&#x27;: {
+      const char *r = strptime(p, &quot;%H:%M&quot;, t);
+      if ( !r ) return nullptr;
+      p = r;
+      break;
+    }
+    case &#x27;F&#x27;: {
+      const char *r = strptime(p, &quot;%Y-%m-%d&quot;, t);
+      if ( !r ) return nullptr;
+      p = r;
+      have_ymd = true;
+      break;
+    }
+    case &#x27;D&#x27;:
+    case &#x27;x&#x27;: {
+      const char *r = strptime(p, &quot;%m/%d/%y&quot;, t);
+      if ( !r ) return nullptr;
+      p = r;
+      have_ymd = true;
+      break;
+    }
+    case &#x27;c&#x27;: {
+      const char *r = strptime(p, &quot;%a %b %e %H:%M:%S %Y&quot;, t);
+      if ( !r ) return nullptr;
+      p = r;
+      have_ymd = true;
+      break;
+    }
+    default:
+      return nullptr;
+    }
+  }
+
+  if ( have_ampm ) {
+    if ( pm &amp;&amp; t-&gt;tm_hour &lt; 12 ) t-&gt;tm_hour += 12;
+    if ( !pm &amp;&amp; t-&gt;tm_hour == 12 ) t-&gt;tm_hour = 0;
+  }
+  if ( have_ymd ) {
+    const chrono::civil c = civil_of_tm(*t);
+    t-&gt;tm_wday = static_cast&lt;int&gt;(chrono::weekday_of(c.y, c.mo, c.d));
+    t-&gt;tm_yday = static_cast&lt;int&gt;(chrono::day_of_year(c.y, c.mo, c.d)) - 1;
+  }
+  return p;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L225">line 225</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L240">line 240</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L245">line 245</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L251">line 251</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L256">line 256</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L261">line 261</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L265">line 265</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L266">line 266</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L273">line 273</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L274">line 274</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L279">line 279</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L280">line 280</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L284">line 284</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L285">line 285</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L289">line 289</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L290">line 290</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L294">line 294</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L295">line 295</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L299">line 299</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L300">line 300</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L307">line 307</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L315">line 315</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L330">line 330</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L337">line 337</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L343">line 343</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L352">line 352</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L358">line 358</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L364">line 364</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L370">line 370</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L378">line 378</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L385">line 385</a></td></tr><tr class="t-dsc"><td><code>nullptr</code></td><td><a href="../../source/chrono/posix.hpp.html#L391">line 391</a></td></tr><tr class="t-dsc"><td><code>p</code></td><td><a href="../../source/chrono/posix.hpp.html#L404">line 404</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="posix.hpp.html#f-5d05ebc75a2c6358">__impl::__sp_digits</a>, <a href="posix.hpp.html#f-ba14289091d5ce0b">__impl::__sp_match</a>, <a href="parse.hpp.html#f-f3770ea52636e05d">chrono::__impl::__ieq</a>, <a href="parse.hpp.html#f-e851d4bf4de351a1">chrono::__impl::__offset</a>, <a href="posix.hpp.html#f-18d542840bd72999">tm_of_civil</a>, <a href="civil.hpp.html#f-754475af8675d3f0">chrono::civil_utc</a>, <a href="posix.hpp.html#f-0c3200ee87ce00f9">civil_of_tm</a>, <a href="calendar.hpp.html#f-71e1c76974f80019">chrono::weekday_of</a>, <a href="calendar.hpp.html#f-dcca6417cc4aef49">chrono::day_of_year</a>.</p></section><section class="function-entry" id="f-f6c3b387014262b2"><h3><code>micron::posix::usleep(u64 usec) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L411">line 411</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline i32
+usleep(u64 usec) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 usec</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline i32
+usleep(u64 usec) noexcept
+{
+  timespec_t r = chrono::ts_of_ns(static_cast&lt;i64&gt;(usec) * static_cast&lt;i64&gt;(chrono::ns_per_us));
+  timespec_t rem{};
+  for ( ;; ) {
+    const i32 v = static_cast&lt;i32&gt;(micron::nanosleep(r, rem));
+    if ( v == 0 ) return 0;
+    if ( -v != static_cast&lt;i32&gt;(error::interrupted) ) return v;
+    r = rem;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/posix.hpp.html#L417">line 417</a></td></tr><tr class="t-dsc"><td><code>v</code></td><td><a href="../../source/chrono/posix.hpp.html#L418">line 418</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="units.hpp.html#f-c8a906ae2888a229">chrono::ts_of_ns</a>, <a href="../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>.</p></section><section class="function-entry" id="f-7fc7a1a821b6927e"><h3><code>micron::posix::nsleep(u64 nsec) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L424">line 424</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline i32
+nsleep(u64 nsec) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>u64 nsec</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline i32
+nsleep(u64 nsec) noexcept
+{
+  timespec_t r = chrono::ts_of_ns(static_cast&lt;i64&gt;(nsec));
+  timespec_t rem{};
+  for ( ;; ) {
+    const i32 v = static_cast&lt;i32&gt;(micron::nanosleep(r, rem));
+    if ( v == 0 ) return 0;
+    if ( -v != static_cast&lt;i32&gt;(error::interrupted) ) return v;
+    r = rem;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>0</code></td><td><a href="../../source/chrono/posix.hpp.html#L430">line 430</a></td></tr><tr class="t-dsc"><td><code>v</code></td><td><a href="../../source/chrono/posix.hpp.html#L431">line 431</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="units.hpp.html#f-c8a906ae2888a229">chrono::ts_of_ns</a>, <a href="../linux/sys/time.hpp.html#f-f3bdb8fe5d311c0c">micron::nanosleep</a>.</p></section><section class="function-entry" id="f-7ec6ab07636c9f63"><h3><code>micron::posix::clk_tck(void) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L448">line 448</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline long
+clk_tck(void) noexcept</pre></td></tr></tbody></table><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline long
+clk_tck(void) noexcept
+{
+#if defined(__micron_arch_wasm32)
+  return -1;
+#else
+  const unsigned long v = micron::getauxval(micron::at_clktck);
+  return v != 0 ? static_cast&lt;long&gt;(v) : 100l;
+#endif
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/chrono/posix.hpp.html#L451">line 451</a></td></tr><tr class="t-dsc"><td><code>v != 0 ? static_cast&lt;long&gt;(v) : 100l</code></td><td><a href="../../source/chrono/posix.hpp.html#L454">line 454</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="../linux/elf/auxval.hpp.html#f-85445bdc43919f42">micron::getauxval</a>.</p></section><section class="function-entry" id="f-4bebb5015f613970"><h3><code>micron::posix::sysconf(int name) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L459">line 459</a>.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>inline long
+sysconf(int name) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>int name</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">inline long
+sysconf(int name) noexcept
+{
+  switch ( name ) {
+  case _sc_clk_tck:
+    return clk_tck();
+  case _sc_pagesize: {
+#if defined(__micron_arch_wasm32)
+    return 65536;
+#else
+    const unsigned long v = micron::getauxval(micron::at_pagesz);
+    return v != 0 ? static_cast&lt;long&gt;(v) : static_cast&lt;long&gt;(__micron_page_size_default);
+#endif
+  }
+  default:
+    return -1l;
+  }
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>clk_tck()</code></td><td><a href="../../source/chrono/posix.hpp.html#L463">line 463</a></td></tr><tr class="t-dsc"><td><code>65536</code></td><td><a href="../../source/chrono/posix.hpp.html#L466">line 466</a></td></tr><tr class="t-dsc"><td><code>v != 0 ? static_cast&lt;long&gt;(v) : static_cast&lt;long&gt;(__micron_page_size_default)</code></td><td><a href="../../source/chrono/posix.hpp.html#L469">line 469</a></td></tr><tr class="t-dsc"><td><code>-1l</code></td><td><a href="../../source/chrono/posix.hpp.html#L473">line 473</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="posix.hpp.html#f-7ec6ab07636c9f63">clk_tck</a>, <a href="../linux/elf/auxval.hpp.html#f-85445bdc43919f42">micron::getauxval</a>.</p></section><h2 id="implementation-functions">Implementation functions</h2><section class="function-entry" id="f-5d05ebc75a2c6358"><h3><code>micron::posix::__impl::__sp_digits(const char *&amp;p, const char *end, u32 max, i64 &amp;out, bool &amp;any) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L180">line 180</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr bool
+__sp_digits(const char *&amp;p, const char *end, u32 max, i64 &amp;out, bool &amp;any) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *&amp;p</code></li><li><code>const char *end</code></li><li><code>u32 max</code></li><li><code>i64 &amp;out</code></li><li><code>bool &amp;any</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr bool
+__sp_digits(const char *&amp;p, const char *end, u32 max, i64 &amp;out, bool &amp;any) noexcept
+{
+  out = 0;
+  any = false;
+  u32 taken = 0;
+  bool neg = false;
+  if ( p &lt; end &amp;&amp; (*p == &#x27;-&#x27; || *p == &#x27;+&#x27;) ) {
+    neg = *p == &#x27;-&#x27;;
+    ++p;
+  }
+  while ( p &lt; end &amp;&amp; taken &lt; max &amp;&amp; *p &gt;= &#x27;0&#x27; &amp;&amp; *p &lt;= &#x27;9&#x27; ) {
+    out = out * 10 + (*p - &#x27;0&#x27;);
+    ++p;
+    ++taken;
+    any = true;
+  }
+  if ( neg ) out = -out;
+  return any;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>any</code></td><td><a href="../../source/chrono/posix.hpp.html#L197">line 197</a></td></tr></tbody></table></section><section class="function-entry" id="f-ba14289091d5ce0b"><h3><code>micron::posix::__impl::__sp_match(const char *&amp;p, const char *end, const char *const *tbl, u32 lo, u32 hi, u32 abbr_len) noexcept</code></h3><p>Defined in <code>chrono/posix.hpp</code>, <a href="../../source/chrono/posix.hpp.html#L201">line 201</a>.</p><p>Implementation function. Its declaration is used by the library implementation.</p><table class="t-dcl-begin"><tbody><tr class="t-dcl"><td><pre>constexpr int
+__sp_match(const char *&amp;p, const char *end, const char *const *tbl, u32 lo, u32 hi, u32 abbr_len) noexcept</pre></td></tr></tbody></table><h4>Parameters</h4><p>The parameter declarations, including any default arguments, are:</p><ul><li><code>const char *&amp;p</code></li><li><code>const char *end</code></li><li><code>const char *const *tbl</code></li><li><code>u32 lo</code></li><li><code>u32 hi</code></li><li><code>u32 abbr_len</code></li></ul><h4>Effects</h4><p>Equivalent to the following definition. Expressions, calls, initialization, and conditional branches are evaluated in the order specified here.</p><details class="equivalent-definition"><summary>Equivalent definition</summary><pre class="source-cpp">constexpr int
+__sp_match(const char *&amp;p, const char *end, const char *const *tbl, u32 lo, u32 hi, u32 abbr_len) noexcept
+{
+  for ( u32 k = lo; k &lt;= hi; ++k ) {
+    const char *w = tbl[k];
+    // the full name first, so &quot;June&quot; is not consumed as &quot;Jun&quot; leaving a stray &#x27;e&#x27;
+    usize full = 0;
+    while ( w[full] ) ++full;
+    if ( chrono::__impl::__ieq(p, static_cast&lt;usize&gt;(end - p), 0, w, full) ) {
+      p += full;
+      return static_cast&lt;int&gt;(k);
+    }
+    if ( chrono::__impl::__ieq(p, static_cast&lt;usize&gt;(end - p), 0, w, abbr_len) ) {
+      p += abbr_len;
+      return static_cast&lt;int&gt;(k);
+    }
+  }
+  return -1;
+}</pre></details><h4>Return value</h4><p>Evaluates the return expression reached in the equivalent definition. The return sites are listed in source order; preceding exits and enclosing branches determine which site is reached.</p><table class="t-dsc-begin"><tbody><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(k)</code></td><td><a href="../../source/chrono/posix.hpp.html#L210">line 210</a></td></tr><tr class="t-dsc"><td><code>static_cast&lt;int&gt;(k)</code></td><td><a href="../../source/chrono/posix.hpp.html#L214">line 214</a></td></tr><tr class="t-dsc"><td><code>-1</code></td><td><a href="../../source/chrono/posix.hpp.html#L217">line 217</a></td></tr></tbody></table><h4>Referenced functions</h4><p><a href="parse.hpp.html#f-f3770ea52636e05d">chrono::__impl::__ieq</a>.</p></section><div class="visualClear"></div></div></div></div>
+<div id="cpp-footer-base"><div id="footer"><p>micron reference · <a href="../../about.html">Attribution and licenses</a> · <a href="../../index.html">Contents</a></p></div></div>
+</body></html>
